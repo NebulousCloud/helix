@@ -48,10 +48,12 @@ local PANEL = {}
 				title:SetExpensiveShadow(1, color_black)
 
 				for k2, v2 in ipairs(team.GetPlayers(k)) do
-					local panel = self.list:Add("nut_PlayerScore")
-					panel:DockMargin(4, 0, 4, 2)
-					panel:Dock(TOP)
-					panel:SetPlayer(v2)
+					if (v2.character) then
+						local panel = self.list:Add("nut_PlayerScore")
+						panel:DockMargin(4, 0, 4, 2)
+						panel:Dock(TOP)
+						panel:SetPlayer(v2)
+					end
 				end
 			end
 		end
