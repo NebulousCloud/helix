@@ -123,6 +123,10 @@ function GM:HUDPaintTargetID(entity)
 					local color = team.GetColor(v:Team())
 					color.a = alpha
 
+					if (v:IsTyping()) then
+						nut.util.DrawText(position.x, position.y - nut.config.targetTall, nut.config.showTypingText and v:GetNetVar("typing") or "Typing...", Color(255, 255, 255, alpha))
+					end
+
 					nut.util.DrawText(position.x, position.y, v:Name(), color)
 					position.y = position.y + nut.config.targetTall
 					color = Color(255, 255, 255, alpha)

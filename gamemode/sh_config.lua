@@ -75,6 +75,11 @@ nut.config.menuMusicFade = 15
 -- The starting weight for inventories.
 nut.config.defaultInvWeight = 10
 
+-- Shows what other people are typing.
+-- If set to false, it'll just show Typing... above someone's head when they are.
+-- Setting it to true MIGHT cause a little network strain, depending on how many players there are.
+nut.config.showTypingText = false
+
 if (CLIENT) then
 	hook.Add("SchemaInitialized", "nut_FontConfig", function()
 		surface.SetFont("nut_TargetFont")

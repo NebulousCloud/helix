@@ -161,16 +161,32 @@ if (CLIENT) then
 		return true
 	end)
 
-	hook.Add("StartChat", "nut_Typing", function(teamChat)
-		net.Start("nut_Typing")
-			net.WriteBit(true)
-		net.SendToServer()
+	hook.Add("ChatOpened", "nut_Typing", function(teamChat)
+		if (!nut.config.showTypingText) then
+			net.Start("nut_Typing")
+				net.WriteString("1")
+			net.SendToServer()
+		end
 	end)
 
 	hook.Add("FinishChat", "nut_Typing", function(teamChat)
 		net.Start("nut_Typing")
-			net.WriteBit(false)
+			net.WriteString("")
 		net.SendToServer()
+	end)
+
+	local nextSend = 0
+
+	hook.Add("ChatTextChanged", "nut_Typing", function(text)
+		if (nut.config.showTypingText) then
+			if (nextSend < CurTime()) then
+				net.Start("nut_Typing")
+					net.WriteString(text)
+				net.SendToServer()
+
+				nextSend = CurTime() + 0.25
+			end
+		end
 	end)
 
 	-- Handle a chat message from the server and parse it with the appropriate chat class.
@@ -192,18 +208,9 @@ else
 	util.AddNetworkString("nut_ChatMessage")
 	util.AddNetworkString("nut_Typing")
 
-	net.Receive("nut_Typing", function(length)
-		local client = net.ReadEntity()
-		local state = net.ReadBit() == 1
-
-		client:SetNetVar("typing", state)
+	net.Receive("nut_Typing", function(length, client)
+		client:SetNetVar("typing", net.ReadString())
 	end)
-
-	local playerMeta = FindMetaTable("Player")
-
-	function playerMeta:IsTyping()
-		return self:GetNetVar("typing")
-	end
 
 	-- Send a chat class to the clients that can hear it based off the classes's canHear function.
 	function nut.chat.Send(client, mode, text)
@@ -282,4 +289,10 @@ else
 
 		return ""
 	end
+end
+
+local playerMeta = FindMetaTable("Player")
+
+function playerMeta:IsTyping()
+	return self:GetNetVar("typing", "") != ""
 end
