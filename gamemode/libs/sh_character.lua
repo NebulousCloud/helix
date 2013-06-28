@@ -433,6 +433,8 @@ if (SERVER) then
 			return
 		end
 
+		nut.schema.Call("CharacterSave", client)
+
 		local index = character.index
 		local data = character:GetVars()
 		data.model = client:GetModel()
