@@ -20,7 +20,7 @@ if (SERVER) then
 	end)
 
 	function entityMeta:SendVar(key, receiver)
-		if (self.nut_NetVars and self.nut_NetVars[key]) then
+		if (self.nut_NetVars and self.nut_NetVars[key] != nil) then
 			net.Start("nut_EntityVar")
 				net.WriteUInt(self:EntIndex(), 16)
 				net.WriteString(key)
