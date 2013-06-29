@@ -183,5 +183,9 @@ function GM:InitPostEntity()
 end
 
 function GM:PlayerDeathThink(client)
-	return client.character != nil
+	if (client.character) then
+		client:Spawn()
+	end
+	
+	return false
 end
