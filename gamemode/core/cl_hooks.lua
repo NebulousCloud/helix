@@ -58,18 +58,21 @@ function GM:HUDPaint()
 		draw.SimpleText("Loading NutScript", "nut_HeaderFont", ScrW() * 0.5, ScrH() * 0.5, color_white, 1, 1)
 	end
 
-	local text = "NutScript Development Build"
-	local x, y = 4, 4
-	local border = 8
+	local info = {
+		"NutScript Development Build",
+		"Schema UniqueID: "..SCHEMA.uniqueID,
+		"http://chessnut.info"
+	}
 
 	surface.SetFont("DermaDefault")
-	local w, h = surface.GetTextSize(text)
 
-	surface.SetDrawColor(0, 0, 0, 50)
-	surface.DrawRect(x, y, w + border*2, h + border*2)
+	local x, y = 8, 8
 
-	draw.SimpleText(text, "DermaDefault", x + border + 1, y + border + 1, color_black, 0, 0)
-	draw.SimpleText(text, "DermaDefault", x + border, y + border, color_white, 0, 0)
+	for k, v in ipairs(info) do
+		draw.SimpleText(v, "BudgetLabel", x, y, color_white, 0, 0)
+
+		y = y + 16
+	end
 end
 
 function GM:ShouldDrawTargetEntity(entity)
