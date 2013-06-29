@@ -27,6 +27,14 @@ local PANEL = {}
 
 		self.currentMenu = NULL
 
+		self.business = self.buttonList:Add("nut_MenuButton")
+		self.business:SetText(nut.lang.Get("business"))
+		self.business:DockMargin(0, 0, 0, 8)
+		self.business.OnClick = function()
+			nut.gui.business = vgui.Create("nut_Business", self)
+			self:SetCurrentMenu(nut.gui.business)
+		end
+
 		self.inv = self.buttonList:Add("nut_MenuButton")
 		self.inv:SetText(nut.lang.Get("inventory"))
 		self.inv:DockMargin(0, 0, 0, 8)
@@ -41,6 +49,14 @@ local PANEL = {}
 		self.help.OnClick = function()
 			nut.gui.inv = vgui.Create("nut_Help", self)
 			self:SetCurrentMenu(nut.gui.inv)
+		end
+
+		self.settings = self.buttonList:Add("nut_MenuButton")
+		self.settings:SetText(nut.lang.Get("settings"))
+		self.settings:DockMargin(0, 0, 0, 8)
+		self.settings.OnClick = function()
+			nut.gui.settings = vgui.Create("nut_Help", self)
+			self:SetCurrentMenu(nut.gui.settings)
 		end
 
 		nut.schema.Call("CreateMenuButtons", self.buttonList)
