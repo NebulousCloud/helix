@@ -58,11 +58,14 @@ function nut.item.Register(itemTable, isBase)
 			local description = string.gsub(self.desc, "%%.-%%", function(key)
 				key = string.sub(key, 2, -2)
 
-				if (data[key]) then
+				local exploded = string.Explode("|", key)
+				key = exploded[1]
+
+				if (data and data[key]) then
 					return data[key]
 				end
 
-				return self.data[key]
+				return self.data[key] or exploded[2]
 			end)
 
 			return description
