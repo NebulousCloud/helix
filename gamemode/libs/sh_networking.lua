@@ -2,6 +2,7 @@ local entityMeta = FindMetaTable("Entity")
 
 if (SERVER) then
 	util.AddNetworkString("nut_EntityVar")
+	util.AddNetworkString("nut_NetHandshake")
 
 	function entityMeta:SyncVars(client)
 		if (self.nut_NetVars) then
@@ -19,7 +20,25 @@ if (SERVER) then
 		end)
 	end)
 
-	function entityMeta:SendVar(key, receiver)
+	local function initiateHandShake(client, entity, key)
+		if (!key or !IsValid(entity)) then
+			return
+		end
+
+		local uniqueID = "nut_Net"..client:UniqueID()..entity:EntIndex()..key
+		
+		timer.Create(uniqueID, client:Ping() / 75, 10, function()
+			if (!IsValid(client) or !IsValid(entity)) then
+				timer.Remove(uniqueID)
+
+				return
+			end
+
+			entity:SendVar(key, client, true)
+		end)
+	end
+
+	function entityMeta:SendVar(key, receiver, noHandShake)
 		if (self.nut_NetVars and self.nut_NetVars[key] != nil) then
 			net.Start("nut_EntityVar")
 				net.WriteUInt(self:EntIndex(), 16)
@@ -27,8 +46,24 @@ if (SERVER) then
 				net.WriteType(self.nut_NetVars[key])
 			if (receiver) then
 				net.Send(receiver)
+
+				if (!noHandShake) then
+					if (type(receiver) == "Player") then
+						initiateHandShake(receiver, self, key)
+					elseif (type(receiver) == "table") then
+						for k, v in pairs(receiver) do
+							initiateHandShake(v, self, key)
+						end
+					end
+				end
 			else
 				net.Broadcast()
+
+				if (!noHandShake) then
+					for k, v in pairs(player.GetAll()) do
+						initiateHandShake(v, self, key)
+					end
+				end
 			end
 		end
 	end
@@ -39,6 +74,10 @@ if (SERVER) then
 
 		self:SendVar(key)
 	end
+
+	net.Receive("nut_NetHandshake", function(length, client)
+		timer.Remove(net.ReadString())
+	end)
 else
 	NUT_ENT_REGISTRY = NUT_ENT_REGISTRY or {}
 
@@ -50,6 +89,10 @@ else
 
 		NUT_ENT_REGISTRY[entIndex] = NUT_ENT_REGISTRY[entIndex] or {}
 		NUT_ENT_REGISTRY[entIndex][key] = value
+
+		net.Start("nut_NetHandshake")
+			net.WriteString("nut_Net"..LocalPlayer():UniqueID()..entIndex..key)
+		net.SendToServer()
 	end)
 end
 
