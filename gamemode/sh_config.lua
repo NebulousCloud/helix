@@ -53,7 +53,7 @@ nut.config.breathing = true
 nut.config.whisperRange = 160
 
 -- The maximum distance in Source units to hear someone talk.
-nut.config.talkRange = 540
+nut.config.chatRange = 540
 
 -- The maximum distance in Source units to hear someone yell.
 nut.config.yellRange = 720

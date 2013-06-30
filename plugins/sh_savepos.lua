@@ -2,7 +2,11 @@ PLUGIN.name = "Save Position"
 PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Saves where a character left."
 
-function PLUGIN:CharacterSave(client)
+function PLUGIN:PlayerDisconnected(client)
+	if (!client.character) then
+		return
+	end
+
 	client.character:SetData("pos", client:GetPos())
 	client.character:SetData("posmap", game.GetMap())
 end
