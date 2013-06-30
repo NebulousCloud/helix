@@ -137,13 +137,13 @@ do
 		--]]
 		local function isSimilarTable(a, b)
 			for k, v in pairs(a) do
-				if (!b[k] or v != b[k]) then
+				if (b[k] == nil or v != b[k]) then
 					return false
 				end
 			end
 
 			for k, v in pairs(b) do
-				if (!a[k] or v != a[k]) then
+				if (a[k] == nil or v != a[k]) then
 					return false
 				end
 			end
@@ -180,7 +180,10 @@ do
 			end
 
 			if (itemTable.data) then
-				data = table.Merge(data, itemTable.data)
+				local oldData = data or {}
+
+				data = table.Copy(itemTable.data)
+				data = table.Merge(data, oldData)
 			end
 
 			local inventory = self.character:GetVar("inv")
@@ -238,7 +241,7 @@ do
 
 				if ((self.nut_NextItemSave or 0) < CurTime()) then
 					shouldSave = true
-					self.nut_NextItemSave = CurTime() + 15
+					self.nut_NextItemSave = CurTime() + 30
 				end
 
 				if (shouldSave) then
@@ -333,7 +336,7 @@ do
 		same class as the one provided.
 	--]]
 	function playerMeta:HasItem(class)
-		return self:GetInventory()[class]
+		return table.Count(self:GetItemsByClass(class)) > 0
 	end
 
 	--[[
@@ -349,6 +352,10 @@ do
 		index = index or 1
 
 		return self:GetInventory()[class][index]
+	end
+
+	function playerMeta:GetItemsByClass(class)
+		return self:GetInventory()[class] or {}
 	end
 end
 
@@ -376,7 +383,7 @@ do
 				local result = true
 
 				if (itemFunction.run) then
-					result = itemFunction.run(itemTable, client, item.data)
+					result = itemFunction.run(itemTable, client, item.data or {}, NULL, index)
 				end
 
 				if (result != false) then
@@ -403,7 +410,7 @@ do
 				local result = true
 
 				if (itemFunction.run) then
-					result = itemFunction.run(itemTable, client, data, entity)
+					result = itemFunction.run(itemTable, client, data or {}, entity)
 				end
 
 				if (result != false) then
@@ -434,7 +441,7 @@ do
 							net.SendToServer()
 
 							if (v.run) then
-								v.run(itemTable, LocalPlayer(), item.data)
+								v.run(itemTable, LocalPlayer(), item.data or {}, NULL, index)
 							end
 						end)
 						option:SetImage(material)
@@ -475,7 +482,7 @@ do
 							net.SendToServer()
 
 							if (v.run) then
-								v.run(itemTable, LocalPlayer(), entity:GetData(), entity)
+								v.run(itemTable, LocalPlayer(), entity:GetData() or {}, entity)
 							end
 						end)
 						option:SetImage(material)
