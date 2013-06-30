@@ -5,7 +5,7 @@ function GM:ShowHelp(client)
 	net.Send(client)
 end
 
-function GM:GetDefaultInventory(client)
+function GM:GetDefaultInv(client, name, faction)
 	return {}
 end
 

@@ -55,7 +55,7 @@ local PANEL = {}
 		self.settings:SetText(nut.lang.Get("settings"))
 		self.settings:DockMargin(0, 0, 0, 8)
 		self.settings.OnClick = function()
-			nut.gui.settings = vgui.Create("nut_Help", self)
+			nut.gui.settings = vgui.Create("nut_Settings", self)
 			self:SetCurrentMenu(nut.gui.settings)
 		end
 

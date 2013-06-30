@@ -132,7 +132,7 @@ local PANEL = {}
 		self.player = client
 
 		self.model:SetModel(client:GetModel())
-		self.model:SetToolTip("Click to open "..client:Name().."'s Steam profile.")
+		self.model:SetToolTip("Click to open "..client:RealName().."'s Steam profile.")
 
 		self.name:SetText(client:Name())
 		self.name:SizeToContents()

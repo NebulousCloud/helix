@@ -121,7 +121,11 @@ nut.command.Register(COMMAND, "freq")
 
 nut.chat.Register("radio", {
 	onChat = function(speaker, text)
-		chat.AddText(Color(85, 161, 39), speaker:Name()..": "..text)
+		if (LocalPlayer() != speaker and speaker:GetPos():Distance(LocalPlayer():GetPos()) <= nut.config.chatRange) then
+			chat.AddText(Color(169, 207, 232), speaker:Name()..": "..text)
+		else
+			chat.AddText(Color(85, 161, 39), speaker:Name()..": "..text)
+		end
 	end,
 	prefix = {"/radio", "/r"},
 	canHear = function(speaker, listener)

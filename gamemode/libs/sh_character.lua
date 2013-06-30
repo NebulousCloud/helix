@@ -488,7 +488,7 @@ if (SERVER) then
 			charname = name,
 			description = desc,
 			gender = gender,
-			inv = nut.schema.Call("GetDefaultInventory", client),
+			inv = nut.schema.Call("GetDefaultInv", client, name, faction),
 			money = nut.schema.Call("GetDefaultMoney", client),
 			chardata = data,
 			faction = faction,
@@ -500,7 +500,7 @@ if (SERVER) then
 			timer.Simple(0.05, function()
 				nut.char.SendInfo(client, id)
 
-				print("Created new character '"..name.."' for "..client:Name()..".")
+				print("Created new character '"..name.."' for "..client:RealName()..".")
 			end)
 		end)		
 	end)

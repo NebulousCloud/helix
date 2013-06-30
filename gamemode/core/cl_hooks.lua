@@ -116,7 +116,7 @@ function GM:HUDPaintTargetID(entity)
 						position.y = position.y + nut.config.targetTall
 						color = Color(255, 255, 255, alpha)
 
-						nut.util.DrawText(position.x, position.y, itemTable:GetDesc(v:GetData()), color, "nut_TargetFontSmall")
+						nut.util.DrawText(position.x, position.y, string.gsub(itemTable:GetDesc(v:GetData()), "\n", ""), color, "nut_TargetFontSmall")
 
 						if (itemTable.Paint) then
 							itemTable:Paint(v, position.x, position.y + nut.config.targetTall, color)
@@ -201,9 +201,9 @@ function GM:RenderScreenspaceEffects()
 	color["$pp_colour_addr"] = 0.02
 	color["$pp_colour_addg"] = 0.01
 	color["$pp_colour_addb"] = 0.07
-	color["$pp_colour_brightness"] = -0.05
+	color["$pp_colour_brightness"] = -0.1
 	color["$pp_colour_contrast"] = 1.3
-	color["$pp_colour_colour"] = 0.4
+	color["$pp_colour_colour"] = 0.7
 	color["$pp_colour_mulr"] = 0.1
 	color["$pp_colour_mulg"] = 0
 	color["$pp_colour_mulb"] = 0.1

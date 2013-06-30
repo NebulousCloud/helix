@@ -368,7 +368,7 @@ do
 
 		net.Receive("nut_ItemAction", function(length, client)
 			local class = net.ReadString()
-
+			print(class)
 			if (!client:HasItem(class)) then
 				return
 			end

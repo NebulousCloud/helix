@@ -75,6 +75,8 @@ function GM:CalcMainActivity(client, velocity)
 
 		if (!client:OnGround()) then
 			client.CalcIdeal = nut.anim[class].glide or ACT_GLIDE
+		elseif (client:InVehicle()) then
+			client.CalcIdeal = nut.anim[class].normal.idle_crouch[1]
 		elseif (animation) then
 			value = animation[state]
 
