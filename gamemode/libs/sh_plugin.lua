@@ -21,7 +21,7 @@ function nut.plugin.IncludeEntities(directory)
 
 	for k, v in pairs(entityFiles) do
 		ENT = {}
-			ENT.ClassName = string.sub(v, 1, -4)
+			ENT.ClassName = string.sub(v, 1, -5)
 			nut.util.Include(directory.."/entities/entities/"..ENT.ClassName..".lua", "shared")
 			scripted_ents.Register(ENT, ENT.ClassName)
 		ENT = nil
