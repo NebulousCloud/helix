@@ -125,7 +125,7 @@ function SWEP:PrimaryAttack()
 	self.Owner:ViewPunch( Angle(self.LastHand + 2, self.LastHand + 5, 0.125) )
 
 	timer.Simple(0.085, function()
-		if (IsValid(self.Owner) and self.Owner:GetPos():Distance(trace.HitPos or vector_origin) <= 108) then
+		if (IsValid(self) and IsValid(self.Owner) and self.Owner:GetPos():Distance(trace.HitPos or vector_origin) <= 108) then
 			local shoot = false
 
 			if (trace.Hit) then
