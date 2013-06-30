@@ -46,7 +46,7 @@ function nut.chat.Register(class, structure)
 		end
 
 		if (!speaker:Alive()) then
-			speaker:ChatPrint(nut.lang.Get("dead_talk_error"))
+			nut.util.Notify(nut.lang.Get("dead_talk_error"), speaker)
 
 			return false
 		end
@@ -122,7 +122,7 @@ do
 	nut.chat.Register("event", {
 		onChat = function(speaker, text)
 			if (!speaker:IsAdmin()) then
-				speaker:ChatPrint(nut.lang.Get("no_perm", speaker:Name()))
+				nut.util.Notify(nut.lang.Get("no_perm", speaker:Name()), speaker)
 
 				return
 			end
@@ -243,7 +243,7 @@ else
 	-- Proccess the text and see if it is a chat class or chat command.
 	function nut.chat.Process(client, text)
 		if (!client.character) then
-			client:ChatPrint(nut.lang.Get("nochar_talk_error"))
+			nut.util.Notify(nut.lang.Get("nochar_talk_error"), client)
 			
 			return
 		end

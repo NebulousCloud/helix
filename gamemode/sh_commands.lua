@@ -38,7 +38,7 @@ function COMMAND:OnRun(client, arguments)
 
 	if (IsValid(target)) then
 		if (!arguments[2]) then
-			client:ChatPrint(nut.lang.Get("missing_arg", 2))
+			nut.util.Notify(nut.lang.Get("missing_arg", 2), client)
 
 			return
 		end
@@ -60,7 +60,7 @@ function COMMAND:OnRun(client, arguments)
 
 	if (IsValid(target)) then
 		if (!arguments[2]) then
-			client:ChatPrint(nut.lang.Get("missing_arg", 2))
+			nut.util.Notify(nut.lang.Get("missing_arg", 2), client)
 
 			return
 		end
@@ -82,7 +82,7 @@ function COMMAND:OnRun(client, arguments)
 
 	if (IsValid(target)) then
 		if (!arguments[2]) then
-			client:ChatPrint(nut.lang.Get("missing_arg", 2))
+			nut.util.Notify(nut.lang.Get("missing_arg", 2), client)
 
 			return
 		end
@@ -99,7 +99,7 @@ function COMMAND:OnRun(client, arguments)
 
 		if (faction) then
 			if (nut.faction.CanBe(target, faction.index)) then
-				target:ChatPrint(nut.lang.Get("already_whitelisted"))
+				nut.util.Notify(nut.lang.Get("already_whitelisted"), target)
 
 				return
 			end
@@ -124,7 +124,7 @@ function COMMAND:OnRun(client, arguments)
 
 	if (IsValid(target)) then
 		if (!arguments[2]) then
-			client:ChatPrint(nut.lang.Get("missing_arg", 2))
+			nut.util.Notify(nut.lang.Get("missing_arg", 2), client)
 
 			return
 		end
@@ -141,7 +141,7 @@ function COMMAND:OnRun(client, arguments)
 
 		if (faction) then
 			if (!nut.faction.CanBe(target, faction.index)) then
-				target:ChatPrint(nut.lang.Get("not_whitelisted"))
+				nut.util.Notify(nut.lang.Get("not_whitelisted"), target)
 
 				return
 			end

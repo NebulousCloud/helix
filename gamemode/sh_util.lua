@@ -207,6 +207,10 @@ if (SERVER) then
 		end
 	end
 else
+	function nut.util.Notify(message)
+		LocalPlayer():ChatPrint(message)
+	end
+
 	--[[
 		Purpose: Automatically creates a structure for drawing text with a shadow. By default the
 		font is the target font, color is white, and the text alignment is centered on both axes.

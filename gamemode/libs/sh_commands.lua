@@ -18,13 +18,13 @@ if (SERVER) then
 			if (commandTable.OnRun) then
 				if (commandTable.superAdminOnly) then
 					if (!client:IsSuperAdmin()) then
-						client:ChatPrint(nut.lang.Get("no_perm", client:Name()))
+						nut.util.Notify(nut.lang.Get("no_perm", client:Name()), client)
 
 						return
 					end
 				elseif (commandTable.adminOnly) then
 					if (!client:IsAdmin()) then
-						client:ChatPrint(nut.lang.Get("no_perm", client:Name()))
+						nut.util.Notify(nut.lang.Get("no_perm", client:Name()), client)
 
 						return
 					end
@@ -43,7 +43,7 @@ if (SERVER) then
 				end
 			end
 		else
-			client:ChatPrint("That command does not exist.")
+			nut.util.Notify("That command does not exist.", client)
 		end
 
 		if (!echo) then
@@ -66,7 +66,7 @@ if (SERVER) then
 		end
 
 		if (!nut.command.buffer[action]) then
-			client:ChatPrint("That command does not exist.")
+			nut.util.Notify("That command does not exist.", client)
 		else
 			nut.command.RunCommand(client, action, arguments)
 		end
@@ -118,7 +118,7 @@ if (SERVER) then
 		local fault = nut.lang.Get("no_ply")
 
 		if (!name) then
-			client:ChatPrint(fault)
+			nut.util.Notify(fault, client)
 
 			return
 		end
@@ -126,7 +126,7 @@ if (SERVER) then
 		local target = nut.util.FindPlayer(name)
 
 		if (!IsValid(target)) then
-			client:ChatPrint(fault)
+			nut.util.Notify(fault, client)
 		end
 
 		return target
