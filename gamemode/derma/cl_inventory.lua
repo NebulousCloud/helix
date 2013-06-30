@@ -72,17 +72,7 @@ local PANEL = {}
 						label:SetDark(true)
 						label:SetExpensiveShadow(1, Color(240, 240, 240))
 
-						local tip = nut.lang.Get("item_info", itemTable.name, itemTable:GetDesc(v.data))
-
-						if (v.data) then
-							for k, v in pairs(v.data) do
-								tip = tip.."\n  "..k..": "..v
-							end
-						else
-							tip = tip..nut.lang.Get("none")
-						end
-
-						icon:SetToolTip(tip)
+						icon:SetToolTip(nut.lang.Get("item_info", itemTable.name, itemTable:GetDesc(v.data)))
 						icon.DoClick = function(icon)
 							nut.item.OpenMenu(itemTable, v, k, icon, label)
 						end
