@@ -27,7 +27,7 @@ if (SERVER) then
 
 		local uniqueID = "nut_Net"..client:UniqueID()..entity:EntIndex()..key
 		
-		timer.Create(uniqueID, client:Ping() / 75, 10, function()
+		timer.Create(uniqueID, client:Ping() / 75, 25, function()
 			if (!IsValid(client) or !IsValid(entity)) then
 				timer.Remove(uniqueID)
 
