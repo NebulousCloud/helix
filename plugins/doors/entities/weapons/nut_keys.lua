@@ -32,7 +32,7 @@ SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = ""
 
 SWEP.ViewModel = Model("models/props_junk/watermelon01.mdl")
-SWEP.WorldModel = Model("models/weapons/w_fists.mdl")
+SWEP.WorldModel = ""
 
 SWEP.AlwaysRaised = true
 SWEP.DrawViewModel = false

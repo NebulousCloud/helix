@@ -32,7 +32,7 @@ SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = ""
 
 SWEP.ViewModel = Model("models/weapons/v_fists.mdl")
-SWEP.WorldModel = Model("models/weapons/w_fists.mdl")
+SWEP.WorldModel = ""
 
 SWEP.UseHands = true
 SWEP.LowerAngles = Angle(0, 5, -20)
