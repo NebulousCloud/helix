@@ -191,7 +191,12 @@ function COMMAND:OnRun(client, arguments)
 		local name = table.concat(arguments, " ")
 
 		if (name and string.find(name, "[^%s]")) then
+			local oldName = target:Name()
 			target.character:SetVar("charname", name)
+
+			nut.util.Notify(client:Name().." has changed "..oldName.."'s name to "..name..".")
+		else
+			nut.util.Notify("You provided an invalid name.", client)
 		end
 	end
 end

@@ -4,7 +4,7 @@
 --]]
 
 nut.class = nut.class or {}
-nut.class.buffer = nut.class.buffer or {}
+nut.class.buffer = {}
 
 function nut.class.Register(classTable)
 	return table.insert(nut.class.buffer, classTable)
@@ -19,14 +19,28 @@ do
 
 	function playerMeta:CharClass()
 		if (self.character) then
-			return self.character:GetData("class")		
+			return self.character:GetData("class")	
 		end
 	end
 
 	if (SERVER) then
 		function playerMeta:SetCharClass(index)
 			if (self.character) then
-				return self.character:SetData("class")
+				local class = nut.class.Get(index)
+
+				if (class) then
+					local result = true
+
+					if (class.OnSet) then
+						result = class:OnSet(self) or true
+					end
+
+					if (result == false) then
+						return
+					end
+					
+					self.character:SetData("class", index)
+				end
 			end
 		end
 	end

@@ -25,6 +25,8 @@ function nut.schema.Init()
 
 	nut.util.Include("schema/sh_schema.lua")
 	nut.util.IncludeDir("schema/factions")
+	nut.util.IncludeDir("schema/classes")
+	nut.util.IncludeDir("schema/derma")
 
 	nut.plugin.Load(SCHEMA.folderName)
 	nut.item.Load(SCHEMA.folderName.."/gamemode/schema")

@@ -336,6 +336,13 @@ if (SERVER) then
 
 		if (client.nut_CachedChars[index]) then
 			client.character = client.nut_CachedChars[index]
+				for name, _ in pairs(client.character:GetVars()) do
+					if (nut.char.hooks[name]) then
+						for k, v in pairs(nut.char.hooks[name]) do
+							v(client.character)
+						end
+					end
+				end
 			client.character:Send()
 
 			print("Restoring cached character '"..client.character:GetVar("charname").."' for "..client:RealName()..".")
