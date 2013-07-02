@@ -1,4 +1,5 @@
 -- ALl of this just for hands that match the player model.
+-- And we'll include some misc. player stuff too.
 
 local PLAYER = {}
 PLAYER.DisplayName = "NutScript Player"
@@ -32,10 +33,10 @@ function PLAYER:GetHandsModel()
 	return player_manager.TranslatePlayerHands(model)
 end
 
+local playerMeta = FindMetaTable("Player")
+
 -- Weapon raising/lowering stuff.
 do
-	local playerMeta = FindMetaTable("Player")
-
 	function playerMeta:WepRaised()
 		if (CLIENT and self != LocalPlayer() and !self.GetNutWepRaised) then
 			RunConsoleCommand("ns_sendplydt")
@@ -108,6 +109,99 @@ do
 					player_manager.RunClass(v, "SetupDataTables")
 				end
 			end
+		end)
+	end
+end
+
+-- Player ragdoll.
+do
+	function playerMeta:IsPenetrating()
+		local physicsObject = self:GetPhysicsObject()
+		local entities = ents.FindInBox(self:LocalToWorld(self:OBBMins()), self:LocalToWorld(self:OBBMaxs()))
+
+		for k, v in pairs(entities) do
+			if (self.ragdoll and self.ragdoll == v) then
+				continue
+			end
+
+			if (string.find(v:GetClass(), "prop_")) then
+				return true
+			end
+		end
+
+		if (IsValid(physicsObject)) then
+			return physicsObject:IsPenetrating()
+		end
+
+		return true
+	end
+
+	if (SERVER) then
+		function playerMeta:ForceRagdoll()
+			self.ragdoll = ents.Create("prop_ragdoll")
+			self.ragdoll:SetModel(self:GetModel())
+			self.ragdoll:SetPos(self:GetPos())
+			self.ragdoll:SetAngles(self:GetAngles())
+			self.ragdoll:SetSkin(self:GetSkin())
+			self.ragdoll:SetColor(self:GetColor())
+			self.ragdoll:Spawn()
+			self.ragdoll:Activate()
+			self.ragdoll:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+
+			self:Freeze(true)
+			self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+			self:SetNetVar("ragdoll", self.ragdoll)
+			self:SetNoDraw(true)
+
+			local uniqueID = "nut_RagSafePos"..self:EntIndex()
+
+			timer.Create(uniqueID, 0.33, 0, function()
+				if (!IsValid(self) or !IsValid(self.ragdoll)) then
+					if (IsValid(self.ragdoll)) then
+						self.ragdoll:Remove()
+					end
+
+					timer.Remove(uniqueID)
+
+					return
+				end
+
+				self.nut_LastPos = self.nut_LastPos or self:GetPos()
+
+				if (self.nut_LastPos != self:GetPos() and !self:IsPenetrating() and self:IsInWorld()) then
+					self.nut_LastPos = self:GetPos()
+				end
+
+				self:SetPos(self.ragdoll:GetPos())
+			end)
+		end
+
+		function playerMeta:UnRagdoll()
+			if (IsValid(self.ragdoll)) then
+				self.ragdoll:Remove()
+			end
+
+			self:SetPos(self.nut_LastPos or self:GetPos())
+			self:SetMoveType(MOVETYPE_WALK)
+			self:SetCollisionGroup(COLLISION_GROUP_PLAYER)
+			self:Freeze(false)
+			self:SetNoDraw(false)
+			self:SetNetVar("ragdoll", NULL)
+			self.nut_LastPos = nil
+		end
+
+		function playerMeta:SetTimedRagdoll(time)
+			self:ForceRagdoll()
+
+			timer.Create("nut_RagTime"..self:EntIndex(), time, 1, function()
+				if (IsValid(self)) then
+					self:UnRagdoll()
+				end
+			end)
+		end
+
+		hook.Add("PlayerDeath", "nut_UnRagdoll", function(client)
+			client:UnRagdoll()
 		end)
 	end
 end
