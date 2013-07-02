@@ -156,3 +156,24 @@ function COMMAND:OnRun(client, arguments)
 end
 
 nut.command.Register(COMMAND, "plyunwhitelist")
+
+local COMMAND = {}
+COMMAND.adminOnly = true
+COMMAND.help = "<string name> <string faction>"
+
+function COMMAND:OnRun(client, arguments)
+	local target = nut.command.FindPlayer(client, arguments[1])
+
+	if (IsValid(target)) then
+		if (!arguments[2]) then
+			nut.util.Notify(nut.lang.Get("missing_arg", 2), client)
+
+			return
+		end
+
+		target:SetModel(string.lower(arguments[2]))
+		nut.util.Notify(client:Name().." has changed "..target:Name().."'s model to "..arguments[2]..".")
+	end
+end
+
+nut.command.Register(COMMAND, "charsetmodel")

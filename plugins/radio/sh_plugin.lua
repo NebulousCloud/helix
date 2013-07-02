@@ -5,7 +5,7 @@ PLUGIN.desc = "Adds usable radios for in-game communication."
 if (CLIENT) then
 	surface.CreateFont("nut_ChatFontRadio", {
 		font = "Courier New",
-		size = ScreenScale(7),
+		size = 20,
 		weight = 1000
 	})
 

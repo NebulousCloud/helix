@@ -98,6 +98,10 @@ local PANEL = {}
 			self.create:SetToolTip(nut.lang.Get("create_tip"))
 			self.create.OnClick = function(create)
 				if (!IsValid(nut.gui.char)) then
+					if (LocalPlayer().characters and #LocalPlayer().characters >= nut.config.maxChars) then
+						return false
+					end
+
 					self:ShowCancel()
 
 					nut.gui.char = self:Add("nut_CharacterCreate")
@@ -144,13 +148,23 @@ local PANEL = {}
 			local lower = string.lower(nut.config.menuMusic)
 
 			if (string.Left(lower, 4) == "http") then
-				sound.PlayURL(nut.config.menuMusic, "mono noplay", function(music)
-					if (music) then
-						nut.menuMusic = music
-						nut.menuMusic:Play()
-						nut.menuMusic:SetVolume(nut.config.menuMusicVol / 100)
-					end
-				end)
+				local function createMusic()
+					local nextAttempt = 0
+
+					sound.PlayURL(nut.config.menuMusic, "mono noplay", function(music)
+						if (music) then
+							nut.menuMusic = music
+							nut.menuMusic:Play()
+							nut.menuMusic:SetVolume(nut.config.menuMusicVol / 100)
+						elseif (nextAttempt < CurTime()) then
+							nextAttempt = CurTime() + 1
+
+							createMusic()
+						end
+					end)
+				end
+
+				createMusic()
 			else
 				nut.menuMusic = CreateSound(LocalPlayer(), nut.config.menuMusic)
 				nut.menuMusic:Play()
@@ -208,11 +222,19 @@ local PANEL = {}
 vgui.Register("nut_CharMenu", PANEL, "DPanel")
 
 net.Receive("nut_CharMenu", function(length)
+	local forced = net.ReadBit() == 1
+
 	if (IsValid(nut.gui.charMenu)) then
 		nut.gui.charMenu:FadeOutMusic()
 		nut.gui.charMenu:Remove()
 
-		return
+		if (!forced) then
+			return
+		end
+	end
+
+	if (forced) then
+		nut.loaded = nil
 	end
 
 	nut.gui.charMenu = vgui.Create("nut_CharMenu")

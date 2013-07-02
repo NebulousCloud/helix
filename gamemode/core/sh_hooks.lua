@@ -20,7 +20,7 @@ WEAPON_RAISED = 2
 function GM:CalcMainActivity(client, velocity)
 	local model = string.lower(client:GetModel())
 
-	if (string.find(model, "/player/")) then
+	if (string.find(model, "/player/") or string.find(model, "/playermodel")) then
 		return self.BaseClass:CalcMainActivity(client, velocity)
 	end
 
@@ -104,7 +104,7 @@ end
 function GM:DoAnimationEvent(client, event, data)
 	local model = string.lower(client:GetModel())
 
-	if (string.find(model, "/player/")) then
+	if (string.find(model, "/player/") or string.find(model, "/playermodel")) then
 		return self.BaseClass:DoAnimationEvent(client, event, data)
 	end
 

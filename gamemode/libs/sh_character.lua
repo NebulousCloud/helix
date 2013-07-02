@@ -452,6 +452,10 @@ if (SERVER) then
 			return
 		end
 
+		if (client.characters and #client.characters >= nut.config.maxChars) then
+			return
+		end
+
 		local name = string.sub(net.ReadString(), 1, 70)
 		local gender = string.lower( net.ReadString() )
 		local desc = string.sub(net.ReadString(), 1, 240)
@@ -516,6 +520,7 @@ if (SERVER) then
 
 		nut.char.LoadID(client, index, function(sameChar)
 			net.Start("nut_CharMenu")
+				net.WriteBit(false)
 			net.Send(client)
 
 			if (!sameChar) then
@@ -531,11 +536,20 @@ if (SERVER) then
 		local index = net.ReadUInt(8)
 
 		if (client.characters and table.HasValue(client.characters, index)) then
-			if (client.character and client.character.index == index) then
-				return
-			end
-
 			nut.db.Query("DELETE FROM "..nut.config.dbTable.." WHERE steamid = "..client:SteamID64().." AND id = "..index..sameSchema(), function(data)
+				if (IsValid(client) and client.character and client.character.index == index) then
+					if (client.nut_CachedChars) then
+						client.nut_CachedChars[client.character.index] = nil
+					end
+					
+					client.character = nil
+					client:KillSilent()
+
+					net.Start("nut_CharMenu")
+						net.WriteBit(true)
+					net.Send(client)
+				end
+
 				print("Deleted character #"..index.." for "..client:Name()..".")
 			end)
 		else

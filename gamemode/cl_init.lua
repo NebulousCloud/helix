@@ -69,27 +69,27 @@ surface.CreateFont("nut_BigThinFont", {
 
 surface.CreateFont("nut_TargetFont", {
 	font = mainFont,
-	size = 20,
+	size = 23,
 	weight = 1000,
 	antialias = true
 })
 
 surface.CreateFont("nut_TargetFontSmall", {
 	font = mainFont,
-	size = 17,
+	size = 19,
 	weight = 800,
 	antialias = true
 })
 
 surface.CreateFont("nut_ChatFont", {
 	font = mainFont,
-	size = ScreenScale(8),
+	size = 20,
 	weight = 1000
 })
 
 surface.CreateFont("nut_ChatFontAction", {
 	font = mainFont,
-	size = ScreenScale(8),
+	size = 20,
 	weight = 1000,
 	italic = true
 })

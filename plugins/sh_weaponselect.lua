@@ -78,7 +78,7 @@ if (CLIENT) then
 		for k, v in SortedPairs(LocalPlayer():GetWeapons()) do
 			local y = (ScrH() / 2) + (k * 24)
 
-			local color = color_white
+			local color = Color(255, 255, 255)
 
 			if (k == self.lastSlot) then
 				color = nut.config.mainColor

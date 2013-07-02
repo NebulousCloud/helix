@@ -23,7 +23,7 @@ SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = -1
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = ""
-SWEP.Primary.Damage = 15
+SWEP.Primary.Damage = 5
 SWEP.Primary.Delay = 0.75
 
 SWEP.Secondary.ClipSize = -1
@@ -115,7 +115,11 @@ function SWEP:PrimaryAttack()
 
 	self:EmitSound("npc/vort/claw_swing"..math.random(1, 2)..".wav")
 	
-	local trace = self.Owner:GetEyeTraceNoCursor()
+	local data = {}
+		data.start = self.Owner:GetShootPos()
+		data.endpos = data.start + self.Owner:GetAimVector() * 72
+		data.filter = self.Owner
+	local trace = util.TraceLine(data)
 	local damage = self.Primary.Damage
 
 	self:DoPunchAnimation()

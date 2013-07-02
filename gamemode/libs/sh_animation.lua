@@ -60,6 +60,8 @@ nut.anim.SetModelClass("overwatch", "models/combine_soldier.mdl")
 nut.anim.SetModelClass("vort", "models/vortigaunt.mdl")
 nut.anim.SetModelClass("vort", "models/vortigaunt_slave.mdl")
 
+nut.anim.SetModelClass("metrocop", "models/dpfilms/metropolice/playermodels/pm_skull_police.mdl")
+
 -- Male citizen animation tree.
 nut.anim.citizen_male = {
 	normal = {

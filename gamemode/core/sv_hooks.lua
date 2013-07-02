@@ -1,6 +1,10 @@
 util.AddNetworkString("nut_ShowMenu")
 
 function GM:ShowHelp(client)
+	if (!client.character) then
+		return
+	end
+	
 	net.Start("nut_ShowMenu")
 	net.Send(client)
 end
@@ -30,12 +34,9 @@ function GM:PlayerInitialSpawn(client)
 		player_manager.SetPlayerClass(client, "player_nut")
 		player_manager.RunClass(client, "Spawn")
 
-		for k, v in pairs(nut.char.GetAll()) do
-			v:Send(nil, client)
-		end
-
 		nut.char.Load(client, function()
 			net.Start("nut_CharMenu")
+				net.WriteBit(false)
 			net.Send(client)
 
 			local uniqueID = "nut_SaveChar"..client:SteamID()

@@ -63,7 +63,7 @@ nut.config.yellRange = 720
 nut.config.gameMsgColor = Color(230, 230, 230)
 
 -- How loud the menu music is out of 100.
-nut.config.menuMusicVol = 25
+nut.config.menuMusicVol = 10
 
 -- What the actual menu music is. It can be a URL or game sound. Set to false if you
 -- do not want any menu music. This can also be overwritten by the schema.
@@ -73,12 +73,15 @@ nut.config.menuMusic = false
 nut.config.menuMusicFade = 15
 
 -- The starting weight for inventories.
-nut.config.defaultInvWeight = 10
+nut.config.defaultInvWeight = 20
 
 -- Shows what other people are typing.
 -- If set to false, it'll just show Typing... above someone's head when they are.
 -- Setting it to true MIGHT cause a little network strain, depending on how many players there are.
 nut.config.showTypingText = true
+
+-- The maximum number of characters.
+nut.config.maxChars = 4
 
 if (CLIENT) then
 	hook.Add("SchemaInitialized", "nut_FontConfig", function()
