@@ -177,3 +177,23 @@ function COMMAND:OnRun(client, arguments)
 end
 
 nut.command.Register(COMMAND, "charsetmodel")
+
+local COMMAND = {}
+COMMAND.adminOnly = true
+COMMAND.help = "<string name> <string newName>"
+
+function COMMAND:OnRun(client, arguments)
+	local target = nut.command.FindPlayer(client, arguments[1])
+
+	if (IsValid(target)) then
+		table.remove(arguments, 1)
+
+		local name = table.concat(arguments, " ")
+
+		if (name and string.find(name, "[^%s]")) then
+			target.character:SetVar("charname", name)
+		end
+	end
+end
+
+nut.command.Register(COMMAND, "charsetname")
