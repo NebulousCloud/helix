@@ -191,8 +191,12 @@ function nut.db.InsertTable(data, callback, dbTable)
 			end
 
 			-- SQLite doesn't play nice with quotations.
-			if (dbModule != "sqlite" and type(v) == "string") then
-				v = "'"..nut.db.Escape(v).."'"
+			if (type(v) == "string") then
+				if (dbModule == "sqlite") then
+					v = nut.db.Escape(v)
+				else
+					v = "'"..nut.db.Escape(v).."'"
+				end
 			end
 		end
 
@@ -219,8 +223,12 @@ function nut.db.UpdateTable(condition, data, dbTable)
 			end
 
 			-- SQLite doesn't play nice with quotations.
-			if (dbModule != "sqlite" and type(v) == "string") then
-				v = "'"..nut.db.Escape(v).."'"
+			if (type(v) == "string") then
+				if (dbModule == "sqlite") then
+					v = nut.db.Escape(v)
+				else
+					v = "'"..nut.db.Escape(v).."'"
+				end
 			end
 		end
 
