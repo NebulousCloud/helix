@@ -154,11 +154,14 @@ do
 					self:UnRagdoll()
 				end
 			end)
+			self.ragdoll.grace = CurTime() + 1
 
-			local physicsObject = self.ragdoll:GetPhysicsObject()
+			for i = 0, self.ragdoll:GetPhysicsObjectCount() do
+				local physicsObject = self.ragdoll:GetPhysicsObjectNum(i)
 
-			if (IsValid(physicsObject)) then
-				physicsObject:SetVelocity(self:GetVelocity())
+				if (IsValid(physicsObject)) then
+					physicsObject:SetVelocity(self:GetVelocity() * 1.25)
+				end
 			end
 
 			self.nut_Weapons = {}
@@ -197,7 +200,9 @@ do
 		end
 
 		function playerMeta:UnRagdoll(samePos)
-			if (samePos and IsValid(self.ragdoll)) then
+			local isValid = IsValid(self.ragdoll)
+
+			if (samePos and isValid) then
 				self:SetPos(self.ragdoll:GetPos())
 			elseif (self.nut_LastPos) then
 				self:SetPos(self.nut_LastPos)
@@ -211,6 +216,14 @@ do
 			self:DropToFloor()
 			self.nut_LastPos = nil
 
+			if (isValid) then
+				local physicsObject = self.ragdoll:GetPhysicsObject()
+
+				if (IsValid(physicsObject)) then
+					self:SetVelocity(physicsObject:GetVelocity())
+				end
+			end
+
 			if (self.nut_Weapons) then
 				for k, v in pairs(self.nut_Weapons) do
 					self:Give(v)
@@ -219,7 +232,7 @@ do
 				self.nut_Weapons = nil
 			end
 
-			if (IsValid(self.ragdoll)) then
+			if (isValid) then
 				self.ragdoll:Remove()
 			end
 		end
@@ -239,7 +252,7 @@ do
 		end)
 
 		hook.Add("EntityTakeDamage", "nut_FallenOver", function(entity, damageInfo)
-			if (IsValid(entity.player)) then
+			if (IsValid(entity.player) and (entity.grace or 0) < CurTime()) then
 				entity.player:TakeDamageInfo(damageInfo)
 			end
 		end)
@@ -262,12 +275,6 @@ do
 			end
 		end)
 	end
-
-	hook.Add("ShouldCollide", "nut_FallenOver", function(entity, entity2)
-		if (entity:GetNetVar("ragdoll", 0) != 0 and !entity2:IsWorld()) then
-			return false
-		end
-	end)
 end
 
 player_manager.RegisterClass("player_nut", PLAYER, "player_default")
