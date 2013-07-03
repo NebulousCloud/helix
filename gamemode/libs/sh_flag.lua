@@ -30,6 +30,24 @@ if (SERVER) then
 			end
 		end
 	end
+else
+	hook.Add("BuildHelpOptions", "nut_FlagHelp", function(data)
+		data:AddHelp("Flags", function()
+			local html = ""
+
+			for k, v in SortedPairs(nut.flag.buffer) do
+				local color = "<font color=\"red\">"
+
+				if (LocalPlayer():HasFlag(k)) then
+					color = "<font color=\"green\">"
+				end
+
+				html = html.."<p><b>"..color.."&#10004;&nbsp;</font>"..k.."</b><br /><hi><i>Description:</i> "..v.desc or nut.lang.Get("no_desc").."</p>"
+			end
+
+			return html
+		end)
+	end)
 end
 
 do

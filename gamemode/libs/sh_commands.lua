@@ -131,6 +131,25 @@ if (SERVER) then
 
 		return target
 	end
+else
+	hook.Add("BuildHelpOptions", "nut_CommandHelp", function(data)
+		data:AddHelp("Commands", function()
+			local html = ""
+
+			for k, v in SortedPairs(nut.command.buffer) do
+				local syntax = v.syntax or "[none]"
+				syntax = string.gsub(syntax, "<", "&lt;")
+				syntax = string.gsub(syntax, ">", "&gt;")
+				syntax = string.gsub(syntax, "%b[]", function(tag)
+					return "<font color=\"#969696\">"..tag.."</font>"
+				end)
+
+				html = html.."<p><b>/"..k.."</b><br /><hi><i>Syntax:</i> "..syntax.."</p>"
+			end
+
+			return html
+		end)
+	end)
 end
 
 --[[

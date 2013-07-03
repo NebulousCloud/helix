@@ -5,9 +5,6 @@
 -- Define a table for a command.
 local COMMAND = {}
 
--- Help text will appear in a help menu that describes what the command does.
-COMMAND.help = "Either raises or lowers the current weapon."
-
 -- Similar to console commands, gets called when the command is ran either using ns <command> or !<command>.
 function COMMAND:OnRun(client, arguments)
 	if ((client.nut_NextRaise or 0) < CurTime()) then
@@ -31,7 +28,7 @@ nut.command.Register(COMMAND, "toggleraise")
 
 local COMMAND = {}
 COMMAND.adminOnly = true
-COMMAND.help = "<string name>"
+COMMAND.syntax = "<string name> <string flag>"
 
 function COMMAND:OnRun(client, arguments)
 	local target = nut.command.FindPlayer(client, arguments[1])
@@ -53,7 +50,7 @@ nut.command.Register(COMMAND, "flaggive")
 
 local COMMAND = {}
 COMMAND.adminOnly = true
-COMMAND.help = "<string name>"
+COMMAND.syntax = "<string name> <string flag>"
 
 function COMMAND:OnRun(client, arguments)
 	local target = nut.command.FindPlayer(client, arguments[1])
@@ -75,7 +72,7 @@ nut.command.Register(COMMAND, "flagtake")
 
 local COMMAND = {}
 COMMAND.superAdminOnly = true
-COMMAND.help = "<string name> <string faction>"
+COMMAND.syntax = "<string name> <string faction>"
 
 function COMMAND:OnRun(client, arguments)
 	local target = nut.command.FindPlayer(client, arguments[1])
@@ -117,7 +114,7 @@ nut.command.Register(COMMAND, "plywhitelist")
 
 local COMMAND = {}
 COMMAND.superAdminOnly = true
-COMMAND.help = "<string name> <string faction>"
+COMMAND.syntax = "<string name> <string faction>"
 
 function COMMAND:OnRun(client, arguments)
 	local target = nut.command.FindPlayer(client, arguments[1])
@@ -159,7 +156,7 @@ nut.command.Register(COMMAND, "plyunwhitelist")
 
 local COMMAND = {}
 COMMAND.adminOnly = true
-COMMAND.help = "<string name> <string faction>"
+COMMAND.syntax = "<string name> <string faction>"
 
 function COMMAND:OnRun(client, arguments)
 	local target = nut.command.FindPlayer(client, arguments[1])
@@ -180,7 +177,7 @@ nut.command.Register(COMMAND, "charsetmodel")
 
 local COMMAND = {}
 COMMAND.adminOnly = true
-COMMAND.help = "<string name> <string newName>"
+COMMAND.syntax = "<string name> <string newName>"
 
 function COMMAND:OnRun(client, arguments)
 	local target = nut.command.FindPlayer(client, arguments[1])
@@ -204,7 +201,7 @@ end
 nut.command.Register(COMMAND, "charsetname")
 
 local COMMAND = {}
-COMMAND.help = "[number time]"
+COMMAND.syntax = "[number time]"
 
 function COMMAND:OnRun(client, arguments)
 	local time = math.Clamp(tonumber(arguments[1] or "") or 5, 5, 45)

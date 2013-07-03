@@ -2,7 +2,6 @@
 local PLUGIN = PLUGIN
 
 local COMMAND = {}
-COMMAND.help = "[none]"
 
 function COMMAND:OnRun(client, arguments)
 	local data = {}
@@ -44,7 +43,6 @@ end
 nut.command.Register(COMMAND, "doorbuy")
 
 local COMMAND = {}
-COMMAND.help = "[none]"
 
 function COMMAND:OnRun(client, arguments)
 	local data = {}
@@ -72,7 +70,6 @@ end
 nut.command.Register(COMMAND, "doorsell")
 
 local COMMAND = {}
-COMMAND.help = "[none]"
 
 function COMMAND:OnRun(client, arguments)
 	local data = {}
@@ -102,7 +99,6 @@ nut.command.Register(COMMAND, "doortitle")
 
 local COMMAND = {}
 COMMAND.adminOnly = true
-COMMAND.help = "[none]"
 
 function COMMAND:OnRun(client, arguments)
 	local data = {}
@@ -131,7 +127,6 @@ nut.command.Register(COMMAND, "doorsetunownable")
 
 local COMMAND = {}
 COMMAND.adminOnly = true
-COMMAND.help = "[none]"
 
 function COMMAND:OnRun(client, arguments)
 	local data = {}

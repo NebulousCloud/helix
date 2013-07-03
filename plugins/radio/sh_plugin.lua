@@ -71,7 +71,7 @@ else
 end
 
 local COMMAND = {}
-COMMAND.help = "<number Freq>"
+COMMAND.syntax = "<number freq>"
 
 function COMMAND:OnRun(client, arguments)
 	local data = {}
