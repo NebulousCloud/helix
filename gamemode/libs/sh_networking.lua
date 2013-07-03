@@ -76,7 +76,7 @@ if (SERVER) then
 	end
 
 	net.Receive("nut_NetHandshake", function(length, client)
-		timer.Remove(net.ReadString())
+		timer.Remove("nut_Net"..client:UniqueID()..net.ReadString())
 	end)
 else
 	NUT_ENT_REGISTRY = NUT_ENT_REGISTRY or {}
@@ -91,7 +91,7 @@ else
 		NUT_ENT_REGISTRY[entIndex][key] = value
 
 		net.Start("nut_NetHandshake")
-			net.WriteString("nut_Net"..LocalPlayer():UniqueID()..entIndex..key)
+			net.WriteString(entIndex..key)
 		net.SendToServer()
 	end)
 end

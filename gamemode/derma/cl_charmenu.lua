@@ -151,11 +151,18 @@ local PANEL = {}
 				local function createMusic()
 					local nextAttempt = 0
 
-					sound.PlayURL(nut.config.menuMusic, "mono noplay", function(music)
+					sound.PlayURL(nut.config.menuMusic, "noplay", function(music)
 						if (music) then
 							nut.menuMusic = music
 							nut.menuMusic:Play()
-							nut.menuMusic:SetVolume(nut.config.menuMusicVol / 100)
+
+							timer.Simple(0.5, function()
+								if (!nut.menuMusic) then
+									return
+								end
+								
+								nut.menuMusic:SetVolume(nut.config.menuMusicVol / 100)
+							end)
 						elseif (nextAttempt < CurTime()) then
 							nextAttempt = CurTime() + 1
 

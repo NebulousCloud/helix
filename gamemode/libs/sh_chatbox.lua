@@ -45,7 +45,7 @@ function nut.chat.Register(class, structure)
 			return result
 		end
 
-		if (!speaker:Alive()) then
+		if (!speaker:Alive() and !structure.deadCanTalk) then
 			nut.util.Notify(nut.lang.Get("dead_talk_error"), speaker)
 
 			return false
@@ -117,6 +117,7 @@ do
 			chat.AddText(Color(250, 40, 40), "[OOC] ", speaker, color_white, ": "..text)
 		end,
 		prefix = {"//", "/ooc"},
+		deadCanTalk = true
 	})
 
 	nut.chat.Register("event", {

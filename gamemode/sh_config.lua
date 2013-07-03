@@ -63,7 +63,7 @@ nut.config.yellRange = 720
 nut.config.gameMsgColor = Color(230, 230, 230)
 
 -- How loud the menu music is out of 100.
-nut.config.menuMusicVol = 10
+nut.config.menuMusicVol = 40
 
 -- What the actual menu music is. It can be a URL or game sound. Set to false if you
 -- do not want any menu music. This can also be overwritten by the schema.

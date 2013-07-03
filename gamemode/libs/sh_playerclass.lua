@@ -117,14 +117,15 @@ end
 do
 	function playerMeta:IsPenetrating()
 		local physicsObject = self:GetPhysicsObject()
-		local entities = ents.FindInBox(self:LocalToWorld(self:OBBMins()), self:LocalToWorld(self:OBBMaxs()))
+		local position = self:GetPos()
+		local entities = ents.FindInBox(position + Vector(-16, -16, 0), position + Vector(16, 16, 64))
 
 		for k, v in pairs(entities) do
-			if (self.ragdoll and self.ragdoll == v) then
+			if ((self.ragdoll and self.ragdoll == v) or v == self) then
 				continue
 			end
 
-			if (string.find(v:GetClass(), "prop_")) then
+			if (string.find(v:GetClass(), "prop_") or v:IsPlayer() or v:IsNPC()) then
 				return true
 			end
 		end
@@ -147,10 +148,29 @@ do
 			self.ragdoll:Spawn()
 			self.ragdoll:Activate()
 			self.ragdoll:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+			self.ragdoll.player = self
+			self.ragdoll:CallOnRemove("RestorePlayer", function()
+				if (IsValid(self)) then
+					self:UnRagdoll()
+				end
+			end)
 
+			local physicsObject = self.ragdoll:GetPhysicsObject()
+
+			if (IsValid(physicsObject)) then
+				physicsObject:SetVelocity(self:GetVelocity())
+			end
+
+			self.nut_Weapons = {}
+
+			for k, v in pairs(self:GetWeapons()) do
+				self.nut_Weapons[#self.nut_Weapons + 1] = v:GetClass()
+			end
+
+			self:StripWeapons()
 			self:Freeze(true)
 			self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-			self:SetNetVar("ragdoll", self.ragdoll)
+			self:SetNetVar("ragdoll", self.ragdoll:EntIndex())
 			self:SetNoDraw(true)
 
 			local uniqueID = "nut_RagSafePos"..self:EntIndex()
@@ -176,18 +196,32 @@ do
 			end)
 		end
 
-		function playerMeta:UnRagdoll()
-			if (IsValid(self.ragdoll)) then
-				self.ragdoll:Remove()
+		function playerMeta:UnRagdoll(samePos)
+			if (samePos and IsValid(self.ragdoll)) then
+				self:SetPos(self.ragdoll:GetPos())
+			elseif (self.nut_LastPos) then
+				self:SetPos(self.nut_LastPos)
 			end
 
-			self:SetPos(self.nut_LastPos or self:GetPos())
 			self:SetMoveType(MOVETYPE_WALK)
 			self:SetCollisionGroup(COLLISION_GROUP_PLAYER)
 			self:Freeze(false)
 			self:SetNoDraw(false)
-			self:SetNetVar("ragdoll", NULL)
+			self:SetNetVar("ragdoll", 0)
+			self:DropToFloor()
 			self.nut_LastPos = nil
+
+			if (self.nut_Weapons) then
+				for k, v in pairs(self.nut_Weapons) do
+					self:Give(v)
+				end
+
+				self.nut_Weapons = nil
+			end
+
+			if (IsValid(self.ragdoll)) then
+				self.ragdoll:Remove()
+			end
 		end
 
 		function playerMeta:SetTimedRagdoll(time)
@@ -201,9 +235,39 @@ do
 		end
 
 		hook.Add("PlayerDeath", "nut_UnRagdoll", function(client)
-			client:UnRagdoll()
+			client:UnRagdoll(true)
+		end)
+
+		hook.Add("EntityTakeDamage", "nut_FallenOver", function(entity, damageInfo)
+			if (IsValid(entity.player)) then
+				entity.player:TakeDamageInfo(damageInfo)
+			end
+		end)
+	else
+		hook.Add("CalcView", "nut_RagdollView", function(client, origin, angles, fov)
+			local entIndex = client:GetNetVar("ragdoll")
+
+			if (entIndex and entIndex > 0) then
+				local entity = Entity(entIndex)
+
+				if (IsValid(entity)) then
+					local index = entity:LookupAttachment("eyes")
+					local attachment = entity:GetAttachment(index)
+
+					local view = {}
+						view.origin = attachment.Pos
+						view.angles = attachment.Ang
+					return view
+				end
+			end
 		end)
 	end
+
+	hook.Add("ShouldCollide", "nut_FallenOver", function(entity, entity2)
+		if (entity:GetNetVar("ragdoll", 0) != 0 and !entity2:IsWorld()) then
+			return false
+		end
+	end)
 end
 
 player_manager.RegisterClass("player_nut", PLAYER, "player_default")

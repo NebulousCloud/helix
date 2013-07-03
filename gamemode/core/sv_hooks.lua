@@ -31,6 +31,17 @@ function GM:PlayerInitialSpawn(client)
 		client:StripWeapons()
 		client:InitializeData()
 
+		local fraction = client:Ping() / 100
+
+		for k, v in ipairs(nut.char.GetAll()) do
+			timer.Simple(k * fraction, function()
+				if (IsValid(client)) then
+					print("Streaming: ", v)
+					v:Send(nil, client)
+				end
+			end)
+		end
+
 		player_manager.SetPlayerClass(client, "player_nut")
 		player_manager.RunClass(client, "Spawn")
 
@@ -183,9 +194,15 @@ function GM:InitPostEntity()
 	nut.schema.Call("LoadData")
 end
 
+function GM:PlayerDeath(victim, weapon, attacker)
+	victim.nut_DeathTime = CurTime() + nut.config.deathTime
+end
+
 function GM:PlayerDeathThink(client)
-	if (client.character) then
+	if (client.character and (client.nut_DeathTime or 0) < CurTime()) then
 		client:Spawn()
+
+		return true
 	end
 	
 	return false

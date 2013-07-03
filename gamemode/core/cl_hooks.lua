@@ -138,7 +138,7 @@ function GM:HUDPaintTargetID(entity)
 
 					if (!v.nut_DescLines or description != (v.nut_DescText or "")) then
 						v.nut_DescText = description
-						v.nut_DescLines, _, v.nut_DescLineH = nut.util.WrapText("nut_TargetFontSmall", ScrW() * 0.2, v.nut_DescText)
+						v.nut_DescLines, _, v.nut_DescLineH = nut.util.WrapText("nut_TargetFontSmall", ScrW() * 0.4, v.nut_DescText)
 					end
 
 					nut.util.DrawWrappedText(position.x, position.y, v.nut_DescLines, v.nut_DescLineH, "nut_TargetFontSmall", 1, 1, alpha)

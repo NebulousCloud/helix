@@ -49,3 +49,5 @@ nut.config.startingAmount = 0
 
 -- How high players can jump by default.
 nut.config.jumpPower = 128
+
+nut.config.deathTime = 10

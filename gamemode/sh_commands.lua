@@ -202,3 +202,19 @@ function COMMAND:OnRun(client, arguments)
 end
 
 nut.command.Register(COMMAND, "charsetname")
+
+local COMMAND = {}
+COMMAND.help = "[number time]"
+
+function COMMAND:OnRun(client, arguments)
+	local time = math.Clamp(tonumber(arguments[1] or "") or 5, 5, 45)
+	local entity = Entity(client:GetNetVar("ragdoll", -1))
+	
+	if (!IsValid(entity)) then
+		client:SetTimedRagdoll(time)
+	else
+		nut.util.Notify("You are already fallen over.", client)
+	end
+end
+
+nut.command.Register(COMMAND, "charfallover")
