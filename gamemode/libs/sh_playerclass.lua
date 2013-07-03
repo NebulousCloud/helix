@@ -172,7 +172,6 @@ do
 
 			self:StripWeapons()
 			self:Freeze(true)
-			self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 			self:SetNetVar("ragdoll", self.ragdoll:EntIndex())
 			self:SetNoDraw(true)
 
