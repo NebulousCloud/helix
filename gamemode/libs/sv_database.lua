@@ -134,19 +134,19 @@ function nut.db.Query(query, callback)
 			end
 		end, QUERY_FLAG_ASSOC)
 	elseif (dbModule == "mysqloo") then
-		local query = nut.db.object:query(query)
+		local result = nut.db.object:query(query)
 
-		if (query) then
+		if (result) then
 			if (callback) then
-				query.onSuccess = function(_, data)
+				result.onSuccess = function(_, data)
 					callback(data[1], data)
 				end
 			end
-			query.onError = function(_, fault)
+			result.onError = function(_, fault)
 				print("Query Error: "..query);
 				print(fault)
 			end
-			query:start()
+			result:start()
 		end
 	else
 		local data = sql.Query(query)
