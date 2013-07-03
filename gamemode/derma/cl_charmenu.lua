@@ -149,6 +149,10 @@ local PANEL = {}
 
 			if (string.Left(lower, 4) == "http") then
 				local function createMusic()
+					if (!IsValid(nut.gui.charMenu)) then
+						return
+					end
+
 					local nextAttempt = 0
 
 					sound.PlayURL(nut.config.menuMusic, "noplay", function(music)
@@ -165,7 +169,6 @@ local PANEL = {}
 							end)
 						elseif (nextAttempt < CurTime()) then
 							nextAttempt = CurTime() + 1
-
 							createMusic()
 						end
 					end)
