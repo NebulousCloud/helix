@@ -19,8 +19,9 @@ WEAPON_RAISED = 2
 
 function GM:CalcMainActivity(client, velocity)
 	local model = string.lower(client:GetModel())
+	local class = nut.anim.GetClass(model)
 
-	if (string.find(model, "/player/") or string.find(model, "/playermodel")) then
+	if (string.find(model, "/player/") or string.find(model, "/playermodel") or class == "player") then
 		return self.BaseClass:CalcMainActivity(client, velocity)
 	end
 
@@ -30,7 +31,6 @@ function GM:CalcMainActivity(client, velocity)
 		local weapon = client:GetActiveWeapon()
 		local holdType = "normal"
 		local action = "idle"
-		local class = nut.anim.GetClass(model)
 		
 		local length2D = velocity:Length2D()
 
