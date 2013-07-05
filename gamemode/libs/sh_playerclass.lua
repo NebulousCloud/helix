@@ -274,6 +274,12 @@ do
 			end
 		end)
 	end
+
+	hook.Add("ShouldCollide", "nut_RagdollPlayer", function(entity, entity2)
+		if (entity:IsPlayer() and entity:GetNetVar("ragdoll", 0) != 0 and !entity2:IsWorld()) then
+			return false
+		end
+	end)
 end
 
 player_manager.RegisterClass("player_nut", PLAYER, "player_default")
