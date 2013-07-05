@@ -154,13 +154,14 @@ if (SERVER) then
 		is not true, or data/nutscript/data if it is. The table is also stored in a cache for
 		later retrieval without needing to read the file each time.
 	--]]
-	function nut.util.WriteTable(uniqueID, value, global)
+	function nut.util.WriteTable(uniqueID, value, ignoreMap, global)
 		local encoded = von.serialize(value)
+		local map = !ignoreMap and game.GetMap() or ""
 
 		if (!global) then
-			file.Write("nutscript/"..SCHEMA.folderName.."/"..uniqueID..".txt", encoded)
+			file.Write("nutscript/"..SCHEMA.folderName.."/"..map..uniqueID..".txt", encoded)
 		else
-			file.Write("nutscript/data/"..uniqueID..".txt", encoded)
+			file.Write("nutscript/data/"..map..uniqueID..".txt", encoded)
 		end
 
 		nut.util.cachedTable[uniqueID] = value
@@ -171,15 +172,17 @@ if (SERVER) then
 		the global data if it exists, otherwise the current schema's data folder, then decode the vON
 		encoded data and cache it. If it does exist, then the cached copy will be returned.
 	--]]
-	function nut.util.ReadTable(uniqueID, forceRefresh)
+	function nut.util.ReadTable(uniqueID, ignoreMap, forceRefresh)
+		local map = !ignoreMap and game.GetMap() or ""
+
 		if (!forceRefresh and nut.util.cachedTable[uniqueID]) then
 			return nut.util.cachedTable[uniqueID]
 		end
 
-		local contents = file.Read("nutscript/data/"..uniqueID..".txt", "DATA")
+		local contents = file.Read("nutscript/data/"..map..uniqueID..".txt", "DATA")
 
 		if (!contents or contents == "") then
-			contents = file.Read("nutscript/"..SCHEMA.uniqueID.."/"..uniqueID..".txt", "DATA")
+			contents = file.Read("nutscript/"..SCHEMA.uniqueID.."/"..map..uniqueID..".txt", "DATA")
 		end
 
 		if (contents) then
@@ -191,6 +194,8 @@ if (SERVER) then
 
 			return decoded
 		end
+
+		return {}
 	end
 
 	function nut.util.Notify(message, ...)

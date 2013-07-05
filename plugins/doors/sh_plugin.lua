@@ -7,7 +7,7 @@ nut.config.doorSellAmount = 25
 
 if (SERVER) then
 	function PLUGIN:DoorSetUnownable(entity)
-		self.data = nut.util.ReadTable("doors_"..game.GetMap()) or {}
+		self.data = nut.util.ReadTable("doors")
 
 		local title = entity:GetNetVar("title", "Unownable Door")
 
@@ -20,7 +20,7 @@ if (SERVER) then
 		end
 
 		self.data[#self.data + 1] = {title = title, position = entity:GetPos()}
-		nut.util.WriteTable("doors_"..game.GetMap(), self.data)
+		nut.util.WriteTable("doors", self.data)
 
 		entity:SetNetVar("unownable", true)
 	end
@@ -45,14 +45,14 @@ if (SERVER) then
 	end
 
 	function PLUGIN:DoorSetOwnable(entity)
-		self.data = nut.util.ReadTable("doors_"..game.GetMap()) or {}
+		self.data = nut.util.ReadTable("doors")
 
 		for k, v in pairs(self.data) do
 			if (v.position == entity:GetPos()) then
 				entity:SetNetVar("unownable", nil)
 				table.remove(self.data, k)
 
-				nut.util.WriteTable("doors_"..game.GetMap(), self.data)
+				nut.util.WriteTable("doors", self.data)
 
 				return
 			end
@@ -60,7 +60,7 @@ if (SERVER) then
 	end
 
 	function PLUGIN:LoadData()
-		self.data = nut.util.ReadTable("doors_"..game.GetMap()) or {}
+		self.data = nut.util.ReadTable("doors")
 
 		for k, v in pairs(self.data) do
 			local entities = ents.FindInSphere(v.position, 4)
