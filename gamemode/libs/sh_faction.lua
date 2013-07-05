@@ -32,6 +32,8 @@ do
 							net.WriteString(self.whitelists)
 						net.Send(self)
 					end
+
+					nut.schema.Call("PlayerLoadedData", self)
 				else
 					nut.db.InsertTable({
 						steamid = self:SteamID64(),
