@@ -10,12 +10,16 @@ local playerMeta = FindMetaTable("Player")
 
 -- Player functions to handle data.
 do
+	local function sameSchema()
+		return " AND rpschema = '"..SCHEMA.uniqueID.."'"
+	end
+
 	if (SERVER) then
 		util.AddNetworkString("nut_PlayerData")
 		util.AddNetworkString("nut_WhitelistData")
 
 		function playerMeta:InitializeData()
-			nut.db.Query("SELECT whitelists, plydata FROM "..nut.config.dbPlyTable.." WHERE steamid = "..self:SteamID64(), function(data)
+			nut.db.Query("SELECT whitelists, plydata FROM "..nut.config.dbPlyTable.." WHERE steamid = "..self:SteamID64()..sameSchema(), function(data)
 				if (!IsValid(self)) then
 					return
 				end
@@ -38,7 +42,8 @@ do
 					nut.db.InsertTable({
 						steamid = self:SteamID64(),
 						whitelists = "",
-						plydata = {}
+						plydata = {},
+						rpschema = SCHEMA.uniqueID
 					}, function(data)
 						if (IsValid(self)) then
 							self:InitializeData()
@@ -49,7 +54,7 @@ do
 		end
 
 		function playerMeta:SaveData()
-			nut.db.UpdateTable("steamid = "..self:SteamID64(), {
+			nut.db.UpdateTable("steamid = "..self:SteamID64()..sameSchema(), {
 				plydata = self.nut_Vars or {},
 				whitelists = self.whitelists or ""
 			}, nut.config.dbPlyTable)

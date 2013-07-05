@@ -32,7 +32,8 @@ else
 	CREATE TABLE ]]..nut.config.dbPlyTable..[[ (
 		steamid int,
 		whitelists tinytext,
-		plydata mediumtext
+		plydata mediumtext,
+		rpschema tinytext
 	);
 	]]
 

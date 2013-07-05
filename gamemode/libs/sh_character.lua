@@ -388,7 +388,7 @@ if (SERVER) then
 	--]]
 	function nut.char.SendInfo(client, index)
 		local steamID = client:SteamID64()
-		local condition = "steamid = "..steamID.." AND id = "..index--..sameSchema()
+		local condition = "steamid = "..steamID.." AND id = "..index..sameSchema()
 		local tables = "charname, faction, id, description, model"
 		
 		nut.db.FetchTable(condition, tables, function(data)
@@ -416,7 +416,7 @@ if (SERVER) then
 		a callback is provided, it will be ran with no arguments.
 	--]]
 	function nut.char.Load(client, callback)
-		nut.db.FetchTable("steamid = "..client:SteamID64(), "id", function(_, data)
+		nut.db.FetchTable("steamid = "..client:SteamID64()..sameSchema(), "id", function(_, data)
 			if (IsValid(client)) then
 				for k, v in SortedPairs(data) do
 					nut.char.SendInfo(client, v.id)
