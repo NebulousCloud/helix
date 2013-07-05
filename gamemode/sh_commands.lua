@@ -28,6 +28,7 @@ nut.command.Register(COMMAND, "toggleraise")
 
 local COMMAND = {}
 COMMAND.adminOnly = true
+COMMAND.allowDead = true
 COMMAND.syntax = "<string name> <string flag>"
 
 function COMMAND:OnRun(client, arguments)
@@ -50,6 +51,7 @@ nut.command.Register(COMMAND, "flaggive")
 
 local COMMAND = {}
 COMMAND.adminOnly = true
+COMMAND.allowDead = true
 COMMAND.syntax = "<string name> <string flag>"
 
 function COMMAND:OnRun(client, arguments)
@@ -72,6 +74,7 @@ nut.command.Register(COMMAND, "flagtake")
 
 local COMMAND = {}
 COMMAND.superAdminOnly = true
+COMMAND.allowDead = true
 COMMAND.syntax = "<string name> <string faction>"
 
 function COMMAND:OnRun(client, arguments)
@@ -114,6 +117,7 @@ nut.command.Register(COMMAND, "plywhitelist")
 
 local COMMAND = {}
 COMMAND.superAdminOnly = true
+COMMAND.allowDead = true
 COMMAND.syntax = "<string name> <string faction>"
 
 function COMMAND:OnRun(client, arguments)
@@ -156,6 +160,7 @@ nut.command.Register(COMMAND, "plyunwhitelist")
 
 local COMMAND = {}
 COMMAND.adminOnly = true
+COMMAND.allowDead = true
 COMMAND.syntax = "<string name> <string faction>"
 
 function COMMAND:OnRun(client, arguments)
@@ -177,6 +182,7 @@ nut.command.Register(COMMAND, "charsetmodel")
 
 local COMMAND = {}
 COMMAND.adminOnly = true
+COMMAND.allowDead = true
 COMMAND.syntax = "<string name> <string newName>"
 
 function COMMAND:OnRun(client, arguments)

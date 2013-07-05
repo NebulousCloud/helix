@@ -30,6 +30,12 @@ if (SERVER) then
 					end
 				end
 
+				if (!commandTable.allowDead and !client:Alive()) then
+					nut.util.Notify(nut.lang.Get("dead_talk_error"), client)
+
+					return
+				end
+
 				local result = commandTable:OnRun(client, arguments)
 
 				if (result == false) then
