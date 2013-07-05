@@ -140,9 +140,9 @@ if (SERVER) then
 		if (!file.IsDir("nutscript/data", "DATA")) then
 			file.CreateDir("nutscript/data")
 		end
-		
-		if (!file.IsDir("nutscript/"..SCHEMA.folderName, "DATA")) then
-			file.CreateDir("nutscript/"..SCHEMA.folderName)
+
+		if (!file.IsDir("nutscript/"..SCHEMA.uniqueID, "DATA")) then
+			file.CreateDir("nutscript/"..SCHEMA.uniqueID)
 		end
 	end)
 
@@ -155,11 +155,15 @@ if (SERVER) then
 		later retrieval without needing to read the file each time.
 	--]]
 	function nut.util.WriteTable(uniqueID, value, ignoreMap, global)
+		if (type(value) != "table") then
+			value = {value}
+		end
+
 		local encoded = von.serialize(value)
 		local map = !ignoreMap and game.GetMap() or ""
 
 		if (!global) then
-			file.Write("nutscript/"..SCHEMA.folderName.."/"..map..uniqueID..".txt", encoded)
+			file.Write("nutscript/"..SCHEMA.uniqueID.."/"..map..uniqueID..".txt", encoded)
 		else
 			file.Write("nutscript/data/"..map..uniqueID..".txt", encoded)
 		end
