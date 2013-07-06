@@ -71,9 +71,8 @@ function GM:PlayerLoadedChar(client)
 
 	if (!client.nut_SawCredits) then
 		client.nut_SawCredits = true
-		nut.scroll.Send("NutScript: "..nut.lang.Get("schema_author", "Chessnut"), client)
-
-		timer.Simple(20, function()
+		
+		nut.scroll.Send("NutScript: "..nut.lang.Get("schema_author", "Chessnut"), client, function()
 			if (IsValid(client)) then
 				nut.scroll.Send(SCHEMA.name..": "..nut.lang.Get("schema_author", SCHEMA.author), client)
 			end
@@ -82,6 +81,8 @@ function GM:PlayerLoadedChar(client)
 end
 
 function GM:PlayerSpawn(client)
+	client:SetMainBar()
+
 	if (!client.character) then
 		return
 	end
@@ -196,6 +197,10 @@ end
 
 function GM:PlayerDeath(victim, weapon, attacker)
 	victim.nut_DeathTime = CurTime() + nut.config.deathTime
+
+	timer.Simple(0, function()
+		victim:SetMainBar("You are now respawning.", nut.config.deathTime)
+	end)
 end
 
 function GM:PlayerDeathThink(client)

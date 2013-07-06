@@ -50,6 +50,7 @@ function GM:HUDPaint()
 	end
 
 	nut.scroll.Paint()
+	nut.bar.PaintMain()
 	
 	if (!nut.loaded) then
 		surface.SetDrawColor(0, 0, 0, 255)
@@ -127,7 +128,7 @@ function GM:HUDPaintTargetID(entity)
 					color.a = alpha
 
 					if (v:IsTyping()) then
-						nut.util.DrawText(position.x, position.y - nut.config.targetTall, nut.config.showTypingText and v:GetNetVar("typing") or "Typing...", Color(255, 255, 255, alpha))
+						nut.util.DrawText(position.x, position.y - nut.config.targetTall, nut.config.showTypingText and v:GetNetVar("typing") or "Typing...", Color(255, 255, 255, alpha), "nut_TargetFontSmall")
 					end
 
 					nut.util.DrawText(position.x, position.y, v:Name(), color)

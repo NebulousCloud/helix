@@ -199,6 +199,10 @@ do
 		end
 
 		function playerMeta:UnRagdoll(samePos)
+			if (self:GetNetVar("ragdoll") == 0) then
+				return
+			end
+			
 			local isValid = IsValid(self.ragdoll)
 
 			if (samePos and isValid) then
@@ -213,6 +217,7 @@ do
 			self:SetNoDraw(false)
 			self:SetNetVar("ragdoll", 0)
 			self:DropToFloor()
+			self:SetMainBar()
 			self.nut_LastPos = nil
 
 			if (isValid) then
@@ -237,6 +242,13 @@ do
 		end
 
 		function playerMeta:SetTimedRagdoll(time)
+			local suffix = "s"
+
+			if (time == 1) then
+				suffix = ""
+			end
+
+			self:SetMainBar("You are regaining conciousness.", time)
 			self:ForceRagdoll()
 
 			timer.Create("nut_RagTime"..self:EntIndex(), time, 1, function()

@@ -1,16 +1,11 @@
 nut.scroll = nut.scroll or {}
 nut.scroll.buffer = nut.scroll.buffer or {}
 
+local CHAR_DELAY = 0.1
+
 if (CLIENT) then
-	local CHAR_DELAY = 0.1
-	local CURRENT_INDEX = 1
-
-	function nut.scroll.Add(text)
-		CURRENT_INDEX = CURRENT_INDEX + 1
-		local index = CURRENT_INDEX
-
-		nut.scroll.buffer[index] = {text = "", alpha = 255}
-
+	function nut.scroll.Add(text, callback)
+		local index = table.insert(nut.scroll.buffer, {text = "", callback = callback})
 		local i = 1
 		local alpha = 1
 
@@ -19,26 +14,13 @@ if (CLIENT) then
 			i = i + 1
 
 			if (i == string.len(text)) then
-				timer.Simple(5, function()
-					local alpha = 255
-					local uniqueID = "nut_ScrollFadeOut"..index
+				local buffer = nut.scroll.buffer
 
-					timer.Create(uniqueID, 0, 0, function()
-						if (!nut.scroll.buffer[index]) then
-							timer.Remove(uniqueID)
-
-							return
-						end
-
-						nut.scroll.buffer[index].alpha = alpha
-						alpha = alpha - 1
-
-						if (alpha <= 0) then
-							nut.scroll.buffer[index] = nil
-
-							timer.Remove(uniqueID)
-						end
-					end)
+				timer.Simple(1, function()
+					if (buffer[index]) then
+						buffer[index].start = CurTime()
+						buffer[index].finish = CurTime() + 3
+					end
 				end)
 			end
 		end)
@@ -48,11 +30,22 @@ if (CLIENT) then
 	local SCROLL_Y = ScrH() * 0.7
 
 	function nut.scroll.Paint()
-		local i = 0
+		for k, v in pairs(nut.scroll.buffer) do
+			local alpha = 255
 
-		for _, v in pairs(nut.scroll.buffer) do
-			nut.util.DrawText(SCROLL_X, SCROLL_Y - (i * 24), v.text, Color(255, 255, 255, v.alpha), nil, 2, 1)
-			i = i + 1
+			if (v.start and v.finish) then
+				alpha = 255 - math.Clamp(math.TimeFraction(v.start, v.finish, CurTime()) * 255, 0, 255)
+			end
+
+			nut.util.DrawText(SCROLL_X, SCROLL_Y - (k * 24), v.text, Color(255, 255, 255, alpha), nil, 2, 1)
+
+			if (alpha == 0) then
+				if (v.callback) then
+					v.callback()
+				end
+
+				table.remove(nut.scroll.buffer, k)
+			end
 		end
 	end
 
@@ -62,7 +55,7 @@ if (CLIENT) then
 else
 	util.AddNetworkString("nut_ScrollData")
 
-	function nut.scroll.Send(text, receiver)
+	function nut.scroll.Send(text, receiver, callback)
 		net.Start("nut_ScrollData")
 			net.WriteString(text)
 		if (receiver) then
@@ -70,5 +63,11 @@ else
 		else
 			net.Broadcast()
 		end
+
+		timer.Simple(CHAR_DELAY*string.len(text) + 4, function()
+			if (callback) then
+				callback()
+			end
+		end)
 	end
 end
