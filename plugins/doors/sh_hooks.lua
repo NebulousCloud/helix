@@ -67,13 +67,13 @@ else
 
 			local text = "Purchase this door by pressing F2."
 
-			if (IsValid(owner)) then
-				text = "Owned by "..owner:Name().."."
-			elseif (entity:GetNetVar("unownable")) then
+			if (entity:GetNetVar("unownable")) then
 				text = "This door is unownable."
+			elseif (IsValid(owner)) then
+				text = "Owned by "..owner:Name().."."
 			end
 
-			nut.util.DrawText(x, y, text, Color(255, 255, 255, alpha))
+			nut.util.DrawText(x, y, text, Color(255, 255, 255, alpha), "nut_TargetFontSmall")
 		end
 	end
 end

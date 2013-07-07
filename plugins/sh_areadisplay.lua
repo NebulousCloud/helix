@@ -56,7 +56,7 @@ COMMAND.syntax = "[bool showTime]"
 
 function COMMAND:OnRun(client, arguments)
 	local name = arguments[1]
-	local showTime = util.tobool(arguments[2] or "false")
+	local showTime = util.tobool(arguments[2] or "true")
 
 	if (!client.nut_AreaMins) then
 		if (!name) then

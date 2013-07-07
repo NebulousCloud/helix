@@ -85,11 +85,16 @@ nut.config.maxChars = 4
 
 if (CLIENT) then
 	hook.Add("SchemaInitialized", "nut_FontConfig", function()
-		surface.SetFont("nut_TargetFont")
+		surface.SetFont("nut_TargetFontSmall")
 
 		_, nut.config.targetTall = surface.GetTextSize("W")
-		nut.config.targetTall = nut.config.targetTall or 18
+
+		if (nut.config.targetTall) then
+			nut.config.targetTall = nut.config.targetTall + 2
+		end
+
+		nut.config.targetTall = nut.config.targetTall or 10
 	end)
 
-	nut.config.targetTall = nut.config.targetTall or 18
+	nut.config.targetTall = nut.config.targetTall or 10
 end

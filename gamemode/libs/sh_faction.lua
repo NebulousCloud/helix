@@ -160,10 +160,30 @@ function nut.faction.Register(index, faction)
 	faction.maxChars = faction.maxChars or 2
 	faction.maleModels = faction.maleModels or MALE_MODELS
 	faction.femaleModels = faction.femaleModels or FEMALE_MODELS
+	faction.pay = faction.pay or 0
+	faction.payTime = faction.payTime or 600
 
 	team.SetUp(index, faction.name, faction.color)
 	
 	nut.faction.buffer[index] = faction
+end
+
+if (SERVER) then
+	timer.Create("nut_PayTick", 1, 0, function()
+		for k, v in pairs(player.GetAll()) do
+			local faction = nut.faction.GetByID(v:Team())
+
+			if (faction and faction.pay > 0 and (v.nut_NextPay or (CurTime() + faction.payTime)) < CurTime()) then
+				if (nut.schema.Call("ShouldReceivePay", v) != false) then
+					v:GiveMoney(faction.pay)
+
+					nut.util.Notify("You've received a pay of "..nut.currency.GetName(faction.pay)..".", v)
+				end
+
+				v.nut_NextPay = CurTime() + faction.payTime
+			end
+		end
+	end)
 end
 
 --[[

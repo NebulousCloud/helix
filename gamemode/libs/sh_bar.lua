@@ -109,7 +109,6 @@ else
 	local playerMeta = FindMetaTable("Player")
 
 	function playerMeta:SetMainBar(text, time)
-		print(text, time)
 		text = text or ""
 		time = time or 0
 

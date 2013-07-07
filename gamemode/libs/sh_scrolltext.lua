@@ -10,6 +10,10 @@ if (CLIENT) then
 		local alpha = 1
 
 		timer.Create("nut_Scroll"..index, CHAR_DELAY, string.len(text), function()
+			if (!nut.scroll.buffer[index]) then
+				return
+			end
+			
 			nut.scroll.buffer[index].text = string.sub(text, 1, i)
 			i = i + 1
 

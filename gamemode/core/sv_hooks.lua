@@ -36,7 +36,6 @@ function GM:PlayerInitialSpawn(client)
 		for k, v in ipairs(nut.char.GetAll()) do
 			timer.Simple(k * fraction, function()
 				if (IsValid(client)) then
-					print("Streaming: ", v)
 					v:Send(nil, client)
 				end
 			end)
