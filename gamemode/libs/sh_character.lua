@@ -187,9 +187,9 @@ function META:Send(variable, receiver)
 			self:Send(k, receiver)
 		end
 
-		if (receiver == self.player) then
+		if (!receiver or receiver == self.player) then
 			for k, v in pairs(self.privateVars) do
-				self:Send(k, receiver)
+				self:Send(k, self.player)
 			end
 		end
 	elseif (self.privateVars[variable]) then
@@ -592,7 +592,7 @@ else
 		if (!LocalPlayer().character) then
 			LocalPlayer().character = nut.char.New(LocalPlayer())
 		end
-
+		
 		LocalPlayer().character:SetVar(key, value)
 	end)
 

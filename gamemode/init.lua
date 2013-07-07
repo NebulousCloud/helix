@@ -28,7 +28,7 @@ local function checkVersion()
 			if (body != version) then
 				MsgC(Color(255, 0, 255), "You're running an older version of NutScript!\n")
 
-				timer.Create("nut_VersionNotify", 30, 0, function()
+				timer.Create("nut_VersionNotify", 300, 0, function()
 					MsgC(Color(255, 0, 255), "You're running an older version of NutScript!\n")
 				end)
 			else

@@ -83,6 +83,9 @@ nut.config.showTypingText = true
 -- The maximum number of characters.
 nut.config.maxChars = 4
 
+-- The delay between which someone can buy something.
+nut.config.buyDelay = 1
+
 if (CLIENT) then
 	hook.Add("SchemaInitialized", "nut_FontConfig", function()
 		surface.SetFont("nut_TargetFontSmall")

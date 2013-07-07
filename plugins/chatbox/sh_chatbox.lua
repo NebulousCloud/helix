@@ -148,6 +148,8 @@ if (CLIENT) then
 
 		nut.chat.AddText(unpack(data))
 
+		surface.PlaySound("common/talk.wav")
+
 		return chat.NutAddText(unpack(data))
 	end
 

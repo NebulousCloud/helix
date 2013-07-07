@@ -131,6 +131,12 @@ local PANEL = {}
 				nut.schema.Call("OnCharChanged", LocalPlayer())
 			end
 
+			if (IsValid(nut.gui.inv)) then
+				print("HI")
+				nut.gui.inv:Remove()
+				print(IsValid(nut.gui.inv))
+			end
+
 			net.Start("nut_CharChoose")
 				net.WriteUInt(LocalPlayer().characters[self.currentIndex].id, 16)
 			net.SendToServer()

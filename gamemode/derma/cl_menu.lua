@@ -22,7 +22,7 @@ local PANEL = {}
 		self.char.OnClick = function()
 			nut.gui.charMenu = vgui.Create("nut_CharMenu")
 
-			self:SetVisible(false)
+			self:Remove()
 		end
 
 		self.currentMenu = NULL
@@ -47,8 +47,8 @@ local PANEL = {}
 		self.help:SetText(nut.lang.Get("help"))
 		self.help:DockMargin(0, 0, 0, 8)
 		self.help.OnClick = function()
-			nut.gui.inv = vgui.Create("nut_Help", self)
-			self:SetCurrentMenu(nut.gui.inv)
+			nut.gui.help = vgui.Create("nut_Help", self)
+			self:SetCurrentMenu(nut.gui.help)
 		end
 
 		self.settings = self.buttonList:Add("nut_MenuButton")

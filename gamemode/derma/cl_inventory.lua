@@ -31,7 +31,7 @@ local PANEL = {}
 		self.weightText:SetExpensiveShadow(1, color_black)
 		self.weightText:SetTextColor(color_white)
 		self.weightText:SetContentAlignment(5)
-		self.weightText:SetText(math.floor(self.weightValue * 100).."%")
+		self.weightText:SetText(math.ceil(self.weightValue * 100).."%")
 
 		self.list = self:Add("DScrollPanel")
 		self.list:Dock(FILL)

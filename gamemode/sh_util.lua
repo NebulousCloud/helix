@@ -334,3 +334,72 @@ function nut.util.CleanMarkup(data)
 
 	return data
 end
+
+--[[
+	Purpose: A function to check if two tables have similar keys and
+	values. Note that this isn't recursive so it doesn't check subtables!
+--]]
+function nut.util.IsSimiarTable(a, b)
+	for k, v in pairs(a) do
+		if (b[k] == nil or v != b[k]) then
+			return false
+		end
+	end
+
+	for k, v in pairs(b) do
+		if (a[k] == nil or v != a[k]) then
+			return false
+		end
+	end
+
+	return true
+end
+
+function nut.util.StackInv(inventory, class, quantity, data)
+	local stack, index
+
+	inventory[class] = inventory[class] or {}
+	
+	for k, v in pairs(inventory[class]) do
+		if (data and v.data and nut.util.IsSimiarTable(v.data, data)) then
+			stack = v
+			index = k
+
+			break
+		elseif (!data and !v.data and class2 == class) then
+			stack = v
+			index = k
+
+			break
+		end
+	end
+
+	-- Here we see if the item should be added or removed.
+	if (!stack and quantity > 0) then
+		-- Create a new stack of a specific item here.
+		local item = {quantity = quantity}
+
+		if (data) then
+			item.data = data
+		end
+
+		table.insert(inventory[class], item)
+	elseif (stack) then
+		-- A stack already exists, so add or take from it.
+		stack.quantity = stack.quantity + quantity
+
+		-- If the quantity is negative, meaning we take from the stack, remove
+		-- the stack from the inventory.
+		if (stack.quantity <= 0) then
+			inventory[class][index] = nil
+		end
+
+		-- If there is nothing completely in the class, remove it from the inventory
+		-- completely to reduce data that is saved.
+		if (table.Count(inventory[class]) <= 0) then
+			inventory[class] = nil
+		end
+	end
+
+	return inventory
+end

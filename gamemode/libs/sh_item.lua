@@ -19,7 +19,7 @@ function nut.item.Register(itemTable, isBase)
 	else
 		itemTable.category = itemTable.category or nut.lang.Get("misc")
 		itemTable.price = itemTable.price or 0
-		itemTable.weight = itemTable.weight or 0.1
+		itemTable.weight = itemTable.weight or 1
 		itemTable.desc = itemTable.desc or nut.lang.Get("no_desc")
 		itemTable.functions = itemTable.functions or {}
 		itemTable.data = itemTable.data or {}
@@ -30,11 +30,12 @@ function nut.item.Register(itemTable, isBase)
 			run = function(itemTable, client, data)
 				if (SERVER) then
 					local data2 = {
-						start = client:GetShootPos() + client:GetAimVector() * 16,
+						start = client:GetShootPos(),
 						endpos = client:GetShootPos() + client:GetAimVector() * 72,
+						filter = client
 					}
 					local trace = util.TraceLine(data2)
-					local position = trace.HitPos
+					local position = trace.HitPos + Vector(0, 0, 16)
 
 					nut.item.Spawn(position, client:EyeAngles(), itemTable, data)
 				end
@@ -53,6 +54,22 @@ function nut.item.Register(itemTable, isBase)
 				end
 			end
 		}
+
+		if (!itemTable.ShouldShowOnBusiness) then
+			function itemTable:ShouldShowOnBusiness(client)
+				if (self.faction) then
+					if (type(self.faction) == "table") then
+						if (!table.HasValue(self.faction, client:Team())) then
+							return false
+						end
+					elseif (self.faction != client:Team()) then
+						return false
+					end
+				end
+
+				return true
+			end
+		end
 
 		function itemTable:GetDesc(data)
 			local description = string.gsub(self.desc, "%%.-%%", function(key)
@@ -92,19 +109,19 @@ function nut.item.Load(directory)
 	for k, v in pairs(file.Find(directory.."/items/base/*.lua", "LUA")) do
 		BASE = {}
 			nut.util.Include(directory.."/items/base/"..v)
-
 			nut.item.Register(BASE, true)
+
+			local parent = string.sub(v, 4, -5)
+			local files = file.Find(directory.."/items/"..parent.."/*.lua", "LUA")
+
+			for k2, v2 in pairs(files) do
+				ITEM = table.Inherit({}, BASE)
+					nut.util.Include(directory.."/items/"..parent.."/"..v2)
+
+					nut.item.Register(ITEM)
+				ITEM = nil
+			end
 		BASE = nil
-
-		local parent = string.sub(BASE, 4)
-
-		for k2, v2 in pairs(file.Find(directory.."/items/"..parent.."/*.lua", "LUA")) do
-			ITEM = table.Inherit({}, BASE)
-				nut.util.Include(directory.."/items/"..parent.."/"..v2)
-
-				nut.item.Register(ITEM)
-			ITEM = nil
-		end
 	end
 
 	for k, v in pairs(file.Find(directory.."/items/*.lua", "LUA")) do
@@ -132,26 +149,6 @@ do
 
 	if (SERVER) then
 		--[[
-			Purpose: Quick helper function to check if two tables have similar keys and
-			values. Note that this isn't recursive so it doesn't check subtables!
-		--]]
-		local function isSimilarTable(a, b)
-			for k, v in pairs(a) do
-				if (b[k] == nil or v != b[k]) then
-					return false
-				end
-			end
-
-			for k, v in pairs(b) do
-				if (a[k] == nil or v != a[k]) then
-					return false
-				end
-			end
-
-			return true
-		end
-
-		--[[
 			Purpose: Very important inventory function as this handles the way items
 			are given/taken for a player. The class is an item's uniqueID while quantity
 			is how many to give (or take if it is negative). Data is a table that is for
@@ -169,6 +166,8 @@ do
 
 				return
 			end
+
+			quantity = quantity or 1
 
 			local weight, maxWeight = self:GetInvWeight()
 
@@ -188,52 +187,7 @@ do
 
 			local inventory = self.character:GetVar("inv")
 			inventory[class] = inventory[class] or {}
-
-			-- Oh boy, item stacking!
-			local stack, index
-
-			for class2, items in pairs(self:GetInventory()) do
-				for k, v in pairs(items) do
-					if (data and v.data and isSimilarTable(v.data, data)) then
-						stack = v
-						index = k
-
-						break
-					elseif (!data and !v.data and class2 == class) then
-						stack = v
-						index = k
-
-						break
-					end
-				end
-			end
-
-			-- Here we see if the item should be added or removed.
-			if (!stack and quantity > 0) then
-				-- Create a new stack of a specific item here.
-				local item = {quantity = quantity}
-
-				if (data) then
-					item.data = data
-				end
-
-				table.insert(inventory[class], item)
-			elseif (stack) then
-				-- A stack already exists, so add or take from it.
-				stack.quantity = stack.quantity + quantity
-
-				-- If the quantity is negative, meaning we take from the stack, remove
-				-- the stack from the inventory.
-				if (stack.quantity <= 0) then
-					inventory[class][index] = nil
-				end
-
-				-- If there is nothing completely in the class, remove it from the inventory
-				-- completely to reduce data that is saved.
-				if (table.Count(inventory[class]) <= 0) then
-					inventory[class] = nil
-				end
-			end
+			inventory = nut.util.StackInv(inventory, class, quantity, data)
 
 			if (!noSave) then
 				-- Limit on how often items should save.
@@ -337,8 +291,8 @@ do
 		Purpose: Returns true if an item within the player's inventory has the
 		same class as the one provided.
 	--]]
-	function playerMeta:HasItem(class)
-		return table.Count(self:GetItemsByClass(class)) > 0
+	function playerMeta:HasItem(class, quantity)
+		return table.Count(self:GetItemsByClass(class)) > (quantity or 0)
 	end
 
 	--[[
@@ -500,6 +454,31 @@ do
 
 		net.Receive("nut_ShowItemMenu", function(length)
 			nut.item.OpenEntityMenu(net.ReadEntity())
+		end)
+	end
+end
+
+-- Tie in the business stuff with the items.
+do
+	if (SERVER) then
+		util.AddNetworkString("nut_BuyItem")
+
+		net.Receive("nut_BuyItem", function(length, client)
+			local class = net.ReadString()
+			local itemTable = nut.item.Get(class)
+
+			if (!itemTable) then
+				return
+			end
+
+			local price = itemTable.price
+
+			if (client:CanAfford(price)) then
+				client:UpdateInv(class)
+				client:TakeMoney(price)
+			else
+				nut.util.Notify(nut.lang.Get("no_afford"), client)
+			end
 		end)
 	end
 end

@@ -4,28 +4,25 @@ nut.scroll.buffer = nut.scroll.buffer or {}
 local CHAR_DELAY = 0.1
 
 if (CLIENT) then
+	NUT_CVAR_SCROLLVOL = CreateClientConVar("nut_scrollvol", 40, true)
+
 	function nut.scroll.Add(text, callback)
-		local index = table.insert(nut.scroll.buffer, {text = "", callback = callback})
+		local info = {text = "", callback = callback, nextChar = 0, char = ""}
+		local index = table.insert(nut.scroll.buffer, info)
 		local i = 1
-		local alpha = 1
 
-		timer.Create("nut_Scroll"..index, CHAR_DELAY, string.len(text), function()
-			if (!nut.scroll.buffer[index]) then
-				return
-			end
-			
-			nut.scroll.buffer[index].text = string.sub(text, 1, i)
-			i = i + 1
+		timer.Create("nut_Scroll"..tostring(info), CHAR_DELAY, string.len(text), function()
+			if (info) then
+				info.text = string.sub(text, 1, i)
+				i = i + 1
 
-			if (i == string.len(text)) then
-				local buffer = nut.scroll.buffer
+				LocalPlayer():EmitSound("common/talk.wav", NUT_CVAR_SCROLLVOL:GetInt(), math.random(120, 140))
 
-				timer.Simple(1, function()
-					if (buffer[index]) then
-						buffer[index].start = CurTime()
-						buffer[index].finish = CurTime() + 3
-					end
-				end)
+				if (i >= string.len(text)) then
+					info.char = ""
+					info.start = CurTime() + 3
+					info.finish = CurTime() + 5
+				end
 			end
 		end)
 	end
@@ -39,9 +36,12 @@ if (CLIENT) then
 
 			if (v.start and v.finish) then
 				alpha = 255 - math.Clamp(math.TimeFraction(v.start, v.finish, CurTime()) * 255, 0, 255)
+			elseif (v.nextChar < CurTime()) then
+				v.nextChar = CurTime() + 0.025
+				v.char = string.char(math.random(47, 90))
 			end
 
-			nut.util.DrawText(SCROLL_X, SCROLL_Y - (k * 24), v.text, Color(255, 255, 255, alpha), nil, 2, 1)
+			nut.util.DrawText(SCROLL_X, SCROLL_Y - (k * 24), v.text..v.char, Color(255, 255, 255, alpha), nil, 2, 1)
 
 			if (alpha == 0) then
 				if (v.callback) then

@@ -10,9 +10,10 @@ local PANEL = {}
 		self.list:SetDrawBackground(true)
 
 		self.categories = {}
+		self.nextBuy = 0
 
 		for class, itemTable in SortedPairs(nut.item.GetAll()) do
-			if (!itemTable.noBusiness) then
+			if (!itemTable.noBusiness and (!itemTable.ShouldShowOnBusiness or (itemTable.ShouldShowOnBusiness and itemTable:ShouldShowOnBusiness(LocalPlayer()) != false))) then
 				local category = itemTable.category
 				local category2 = string.lower(category)
 
@@ -39,6 +40,25 @@ local PANEL = {}
 						end
 
 						icon:SetToolTip("Description: "..itemTable:GetDesc().."\n"..cost)
+						icon.DoClick = function(panel)
+							if (icon.disabled) then
+								return
+							end
+							
+							net.Start("nut_BuyItem")
+								net.WriteString(class)
+							net.SendToServer()
+
+							icon.disabled = true
+							icon:SetAlpha(70)
+
+							timer.Simple(nut.config.buyDelay, function()
+								if (IsValid(icon)) then
+									icon.disabled = false
+									icon:SetAlpha(255)
+								end
+							end)
+						end
 					category3:InvalidateLayout(true)
 
 					self.categories[category2] = {category = category3, panel = panel}

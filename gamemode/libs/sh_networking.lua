@@ -72,6 +72,12 @@ if (SERVER) then
 		self.nut_NetVars = self.nut_NetVars or {}
 		self.nut_NetVars[key] = value
 
+		if (self.nut_NetHooks and self.nut_NetHooks[key]) then
+			for k, v in pairs(self.nut_NetHooks[key]) do
+				v()
+			end
+		end
+
 		self:SendVar(key)
 	end
 
@@ -90,10 +96,25 @@ else
 		NUT_ENT_REGISTRY[entIndex] = NUT_ENT_REGISTRY[entIndex] or {}
 		NUT_ENT_REGISTRY[entIndex][key] = value
 
+		local entity = Entity(entIndex)
+
+		if (IsValid(entity) and entity.nut_NetHooks and entity.nut_NetHooks[key]) then
+			for k, v in pairs(entity.nut_NetHooks[key]) do
+				v()
+			end
+		end
+
 		net.Start("nut_NetHandshake")
 			net.WriteString(entIndex..key)
 		net.SendToServer()
 	end)
+end
+
+function entityMeta:HookNetVar(key, callback)
+	self.nut_NetHooks = self.nut_NetHooks or {}
+	self.nut_NetHooks[key] = self.nut_NetHooks[key] or {}
+
+	table.insert(self.nut_NetHooks[key], callback)
 end
 
 function entityMeta:GetNetVar(key, default)
