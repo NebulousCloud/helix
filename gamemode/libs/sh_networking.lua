@@ -40,10 +40,21 @@ if (SERVER) then
 
 	function entityMeta:SendVar(key, receiver, noHandShake)
 		if (self.nut_NetVars and self.nut_NetVars[key] != nil) then
+			self.nut_NetDeltas = self.nut_NetDeltas or {}
+
+			local value = self.nut_NetVars[key]
+
+			if (type(value) == "table") then
+				local oldValue = value
+				value = nut.util.GetTableDelta(value, self.nut_NetDeltas[key] or {})
+
+				self.nut_NetDeltas[key] = table.Copy(oldValue)
+			end
+
 			net.Start("nut_EntityVar")
 				net.WriteUInt(self:EntIndex(), 16)
 				net.WriteString(key)
-				net.WriteType(self.nut_NetVars[key])
+				net.WriteType(value)
 			if (receiver) then
 				net.Send(receiver)
 
@@ -85,6 +96,18 @@ if (SERVER) then
 		timer.Remove("nut_Net"..client:UniqueID()..net.ReadString())
 	end)
 else
+	local function replacePlaceHolders(value)
+		for k, v in pairs(value) do
+			if (type(v) == "table") then
+				v = replacePlaceHolders(v)
+			elseif (type(v) == "string" and v == "__nil") then
+				value[k] = nil
+			end
+		end
+
+		return value
+	end
+
 	NUT_ENT_REGISTRY = NUT_ENT_REGISTRY or {}
 
 	net.Receive("nut_EntityVar", function(length)
@@ -94,7 +117,14 @@ else
 		local value = net.ReadType(index)
 
 		NUT_ENT_REGISTRY[entIndex] = NUT_ENT_REGISTRY[entIndex] or {}
-		NUT_ENT_REGISTRY[entIndex][key] = value
+
+		local registry = NUT_ENT_REGISTRY[entIndex]
+
+		if (type(value) == "table") then
+			value = replacePlaceHolders(table.Merge(registry[key] or {}, value))
+		end
+
+		registry[key] = value
 
 		local entity = Entity(entIndex)
 

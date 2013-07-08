@@ -42,7 +42,7 @@ local PANEL = {}
 		for class, items in pairs(LocalPlayer():GetInventory()) do
 			local itemTable = nut.item.Get(class)
 
-			if (itemTable) then
+			if (itemTable and table.Count(items) > 0) then
 				local category = itemTable.category
 				local category2 = string.lower(category)
 
@@ -82,6 +82,8 @@ local PANEL = {}
 
 					self.categories[category2] = {category = category3, panel = panel}
 				end
+			elseif (table.Count(items) == 0) then
+				LocalPlayer():GetInventory()[class] = nil
 			end
 		end
 	end

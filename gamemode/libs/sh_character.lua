@@ -55,7 +55,7 @@ CHAR_PRIVATE = 2
 	it is a table.
 --]]
 function META:__tostring()
-	return "Character ["..(IsValid(self.player) and self.player:Name() or "NULL").."]["..self:GetVar("charname", "John Doe").."]"
+	return "Character ["..(IsValid(character.player) and character.player:Name() or "NULL").."]["..self:GetVar("charname", "John Doe").."]"
 end
 
 --[[
@@ -175,6 +175,18 @@ function META:GetDataTable()
 	return self:GetVar("chardata")
 end
 
+local function replacePlaceHolders(value)
+	for k, v in pairs(value) do
+		if (type(v) == "table") then
+			v = replacePlaceHolders(v)
+		elseif (type(v) == "string" and v == "__nil") then
+			value[k] = nil
+		end
+	end
+
+	return value
+end
+
 --[[
 	Purpose: Using the variables defined by :NewVar, it will send the data to the receiver
 	if it is a public var, or only send it to the character's owner when it is private.
@@ -182,6 +194,10 @@ end
 	neccessary information based off it's state of either private or public.
 --]]
 function META:Send(variable, receiver)
+	local privateValue = self.privateVars[variable]
+	local publicValue = self.publicVars[variable]
+	local deltaValue = self.deltas[variable]
+
 	if (!variable) then
 		for k, v in pairs(self.publicVars) do
 			self:Send(k, receiver)
@@ -192,16 +208,30 @@ function META:Send(variable, receiver)
 				self:Send(k, self.player)
 			end
 		end
-	elseif (self.privateVars[variable]) then
+	elseif (privateValue) then
+		if (type(privateValue) == "table") then
+			local oldValue = privateValue
+			privateValue = nut.util.GetTableDelta(privateValue, self.deltas[variable] or {})
+			
+			self.deltas[variable] = table.Copy(oldValue)
+		end
+
 		net.Start("nut_LocalCharData")
 			net.WriteString(variable)
-			net.WriteType(self.privateVars[variable])
+			net.WriteType(privateValue)
 		net.Send(self.player)
-	elseif (self.publicVars[variable]) then
+	elseif (publicValue) then
+		if (type(publicValue) == "table") then
+			local oldValue = publicValue
+			publicValue = nut.util.GetTableDelta(publicValue, self.deltas[variable] or {})
+
+			self.deltas[variable] = table.Copy(oldValue)
+		end
+
 		net.Start("nut_CharData")
 			net.WriteEntity(self.player)
 			net.WriteString(variable)
-			net.WriteType(self.publicVars[variable])
+			net.WriteType(publicValue)
 		if (receiver) then
 			net.Send(receiver)
 		else
@@ -224,7 +254,8 @@ function nut.char.New(client, send)
 		privateVars = {},
 		publicVars = {},
 		dataTypes = {},
-		noSaveVars = {}
+		noSaveVars = {},
+		deltas = {}
 	}, META)
 
 	nut.schema.Call("CreateCharVars", character)
@@ -440,6 +471,12 @@ if (SERVER) then
 			return
 		end
 
+		local skin = client:GetSkin()
+
+		if (skin > 0) then
+			client.character:SetData("skin", skin)
+		end
+
 		nut.schema.Call("CharacterSave", client)
 
 		local index = character.index
@@ -579,6 +616,21 @@ else
 			client.character = nut.char.New(client)
 		end
 
+		local character = client.character
+
+		if (type(value) == "table") then
+			local currentValue
+
+			if (character.privateVars[key]) then
+				currentValue = character.privateVars[key]
+			elseif (character.publicVars[key]) then
+				currentValue = character.publicVars[key]
+			end
+
+			value = table.Merge(currentValue, value)
+			value = replacePlaceHolders(value)
+		end
+
 		client.character:SetVar(key, value)
 	end)
 
@@ -592,8 +644,23 @@ else
 		if (!LocalPlayer().character) then
 			LocalPlayer().character = nut.char.New(LocalPlayer())
 		end
+
+		local character = LocalPlayer().character
+
+		if (type(value) == "table") then
+			local currentValue
+
+			if (character.privateVars[key]) then
+				currentValue = character.privateVars[key]
+			elseif (character.publicVars[key]) then
+				currentValue = character.publicVars[key]
+			end
+
+			value = table.Merge(currentValue, value)
+			value = replacePlaceHolders(value)
+		end
 		
-		LocalPlayer().character:SetVar(key, value)
+		character:SetVar(key, value)
 	end)
 
 	-- Receives the character information from the server to be displayed in the character listing.

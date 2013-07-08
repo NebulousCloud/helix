@@ -202,22 +202,51 @@ if (SERVER) then
 		return {}
 	end
 
+	util.AddNetworkString("nut_Notice")
+
 	function nut.util.Notify(message, ...)
 		local receivers = {...}
 
+		net.Start("nut_Notice")
+			net.WriteString(message)
 		if (#receivers == 0) then
-			receivers = player.GetAll()
-		elseif (receivers[1] and type(receivers[1]) == "table") then
-			receivers = receivers[1]
-		end
-
-		for k, v in pairs(receivers) do
-			v:ChatPrint(message)
+			net.Broadcast()
+		elseif (#receivers == 1) then
+			net.Send(receivers[1])
+		else
+			net.Send(receivers)
 		end
 	end
 else
+	net.Receive("nut_Notice", function(length)
+		nut.util.Notify(net.ReadString())
+	end)
+
+	nut.notices = nut.notices or {}
+
 	function nut.util.Notify(message)
-		LocalPlayer():ChatPrint(message)
+		local notice = vgui.Create("nut_Notification")
+		notice:SetText(message)
+		notice:SetPos(ScrW() * 0.3, ScrH() + 24)
+		notice:SetWide(ScrW() * 0.4)
+		notice:LerpPositions(1, true)
+		notice:SetPos(ScrW() * 0.3, #nut.notices * 28)
+
+		notice:CallOnRemove(function()
+			for k, v in pairs(nut.notices) do
+				if (v == notice) then
+					table.remove(nut.notices, k)
+				end
+			end
+
+			for k, v in pairs(nut.notices) do
+				v:SetPos(ScrW() * 0.3, (k - 1) * 28)
+			end
+		end)
+
+		table.insert(nut.notices, notice)
+
+		MsgC(Color(92, 232, 250), message.."\n")
 	end
 
 	--[[
@@ -301,19 +330,21 @@ else
 		Purpose: Takes the output of nut.util.WrapText and draws them on the screen.
 	--]]
 	function nut.util.DrawWrappedText(x, y, lines, lineHeight, font, xAlign, yAlign, alpha)
-		alpha = alpha or 255
+		if (lines) then
+			alpha = alpha or 255
 
-		local lastColor = Color(255, 255, 255, alpha)
+			local lastColor = Color(255, 255, 255, alpha)
 
-		for k2, v2 in ipairs(lines) do
-			local lastX = 0
+			for k2, v2 in ipairs(lines) do
+				local lastX = 0
 
-			for k, v in pairs(v2) do
-				if (type(v) == "table" and v.r and v.g and v.b) then
-					lastColor = Color(v.r, v.g, v.b, alpha)
-				else
-					nut.util.DrawText(x + lastX, y + (k2 - 1) * lineHeight, v, lastColor, font, xAlign, yAlign)
-					lastX = lastX + surface.GetTextSize(v)
+				for k, v in pairs(v2) do
+					if (type(v) == "table" and v.r and v.g and v.b) then
+						lastColor = Color(v.r, v.g, v.b, alpha)
+					else
+						nut.util.DrawText(x + lastX, y + (k2 - 1) * lineHeight, v, lastColor, font, xAlign, yAlign)
+						lastX = lastX + surface.GetTextSize(v)
+					end
 				end
 			end
 		end
@@ -322,10 +353,10 @@ end
 
 function nut.util.CleanMarkup(data)
 	if (type(data) == "string") then
-		data = string.gsub(data, "<font(=?)", "")
-		data = string.gsub(data, "<face(=?)", "")
-		data = string.gsub(data, "<color(=?)", "")
-		data = string.gsub(data, "<colour(=?)", "")
+		data = string.gsub(data, "<font(=?)>", "")
+		data = string.gsub(data, "<face(=?)>", "")
+		data = string.gsub(data, "<color(=?)>", "")
+		data = string.gsub(data, "<colour(=?)>", "")
 		data = string.gsub(data, "</color>", "")
 		data = string.gsub(data, "</font>", "")
 		data = string.gsub(data, "</face>", "")
@@ -336,23 +367,50 @@ function nut.util.CleanMarkup(data)
 end
 
 --[[
-	Purpose: A function to check if two tables have similar keys and
-	values. Note that this isn't recursive so it doesn't check subtables!
+	Purpose: Gathers up all the differences between the 'delta' table
+	and a source table and returns them as a table of changes. This function
+	is also used for nut.util.IsSimilarTable to return a boolean of whether
+	there is any change or not.
 --]]
-function nut.util.IsSimiarTable(a, b)
+function nut.util.GetTableDelta(a, b)
+	local output = {}
+
 	for k, v in pairs(a) do
-		if (b[k] == nil or v != b[k]) then
-			return false
+		if (type(v) == "table" and type(b[k]) == "table") then
+			local output2 = nut.util.GetTableDelta(v, b[k])
+
+			for k2, v2 in pairs(output2) do
+				output[k] = output[k] or {}
+				output[k][k2] = v2
+			end
+		elseif (b[k] == nil or v ~= b[k]) then
+			output[k] = v or "__nil"
 		end
 	end
 
 	for k, v in pairs(b) do
-		if (a[k] == nil or v != a[k]) then
-			return false
+		if (type(v) == "table" and type(a[k]) == "table") then
+			local output2 = nut.util.GetTableDelta(v, a[k])
+
+			for k2, v2 in pairs(output2) do
+				output[k] = output[k] or {}
+				output[k][k2] = v2
+			end
+		elseif (a[k] == nil) then
+			output[k] = "__nil"
 		end
 	end
 
-	return true
+	return output
+end
+
+--[[
+	Purpose: Checks whether two tables have the same keys with the
+	same values by checking their delta. If there are any differences,
+	the function will return false.
+--]]
+function nut.util.IsSimiarTable(a, b)
+	return table.Count(nut.util.GetTableDelta(a, b)) == 0
 end
 
 function nut.util.StackInv(inventory, class, quantity, data)
