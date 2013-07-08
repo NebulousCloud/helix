@@ -193,9 +193,9 @@ do
 				-- Limit on how often items should save.
 				local shouldSave = false
 
-				if ((self.nut_NextItemSave or 0) < CurTime()) then
+				if (self:GetNutVar("nextItemSave", 0) < CurTime()) then
 					shouldSave = true
-					self.nut_NextItemSave = CurTime() + 30
+					self:SetNutVar("nextItemSave", CurTime() + 30)
 				end
 
 				if (shouldSave) then

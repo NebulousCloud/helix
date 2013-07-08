@@ -137,12 +137,16 @@ function GM:HUDPaintTargetID(entity)
 
 					local description = v.character:GetVar("description", nut.lang.Get("no_desc"))
 
-					if (!v.nut_DescLines or description != (v.nut_DescText or "")) then
-						v.nut_DescText = description
-						v.nut_DescLines, _, v.nut_DescLineH = nut.util.WrapText("nut_TargetFontSmall", ScrW() * 0.4, v.nut_DescText)
+					if (!v:GetNutVar("descLines") or description != (v:GetNutVar("descText") or "")) then
+						v:SetNutVar("descText", description)
+
+						local descLines, _, lineH = nut.util.WrapText("nut_TargetFontSmall", ScrW() * 0.4, v:GetNutVar("descText"))
+
+						v:SetNutVar("descLines", descLines)
+						v:SetNutVar("lineH", lineH)
 					end
 
-					nut.util.DrawWrappedText(position.x, position.y, v.nut_DescLines, v.nut_DescLineH, "nut_TargetFontSmall", 1, 1, alpha)
+					nut.util.DrawWrappedText(position.x, position.y, v:GetNutVar("descLines"), v:GetNutVar("lineH"), "nut_TargetFontSmall", 1, 1, alpha)
 				else
 					nut.schema.Call("DrawTargetID", v, position.x, position.y, alpha)
 				end
@@ -210,4 +214,8 @@ function GM:RenderScreenspaceEffects()
 	color["$pp_colour_mulb"] = 0.1
 
 	DrawColorModify(color)
+end
+
+function GM:PlayerCanSeeBusiness()
+	return true
 end

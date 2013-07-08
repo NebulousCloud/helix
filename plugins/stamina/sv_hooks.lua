@@ -35,20 +35,24 @@ function PLUGIN:PlayerLoadedChar(client)
 
 			if (stamina <= 0) then
 				client:SetRunSpeed(nut.config.walkSpeed)
-				client.nut_OutOfStamina = true
+				client:SetNutVar("outOfStam", true)
 
 				if (nut.config.breathing == true) then
-					client.nut_Breathing = CreateSound(client, "player/breathe1.wav")
-					client.nut_Breathing:Play()
-					client.nut_Breathing:ChangeVolume(0.5, 0)
+					local breathing = CreateSound(client, "player/breathe1.wav")
+					breathing:Play()
+					breathing:ChangeVolume(0.5, 0)
+
+					client:SetNutVar("breathing", breathing)
 				end
-			elseif (stamina >= nut.config.staminaRestore and client.nut_OutOfStamina) then
-				client.nut_OutOfStamina = false
+			elseif (stamina >= nut.config.staminaRestore and client:GetNutVar("outOfStam")) then
+				client:SetNutVar("outOfStam", false)
 				client:SetRunSpeed(nut.config.runSpeed)
 
-				if (client.nut_Breathing) then
-					client.nut_Breathing:FadeOut(10)
-					client.nut_Breathing = nil
+				local breathing = client:GetNutVar("breathing")
+
+				if (breathing) then
+					breathing:FadeOut(10)
+					breathing = nil
 				end
 			end
 		end

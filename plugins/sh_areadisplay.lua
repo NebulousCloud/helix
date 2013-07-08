@@ -58,31 +58,32 @@ function COMMAND:OnRun(client, arguments)
 	local name = arguments[1]
 	local showTime = util.tobool(arguments[2] or "true")
 
-	if (!client.nut_AreaMins) then
+	if (!client:GetNutVar("areaMin")) then
 		if (!name) then
 			nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
 
 			return
 		end
 
-		client.nut_AreaMins = client:GetPos()
-		client.nut_AreaName = name
-		client.nut_AreaShowTime = showTime
+		client:SetNutVar("areaMin", client:GetPos())
+		client:SetNutVar("areaName", name)
+		client:SetNutVar("areaShowTime", showTime)
 
 		nut.util.Notify("Run the command again at a different position to set a maximum point.", client)
 	else
 		local data = {}
-		data.min = client.nut_AreaMins
+		data.min = client:GetNutVar("areaMin")
 		data.max = client:GetPos()
-		data.name = client.nut_AreaName
-		data.showTime = client.nut_AreaShowTime
+		data.name = client:GetNutVar("areaName")
+		data.showTime = client:GetNutVar("areaShowTime")
 
-		client.nut_AreaName = nil
-		client.nut_AreaMins = nil
-		client.nut_AreaShowTime = nil
+		client:SetNutVar("areaMin", nil)
+		client:SetNutVar("areaName", nil)
+		client:SetNutVar("areaShowTime", nil)
 
 		table.insert(PLUGIN.areas, data)
 
+		nut.util.WriteTable("areas", PLUGIN.areas)
 		nut.util.Notify("You've added a new area.", client)
 	end
 end
@@ -103,6 +104,7 @@ function COMMAND:OnRun(client, arguments)
 		end
 	end
 
+	nut.util.WriteTable("areas", PLUGIN.areas)
 	nut.util.Notify("You've removed "..count.." areas.", client)
 end
 

@@ -7,7 +7,7 @@ local COMMAND = {}
 
 -- Similar to console commands, gets called when the command is ran either using ns <command> or !<command>.
 function COMMAND:OnRun(client, arguments)
-	if ((client.nut_NextRaise or 0) < CurTime()) then
+	if (client:GetNutVar("nextRaise", 0) < CurTime()) then
 		local weapon = client:GetActiveWeapon()
 
 		if (!IsValid(weapon)) then
@@ -19,7 +19,7 @@ function COMMAND:OnRun(client, arguments)
 		end
 
 		client:SetWepRaised(!client:WepRaised())
-		client.nut_NextRaise = CurTime() + 0.6
+		client:SetNutVar("nextRaise", CurTime() + 0.6)
 	end
 end
 

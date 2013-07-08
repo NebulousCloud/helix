@@ -173,14 +173,14 @@ if (SERVER) then
 		for k, v in pairs(player.GetAll()) do
 			local faction = nut.faction.GetByID(v:Team())
 
-			if (faction and faction.pay > 0 and (v.nut_NextPay or (CurTime() + faction.payTime)) < CurTime()) then
+			if (faction and faction.pay > 0 and v:GetNutVar("nextPay", CurTime() + faction.payTime) < CurTime()) then
 				if (nut.schema.Call("ShouldReceivePay", v) != false) then
 					v:GiveMoney(faction.pay)
 
 					nut.util.Notify("You've received a pay of "..nut.currency.GetName(faction.pay)..".", v)
 				end
 
-				v.nut_NextPay = CurTime() + faction.payTime
+				v:SetNutVar("nextPay", CurTime() + faction.payTime)
 			end
 		end
 	end)

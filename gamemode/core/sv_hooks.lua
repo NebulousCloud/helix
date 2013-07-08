@@ -67,9 +67,10 @@ end
 function GM:PlayerLoadedChar(client)
 	local faction = client.character:GetVar("faction", 9001)
 	client:SetTeam(faction)
+	client:SetSkin(client.character:GetData("skin", 0))
 
-	if (!client.nut_SawCredits) then
-		client.nut_SawCredits = true
+	if (!client:GetNutVar("sawCredits")) then
+		client:SetNutVar("sawCredits", true)
 		
 		nut.scroll.Send("NutScript: "..nut.lang.Get("schema_author", "Chessnut"), client, function()
 			if (IsValid(client)) then
@@ -195,7 +196,7 @@ function GM:InitPostEntity()
 end
 
 function GM:PlayerDeath(victim, weapon, attacker)
-	victim.nut_DeathTime = CurTime() + nut.config.deathTime
+	victim:SetNutVar("deathTime", CurTime() + nut.config.deathTime)
 
 	timer.Simple(0, function()
 		victim:SetMainBar("You are now respawning.", nut.config.deathTime)
@@ -203,7 +204,7 @@ function GM:PlayerDeath(victim, weapon, attacker)
 end
 
 function GM:PlayerDeathThink(client)
-	if (client.character and (client.nut_DeathTime or 0) < CurTime()) then
+	if (client.character and client:GetNutVar("deathTime", 0) < CurTime()) then
 		client:Spawn()
 
 		return true

@@ -40,13 +40,15 @@ else
 				net.WriteAngle(data.angles)
 			net.Send(client)
 
-			client.nut_MapScenePos = data.position
+			client:SetNutVar("mapScenePos", data.position)
 		end
 	end
 
 	function PLUGIN:SetupPlayerVisibility(client, viewEntity)
-		if (!client.character and client.nut_MapScenePos) then
-			AddOriginToPVS(client.nut_MapScenePos)
+		local position = client:GetNutVar("mapScenePos")
+
+		if (!client.character and position) then
+			AddOriginToPVS(position)
 		end
 	end
 end

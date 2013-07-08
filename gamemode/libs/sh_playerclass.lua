@@ -93,11 +93,11 @@ do
 				return
 			end
 			
-			if ((client.nut_NextUpdate or 0) < CurTime()) then
+			if (client:GetNutVar("nextUpdate", 0) < CurTime()) then
 				net.Start("nut_PlayerDataTables")
 				net.Send(client)
 
-				client.nut_NextUpdate = CurTime() + 10
+				client:SetNutVar("nextUpdate", CurTime() + 10)
 			end
 		end)
 	else
@@ -164,12 +164,13 @@ do
 				end
 			end
 
-			self.nut_Weapons = {}
+			local weapons = {}
 
 			for k, v in pairs(self:GetWeapons()) do
-				self.nut_Weapons[#self.nut_Weapons + 1] = v:GetClass()
+				weapons[#weapons + 1] = v:GetClass()
 			end
 
+			self:SetNutVar("weapons", weapons)
 			self:StripWeapons()
 			self:Freeze(true)
 			self:SetNetVar("ragdoll", self.ragdoll:EntIndex())
@@ -188,10 +189,10 @@ do
 					return
 				end
 
-				self.nut_LastPos = self.nut_LastPos or self:GetPos()
+				local position = self:GetPos()
 
-				if (self.nut_LastPos != self:GetPos() and !self:IsPenetrating() and self:IsInWorld()) then
-					self.nut_LastPos = self:GetPos()
+				if (self:GetNutVar("lastPos",position) != position and !self:IsPenetrating() and self:IsInWorld()) then
+					self:SetNutVar("lastPos", position)
 				end
 
 				self:SetPos(self.ragdoll:GetPos())
@@ -204,11 +205,12 @@ do
 			end
 			
 			local isValid = IsValid(self.ragdoll)
+			local position = self:GetNutVar("lastPos")
 
 			if (samePos and isValid) then
 				self:SetPos(self.ragdoll:GetPos())
-			elseif (self.nut_LastPos) then
-				self:SetPos(self.nut_LastPos)
+			elseif (position) then
+				self:SetPos(position)
 			end
 
 			self:SetMoveType(MOVETYPE_WALK)
@@ -218,7 +220,7 @@ do
 			self:SetNetVar("ragdoll", 0)
 			self:DropToFloor()
 			self:SetMainBar()
-			self.nut_LastPos = nil
+			self:SetNutVar("lastPos", nil)
 
 			if (isValid) then
 				local physicsObject = self.ragdoll:GetPhysicsObject()
@@ -228,13 +230,11 @@ do
 				end
 			end
 
-			if (self.nut_Weapons) then
-				for k, v in pairs(self.nut_Weapons) do
-					self:Give(v)
-				end
-
-				self.nut_Weapons = nil
+			for k, v in pairs(self:GetNutVar("weapons", {})) do
+				self:Give(v)
 			end
+
+			self:SetNutVar("weapons", nil)
 
 			if (isValid) then
 				self.ragdoll:Remove()
@@ -292,6 +292,20 @@ do
 			return false
 		end
 	end)
+end
+
+-- Player nut variable accessors.
+do
+	function playerMeta:SetNutVar(key, value)
+		self.nut = self.nut or {}
+		self.nut[key] = value
+	end
+
+	function playerMeta:GetNutVar(key, default)
+		self.nut = self.nut or {}
+
+		return self.nut[key] or default
+	end
 end
 
 player_manager.RegisterClass("player_nut", PLAYER, "player_default")
