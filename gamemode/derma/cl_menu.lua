@@ -27,14 +27,34 @@ local PANEL = {}
 
 		self.currentMenu = NULL
 
-		self.business = self.buttonList:Add("nut_MenuButton")
-		self.business:SetText(nut.lang.Get("business"))
-		self.business:DockMargin(0, 0, 0, 8)
-		self.business.OnClick = function()
-			nut.gui.business = vgui.Create("nut_Business", self)
-			self:SetCurrentMenu(nut.gui.business)
+		if (nut.config.businessEnabled and nut.schema.Call("PlayerCanSeeBusiness")) then
+			self.business = self.buttonList:Add("nut_MenuButton")
+			self.business:SetText(nut.lang.Get("business"))
+			self.business:DockMargin(0, 0, 0, 8)
+			self.business.OnClick = function()
+				nut.gui.business = vgui.Create("nut_Business", self)
+				self:SetCurrentMenu(nut.gui.business)
+			end
 		end
 
+		local count = 0
+
+		for k, v in SortedPairs(nut.class.GetByFaction(LocalPlayer():Team())) do
+			if (LocalPlayer():CharClass() != k and v:PlayerCanJoin(LocalPlayer())) then
+				count = count + 1
+			end
+		end
+
+		if (count > 0) then
+			self.classes = self.buttonList:Add("nut_MenuButton")
+			self.classes:SetText(nut.lang.Get("classes"))
+			self.classes:DockMargin(0, 0, 0, 8)
+			self.classes.OnClick = function()
+				nut.gui.classes = vgui.Create("nut_Classes", self)
+				self:SetCurrentMenu(nut.gui.classes)
+			end
+		end
+		
 		self.inv = self.buttonList:Add("nut_MenuButton")
 		self.inv:SetText(nut.lang.Get("inventory"))
 		self.inv:DockMargin(0, 0, 0, 8)

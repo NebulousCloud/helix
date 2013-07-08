@@ -86,6 +86,9 @@ nut.config.maxChars = 4
 -- The delay between which someone can buy something.
 nut.config.buyDelay = 1
 
+-- If any player can see the business menu.
+nut.config.businessEnabled = true
+
 if (CLIENT) then
 	hook.Add("SchemaInitialized", "nut_FontConfig", function()
 		surface.SetFont("nut_TargetFontSmall")
