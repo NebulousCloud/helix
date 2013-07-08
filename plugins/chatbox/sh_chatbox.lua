@@ -132,16 +132,7 @@ if (CLIENT) then
 		local lastColor = Color(255, 255, 255)
 
 		for k, v in pairs({...}) do
-			if (type(v) == "string") then
-				v = string.gsub(v, "<font(=?)", "")
-				v = string.gsub(v, "<face(=?)", "")
-				v = string.gsub(v, "<color(=?)", "")
-				v = string.gsub(v, "<colour(=?)", "")
-				v = string.gsub(v, "</color>", "")
-				v = string.gsub(v, "</font>", "")
-				v = string.gsub(v, "</face>", "")
-				v = string.gsub(v, "</face>", "")
-			end
+			v = nut.util.CleanMarkup(v)
 
 			data[k] = v
 		end

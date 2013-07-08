@@ -21,7 +21,7 @@ function COMMAND:OnRun(client, arguments)
 		local cost = nut.config.doorCost
 
 		if (!client:CanAfford(cost)) then
-			nut.util.Notify(net.lang.Get("no_afford"), client)
+			nut.util.Notify(nut.lang.Get("no_afford"), client)
 
 			return
 		end

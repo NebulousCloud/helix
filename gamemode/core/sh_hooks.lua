@@ -12,6 +12,7 @@ function GM:CreateCharVars(character)
 	character:NewVar("money", 0, CHAR_PRIVATE)
 	character:NewVar("inv", {}, CHAR_PRIVATE)
 	character:NewVar("chardata", {}, CHAR_PRIVATE)
+	character:NewVar("gender", "male", CHAR_PUBLIC)
 end
 
 WEAPON_LOWERED = 1

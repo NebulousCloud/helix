@@ -42,6 +42,7 @@ if (SERVER) then
 					entity:Activate()
 					entity:SetNetVar("inv", inventory)
 					entity:SetNetVar("name", itemTable.name)
+					entity.itemID = v.uniqueID
 
 					if (itemTable.maxWeight) then
 						entity:SetNetVar("max", itemTable.maxWeight)
