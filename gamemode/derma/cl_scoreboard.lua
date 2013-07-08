@@ -131,7 +131,7 @@ local PANEL = {}
 	function PANEL:SetPlayer(client)
 		self.player = client
 
-		self.model:SetModel(client:GetModel())
+		self.model:SetModel(client:GetModel(), client:GetSkin())
 		self.model:SetToolTip("Click to open "..client:RealName().."'s Steam profile.")
 
 		self.name:SetText(client:Name())
