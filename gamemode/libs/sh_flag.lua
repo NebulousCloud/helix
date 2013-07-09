@@ -169,3 +169,19 @@ nut.flag.Create("t", {
 		client:Give("gmod_tool")
 	end
 })
+
+nut.flag.Create("e", {
+	desc = "Allows one to spawn objects."
+})
+
+nut.flag.Create("n", {
+	desc = "Allows one to spawn NPCs."
+})
+
+nut.flag.Create("r", {
+	desc = "Allows one to spawn ragdolls."
+})
+
+nut.flag.Create("c", {
+	desc = "Allows one to spawn vehicles."
+})

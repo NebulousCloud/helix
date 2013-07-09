@@ -160,7 +160,7 @@ function GM:PlayerSpawnSWEP(client, class, weapon)
 end
 
 function GM:PlayerSpawnEffect(client, model)
-	return client:HasFlag("p")
+	return client:HasFlag("e")
 end
 
 function GM:PlayerSpawnNPC(client, npc, weapon)
