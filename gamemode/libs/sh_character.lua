@@ -193,35 +193,40 @@ end
 	If a field is not known, it will give an error. If variable is nil, then it sends all
 	neccessary information based off it's state of either private or public.
 --]]
-function META:Send(variable, receiver)
+function META:Send(variable, receiver, noDelta)
 	local privateValue = self.privateVars[variable]
 	local publicValue = self.publicVars[variable]
 	local deltaValue = self.deltas[variable]
 
 	if (!variable) then
 		for k, v in pairs(self.publicVars) do
-			self:Send(k, receiver)
+			self:Send(k, receiver, noDelta)
 		end
 
 		if (!receiver or receiver == self.player) then
 			for k, v in pairs(self.privateVars) do
-				self:Send(k, self.player)
+				self:Send(k, self.player, noDelta)
 			end
 		end
 	elseif (privateValue) then
-		if (type(privateValue) == "table") then
+		if (noDelta) then
+			print(variable)
+		end
+
+		if (!noDelta and type(privateValue) == "table") then
 			local oldValue = privateValue
 			privateValue = nut.util.GetTableDelta(privateValue, self.deltas[variable] or {})
-			
+
 			self.deltas[variable] = table.Copy(oldValue)
 		end
 
 		net.Start("nut_LocalCharData")
 			net.WriteString(variable)
 			net.WriteType(privateValue)
+			net.WriteBit(noDelta or false)
 		net.Send(self.player)
 	elseif (publicValue) then
-		if (type(publicValue) == "table") then
+		if (!noDelta and type(publicValue) == "table") then
 			local oldValue = publicValue
 			publicValue = nut.util.GetTableDelta(publicValue, self.deltas[variable] or {})
 
@@ -232,6 +237,7 @@ function META:Send(variable, receiver)
 			net.WriteEntity(self.player)
 			net.WriteString(variable)
 			net.WriteType(publicValue)
+			net.WriteBit(noDelta or false)
 		if (receiver) then
 			net.Send(receiver)
 		else
@@ -249,6 +255,10 @@ setmetatable(META, {})
 	and will broadcast the information if ran on the server and send is true.
 --]]
 function nut.char.New(client, send)
+	if (send == nil) then
+		send = true
+	end
+
 	local character = setmetatable({
 		player = client,
 		privateVars = {},
@@ -261,7 +271,7 @@ function nut.char.New(client, send)
 	nut.schema.Call("CreateCharVars", character)
 
 	if (SERVER and send) then
-		character:Send()
+		character:Send(nil, nil, true)
 	end
 
 	table.insert(nut.char.buffer, character)
@@ -374,7 +384,7 @@ if (SERVER) then
 						end
 					end
 				end
-			client.character:Send()
+			client.character:Send(nil, nil, true)
 
 			print("Restoring cached character '"..client.character:GetVar("charname").."' for "..client:RealName()..".")
 
@@ -532,16 +542,32 @@ if (SERVER) then
 			end
 		end
 
-		nut.char.Create(client, {
-			charname = name,
-			description = desc,
-			gender = gender,
-			inv = nut.schema.Call("GetDefaultInv", client, name, faction),
-			money = nut.schema.Call("GetDefaultMoney", client),
-			chardata = data,
-			faction = faction,
-			model = model
-		}, function(id)
+		local charData = {}
+		charData.charname = name
+		charData.description = desc
+		charData.gender = gender
+		charData.money = 0
+		charData.inv = {}
+		charData.chardata = data
+		charData.faction = faction
+		charData.model = model
+
+		local inventory = {}
+		inventory.buffer = {}
+
+		function inventory:Add(class, quantity, data2)
+			self.buffer = nut.util.StackInv(self.buffer, class, quantity, data2)
+		end
+
+		nut.schema.Call("GetDefaultInv", inventory, client, charData)
+
+		charData.inv = inventory.buffer
+
+		PrintTable(charData.inv)
+
+		charData.money = nut.schema.Call("GetDefaultMoney", client, charData)
+
+		nut.char.Create(client, charData, function(id)
 			net.Start("nut_CharCreateAuthed")
 			net.Send(client)
 
@@ -550,7 +576,7 @@ if (SERVER) then
 
 				print("Created new character '"..name.."' for "..client:RealName()..".")
 			end)
-		end)		
+		end)
 	end)
 
 	-- Spawns the player with their appropriate character and closes the main menu.
@@ -607,6 +633,7 @@ else
 		local key = net.ReadString()
 		local index = net.ReadUInt(8)
 		local value = net.ReadType(index)
+		local noDelta = net.ReadBit() == 1
 
 		if (!IsValid(client)) then
 			return
@@ -618,7 +645,7 @@ else
 
 		local character = client.character
 
-		if (type(value) == "table") then
+		if (!noDelta and type(value) == "table") then
 			local currentValue
 
 			if (character.privateVars[key]) then
@@ -640,15 +667,16 @@ else
 		local key = net.ReadString()
 		local index = net.ReadUInt(8)
 		local value = net.ReadType(index)
+		local noDelta = net.ReadBit() == 1
 
 		if (!LocalPlayer().character) then
 			LocalPlayer().character = nut.char.New(LocalPlayer())
 		end
 
 		local character = LocalPlayer().character
-
-		if (type(value) == "table") then
-			local currentValue
+		print(key, noDelta)
+		if (!noDelta and type(value) == "table") then
+			local currentValue = {}
 
 			if (character.privateVars[key]) then
 				currentValue = character.privateVars[key]
@@ -659,7 +687,7 @@ else
 			value = table.Merge(currentValue, value)
 			value = replacePlaceHolders(value)
 		end
-		
+
 		character:SetVar(key, value)
 	end)
 

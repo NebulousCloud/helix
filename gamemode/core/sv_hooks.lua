@@ -9,8 +9,7 @@ function GM:ShowHelp(client)
 	net.Send(client)
 end
 
-function GM:GetDefaultInv(client, name, faction)
-	return {}
+function GM:GetDefaultInv(inventory, client, data)
 end
 
 function GM:GetDefaultMoney(client)
@@ -36,7 +35,7 @@ function GM:PlayerInitialSpawn(client)
 		for k, v in ipairs(nut.char.GetAll()) do
 			timer.Simple(k * fraction, function()
 				if (IsValid(client)) then
-					v:Send(nil, client)
+					v:Send(nil, client, true)
 				end
 			end)
 		end
