@@ -12,7 +12,7 @@ if (SERVER) then
 
 	function ENT:Initialize()
 		self:SetModel("models/props_lab/filecabinet02.mdl")
-		self:SetNetVar("space", 10)
+		self:SetNetVar("max", 10)
 		self:SetNetVar("inv", {})
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)

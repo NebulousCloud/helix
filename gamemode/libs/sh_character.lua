@@ -209,10 +209,6 @@ function META:Send(variable, receiver, noDelta)
 			end
 		end
 	elseif (privateValue) then
-		if (noDelta) then
-			print(variable)
-		end
-
 		if (!noDelta and type(privateValue) == "table") then
 			local oldValue = privateValue
 			privateValue = nut.util.GetTableDelta(privateValue, self.deltas[variable] or {})
@@ -674,7 +670,7 @@ else
 		end
 
 		local character = LocalPlayer().character
-		print(key, noDelta)
+		
 		if (!noDelta and type(value) == "table") then
 			local currentValue = {}
 

@@ -132,9 +132,7 @@ local PANEL = {}
 			end
 
 			if (IsValid(nut.gui.inv)) then
-				print("HI")
 				nut.gui.inv:Remove()
-				print(IsValid(nut.gui.inv))
 			end
 
 			net.Start("nut_CharChoose")

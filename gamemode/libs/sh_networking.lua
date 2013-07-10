@@ -4,10 +4,10 @@ if (SERVER) then
 	util.AddNetworkString("nut_EntityVar")
 	util.AddNetworkString("nut_NetHandshake")
 
-	function entityMeta:SyncVars(client)
+	function entityMeta:SyncVars(client, noDelta)
 		if (self.nut_NetVars) then
 			for k, v in pairs(self.nut_NetVars) do
-				self:SendVar(k, client)
+				self:SendVar(k, client, nil, noDelta)
 			end
 		end
 	end
@@ -15,7 +15,7 @@ if (SERVER) then
 	hook.Add("PlayerInitialSpawn", "nut_SyncVars", function(client)
 		timer.Simple(5, function()
 			for k, v in pairs(ents.GetAll()) do
-				v:SyncVars(client)
+				v:SyncVars(client, true)
 			end
 		end)
 	end)
@@ -38,13 +38,13 @@ if (SERVER) then
 		end)
 	end
 
-	function entityMeta:SendVar(key, receiver, noHandShake)
+	function entityMeta:SendVar(key, receiver, noHandShake, noDelta)
 		if (self.nut_NetVars and self.nut_NetVars[key] != nil) then
 			self.nut_NetDeltas = self.nut_NetDeltas or {}
 
 			local value = self.nut_NetVars[key]
 
-			if (type(value) == "table") then
+			if (!noDelta and type(value) == "table") then
 				local oldValue = value
 				value = nut.util.GetTableDelta(value, self.nut_NetDeltas[key] or {})
 
