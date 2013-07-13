@@ -1,7 +1,9 @@
 ENT.Type = "anim"
-ENT.Name = "Radio"
+ENT.PrintName = "Radio"
 ENT.Author = "Chessnut"
 ENT.Spawnable = true
+ENT.AdminOnly = true
+ENT.Category = "NutScript"
 
 if (SERVER) then
 	function ENT:Initialize()

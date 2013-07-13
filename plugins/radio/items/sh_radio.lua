@@ -10,7 +10,7 @@ ITEM.functions.Toggle = {
 	menuOnly = true,
 	run = function(itemTable, client, data)
 		if (SERVER) then
-			local frequency = data.Freq
+			local data = table.Copy(data)
 
 			if (!data.On or data.On == "off") then
 				data.On = "on"
@@ -18,10 +18,10 @@ ITEM.functions.Toggle = {
 				data.On = "off"
 			end
 
-			client.character:Send("inv", client)
+			client:UpdateInv("radio", 1, data)
 		end
 
-		return false
+		return true
 	end
 }
 ITEM.functions.Freq = {
@@ -31,7 +31,9 @@ ITEM.functions.Freq = {
 	run = function(itemTable, client, data, entity, index)
 		if (CLIENT) then
 			Derma_StringRequest("Change Frequency", "What would you like the frequency to be?", "000.0", function(frequency)
-				if (!string.match(frequency, "%d%d%d%.%d")) then
+				local match = string.match(frequency, "%d%d%d%.%d")
+				
+				if (!match) then
 					nut.util.Notify("Frequencies must follow the ###.# format to be valid.", client)
 
 					return
@@ -39,7 +41,7 @@ ITEM.functions.Freq = {
 
 				net.Start("nut_RadioFreq")
 					net.WriteUInt(index, 8)
-					net.WriteString(frequency)
+					net.WriteString(match)
 				net.SendToServer()
 			end)
 		end
@@ -57,10 +59,11 @@ if (SERVER) then
 		local item = client:GetItem("radio", index)
 
 		if (item) then
-			item.data = item.data or {}
-			item.data.Freq = frequency
+			local data = table.Copy(item.data or {})
+			data.Freq = frequency
 
-			client.character:Send("inv", client)
+			client:UpdateInv("radio", -1, item.data)
+			client:UpdateInv("radio", 1, data)
 		end
 	end)
 end

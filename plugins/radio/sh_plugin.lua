@@ -92,28 +92,8 @@ function COMMAND:OnRun(client, arguments)
 		entity:SetNetVar("freq", frequency)
 
 		nut.util.Notify("You have set this radio's frequency to "..frequency..".", client)
-	elseif (client:HasItem("radio")) then
-		for k, v in pairs(client:GetItemsByClass("radio")) do
-			if (!v.data or !v.data.Freq) then
-				v.data = v.data or {}
-				v.data.Freq = frequency
-				client.character:Send("inv", client)
-
-				nut.util.Notify("You have set your radio's frequency to "..frequency..".", client)
-
-				return
-			end
-		end
-
-		local radio = client:GetItem("radio")
-
-		radio.data = radio.data or {}
-		radio.data.Freq = frequency
-		client.character:Send("inv", client)
-
-		nut.util.Notify("You have set your radio's frequency to "..frequency..".", client)
 	else
-		nut.util.Notify("You do not have a radio.", client)
+		nut.util.Notify("You must be looking at a radio.", client)
 	end
 end
 
