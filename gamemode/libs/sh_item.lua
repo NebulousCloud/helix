@@ -335,7 +335,7 @@ do
 			local item = client:GetItem(class, index)
 			local itemFunction = itemTable.functions[action]
 
-			if (itemFunction) then
+			if (item and itemFunction) then
 				local result = true
 
 				if (itemFunction.run) then

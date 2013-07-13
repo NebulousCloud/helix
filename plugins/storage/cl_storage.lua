@@ -44,7 +44,7 @@ local PANEL = {}
 		self.inv:SetDrawBackground(true)
 
 		self.invTitle = self.inv:Add("DLabel")
-		self.invTitle:SetText("")
+		self.invTitle:SetText(nut.lang.Get("inventory"))
 		self.invTitle:DockMargin(3, 3, 3, 3)
 		self.invTitle:Dock(TOP)
 		self.invTitle:SetTextColor(Color(60, 60, 60))

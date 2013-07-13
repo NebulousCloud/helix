@@ -148,6 +148,7 @@ nut.flag.Create("p", {
 	desc = "Allows access to the physgun.",
 	onReceived = function(client)
 		client:Give("weapon_physgun")
+		client:SelectWeapon("weapon_physgun")
 	end,
 	onTaken = function(client)
 		client:StripWeapon("weapon_physgun")
@@ -161,6 +162,7 @@ nut.flag.Create("t", {
 	desc = "Allows access to the toolgun.",
 	onReceived = function(client)
 		client:Give("gmod_tool")
+		client:SelectWeapon("gmod_tool")
 	end,
 	onTaken = function(client)
 		client:StripWeapon("gmod_tool")
