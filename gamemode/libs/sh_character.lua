@@ -558,9 +558,6 @@ if (SERVER) then
 		nut.schema.Call("GetDefaultInv", inventory, client, charData)
 
 		charData.inv = inventory.buffer
-
-		PrintTable(charData.inv)
-
 		charData.money = nut.schema.Call("GetDefaultMoney", client, charData)
 
 		nut.char.Create(client, charData, function(id)
