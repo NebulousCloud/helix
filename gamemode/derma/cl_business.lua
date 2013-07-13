@@ -61,7 +61,38 @@ local PANEL = {}
 						end
 					category3:InvalidateLayout(true)
 
-					self.categories[category2] = {category = category3, panel = panel}
+					self.categories[category2] = {list = list, category = category3, panel = panel}
+				else
+					local list = self.categories[category2].list
+					local icon = list:Add("SpawnIcon")
+					icon:SetModel(itemTable.model or "models/error.mdl")
+
+					local cost = "Price: Free"
+
+					if (itemTable.price and itemTable.price > 0) then
+						cost = "Price: "..nut.currency.GetName(itemTable.price or 0)
+					end
+
+					icon:SetToolTip("Description: "..itemTable:GetDesc().."\n"..cost)
+					icon.DoClick = function(panel)
+						if (icon.disabled) then
+							return
+						end
+						
+						net.Start("nut_BuyItem")
+							net.WriteString(class)
+						net.SendToServer()
+
+						icon.disabled = true
+						icon:SetAlpha(70)
+
+						timer.Simple(nut.config.buyDelay, function()
+							if (IsValid(icon)) then
+								icon.disabled = false
+								icon:SetAlpha(255)
+							end
+						end)
+					end					
 				end
 			end
 		end
