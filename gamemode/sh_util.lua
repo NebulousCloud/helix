@@ -383,14 +383,14 @@ function nut.util.GetTableDelta(a, b)
 				output[k] = output[k] or {}
 				output[k][k2] = v2
 			end
-		elseif (b[k] == nil or v ~= b[k]) then
+		elseif (b[k] == nil or b[k] != v) then
 			output[k] = v or "__nil"
 		end
 	end
 
 	for k, v in pairs(b) do
 		if (type(v) == "table" and type(a[k]) == "table") then
-			local output2 = nut.util.GetTableDelta(v, a[k])
+			local output2 = nut.util.GetTableDelta(a[k], v)
 
 			for k2, v2 in pairs(output2) do
 				output[k] = output[k] or {}
@@ -445,7 +445,7 @@ function nut.util.StackInv(inventory, class, quantity, data)
 	elseif (stack) then
 		-- A stack already exists, so add or take from it.
 		stack.quantity = stack.quantity + quantity
-
+		print(stack.quantity)
 		-- If the quantity is negative, meaning we take from the stack, remove
 		-- the stack from the inventory.
 		if (stack.quantity <= 0) then
