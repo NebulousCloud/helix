@@ -39,6 +39,10 @@ function nut.class.Register(classTable)
 	return table.insert(nut.class.buffer, classTable)
 end
 
+function nut.class.GetAll()
+	return nut.class.buffer
+end
+
 function nut.class.Get(index)
 	return nut.class.buffer[index]
 end

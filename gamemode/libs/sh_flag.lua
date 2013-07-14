@@ -36,13 +36,13 @@ else
 			local html = ""
 
 			for k, v in SortedPairs(nut.flag.buffer) do
-				local color = "<font color=\"red\">"
+				local color = "<font color=\"red\">&#10008;"
 
 				if (LocalPlayer():HasFlag(k)) then
-					color = "<font color=\"green\">"
+					color = "<font color=\"green\">&#10004;"
 				end
 
-				html = html.."<p><b>"..color.."&#10004;&nbsp;</font>"..k.."</b><br /><hi><i>Description:</i> "..v.desc or nut.lang.Get("no_desc").."</p>"
+				html = html.."<p><b>"..color.."&nbsp;</font>"..k.."</b><br /><hi><i>Description:</i> "..v.desc or nut.lang.Get("no_desc").."</p>"
 			end
 
 			return html
