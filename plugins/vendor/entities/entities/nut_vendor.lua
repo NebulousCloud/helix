@@ -141,7 +141,7 @@ else
 
 		local classData = entity:GetNetVar("classdata", {})
 
-		if (!classData[client:CharClass()]) then
+		if (table.Count(classData) > 0 and !classData[client:CharClass()]) then
 			return
 		end
 

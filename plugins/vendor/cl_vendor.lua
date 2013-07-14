@@ -48,7 +48,7 @@ local PANEL = {}
 
 			local classData = entity:GetNetVar("classdata", {})
 
-			if (LocalPlayer():CharClass() and !classData[LocalPlayer():CharClass()]) then
+			if (table.Count(classData) > 0 and LocalPlayer():CharClass() and !classData[LocalPlayer():CharClass()]) then
 				continue
 			end
 
@@ -326,8 +326,6 @@ local PANEL = {}
 						classData[k] = true
 					end
 				end
-
-				PrintTable(data)
 
 				net.Start("nut_VendorData")
 					net.WriteEntity(entity)
