@@ -38,6 +38,11 @@ if (CLIENT) then
 
 				if (v.deltaValue != realValue) then
 					color = Color(200, 200, 200, 100)
+					v.fadeTime = CurTime() + 2
+				end
+
+				if ((v.fadeTime or 0) < CurTime()) then
+					continue
 				end
 
 				y = nut:PaintBar(v.deltaValue, color, x, y, width, height)

@@ -16,23 +16,19 @@ function GM:HUDShouldDraw(element)
 end
 
 function GM:PaintBar(value, color, x, y, width, height)
-	if (value < 100 and value > 0) then
-		color.a = 205
+	color.a = 205
 
-		draw.RoundedBox(2, x, y, width, height, Color(0, 0, 0, 250))
+	draw.RoundedBox(2, x, y, width, height, Color(0, 0, 0, 250))
 
-		width = width * (math.Clamp(value, 0, 100) / 100) - 2
+	width = width * (math.Clamp(value, 0, 100) / 100) - 2
 
-		surface.SetDrawColor(color)
-		surface.DrawRect(x + 1, y + 1, width, height - 2)
+	surface.SetDrawColor(color)
+	surface.DrawRect(x + 1, y + 1, width, height - 2)
 
-		surface.SetDrawColor(255, 255, 255, 50)
-		surface.DrawOutlinedRect(x + 1, y + 1, width, height - 2)
+	surface.SetDrawColor(255, 255, 255, 50)
+	surface.DrawOutlinedRect(x + 1, y + 1, width, height - 2)
 
-		return y - height - 2
-	else
-		return y
-	end
+	return y - height - 2
 end
 
 local BAR_WIDTH, BAR_HEIGHT = ScrW() * 0.27, 10
