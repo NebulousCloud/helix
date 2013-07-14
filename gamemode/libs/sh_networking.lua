@@ -3,6 +3,7 @@ local entityMeta = FindMetaTable("Entity")
 if (SERVER) then
 	util.AddNetworkString("nut_EntityVar")
 	util.AddNetworkString("nut_NetHandshake")
+	util.AddNetworkString("nut_EntityVarClean")
 
 	function entityMeta:SyncVars(client, noDelta)
 		if (self.nut_NetVars) then
@@ -83,6 +84,12 @@ if (SERVER) then
 		self.nut_NetVars = self.nut_NetVars or {}
 		self.nut_NetVars[key] = value
 
+		self:CallOnRemove("CleanNetVar", function()
+			net.Start("nut_EntityVarClean")
+				net.WriteUInt(self:EntIndex(), 16)
+			net.Broadcast()
+		end)
+
 		if (self.nut_NetHooks and self.nut_NetHooks[key]) then
 			for k, v in pairs(self.nut_NetHooks[key]) do
 				v()
@@ -109,6 +116,10 @@ else
 	end
 
 	NUT_ENT_REGISTRY = NUT_ENT_REGISTRY or {}
+
+	net.Receive("nut_EntityVarClean", function(length)
+		NUT_ENT_REGISTRY[net.ReadUInt(16)] = nil
+	end)
 
 	net.Receive("nut_EntityVar", function(length)
 		local entIndex = net.ReadUInt(16)
