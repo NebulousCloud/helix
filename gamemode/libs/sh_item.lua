@@ -476,6 +476,8 @@ do
 			if (client:CanAfford(price)) then
 				client:UpdateInv(class)
 				client:TakeMoney(price)
+
+				nut.util.Notify(nut.lang.Get("purchased", itemTable.name), client)
 			else
 				nut.util.Notify(nut.lang.Get("no_afford"), client)
 			end

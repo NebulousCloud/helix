@@ -84,7 +84,7 @@ nut.config.showTypingText = true
 nut.config.maxChars = 4
 
 -- The delay between which someone can buy something.
-nut.config.buyDelay = 1
+nut.config.buyDelay = 2
 
 -- If any player can see the business menu.
 nut.config.businessEnabled = true
