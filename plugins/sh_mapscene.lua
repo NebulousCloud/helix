@@ -64,6 +64,7 @@ function COMMAND:OnRun(client, arguments)
 
 	table.insert(PLUGIN.positions, data)
 
+	PLUGIN:SaveData()
 	nut.util.Notify("You've added a new map scene.", client)
 end
 
@@ -83,6 +84,10 @@ function COMMAND:OnRun(client, arguments)
 
 			table.remove(PLUGIN.positions, k)
 		end
+	end
+
+	if (count > 0) then
+		PLUGIN:SaveData()
 	end
 
 	nut.util.Notify("You've removed "..count.." map scenes in a "..range.." unit radius.", client)
