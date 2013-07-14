@@ -51,3 +51,9 @@ nut.config.startingAmount = 0
 nut.config.jumpPower = 128
 
 nut.config.deathTime = 10
+
+-- Determines whether or not voice chat is allowed.
+nut.config.allowVoice = false
+
+-- If true, will have voices fade over distance.
+nut.config.voice3D = false

@@ -119,7 +119,7 @@ function GM:CanArmDupe()
 end
 
 function GM:GetGameDescription()
-	return "NS - "..(SCHEMA and SCHEMA.name or "Unknown")
+	return "NutScript - "..(SCHEMA and SCHEMA.name or "Unknown")
 end
 
 function GM:GetFallDamage(client, speed)
@@ -210,4 +210,8 @@ function GM:PlayerDeathThink(client)
 	end
 	
 	return false
+end
+
+function GM:PlayerCanHearPlayersVoice(speaker, listener)
+	return nut.config.allowVoice, nut.config.voice3D
 end
