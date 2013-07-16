@@ -316,32 +316,31 @@ nut.anim.vort = {
 	glide = ACT_GLIDE
 }
 
--- Dev utility command to lookup enumerations.
-concommand.Add("enum_lookup", function(client, command, arguments)
-	if (!client:IsAdmin()) then
-		return
-	end
+if (SERVER) then
+	local playerMeta = FindMetaTable("Player")
 
-	local enum = table.concat(arguments, " ")
-	local out = {}
+	function playerMeta:SetNutSeq(sequence, time, startCallback, finishCallback)
+		local realSeq, duration = self:LookupSequence(sequence)
+		time = time or duration
 
-	if (tonumber(enum)) then
-		for k, v in pairs(_G) do
-			if (v == tonumber(enum)) then
-				print(k, v)
+		if (!realSeq or realSeq == -1) then
+			return
+		end
+		
+		self:SetNetVar("seq", sequence)
 
-				return
+		if (startCallback) then
+			startCallback()
+		end
+
+		timer.Create("nut_Seq"..self:UniqueID(), time, 1, function()
+			if (IsValid(self)) then
+				self:SetNetVar("seq", false)
+
+				if (finishCallback) then
+					finishCallback()
+				end
 			end
-		end
+		end)
 	end
-
-	for k, v in pairs(_G) do
-		if (type(k) == "string" and string.find(k, enum)) then
-			out[k] = v
-		end
-	end
-
-	for k, v in pairs(out) do
-		print(k, v)
-	end
-end)
+end

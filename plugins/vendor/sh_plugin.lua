@@ -54,7 +54,7 @@ end
 
 nut.command.Register({
 	adminOnly = true,
-	OnRun = function(command, client, arguments)
+	onRun = function(client, arguments)
 		local position = client:GetEyeTraceNoCursor().HitPos
 		local angles = client:EyeAngles()
 		angles.p = 0
@@ -75,7 +75,7 @@ nut.command.Register({
 
 nut.command.Register({
 	adminOnly = true,
-	OnRun = function(command, client, arguments)
+	onRun = function(client, arguments)
 		local trace = client:GetEyeTraceNoCursor()
 		local entity = trace.Entity
 

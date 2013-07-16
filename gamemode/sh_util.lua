@@ -217,6 +217,13 @@ if (SERVER) then
 			net.Send(receivers)
 		end
 	end
+
+	util.AddNetworkString("nut_FadeIntro")
+
+	function nut.util.SendIntroFade(client)
+		net.Start("nut_FadeIntro")
+		net.Send(client)
+	end
 else
 	net.Receive("nut_Notice", function(length)
 		nut.util.Notify(net.ReadString())
@@ -227,10 +234,10 @@ else
 	function nut.util.Notify(message)
 		local notice = vgui.Create("nut_Notification")
 		notice:SetText(message)
-		notice:SetPos(ScrW() * 0.3, ScrH() + 24)
+		notice:SetPos(ScrW() * 0.3, -24)
 		notice:SetWide(ScrW() * 0.4)
-		notice:LerpPositions(1, true)
-		notice:SetPos(ScrW() * 0.3, #nut.notices * 28)
+		notice:LerpPositions(2, true)
+		notice:SetPos(ScrW() * 0.3, ScrH() - ((#nut.notices + 1) * 28))
 
 		notice:CallOnRemove(function()
 			for k, v in pairs(nut.notices) do
@@ -240,7 +247,7 @@ else
 			end
 
 			for k, v in pairs(nut.notices) do
-				v:SetPos(ScrW() * 0.3, (k - 1) * 28)
+				v:SetPos(ScrW() * 0.3, ScrH() - (k * 28))
 			end
 		end)
 
@@ -445,7 +452,7 @@ function nut.util.StackInv(inventory, class, quantity, data)
 	elseif (stack) then
 		-- A stack already exists, so add or take from it.
 		stack.quantity = stack.quantity + quantity
-		print(stack.quantity)
+
 		-- If the quantity is negative, meaning we take from the stack, remove
 		-- the stack from the inventory.
 		if (stack.quantity <= 0) then

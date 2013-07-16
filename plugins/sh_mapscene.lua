@@ -53,44 +53,40 @@ else
 	end
 end
 
-local COMMAND = {}
-COMMAND.adminOnly = true
+nut.command.Register({
+	adminOnly = true,
+	onRun = function(client, arguments)
+		local data = {
+			position = client:EyePos(),
+			angles = client:EyeAngles()
+		}
 
-function COMMAND:OnRun(client, arguments)
-	local data = {
-		position = client:EyePos(),
-		angles = client:EyeAngles()
-	}
+		table.insert(PLUGIN.positions, data)
 
-	table.insert(PLUGIN.positions, data)
-
-	PLUGIN:SaveData()
-	nut.util.Notify("You've added a new map scene.", client)
-end
-
-nut.command.Register(COMMAND, "mapsceneadd")
-
-local COMMAND = {}
-COMMAND.adminOnly = true
-COMMAND.syntax = "[number range]"
-
-function COMMAND:OnRun(client, arguments)
-	local range = tonumber(arguments[1] or "160") or 160
-	local count = 0
-
-	for k, v in pairs(PLUGIN.positions) do
-		if (v.position:Distance(client:GetPos()) <= range) then
-			count = count + 1
-
-			table.remove(PLUGIN.positions, k)
-		end
-	end
-
-	if (count > 0) then
 		PLUGIN:SaveData()
+		nut.util.Notify("You've added a new map scene.", client)
 	end
+}, "mapsceneadd")
 
-	nut.util.Notify("You've removed "..count.." map scenes in a "..range.." unit radius.", client)
-end
+nut.command.Register({
+	adminOnly = true,
+	syntax = "[number range]",
+	onRun = function(client, arguments)
+		local range = tonumber(arguments[1] or "160") or 160
+		local count = 0
 
-nut.command.Register(COMMAND, "mapsceneremove")
+		for k, v in pairs(PLUGIN.positions) do
+			if (v.position:Distance(client:GetPos()) <= range) then
+				count = count + 1
+
+				table.remove(PLUGIN.positions, k)
+			end
+		end
+
+		if (count > 0) then
+			PLUGIN:SaveData()
+		end
+
+		nut.util.Notify("You've removed "..count.." map scenes in a "..range.." unit radius.", client)
+	end
+}, "mapsceneremove")

@@ -24,9 +24,11 @@ if (SERVER) then
 	end
 
 	function ENT:Use(activator)
-		net.Start("nut_ShowItemMenu")
-			net.WriteEntity(self)
-		net.Send(activator)
+		if (nut.schema.Call("PlayerCanUseItem", activator, self) != false) then
+			net.Start("nut_ShowItemMenu")
+				net.WriteEntity(self)
+			net.Send(activator)
+		end
 	end
 end
 

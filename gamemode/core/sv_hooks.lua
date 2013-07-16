@@ -12,7 +12,7 @@ end
 function GM:GetDefaultInv(inventory, client, data)
 end
 
-function GM:GetDefaultMoney(client)
+function GM:GetDefaultMoney(client, data)
 	return nut.config.startingAmount
 end
 
@@ -71,10 +71,18 @@ function GM:PlayerLoadedChar(client)
 	if (!client:GetNutVar("sawCredits")) then
 		client:SetNutVar("sawCredits", true)
 		
-		nut.scroll.Send("NutScript: "..nut.lang.Get("schema_author", "Chessnut"), client, function()
-			if (IsValid(client)) then
-				nut.scroll.Send(SCHEMA.name..": "..nut.lang.Get("schema_author", SCHEMA.author), client)
+		nut.util.SendIntroFade(client)
+
+		timer.Simple(15, function()
+			if (!IsValid(client)) then
+				return
 			end
+			
+			nut.scroll.Send("NutScript: "..nut.lang.Get("schema_author", "Chessnut"), client, function()
+				if (IsValid(client)) then
+					nut.scroll.Send(SCHEMA.name..": "..nut.lang.Get("schema_author", SCHEMA.author), client)
+				end
+			end)
 		end)
 	end
 end
@@ -195,7 +203,10 @@ function GM:InitPostEntity()
 end
 
 function GM:PlayerDeath(victim, weapon, attacker)
-	victim:SetNutVar("deathTime", CurTime() + nut.config.deathTime)
+	local time = CurTime() + nut.config.deathTime
+	time = nut.schema.Call("PlayerGetDeathTime", client, time) or time
+
+	victim:SetNutVar("deathTime", time)
 
 	timer.Simple(0, function()
 		victim:SetMainBar("You are now respawning.", nut.config.deathTime)
@@ -214,4 +225,18 @@ end
 
 function GM:PlayerCanHearPlayersVoice(speaker, listener)
 	return nut.config.allowVoice, nut.config.voice3D
+end
+
+function GM:PlayerGetFistDamage(client, damage)
+	return damage + playerMeta:GetAttrib(ATTRIB_STR, 0)
+end
+
+function GM:PlayerThrowPunch(client, attempted)
+	client:UpdateAttrib(ATTRIB_STR, 0.025)
+end
+
+function GM:OnPlayerHitGround(client, inWater, onFloater, fallSpeed)
+	if (!inWater and !onFloater) then
+		client:UpdateAttrib(ATTRIB_ACR, 0.01)
+	end
 end

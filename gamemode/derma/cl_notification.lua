@@ -39,7 +39,7 @@ local PANEL = {}
 
 	function PANEL:Think()
 		if (self.start and self.finish and CurTime() > self.finish) then
-			self:SetPos(ScrW(), 0)
+			self:SetPos(ScrW(), ScrH() - 28)
 
 			timer.Simple(0.25, function()
 				if (IsValid(self)) then

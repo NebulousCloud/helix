@@ -34,6 +34,33 @@ end
 local BAR_WIDTH, BAR_HEIGHT = ScrW() * 0.27, 10
 
 function GM:HUDPaint()
+	if (!nut.loaded) then
+		surface.SetDrawColor(0, 0, 0, 255)
+		surface.DrawRect(0, 0, ScrW(), ScrH())
+
+		draw.SimpleText("Loading NutScript", "nut_HeaderFont", ScrW() * 0.5, ScrH() * 0.5, color_white, 1, 1)
+
+		nut.schema.Call("DrawLoadingScreen")
+
+		return
+	end
+
+	nut.scroll.Paint()
+
+	if (nut.fadeStart and nut.fadeFinish) then
+		local fraction = 255 - (math.TimeFraction(nut.fadeStart, nut.fadeFinish, CurTime()) * 255)
+		local color = Color(255, 255, 255, fraction)
+		local bigTitle = nut.config.bigIntroText or SCHEMA.name
+
+		surface.SetFont("nut_TitleFont")
+		local _, h = surface.GetTextSize(bigTitle)
+
+		draw.SimpleText(bigTitle, "nut_TitleFont", ScrW() * 0.5, ScrH() * 0.35, color, 1, 1)
+		draw.SimpleText(nut.config.smallIntroText or SCHEMA.desc, "nut_TargetFont", ScrW() * 0.5, (ScrH() * 0.35) + h, color, 1, 1)
+
+		return
+	end
+
 	local trace = LocalPlayer():GetEyeTrace()
 
 	nut.schema.Call("HUDPaintTargetID", trace.Entity)
@@ -45,16 +72,8 @@ function GM:HUDPaint()
 		y = nut.bar.Paint(x, y, BAR_WIDTH, BAR_HEIGHT)
 	end
 
-	nut.scroll.Paint()
 	nut.bar.PaintMain()
 	
-	if (!nut.loaded) then
-		surface.SetDrawColor(0, 0, 0, 255)
-		surface.DrawRect(0, 0, ScrW(), ScrH())
-
-		draw.SimpleText("Loading NutScript", "nut_HeaderFont", ScrW() * 0.5, ScrH() * 0.5, color_white, 1, 1)
-	end
-
 	local info = {
 		"NutScript Development Build",
 		"Schema UniqueID: "..SCHEMA.uniqueID,
@@ -197,14 +216,48 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 	viewModel:SetAngles(eyeAngles)
 end
 
+local FADE_TIME = 7
+
+net.Receive("nut_FadeIntro", function(length)
+	nut.fadeStart = CurTime()
+	nut.fadeFinish = CurTime() + FADE_TIME
+
+	nut.fadeColorStart = CurTime() + FADE_TIME + 5
+	nut.fadeColorFinish = CurTime() + FADE_TIME + 10
+
+	nut.schema.Call("DoSchemaIntro")
+end)
+
 function GM:RenderScreenspaceEffects()
+	local brightness = 0
+	local color2 = 0
+	local curTime = CurTime()
+
+	if (nut.fadeStart and nut.fadeFinish) then
+		brightness = 1 - math.TimeFraction(nut.fadeStart, nut.fadeFinish, curTime)
+
+		if (curTime > nut.fadeFinish) then
+			nut.fadeStart = nil
+			nut.fadeFinish = nil
+		end
+	end
+
+	if (nut.fadeColorStart and nut.fadeColorFinish) then
+		color2 = (1 - math.TimeFraction(nut.fadeColorStart, nut.fadeColorFinish, curTime)) * 0.7
+
+		if (curTime > nut.fadeColorFinish) then
+			nut.fadeColorStart = nil
+			nut.fadeColorFinish = nil
+		end
+	end
+
 	local color = {}
 	color["$pp_colour_addr"] = 0.02
 	color["$pp_colour_addg"] = 0.01
 	color["$pp_colour_addb"] = 0.07
-	color["$pp_colour_brightness"] = -0.02
+	color["$pp_colour_brightness"] = -0.02 - (brightness * 1)
 	color["$pp_colour_contrast"] = 1.3
-	color["$pp_colour_colour"] = 0.7
+	color["$pp_colour_colour"] = math.Clamp(0.7 - color2, 0, 1)
 	color["$pp_colour_mulr"] = 0.1
 	color["$pp_colour_mulg"] = 0
 	color["$pp_colour_mulb"] = 0.1

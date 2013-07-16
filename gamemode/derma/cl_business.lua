@@ -12,6 +12,8 @@ local PANEL = {}
 		self.categories = {}
 		self.nextBuy = 0
 
+		nut.schema.Call("BusinessPrePopulateItems", self)
+
 		for class, itemTable in SortedPairs(nut.item.GetAll()) do
 			if (!itemTable.noBusiness and (!itemTable.ShouldShowOnBusiness or (itemTable.ShouldShowOnBusiness and itemTable:ShouldShowOnBusiness(LocalPlayer()) != false))) then
 				local category = itemTable.category
@@ -61,6 +63,8 @@ local PANEL = {}
 						end
 					category3:InvalidateLayout(true)
 
+					nut.schema.Call("BusinessCategoryCreated", category3)
+
 					self.categories[category2] = {list = list, category = category3, panel = panel}
 				else
 					local list = self.categories[category2].list
@@ -92,10 +96,14 @@ local PANEL = {}
 								icon:SetAlpha(255)
 							end
 						end)
-					end					
+					end
+
+					nut.schema.Call("BusinessItemCreated", itemTable, icon)			
 				end
 			end
 		end
+
+		nut.schema.Call("BusinessPostPopulateItems", self)
 	end
 
 	function PANEL:Think()

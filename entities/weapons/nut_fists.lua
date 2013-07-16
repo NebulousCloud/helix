@@ -125,7 +125,6 @@ function SWEP:PrimaryAttack()
 	self:DoPunchAnimation()
 
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
-
 	self.Owner:ViewPunch( Angle(self.LastHand + 2, self.LastHand + 5, 0.125) )
 
 	timer.Simple(0.085, function()
@@ -147,6 +146,13 @@ function SWEP:PrimaryAttack()
 			end
 
 			if (shoot) then
+				local damage = self.Primary.Damage
+				local result = nut.schema.Call("PlayerGetFistDamage", self.Owner, damage)
+
+				if (result != nil) then
+					damage = result
+				end
+
 				local bullet = {}
 				bullet.Num = 1
 				bullet.Src = self.Owner:GetShootPos()
@@ -154,7 +160,7 @@ function SWEP:PrimaryAttack()
 				bullet.Spread = Vector(0, 0, 0)
 				bullet.Tracer = 0
 				bullet.Force = 5
-				bullet.Damage = self.Primary.Damage
+				bullet.Damage = damage
 
 				self.Owner:FireBullets(bullet)
 			elseif ( IsValid(trace.Entity) ) then
@@ -162,6 +168,8 @@ function SWEP:PrimaryAttack()
 					trace.Entity:GetPhysicsObject():ApplyForceOffset(self.Owner:GetAimVector() * 500, trace.HitPos)
 				end
 			end
+
+			nut.schema.Call("PlayerThrowPunch", self.Owner, shoot)
 		end
 	end)
 end
@@ -174,6 +182,10 @@ function SWEP:SecondaryAttack()
 		local distance = self.Owner:EyePos():Distance(trace.HitPos)
 
 		if (distance > 72) then
+			return
+		end
+
+		if (nut.schema.Call("PlayerCanKnock", self.Owner, entity) == false) then
 			return
 		end
 

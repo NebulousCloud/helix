@@ -8,7 +8,7 @@ if (SERVER) then
 
 	PLUGIN.areas = PLUGIN.areas or {}
 
-	timer.Create("nut_AreaManager", 0.5, 0, function()
+	timer.Create("nut_AreaManager", 1, 0, function()
 		local areas = PLUGIN.areas
 
 		if (#areas > 0) then
@@ -51,61 +51,58 @@ else
 	end)
 end
 
-local COMMAND = {}
-COMMAND.syntax = "[bool showTime]"
+nut.command.Register({
+	adminOnly = true,
+	syntax = "[bool showTime]",
+	onRun = function(client, arguments)
+		local name = arguments[1]
+		local showTime = util.tobool(arguments[2] or "true")
 
-function COMMAND:OnRun(client, arguments)
-	local name = arguments[1]
-	local showTime = util.tobool(arguments[2] or "true")
+		if (!client:GetNutVar("areaMin")) then
+			if (!name) then
+				nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
 
-	if (!client:GetNutVar("areaMin")) then
-		if (!name) then
-			nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
+				return
+			end
 
-			return
+			client:SetNutVar("areaMin", client:GetPos())
+			client:SetNutVar("areaName", name)
+			client:SetNutVar("areaShowTime", showTime)
+
+			nut.util.Notify("Run the command again at a different position to set a maximum point.", client)
+		else
+			local data = {}
+			data.min = client:GetNutVar("areaMin")
+			data.max = client:GetPos()
+			data.name = client:GetNutVar("areaName")
+			data.showTime = client:GetNutVar("areaShowTime")
+
+			client:SetNutVar("areaMin", nil)
+			client:SetNutVar("areaName", nil)
+			client:SetNutVar("areaShowTime", nil)
+
+			table.insert(PLUGIN.areas, data)
+
+			nut.util.WriteTable("areas", PLUGIN.areas)
+			nut.util.Notify("You've added a new area.", client)
 		end
+	end
+}, "areaadd")
 
-		client:SetNutVar("areaMin", client:GetPos())
-		client:SetNutVar("areaName", name)
-		client:SetNutVar("areaShowTime", showTime)
+nut.command.Register({
+	adminOnly = true,
+	onRun = function(client, arguments)
+		local count = 0
 
-		nut.util.Notify("Run the command again at a different position to set a maximum point.", client)
-	else
-		local data = {}
-		data.min = client:GetNutVar("areaMin")
-		data.max = client:GetPos()
-		data.name = client:GetNutVar("areaName")
-		data.showTime = client:GetNutVar("areaShowTime")
+		for k, v in pairs(PLUGIN.areas) do
+			if (table.HasValue(ents.FindInBox(v.min, v.max), client)) then
+				table.remove(PLUGIN.areas, k)
 
-		client:SetNutVar("areaMin", nil)
-		client:SetNutVar("areaName", nil)
-		client:SetNutVar("areaShowTime", nil)
-
-		table.insert(PLUGIN.areas, data)
+				count = count + 1
+			end
+		end
 
 		nut.util.WriteTable("areas", PLUGIN.areas)
-		nut.util.Notify("You've added a new area.", client)
+		nut.util.Notify("You've removed "..count.." areas.", client)
 	end
-end
-
-nut.command.Register(COMMAND, "areaadd")
-
-local COMMAND = {}
-COMMAND.adminOnly = true
-
-function COMMAND:OnRun(client, arguments)
-	local count = 0
-
-	for k, v in pairs(PLUGIN.areas) do
-		if (table.HasValue(ents.FindInBox(v.min, v.max), client)) then
-			table.remove(PLUGIN.areas, k)
-
-			count = count + 1
-		end
-	end
-
-	nut.util.WriteTable("areas", PLUGIN.areas)
-	nut.util.Notify("You've removed "..count.." areas.", client)
-end
-
-nut.command.Register(COMMAND, "arearemove")
+}, "arearemove")

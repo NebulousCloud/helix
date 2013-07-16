@@ -18,7 +18,7 @@ function PLUGIN:PlayerLoadedChar(client)
 			local value = 3
 
 			if (length2D >= runSpeed) then
-				value = -10
+				value = -10 + math.min(client:GetAttrib(ATTRIB_END) * 0.25, 7.5)
 			elseif (length2D <= 10) then
 				value = 5
 

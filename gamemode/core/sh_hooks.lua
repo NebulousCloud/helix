@@ -27,7 +27,7 @@ function GM:CalcMainActivity(client, velocity)
 	end
 
 	if (client.character and client:Alive()) then
-		client.CalcSeqOverride = nil
+		client.CalcSeqOverride = -1
 
 		local weapon = client:GetActiveWeapon()
 		local holdType = "normal"
@@ -86,6 +86,12 @@ function GM:CalcMainActivity(client, velocity)
 			else
 				client.CalcIdeal = value
 			end
+		end
+
+		local override = client:GetNetVar("seq")
+
+		if (override) then
+			client.CalcSeqOverride = client:LookupSequence(override)
 		end
 
 		if (CLIENT) then

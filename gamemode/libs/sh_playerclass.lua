@@ -118,13 +118,13 @@ do
 	function playerMeta:IsPenetrating()
 		local physicsObject = self:GetPhysicsObject()
 		local position = self:GetPos()
-		local entities = ents.FindInBox(position + Vector(-16, -16, 0), position + Vector(16, 16, 64))
+		local entities = ents.FindInBox(position + Vector(-32, -32, 0), position + Vector(32, 32, 84))
 
 		for k, v in pairs(entities) do
 			if ((self.ragdoll and self.ragdoll == v) or v == self) then
 				continue
 			end
-
+			print(k, v)
 			if (string.find(v:GetClass(), "prop_") or v:IsPlayer() or v:IsNPC()) then
 				return true
 			end
@@ -174,7 +174,7 @@ do
 			self:StripWeapons()
 			self:Freeze(true)
 			self:SetNetVar("ragdoll", self.ragdoll:EntIndex())
-			self:SetNoDraw(true)
+			--self:SetNoDraw(true)
 
 			local uniqueID = "nut_RagSafePos"..self:EntIndex()
 

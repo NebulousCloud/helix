@@ -15,7 +15,7 @@ if (SERVER) then
 		local echo = false
 
 		if (commandTable) then
-			if (commandTable.OnRun) then
+			if (commandTable.onRun) then
 				if (commandTable.superAdminOnly) then
 					if (!client:IsSuperAdmin()) then
 						nut.util.Notify(nut.lang.Get("no_perm", client:Name()), client)
@@ -36,7 +36,7 @@ if (SERVER) then
 					return
 				end
 
-				local result = commandTable:OnRun(client, arguments)
+				local result = commandTable.onRun(client, arguments)
 
 				if (result == false) then
 					echo = true

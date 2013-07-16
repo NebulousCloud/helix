@@ -70,34 +70,32 @@ else
 	end
 end
 
-local COMMAND = {}
-COMMAND.syntax = "<number freq>"
+nut.command.Register({
+	syntax = "<number freq>",
+	onRun = function(client, arguments)
+		local data = {}
+			data.start = client:GetShootPos()
+			data.endpos = data.start + client:GetAimVector() * 96
+			data.filter = client
+		local trace = util.TraceLine(data)
+		local entity = trace.Entity
+		local frequency = arguments[1] or ""
 
-function COMMAND:OnRun(client, arguments)
-	local data = {}
-		data.start = client:GetShootPos()
-		data.endpos = data.start + client:GetAimVector() * 96
-		data.filter = client
-	local trace = util.TraceLine(data)
-	local entity = trace.Entity
-	local frequency = arguments[1] or ""
+		if (!string.match(frequency, "%d%d%d%.%d")) then
+			nut.util.Notify("Frequencies must follow the ###.# format to be valid.", client)
 
-	if (!string.match(frequency, "%d%d%d%.%d")) then
-		nut.util.Notify("Frequencies must follow the ###.# format to be valid.", client)
+			return
+		end
 
-		return
+		if (IsValid(entity) and entity:GetClass() == "nut_radio") then
+			entity:SetNetVar("freq", frequency)
+
+			nut.util.Notify("You have set this radio's frequency to "..frequency..".", client)
+		else
+			nut.util.Notify("You must be looking at a radio.", client)
+		end
 	end
-
-	if (IsValid(entity) and entity:GetClass() == "nut_radio") then
-		entity:SetNetVar("freq", frequency)
-
-		nut.util.Notify("You have set this radio's frequency to "..frequency..".", client)
-	else
-		nut.util.Notify("You must be looking at a radio.", client)
-	end
-end
-
-nut.command.Register(COMMAND, "freq")
+}, "freq")
 
 nut.chat.Register("radio", {
 	onChat = function(speaker, text)
