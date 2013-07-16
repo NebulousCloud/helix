@@ -70,7 +70,7 @@ function GM:PlayerLoadedChar(client)
 
 	if (!client:GetNutVar("sawCredits")) then
 		client:SetNutVar("sawCredits", true)
-		
+
 		nut.util.SendIntroFade(client)
 
 		timer.Simple(15, function()
@@ -228,11 +228,18 @@ function GM:PlayerCanHearPlayersVoice(speaker, listener)
 end
 
 function GM:PlayerGetFistDamage(client, damage)
-	return damage + playerMeta:GetAttrib(ATTRIB_STR, 0)
+	return damage + client:GetAttrib(ATTRIB_STR, 0)
 end
 
 function GM:PlayerThrowPunch(client, attempted)
-	client:UpdateAttrib(ATTRIB_STR, 0.025)
+	local value = 0.001
+
+	if (attempted) then
+		value = 0.005
+	end
+
+	client:UpdateAttrib(ATTRIB_STR, value)
+	print(client:GetAttrib(ATTRIB_STR))
 end
 
 function GM:OnPlayerHitGround(client, inWater, onFloater, fallSpeed)
