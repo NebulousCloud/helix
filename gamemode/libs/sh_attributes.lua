@@ -61,8 +61,6 @@ do
 				return
 			end
 
-			value = math.floor(value)
-
 			-- No point in no change.
 			if (value == 0) then
 				return
