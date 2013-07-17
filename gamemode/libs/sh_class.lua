@@ -8,7 +8,7 @@ nut.class.buffer = {}
 
 function nut.class.Register(classTable)
 	if (!classTable.faction) then
-		error("Attempt to register class without class! ("..classTable.uniqueID or "unknown"..")")
+		error("Attempt to register class without faction! ("..(classTable.uniqueID or "unknown")..")")
 	end
 
 	if (!classTable.PlayerCanJoin) then
