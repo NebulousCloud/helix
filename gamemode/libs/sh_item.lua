@@ -71,21 +71,23 @@ function nut.item.Register(itemTable, isBase)
 			end
 		end
 
-		function itemTable:GetDesc(data)
-			local description = string.gsub(self.desc, "%%.-%%", function(key)
-				key = string.sub(key, 2, -2)
+		if (!itemTable.GetDesc) then
+			function itemTable:GetDesc(data)
+				local description = string.gsub(self.desc, "%%.-%%", function(key)
+					key = string.sub(key, 2, -2)
 
-				local exploded = string.Explode("|", key)
-				key = exploded[1]
+					local exploded = string.Explode("|", key)
+					key = exploded[1]
 
-				if (data and data[key]) then
-					return data[key]
-				end
+					if (data and data[key]) then
+						return data[key]
+					end
 
-				return self.data[key] or exploded[2]
-			end)
+					return self.data[key] or exploded[2]
+				end)
 
-			return description
+				return description
+			end
 		end
 
 		nut.item.buffer[itemTable.uniqueID] = itemTable
@@ -386,6 +388,10 @@ do
 
 			local menu = DermaMenu()
 				for k, v in SortedPairs(itemTable.functions) do
+					if (v.shouldDisplay and v.shouldDisplay(entity) == false) then
+						continue
+					end
+
 					if (!v.entityOnly) then
 						local material = v.icon or "icon16/plugin_go.png"
 
@@ -428,6 +434,10 @@ do
 
 			local menu = DermaMenu()
 				for k, v in SortedPairs(itemTable.functions) do
+					if (v.shouldDisplay and v.shouldDisplay(entity) == false) then
+						continue
+					end
+
 					if (!v.menuOnly) then
 						local material = v.icon or "icon16/plugin_go.png"
 
