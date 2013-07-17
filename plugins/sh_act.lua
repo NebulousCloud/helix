@@ -92,7 +92,7 @@ if (SERVER) then
 			end
 
 			local act = list[sequence]
-			PrintTable(list)
+			
 			if (act) then
 				if (act[3] and act[3](client) == false) then
 					return
