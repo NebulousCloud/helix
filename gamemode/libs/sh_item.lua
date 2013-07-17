@@ -17,6 +17,16 @@ function nut.item.Register(itemTable, isBase)
 	if (isBase) then
 		nut.item.bases[itemTable.uniqueID] = itemTable
 	else
+		if (itemTable.base) then
+			local baseTable = nut.item.bases[itemTable.base]
+
+			if (baseTable) then
+				itemTable = table.Inherit(itemTable, baseTable)
+			else
+				error("Attempt to derive item '"..itemTable.uniqueID.."' from unknown base! ("..itemTable.base..")")
+			end
+		end
+
 		itemTable.category = itemTable.category or nut.lang.Get("misc")
 		itemTable.price = itemTable.price or 0
 		itemTable.weight = itemTable.weight or 1
@@ -102,6 +112,14 @@ function nut.item.Get(uniqueID)
 end
 
 --[[
+	Purpose: Similar to nut.item.Get, but instead of searching through
+	the item buffer, it searches through registered base items.
+--]]
+function nut.item.GetBase(uniqueID)
+	return nut.item.bases[uniqueID]
+end
+
+--[[
 	Purpose: Loads all of the bases within the items/base folder relative to the
 	specified directory. For each base, it will look for items within items/<base name>
 	for items that derive from the base item and register them. Finally, regular items
@@ -136,7 +154,7 @@ function nut.item.Load(directory)
 end
 
 -- By default, we include all items in the core folder within the framework.
-nut.item.Load(nut.FolderName.."/gamemode/core")
+nut.item.Load(nut.FolderName.."/gamemode")
 
 --[[
 	Purpose: Returns all of the registered item tables.
