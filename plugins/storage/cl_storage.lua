@@ -166,33 +166,34 @@ local PANEL = {}
 							surface.DrawRect(0, 0, w, h)
 						end
 					category3:SetContents(list)
-
-					for k, v in SortedPairs(items) do
-						local icon = list:Add("SpawnIcon")
-						icon:SetModel(itemTable.model or "models/error.mdl")
-
-						local label = icon:Add("DLabel")
-						label:SetPos(8, 3)
-						label:SetWide(64)
-						label:SetText(v.quantity)
-						label:SetFont("DermaDefaultBold")
-						label:SetDark(true)
-						label:SetExpensiveShadow(1, Color(240, 240, 240))
-
-						icon:SetToolTip(nut.lang.Get("item_info", itemTable.name, itemTable:GetDesc(v.data)))
-						icon.DoClick = function(icon)
-							net.Start("nut_StorageUpdate")
-								net.WriteEntity(entity)
-								net.WriteString(class)
-								net.WriteInt(-1, 8)
-								net.WriteTable(v.data or {})
-							net.SendToServer()
-						end
-					end
-
 					category3:InvalidateLayout(true)
 
-					self.categories[category2] = {category = category3, panel = panel}
+					self.categories[category2] = {list = list, category = category3, panel = panel}
+				end
+
+				local list = self.categories[category2].list
+				
+				for k, v in SortedPairs(items) do
+					local icon = list:Add("SpawnIcon")
+					icon:SetModel(itemTable.model or "models/error.mdl")
+
+					local label = icon:Add("DLabel")
+					label:SetPos(8, 3)
+					label:SetWide(64)
+					label:SetText(v.quantity)
+					label:SetFont("DermaDefaultBold")
+					label:SetDark(true)
+					label:SetExpensiveShadow(1, Color(240, 240, 240))
+
+					icon:SetToolTip(nut.lang.Get("item_info", itemTable.name, itemTable:GetDesc(v.data)))
+					icon.DoClick = function(icon)
+						net.Start("nut_StorageUpdate")
+							net.WriteEntity(entity)
+							net.WriteString(class)
+							net.WriteInt(-1, 8)
+							net.WriteTable(v.data or {})
+						net.SendToServer()
+					end
 				end
 			end
 		end
