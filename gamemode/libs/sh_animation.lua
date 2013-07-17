@@ -316,10 +316,10 @@ nut.anim.vort = {
 	glide = ACT_GLIDE
 }
 
-if (SERVER) then
-	local playerMeta = FindMetaTable("Player")
+local playerMeta = FindMetaTable("Player")
 
-	function playerMeta:SetNutSeq(sequence, time, startCallback, finishCallback)
+if (SERVER) then
+	function playerMeta:SetOverrideSeq(sequence, time, startCallback, finishCallback)
 		local realSeq, duration = self:LookupSequence(sequence)
 		time = time or duration
 
@@ -333,14 +333,26 @@ if (SERVER) then
 			startCallback()
 		end
 
-		timer.Create("nut_Seq"..self:UniqueID(), time, 1, function()
-			if (IsValid(self)) then
-				self:SetNetVar("seq", false)
+		if (time > 0) then
+			timer.Create("nut_Seq"..self:UniqueID(), time, 1, function()
+				if (IsValid(self)) then
+					self:ResetOverrideSeq()
 
-				if (finishCallback) then
-					finishCallback()
+					if (finishCallback) then
+						finishCallback()
+					end
 				end
-			end
-		end)
+			end)
+		end
+
+		return time
 	end
+
+	function playerMeta:ResetOverrideSeq()
+		self:SetNetVar("seq", false)
+	end
+end
+
+function playerMeta:GetOverrideSeq()
+	return self:GetNetVar("seq", false)
 end
