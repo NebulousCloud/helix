@@ -221,6 +221,10 @@ if (SERVER) then
 	util.AddNetworkString("nut_FadeIntro")
 
 	function nut.util.SendIntroFade(client)
+		if (nut.schema.Call("PlayerShouldSeeIntro", client) == false) then
+			return
+		end
+
 		net.Start("nut_FadeIntro")
 		net.Send(client)
 	end
@@ -232,6 +236,10 @@ else
 	nut.notices = nut.notices or {}
 
 	function nut.util.Notify(message)
+		if (nut.schema.Call("NoticeShouldAppear") == false) then
+			return
+		end
+
 		local notice = vgui.Create("nut_Notification")
 		notice:SetText(message)
 		notice:SetPos(ScrW() * 0.3, -24)
@@ -249,11 +257,15 @@ else
 			for k, v in pairs(nut.notices) do
 				v:SetPos(ScrW() * 0.3, ScrH() - (k * 28))
 			end
+
+			nut.schema.Call("NoticeRemoved", notice)
 		end)
 
 		table.insert(nut.notices, notice)
 
 		MsgC(Color(92, 232, 250), message.."\n")
+
+		nut.schema.Call("NoticeCreated", notice)
 	end
 
 	--[[
@@ -263,18 +275,6 @@ else
 	function nut.util.DrawText(x, y, text, color, font, xalign, yalign)
 		color = color or Color(255, 255, 255)
 
-		--[[
-		local data = {
-			pos = {x, y},
-			text = text,
-			font = font or "nut_TargetFont",
-			color = color,
-			xalign = xalign or 1,
-			yalign = yalign or 1
-		}
-
-		draw.TextShadow(data, 1, color.a or 255)
-		--]]
 		draw.SimpleTextOutlined(text, font or "nut_TargetFont", x, y, color, xalign or 1, yalign or 1, 1, Color(0, 0, 0, color.a * 0.7))
 	end
 
