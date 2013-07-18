@@ -2,6 +2,7 @@ BASE.name = "Base Weapon"
 BASE.uniqueID = "base_wep"
 BASE.category = "Weapons"
 BASE.class = "weapon_crowbar"
+BASE.type = "melee"
 BASE.functions = {}
 BASE.functions.Use = {
 	run = function(itemTable, client, data)
@@ -16,6 +17,7 @@ BASE.functions.Use = {
 
 			if (IsValid(weapon)) then
 				client:SetNutVar(itemTable.type, weapon)
+				client:SelectWeapon(itemTable.class)
 			end
 		else
 			return false
