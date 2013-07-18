@@ -358,21 +358,6 @@ else
 	end
 end
 
-function nut.util.CleanMarkup(data)
-	if (type(data) == "string") then
-		data = string.gsub(data, "<font(=?)>", "")
-		data = string.gsub(data, "<face(=?)>", "")
-		data = string.gsub(data, "<color(=?)>", "")
-		data = string.gsub(data, "<colour(=?)>", "")
-		data = string.gsub(data, "</color>", "")
-		data = string.gsub(data, "</font>", "")
-		data = string.gsub(data, "</face>", "")
-		data = string.gsub(data, "</face>", "")
-	end
-
-	return data
-end
-
 --[[
 	Purpose: Gathers up all the differences between the 'delta' table
 	and a source table and returns them as a table of changes. This function
@@ -467,4 +452,26 @@ function nut.util.StackInv(inventory, class, quantity, data)
 	end
 
 	return inventory
+end
+
+--[[
+	Purpose: Finds the closest player to a given position by looping through
+	each player and determining if their distance is lower than the
+	last. This function will return the closest player and the distance for
+	that player.
+--]]
+function nut.util.FindClosestPlayer(position)
+	local distance = 32768 -- maximum map size.
+	local client
+
+	for k, v in pairs(player.GetAll()) do
+		local theirDistance = v:GetPos():Distance(position)
+
+		if (theirDistance < distance) then
+			distance = theirDistance
+			client = v
+		end
+	end
+
+	return client, distance
 end
