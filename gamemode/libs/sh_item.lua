@@ -120,6 +120,13 @@ function nut.item.GetBase(uniqueID)
 end
 
 --[[
+	Purpose: Retrieves all valid item bases that were registered.
+--]]
+function nut.item.GetBases()
+	return nut.item.bases
+end
+
+--[[
 	Purpose: Loads all of the bases within the items/base folder relative to the
 	specified directory. For each base, it will look for items within items/<base name>
 	for items that derive from the base item and register them. Finally, regular items
@@ -127,21 +134,28 @@ end
 --]]
 function nut.item.Load(directory)
 	for k, v in pairs(file.Find(directory.."/items/base/*.lua", "LUA")) do
-		BASE = {}
+		BASE = {folderName = string.sub(v, 4, -5)}
 			nut.util.Include(directory.."/items/base/"..v)
 			nut.item.Register(BASE, true)
+		BASE = nil
+	end
 
-			local parent = string.sub(v, 4, -5)
+	for k, v in pairs(nut.item.GetBases()) do
+		local parent = v.folderName
+
+		if (parent) then
 			local files = file.Find(directory.."/items/"..parent.."/*.lua", "LUA")
 
 			for k2, v2 in pairs(files) do
-				ITEM = table.Inherit({}, BASE)
+				ITEM = table.Inherit({}, v)
 					nut.util.Include(directory.."/items/"..parent.."/"..v2)
 
 					nut.item.Register(ITEM)
 				ITEM = nil
 			end
-		BASE = nil
+		else
+			error("Item base '"..v.uniqueID.."' does not have a folder!")
+		end
 	end
 
 	for k, v in pairs(file.Find(directory.."/items/*.lua", "LUA")) do
