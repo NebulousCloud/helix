@@ -69,7 +69,8 @@ local PANEL = {}
 				for k, v in SortedPairs(items) do
 					local icon = list:Add("SpawnIcon")
 					icon:SetModel(itemTable.model or "models/error.mdl")
-
+					icon.PaintOver = itemTable.Paint
+					
 					local label = icon:Add("DLabel")
 					label:SetPos(8, 3)
 					label:SetWide(64)
