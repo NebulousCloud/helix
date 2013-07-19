@@ -151,6 +151,14 @@ end
 	will also be set up for the faction so it makes it easier to network.
 --]]
 function nut.faction.Register(index, faction)
+	if (!index) then
+		error("Attempt to register faction without an index!")
+	end
+
+	if (!faction) then
+		error("Attempt to register faction without an actual faction table!")
+	end
+	
 	faction.index = index
 
 	if (faction.isDefault == nil) then
