@@ -176,7 +176,11 @@ local PANEL = {}
 				for k, v in SortedPairs(items) do
 					local icon = list:Add("SpawnIcon")
 					icon:SetModel(itemTable.model or "models/error.mdl")
-					icon.PaintOver = itemTable.Paint
+					icon.PaintOver = function(icon, w, h)
+						if (itemTable.PaintIcon) then
+							itemTable:PaintIcon(w, h)
+						end
+					end
 
 					local label = icon:Add("DLabel")
 					label:SetPos(8, 3)
@@ -240,7 +244,11 @@ local PANEL = {}
 				for k, v in SortedPairs(items) do
 					local icon = list:Add("SpawnIcon")
 					icon:SetModel(itemTable.model or "models/error.mdl")
-					icon.PaintOver = itemTable.Paint
+					icon.PaintOver = function(icon, w, h)
+						if (itemTable.PaintIcon) then
+							itemTable:PaintIcon(w, h)
+						end
+					end
 					
 					local label = icon:Add("DLabel")
 					label:SetPos(8, 3)
