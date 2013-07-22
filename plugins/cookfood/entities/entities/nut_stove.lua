@@ -1,5 +1,5 @@
 ENT.Type = "anim"
-ENT.PrintName = "Radio"
+ENT.PrintName = "Stove"
 ENT.Author = "Chessnut"
 ENT.Spawnable = true
 ENT.AdminOnly = true
