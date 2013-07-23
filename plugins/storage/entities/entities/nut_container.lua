@@ -69,8 +69,13 @@ if (SERVER) then
 		local class = net.ReadString()
 		local quantity = net.ReadInt(8)
 		local data = net.ReadTable()
+		local itemTable = nut.item.Get(class)
 
-		if (IsValid(entity) and entity:GetPos():Distance(client:GetPos()) <= 128) then
+		if (itemTable and IsValid(entity) and entity:GetPos():Distance(client:GetPos()) <= 128) then
+			if (itemTable.CanTransfer and itemTable:CanTransfer(client, data) == false) then
+				return false
+			end
+
 			if (quantity > 0 and client:HasItem(class)) then
 				local result = client:UpdateInv(class, -1, data)
 

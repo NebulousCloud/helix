@@ -39,6 +39,10 @@ function nut.item.Register(itemTable, isBase)
 			icon = "icon16/world.png",
 			run = function(itemTable, client, data)
 				if (SERVER) then
+					if (itemTable.CanTransfer and itemTable:CanTransfer(client, data) == false) then
+						return false
+					end
+
 					local data2 = {
 						start = client:GetShootPos(),
 						endpos = client:GetShootPos() + client:GetAimVector() * 72,
@@ -73,6 +77,12 @@ function nut.item.Register(itemTable, isBase)
 							return false
 						end
 					elseif (self.faction != client:Team()) then
+						return false
+					end
+				end
+
+				if (self.flag) then
+					if (!client:HasFlag(self.flag)) then
 						return false
 					end
 				end
@@ -420,7 +430,7 @@ do
 
 			local menu = DermaMenu()
 				for k, v in SortedPairs(itemTable.functions) do
-					if (v.shouldDisplay and v.shouldDisplay(entity) == false) then
+					if (v.shouldDisplay and v.shouldDisplay(itemTable, item.data) == false) then
 						continue
 					end
 
@@ -466,7 +476,7 @@ do
 
 			local menu = DermaMenu()
 				for k, v in SortedPairs(itemTable.functions) do
-					if (v.shouldDisplay and v.shouldDisplay(entity) == false) then
+					if (v.shouldDisplay and v.shouldDisplay(itemTable, entity:GetData(), entity) == false) then
 						continue
 					end
 
