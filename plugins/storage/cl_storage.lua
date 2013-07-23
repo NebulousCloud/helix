@@ -177,8 +177,13 @@ local PANEL = {}
 					local icon = list:Add("SpawnIcon")
 					icon:SetModel(itemTable.model or "models/error.mdl")
 					icon.PaintOver = function(icon, w, h)
+						surface.SetDrawColor(0, 0, 0, 45)
+						surface.DrawOutlinedRect(1, 1, w - 2, h - 2)
+
 						if (itemTable.PaintIcon) then
-							itemTable:PaintIcon(w, h)
+							itemTable.data = v.data
+								itemTable:PaintIcon(w, h)
+							itemTable.data = nil
 						end
 					end
 
@@ -245,8 +250,13 @@ local PANEL = {}
 					local icon = list:Add("SpawnIcon")
 					icon:SetModel(itemTable.model or "models/error.mdl")
 					icon.PaintOver = function(icon, w, h)
+						surface.SetDrawColor(0, 0, 0, 45)
+						surface.DrawOutlinedRect(1, 1, w - 2, h - 2)
+
 						if (itemTable.PaintIcon) then
-							itemTable:PaintIcon(w, h)
+							itemTable.data = v.data
+								itemTable:PaintIcon(w, h)
+							itemTable.data = nil
 						end
 					end
 					
@@ -260,6 +270,10 @@ local PANEL = {}
 
 					icon:SetToolTip(nut.lang.Get("item_info", itemTable.name, itemTable:GetDesc(v.data)))
 					icon.DoClick = function(icon)
+						if (itemTable.CanTransfer and itemTable:CanTransfer(LocalPlayer(), v.data) == false) then
+							return false
+						end
+
 						net.Start("nut_StorageUpdate")
 							net.WriteEntity(self.entity)
 							net.WriteString(class)
