@@ -47,10 +47,10 @@ BASE.functions.Unequip = {
 				client:StripWeapon(itemTable.class)
 			end
 
-			local oldData = data
-			data.Equipped = false
+			local newData = table.Copy(data)
+			newData.Equipped = false
 
-			client:UpdateInv(itemTable.uniqueID, 1, data)
+			client:UpdateInv(itemTable.uniqueID, 1, newData)
 
 			return true
 		end
@@ -82,4 +82,26 @@ function BASE:CanTransfer(client, data)
 	end
 
 	return !data.Equipped
+end
+
+if (SERVER) then
+	hook.Add("PlayerSpawn", "nut_WeaponBase", function(client)
+		timer.Simple(0.1, function()
+			if (!IsValid(client) or !client.character) then
+				return
+			end
+
+			for class, items in pairs(client:GetInventory()) do
+				local itemTable = nut.item.Get(class)
+
+				if (itemTable.class) then
+					for k, v in pairs(items) do
+						if (v.data.Equipped) then
+							client:Give(itemTable.class)
+						end
+					end
+				end
+			end
+		end)
+	end)
 end
