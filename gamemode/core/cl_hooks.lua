@@ -127,15 +127,19 @@ function GM:HUDPaintTargetID(entity)
 					local itemTable = v:GetItemTable()
 
 					if (itemTable) then
+						local data = v:GetData()
+
 						nut.util.DrawText(position.x, position.y, itemTable.name, color)
 
 						position.y = position.y + nut.config.targetTall
 						color = Color(255, 255, 255, alpha)
 
-						nut.util.DrawText(position.x, position.y, string.gsub(itemTable:GetDesc(v:GetData()), "\n", ""), color, "nut_TargetFontSmall")
+						nut.util.DrawText(position.x, position.y, string.gsub(itemTable:GetDesc(data), "\n", ""), color, "nut_TargetFontSmall")
 
 						if (itemTable.Paint) then
-							itemTable:Paint(v, position.x, position.y + nut.config.targetTall, color)
+							itemTable.data = data
+								itemTable:Paint(v, position.x, position.y + nut.config.targetTall, color)
+							itemTable.data = nil
 						end
 					end
 				elseif (v.character) then
