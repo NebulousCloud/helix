@@ -89,6 +89,14 @@ nut.config.buyDelay = 2
 -- If any player can see the business menu.
 nut.config.businessEnabled = true
 
+-- The initial date that is used by the time system.
+nut.config.dateStartMonth = 1
+nut.config.dateStartDay = 1
+nut.config.dateStartYear = 2014
+
+-- How many seconds are in a minute.
+nut.config.dateMinuteLength = 60
+
 if (CLIENT) then
 	hook.Add("SchemaInitialized", "nut_FontConfig", function()
 		surface.SetFont("nut_TargetFontSmall")

@@ -33,6 +33,9 @@ end
 
 local BAR_WIDTH, BAR_HEIGHT = ScrW() * 0.27, 10
 
+NUT_CVAR_24HOUR = CreateClientConVar("nut_24hourtime", "0", true, true)
+NUT_CVAR_DB4M = CreateClientConVar("nut_dayb4month", "0", true, true)
+
 function GM:HUDPaint()
 	if (!nut.loaded) then
 		surface.SetDrawColor(0, 0, 0, 255)
@@ -59,6 +62,21 @@ function GM:HUDPaint()
 		draw.SimpleText(nut.config.smallIntroText or SCHEMA.desc, "nut_TargetFont", ScrW() * 0.5, (ScrH() * 0.35) + h, color, 1, 1)
 
 		return
+	end
+
+	if (nut.curTime) then
+		local clock = "%I:%M:%S %p"
+		local date = "%B %d, %Y"
+
+		if (NUT_CVAR_24HOUR:GetInt() > 0) then
+			clock = "%X"
+		end
+
+		if (NUT_CVAR_DB4M:GetInt() > 0) then
+			date = "%d %B, %Y"
+		end
+
+		nut.util.DrawText(ScrW() - 12, 12, os.date(date..". "..clock, nut.util.GetTime()), nil, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 	end
 
 	local trace = LocalPlayer():GetEyeTrace()
@@ -272,3 +290,7 @@ end
 function GM:PlayerCanSeeBusiness()
 	return true
 end
+
+net.Receive("nut_CurTime", function(length)
+	nut.curTime = net.ReadUInt(32)
+end)

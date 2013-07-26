@@ -32,7 +32,7 @@ if (SERVER) then
 		local text = area.name
 
 		if (area.showTime) then
-			text = text..", "..os.date("%X").."."
+			text = text..", "..os.date("%X", nut.util.GetTime()).."."
 		end
 
 		nut.scroll.Send(text, client)

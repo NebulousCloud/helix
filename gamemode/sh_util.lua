@@ -356,6 +356,17 @@ else
 			end
 		end
 	end
+
+	hook.Add("InitPostEntity", "nut_TimeInitialize", function()
+		nut.connectTime = RealTime()
+	end)
+
+	function nut.util.TimeConnected()
+		local realTime = RealTime()
+
+		-- Subtract five since we have the 5 second delay for loading.
+		return realTime - (nut.connectTime or realTime) - 5
+	end
 end
 
 --[[
@@ -474,4 +485,26 @@ function nut.util.FindClosestPlayer(position)
 	end
 
 	return client, distance
+end
+
+if (SERVER) then
+	hook.Add("InitPostEntity", "nut_StartTime", function()
+		nut.initTime = RealTime()
+	end)
+end
+
+function nut.util.GetTime()
+	local curTime = nut.curTime or 0
+	local length = nut.config.dateMinuteLength
+	local multiplier = 60 / length
+
+	if (SERVER) then
+		local realTime = RealTime() - (nut.initTime or 0)
+
+		return (curTime + realTime) * multiplier
+	else
+		return (curTime + nut.util.TimeConnected()) * multiplier
+	end
+
+	return 0
 end
