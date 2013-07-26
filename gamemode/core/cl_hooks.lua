@@ -33,9 +33,6 @@ end
 
 local BAR_WIDTH, BAR_HEIGHT = ScrW() * 0.27, 10
 
-NUT_CVAR_24HOUR = CreateClientConVar("nut_24hourtime", "0", true, true)
-NUT_CVAR_DB4M = CreateClientConVar("nut_dayb4month", "0", true, true)
-
 function GM:HUDPaint()
 	if (!nut.loaded) then
 		surface.SetDrawColor(0, 0, 0, 255)
@@ -45,6 +42,10 @@ function GM:HUDPaint()
 
 		nut.schema.Call("DrawLoadingScreen")
 
+		return
+	end
+
+	if (IsValid(nut.gui.charMenu)) then
 		return
 	end
 
@@ -65,30 +66,17 @@ function GM:HUDPaint()
 	end
 
 	if (nut.curTime) then
-		local clock = "%I:%M:%S %p"
-		local date = "%B %d, %Y"
-
-		if (NUT_CVAR_24HOUR:GetInt() > 0) then
-			clock = "%X"
-		end
-
-		if (NUT_CVAR_DB4M:GetInt() > 0) then
-			date = "%d %B, %Y"
-		end
-
-		nut.util.DrawText(ScrW() - 12, 12, os.date(date..". "..clock, nut.util.GetTime()), nil, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+		nut.util.DrawText(ScrW() - 12, 12, os.date("!%c", nut.util.GetTime()), nil, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 	end
 
 	local trace = LocalPlayer():GetEyeTrace()
 
 	nut.schema.Call("HUDPaintTargetID", trace.Entity)
 
-	if (!IsValid(nut.gui.charMenu)) then
-		local x = 8
-		local y = ScrH() - BAR_HEIGHT - 8
+	local x = 8
+	local y = ScrH() - BAR_HEIGHT - 8
 
-		y = nut.bar.Paint(x, y, BAR_WIDTH, BAR_HEIGHT)
-	end
+	y = nut.bar.Paint(x, y, BAR_WIDTH, BAR_HEIGHT)
 
 	nut.bar.PaintMain()
 	
@@ -293,4 +281,5 @@ end
 
 net.Receive("nut_CurTime", function(length)
 	nut.curTime = net.ReadUInt(32)
+	print(nut.curTime)
 end)
