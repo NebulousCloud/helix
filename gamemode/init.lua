@@ -3,6 +3,10 @@
 	the framework without GM.BaseClass since it the baseclass is not defined in time.
 --]]
 
+if (game.SinglePlayer()) then
+	error("NutScript can not be ran in single-player, sorry.")
+end
+
 if (string.lower(GetConVarString("gamemode")) == "nutscript") then
 	MsgC(Color(255, 0, 0), "FATAL WARNING! CHANGE +GAMEMODE TO YOUR SCHEMA, NOT NUTSCRIPT!\n")
 
