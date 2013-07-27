@@ -3,6 +3,10 @@
 	the framework without GM.BaseClass since it the baseclass is not defined in time.
 --]]
 
+if (game.SinglePlayer()) then
+	error("NutScript can not be ran in single-player, sorry.")
+end
+
 -- Set this since self.BaseClass for schemas aren't created in time.
 nut = nut or GM
 
