@@ -1,371 +1,217 @@
 local PANEL = {}
-	local STAGE_FACTION = 1
-	local STAGE_GENDER = 2
-	local STAGE_NAME = 3
-	local STAGE_DESC = 4
-	local STAGE_MODEL = 5
-	local STAGE_ATTRIBS = 6
-
-	local STAGE_ANSWERS = {}
-
-	local STAGES = {}
-
-	local function makeDisplay()
-		return true
-	end
-
-	STAGES[STAGE_FACTION] = {
-		shouldDisplay = function()
-			local count = 0
-
-			for k, v in SortedPairs(nut.faction.GetAll()) do
-				if (nut.faction.CanBe(LocalPlayer(), v.index)) then
-					count = count + 1
-				end
-			end
-
-			if (count < 2) then
-				STAGE_ANSWERS[STAGE_FACTION] = 1
-
-				return false
-			end
-
-			return true
-		end,
-		title = nut.lang.Get("faction_status").."...",
-		layout = function(panel, title)
-			for k, v in SortedPairs(nut.faction.GetAll()) do
-				if (nut.faction.CanBe(LocalPlayer(), v.index)) then
-					local button = panel:Add("nut_MenuButton")
-					button:Dock(TOP)
-					button:DockMargin(8, 8, 8, 8)
-					button:SetText(v.name)
-					button.OnClick = function(button)
-						STAGE_ANSWERS[STAGE_FACTION] = k
-
-						title:SetText(nut.lang.Get("faction_status")..v.name..".")
-						title:SizeToContents()
-					end
-				end
-			end
-		end,
-		canContinue = function(panel)
-			return nut.faction.GetByID(STAGE_ANSWERS[STAGE_FACTION]) != nil
-		end
-	}
-	STAGES[STAGE_GENDER] = {
-		shouldDisplay = makeDisplay,
-		title = nut.lang.Get("gender_status").."...",
-		layout = function(panel, title)
-			local male = panel:Add("nut_MenuButton")
-			male:Dock(TOP)
-			male:SetText(nut.lang.Get("male"))
-			male.OnClick = function()
-				STAGE_ANSWERS[STAGE_GENDER] = "male"
-
-				title:SetText(nut.lang.Get("gender_status")..nut.lang.GetLower("male")..".")
-				title:SizeToContents()
-			end
-
-			local female = panel:Add("nut_MenuButton")
-			female:Dock(TOP)
-			female:SetText(nut.lang.Get("female"))
-			female.OnClick = function()
-				STAGE_ANSWERS[STAGE_GENDER] = "female"
-
-				title:SetText(nut.lang.Get("gender_status")..nut.lang.GetLower("female")..".")
-				title:SizeToContents()
-			end
-		end,
-		canContinue = function(panel)
-			return STAGE_ANSWERS[STAGE_GENDER] != nil
-		end
-	}
-	STAGES[STAGE_NAME] = {
-		shouldDisplay = function()
-			local faction = nut.faction.GetByID(STAGE_ANSWERS[STAGE_FACTION])
-
-			if (faction.GetDefaultName) then
-				STAGE_ANSWERS[STAGE_NAME] = faction:GetDefaultName()
-
-				return false
-			end
-
-			return true
-		end,
-		title = nut.lang.Get("name_status").."...",
-		layout = function(panel, title)
-			local submit
-
-			local textEntry = panel:Add("DTextEntry")
-			textEntry:SetTall(48)
-			textEntry:Dock(TOP)
-			textEntry:SetFont("nut_BigThinFont")
-			textEntry.OnEnter = function()
-				submit.OnClick()
-			end
-
-			submit = panel:Add("nut_MenuButton")
-			submit:SetText(nut.lang.Get("set_as"))
-			submit:Dock(TOP)
-			submit:DockMargin(0, 16, 0, 0)
-			submit.OnClick = function()
-				local text = textEntry:GetText() or ""
-
-				if (text == "") then
-					return false
-				end
-
-				text = string.sub(text, 1, 70)
-
-				title:SetText(nut.lang.Get("name_status")..text..".")
-				title:SizeToContents()
-
-				STAGE_ANSWERS[STAGE_NAME] = text
-			end
-		end,
-		canContinue = function(panel)
-			return STAGE_ANSWERS[STAGE_NAME] != nil
-		end
-	}
-	STAGES[STAGE_DESC] = {
-		shouldDisplay = makeDisplay,
-		title = nut.lang.Get("desc_status").."...",
-		layout = function(panel, title)
-			local submit
-
-			local textEntry = panel:Add("DTextEntry")
-			textEntry:SetTall(48)
-			textEntry:Dock(TOP)
-			textEntry:SetFont("nut_BigThinFont")
-			textEntry:SetToolTip(nut.lang.Get("desc_char_req", nut.config.descMinChars))
-			textEntry.OnEnter = function()
-				submit.OnClick()
-			end
-
-			submit = panel:Add("nut_MenuButton")
-			submit:SetText(nut.lang.Get("set_as"))
-			submit:Dock(TOP)
-			submit:DockMargin(0, 16, 0, 0)
-			submit.OnClick = function()
-				local text = textEntry:GetText() or ""
-
-				if (string.len(text) < nut.config.descMinChars) then
-					return false
-				end
-
-				text = string.sub(text, 1, 240)
-				
-				title:SetText(nut.lang.Get("desc_status")..text..".")
-				title:SetWide(panel:GetWide())
-
-				STAGE_ANSWERS[STAGE_DESC] = text
-			end
-		end,
-		canContinue = function(panel)
-			return STAGE_ANSWERS[STAGE_DESC] != nil
-		end
-	}
-	STAGES[STAGE_MODEL] = {
-		shouldDisplay = function()
-			local default = nut.faction.GetByID(STAGE_ANSWERS[STAGE_FACTION]).defaultModel
-
-			if (default != nil) then
-				STAGE_ANSWERS[STAGE_MODEL] = default
-
-				return false
-			end
-
-			return true
-		end,
-		title = "I look like...",
-		layout = function(panel, title)
-			local faction = nut.faction.GetByID(STAGE_ANSWERS[STAGE_FACTION])
-			local gender = STAGE_ANSWERS[STAGE_GENDER]
-			local models = faction[gender.."Models"]
-
-			local modelPanel = panel:Add("DModelPanel")
-			modelPanel:SetSize(panel:GetSize())
-			modelPanel:SetModel(models[1])
-
-			STAGE_ANSWERS[STAGE_MODEL] = modelPanel.Entity:GetModel()
-			
-			local modelIndex = 1
-
-			local prevModel = modelPanel:Add("nut_MenuButton")
-			prevModel:SetText("<")
-			prevModel:SetWide(48)
-			prevModel:Dock(NODOCK)
-			prevModel.OnClick = function()
-				if (models[modelIndex - 1]) then
-					modelIndex = modelIndex - 1
-					modelPanel:SetModel(models[modelIndex])
-
-					STAGE_ANSWERS[STAGE_MODEL] = modelPanel.Entity:GetModel()
-				else
-					return false
-				end
-			end
-
-			local nextModel = modelPanel:Add("nut_MenuButton")
-			nextModel:SetText(">")
-			nextModel:SetWide(48)
-			nextModel:SetPos(56, 0)
-			nextModel:Dock(NODOCK)
-			nextModel.OnClick = function()
-				if (models[modelIndex + 1]) then
-					modelIndex = modelIndex + 1
-					modelPanel:SetModel(models[modelIndex])
-
-					STAGE_ANSWERS[STAGE_MODEL] = modelPanel.Entity:GetModel()
-				else
-					return false
-				end
-			end
-		end,
-		canContinue = function(panel)
-			return STAGE_ANSWERS[STAGE_MODEL] != nil
-		end
-	}
-	STAGES[STAGE_ATTRIBS] = {
-		shouldDisplay = function()
-			return #nut.attribs.GetAll() > 0
-		end,
-		title = "You have # points left.",
-		layout = function(panel, title)
-			local points = nut.config.startingPoints
-			local pointsLeft = points
-			local bars = {}
-
-			STAGE_ANSWERS[STAGE_ATTRIBS] = {}
-
-			title:SetText("You have "..pointsLeft.." points left.")
-			title:SizeToContents()
-
-			for k, v in ipairs(nut.attribs.GetAll()) do
-				local attribute = nut.attribs.Get(k)
-
-				local bar = panel:Add("nut_AttribBar")
-				bar:Dock(TOP)
-				bar:SetMax(nut.config.startingPoints)
-				bar:SetText(attribute.name)
-				bar:SetToolTip(attribute.desc)
-				bar.OnChanged = function(panel2, hindered)
-					if (hindered) then
-						pointsLeft = pointsLeft + 1
-					else
-						pointsLeft = pointsLeft - 1
-					end
-
-					title:SetText("You have "..pointsLeft.." points left.")
-					title:SizeToContents()
-
-					STAGE_ANSWERS[STAGE_ATTRIBS][k] = panel2:GetValue()
-				end
-				bar.CanChange = function(panel2, hindered)
-					if (hindered) then
-						return true
-					end
-
-					return pointsLeft > 0
-				end
-
-				bars[k] = bar
-			end
-		end,
-		canContinue = function(panel)
-			return true
-		end
-	}
-
-	function PANEL:SetupStage(index)
-		local stage = STAGES[index]
-
-		if (stage and stage.shouldDisplay() == true) then
-			self.panel:Clear(true)
-
-			self.title:SetText(stage.title)
-			self.title:SizeToContents()
-
-			stage.layout(self.panel, self.title)
-		else
-			self.currentStage = self.currentStage + 1
-			self:SetupStage(self.currentStage)
-		end
-	end
-
 	function PANEL:Init()
-		self:SetPos(ScrW() * 0.4, ScrH() * 0.15)
-		self:SetSize(ScrW() * 0.5, ScrH() * 0.7)
+		self:SetSize(ScrW() * 0.325, ScrH() * 0.725)
+		self:SetTitle("Character Creation")
 		self:MakePopup()
-		self:SetTitle("")
-		self:SetDraggable(false)
-		self:ShowCloseButton(false)
-
-		self.panel = NULL
-		self.currentStage = STAGE_FACTION
-
-		self.next = self:Add("nut_MenuButton")
-		self.next:SetText(">")
-		self.next:Dock(RIGHT)
-		self.next.OnClick = function(button)
-			if (STAGES[self.currentStage].canContinue()) then
-				self.currentStage = self.currentStage + 1
-
-				if (STAGES[self.currentStage]) then
-					self:SetupStage(self.currentStage)
-				else
-					self:Finish()
-				end
-			else
-				return false
-			end
-		end
-
-		self.panel = self:Add("DScrollPanel")
-		self.panel:Dock(FILL)
-		self.panel:DockMargin(32, 32, 32, 32)
-
-		self.title = self:Add("DLabel")
-		self.title:SetTextColor(Color(255, 255, 255))
-		self.title:SetText("")
-		self.title:SetFont("nut_HeaderFont")
-		self.title:SetExpensiveShadow(1, color_black)
-		self.title:SizeToContents()
-
-		self:SetupStage(self.currentStage)
+		self:Center()
+		self:SetBackgroundBlur(true)
 	end
 
-	function PANEL:Finish(noSend)
-		if (!noSend) then
-			nut.gui.char.validating = true
+	function PANEL:SetupFaction(index)
+		if (!index) then
+			return
+		end
 
-			self.title:SetText(nut.lang.Get("char_validating"))
-			self.title:SizeToContents()
+		local faction = nut.faction.GetByID(index)
 
-			self.panel:Clear(true)
-			self.next:Remove()
+		if (!faction) then
+			return
+		end
 
-			timer.Simple(5, function()
-				if (nut.gui.char.validating) then
-					self.title:SetText("Validation timed out! Press 'Cancel'...")
-					self.title:SizeToContents()
+		self.scroll = self:Add("DScrollPanel")
+		self.scroll:Dock(FILL)
+		self.scroll:SetDrawBackground(true)
 
-					nut.gui.char.validating = false
+		self.form = self.scroll:Add("DForm")
+		self.form:Dock(FILL)
+		self.form:DockMargin(3, 3, 3, 3)
+		self.form:SetName("Character")
+		
+		self.label = self.form:Help(nut.lang.Get("char_create_tip"))
+		self.name = self.form:TextEntry(nut.lang.Get("name"))
+
+		if (faction.GetDefaultName) then
+			self.name:SetEditable(false)
+			self.name:SetText(faction:GetDefaultName())
+		end
+
+		self.models = {}
+
+		self.desc = self.form:TextEntry(nut.lang.Get("desc"))
+		self.desc:SetToolTip(nut.lang.Get("desc_char_req", nut.config.descMinChars))
+
+		self.gender = self.form:ComboBox(nut.lang.Get("gender"))
+		self.gender.OnSelect = function(panel, index, value, data)
+			local gender = string.lower(value)
+
+			self:SetupModels(faction[gender.."Models"])
+		end
+		self.gender:AddChoice("Male")
+		self.gender:AddChoice("Female")
+
+		local label = vgui.Create("DLabel")
+		label:SetText(nut.lang.Get("model"))
+		label:SetDark(true)
+
+		self.modelScroll = vgui.Create("DScrollPanel")
+			self.modelScroll:Dock(TOP)
+			self.modelScroll:SetTall(128)
+
+			self.model = self.modelScroll:Add("DIconLayout")
+			self.model:Dock(FILL)
+
+			self:SetupModels(faction.maleModels)
+		self.form:AddItem(label, self.modelScroll)
+
+		self.gender:ChooseOptionID(1)
+
+		local points = nut.config.startingPoints
+		local pointsLeft = points
+
+		local pointsLabel = self.form:Help(nut.lang.Get("points_left", pointsLeft))
+		pointsLabel:SetFont("DermaDefaultBold")
+
+		self.bars = {}
+
+		for k, v in ipairs(nut.attribs.GetAll()) do
+			local attribute = nut.attribs.Get(k)
+
+			local bar = vgui.Create("nut_AttribBar")
+			bar:Dock(TOP)
+			bar:SetMax(nut.config.startingPoints)
+			bar:SetText(attribute.name)
+			bar:SetToolTip(attribute.desc)
+			bar.OnChanged = function(panel2, hindered)
+				if (hindered) then
+					pointsLeft = pointsLeft + 1
+				else
+					pointsLeft = pointsLeft - 1
 				end
-			end)
+
+				pointsLabel:SetText(nut.lang.Get("points_left", pointsLeft))
+			end
+			bar.CanChange = function(panel2, hindered)
+				if (hindered) then
+					return true
+				end
+
+				return pointsLeft > 0
+			end
+
+			self.form:AddItem(bar)
+			self.bars[k] = bar
+		end
+
+		self.finish = self:Add("DButton")
+		self.finish:Dock(BOTTOM)
+		self.finish:DockMargin(0, 4, 0, 0)
+		self.finish:SetText(nut.lang.Get("finish"))
+		self.finish:SetImage("icon16/building_go.png")
+		self.finish:SetTall(28)
+		self.finish.DoClick = function(panel)
+			local name = self.name:GetText()
+			local gender = string.lower(self.gender:GetValue())
+			local desc = self.desc:GetText()
+			local model = IsValid(self.selectedModel) and self.selectedModel.model
+			local faction = index
+			local attribs = {}
+
+			for k, v in pairs(self.bars) do
+				attribs[k] = v:GetValue()
+			end
+
+			local fault
+
+			-- Huge if that verifies values for characters.
+			if (!name or !string.find(name, "[^%s+]") or name == "") then
+				fault = "You need to provide a valid name."
+			elseif (!gender or (gender != "male" and gender != "female")) then
+				fault = "You need to provide a valid gender."
+			elseif (!desc or string.len(desc) < nut.config.descMinChars or !string.find(desc, "[^%s+]")) then
+				fault = "You need to provide a valid description."
+			elseif (!model) then
+				fault = "You need to pick a valid model."
+			elseif (!faction or !nut.faction.GetByID(faction)) then
+				fault = "You did not choose a valid faction."
+			end
+
+			if (fault) then
+				surface.PlaySound("buttons/button8.wav")
+
+				self.label:SetTextColor(Color(255, 0, 0))
+				self.label:SetText(fault)
+
+				return
+			end
 
 			net.Start("nut_CharCreate")
-				net.WriteString(STAGE_ANSWERS[STAGE_NAME])
-				net.WriteString(STAGE_ANSWERS[STAGE_GENDER])
-				net.WriteString(STAGE_ANSWERS[STAGE_DESC])
-				net.WriteString(STAGE_ANSWERS[STAGE_MODEL])
-				net.WriteUInt(STAGE_ANSWERS[STAGE_FACTION], 8)
-				net.WriteTable(STAGE_ANSWERS[STAGE_ATTRIBS] or {})
+				net.WriteString(name)
+				net.WriteString(gender)
+				net.WriteString(desc)
+				net.WriteString(model)
+				net.WriteUInt(faction, 8)
+				net.WriteTable(attribs)
 			net.SendToServer()
+
+			self:ShowCloseButton(false)
+			panel:SetDisabled(true)
+
+			timer.Simple(7.5, function()
+				if (IsValid(self)) then
+					self:Remove()
+
+					chat.AddText(Color(255, 0, 0), "Character creation request timed out!")
+				end
+			end)
+		end
+	end
+
+	function PANEL:SetupModels(models)
+		local highlight = table.Copy(nut.config.mainColor)
+		highlight.a = 200
+
+		for k, v in pairs(self.models) do
+			v:Remove()
 		end
 
-		STAGE_ANSWERS = {}
+		self.selectedModel = nil
+
+		local selected = false
+
+		for k, v in ipairs(models) do
+			local icon = self.model:Add("SpawnIcon")
+			icon:SetModel(v)
+			icon.model = v
+			icon.PaintOver = function(panel, w, h)
+				local model = self.selectedModel
+
+				if (IsValid(model) and model == panel) then
+					surface.SetDrawColor(highlight)
+
+					for i = 1, 3 do
+						local i2 = i * 2
+
+						surface.DrawOutlinedRect(i, i, w - i2, h - i2)
+					end
+				end
+			end
+			icon.DoClick = function(panel)
+				surface.PlaySound("garrysmod/ui_click.wav")
+
+				self.selectedModel = panel
+			end
+
+			if (!selected) then
+				self.selectedModel = icon
+
+				selected = true
+			end
+
+			self.models[#self.models + 1] = icon
+		end
+
+		self.modelScroll.VBar:SetEnabled(true)
+		self.modelScroll.VBar:SetScroll(0)
 	end
 
 	function PANEL:Think()
@@ -373,12 +219,19 @@ local PANEL = {}
 			self:MakePopup()
 		end
 	end
-
-	function PANEL:Paint(w, h)
-	end
-vgui.Register("nut_CharacterCreate", PANEL, "DFrame")
+vgui.Register("nut_CharCreate", PANEL, "DFrame")
 
 net.Receive("nut_CharCreateAuthed", function(length)
-	nut.gui.char.validating = false
-	nut.gui.charMenu:ResetMenu()
+	nut.gui.charCreate:Remove()
+
+	surface.PlaySound("buttons/button9.wav")
+
+	timer.Simple(0, function()
+		if (IsValid(nut.gui.charMenu)) then
+			nut.gui.charMenu:FadeOutMusic()
+			nut.gui.charMenu:Remove()
+		end
+		
+		nut.gui.charMenu = vgui.Create("nut_CharMenu")
+	end)
 end)
