@@ -10,12 +10,9 @@ local PANEL = {}
 
 		self.minus = self:Add("DButton")
 		self.minus:Dock(LEFT)
-		self.minus:SetText("-")
+		self.minus:SetText("")
 		self.minus:SetSize(24, 24)
-		self.minus.Paint = function(panel, w, h)
-			surface.SetDrawColor(255, 255, 255, 200)
-			surface.DrawRect(1, 1, w - 2, h - 2)
-		end
+		self.minus:SetImage("icon16/delete.png")
 		self.minus.DoClick =  function(panel, w, h)
 			if (self.amount - 1 >= self.min and self:CanChange(true)) then
 				self.amount = self.amount - 1
@@ -28,7 +25,7 @@ local PANEL = {}
 		self.content = self:Add("DPanel")
 		self.content:Dock(FILL)
 		self.content.Paint = function(panel, w, h)
-			surface.SetDrawColor(255, 255, 255, 100)
+			surface.SetDrawColor(5, 5, 5, 40)
 			surface.DrawRect(1, 1, w - 2, h - 2)
 
 			if (self.max == 0) then
@@ -52,12 +49,9 @@ local PANEL = {}
 
 		self.plus = self:Add("DButton")
 		self.plus:Dock(RIGHT)
-		self.plus:SetText("+")
+		self.plus:SetText("")
 		self.plus:SetSize(24, 24)
-		self.plus.Paint = function(panel, w, h)
-			surface.SetDrawColor(255, 255, 255, 200)
-			surface.DrawRect(1, 1, w - 2, h - 2)
-		end
+		self.plus:SetImage("icon16/add.png")
 		self.plus.DoClick = function(panel)
 			if (self.amount + 1 <= self.max and self:CanChange()) then
 				self.amount = self.amount + 1
@@ -67,10 +61,10 @@ local PANEL = {}
 
 		self.label = self.content:Add("DLabel")
 		self.label:SetText("")
-		self.label:SetTextColor(color_white)
+		self.label:SetTextColor(color_black)
 		self.label:SetContentAlignment(5)
 		self.label:Dock(FILL)
-		self.label:SetExpensiveShadow(1, color_black)
+		--self.label:SetExpensiveShadow(1, color_black)
 	end
 
 	function PANEL:SetText(text)
