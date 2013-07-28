@@ -1,141 +1,214 @@
 local PANEL = {}
-	function PANEL:ResetMenu()
-		self.cancel:Remove()
-
-		if (self.create) then
-			self.create:SetVisible(true)
-		end
-
-		if (self.load) then
-			self.load:SetVisible(true)
-		end
-
-		if (self.ret) then
-			self.ret:SetVisible(true)
-		end
-
-		if (self.leave) then
-			self.leave:SetVisible(true)
-		end
-		
-		if (IsValid(nut.gui.char)) then
-			nut.gui.char:Finish(true)
-			nut.gui.char:Remove()
-		end
-
-		if (IsValid(nut.gui.charList)) then
-			nut.gui.charList:Remove()
-		end
-	end
-
-	function PANEL:ShowCancel()
-		if (self.ret) then
-			self.ret:SetVisible(false)
-		end
-
-		if (self.create) then
-			self.create:SetVisible(false)
-		end
-
-		if (self.load) then
-			self.load:SetVisible(false)
-		end
-
-		if (self.leave) then
-			self.leave:SetVisible(false)
-		end
-		
-		self.cancel = self.panel:Add("nut_MenuButton")
-		self.cancel:SetText(nut.lang.Get("cancel"))
-		self.cancel:SetToolTip(nut.lang.Get("cancel_tip"))
-		self.cancel.OnClick = function()
-			if (IsValid(nut.gui.char) and nut.gui.char.validating) then
-				return false
-			else
-				self:ResetMenu()
-			end
-		end
-	end
+	local gradient = surface.GetTextureID("gui/gradient_up")
+	local gradient2 = surface.GetTextureID("gui/gradient_down")
+	local gradient3 = surface.GetTextureID("gui/center_gradient")
 
 	function PANEL:Init()
 		self:SetSize(ScrW(), ScrH())
 		self:SetDrawBackground(false)
 		self:MakePopup()
 
-		self.panel = self:Add("DScrollPanel")
-		self.panel:SetWide(ScrW() * 0.275)
-
 		self.title = self:Add("DLabel")
+		self.title:Dock(TOP)
 		self.title:SetText(SCHEMA.name)
-		self.title:SetPos(32, 16)
 		self.title:SetFont("nut_TitleFont")
-		self.title:SetTextColor(Color(250, 250, 250))
-		self.title:SetExpensiveShadow(5, color_black)
-		self.title:SizeToContentsY()
-		self.title:SetWide(ScrW() * 0.275 - 16)
+		self.title:SizeToContents()
+		self.title:SetContentAlignment(5)
+		self.title:SetTextColor(color_white)
+		self.title:SetExpensiveShadow(1, color_black)
+		self.title.Paint = function(panel, w, h)
+			surface.SetDrawColor(0, 0, 0, 125)
+			surface.SetTexture(gradient2)
+			surface.DrawTexturedRect(0, 0, w, h)
+		end
 
-		surface.SetFont("nut_TitleFont")
-		local w, h = surface.GetTextSize(self.title:GetText())
+		self.subTitle = self:Add("DLabel")
+		self.subTitle:Dock(TOP)
+		self.subTitle:SetText(SCHEMA.desc)
+		self.subTitle:SetFont("nut_SubTitleFont")
+		self.subTitle:SizeToContents()
+		self.subTitle:SetContentAlignment(5)
+		self.subTitle:SetTextColor(color_white)
+		self.subTitle:SetExpensiveShadow(1, color_black)
+		self.subTitle.Paint = function(panel, w, h)
+			surface.SetDrawColor(0, 0, 0, 125)
+			surface.SetTexture(gradient3)
+			surface.DrawTexturedRect(w * 0.25, 0, w * 0.5, h)
+		end
 
-		self.desc = self:Add("DLabel")
-		self.desc:SetFont("nut_SubTitleFont")
-		self.desc:SetText(nut.lang.Get("schema_author", SCHEMA.author).." "..SCHEMA.desc)
-		self.desc:SetPos(32, h + 24)
-		self.desc:SetWide(ScrW() * 0.275 - 16)
-		self.desc:SetTextColor(Color(250, 250, 250))
-		self.desc:SetExpensiveShadow(1, color_black)
-		self.desc:SizeToContentsY();
+		self.lowerPanel = self:Add("DPanel")
+		self.lowerPanel:Dock(BOTTOM)
+		self.lowerPanel:DockPadding(32, 0, 28, 0)
+		self.lowerPanel:SetTall(ScrH() * 0.1)
+		self.lowerPanel.Paint = function(panel, w, h)
+			surface.SetDrawColor(20, 20, 20, 230)
+			surface.DrawRect(0, 0, w, h)
+		end
 
-		local w2, h2 = surface.GetTextSize(self.desc:GetText())
-		h = h + h2 + 32
+		self.rightPanel = self:Add("DPanel")
+		self.rightPanel:Dock(RIGHT)
+		self.rightPanel:SetWide(ScrW() * 0.25)
+		self.rightPanel:DockMargin(0, ScrH() * 0.3, 32, ScrH() * 0.15)
+		self.rightPanel:SetPaintBackground(false)
 
-		self.panel:SetPos(32, h - 48)
-		self.panel:SetTall(ScrH() - h)
+		self.model = self:Add("DModelPanel")
+		self.model:Dock(FILL)
+		self.model:DockMargin(ScrW() * 0.4, ScrH() * 0.05, 0, ScrH() * 0.05)
+		self.model:SetFOV(55)
+		self.model.OnCursorEntered = function() end
+		self.model:SetDisabled(true)
+		self.model:SetCursor("none")
+
+		self.characters = {}
+
+		if (LocalPlayer().characters and #LocalPlayer().characters > 0) then
+			for k, v in SortedPairsByMemberValue(LocalPlayer().characters, "id", true) do
+				local color = nut.config.mainColor
+				local r, g, b = color.r, color.g, color.b
+
+				local panel = self.rightPanel:Add("nut_MenuButton")
+				panel:Dock(BOTTOM)
+				panel:DockMargin(0, 10, 0, 0)
+				panel:SetText(v.name)
+				panel:SetToolTip(v.desc)
+				panel.OldPaint = panel.Paint
+				panel.Paint = function(panel, w, h)
+					panel.OldPaint(panel, w, h)
+
+					if (self.id and self.id == v.id) then
+						surface.SetDrawColor(r, g, b, 200)
+						surface.DrawRect(0, 0, w, h)
+					end
+				end
+				panel.OnClick = function(panel)
+					self.id = v.id
+					self.model:SetModel(v.model)
+				end
+
+				self.characters[v.id] = panel
+			end
+		end
+
+		local function addLowerButton(variable, text, dock)
+			local button = self.lowerPanel:Add("nut_MenuButton")
+			button:Dock(dock)
+			button:DockMargin(0, 0, 4, 0)
+			button:SetText(text)
+			button:SetWide(ScrW() * 0.12)
+
+			self[variable] = button
+		end
 
 		if (nut.faction.Count() > 0) then
-			self.create = self.panel:Add("nut_MenuButton")
-			self.create:SetText(nut.lang.Get("create"))
-			self.create:SetToolTip(nut.lang.Get("create_tip"))
-			self.create.OnClick = function(create)
-				if (!IsValid(nut.gui.char)) then
-					if (LocalPlayer().characters and #LocalPlayer().characters >= nut.config.maxChars) then
-						return false
+			addLowerButton("create", "Create", LEFT)
+
+			self.create.OnClick = function(panel)
+				if (IsValid(nut.gui.charCreate)) then
+					return false
+				end
+
+				if (LocalPlayer().characters and #LocalPlayer().characters >= nut.config.maxChars) then
+					return false
+				end
+
+				if (IsValid(self.selector)) then
+					self.selector:Remove()
+
+					return
+				end
+
+				local grace = CurTime() + 0.1
+
+				self.selector = self:Add("DPanel")
+				self.selector:Dock(LEFT)
+				self.selector:DockMargin(32, 0, 0, 0)
+				self.selector:SetWide(ScrW() * 0.25)
+
+				local y = 5
+
+				for k, v in ipairs(nut.faction.GetAll()) do
+					if (nut.faction.CanBe(LocalPlayer(), v.index)) then
+						local button = self.selector:Add("nut_MenuButton")
+						button:SetText(v.name)
+						button:DockMargin(5, 0, 5, 5)
+						button:SetToolTip(v.desc)
+						button:Dock(BOTTOM)
+						button.OnClick = function(panel)
+							nut.gui.charCreate = vgui.Create("nut_CharCreate")
+							nut.gui.charCreate:SetupFaction(k)
+
+							self.selector:Remove()
+						end
+
+						y = y + (button:GetTall() + 5)
 					end
+				end
 
-					self:ShowCancel()
-
-					nut.gui.char = self:Add("nut_CharacterCreate")
+				self.selector.Paint = function(panel, w, h)
+					surface.SetDrawColor(30, 30, 30, 245)
+					surface.DrawRect(0, h - y, w, h)
 				end
 			end
 		end
 
-		self.load = self.panel:Add("nut_MenuButton")
-		self.load:SetText(nut.lang.Get("load"))
-		self.load:SetToolTip(nut.lang.Get("load_tip"))
-		self.load.OnClick = function(load)
-			if (!IsValid(nut.gui.charList)) then
-				self:ShowCancel()
+		addLowerButton("leave", nut.loaded and nut.lang.Get("return") or nut.lang.Get("leave"), RIGHT)
+		addLowerButton("delete", nut.lang.Get("delete"), RIGHT)
+		addLowerButton("choose", nut.lang.Get("choose"), RIGHT)
 
-				nut.gui.charList = self:Add("nut_CharacterList")
+		self.create:SetToolTip(nut.lang.Get("create_tip"))
+		self.leave:SetToolTip(LocalPlayer().character and nut.lang.Get("return_tip") or nut.lang.Get("leave_tip"))
+		self.delete:SetToolTip(nut.lang.Get("delete_tip"))
+		self.choose:SetToolTip(nut.lang.Get("choose_tip"))
+
+		self.delete.OnClick = function(panel)
+			if (!self.id) then
+				return false
+			end
+
+			if (self.characters[self.id]) then
+				Derma_Query("Are you sure you want to delete this character? It can not be undone.", "Confirm", "No", nil, "Yes", function()
+					self.characters[self.id]:Remove()
+					self.characters[self.id] = nil
+
+					net.Start("nut_CharDelete")
+						net.WriteUInt(self.id, 8)
+					net.SendToServer()
+
+					for k, v in pairs(LocalPlayer().characters) do
+						if (v.id == self.id) then
+							LocalPlayer().characters[k] = nil
+						end
+					end
+
+					surface.PlaySound("buttons/button9.wav")
+
+					timer.Simple(0, function()
+						if (IsValid(nut.gui.charMenu)) then
+							nut.gui.charMenu:FadeOutMusic()
+							nut.gui.charMenu:Remove()
+						end
+
+						nut.gui.charMenu = vgui.Create("nut_CharMenu")
+					end)
+				end)
 			end
 		end
 
-		if (!nut.loaded) then
-			self.leave = self.panel:Add("nut_MenuButton")
-			self.leave:SetText(nut.lang.Get("leave"))
-			self.leave:SetToolTip(nut.lang.Get("leave_tip"))
-			self.leave.OnClick = function()
+		self.leave.OnClick = function(panel)
+			if (LocalPlayer().character) then
+				self:Remove()
+			else
 				RunConsoleCommand("disconnect")
 			end
 		end
-		
-		if (nut.loaded) then
-			self.ret = self.panel:Add("nut_MenuButton")
-			self.ret:SetText(nut.lang.Get("return"))
-			self.ret:SetToolTip(nut.lang.Get("cancel_tip"))
-			self.ret.OnClick = function()
-				nut.gui.charMenu:FadeOutMusic()
-				nut.gui.charMenu:Remove()
+
+		self.choose.OnClick = function(panel)
+			if (self.id) then
+				net.Start("nut_CharChoose")
+					net.WriteUInt(self.id, 16)
+				net.SendToServer()
+			else
+				return false
 			end
 		end
 		
@@ -222,12 +295,10 @@ local PANEL = {}
 		end
 	end
 
-	local gradient = surface.GetTextureID("gui/gradient")
-
 	function PANEL:Paint(w, h)
-		surface.SetDrawColor(0, 0, 0, 245)
+		surface.SetDrawColor(20, 20, 20)
 		surface.SetTexture(gradient)
-		surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
+		surface.DrawTexturedRect(0, 0, w, h)
 	end
 vgui.Register("nut_CharMenu", PANEL, "DPanel")
 
