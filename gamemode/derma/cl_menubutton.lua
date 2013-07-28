@@ -12,7 +12,7 @@ local PANEL = {}
 		self:SetFont("nut_MenuButtonFont")
 		self:SetTextColor(Color(240, 240, 240))
 		self:SetExpensiveShadow(1, color_black)
-		self.alphaApproach = 5
+		self.alphaApproach = 15
 		self.alpha = self.alphaApproach
 	end
 
@@ -22,7 +22,7 @@ local PANEL = {}
 	end
 
 	function PANEL:OnCursorExited()
-		self.alpha = 5
+		self.alpha = 15
 	end
 	
 	function PANEL:DoClick()
@@ -38,13 +38,15 @@ local PANEL = {}
 		end
 	end
 
+	local sin = math.sin
+
 	function PANEL:Paint(w, h)
 		self.alphaApproach = math.Approach(self.alphaApproach, self.alpha, FrameTime() * 150)
 
 		local blink = 0
 
 		if (self.alphaApproach == HOVER_ALPHA) then
-			blink = math.sin(RealTime() * 5) * 10
+			blink = sin(RealTime() * 5) * 10
 		end
 
 		local color = nut.config.mainColor
