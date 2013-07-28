@@ -31,7 +31,7 @@ function nut.lang.Get(key, ...)
 	if (nut.lang.phrases[key]) then
 		return string.format(nut.lang.phrases[key], ...)
 	else
-		return "<missing translation>"
+		return "<missing "..key..">"
 	end
 end
 
