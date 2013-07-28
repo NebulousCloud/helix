@@ -48,7 +48,7 @@ sequences["citizen_male"] = {
 	["stand"] = {"d1_t01_breakroom_watchclock"},
 	["standpockets"] = {"d1_t02_playground_cit2_pockets"},
 	["showid"] = {"d1_t02_plaza_scan_id"},
-	["pant"] = {"d2_coast03_postbattle_idle02"},
+	["pant"] = {"d2_coast03_postbattle_idle02", true},
 	["leanback"] = {"lean_back", true, lean},
 	["sit"] = {"sit_ground", true},
 	["sitknees"] = {"sitcouchknees1", true}
@@ -125,6 +125,10 @@ if (SERVER) then
 		client:SetNutVar("nextAct", CurTime() + 1)
 		client:ResetOverrideSeq()
 		client:Freeze(false)
+	end
+
+	function PLUGIN:PlayerDeath(client)
+		self:PlayerExitSeq(client)
 	end
 else
 	function PLUGIN:CalcView(client, origin, angles, fov)
