@@ -174,7 +174,7 @@ do
 			self:StripWeapons()
 			self:Freeze(true)
 			self:SetNetVar("ragdoll", self.ragdoll:EntIndex())
-			--self:SetNoDraw(true)
+			self:SetNoDraw(true)
 
 			local uniqueID = "nut_RagSafePos"..self:EntIndex()
 
