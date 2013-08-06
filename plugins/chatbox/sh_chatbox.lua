@@ -48,6 +48,9 @@ if (CLIENT) then
 					data = data.."<color="..color.r..","..color.g..","..color.b..">"..v:Name().."</color>"
 				else
 					v = tostring(v)
+					v = string.gsub(v, "&", "&amp;")
+					v = string.gsub(v, "<", "&lt;")
+					v = string.gsub(v, ">", "&gt;")
 
 					data = data..v
 				end
@@ -132,8 +135,6 @@ if (CLIENT) then
 		local lastColor = Color(255, 255, 255)
 
 		for k, v in pairs({...}) do
-			v = nut.util.CleanMarkup(v)
-
 			data[k] = v
 		end
 
@@ -151,6 +152,12 @@ if (CLIENT) then
 		message:SetFont(chat.font or "nut_ChatFont")
 		message:SetMaxWidth(CHAT_W - 16)
 		message:Parse(...)
+		message.lifetime = CurTime() + 150
+		message.Think = function()
+			if message.lifetime < CurTime() then
+				message:Remove()
+			end
+		end
 
 		local scrollBar = nut.chat.panel.content.VBar
 		scrollBar.CanvasSize = scrollBar.CanvasSize + message:GetTall()
