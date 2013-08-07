@@ -152,6 +152,12 @@ if (CLIENT) then
 		message:SetFont(chat.font or "nut_ChatFont")
 		message:SetMaxWidth(CHAT_W - 16)
 		message:Parse(...)
+		message.lifetime = CurTime() + 150
+		message.Think = function()
+			if message.lifetime < CurTime() then
+				message:Remove()
+			end
+		end
 
 		local scrollBar = nut.chat.panel.content.VBar
 		scrollBar.CanvasSize = scrollBar.CanvasSize + message:GetTall()

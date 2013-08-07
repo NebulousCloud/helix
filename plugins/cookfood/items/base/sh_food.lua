@@ -1,6 +1,10 @@
 BASE.name = "Base Food"
 BASE.uniqueID = "base_food"
+BASE.weight = .5
 BASE.category = "Consumeable - Food"
+BASE.eatsound = "physics/flesh/flesh_bloody_break.wav"
+BASE.eatsoundlevel = 75
+BASE.eatpitch = 200
 BASE.cooktime = 5
 BASE.hunger = 5
 BASE.hungermultp = 1
@@ -13,21 +17,40 @@ BASE.functions.Eat = {
 	alias = "Eat",
 	tip = "Eat the food.",
 	icon = "icon16/cup.png",
-	run = function(itemTable, client, data)
+	run = function(itemTable, client, data, entity)
 		if (SERVER) then
-			if data.cooklevel then
-				local cooklevel = data.cooklevel or 0
-				client:EmitSound( "physics/flesh/flesh_bloody_break.wav", 75, 200 )
-				if itemTable.cookable then
-					client:SolveHunger( math.Clamp(  itemTable.hunger + itemTable.hungermultp * ( data.cooklevel - 4 ), 0, HUNGER_MAX ) )
-					client:SolveThirst(  math.Clamp( itemTable.thirst + itemTable.thirstmultip * ( data.cooklevel - 4 ), 0, THIRST_MAX ) )			
-				else
-					client:SolveHunger( math.Clamp(  itemTable.hunger , 0, HUNGER_MAX ) )
-					client:SolveThirst(  math.Clamp( itemTable.thirst , 0, THIRST_MAX ) )			
+			
+			local cooklevel = data.cooklevel or 0
+			client:EmitSound( itemTable.eatsound, itemTable.eatsoundlevel, itemTable.eatpitch )
+			if itemTable.cookable then
+				client:SolveHunger( math.Clamp(  itemTable.hunger + itemTable.hungermultp * ( cooklevel - 4 ), 0, HUNGER_MAX ) )
+				client:SolveThirst(  math.Clamp( itemTable.thirst + itemTable.thirstmultip * ( cooklevel - 4 ), 0, THIRST_MAX ) )			
+			else
+				client:SolveHunger( math.Clamp(  itemTable.hunger , 0, HUNGER_MAX ) )
+				client:SolveThirst(  math.Clamp( itemTable.thirst , 0, THIRST_MAX ) )			
+			end
+			
+			if entity && entity:IsValid() then
+				entity:GetData().usenum = entity:GetData().usenum or 1
+				entity:GetData().usenum = entity:GetData().usenum - 1
+				net.Start( "nut_UpdateData" )
+					net.WriteEntity( entity )
+					net.WriteFloat( entity:GetData().usenum )
+				net.Broadcast()
+				if entity:GetData().usenum <= 0 then
+					entity:Remove()
+					return true
+				end
+			else
+				data.usenum = data.usenum or 1
+				data.usenum = data.usenum - 1 
+				if data.usenum <= 0 then
+					return true
 				end
 			end
+			
 		end
-		return true
+		return false
 	end
 }
 
@@ -46,7 +69,8 @@ BASE.functions.Cook = {
 			local entity = trace.Entity
 			local cooklevel = data.cooklevel or 0
 			
-			if !itemTable.cookable then Format( cookmod["notice_notcookable"], itemTable.name ) return false end
+			if !itemTable.cookable then nut.util.Notify( Format( cookmod["notice_notcookable"], itemTable.name ), client ) return false end
+			
 			if ( cooklevel == 0 ) then
 				if (IsValid(entity) and entity:GetClass() == "nut_stove") then
 					if entity:GetNetVar( "active" ) then
@@ -103,6 +127,20 @@ if SERVER then
 			client:UpdateInv(uid, -1, item.data)
 			client:UpdateInv(uid, 1, data)
 		end
+	end)
+	
+	util.AddNetworkString("nut_UpdateData")
+else
+
+	net.Receive("nut_UpdateData", function(length, client)
+	
+		local ent = net.ReadEntity()
+		local var = net.ReadFloat()
+		
+		if ( ent && ent:IsValid() ) then
+			ent:GetData().usenum = var
+		end
+		
 	end)
 
 end
