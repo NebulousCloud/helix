@@ -357,7 +357,7 @@ do
 		same class as the one provided.
 	--]]
 	function playerMeta:HasItem(class, quantity)
-		return table.Count(self:GetItemsByClass(class)) > (quantity or 0)
+		return table.Count(self:GetItemsByClass(class)) >= (quantity or 1)
 	end
 
 	--[[

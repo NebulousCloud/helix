@@ -12,8 +12,9 @@ if (SERVER) then
 				local angles = v.angles
 				local itemTable = nut.item.Get(v.uniqueID)
 				local data = v.data
-
-				nut.item.Spawn(position, angles, itemTable, data)
+				if itemTable then
+					nut.item.Spawn(position, angles, itemTable, data)
+				end
 			end
 		end
 	end
