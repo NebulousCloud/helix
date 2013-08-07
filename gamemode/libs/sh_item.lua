@@ -145,6 +145,13 @@ end
 function nut.item.Load(directory)
 	for k, v in pairs(file.Find(directory.."/items/base/*.lua", "LUA")) do
 		BASE = {folderName = string.sub(v, 4, -5)}
+			function BASE:Hook(uniqueID, callback)
+				self.hooks = self.hooks or {}
+				self.hooks[uniqueID] = self.hooks[uniqueID] or {}
+
+				table.insert(self.hooks[uniqueID], callback)
+			end
+
 			nut.util.Include(directory.."/items/base/"..v)
 			nut.item.Register(BASE, true)
 		BASE = nil
@@ -158,6 +165,13 @@ function nut.item.Load(directory)
 
 			for k2, v2 in pairs(files) do
 				ITEM = table.Inherit({}, v)
+					function ITEM:Hook(uniqueID, callback)
+						self.hooks = self.hooks or {}
+						self.hooks[uniqueID] = self.hooks[uniqueID] or {}
+
+						table.insert(self.hooks[uniqueID], callback)
+					end
+
 					nut.util.Include(directory.."/items/"..parent.."/"..v2)
 
 					nut.item.Register(ITEM)
@@ -170,6 +184,13 @@ function nut.item.Load(directory)
 
 	for k, v in pairs(file.Find(directory.."/items/*.lua", "LUA")) do
 		ITEM =  {}
+			function ITEM:Hook(uniqueID, callback)
+				self.hooks = self.hooks or {}
+				self.hooks[uniqueID] = self.hooks[uniqueID] or {}
+
+				table.insert(self.hooks[uniqueID], callback)
+			end
+
 			nut.util.Include(directory.."/items/"..v)
 
 			nut.item.Register(ITEM)
@@ -384,6 +405,18 @@ do
 
 				if (itemFunction.run) then
 					result = itemFunction.run(itemTable, client, item.data or {}, NULL, index)
+
+					local result2
+
+					if (itemTable.hooks and itemTable.hooks[action]) then
+						for k, v in pairs(itemTable.hooks[action]) do
+							result2 = v(itemTable, client, item.data or {}, NULL, index)
+						end
+					end
+
+					if (result2 != nil) then
+						result = result2
+					end
 				end
 
 				if (result != false) then
@@ -411,6 +444,18 @@ do
 
 				if (itemFunction.run) then
 					result = itemFunction.run(itemTable, client, data or {}, entity)
+				end
+
+				local result2
+
+				if (itemTable.hooks and itemTable.hooks[action]) then
+					for k, v in pairs(itemTable.hooks[action]) do
+						result2 = v(itemTable, client, item.data or {}, entity)
+					end
+				end
+
+				if (result2 != nil) then
+					result = result2
 				end
 
 				if (result != false) then
@@ -441,10 +486,17 @@ do
 							net.Start("nut_ItemAction")
 								net.WriteString(itemTable.uniqueID)
 								net.WriteUInt(index, 16)
-								net.WriteString(k)
+								net.WriteString(k).
+
 							net.SendToServer()
 
 							if (v.run) then
+								if (itemTable.hooks and itemTable.hooks[k]) then
+									for k2, v2 in pairs(itemTable.hooks[k]) do
+										v2(itemTable, LocalPlayer(), item.data or {}, entity)
+									end
+								end
+
 								v.run(itemTable, LocalPlayer(), item.data or {}, NULL, index)
 							end
 						end)
@@ -490,6 +542,12 @@ do
 							net.SendToServer()
 
 							if (v.run) then
+								if (itemTable.hooks and itemTable.hooks[k]) then
+									for k2, v2 in pairs(itemTable.hooks[k]) do
+										v2(itemTable, LocalPlayer(), entity:GetData() or {}, entity)
+									end
+								end
+
 								v.run(itemTable, LocalPlayer(), entity:GetData() or {}, entity)
 							end
 						end)
