@@ -9,7 +9,7 @@ if (CLIENT) then
 end
 
 SWEP.Author = "Chessnut"
-SWEP.Instructions = "Primary Fire: Throw/[RAISED] Punch,\nSecondary Fire: Knock/Pickup"
+SWEP.Instructions = "Primary Fire: [RAISED] Punch\nSecondary Fire: Knock/Pickup"
 SWEP.Purpose = "Hitting things and knocking on doors."
 SWEP.Drop = false
 
@@ -109,10 +109,6 @@ end
 function SWEP:PrimaryAttack()	
 	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
 
-	if (IsValid(self.grab)) then
-		self:StopGrab(240)
-	end
-
 	if (!self.Owner:WepRaised()) then
 		return
 	end
@@ -178,7 +174,13 @@ function SWEP:PrimaryAttack()
 	end)
 end
 
-function SWEP:CanCarry(entity, physicsObject)
+function SWEP:CanCarry(entity)
+	local physicsObject = entity:GetPhysicsObject()
+
+	if (!IsValid(physicsObject)) then
+		return false
+	end
+
 	if (physicsObject:GetMass() > 100 or !physicsObject:IsMoveable()) then
 		return false
 	end
@@ -190,129 +192,25 @@ function SWEP:CanCarry(entity, physicsObject)
 	return true
 end
 
-function SWEP:StartGrab(entity, trace)
-	self:SetNextPrimaryFire(CurTime() + 1)
-	self:SetNextSecondaryFire(CurTime() + 1)
-
-	local physicsObject = entity:GetPhysicsObject()
-	local canCarry = false
-
-	if (IsValid(physicsObject)) then
-		canCarry = self:CanCarry(entity, physicsObject)
-	end
-
-	if (!canCarry) then
+function SWEP:DoPickup(entity)
+	if (entity:IsPlayerHolding()) then
 		return
 	end
 
-	self.grabbedEntity = entity
-
-	self.grab = ents.Create("prop_physics")
-	self.grab:SetPos(self.Owner:GetShootPos() + self.Owner:GetAimVector() * 54)
-	self.grab:SetModel("models/props_junk/popcan01a.mdl")
-	self.grab:SetNoDraw(true)
-	self.grab:Spawn()
-	self.grab:Activate()
-	self.grab:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-	self.grab:GetPhysicsObject():EnableMotion(false)
-
-	entity:SetPos(self.grab:GetPos())
-	entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
-	entity:SetOwner(self.Owner)
-	entity.carrier = self.Owner
-
-	if (IsValid(physicsObject)) then
-		physicsObject:AddGameFlag(FVPHYSICS_PLAYER_HELD)
-	end
-
-	self.grabConstraint = constraint.Weld(self.grab, entity, 0, trace.PhysicsBone, 0, true)
-	self:DeleteOnRemove(self.grab)
-
-	self.Owner:EmitSound("physics/body/body_medium_impact_soft"..math.random(1, 4)..".wav")
-
-	timer.Simple(0.1, function()
-		if (!IsValid(entity)) then
+	timer.Simple(FrameTime() * 10, function()
+		if (!IsValid(entity) or entity:IsPlayerHolding()) then
 			return
 		end
 
-		self:CallOnClient("PickUp", entity:EntIndex())
+		self.Owner:PickupObject(entity)
 	end)
-end
 
-function SWEP:Holster(weapon)
-	if (SERVER) then
-		self:StopGrab()
-	end
-
-	return true
-end
-
-function SWEP:StopGrab(force)
-	self:SetNextPrimaryFire(CurTime() + 1)
 	self:SetNextSecondaryFire(CurTime() + 1)
-
-	force = force or 32
-
-	if (IsValid(self.grabConstraint)) then
-		self.grabConstraint:Remove()
-	end
-
-	if (IsValid(self.grab)) then
-		self.grab:Remove()
-	end
-
-	local entity = self.grabbedEntity
-
-	self.Owner:EmitSound("physics/body/body_medium_impact_soft"..math.random(5, 7)..".wav")
-
-	timer.Simple(0.05, function()
-		if (IsValid(entity)) then
-			entity.carrier = nil
-			entity:SetOwner(NULL)
-
-			local velocity = self.Owner:GetAimVector() * force
-			local physicsObject = entity:GetPhysicsObject()
-
-			if (entity:GetClass() == "prop_ragdoll") then
-				for i = 0, entity:GetPhysicsObjectCount() do
-					local physicsObject = entity:GetPhysicsObjectNum(i)
-
-					if (IsValid(physicsObject)) then
-						physicsObject:SetVelocity(velocity)
-					end
-				end
-			elseif (IsValid(physicsObject)) then
-				physicsObject:Wake()
-				physicsObject:EnableMotion(true)
-				physicsObject:SetVelocity(velocity)
-				physicsObject:ClearGameFlag(FVPHYSICS_PLAYER_HELD)
-				physicsObject:AddGameFlag(FVPHYSICS_WAS_THROWN)
-			end
-
-			entity:SetCollisionGroup(COLLISION_GROUP_NONE)
-
-			timer.Simple(0.1, function()
-				if (!IsValid(entity)) then
-					return
-				end
-				print(entity)
-				self:CallOnClient("Dropped", entity:EntIndex())
-			end)
-		end
-	end)
-
-	self.grabbedEntity = nil
 end
 
 function SWEP:SecondaryAttack()
 	local trace = self.Owner:GetEyeTraceNoCursor()
 	local entity = trace.Entity
-
-	if (IsValid(self.grab)) then
-		self:StopGrab()
-
-		return
-	end
 
 	if (SERVER and IsValid(entity)) then
 		local distance = self.Owner:EyePos():Distance(trace.HitPos)
@@ -333,48 +231,8 @@ function SWEP:SecondaryAttack()
 			self:DoPunchAnimation()
 			self:SetNextSecondaryFire(CurTime() + 0.4)
 			self:SetNextPrimaryFire(CurTime() + 1)
-		elseif (!entity:IsPlayer() and !entity:IsNPC()) then
-			self:StartGrab(entity, trace)
+		elseif (!entity:IsPlayer() and !entity:IsNPC() and self:CanCarry(entity)) then
+			self:DoPickup(entity)
 		end
-	end
-end
-
-function SWEP:Think()
-	local grab = self.grab
-	local grabbedEntity = self.grabbedEntity
-
-	if (SERVER and IsValid(grab) and IsValid(grabbedEntity)) then
-		local data = {
-			start = self.Owner:GetShootPos(),
-			endpos = self.Owner:GetShootPos() + self.Owner:GetAimVector() * 54,
-			filter = {self.Owner, self.grabbedEntity}
-		}
-		local trace = util.TraceLine(data)
-
-		grab:SetPos(trace.HitPos)
-		grabbedEntity:PhysWake()
-	end
-end
-
-function SWEP:PickUp(index)
-	local entity = Entity(tonumber(index))
-
-	if (IsValid(entity) and entity:GetOwner() == LocalPlayer()) then
-		local color = entity:GetColor()
-		color.a = 200
-
-		entity:SetRenderMode(RENDERMODE_TRANSALPHADD)
-		entity:SetColor(color)
-	end
-end
-
-function SWEP:Dropped(index)
-	local entity = Entity(tonumber(index))
-
-	if (IsValid(entity)) then
-		local color = entity:GetColor()
-		color.a = 255
-
-		entity:SetColor(color)
 	end
 end
