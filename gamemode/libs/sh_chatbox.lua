@@ -240,7 +240,33 @@ else
 			net.Send(listeners)
 		end
 
-		print(client:Name()..": ("..string.upper(mode)..") "..text)
+		local color = team.GetColor(client:Team())
+		local channel = "r"
+		local highest = 0
+
+		for k, v in pairs(color) do
+			if (v > highest and k != "a") then
+				highest = v
+				channel = k
+			end
+
+			if (v <= 50) then
+				color[k] = 0
+			end
+		end
+
+		if (highest <= 200) then
+			color[channel] = 200
+		else
+			color[channel] = 255
+		end
+		
+		MsgC(color, client:Name())
+		MsgC(color_white, ": ")
+		MsgC(Color(200, 200, 200), "("..string.upper(mode)..") ")
+		MsgC(color_white, text.."\n")
+
+		--print(client:Name()..": ("..string.upper(mode)..") "..text)
 	end
 
 	-- Proccess the text and see if it is a chat class or chat command.
