@@ -486,8 +486,7 @@ do
 							net.Start("nut_ItemAction")
 								net.WriteString(itemTable.uniqueID)
 								net.WriteUInt(index, 16)
-								net.WriteString(k).
-
+								net.WriteString(k)
 							net.SendToServer()
 
 							if (v.run) then
