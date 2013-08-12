@@ -12,7 +12,9 @@ if (SERVER) then
 		local areas = PLUGIN.areas
 
 		if (#areas > 0) then
-			for k, v in pairs(areas) do
+			for k = 1, #areas do
+				local v = areas[k]
+				
 				for k2, v2 in pairs(ents.FindInBox(v.min, v.max)) do
 					if (v2:IsPlayer() and v2.character and v2:GetNetVar("area", "") != v.name) then
 						v2:SetNetVar("area", v.name)

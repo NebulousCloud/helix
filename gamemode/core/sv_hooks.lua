@@ -212,6 +212,7 @@ function GM:PlayerDeath(victim, weapon, attacker)
 	local time = CurTime() + nut.config.deathTime
 	time = nut.schema.Call("PlayerGetDeathTime", client, time) or time
 
+	
 	victim:SetNutVar("deathTime", time)
 
 	timer.Simple(0, function()
@@ -273,4 +274,24 @@ end
 
 function GM:SaveTime()
 	nut.util.WriteTable("date", tostring(nut.util.GetTime()), true)
+end
+
+function GM:KeyPress(client, key)
+	-- PlayerUse hook doesn't get called on doors that don't allow +use :c
+	if (key == IN_USE) then
+		local data = {}
+			data.start = client:GetShootPos()
+			data.endpos = data.start + client:GetAimVector() * 56
+			data.filter = client
+		local trace = util.TraceLine(data)
+		local entity = trace.Entity
+
+		if (IsValid(entity) and string.find(entity:GetClass(), "door")) then
+			if (nut.schema.Call("PlayerCanUseDoor", client, entity) == false) then
+				return
+			end
+
+			nut.schema.Call("PlayerUseDoor", client, entity)
+		end
+	end
 end

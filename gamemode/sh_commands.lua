@@ -148,7 +148,7 @@ nut.command.Register({
 nut.command.Register({
 	adminOnly = true,
 	allowDead = true,
-	syntax = "<string name> <string faction>",
+	syntax = "<string name> <string model> [number skin]",
 	onRun = function(client, arguments)
 		local target = nut.command.FindPlayer(client, arguments[1])
 
@@ -160,6 +160,8 @@ nut.command.Register({
 			end
 
 			target:SetModel(string.lower(arguments[2]))
+			target:SetSkin(tonumber(arguments[3]) or 0)
+			
 			nut.util.Notify(client:Name().." has changed "..target:Name().."'s model to "..arguments[2]..".")
 		end
 	end

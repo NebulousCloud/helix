@@ -1,4 +1,6 @@
 local PLUGIN = PLUGIN
+local math_min = math.min
+local math_Clamp = math.Clamp
 
 function PLUGIN:PlayerLoadedChar(client)
 	local uniqueID = "nut_Stamina"..client:SteamID()
@@ -18,7 +20,7 @@ function PLUGIN:PlayerLoadedChar(client)
 			local value = 3
 
 			if (length2D >= runSpeed) then
-				value = -10 + math.min(client:GetAttrib(ATTRIB_END) * 0.25, 7.5)
+				value = -10 + math_min(client:GetAttrib(ATTRIB_END) * 0.25, 7.5)
 
 				client:SetNutVar("runDist", client:GetNutVar("runDist", 0) + 1)
 
@@ -35,7 +37,7 @@ function PLUGIN:PlayerLoadedChar(client)
 				end
 			end
 
-			local stamina = math.Clamp(client.character:GetVar("stamina", 100) + value, 0, 100)
+			local stamina = math_Clamp(client.character:GetVar("stamina", 100) + value, 0, 100)
 
 			if (stamina != client.character:GetVar("stamina", 100)) then
 				client.character:SetVar("stamina", stamina)

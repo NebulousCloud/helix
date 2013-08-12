@@ -78,30 +78,36 @@ else
 		local hunger = self.character:GetVar("thirst", 0)
 		self.character:SetVar("thirst", math.Clamp( hunger + intAmount, 0, THIRST_MAX ))
 	end
-	
-	hook.Add( "Think", "plg_Hunger", function()
-	
-		if HUNGER_RATE < CurTime() then
+
+	local math_Clamp = math.Clamp
+
+	function PLUGIN:Think()
+		local curTime = CurTime()
+
+		if HUNGER_RATE < curTime then
 			for _, player in pairs( player.GetAll() ) do
-				if player.character then
-					local hunger = player.character:GetVar("hunger", 0)
-					player.character:SetVar("hunger", math.Clamp( hunger - 10, 0, HUNGER_MAX ))
+				local character = player.character
+
+				if character then
+					local hunger = character:GetVar("hunger", 0)
+					character:SetVar("hunger", math_Clamp( hunger - 10, 0, HUNGER_MAX ))
 				end
 			end
-			HUNGER_RATE = CurTime() + HUNGER_SPEED
+			HUNGER_RATE = curTime + HUNGER_SPEED
 		end
 		
-		if THIRST_RATE < CurTime() then
+		if THIRST_RATE < curTime then
 			for _, player in pairs( player.GetAll() ) do
-				if player.character then
-					local hunger = player.character:GetVar("thirst", 0)
-					player.character:SetVar("thirst", math.Clamp( hunger - 10, 0, THIRST_MAX ))
+				local character = player.character
+
+				if character then
+					local hunger = character:GetVar("thirst", 0)
+					character:SetVar("thirst", math.Clamp( hunger - 10, 0, THIRST_MAX ))
 				end
 			end
-			THIRST_RATE = CurTime() + THIRST_SPEED
+			THIRST_RATE = curTime + THIRST_SPEED
 		end
-		
-	end)
+	end
 	
 	
 	function PLUGIN:LoadData()

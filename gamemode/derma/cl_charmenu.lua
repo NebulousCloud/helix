@@ -196,6 +196,7 @@ local PANEL = {}
 
 		self.leave.OnClick = function(panel)
 			if (LocalPlayer().character) then
+				self:FadeOutMusic()
 				self:Remove()
 			else
 				RunConsoleCommand("disconnect")

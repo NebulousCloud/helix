@@ -91,7 +91,7 @@ function GM:HUDPaint()
 	local x, y = 8, 8
 
 	for k, v in ipairs(info) do
-		draw.SimpleText(v, "BudgetLabel", x, y, color_white, 0, 0)
+		--draw.SimpleText(v, "BudgetLabel", x, y, color_white, 0, 0)
 
 		y = y + 16
 	end
@@ -281,5 +281,4 @@ end
 
 net.Receive("nut_CurTime", function(length)
 	nut.curTime = net.ReadUInt(32)
-	print(nut.curTime)
 end)
