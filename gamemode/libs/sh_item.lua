@@ -357,7 +357,11 @@ do
 		same class as the one provided.
 	--]]
 	function playerMeta:HasItem(class, quantity)
-		return table.Count(self:GetItemsByClass(class)) >= (quantity or 1)
+		local amt = 0
+		for k, v in pairs( self:GetItemsByClass(class) ) do
+			amt = amt + v.quantity
+		end
+		return amt >= (quantity or 1)
 	end
 
 	--[[
