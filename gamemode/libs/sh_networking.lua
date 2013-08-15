@@ -104,20 +104,10 @@ if (SERVER) then
 	end)
 	
 	-- Clean up player vars.
-	gameevent.Listen("player_disconnect")
-
-	hook.Add("player_disconnect", "cn_PlayerVarClean", function(data)
-		if (data.userid) then
-			for k, v in pairs(player.GetAll()) do
-				if (v:UserID() == data.userid) then
-					net.Start("cn_EntityVarClean")
-						net.WriteUInt(v:EntIndex(), 16)
-					net.Broadcast()
-
-					print("Cleaned net vars.")
-				end
-			end
-		end
+	hook.Add("PlayerDisconnected", "cn_PlayerVarClean", function(client)
+		net.Start("cn_EntityVarClean")
+			net.WriteUInt(client:EntIndex(), 16)
+		net.Broadcast()
 	end)
 else
 	local function replacePlaceHolders(value)
