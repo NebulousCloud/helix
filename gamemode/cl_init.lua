@@ -98,6 +98,14 @@ surface.CreateFont("nut_ChatFontAction", {
 	italic = true
 })
 
+surface.CreateFont("nut_ScaledFont", {
+	font = mainFont,
+	size = 50,
+	weight = 1000,
+	outline = true,
+	antialias = false
+})
+
 timer.Destroy("HintSystem_OpeningMenu")
 timer.Destroy("HintSystem_Annoy1")
 timer.Destroy("HintSystem_Annoy2")
