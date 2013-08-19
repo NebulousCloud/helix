@@ -226,7 +226,7 @@ net.Receive("nut_CharCreateAuthed", function(length)
 
 	surface.PlaySound("buttons/button9.wav")
 
-	timer.Simple(0, function()
+	timer.Simple(0.1, function()
 		if (IsValid(nut.gui.charMenu)) then
 			nut.gui.charMenu:FadeOutMusic()
 			nut.gui.charMenu:Remove()
