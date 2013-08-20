@@ -105,7 +105,7 @@ if (SERVER) then
 	
 	-- Clean up player vars.
 	hook.Add("PlayerDisconnected", "cn_PlayerVarClean", function(client)
-		net.Start("cn_EntityVarClean")
+		net.Start("nut_EntityVarClean")
 			net.WriteUInt(client:EntIndex(), 16)
 		net.Broadcast()
 	end)
