@@ -110,7 +110,7 @@ nut.command.Register({
 	adminOnly = true,
 	syntax = "[number radius]",
 	onRun = function(client, arguments)
-		local radius = math.max(tonumber(arguments[1]) or 128, 8)
+		local radius = math.max(tonumber(arguments[1] or "") or 128, 8)
 		local i = 0
 		local position = client:GetPos()
 

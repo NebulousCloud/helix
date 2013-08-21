@@ -209,9 +209,9 @@ nut.command.Register({
 	adminOnly = true,
 	syntax = "<string name> <string item> [number amount]",
 	onRun = function(client, arguments)
-		local name = arguments[1]
-		local find = arguments[2]
-		local amount = math.max(arguments[3] or 1, 1)
+		local name = arguments[1] or ""
+		local find = arguments[2] or ""
+		local amount = math.max(tonumber(arguments[3] or "") or 1, 1)
 		local target = nut.command.FindPlayer(client, name)
 
 		if (IsValid(target)) then
