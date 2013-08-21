@@ -60,7 +60,6 @@ nut.command.Register({
 		angles.p = 0
 		angles.y = angles.y - 180
 
-		print(angles)
 		local entity = ents.Create("nut_vendor")
 		entity:SetPos(position)
 		entity:SetAngles(angles)

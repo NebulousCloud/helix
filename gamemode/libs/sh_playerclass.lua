@@ -124,7 +124,7 @@ do
 			if ((self.ragdoll and self.ragdoll == v) or v == self) then
 				continue
 			end
-			print(k, v)
+			
 			if (string.find(v:GetClass(), "prop_") or v:IsPlayer() or v:IsNPC()) then
 				return true
 			end
