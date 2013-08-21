@@ -87,6 +87,14 @@ function nut.plugin.Load(directory)
 
 	for k, v in pairs(folders) do
 		PLUGIN = nut.plugin.Get(v) or {}
+			function PLUGIN:WriteTable(data, ignoreMap, global)
+				return nut.util.WriteTable(v, value, ignoreMap, global)
+			end
+
+			function PLUGIN:ReadTable(ignoreMap, forceRefresh)
+				return nut.util.ReadTable(v, ignoreMap, forceRefresh)
+			end
+
 			nut.util.Include(directory.."/plugins/"..v.."/sh_plugin.lua")
 
 			local pluginDir = directory.."/plugins/"..v
@@ -103,6 +111,14 @@ function nut.plugin.Load(directory)
 		local cleanName = string.sub(v, 4, -5)
 
 		PLUGIN = nut.plugin.Get(cleanName) or {}
+			function PLUGIN:WriteTable(data, ignoreMap, global)
+				return nut.util.WriteTable(cleanName, value, ignoreMap, global)
+			end
+
+			function PLUGIN:ReadTable(ignoreMap, forceRefresh)
+				return nut.util.ReadTable(cleanName, ignoreMap, forceRefresh)
+			end
+
 			nut.util.Include(directory.."/plugins/"..v)
 			nut.plugin.buffer[cleanName] = PLUGIN
 		PLUGIN = nil
