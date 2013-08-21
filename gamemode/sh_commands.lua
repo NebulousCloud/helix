@@ -204,3 +204,29 @@ nut.command.Register({
 		end
 	end
 }, "charfallover")
+
+nut.command.Register({
+	adminOnly = true,
+	syntax = "<string name> <string item> [number amount]",
+	onRun = function(client, arguments)
+		local name = arguments[1]
+		local find = arguments[2]
+		local amount = math.max(arguments[3] or 1, 1)
+		local target = nut.command.FindPlayer(client, name)
+
+		if (IsValid(target)) then
+			for k, v in pairs(nut.item.GetAll()) do
+				if (nut.util.StringMatches(find, v.name) or nut.util.StringMatches(find, v.uniqueID)) then
+					target:UpdateInv(v.uniqueID, amount)
+
+					nut.util.Notify("You have given "..target:Name().." "..amount.." "..v.name.." item(s).", client)
+					nut.util.Notify(target:Name().." has given you "..amount.." "..v.name.." item(s).", target)
+
+					return
+				end
+			end
+
+			nut.util.Notify("You specified an invalid item.", client)
+		end
+	end
+}, "chargiveitem")

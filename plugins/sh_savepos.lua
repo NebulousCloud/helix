@@ -12,13 +12,19 @@ function PLUGIN:PlayerDisconnected(client)
 end
 
 function PLUGIN:PlayerSpawn(client)
-	local map = client.character:GetData("posmap")
-	local position = client.character:GetData("pos")
+	timer.Simple(0.1, function()
+		if (!IsValid(client)) then
+			return
+		end
 
-	if (map and map == game.GetMap() and position) then
-		client:SetPos(position + Vector(0, 0, 8))
-	end
+		local map = client.character:GetData("posmap")
+		local position = client.character:GetData("pos")
 
-	client.character:SetData("posmap", nil)
-	client.character:SetData("pos", nil)
+		if (map and map == game.GetMap() and position) then
+			client:SetPos(position + Vector(0, 0, 8))
+		end
+
+		client.character:SetData("posmap", nil)
+		client.character:SetData("pos", nil)
+	end)
 end
