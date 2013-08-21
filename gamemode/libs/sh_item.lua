@@ -219,7 +219,7 @@ do
 			is how many to give (or take if it is negative). Data is a table that is for
 			persistent item data. noSave and noSend are self-explanatory.
 		--]]
-		function playerMeta:UpdateInv(class, quantity, data, noSave, noSend)
+		function playerMeta:UpdateInv(class, quantity, data, noSave, noSend, forced)
 			if (!self.character) then
 				return false
 			end
@@ -229,7 +229,7 @@ do
 			if (!itemTable) then
 				ErrorNoHalt("Attempt to give invalid item '"..class.."'\n")
 
-				return
+				return false
 			end
 
 			quantity = quantity or 1
@@ -237,7 +237,7 @@ do
 			local weight, maxWeight = self:GetInvWeight()
 
 			-- Cannot add more items.
-			if (quantity > 0 and weight + itemTable.weight > maxWeight) then
+			if (!forced and (quantity > 0 and weight + itemTable.weight > maxWeight)) then
 				nut.util.Notify(nut.lang.Get("no_invspace"), self)
 
 				return false
