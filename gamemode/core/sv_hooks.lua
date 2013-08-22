@@ -83,7 +83,7 @@ function GM:PlayerLoadedChar(client)
 				return
 			end
 			
-			nut.scroll.Send("NutScript: "..nut.lang.Get("schema_author", "Chessnut"), client, function()
+			nut.scroll.Send("NutScript: "..nut.lang.Get("schema_author", "Chessnut and rebel1324"), client, function()
 				if (IsValid(client)) then
 					nut.scroll.Send(SCHEMA.name..": "..nut.lang.Get("schema_author", SCHEMA.author), client)
 				end
