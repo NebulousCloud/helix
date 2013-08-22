@@ -14,7 +14,6 @@ end
 
 function PLUGIN:ChooseSpawn(client, spawns)
 	if (#spawns > 0) then
-		PrintTable(spawns)
 		local data = table.Random(spawns)
 
 		client:SetPos(data.pos)
