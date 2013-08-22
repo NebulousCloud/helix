@@ -230,3 +230,11 @@ nut.command.Register({
 		end
 	end
 }, "chargiveitem")
+
+nut.command.Register({
+	onRun = function(client, arguments)
+		math.randomseed(CurTime())
+		
+		nut.chat.Send(client, "roll", client:Name().." has rolled "..math.random(1, 100)..".")
+	end
+}, "roll")

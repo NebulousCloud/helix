@@ -10,7 +10,7 @@ if (SERVER) then
 		Purpose: Checks if the command exists and determines what should be returned to the
 		PlayerSay hook.
 	--]]
-	function nut.command.RunCommand(client, action, arguments)
+	function nut.command.RunCommand(client, action, arguments, noMsgOnFail)
 		local commandTable = nut.command.buffer[action]
 		local echo = false
 
@@ -43,12 +43,12 @@ if (SERVER) then
 				end
 
 				if (#arguments > 0) then
-					print(client:Name().." has ran command '/"..action.." "..table.concat(arguments, " ").."'")
+					print(client:Name().." has ran command '"..action.." "..table.concat(arguments, " ").."'")
 				else
-					print(client:Name().." has ran command '/"..action.."'")
+					print(client:Name().." has ran command '"..action.."'")
 				end
 			end
-		else
+		elseif (!noMsgOnFail) then
 			nut.util.Notify("That command does not exist.", client)
 		end
 
@@ -83,7 +83,7 @@ if (SERVER) then
 		that are enclosed in quotes. It also takes all the arguments and packs them into a
 		table. This function calls nut.command.RunCommand and returns its return value.
 	--]]
-	function nut.command.ParseCommand(client, text)
+	function nut.command.ParseCommand(client, text, noMsgOnFail)
 		if (string.sub(text, 1, 1) == "/") then
 			local arguments = {}
 			local text2 = string.sub(text, 2)
@@ -101,12 +101,16 @@ if (SERVER) then
 				end
 			end
 
-			local command = string.lower(arguments[1] or "")
+			local command
+
+			if (arguments[1]) then
+				command = string.lower(arguments[1])
+			end
 			
 			if (command) then
 				table.remove(arguments, 1)
 
-				local value = nut.command.RunCommand(client, command, arguments)
+				local value = nut.command.RunCommand(client, command, arguments, noMsgOnFail)
 
 				if (value) then
 					return value

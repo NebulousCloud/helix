@@ -134,6 +134,26 @@ do
 		end,
 		prefix = "/event",
 	})
+
+	nut.chat.Register("event", {
+		onChat = function(speaker, text)
+			if (!speaker:IsAdmin()) then
+				nut.util.Notify(nut.lang.Get("no_perm", speaker:Name()), speaker)
+
+				return
+			end
+
+			chat.AddText(Color(194, 93, 39), text)
+		end,
+		prefix = "/event",
+	})
+
+	nut.chat.Register("roll", {
+		canHear = nut.config.chatRange,
+		onChat = function(speaker, text)
+			chat.AddText(Color(158, 122, 196), text)
+		end
+	})
 end
 
 if (CLIENT) then
@@ -265,8 +285,6 @@ else
 		MsgC(color_white, ": ")
 		MsgC(Color(200, 200, 200), "("..string.upper(mode)..") ")
 		MsgC(color_white, text.."\n")
-
-		--print(client:Name()..": ("..string.upper(mode)..") "..text)
 	end
 
 	-- Proccess the text and see if it is a chat class or chat command.
@@ -284,6 +302,7 @@ else
 			if (type(v.prefix) == "table") then
 				for k2, v2 in pairs(v.prefix) do
 					local length = string.len(v2) + 1
+
 					if (string.Left(text2, length) == v2.." ") then
 						mode = k
 						text = string.sub(text, length + 1)
@@ -291,15 +310,12 @@ else
 						break
 					end
 				end
-			else
-				if (v.prefix) then
-					local length = string.len(v.prefix) + 1
-					if (string.Left(text2, length) == v.prefix.." ") then
-						mode = k
-						text = string.sub(text, length + 1)
+			elseif (v.prefix) then
+				local length = string.len(v.prefix) + 1
 
-						break
-					end
+				if (string.Left(text2, length) == v.prefix.." ") then
+					mode = k
+					text = string.sub(text, length + 1)
 				end
 			end
 		end
