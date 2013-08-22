@@ -11,7 +11,7 @@ BASE.functions.Equip = {
 	run = function(itemTable, client, data)
 		if (SERVER) then
 			if (client:HasWeapon(itemTable.class)) then
-				nut.util.Notify("You already has this weapon equipped.")
+				nut.util.Notify("You already has this weapon equipped.", client)
 
 				return false
 			end
