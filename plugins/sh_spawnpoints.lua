@@ -102,6 +102,8 @@ nut.command.Register({
 		else
 			nut.util.Notify("You have added a(n) "..(factionTable and factionTable.name or "default").." spawn.", client)
 		end
+
+		PLUGIN:SaveData()
 	end
 }, "spawnadd")
 
@@ -121,5 +123,6 @@ nut.command.Register({
 		end
 
 		nut.util.Notify("You have removed "..i.." spawn point(s).", client)
+		PLUGIN:SaveData()
 	end
 }, "spawnremove")

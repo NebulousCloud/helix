@@ -88,7 +88,7 @@ function nut.plugin.Load(directory)
 	for k, v in pairs(folders) do
 		PLUGIN = nut.plugin.Get(v) or {}
 			function PLUGIN:WriteTable(data, ignoreMap, global)
-				return nut.util.WriteTable(v, value, ignoreMap, global)
+				return nut.util.WriteTable(v, data, ignoreMap, global)
 			end
 
 			function PLUGIN:ReadTable(ignoreMap, forceRefresh)
@@ -112,7 +112,7 @@ function nut.plugin.Load(directory)
 
 		PLUGIN = nut.plugin.Get(cleanName) or {}
 			function PLUGIN:WriteTable(data, ignoreMap, global)
-				return nut.util.WriteTable(cleanName, value, ignoreMap, global)
+				return nut.util.WriteTable(cleanName, data, ignoreMap, global)
 			end
 
 			function PLUGIN:ReadTable(ignoreMap, forceRefresh)
