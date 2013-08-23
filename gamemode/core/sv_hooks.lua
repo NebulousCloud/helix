@@ -220,6 +220,36 @@ function GM:PlayerDeath(victim, weapon, attacker)
 	end)
 end
 
+function GM:PlayerDeathSound(client)
+	local model = string.lower(client:GetModel())
+	local gender = "male"
+
+	if (string.find(model, "female") or nut.anim.GetClass(model) == "citizen_female") then
+		gender = "female"
+	end
+
+	client:EmitSound("vo/npc/"..gender.."01/pain0"..math.random(7, 9)..".wav")
+
+	return true
+end
+
+function GM:PlayerHurt(client, attacker, health, damage)
+	if (health <= 0) then
+		return true
+	end
+
+	local model = string.lower(client:GetModel())
+	local gender = "male"
+
+	if (string.find(model, "female") or nut.anim.GetClass(model) == "citizen_female") then
+		gender = "female"
+	end
+
+	client:EmitSound(nut.schema.Call("PlayerPainSound", client), "vo/npc/"..gender.."01/pain0"..math.random(1, 6)..".wav")
+
+	return true
+end
+
 function GM:PlayerDeathThink(client)
 	if (client.character and client:GetNutVar("deathTime", 0) < CurTime()) then
 		client:Spawn()
