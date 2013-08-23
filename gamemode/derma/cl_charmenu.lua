@@ -149,13 +149,14 @@ local PANEL = {}
 					surface.DrawRect(0, h - y, w, h)
 				end
 			end
+
+			self.create:SetToolTip(nut.lang.Get("create_tip"))
 		end
 
 		addLowerButton("leave", nut.loaded and nut.lang.Get("return") or nut.lang.Get("leave"), RIGHT)
 		addLowerButton("delete", nut.lang.Get("delete"), RIGHT)
 		addLowerButton("choose", nut.lang.Get("choose"), RIGHT)
 
-		self.create:SetToolTip(nut.lang.Get("create_tip"))
 		self.leave:SetToolTip(LocalPlayer().character and nut.lang.Get("return_tip") or nut.lang.Get("leave_tip"))
 		self.delete:SetToolTip(nut.lang.Get("delete_tip"))
 		self.choose:SetToolTip(nut.lang.Get("choose_tip"))
