@@ -234,7 +234,44 @@ nut.command.Register({
 nut.command.Register({
 	onRun = function(client, arguments)
 		math.randomseed(CurTime())
-		
+
 		nut.chat.Send(client, "roll", client:Name().." has rolled "..math.random(1, 100)..".")
 	end
 }, "roll")
+
+nut.command.Register({
+	adminOnly = true,
+	syntax = "<string name> <string group> [bool active]",
+	onRun = function(client, arguments)
+		local target = nut.command.FindPlayer(client, arguments[1])
+
+		if (!IsValid(target)) then
+			return
+		end
+
+		local group = arguments[2]
+		local active = util.tobool(arguments[3] or "true")
+
+		if (!group) then
+			nut.util.Notify(nut.lang.Get("missing_arg", 2), client)
+
+			return
+		end
+
+		for k, v in pairs(target:GetBodyGroups()) do
+			if (v.id > 0 and (tostring(v.id) == group or nut.util.StringMatches(group, v.name))) then
+				if (active) then
+					target:SetBodygroup(v.id, 1)
+					nut.util.Notify(client:Name().." has enabled "..target:Name().."'s "..v.name.." bodygroup.")
+				else
+					target:SetBodygroup(v.id, 0)
+					nut.util.Notify(client:Name().." has disabled "..target:Name().."'s "..v.name.." bodygroup.")
+				end
+
+				return
+			end
+		end
+
+		nut.util.Notify("You provided an invalid bodygroup.", client)
+	end
+}, "charsetbodygroup")
