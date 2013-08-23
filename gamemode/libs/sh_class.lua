@@ -54,8 +54,10 @@ if (SERVER) then
 		local index = net.ReadUInt(8)
 		local class = nut.class.Get(index)
 
-		if (class and client:CharClass() != class and class:PlayerCanJoin(client)) then
-			client:SetCharClass(index)
+		if (class and client:CharClass() != class and class:PlayerCanJoin(client) and nut.schema.Call("PlayerCanJoinClass", client, class) != false) then
+			nut.schema.Call("PlayerPreJoinClass", client, class)
+				client:SetCharClass(index)
+			nut.schema.Call("PlayerPostJoinClass", client, class)
 
 			nut.util.Notify("You have joined the "..class.name.." class.", client)
 		else
