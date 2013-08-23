@@ -252,6 +252,10 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:OnPlayerChat(client, text, teamOnly, dead)
+		if (!IsValid(client)) then
+			chat.AddText(Color(150, 150, 150), "Console", color_white, ": "..text)
+		end
+
 		return true
 	end
 
