@@ -159,8 +159,11 @@ nut.command.Register({
 				return
 			end
 
-			target:SetModel(string.lower(arguments[2]))
+			local model = string.lower(arguments[2])
+
+			target:SetModel(model)
 			target:SetSkin(tonumber(arguments[3]) or 0)
+			target.character:SetVar("model", model)
 			
 			nut.util.Notify(client:Name().." has changed "..target:Name().."'s model to "..arguments[2]..".")
 		end
@@ -235,7 +238,10 @@ nut.command.Register({
 	onRun = function(client, arguments)
 		math.randomseed(CurTime())
 
-		nut.chat.Send(client, "roll", client:Name().." has rolled "..math.random(1, 100)..".")
+		local roll = math.random(1, 100)
+		roll = nut.schema.Call("GetRollAmount", client, roll) or roll
+
+		nut.chat.Send(client, "roll", client:Name().." has rolled "..roll..".")
 	end
 }, "roll")
 
@@ -267,8 +273,6 @@ nut.command.Register({
 					target:SetBodygroup(v.id, 0)
 					nut.util.Notify(client:Name().." has disabled "..target:Name().."'s "..v.name.." bodygroup.")
 				end
-
-				return
 			end
 		end
 
