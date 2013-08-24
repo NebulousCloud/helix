@@ -24,12 +24,19 @@ if (CLIENT) then
 	end
 
 	--[[
+		Purpose: Return the data for a specific bar based off the uniqueID provided.
+	--]]
+	function nut.bar.Get(uniqueID)
+		return nut.bar.buffer[uniqueID]
+	end
+
+	--[[
 		Purpose: Loops through the list of bars, sorted by their IDs, and draws them
 		using nut:PaintBar(). It returns the y of the next bar that is to be drawn.
 	--]]
 	function nut.bar.Paint(x, y, width, height)
 		for k, v in SortedPairsByMemberValue(nut.bar.buffer, "id", true) do
-			if (v.getValue) then
+			if (nut.schema.Call("HUDShouldPaintBar", k) != false and v.getValue) then
 				local realValue = v.getValue()
 
 				v.deltaValue = math.Approach(v.deltaValue or 0, realValue, FrameTime() * 80)
