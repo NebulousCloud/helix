@@ -39,6 +39,7 @@ function PLUGIN:PlayerDeath( ply, dmg, att )
 		end
 				
 		for k,v in pairs( ply:GetInventory() ) do
+			if !nut.item.Get( k ) then continue end
 			local dice = math.random( 0, 100 )
 			local chance = math.Clamp( self.config.losechance, 0, 100 )
 			if self.config.fixchance[ k ] then
@@ -47,15 +48,17 @@ function PLUGIN:PlayerDeath( ply, dmg, att )
 					chance = math.Clamp( self.config.fixchance[ k ][ fct ], 0, 100 )
 				end
 			end
-			
+							
 			if dice <= chance then
-				local dat = v.data or {}
+				local dat = v[1].data
 				local q =  1
 				if v.quantity then
-					q = math.random( 1, v.quantity )
+					q = math.random( 1, v[1].quantity )
 				end
-				ply:UpdateInv( k, -q, dat ) 
-				entity:UpdateInv( k, q, dat ) 
+				if !dat.Equipped then
+					ply:UpdateInv( k, -q, dat ) 
+					entity:UpdateInv( k, q, dat )
+				end				
 			end
 		end
 		
