@@ -3,10 +3,12 @@ NutScript
 
 A free role-play framework for Garry's Mod. Please note that this version is under development and should only be used for developing a schema early, or assisting with development on the schema.
 
+#### Check out the wiki @ http://ns.chessnut.info/
+
 Installation
 =========
 
-Installation just requires the files to be placed into a folder called 'nutscript' in the gamemodes/ folder. After that, configurations can be made in the configuration files located under nutscript/gamemode/.
+Installation instructions can be found on the wiki.
 
 License
 =========
