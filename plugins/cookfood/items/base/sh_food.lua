@@ -20,6 +20,7 @@ BASE.functions.Eat = {
 	run = function(itemTable, client, data, entity)
 		if (SERVER) then
 			
+			--** Solve Thirst and Hunger.
 			local cooklevel = data.cooklevel or 0
 			client:EmitSound( itemTable.eatsound, itemTable.eatsoundlevel, itemTable.eatpitch )
 			if itemTable.cookable then
@@ -30,7 +31,9 @@ BASE.functions.Eat = {
 				client:SolveThirst(  math.Clamp( itemTable.thirst , 0, THIRST_MAX ) )			
 			end
 			
+			--** Make Entity/Item consumed.
 			if entity && entity:IsValid() then
+				--** If you ate Entity
 				entity:GetData().usenum = entity:GetData().usenum or 1
 				entity:GetData().usenum = entity:GetData().usenum - 1
 				net.Start( "nut_UpdateData" )
@@ -42,14 +45,19 @@ BASE.functions.Eat = {
 					return true
 				end
 			else
-				data.usenum = data.usenum or 1
-				data.usenum = data.usenum - 1 
-				if data.usenum <= 0 then
-					return true
+				--** If you ate Item ( In Inventory. )
+				local ndat = table.Copy( data )
+				ndat.usenum = data.usenum or 1
+				ndat.usenum = data.usenum - 1 
+				client:UpdateInv( itemTable.uniqueID, -1, data ) 
+				if ndat.usenum > 0 then
+					client:UpdateInv( itemTable.uniqueID, 1, ndat )
 				end
+				
 			end
 			
 		end
+		
 		return false
 	end
 }
@@ -69,13 +77,14 @@ BASE.functions.Cook = {
 			local entity = trace.Entity
 			local cooklevel = data.cooklevel or 0
 			
+			--** If it's not cookable ( Just making sure! )
 			if !itemTable.cookable then nut.util.Notify( Format( cookmod["notice_notcookable"], itemTable.name ), client ) return false end
 			
+			--** Conditions
 			if ( cooklevel == 0 ) then
 				if (IsValid(entity) and entity:GetClass() == "nut_stove") then
 					if entity:GetNetVar( "active" ) then
 						nut.util.Notify( Format( cookmod["notice_cooked"], itemTable.name ) , client)
-							
 						net.Start("nut_CookItem")
 							net.WriteUInt(index, 8)
 							net.WriteString( itemTable.uniqueID )
@@ -92,6 +101,9 @@ BASE.functions.Cook = {
 			
 		end
 		return false
+	end,
+	shouldDisplay = function(itemTable, data, entity)
+		return itemTable.cookable
 	end
 }
 
@@ -119,9 +131,12 @@ if SERVER then
 
 		if (item) then
 			local data = table.Copy(item.data or {})
+			
+			--** defines it's cooked level
+			--** currently Random.
 			local wow = math.random( 1, #cookTable )
-			data.Cooked = cookTable[wow]
-			data.cooklevel = wow -- legit
+			data.Cooked = cookTable[wow] --* set description about how it's cooked.
+			data.cooklevel = wow --** It's cooked level. ( 5 is normal. )
 			
 			client:EmitSound( "player/pl_burnpain" .. math.random( 1.3 ) ..".wav", 75, 140 )
 			client:UpdateInv(uid, -1, item.data)
@@ -132,7 +147,7 @@ if SERVER then
 	util.AddNetworkString("nut_UpdateData")
 else
 
-	net.Receive("nut_UpdateData", function(length, client)
+	net.Receive("nut_UpdateData", function(length, client) --** For updating dropped Entity's usenum.
 	
 		local ent = net.ReadEntity()
 		local var = net.ReadFloat()
