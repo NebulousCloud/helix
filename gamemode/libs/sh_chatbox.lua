@@ -223,9 +223,10 @@ if (CLIENT) then
 			return
 		end
 
-		nut.schema.Call("ChatClassPreText", class, speaker, text)
+		if !nut.schema.Call("ChatClassPreText", class, speaker, text, mode) then --** allows you inturrupt the text when the hook is returned true ( can be used for Non-RP Chat filter or Curse word filter. )
 			class.onChat(speaker, text)
-		nut.schema.Call("ChatClassPostText", class, speaker, text)
+		end
+		nut.schema.Call("ChatClassPostText", class, speaker, text, mode)
 	end)
 else
 	util.AddNetworkString("nut_ChatMessage")
