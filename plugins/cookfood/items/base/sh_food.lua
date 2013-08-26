@@ -47,8 +47,8 @@ BASE.functions.Eat = {
 			else
 				--** If you ate Item ( In Inventory. )
 				local ndat = table.Copy( data )
-				ndat.usenum = data.usenum or 1
-				ndat.usenum = data.usenum - 1 
+				ndat.usenum = ndat.usenum or 1
+				ndat.usenum = ndat.usenum - 1 
 				client:UpdateInv( itemTable.uniqueID, -1, data ) 
 				if ndat.usenum > 0 then
 					client:UpdateInv( itemTable.uniqueID, 1, ndat )
