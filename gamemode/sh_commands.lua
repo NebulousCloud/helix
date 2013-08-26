@@ -22,6 +22,30 @@ nut.command.Register({
 }, "toggleraise")
 
 nut.command.Register({
+	allowDead = true,
+	onRun = function(client, arguments)
+		local text = arguments[1]
+		
+		if (!text or string.len(text) < nut.config.descMinChars) then
+			nut.util.Notify("You provided an invalid description.", client)
+			
+			return
+		end
+
+		local description = client.character:GetVar("description", "")
+		
+		if (string.lower(description) == string.lower(text)) then
+			nut.util.Notify("You need to provide a different description.", client)
+			
+			return
+		end
+		
+		client.character:SetVar("description", text)
+		nut.util.Notify("You have changed your character's description.", client)
+	end
+}, "charsetdesc")
+
+nut.command.Register({
 	adminOnly = true,
 	allowDead = true,
 	syntax = "<string name> <string flag>",
