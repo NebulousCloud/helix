@@ -24,6 +24,12 @@ nut.config.alwaysRaised = {
 	gmod_tool = true
 }
 
+-- If set to true, holding your reload key will toggleraise.
+nut.config.holdReloadToToggle = true
+
+-- How many seconds must the player hold reload for to toggleraise.
+nut.config.holdReloadTime = 0.8
+
 -- How often database saving should occur for players (in seconds)
 nut.config.saveInterval = 600
 

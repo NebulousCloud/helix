@@ -307,6 +307,8 @@ function GM:SaveTime()
 end
 
 function GM:KeyPress(client, key)
+	local config = nut.config
+
 	-- PlayerUse hook doesn't get called on doors that don't allow +use :c
 	if (key == IN_USE) then
 		local data = {}
@@ -323,5 +325,18 @@ function GM:KeyPress(client, key)
 
 			nut.schema.Call("PlayerUseDoor", client, entity)
 		end
+	elseif (config.holdReloadToToggle and key == IN_RELOAD) then
+		timer.Create("nut_ToggleTime"..client:UniqueID(), config.holdReloadTime, 1, function()
+			nut.command.SetShowCommandRan(true)
+				nut.command.RunCommand(client, "toggleraise", {})
+			nut.command.SetShowCommandRan(false)
+		end)
+	end
+end
+
+function GM:KeyRelease(client, key)
+	-- Cancel the toggle timer if they let go.
+	if (key == IN_RELOAD) then
+		timer.Remove("nut_ToggleTime"..client:UniqueID())
 	end
 end

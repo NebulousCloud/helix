@@ -6,6 +6,15 @@ nut.command = nut.command or {}
 nut.command.buffer = nut.command.buffer or {}
 
 if (SERVER) then
+	local silent = false
+
+	--[[
+		Purpose: Set whether or not the console will show if a player runs a command.
+	--]]
+	function nut.command.SetShowCommandRan(state)
+		silent = state
+	end
+
 	--[[
 		Purpose: Checks if the command exists and determines what should be returned to the
 		PlayerSay hook.
@@ -42,10 +51,12 @@ if (SERVER) then
 					echo = true
 				end
 
-				if (#arguments > 0) then
-					print(client:Name().." has ran command '"..action.." "..table.concat(arguments, " ").."'")
-				else
-					print(client:Name().." has ran command '"..action.."'")
+				if (!silent) then
+					if (#arguments > 0) then
+						print(client:Name().." has ran command '"..action.." "..table.concat(arguments, " ").."'")
+					else
+						print(client:Name().." has ran command '"..action.."'")
+					end
 				end
 			end
 		elseif (!noMsgOnFail) then
