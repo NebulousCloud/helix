@@ -239,6 +239,8 @@ do
 			if (isValid) then
 				self.ragdoll:Remove()
 			end
+
+			timer.Remove("nut_RagTime"..self:EntIndex())
 		end
 
 		function playerMeta:SetTimedRagdoll(time)
@@ -248,14 +250,17 @@ do
 				suffix = ""
 			end
 
-			self:SetMainBar("You are regaining conciousness.", time)
 			self:ForceRagdoll()
 
-			timer.Create("nut_RagTime"..self:EntIndex(), time, 1, function()
-				if (IsValid(self)) then
-					self:UnRagdoll()
-				end
-			end)
+			if (time > 0) then
+				self:SetMainBar("You are regaining conciousness.", time)
+
+				timer.Create("nut_RagTime"..self:EntIndex(), time, 1, function()
+					if (IsValid(self)) then
+						self:UnRagdoll()
+					end
+				end)
+			end
 		end
 
 		hook.Add("PlayerDeath", "nut_UnRagdoll", function(client)

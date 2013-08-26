@@ -221,16 +221,47 @@ nut.command.Register({
 nut.command.Register({
 	syntax = "[number time]",
 	onRun = function(client, arguments)
-		local time = math.Clamp(tonumber(arguments[1] or "") or 5, 5, 45)
+		local time = math.max(tonumber(arguments[1] or "") or 0, 0)
 		local entity = Entity(client:GetNetVar("ragdoll", -1))
 		
 		if (!IsValid(entity)) then
 			client:SetTimedRagdoll(time)
+			client:SetNutVar("fallGrace", CurTime() + 5)
 		else
 			nut.util.Notify("You are already fallen over.", client)
 		end
 	end
 }, "charfallover")
+
+nut.command.Register({
+	onRun = function(client, arguments)
+		if (client:GetNutVar("fallGrace", 0) >= CurTime()) then
+			nut.util.Notify("You must wait before getting up.", client)
+
+			return
+		end
+		
+		local entity = Entity(client:GetNetVar("ragdoll", -1))
+
+		if (IsValid(entity)) then
+			local velocity = entity:GetVelocity():Length2D()
+
+			if (velocity <= 8) then
+				client:SetMainBar("You are now getting up.", 5)
+
+				timer.Create("nut_CharGetUp"..client:UniqueID(), 5, 1, function()
+					if (IsValid(client)) then
+						client:UnRagdoll()
+					end
+				end)
+			else
+				nut.util.Notify("Your body can not be moving while getting up.", client)
+			end
+		else
+			nut.util.Notify("You have not fallen over.", client)
+		end
+	end
+}, "chargetup")
 
 nut.command.Register({
 	adminOnly = true,
