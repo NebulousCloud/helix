@@ -50,7 +50,10 @@ function PLUGIN:PlayerDeath( ply, dmg, att )
 			end
 							
 			if dice <= chance then
-				local dat = v[1].data
+				local dat = {}
+				if v[1] and v[1].data then
+					dat = v[1].data
+				end
 				local q =  1
 				if v.quantity then
 					q = math.random( 1, v[1].quantity )
@@ -68,4 +71,5 @@ function PLUGIN:PlayerDeath( ply, dmg, att )
 			end
 		end)
 	end
+	
 end
