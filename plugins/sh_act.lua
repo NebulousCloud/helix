@@ -56,6 +56,14 @@ sequences["citizen_male"] = {
 sequences["citizen_female"] = table.Copy(sequences["citizen_male"])
 
 if (SERVER) then
+	
+	function PLUGIN:CanFallOver( client )
+		if (client:GetOverrideSeq()) then
+			nut.util.Notify("You can't fallover while you're acting.", client)
+			return false
+		end
+	end
+
 	function PLUGIN:PlayerStartSeq(client, sequence)
 		if (client:GetNutVar("nextAct", 0) >= CurTime()) then
 			nut.util.Notify("You can not perform another act yet.", client)
