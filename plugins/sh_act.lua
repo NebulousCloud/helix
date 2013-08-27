@@ -57,10 +57,10 @@ sequences["citizen_female"] = table.Copy(sequences["citizen_male"])
 
 if (SERVER) then
 	
-	function PLUGIN:CanFallOver( client )
+	function PLUGIN:CantFallOver( client )
 		if (client:GetOverrideSeq()) then
 			nut.util.Notify("You can't fallover while you're acting.", client)
-			return false
+			return true
 		end
 	end
 
