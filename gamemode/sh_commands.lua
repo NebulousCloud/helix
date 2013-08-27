@@ -221,12 +221,13 @@ nut.command.Register({
 nut.command.Register({
 	syntax = "[number time]",
 	onRun = function(client, arguments)
-		local time = math.max(tonumber(arguments[1] or "") or 0, 0)
+		local time = math.Clamp(tonumber(arguments[1] or "") or 5, 5, 45)
 		local entity = Entity(client:GetNetVar("ragdoll", -1))
+		
+		if !nut.schema.Call( "CanFallOver", client ) then return end --** to prevent some bugs with charfallover.
 		
 		if (!IsValid(entity)) then
 			client:SetTimedRagdoll(time)
-			client:SetNutVar("fallGrace", CurTime() + 5)
 		else
 			nut.util.Notify("You are already fallen over.", client)
 		end
