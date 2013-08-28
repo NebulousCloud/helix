@@ -224,7 +224,7 @@ nut.command.Register({
 		local time = math.max(tonumber(arguments[1] or "") or 0, 0)
 		local entity = Entity(client:GetNetVar("ragdoll", -1))
 		
-		if nut.schema.Call( "CantFallOver", client ) then return end --** to prevent some bugs with charfallover.
+		if nut.schema.Call( "CanFallOver", client ) == false then return end --** to prevent some bugs with charfallover.
 		
 		if (!IsValid(entity)) then
 			client:SetTimedRagdoll(time)
