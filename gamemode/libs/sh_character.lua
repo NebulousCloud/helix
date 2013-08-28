@@ -433,7 +433,7 @@ if (SERVER) then
 				if (data and table.Count(data) > 0) then
 					client.characters = client.characters or {};
 					table.insert(client.characters, tonumber(data.id))
-					PrintTable(data)
+					
 					net.Start("nut_CharInfo")
 						net.WriteString(data.charname)
 						net.WriteString(data.description)
