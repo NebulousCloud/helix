@@ -2,6 +2,7 @@ if (CLIENT) then
 	local CHAT_FADETIME = 15
 	local CHAT_FADEDELAY = 15
 	local OUTLINE_COLOR = Color(0, 0, 0, 150)
+	local NUT_CVAR_CHATMESSAGES = CreateClientConVar("nut_chatmessages", "100", true)
 
 	nut.chat.panel = nut.chat.panel or {}
 	nut.chat.open = nut.chat.open or false
@@ -152,17 +153,19 @@ if (CLIENT) then
 		message:SetFont(chat.font or "nut_ChatFont")
 		message:SetMaxWidth(CHAT_W - 16)
 		message:Parse(...)
-		message.lifetime = CurTime() + 150
-
-		timer.Simple(300, function()
-			if (IsValid(message)) then
-				message:Remove()
-			end
-		end)
 
 		local scrollBar = nut.chat.panel.content.VBar
 		scrollBar.CanvasSize = scrollBar.CanvasSize + message:GetTall()
 		scrollBar:AnimateTo(scrollBar.CanvasSize, 0.25, 0, 0.25)
+
+		table.insert(nut.chat.messages, message)
+
+		if (#nut.chat.messages > NUT_CVAR_CHATMESSAGES:GetInt()) then
+			local panel = nut.chat.messages[1]
+			panel:Remove()
+
+			table.remove(nut.chat.messages, 1)
+		end
 	end
 
 	function nut.chat.CreatePanels()
