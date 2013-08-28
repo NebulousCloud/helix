@@ -119,7 +119,16 @@ do
 			chat.AddText(Color(250, 40, 40), "[OOC] ", speaker, color_white, ": "..text)
 		end,
 		prefix = {"//", "/ooc"},
-		deadCanTalk = true
+		deadCanTalk = true,
+		canSay = function(speaker)
+			if (speaker:GetNutVar("nextOOC", 0) < CurTime()) then
+				speaker:SetNutVar("nextOOC", CurTime() + nut.config.oocDelay)
+
+				return true
+			end
+
+			return false
+		end
 	})
 
 	nut.chat.Register("event", {

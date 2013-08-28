@@ -57,3 +57,6 @@ nut.config.allowVoice = false
 
 -- If true, will have voices fade over distance.
 nut.config.voice3D = false
+
+-- The delay between OOC messages for a player in seconds.
+nut.config.oocDelay = 0
