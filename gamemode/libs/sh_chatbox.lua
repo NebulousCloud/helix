@@ -121,11 +121,14 @@ do
 		prefix = {"//", "/ooc"},
 		deadCanTalk = true,
 		canSay = function(speaker)
-			if (speaker:GetNutVar("nextOOC", 0) < CurTime()) then
-				speaker:SetNutVar("nextOOC", CurTime() + nut.config.oocDelay)
+			local nextOOC = speaker:GetNutVar("nextOOC", 0)
 
+			if (nextOOC < CurTime()) then
+				speaker:SetNutVar("nextOOC", CurTime() + nut.config.oocDelay)
 				return true
 			end
+
+			nut.util.Notify("You must wait "..math.ceil(nextOOC - CurTime()).." more second(s) before using OOC.", client)
 
 			return false
 		end

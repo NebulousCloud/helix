@@ -245,7 +245,7 @@ function GM:PlayerHurt(client, attacker, health, damage)
 		gender = "female"
 	end
 
-	client:EmitSound(nut.schema.Call("PlayerPainSound", client), "vo/npc/"..gender.."01/pain0"..math.random(1, 6)..".wav")
+	client:EmitSound(nut.schema.Call("PlayerPainSound", client) or "vo/npc/"..gender.."01/pain0"..math.random(1, 6)..".wav")
 
 	return true
 end
