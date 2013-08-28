@@ -433,7 +433,7 @@ if (SERVER) then
 				if (data and table.Count(data) > 0) then
 					client.characters = client.characters or {};
 					table.insert(client.characters, tonumber(data.id))
-
+					PrintTable(data)
 					net.Start("nut_CharInfo")
 						net.WriteString(data.charname)
 						net.WriteString(data.description)
@@ -561,11 +561,13 @@ if (SERVER) then
 		charData.money = nut.schema.Call("GetDefaultMoney", client, charData)
 
 		nut.char.Create(client, charData, function(id)
-			net.Start("nut_CharCreateAuthed")
-			net.Send(client)
-
-			timer.Simple(0.05, function()
+			timer.Simple(math.max(client:Ping() / 100, 0.1), function()
 				nut.char.SendInfo(client, id)
+
+				timer.Simple(math.max(client:Ping() / 100, 0.1), function()
+					net.Start("nut_CharCreateAuthed")
+					net.Send(client)
+				end)
 
 				print("Created new character '"..name.."' for "..client:RealName()..".")
 			end)

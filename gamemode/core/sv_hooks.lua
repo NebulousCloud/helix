@@ -49,9 +49,11 @@ function GM:PlayerInitialSpawn(client)
 		player_manager.RunClass(client, "Spawn")
 
 		nut.char.Load(client, function()
-			net.Start("nut_CharMenu")
-				net.WriteBit(false)
-			net.Send(client)
+			timer.Simple(math.max(client:Ping() / 100, 0.1), function()
+				net.Start("nut_CharMenu")
+					net.WriteBit(false)
+				net.Send(client)
+			end)
 
 			local uniqueID = "nut_SaveChar"..client:SteamID()
 
