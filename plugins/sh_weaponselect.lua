@@ -28,47 +28,51 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:PlayerBindPress(client, bind, pressed)
-		bind = string.lower(bind)
+		local weapon = client:GetActiveWeapon()
 
-		if (string.find(bind, "invprev") and pressed) then
-			self.lastSlot = self.lastSlot - 1
+		if (!client:InVehicle() and (!IsValid(weapon) or weapon:GetClass() != "weapon_physgun" or !client:KeyDown(IN_ATTACK))) then
+			bind = string.lower(bind)
 
-			if (self.lastSlot <= 0) then
-				self.lastSlot = #client:GetWeapons()
-			end
+			if (string.find(bind, "invprev") and pressed) then
+				self.lastSlot = self.lastSlot - 1
 
-			self:OnSlotChanged()
+				if (self.lastSlot <= 0) then
+					self.lastSlot = #client:GetWeapons()
+				end
 
-			return true
-		elseif (string.find(bind, "invnext") and pressed) then
-			self.lastSlot = self.lastSlot + 1
+				self:OnSlotChanged()
 
-			if (self.lastSlot > #client:GetWeapons()) then
-				self.lastSlot = 1
-			end
+				return true
+			elseif (string.find(bind, "invnext") and pressed) then
+				self.lastSlot = self.lastSlot + 1
 
-			self:OnSlotChanged()
+				if (self.lastSlot > #client:GetWeapons()) then
+					self.lastSlot = 1
+				end
 
-			return true
-		elseif (string.find(bind, "+attack") and pressed) then
-			if (CurTime() < self.deathTime) then
-				self.lifeTime = 0
-				self.deathTime = 0
+				self:OnSlotChanged()
 
-				for k, v in SortedPairs(LocalPlayer():GetWeapons()) do
-					if (k == self.lastSlot) then
-						RunConsoleCommand("nut_selectwep", v:GetClass())
+				return true
+			elseif (string.find(bind, "+attack") and pressed) then
+				if (CurTime() < self.deathTime) then
+					self.lifeTime = 0
+					self.deathTime = 0
 
-						return true
+					for k, v in SortedPairs(LocalPlayer():GetWeapons()) do
+						if (k == self.lastSlot) then
+							RunConsoleCommand("nut_selectwep", v:GetClass())
+
+							return true
+						end
 					end
 				end
-			end
-		elseif (string.find(bind, "slot")) then
-			self.lastSlot = math.Clamp(tonumber(string.match(bind, "slot(%d)")) or 1, 1, #LocalPlayer():GetWeapons())
-			self.lifeTime = CurTime() + LIFE_TIME
-			self.deathTime = CurTime() + DEATH_TIME
+			elseif (string.find(bind, "slot")) then
+				self.lastSlot = math.Clamp(tonumber(string.match(bind, "slot(%d)")) or 1, 1, #LocalPlayer():GetWeapons())
+				self.lifeTime = CurTime() + LIFE_TIME
+				self.deathTime = CurTime() + DEATH_TIME
 
-			return true
+				return true
+			end
 		end
 	end
 
