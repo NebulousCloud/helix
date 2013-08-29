@@ -8,7 +8,7 @@ nut.config = nut.config or {}
 
 -- The module to use for MySQL. (mysqloo/tmysql4/sqlite)
 -- SQLite is local, meaning you DO NOT need a database!
-nut.config.dbModule = "sqlite"
+nut.config.dbModule = "tmysql4"
 
 -- The IP or address of the host for the database.
 nut.config.dbHost = "127.0.0.1"
@@ -60,3 +60,6 @@ nut.config.voice3D = false
 
 -- The delay between OOC messages for a player in seconds.
 nut.config.oocDelay = 0
+
+-- Clears the map of unwanted entities. (props, vehicles, etc...)
+nut.config.clearMaps = true

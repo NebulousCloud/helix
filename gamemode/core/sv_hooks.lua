@@ -206,8 +206,21 @@ function GM:PlayerSwitchFlashlight(client, state)
 	return nut.config.flashlight
 end
 
+function GM:RemoveEntitiesByClass(class)
+	for k, v in pairs(ents.FindByClass(class)) do
+		SafeRemoveEntity(v)
+	end
+end
+
 function GM:InitPostEntity()
 	nut.schema.Call("LoadData")
+
+	if (nut.config.clearMaps) then
+		self:RemoveEntitiesByClass("item_healthcharger")
+		self:RemoveEntitiesByClass("prop_vehicle*")
+		self:RemoveEntitiesByClass("weapon_*")
+		self:RemoveEntitiesByClass("item_suitcharger")
+	end
 end
 
 function GM:PlayerDeath(victim, weapon, attacker)
