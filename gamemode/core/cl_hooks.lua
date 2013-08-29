@@ -1,6 +1,10 @@
 -- Auto-reload will remove the variable if it doesn't get reset.
 nut.loaded = nut.loaded or false
 
+local surface = surface
+local draw = draw
+local pairs = pairs
+
 function GM:HUDShouldDraw(element)
 	if (element == "CHudHealth" or element == "CHudBattery" or element == "CHudAmmo" or element == "CHudSecondaryAmmo") then
 		return false
@@ -15,12 +19,15 @@ function GM:HUDShouldDraw(element)
 	return true
 end
 
+local OUTLINE_COLOR = Color(0, 0, 0, 250)
+local math_Clamp = math.Clamp
+
 function GM:PaintBar(value, color, x, y, width, height)
 	color.a = 205
 
-	draw.RoundedBox(2, x, y, width, height, Color(0, 0, 0, 250))
+	draw.RoundedBox(2, x, y, width, height, OUTLINE_COLOR)
 
-	width = width * (math.Clamp(value, 0, 100) / 100) - 2
+	width = width * (math_Clamp(value, 0, 100) / 100) - 2
 
 	surface.SetDrawColor(color)
 	surface.DrawRect(x + 1, y + 1, width, height - 2)
@@ -79,22 +86,6 @@ function GM:HUDPaint()
 	y = nut.bar.Paint(x, y, BAR_WIDTH, BAR_HEIGHT)
 
 	nut.bar.PaintMain()
-	
-	local info = {
-		"NutScript Development Build",
-		"Schema UniqueID: "..SCHEMA.uniqueID,
-		"http://chessnut.info"
-	}
-
-	surface.SetFont("DermaDefault")
-
-	local x, y = 8, 8
-
-	for k, v in ipairs(info) do
-		--draw.SimpleText(v, "BudgetLabel", x, y, color_white, 0, 0)
-
-		y = y + 16
-	end
 end
 
 function GM:ShouldDrawTargetEntity(entity)
