@@ -126,15 +126,11 @@ local PANEL = {}
 	end
 vgui.Register("nut_Crafting", PANEL, "DFrame")
 
-function PLUGIN:CreateMenuButtons( derma )
+function PLUGIN:CreateMenuButtons(menu, addButton)
 	if self.enabled then
-		local self = derma:GetParent()
-		self.crafting = self.buttonList:Add("nut_MenuButton")
-		self.crafting:SetText( nut.lang.Get("crafting") )
-		self.crafting:DockMargin(0, 0, 0, 8)
-		self.crafting.OnClick = function()
-			nut.gui.crafting = vgui.Create("nut_Crafting", self)
-			self:SetCurrentMenu(nut.gui.crafting)
-		end
+		addButton("crafting", nut.lang.Get("crafting"), function()
+			nut.gui.crafting = vgui.Create("nut_Crafting", menu)
+			menu:SetCurrentMenu(nut.gui.crafting)
+		end)
 	end
 end
