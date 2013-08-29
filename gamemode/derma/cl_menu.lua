@@ -1,40 +1,65 @@
 local PANEL = {}
 	function PANEL:Init()
-		self:SetSize(ScrW(), ScrH())
+		local width = ScrW() * 0.3
+
+		self:SetSize(width, ScrH())
+		self:SetPos(-width, 0)
 		self:SetPaintBackground(false)
 		self:MakePopup()
+		self:MoveTo(0, 0, 0.25, 0, 0.15)
 
 		self.buttonList = self:Add("DScrollPanel")
 		self.buttonList:Dock(LEFT)
 		self.buttonList:SetWide(ScrW() * 0.2)
-		self.buttonList:DockMargin(64, 64, 64, 64)
+		self.buttonList.Paint = function(panel, w, h)
+			surface.SetDrawColor(25, 25, 25, 253)
+			surface.DrawRect(0, 0, w, h)
+		end
 
 		self.close = self.buttonList:Add("nut_MenuButton")
 		self.close:SetText(nut.lang.Get("return"))
+		self.close:SetTall(48)
 		self.close.OnClick = function()
-			self:SetVisible(false)
+			self:MoveTo(-width, 0, 0.25, 0, 0.15)
+
+			if (IsValid(self.currentMenu)) then
+				local width = self.currentMenu:GetWide()
+				local x, y = self.currentMenu:GetPos()
+
+				self.currentMenu:MoveTo(-width, y, 0.225, 0, 0.125)
+			end
+
+			gui.EnableScreenClicker(false)
+
+			timer.Create("nut_CloseMenu", 0.25, 1, function()
+				self:SetVisible(false)
+			end)
 		end
 		self.close:DockMargin(0, 0, 0, 64)
 
-		self.char = self.buttonList:Add("nut_MenuButton")
-		self.char:SetText(nut.lang.Get("characters"))
-		self.char:DockMargin(0, 0, 0, 8)
-		self.char.OnClick = function()
+		local function addButton(id, text, onClick)
+			local button = self.buttonList:Add("nut_MenuButton")
+			button:SetText(text)
+			button:DockMargin(0, 0, 0, 4)
+			button:SetTall(48)
+			button.OnClick = onClick
+
+			self[id] = button
+		end
+
+		addButton("char", nut.lang.Get("characters"), function()
 			nut.gui.charMenu = vgui.Create("nut_CharMenu")
 
 			self:Remove()
-		end
+		end)
 
 		self.currentMenu = NULL
 
 		if (nut.config.businessEnabled and nut.schema.Call("PlayerCanSeeBusiness")) then
-			self.business = self.buttonList:Add("nut_MenuButton")
-			self.business:SetText(nut.lang.Get("business"))
-			self.business:DockMargin(0, 0, 0, 8)
-			self.business.OnClick = function()
+			addButton("business", nut.lang.Get("business"), function()
 				nut.gui.business = vgui.Create("nut_Business", self)
 				self:SetCurrentMenu(nut.gui.business)
-			end
+			end)
 		end
 
 		local count = 0
@@ -46,40 +71,23 @@ local PANEL = {}
 		end
 
 		if (count > 0) then
-			self.classes = self.buttonList:Add("nut_MenuButton")
-			self.classes:SetText(nut.lang.Get("classes"))
-			self.classes:DockMargin(0, 0, 0, 8)
-			self.classes.OnClick = function()
+			addButton("classes", nut.lang.Get("classes"), function()
 				nut.gui.classes = vgui.Create("nut_Classes", self)
 				self:SetCurrentMenu(nut.gui.classes)
-			end
+			end)
 		end
-		
-		self.inv = self.buttonList:Add("nut_MenuButton")
-		self.inv:SetText(nut.lang.Get("inventory"))
-		self.inv:DockMargin(0, 0, 0, 8)
-		self.inv.OnClick = function()
+
+		addButton("inv", nut.lang.Get("inventory"), function()
 			nut.gui.inv = vgui.Create("nut_Inventory", self)
 			self:SetCurrentMenu(nut.gui.inv)
-		end
+		end)
 
-		self.help = self.buttonList:Add("nut_MenuButton")
-		self.help:SetText(nut.lang.Get("help"))
-		self.help:DockMargin(0, 0, 0, 8)
-		self.help.OnClick = function()
+		addButton("help", nut.lang.Get("help"), function()
 			nut.gui.help = vgui.Create("nut_Help", self)
 			self:SetCurrentMenu(nut.gui.help)
-		end
+		end)
 
-		self.settings = self.buttonList:Add("nut_MenuButton")
-		self.settings:SetText(nut.lang.Get("settings"))
-		self.settings:DockMargin(0, 0, 0, 8)
-		self.settings.OnClick = function()
-			nut.gui.settings = vgui.Create("nut_Settings", self)
-			self:SetCurrentMenu(nut.gui.settings)
-		end
-
-		nut.schema.Call("CreateMenuButtons", self.buttonList)
+		nut.schema.Call("CreateMenuButtons", self, addButton)
 	end
 
 	local gradient = surface.GetTextureID("gui/gradient")
@@ -95,9 +103,12 @@ local PANEL = {}
 	end
 
 	function PANEL:Paint(w, h)
-		surface.SetDrawColor(0, 0, 0, 245)
+		local x, y = self:GetPos()
+		x = x + ScrW() * 0.2
+
+		surface.SetDrawColor(0, 0, 0, 200)
 		surface.SetTexture(gradient)
-		surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
+		surface.DrawTexturedRect(x, y, ScrW() * 0.1, ScrH())
 	end
 vgui.Register("nut_Menu", PANEL, "DPanel")
 
