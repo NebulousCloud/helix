@@ -60,7 +60,7 @@ if (SERVER) then
 	function PLUGIN:CanFallOver( client )
 		if (client:GetOverrideSeq()) then
 			nut.util.Notify("You can't fallover while you're acting.", client)
-			return true
+			return false --** Pointy Elbow
 		end
 	end
 
