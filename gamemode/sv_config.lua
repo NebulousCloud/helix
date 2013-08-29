@@ -8,7 +8,7 @@ nut.config = nut.config or {}
 
 -- The module to use for MySQL. (mysqloo/tmysql4/sqlite)
 -- SQLite is local, meaning you DO NOT need a database!
-nut.config.dbModule = "tmysql4"
+nut.config.dbModule = "sqlite"
 
 -- The IP or address of the host for the database.
 nut.config.dbHost = "127.0.0.1"
