@@ -81,6 +81,16 @@ function nut.item.Register(itemTable, isBase)
 					end
 				end
 
+				if (self.classes) then
+					if (!client:CharClass()) then
+						return false
+					end
+
+					if (!table.HasValue(self.classes, client:CharClass())) then
+						return false
+					end
+				end
+
 				if (self.flag) then
 					if (!client:HasFlag(self.flag)) then
 						return false
