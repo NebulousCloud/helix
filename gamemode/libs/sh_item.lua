@@ -286,7 +286,7 @@ do
 			entity:SetPos(position)
 			entity:SetAngles(angles or Angle())
 			entity:Spawn()
-			entity:SetModel(itemTable.model)
+			entity:SetModel(itemTable.GetDropModel and itemTable:GetDropModel() or itemTable.model)
 			entity:PhysicsInit(SOLID_VPHYSICS)
 			entity.itemTable = itemTable
 			entity:SetItemID(itemTable.uniqueID)
