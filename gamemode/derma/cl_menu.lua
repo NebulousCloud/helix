@@ -7,6 +7,7 @@ local PANEL = {}
 		self:SetPaintBackground(false)
 		self:MakePopup()
 		self:MoveTo(0, 0, 0.25, 0, 0.15)
+		self.closeGrace = RealTime() + 0.5
 
 		self.buttonList = self:Add("DScrollPanel")
 		self.buttonList:Dock(LEFT)
@@ -20,13 +21,12 @@ local PANEL = {}
 		self.close:SetText(nut.lang.Get("return"))
 		self.close:SetTall(48)
 		self.close.OnClick = function()
-			self:MoveTo(-width, 0, 0.25, 0, 0.15)
+			self:MoveTo(-width, 0, 0.25, 0, 0.5)
 
 			if (IsValid(self.currentMenu)) then
-				local width = self.currentMenu:GetWide()
 				local x, y = self.currentMenu:GetPos()
 
-				self.currentMenu:MoveTo(-width, y, 0.225, 0, 0.125)
+				self.currentMenu:MoveTo(x, ScrH(), 0.225, 0, 0.125)
 			end
 
 			gui.EnableScreenClicker(false)
@@ -92,12 +92,35 @@ local PANEL = {}
 
 	local gradient = surface.GetTextureID("gui/gradient")
 
+	function PANEL:OnKeyCodePressed(key)
+		if (self.closeGrace <= RealTime() and key == KEY_F1) then
+			self.close.OnClick()
+		end
+	end
+
 	function PANEL:SetCurrentMenu(panel)
+		local transitionTime = 0.2
+
 		if (IsValid(self.currentMenu)) then
-			self.currentMenu:Remove()
+			local x, y = self.currentMenu:GetPos()
+			local menu = self.currentMenu
+
+			menu:MoveTo(x, ScrH(), transitionTime, 0.1, 0.5)
+
+			timer.Simple(0.25, function()
+				if (IsValid(menu)) then
+					menu:Remove()
+				end
+			end)
 		end
 
 		if (IsValid(panel)) then
+			local x, y = panel:GetPos()
+			local w, h = panel:GetSize()
+
+			panel:SetPos(x, -h)
+			panel:MoveTo(x, y, transitionTime, 0.1, 0.5)
+
 			self.currentMenu = panel
 		end
 	end
