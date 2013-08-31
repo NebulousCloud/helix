@@ -318,5 +318,9 @@ function PLUGIN:DrawTargetID(entity, x, y, alpha)
 
 			local weight, max = entity:GetInvWeight()
 		nut.util.DrawText(x, y, "Has "..math.ceil(weight/max * 100).."% of storage used.", Color(255, 255, 255, alpha), "nut_TargetFontSmall")
+		--nut.util.DrawText(x, y, nut.lang.Get( "stor_info", 1 ), Color(255, 255, 255, alpha), "nut_TargetFontSmall")
+		if entity:GetNetVar( "locked", false ) then
+			nut.util.DrawText(x, y + 16, nut.lang.Get( "lock_locked" ), Color(255, 30, 30, alpha), "nut_TargetFontSmall")
+		end
 	end
 end

@@ -1,7 +1,15 @@
+local PLUGIN = PLUGIN
 PLUGIN.name = "Storage"
-PLUGIN.author = "Chessnut"
+PLUGIN.author = "Chessnut and rebel1324"
 -- Black Tea added few lines.
 PLUGIN.desc = "Adds storage items that can store items."
+
+nut.lang.Add("lock_success", "Successfully Locked the Container.")
+nut.lang.Add("lock_locked", "The contianer is already locked.")
+nut.lang.Add("lock_wrong", "You've entered wrong password.")
+nut.lang.Add("lock_try", "The container is locked.")
+nut.lang.Add("lock_locked", "The container is locked.")
+nut.lang.Add("lock_itsworld", "World Container is cannot be locked.")
 
 nut.util.Include("cl_storage.lua")
 
@@ -10,15 +18,15 @@ if (SERVER) then
 		local data = {}
 
 		for k, v in pairs(ents.FindByClass("nut_container")) do
-			if v.generated then continue end
 			if (v.itemID) then
 				local inventory = v:GetNetVar("inv")
 				data[#data + 1] = {
 					position = v:GetPos(),
 					angles = v:GetAngles(),
 					inv = inventory,
-					world = (v.world or false),
-					lock = (v.lock or nil),
+					world = v.world,
+					lock = v.lock,
+					classic = v.classic,
 					uniqueID = v.itemID,
 					type = v.type
 				}
@@ -50,11 +58,17 @@ if (SERVER) then
 					entity:SetAngles(angles)
 					entity:Spawn()
 					entity:Activate()
-					entity:SetNetVar("inv", inventory)
+					if !v.world then
+						entity:SetNetVar("inv", inventory)
+					end
 					entity:SetNetVar("name", itemTable.name)
 					entity.itemID = v.uniqueID
-					entity.lock = (v.lock or nil)
-					entity.world = (v.world or false)
+					entity.lock = v.lock
+					entity.classic = v.classic
+					if entity.lock then
+						entity:SetNetVar( "locked", true )
+					end
+					entity.world = v.world
 					entity.type = v.type
 
 					if (itemTable.maxWeight) then
@@ -67,6 +81,132 @@ if (SERVER) then
 			end
 		end
 	end
+	
+	util.AddNetworkString("nut_ShowStorageMenu")
+		
+else
+	
+	local locks = {
+		"classic_locker_1",
+		"digital_locker_1",
+	}
+	
+	local function lck1( entity )
+		if !LocalPlayer():HasItem( "classic_locker_1" ) then nut.util.Notify("Lack of required item." , client) return false end
+		net.Start( "nut_RequestLock" )
+			net.WriteEntity( entity )
+			net.WriteBit( true )
+			net.WriteString( "" )
+		net.SendToServer()
+	end
+	
+	local function lck2( entity )
+		if !LocalPlayer():HasItem( "digital_locker_1" ) then nut.util.Notify("Lack of required item." , client) return false end
+		Derma_StringRequest( "Password Lock", "Enter the password for the container", "", function( pas ) 
+			net.Start( "nut_RequestLock" )
+				net.WriteEntity( entity )
+				net.WriteBit( false )
+				net.WriteString( pas )
+			net.SendToServer()
+		end)
+	end
+	
+	local storfuncs = {
+		aopen = {
+			icon = "icon16/star.png",
+			name = "Admin Open",
+			tip = "Open the container.",
+			cond = function( entity )
+				return LocalPlayer():IsAdmin()
+			end,
+			func = function( entity )
+				net.Start( "nut_Storage" )
+					net.WriteEntity( entity )
+				net.SendToServer()
+			end,
+		},
+		open = {
+			name = "Open",
+			tip = "Open the container.",
+			cond = function( entity )
+				return true
+			end,
+			func = function( entity )
+				net.Start( "nut_RequestStorageMenu" )
+					net.WriteEntity( entity )
+				net.SendToServer()
+			end,
+		},
+		pick = {
+			name = "Force Unlock",
+			cond = function( entity )
+				return false
+			end,
+			func = function( entity )
+			end,
+		},
+		lock = {
+			icon = "icon16/key.png",
+			name = "Lock",
+			cond = function( entity )
+				for _, item in pairs( locks ) do
+					if LocalPlayer():HasItem( item ) then
+						return true
+					end
+				end
+				return false
+			end,
+			func = function( entity )
+				Derma_Query( "Which lock you want to use?", "Confirmation", "Normal Padlock", function() lck1( entity ) end, "Digital Lock", function() lck2( entity ) end )
+			end,
+		},
+	}
+	
+	function PLUGIN:ShowStorageMenu( entity )
+		if (!IsValid(entity) or !IsValid(LocalPlayer():GetEyeTrace().Entity) or LocalPlayer():GetEyeTrace().Entity != entity) then
+			return
+		end
+
+		local menu = DermaMenu()
+			for k, v in SortedPairs( storfuncs ) do
+				
+				if v.cond and !v.cond( entity ) then continue end
+				
+				local material = v.icon or "icon16/briefcase.png"
+
+				local option = menu:AddOption(v.name or k, function()
+					if (v.func) then
+						if v.func then
+							v.func( entity )
+						end
+					end
+				end)
+				option:SetImage(material)
+
+				if (v.tip) then
+					option:SetToolTip(v.tip)
+				end
+				
+			end
+			
+		menu:Open()
+		menu:Center()
+	end
+
+	net.Receive("nut_ShowStorageMenu", function(length)
+		PLUGIN:ShowStorageMenu( net.ReadEntity() )
+	end)
+		
+	net.Receive("nut_RequestPassword", function(length)
+		local entity = net.ReadEntity()
+		Derma_StringRequest( "Password Lock", "Enter the password for the container", "", function( pas ) 
+			net.Start( "nut_VerifyPassword" )
+				net.WriteEntity( entity )
+				net.WriteString( pas )
+			net.SendToServer()
+		end)
+	end)
+		
 end
 
 
@@ -112,7 +252,7 @@ nut.command.Register({
 
 nut.command.Register({
 	adminOnly = true,
-	syntax = "[bool showTime]",
+	syntax = "[string Password]",
 	onRun = function(client, arguments)
 
 		local dat = {}
@@ -125,10 +265,15 @@ nut.command.Register({
 		if entity && entity:IsValid() then
 			if entity:GetClass() == "nut_container" then
 				if arguments[1] then
-					entity.type = arguments[1]
-					nut.util.Notify("Flag Set: ".. entity.type, client)		
+					entity.classic = false
+					entity.lock = arguments[1]
+					entity:SetNetVar( "locked", true )
+					nut.util.Notify("Lock Set: ".. entity.lock, client)		
 				else
-					nut.util.Notify("You have to enter valid type", client)		
+					entity.classic = nil
+					entity.lock = nil
+					entity:SetNetVar( "locked", false )
+					nut.util.Notify("Unlocked the Container.", client)		
 				end
 			else
 				nut.util.Notify("You have to face an container to use this command!", client)			
@@ -138,7 +283,7 @@ nut.command.Register({
 		end
 		
 	end
-}, "setcontainertype")
+}, "setcontainerlock")
 
 
 nut.command.Register({
