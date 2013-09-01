@@ -147,19 +147,6 @@ do
 		prefix = "/event",
 	})
 
-	nut.chat.Register("event", {
-		onChat = function(speaker, text)
-			if (!speaker:IsAdmin()) then
-				nut.util.Notify(nut.lang.Get("no_perm", speaker:Name()), speaker)
-
-				return
-			end
-
-			chat.AddText(Color(194, 93, 39), text)
-		end,
-		prefix = "/event",
-	})
-
 	nut.chat.Register("roll", {
 		canHear = nut.config.chatRange,
 		onChat = function(speaker, text)

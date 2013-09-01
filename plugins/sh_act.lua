@@ -1,6 +1,6 @@
 local PLUGIN = PLUGIN
 PLUGIN.name = "Player Acts"
-PLUGIN.author = "Chessnut"
+PLUGIN.author = "Chessnut and rebel1324"
 PLUGIN.desc = "Adds animations that can be performed by players."
 
 local function lean(client)
@@ -56,14 +56,14 @@ sequences["citizen_male"] = {
 sequences["citizen_female"] = table.Copy(sequences["citizen_male"])
 
 if (SERVER) then
-	
+
 	function PLUGIN:CanFallOver( client )
 		if (client:GetOverrideSeq()) then
 			nut.util.Notify("You can't fallover while you're acting.", client)
-			return false --** Pointy Elbow
+			return false
 		end
 	end
-
+	
 	function PLUGIN:PlayerStartSeq(client, sequence)
 		if (client:GetNutVar("nextAct", 0) >= CurTime()) then
 			nut.util.Notify("You can not perform another act yet.", client)
@@ -78,7 +78,7 @@ if (SERVER) then
 		}
 		local trace = util.TraceLine(data)
 
-		if (!trace.HitWorld) then
+		if (!trace.Hit) then
 			nut.util.Notify("You must be on the ground to perform acts.", client)
 
 			return
@@ -134,25 +134,44 @@ if (SERVER) then
 		client:ResetOverrideSeq()
 		client:Freeze(false)
 	end
-
+	
 	function PLUGIN:PlayerDeath(client)
 		self:PlayerExitSeq(client)
 	end
 else
+
+	PLUGIN.AngMod = Angle( 0, 0, 0 )
+	PLUGIN.MouseSensitive = 20
+	function PLUGIN:InputMouseApply( cmd, x, y, ang )
+		if LocalPlayer():GetOverrideSeq() then
+			self.AngMod = self.AngMod - Angle( -y/self.MouseSensitive, x/self.MouseSensitive, 0 )
+			self.AngMod.p = math.Clamp( self.AngMod.p, -80, 80 )
+		--	self.AngMod.y = math.Clamp( self.AngMod.y, -180, 180 )
+		else
+			self.AngMod = Angle( 0, 0, 0 )
+		end
+	end
+	
 	function PLUGIN:CalcView(client, origin, angles, fov)
 		if (client:GetOverrideSeq()) then
 			local view = {}
+			local at = client:LookupAttachment( "eyes" )
+			if at == 0 then at = client:LookupAttachment( "eye" ) end
+			local att = client:GetAttachment( at ) 
+			
+			local ang = Angle( 0, client:GetAngles().y, 0 ) + self.AngMod
 			local data = {
-				start = client:EyePos(),
-				endpos = client:EyePos() - client:GetAimVector()*75
+				start = att.Pos,
+				endpos = att.Pos + ang:Forward() * -80 + ang:Up() * 20 + ang:Right() * 0
 			}
 			local trace = util.TraceLine(data)
 			local position = trace.HitPos + trace.HitNormal*4
 
 			view.origin = position
-			view.angles = (origin - view.origin):Angle()
+			view.angles = ang
 
 			return view
+			
 		end
 	end
 
