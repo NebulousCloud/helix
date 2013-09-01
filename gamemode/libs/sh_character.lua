@@ -538,6 +538,8 @@ if (SERVER) then
 			end
 		end
 
+		data.flags = nut.config.defaultFlags
+		
 		local charData = {}
 		charData.charname = name
 		charData.description = desc
