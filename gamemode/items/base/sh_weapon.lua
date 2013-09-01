@@ -94,7 +94,7 @@ if (SERVER) then
 			for class, items in pairs(client:GetInventory()) do
 				local itemTable = nut.item.Get(class)
 
-				if (itemTable.class) then
+				if (itemTable and itemTable.class) then
 					for k, v in pairs(items) do
 						if (v.data.Equipped) then
 							client:Give(itemTable.class)
