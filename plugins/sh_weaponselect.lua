@@ -16,7 +16,7 @@ if (CLIENT) then
 
 		for k, v in SortedPairs(LocalPlayer():GetWeapons()) do
 			if (k == self.lastSlot) then
-				if (v.Instructions and string.find(v.Instructions, "[^%s]")) then
+				if (v.Instructions and string.find(v.Instructions, "%S")) then
 					self.markup = markup.Parse("<font=nut_TargetFont>"..v.Instructions.."</font>")
 
 					return

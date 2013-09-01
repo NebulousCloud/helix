@@ -206,7 +206,7 @@ nut.command.Register({
 
 			local name = table.concat(arguments, " ")
 
-			if (name and string.find(name, "[^%s]")) then
+			if (name and string.find(name, "%S")) then
 				local oldName = target:Name()
 				target.character:SetVar("charname", name)
 

@@ -217,7 +217,7 @@ if (CLIENT) then
 
 				local text = panel:GetText()
 
-				if (string.find(text, "[^%s]")) then
+				if (string.find(text, "%S")) then
 					net.Start("nut_PlayerSay")
 						net.WriteString(text)
 					net.SendToServer()
