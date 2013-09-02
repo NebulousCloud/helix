@@ -13,9 +13,9 @@ function playerMeta:GetUserGroup()
 end
 
 function PLUGIN:LoadData()
-	local ranks = nut.util.ReadTable("ranks")
-	local users = nut.util.ReadTable("users")
-	local bans = nut.util.ReadTable("bans")
+	local ranks = nut.util.ReadTable("ranks", true)
+	local users = nut.util.ReadTable("users", true)
+	local bans = nut.util.ReadTable("bans", true)
 
 	self.ranks = table.Merge(self.ranks, ranks)
 	self.users = users
@@ -68,10 +68,10 @@ function PLUGIN:BanPlayer(steamID, time, reason)
 		if (time == 0) then
 			time = "permanently"
 		else
-			time = string.ToMinutesSeconds(time).." minute(s)"
+			time = "for "..string.ToMinutesSeconds(time).." minute(s)"
 		end
 
-		client:Kick("You have been banned for "..time.." with the reason: "..reason)
+		client:Kick("You have been banned "..time.." with the reason: "..reason)
 	end
 end
 
@@ -84,14 +84,14 @@ gameevent.Listen("player_connect")
 function PLUGIN:player_connect(data)
 	local ban = self.bans[data.networkid]
 
-	if (ban and ban.expire != 0 and ban.expire >= os.time()) then
-		local time = string.ToMinutesSeconds(math.floor(ban.expire - os.time())).." minute(s)"
+	if (ban and (ban.expire == 0 or ban.expire >= os.time())) then
+		local time = "for "..string.ToMinutesSeconds(math.floor(ban.expire - os.time())).." minute(s)"
 
 		if (ban.expire == 0) then
-			time = "permanently"
+			time = "never"
 		end
-		
-		game.ConsoleCommand("kickid "..data.userid.." You have been banned from this server for "..ban.reason..". Your ban will expire in "..time.."\n")
+
+		game.ConsoleCommand("kickid "..data.userid.." You have been banned from this server "..ban.reason..". Your ban will expire in "..time.."\n")
 	else
 		self.bans[data.networkid] = nil
 	end
