@@ -210,6 +210,8 @@ if (SERVER) then
 		net.Start("nut_Notice")
 			net.WriteString(message)
 		if (#receivers == 0) then
+			MsgN(message)
+			
 			net.Broadcast()
 		elseif (#receivers == 1) then
 			net.Send(receivers[1])
