@@ -133,6 +133,8 @@ if (SERVER) then
 					return value
 				end
 			end
+
+			return ""
 		end
 	end
 
