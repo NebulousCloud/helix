@@ -12,6 +12,39 @@ function playerMeta:GetUserGroup()
 	return self:GetNWString("usergroup", "user")
 end
 
+function PLUGIN:IsAllowed(a, b)
+	if (type(a) == "Player") then
+		a = self.ranks[string.lower(a:GetUserGroup())]
+	else
+		a = self.ranks[string.lower(a)]
+	end
+
+	if (type(b) == "Player") then
+		b = self.ranks[string.lower(b:GetUserGroup())]
+	else
+		b = self.ranks[string.lower(b)]
+	end
+
+	if (a and b) then
+		return a <= b
+	end
+
+	return true
+end
+
+local PLUGIN = PLUGIN
+
+playerMeta.ModIsAdmin = playerMeta.ModIsAdmin or playerMeta.IsAdmin
+playerMeta.ModIsSuperAdmin = playerMeta.ModIsSuperAdmin or playerMeta.IsSuperAdmin
+
+function playerMeta:IsSuperAdmin()
+	return PLUGIN:IsAllowed(self, "superadmin") or self:ModIsSuperAdmin()
+end
+
+function playerMeta:IsAdmin()
+	return PLUGIN:IsAllowed(self, "admin") or self:ModIsAdmin()
+end
+
 function PLUGIN:LoadData()
 	local ranks = nut.util.ReadTable("ranks", true)
 	local users = nut.util.ReadTable("users", true)
