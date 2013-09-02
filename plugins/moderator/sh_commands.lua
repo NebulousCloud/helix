@@ -1,23 +1,3 @@
-function PLUGIN:IsAllowed(a, b)
-	if (type(a) == "Player") then
-		a = self.ranks[string.lower(a:GetUserGroup())]
-	else
-		a = self.ranks[string.lower(a)]
-	end
-
-	if (type(b) == "Player") then
-		b = self.ranks[string.lower(b:GetUserGroup())]
-	else
-		b = self.ranks[string.lower(b)]
-	end
-
-	if (a and b) then
-		return a <= b
-	end
-
-	return true
-end
-
 local timeData = {
 	{"y", 525600},
 	{"mo", 43200},
@@ -359,7 +339,7 @@ PLUGIN:CreateCommand({
 
 if (SERVER) then
 	concommand.Add("nut_setowner", function(client, command, arguments)
-		if (!IsValid(client)) then
+		if (!IsValid(client) or (IsValid(client) and client:IsListenServerHost())) then
 			local steamID = arguments[1]
 
 			if (!steamID) then
@@ -390,7 +370,7 @@ if (SERVER) then
 				nut.util.Notify("You have been made an owner by the server console.", target)
 			end
 		else
-			client:ChatPrint("You may only access this command by the server console.")
+			client:ChatPrint("You may only access this command by the server console or the player running a listen server.")
 		end
 	end)
 end
