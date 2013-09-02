@@ -25,7 +25,13 @@ if (SERVER) then
 
 		if (commandTable) then
 			if (commandTable.onRun) then
-				if (commandTable.superAdminOnly) then
+				if (commandTable.hasPermission) then
+					if (commandTable.hasPermission(client) == false) then
+						nut.util.Notify(nut.lang.Get("no_perm", client:Name()), client)
+
+						return
+					end
+				elseif (commandTable.superAdminOnly) then
 					if (!client:IsSuperAdmin()) then
 						nut.util.Notify(nut.lang.Get("no_perm", client:Name()), client)
 
