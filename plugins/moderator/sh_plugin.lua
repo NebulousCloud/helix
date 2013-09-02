@@ -27,12 +27,18 @@ PLUGIN.ranks.owner = 0
 PLUGIN.ranks.superadmin = 1
 PLUGIN.ranks.admin = 2
 PLUGIN.ranks.operator = 3
+PLUGIN.ranks.user = 4
 
-function PLUGIN:SetUserGroup(client, group)
-	if (!IsValid(client)) then
-		error("Attempt to set rank on invalid player.")
+function PLUGIN:PlayerSpawn(client)
+	if (!client:GetNutVar("modInit")) then
+		self:SetUserGroup(client:SteamID(), self.users[client:SteamID()] or "user", client)
+
+		client:ChatPrint("You are currently in the '"..client:GetUserGroup().."' group of the server.")
+		client:SetNutVar("modInit", true)
 	end
+end
 
+function PLUGIN:SetUserGroup(steamID, group, client)
 	if (!group) then
 		error("No rank was provided.")
 	end
@@ -40,8 +46,11 @@ function PLUGIN:SetUserGroup(client, group)
 	group = string.lower(group)
 
 	if (self.ranks[group]) then
-		self.users[client:SteamID()] = group
-		client:SetUserGroup(group)
+		self.users[steamID] = group
+
+		if (IsValid(client)) then
+			client:SetUserGroup(group)
+		end
 	end
 end
 
@@ -76,7 +85,10 @@ function PLUGIN:BanPlayer(steamID, time, reason)
 end
 
 function PLUGIN:UnbanPlayer(steamID)
+	local found = self.bans[steamID] != nil
 	self.bans[steamID] = nil
+
+	return found
 end
 
 gameevent.Listen("player_connect")
@@ -85,13 +97,13 @@ function PLUGIN:player_connect(data)
 	local ban = self.bans[data.networkid]
 
 	if (ban and (ban.expire == 0 or ban.expire >= os.time())) then
-		local time = "for "..string.ToMinutesSeconds(math.floor(ban.expire - os.time())).." minute(s)"
+		local time = "expire in "..string.ToMinutesSeconds(math.floor(ban.expire - os.time())).." minute(s)"
 
 		if (ban.expire == 0) then
-			time = "never"
+			time = "not expire"
 		end
 
-		game.ConsoleCommand("kickid "..data.userid.." You have been banned from this server "..ban.reason..". Your ban will expire in "..time.."\n")
+		game.ConsoleCommand("kickid "..data.userid.." You have been banned from this server for "..ban.reason..". Your ban will "..time.."\n")
 	else
 		self.bans[data.networkid] = nil
 	end
@@ -105,3 +117,8 @@ function PLUGIN:SaveData()
 end
 
 nut.util.Include("sh_commands.lua")
+nut.util.Include("cl_derma.lua")
+
+function PLUGIN:PlayerNoClip(client)
+	return self:IsAllowed(client, "operator")
+end
