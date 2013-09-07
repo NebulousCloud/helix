@@ -17,11 +17,17 @@ local PANEL = {}
 			surface.DrawRect(0, 0, w, h)
 		end
 
+		self.side = vgui.Create("nut_MenuSide")
+		
 		self.close = self.buttonList:Add("nut_MenuButton")
 		self.close:SetText(nut.lang.Get("return"))
 		self.close:SetTall(48)
 		self.close.OnClick = function()
 			self:MoveTo(-width, 0, 0.25, 0, 0.5)
+
+			if (IsValid(self.side)) then
+				self.side:SlideOut()
+			end
 
 			if (IsValid(self.currentMenu)) then
 				local x, y = self.currentMenu:GetPos()

@@ -72,10 +72,6 @@ function GM:HUDPaint()
 		return
 	end
 
-	if (nut.curTime) then
-		nut.util.DrawText(ScrW() - 12, 12, os.date("!%c", nut.util.GetTime()), nil, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
-	end
-
 	local trace = LocalPlayer():GetEyeTrace()
 
 	nut.schema.Call("HUDPaintTargetID", trace.Entity)
@@ -90,6 +86,34 @@ end
 
 function GM:ShouldDrawTargetEntity(entity)
 	return false
+end
+
+function GM:CreateSideMenu(menu)
+	if (nut.config.showTime) then
+		menu.time = menu:Add("DLabel")
+		menu.time:Dock(TOP)
+		menu.time.Think = function(label)
+			label:SetText(os.date("!%c", nut.util.GetTime()))
+		end
+		menu.time:SetContentAlignment(6)
+		menu.time:SetTextColor(color_white)
+		menu.time:SetExpensiveShadow(1, color_black)
+		menu.time:SetFont("nut_TargetFont")
+		menu.time:DockMargin(4, 4, 4, 4)
+	end
+
+	if (nut.config.showMoney) then
+		menu.money = menu:Add("DLabel")
+		menu.money:Dock(TOP)
+		menu.money.Think = function(label)
+			label:SetText(nut.currency.GetName(LocalPlayer():GetMoney(), true))
+		end
+		menu.money:SetContentAlignment(6)
+		menu.money:SetTextColor(color_white)
+		menu.money:SetExpensiveShadow(1, color_black)
+		menu.money:SetFont("nut_TargetFont")
+		menu.money:DockMargin(4, 4, 4, 4)
+	end
 end
 
 function GM:HUDPaintTargetID(entity)
