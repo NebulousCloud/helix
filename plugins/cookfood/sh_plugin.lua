@@ -33,7 +33,7 @@ if (CLIENT) then
 		end,
 		color = Color(123, 156, 255)
 	})
-	
+
 	surface.CreateFont("nut_ChatFontRadio", {
 		font = "Courier New",
 		size = 18,
@@ -57,31 +57,38 @@ if (CLIENT) then
 			nut.util.DrawText(x, y, text, Color(255, 255, 255, alpha))
 		end
 	end
-	
+
 else
-	
+
 	local HUNGER_SPEED = 100
 	local THIRST_SPEED = 120
 	HUNGER_MAX = 100
 	THIRST_MAX = 100
 	local HUNGER_RATE = CurTime()
 	local THIRST_RATE = CurTime()
-	
+
 	local playerMeta = FindMetaTable("Player")
-	
+
 	function playerMeta:SolveHunger( intAmount )
 		local hunger = self.character:GetVar("hunger", 0)
+		local hp = self:Health()
+		local multp = .1
 		self.character:SetVar("hunger", math.Clamp( hunger + intAmount, 0, HUNGER_MAX ))
+		self:SetHealth( math.Clamp( hp + intAmount * multp, 0, self:GetMaxHealth() ) )
 	end
-	
+
 	function playerMeta:SolveThirst( intAmount )
 		local hunger = self.character:GetVar("thirst", 0)
+		local stamina = self.character:GetVar("stamina", 0)
+		local multp = .5
 		self.character:SetVar("thirst", math.Clamp( hunger + intAmount, 0, THIRST_MAX ))
+		self.character:SetVar("stamina", math.Clamp( stamina + intAmount * multp, 0, 100 ))
 	end
 
 	local math_Clamp = math.Clamp
 
 	function PLUGIN:Think()
+	
 		local curTime = CurTime()
 
 		if HUNGER_RATE < curTime then
@@ -91,25 +98,45 @@ else
 				if character then
 					local hunger = character:GetVar("hunger", 0)
 					character:SetVar("hunger", math_Clamp( hunger - 10, 0, HUNGER_MAX ))
+					nut.schema.Call("PlayerHunger", player)
 				end
 			end
 			HUNGER_RATE = curTime + HUNGER_SPEED
 		end
-		
+
 		if THIRST_RATE < curTime then
 			for _, player in pairs( player.GetAll() ) do
 				local character = player.character
 
 				if character then
-					local hunger = character:GetVar("thirst", 0)
-					character:SetVar("thirst", math.Clamp( hunger - 10, 0, THIRST_MAX ))
+					local thirst = character:GetVar("thirst", 0)
+					character:SetVar("thirst", math.Clamp( thirst - 10, 0, THIRST_MAX ))
+					nut.schema.Call("PlayerThirst", player)
 				end
 			end
 			THIRST_RATE = curTime + THIRST_SPEED
 		end
+		
 	end
 	
+	/*   An Simple Example of Hunger/Thirst Handling
+	function PLUGIN:PlayerHunger( player )
+		local character = player.character
+		local hunger = character:GetVar("hunger", 0)
+		if hunger <= 0 then
+			player:ChatPrint( "You're hungry and angry. now you're hangry." )
+		end
+	end
 	
+	function PLUGIN:PlayerThirst( player )
+		local character = player.character
+		local thirst = character:GetVar("thirst", 0)
+		if thirst <= 0 then
+			player:ChatPrint( "You're thirsty. Your throat is dry." )
+		end
+	end
+	*/
+
 	function PLUGIN:LoadData()
 		local restored = nut.util.ReadTable("stoves")
 
