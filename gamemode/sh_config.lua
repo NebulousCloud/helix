@@ -104,6 +104,12 @@ nut.config.dateStartYear = 2014
 nut.config.dateMinuteLength = 60
 
 if (CLIENT) then
+	-- Whether or not the money is shown in the side menu.
+	nut.config.showMoney = true
+
+	-- Whether or not the time is shown in the side menu.
+	nut.config.showTime = true
+	
 	hook.Add("SchemaInitialized", "nut_FontConfig", function()
 		surface.SetFont("nut_TargetFontSmall")
 
