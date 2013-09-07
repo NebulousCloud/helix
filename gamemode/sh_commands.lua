@@ -24,11 +24,17 @@ nut.command.Register({
 nut.command.Register({
 	allowDead = true,
 	onRun = function(client, arguments)
-		local text = arguments[1]
+		local text = table.concat(arguments, " ")
 		
-		if (!text or string.len(text) < nut.config.descMinChars) then
+		if (!text) then
 			nut.util.Notify("You provided an invalid description.", client)
 			
+			return
+		end
+
+		if (string.len(text) < nut.config.descMinChars) then
+			nut.util.Notify("Your description needs to be at least "..nut.config.descMinChars.." character(s).")
+
 			return
 		end
 
@@ -43,7 +49,7 @@ nut.command.Register({
 		client.character:SetVar("description", text)
 		nut.util.Notify("You have changed your character's description.", client)
 	end
-}, "charsetdesc")
+}, "chardesc")
 
 nut.command.Register({
 	adminOnly = true,
@@ -322,13 +328,25 @@ nut.command.Register({
 		end
 
 		for k, v in pairs(target:GetBodyGroups()) do
+			local groups = target.character:GetData("groups", {})
+
 			if (v.id > 0 and (tostring(v.id) == group or nut.util.StringMatches(group, v.name))) then
 				if (active) then
 					target:SetBodygroup(v.id, 1)
+					target.character:SetData("groups", groups)
+
+					groups[v.id] = 1
 					nut.util.Notify(client:Name().." has enabled "..target:Name().."'s "..v.name.." bodygroup.")
+
+					return
 				else
 					target:SetBodygroup(v.id, 0)
+					target.character:SetData("groups", groups)
+
+					groups[v.id] = 0
 					nut.util.Notify(client:Name().." has disabled "..target:Name().."'s "..v.name.." bodygroup.")
+
+					return
 				end
 			end
 		end

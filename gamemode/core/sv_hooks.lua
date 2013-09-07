@@ -113,6 +113,12 @@ function GM:PlayerSpawn(client)
 	client:SetRunSpeed(nut.config.runSpeed)
 	client:SetWepRaised(false)
 
+	local groups = client.character:GetData("groups", {})
+
+	for k, v in pairs(groups) do
+		client:SetBodygroup(k, v)
+	end
+
 	nut.flag.OnSpawn(client)
 	nut.attribs.OnSpawn(client)
 end
