@@ -66,6 +66,9 @@ end
 	Purpose: Registers a new type of currency and adds it to the list of currencies available.
 --]]
 function nut.currency.SetUp(singular, plural, symbol)
+	singular = string.sub(string.upper(singular), 1, 1)..string.sub(string.lower(singular), 2)
+	plural = string.sub(string.upper(plural), 1, 1)..string.sub(string.lower(plural), 2)
+
 	nut.currency.data = {singular = singular, plural = plural, symbol = symbol}
 end
 
@@ -82,7 +85,7 @@ end
 
 	Useful for saying someone spent a certain amount or gained.
 --]]
-function nut.currency.GetName(amount)
+function nut.currency.GetName(amount, upper)
 	local currency = nut.currency.data
 
 	if (currency) then
@@ -94,6 +97,8 @@ function nut.currency.GetName(amount)
 		else
 			name = name.." "..currency.plural
 		end
+
+		name = !upper and string.lower(name) or name
 
 		return name
 	end
