@@ -109,6 +109,9 @@ if (CLIENT) then
 
 	-- Whether or not the time is shown in the side menu.
 	nut.config.showTime = true
+
+	-- If set to false, then color correction will not be enabled.
+	nut.config.sadColors = true
 	
 	hook.Add("SchemaInitialized", "nut_FontConfig", function()
 		surface.SetFont("nut_TargetFontSmall")

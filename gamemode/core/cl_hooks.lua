@@ -287,7 +287,22 @@ function GM:RenderScreenspaceEffects()
 	color["$pp_colour_mulg"] = 0
 	color["$pp_colour_mulb"] = 0.1
 
+	nut.schema.Call("ModifyColorCorrection", color)
+
 	DrawColorModify(color)
+end
+
+function GM:ModifyColorCorrection(color)
+	if (!nut.config.sadColors) then
+		color["$pp_colour_brightness"] = color["$pp_colour_brightness"] + 0.02
+		color["$pp_colour_contrast"] = 1
+		color["$pp_colour_addr"] = 0
+		color["$pp_colour_addg"] = 0
+		color["$pp_colour_addb"] = 0
+		color["$pp_colour_mulr"] = 0
+		color["$pp_colour_mulg"] = 0
+		color["$pp_colour_mulb"] = 0
+	end
 end
 
 function GM:PlayerCanSeeBusiness()
