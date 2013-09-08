@@ -14,7 +14,7 @@ local PANEL = {}
 	function PANEL:SlideOut()
 		self:MoveTo(ScrW(), 0, 0.25, 0, 0.15)
 
-		timer.Create("nut_SideMenuClose", 0.25, 1, function()
+		timer.Simple(0.25, function()
 			if (!IsValid(self)) then
 				return
 			end
