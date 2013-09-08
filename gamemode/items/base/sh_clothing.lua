@@ -1,8 +1,6 @@
 BASE.name = "Base Clothes"
 BASE.uniqueID = "base_cloth"
 BASE.category = "Clothing"
-BASE.model = Model( "models/props_c17/BriefCase001a.mdl" )
-BASE.outfitmodel = Model( "models/Kleiner.mdl" )
 BASE.data = {
 	Equipped = false
 }
@@ -15,10 +13,38 @@ BASE.functions.Wear = {
 
 				return false
 			end
+			
+			-- Backwards compatability.
+			local model = itemTable.outfitModel or itemTable.model
+			local replacement = itemTable.replacement
+			local lowerPlyModel = string.lower(client:GetModel())
 
-			client.character:SetData("oldModel", client:GetModel())
-			client.character:SetVar("model", itemTable.outfitmodel)
-			client:SetModel(itemTable.model)
+			if (replacement) then
+				--[[
+					Replacements can either be:
+					ITEM.replacement = {"group02", "group03"}
+
+					or:
+
+					ITEM.replacement = {
+						{"group01", "group03"},
+						{"group02", "group03"}
+					}
+				--]]
+				if (#replacement == 2 and type(replacement[1]) == "string" and type(replacement[2]) == "string") then
+					model = string.gsub(lowerPlyModel, replacement[1], replacement[2])
+				elseif (#replacement > 0) then
+					for k, v in pairs(replacement) do
+						if (v[1] and v[2]) then
+							model = string.gsub(lowerPlyModel, string.lower(v[1]), string.lower(v[2]))
+						end
+					end
+				end
+			end
+
+			client.character:SetData("oldModel", lowerPlyModel)
+			client.character:SetVar("model", model)
+			client:SetModel(model)
 
 			local newData = table.Copy(data)
 			newData.Equipped = true
@@ -78,4 +104,8 @@ function BASE:CanTransfer(client, data)
 	end
 
 	return !data.Equipped
+end
+
+function BASE:GetDropModel()
+	return "models/props_c17/suitCase_passenger_physics.mdl"
 end
