@@ -90,6 +90,51 @@ end
 local PLUGIN = PLUGIN
 
 PLUGIN:CreateCommand({
+	group = "owner",
+	syntax = "<string name> [number immunity]",
+	hasTarget = false,
+	onRun = function(client, arguments)
+		local name = arguments[1]
+		local immunity = tonumber(arguments[2] or "0") or 0
+
+		if (!name) then
+			nut.util.Notify("You need to provide a group name.", client)
+
+			return
+		end
+
+		name = string.lower(name)
+
+		PLUGIN:CreateRank(name, immunity)
+		nut.util.Notify(client:Name().." has created the '"..name.."' rank with "..immunity.." immunity.")
+	end
+}, "newrank")
+
+PLUGIN:CreateCommand({
+	group = "owner",
+	syntax = "<string name>",
+	hasTarget = false,
+	onRun = function(client, arguments)
+		local name = arguments[1]
+
+		if (!name) then
+			nut.util.Notify("You need to provide a group name.", client)
+
+			return
+		end
+
+		name = string.lower(name)
+		local removed, realName = PLUGIN:RemoveRank(name)
+
+		if (removed) then
+			nut.util.Notify(client:Name().." has removed the '"..realName.."' rank.")
+		else
+			nut.util.Notify("That rank does not exist.", client)
+		end
+	end
+}, "delrank")
+
+PLUGIN:CreateCommand({
 	group = "operator",
 	syntax = "[number force]",
 	onRun = function(client, arguments, target)

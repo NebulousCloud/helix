@@ -26,7 +26,7 @@ function PLUGIN:IsAllowed(a, b)
 	end
 
 	if (a and b) then
-		return a <= b
+		return a >= b
 	end
 
 	return true
@@ -56,11 +56,11 @@ function PLUGIN:LoadData()
 end
 
 -- Permanent ranks, please do not edit this directly.
-PLUGIN.ranks.owner = 0
-PLUGIN.ranks.superadmin = 1
-PLUGIN.ranks.admin = 2
-PLUGIN.ranks.operator = 3
-PLUGIN.ranks.user = 4
+PLUGIN.ranks.owner = 100
+PLUGIN.ranks.superadmin = 75
+PLUGIN.ranks.admin = 50
+PLUGIN.ranks.operator = 25
+PLUGIN.ranks.user = 0
 
 function PLUGIN:PlayerSpawn(client)
 	if (!client:GetNutVar("modInit")) then
@@ -85,6 +85,22 @@ function PLUGIN:SetUserGroup(steamID, group, client)
 			client:SetUserGroup(group)
 		end
 	end
+end
+
+function PLUGIN:CreateRank(group, immunity)
+	self.ranks[group] = immunity
+end
+
+function PLUGIN:RemoveRank(group)
+	for k, v in pairs(self.ranks) do
+		if (nut.util.StringMatches(group, k)) then
+			self.ranks[k] = nil
+
+			return true, k
+		end
+	end
+
+	return false
 end
 
 function PLUGIN:BanPlayer(steamID, time, reason)
