@@ -56,6 +56,10 @@ local PANEL = {}
 		addButton("char", nut.lang.Get("characters"), function()
 			nut.gui.charMenu = vgui.Create("nut_CharMenu")
 
+			if (IsValid(self.side)) then
+				self.side:SlideOut()
+			end
+			
 			self:Remove()
 		end)
 
