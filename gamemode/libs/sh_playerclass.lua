@@ -20,6 +20,12 @@ function PLAYER:SetupDataTables()
 end
 
 function PLAYER:GetHandsModel()
+	local hands = nut.schema.Call("PlayerGetHandsModel", self.Player)
+
+	if (hands) then
+		return hands
+	end
+
 	local model = string.lower(self.Player:GetModel())
 
 	for k, v in pairs(modelList) do
@@ -102,8 +108,6 @@ do
 		end)
 	else
 		net.Receive("nut_PlayerDataTables", function(length)
-			print("Updating player datatables.")
-
 			for k, v in pairs(player.GetAll()) do
 				if (v != LocalPlayer() and !v.GetNutWepRaised) then
 					player_manager.RunClass(v, "SetupDataTables")
