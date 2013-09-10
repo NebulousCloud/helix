@@ -133,17 +133,9 @@ end
 if (SERVER) then
 	-- Create needed directories here since using file.Write will no longer autocreate directories.
 	hook.Add("SchemaInitialized", "nut_CreateFiles", function()
-		if (!file.IsDir("nutscript", "DATA")) then
-			file.CreateDir("nutscript")
-		end
-
-		if (!file.IsDir("nutscript/data", "DATA")) then
-			file.CreateDir("nutscript/data")
-		end
-
-		if (!file.IsDir("nutscript/"..SCHEMA.uniqueID, "DATA")) then
-			file.CreateDir("nutscript/"..SCHEMA.uniqueID)
-		end
+		file.CreateDir("nutscript")
+		file.CreateDir("nutscript/data")
+		file.CreateDir("nutscript/"..SCHEMA.uniqueID)
 	end)
 
 	-- Table to cache tables that are to be saved/loaded.
