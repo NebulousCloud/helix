@@ -25,6 +25,7 @@ do
 
 	-- Alias to the old function before it gets overwritten.
 	playerMeta.RealName = playerMeta.RealName or playerMeta.Name
+	playerMeta.SteamName = playerMeta.RealName
 
 	function playerMeta:Name()
 		if (self.character) then
