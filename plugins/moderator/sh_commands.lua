@@ -294,7 +294,7 @@ PLUGIN:CreateCommand({
 		local time = PLUGIN:GetTimeByString(arguments[1])
 		local reason = arguments[2] or "no reason"
 
-		PLUGIN:BanPlayer(client, time, reason)
+		PLUGIN:BanPlayer(target, time, reason)
 	end
 }, "ban")
 
