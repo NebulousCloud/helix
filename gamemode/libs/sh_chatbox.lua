@@ -4,6 +4,10 @@
 	chat classes.
 --]]
 
+if (!netstream) then
+	include("sh_netstream.lua")
+end
+
 nut.chat = nut.chat or {}
 nut.chat.classes = nut.chat.classes or {}
 
@@ -185,16 +189,12 @@ if (CLIENT) then
 
 	hook.Add("ChatOpened", "nut_Typing", function(teamChat)
 		if (!nut.config.showTypingText) then
-			net.Start("nut_Typing")
-				net.WriteString("1")
-			net.SendToServer()
+			netstream.Start("nut_Typing", "1")
 		end
 	end)
 
 	hook.Add("FinishChat", "nut_Typing", function(teamChat)
-		net.Start("nut_Typing")
-			net.WriteString("")
-		net.SendToServer()
+		netstream.Start("nut_Typing", "")
 	end)
 
 	local nextSend = 0
@@ -202,20 +202,17 @@ if (CLIENT) then
 	hook.Add("ChatTextChanged", "nut_Typing", function(text)
 		if (nut.config.showTypingText) then
 			if (nextSend < CurTime()) then
-				net.Start("nut_Typing")
-					net.WriteString(text)
-				net.SendToServer()
-
+				netstream.Start("nut_Typing", text)
 				nextSend = CurTime() + 0.25
 			end
 		end
 	end)
 
 	-- Handle a chat message from the server and parse it with the appropriate chat class.
-	net.Receive("nut_ChatMessage", function(length)
-		local speaker = net.ReadEntity()
-		local mode = net.ReadString()
-		local text = net.ReadString()
+	netstream.Hook("nut_ChatMessage", function(data)
+		local speaker = data[1]
+		local mode = data[2]
+		local text = data[3]
 		local class = nut.chat.classes[mode]
 
 		if (!IsValid(speaker) or !speaker.character or !class or isChatFiltered(mode)) then
@@ -225,14 +222,12 @@ if (CLIENT) then
 		if !nut.schema.Call("ChatClassPreText", class, speaker, text, mode) then --** allows you inturrupt the text when the hook is returned true ( can be used for Non-RP Chat filter or Curse word filter. )
 			class.onChat(speaker, text)
 		end
+
 		nut.schema.Call("ChatClassPostText", class, speaker, text, mode)
 	end)
 else
-	util.AddNetworkString("nut_ChatMessage")
-	util.AddNetworkString("nut_Typing")
-
-	net.Receive("nut_Typing", function(length, client)
-		client:SetNetVar("typing", net.ReadString())
+	netstream.Hook("nut_Typing", function(client, data)
+		client:SetNetVar("typing", data)
 	end)
 
 	-- Send a chat class to the clients that can hear it based off the classes's canHear function.
@@ -250,15 +245,7 @@ else
 			end
 		end
 
-		net.Start("nut_ChatMessage")
-			net.WriteEntity(client)
-			net.WriteString(mode)
-			net.WriteString(text)
-		if (#listeners == 0) then
-			net.Broadcast()
-		else
-			net.Send(listeners)
-		end
+		netstream.Start(listeners, "nut_ChatMessage", {client, mode, text})
 
 		local color = team.GetColor(client:Team())
 		local channel = "r"

@@ -3,6 +3,10 @@
 	players able to be whitelisted to certain factions.
 --]]
 
+if (!netstream) then
+	include("sh_netstream.lua")
+end
+
 nut.class = nut.class or {}
 nut.class.buffer = {}
 
@@ -48,10 +52,7 @@ function nut.class.Get(index)
 end
 
 if (SERVER) then
-	util.AddNetworkString("nut_ChooseClass")
-
-	net.Receive("nut_ChooseClass", function(length, client)
-		local index = net.ReadUInt(8)
+	netstream.Hook("nut_ChooseClass", function(client, index)
 		local class = nut.class.Get(index)
 
 		if (class and client:CharClass() != class and class:PlayerCanJoin(client) and nut.schema.Call("PlayerCanJoinClass", client, class) != false) then

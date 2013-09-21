@@ -86,9 +86,7 @@ local PANEL = {}
 
 		self.icon:SetToolTip("Click to join the "..class.name.." class.")
 		self.icon.DoClick = function(panel)
-			net.Start("nut_ChooseClass")
-				net.WriteUInt(index, 8)
-			net.SendToServer()
+			netstream.Start("nut_ChooseClass", index)
 
 			timer.Simple(0.25, function()
 				nut.gui.classes:Reload()

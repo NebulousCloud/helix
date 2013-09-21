@@ -87,10 +87,7 @@ local PANEL = {}
 			local value = tonumber(self.money2:GetText()) or 0
 
 			if (value and value <= LocalPlayer():GetMoney() and value > 0) then
-				net.Start("nut_TransferMoney")
-					net.WriteEntity(self.entity)
-					net.WriteInt(value, 16)
-				net.SendToServer()
+				netstream.Start("nut_TransferMoney", {self.entity, math.abs(value)})
 			else
 				self.money2:SetText(LocalPlayer():GetMoney())
 			end
@@ -137,10 +134,7 @@ local PANEL = {}
 			local value = tonumber(self.money:GetText()) or 0
 
 			if (value and value <= entity:GetNetVar("money", 0) and value > 0) then
-				net.Start("nut_TransferMoney")
-					net.WriteEntity(entity)
-					net.WriteInt(-value, 16)
-				net.SendToServer()
+				netstream.Start("nut_TransferMoney", {entity, -math.abs(value)})
 			else
 				self.money:SetText(entity:GetNetVar("money", 0))
 			end
@@ -197,12 +191,7 @@ local PANEL = {}
 
 					icon:SetToolTip(nut.lang.Get("item_info", itemTable.name, itemTable:GetDesc(v.data)))
 					icon.DoClick = function(icon)
-						net.Start("nut_StorageUpdate")
-							net.WriteEntity(entity)
-							net.WriteString(class)
-							net.WriteInt(-1, 8)
-							net.WriteTable(v.data or {})
-						net.SendToServer()
+						netstream.Start("nut_StorageUpdate", {entity, class, -1, v.data or {}})
 					end
 				end
 			end
@@ -274,12 +263,7 @@ local PANEL = {}
 							return false
 						end
 
-						net.Start("nut_StorageUpdate")
-							net.WriteEntity(self.entity)
-							net.WriteString(class)
-							net.WriteInt(1, 8)
-							net.WriteTable(v.data or {})
-						net.SendToServer()
+						netstream.Start("nut_StorageUpdate", {self.entity, class, 1, v.data or {}})
 					end
 				end
 			end

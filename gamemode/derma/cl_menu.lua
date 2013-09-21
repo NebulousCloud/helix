@@ -145,7 +145,7 @@ local PANEL = {}
 	end
 vgui.Register("nut_Menu", PANEL, "DPanel")
 
-net.Receive("nut_ShowMenu", function(length)
+netstream.Hook("nut_ShowMenu", function()
 	if (IsValid(nut.gui.menu)) then
 		nut.gui.menu:Remove()
 	end

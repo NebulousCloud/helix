@@ -81,9 +81,6 @@ if (SERVER) then
 			end
 		end
 	end
-	
-	util.AddNetworkString("nut_ShowStorageMenu")
-		
 else
 	
 	local locks = {
@@ -93,21 +90,13 @@ else
 	
 	local function lck1( entity )
 		if !LocalPlayer():HasItem( "classic_locker_1" ) then nut.util.Notify("Lack of required item." , client) return false end
-		net.Start( "nut_RequestLock" )
-			net.WriteEntity( entity )
-			net.WriteBit( true )
-			net.WriteString( "" )
-		net.SendToServer()
+		netstream.Start("nut_RequestLock", {entity, true, ""})
 	end
 	
 	local function lck2( entity )
 		if !LocalPlayer():HasItem( "digital_locker_1" ) then nut.util.Notify("Lack of required item." , client) return false end
 		Derma_StringRequest( "Password Lock", "Enter the password for the container", "", function( pas ) 
-			net.Start( "nut_RequestLock" )
-				net.WriteEntity( entity )
-				net.WriteBit( false )
-				net.WriteString( pas )
-			net.SendToServer()
+			netstream.Start("nut_RequestLock", {entity, false, pas})
 		end)
 	end
 	
@@ -120,9 +109,7 @@ else
 				return LocalPlayer():IsAdmin()
 			end,
 			func = function( entity )
-				net.Start( "nut_Storage" )
-					net.WriteEntity( entity )
-				net.SendToServer()
+				netstream.Start("nut_Storage", entity)
 			end,
 		},
 		open = {
@@ -132,9 +119,7 @@ else
 				return true
 			end,
 			func = function( entity )
-				net.Start( "nut_RequestStorageMenu" )
-					net.WriteEntity( entity )
-				net.SendToServer()
+				netstream.Start("nut_RequestStorageMenu", entity)
 			end,
 		},
 		pick = {
@@ -193,17 +178,13 @@ else
 		menu:Center()
 	end
 
-	net.Receive("nut_ShowStorageMenu", function(length)
-		PLUGIN:ShowStorageMenu( net.ReadEntity() )
+	netstream.Hook("nut_ShowStorageMenu", function(entity)
+		PLUGIN:ShowStorageMenu(entity)
 	end)
 		
-	net.Receive("nut_RequestPassword", function(length)
-		local entity = net.ReadEntity()
+	netstream.Hook("nut_RequestPassword", function(entity)
 		Derma_StringRequest( "Password Lock", "Enter the password for the container", "", function( pas ) 
-			net.Start( "nut_VerifyPassword" )
-				net.WriteEntity( entity )
-				net.WriteString( pas )
-			net.SendToServer()
+			netstream.Start("nut_VerifyPassword", {entity, pas})
 		end)
 	end)
 		

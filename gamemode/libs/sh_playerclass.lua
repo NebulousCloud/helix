@@ -14,8 +14,7 @@ function PLAYER:SetupDataTables()
 	self.Player:NetworkVar("Bool", 0, "NutWepRaised")
 
 	if (SERVER and #player.GetAll() > 1) then
-		net.Start("nut_PlayerDataTables")
-		net.Broadcast()
+		netstream.Start(nil, "nut_PlayerDataTables")
 	end
 end
 
@@ -52,8 +51,6 @@ do
 	end
 
 	if (SERVER) then
-		util.AddNetworkString("nut_PlayerDataTables")
-
 		function playerMeta:SetWepRaised(raised, weapon)
 			if (!IsValid(self) or !self.character) then
 				return
@@ -100,14 +97,13 @@ do
 			end
 			
 			if (client:GetNutVar("nextUpdate", 0) < CurTime()) then
-				net.Start("nut_PlayerDataTables")
-				net.Send(client)
+				netstream.Start(client, "nut_PlayerDataTables")
 
 				client:SetNutVar("nextUpdate", CurTime() + 10)
 			end
 		end)
 	else
-		net.Receive("nut_PlayerDataTables", function(length)
+		netstream.Hook("nut_PlayerDataTables", function(data)
 			for k, v in pairs(player.GetAll()) do
 				if (v != LocalPlayer() and !v.GetNutWepRaised) then
 					player_manager.RunClass(v, "SetupDataTables")

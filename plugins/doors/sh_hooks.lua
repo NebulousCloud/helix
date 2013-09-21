@@ -11,8 +11,6 @@ function PLUGIN:GetOwner(entity)
 end
 
 if (SERVER) then
-	util.AddNetworkString("nut_DoorMenu")
-
 	function PLUGIN:ShowTeam(client)
 		local data = {}
 			data.start = client:GetShootPos()

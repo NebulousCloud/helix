@@ -15,9 +15,6 @@ do
 	end
 
 	if (SERVER) then
-		util.AddNetworkString("nut_PlayerData")
-		util.AddNetworkString("nut_WhitelistData")
-
 		function playerMeta:InitializeData()
 			nut.db.Query("SELECT whitelists, plydata FROM "..nut.config.dbPlyTable.." WHERE steamid = "..self:SteamID64()..sameSchema(), function(data)
 				if (!IsValid(self)) then
@@ -32,9 +29,7 @@ do
 					self.whitelists = data.whitelists
 
 					if (self.whitelists != "") then
-						net.Start("nut_WhitelistData")
-							net.WriteString(self.whitelists)
-						net.Send(self)
+						netstream.Start(self, "nut_WhitelistData", self.whitelists)
 					end
 
 					nut.schema.Call("PlayerLoadedData", self)
@@ -65,10 +60,7 @@ do
 			self.nut_Vars[key] = value
 
 			if (!noSend) then
-				net.Start("nut_PlayerData")
-					net.WriteString(key)
-					net.WriteType(value)
-				net.Send(self)
+				netstream.Start(self, "nut_PlayerData", {key, value})
 			end
 
 			if (!noSave) then
@@ -87,9 +79,7 @@ do
 				self.whitelists = self.whitelists..faction.uniqueID..","
 
 				if (!noSend) then
-					net.Start("nut_WhitelistData")
-						net.WriteString(self.whitelists)
-					net.Send(self)
+					netstream.Start(self, "nut_WhitelistData", self.whitelists)
 				end
 
 				if (!noSave) then
@@ -109,9 +99,7 @@ do
 				self.whitelists = string.gsub(self.whitelists, faction.uniqueID..",", "")
 
 				if (!noSend) then
-					net.Start("nut_WhitelistData")
-						net.WriteString(self.whitelists)
-					net.Send(self)
+					netstream.Start(self, "nut_WhitelistData", self.whitelists)
 				end
 			end
 		end
@@ -120,14 +108,13 @@ do
 			return self.whitelists or ""
 		end
 	else
-		net.Receive("nut_WhitelistData", function(length)
-			LocalPlayer().whitelists = net.ReadString()
+		netstream.Hook("nut_WhitelistData", function(data)
+			LocalPlayer().whitelists = data
 		end)
 
-		net.Receive("nut_PlayerData", function(length)
-			local key = net.ReadString()
-			local index = net.ReadUInt(8)
-			local value = net.ReadType(index)
+		netstream.Hook("nut_PlayerData", function(data)
+			local key = data[1]
+			local value = data[2]
 
 			LocalPlayer().nut_Vars = LocalPlayer().nut_Vars or {}
 			LocalPlayer().nut_Vars[key] = value

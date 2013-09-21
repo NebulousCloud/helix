@@ -201,9 +201,7 @@ if (CLIENT) then
 		nut.chat.CreatePanels()
 		nut.chat.open = state
 
-		net.Start("nut_Typing")
-			net.WriteBit(state)
-		net.SendToServer()
+		netstream.Start("nut_Typing", state)
 
 		if (state) then
 			local entry = vgui.Create("DTextEntry")
@@ -218,9 +216,7 @@ if (CLIENT) then
 				local text = panel:GetText()
 
 				if (string.find(text, "%S")) then
-					net.Start("nut_PlayerSay")
-						net.WriteString(text)
-					net.SendToServer()
+					netstream.Start("nut_PlayerSay", string.sub(text, 1, nut.config.maxChatLength))
 
 					hook.Run("FinishChat")
 				end
@@ -280,14 +276,12 @@ if (CLIENT) then
 		end
 	end
 else
-	util.AddNetworkString("nut_PlayerSay")
-
-	net.Receive("nut_PlayerSay", function(length, client)
+	netstream.Hook("nut_PlayerSay", function(client, data)
 		if ((client.nextTalk or 0) < CurTime()) then
 			client.nextTalk = CurTime() + 0.5
 
 			-- Hacky method of allowing large text.
-			hook.Run("PlayerSay", client, net.ReadString(), true)
+			hook.Run("PlayerSay", client, data, true)
 		end
 	end)
 end

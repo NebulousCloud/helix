@@ -47,9 +47,7 @@ local PANEL = {}
 								return
 							end
 							
-							net.Start("nut_BuyItem")
-								net.WriteString(class)
-							net.SendToServer()
+							netstream.Start("nut_BuyItem", class)
 
 							icon.disabled = true
 							icon:SetAlpha(70)
@@ -82,10 +80,8 @@ local PANEL = {}
 						if (icon.disabled) then
 							return
 						end
-						
-						net.Start("nut_BuyItem")
-							net.WriteString(class)
-						net.SendToServer()
+							
+						netstream.Start("nut_BuyItem", class)
 
 						icon.disabled = true
 						icon:SetAlpha(70)

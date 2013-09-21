@@ -5,17 +5,9 @@ PLUGIN.desc = "Adds 3D text that can be placed anywhere."
 PLUGIN.text = PLUGIN.text or {}
 
 if (SERVER) then
-	util.AddNetworkString("nut_TextData")
-	util.AddNetworkString("nut_TextRemove")
-
 	function PLUGIN:PlayerLoadedData(client)
 		for k, v in ipairs(self.text) do
-			net.Start("nut_TextData")
-				net.WriteVector(v.pos)
-				net.WriteAngle(v.angle)
-				net.WriteString(v.text)
-				net.WriteFloat(v.scale)
-			net.Send(client)
+			netstream.Start(client, "nut_TextData", {v.pos, v.angle, v.text, v.scale})
 		end
 	end
 
@@ -32,12 +24,7 @@ if (SERVER) then
 
 		self.text[#self.text + 1] = data
 
-		net.Start("nut_TextData")
-			net.WriteVector(data.pos)
-			net.WriteAngle(data.angle)
-			net.WriteString(data.text)
-			net.WriteFloat(data.scale)
-		net.Broadcast()
+		netstream.Start(nil, "nut_TextData", {data.pos, data.angle, data.text, data.scale})
 	end
 
 	function PLUGIN:SaveData()
@@ -53,9 +40,7 @@ if (SERVER) then
 
 		for k, v in ipairs(self.text) do
 			if (v.pos:Distance(position) <= radius) then
-				net.Start("nut_TextRemove")
-					net.WriteUInt(k, 8)
-				net.Broadcast()
+				netstream.Start(nil, "nut_TextRemove", k)
 
 				self.text[k] = nil
 				i = i + 1
@@ -91,17 +76,15 @@ if (SERVER) then
 		end
 	}, "textremove")
 else
-	net.Receive("nut_TextRemove", function(length)
-		local index = net.ReadUInt(8)
-
+	netstream.Hook("nut_TextRemove", function(index)
 		PLUGIN.text[index] = nil
 	end)
 
-	net.Receive("nut_TextData", function(length)
-		local position = net.ReadVector()
-		local angle = net.ReadAngle()
-		local text = net.ReadString()
-		local scale = net.ReadFloat()
+	netstream.Hook("nut_TextData", function(data)
+		local position = data[1]
+		local angle = data[2]
+		local text = data[3]
+		local scale = data[4]
 
 		scale = math.max(scale, 0.25)
 

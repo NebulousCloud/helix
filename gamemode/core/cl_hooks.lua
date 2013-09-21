@@ -243,7 +243,7 @@ end
 
 local FADE_TIME = 7
 
-net.Receive("nut_FadeIntro", function(length)
+netstream.Hook("nut_FadeIntro", function(data)
 	nut.fadeStart = CurTime()
 	nut.fadeFinish = CurTime() + FADE_TIME
 
@@ -309,6 +309,6 @@ function GM:PlayerCanSeeBusiness()
 	return true
 end
 
-net.Receive("nut_CurTime", function(length)
-	nut.curTime = net.ReadUInt(32)
+netstream.Hook("nut_CurTime", function(data)
+	net.curTime = data
 end)

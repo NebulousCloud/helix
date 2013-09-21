@@ -4,8 +4,6 @@ PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Shows which location you are at."
 
 if (SERVER) then
-	util.AddNetworkString("nut_PlayerEnterArea")
-
 	PLUGIN.areas = PLUGIN.areas or {}
 
 	timer.Create("nut_AreaManager", 1, 0, function()
@@ -20,10 +18,7 @@ if (SERVER) then
 						v2:SetNetVar("area", v.name)
 
 						nut.schema.Call("PlayerEnterArea", v2, v)
-
-						net.Start("nut_PlayerEnterArea")
-							net.WriteEntity(v2)
-						net.Broadcast()
+						netstream.Start(nil, "nut_PlayerEnterArea", v2)
 					end
 				end
 			end
@@ -48,8 +43,8 @@ if (SERVER) then
 		nut.util.WriteTable("areas", self.areas)
 	end
 else
-	net.Receive("nut_PlayerEnterArea", function(length)
-		nut.schema.Call("PlayerEnterArea", net.ReadEntity())
+	netstream.Hook("nut_PlayerEnterArea", function(data)
+		nut.schema.Call("PlayerEnterArea", data)
 	end)
 end
 

@@ -1,10 +1,6 @@
 local entityMeta = FindMetaTable("Entity")
 
 if (SERVER) then
-	util.AddNetworkString("nut_EntityVar")
-	util.AddNetworkString("nut_NetHandshake")
-	util.AddNetworkString("nut_EntityVarClean")
-
 	function entityMeta:SyncVars(client, noDelta)
 		if (self.nut_NetVars) then
 			for k, v in pairs(self.nut_NetVars) do
@@ -52,12 +48,8 @@ if (SERVER) then
 				self.nut_NetDeltas[key] = table.Copy(oldValue)
 			end
 
-			net.Start("nut_EntityVar")
-				net.WriteUInt(self:EntIndex(), 16)
-				net.WriteString(key)
-				net.WriteType(value)
 			if (receiver) then
-				net.Send(receiver)
+				netstream.Start(receiver, "nut_EntityVar", {self:EntIndex(), key, value})
 
 				if (!noHandShake) then
 					if (type(receiver) == "Player") then
@@ -69,7 +61,7 @@ if (SERVER) then
 					end
 				end
 			else
-				net.Broadcast()
+				netstream.Start(nil, "nut_EntityVar", {self:EntIndex(), key, value})
 
 				if (!noHandShake) then
 					for k, v in pairs(player.GetAll()) do
@@ -85,9 +77,7 @@ if (SERVER) then
 		self.nut_NetVars[key] = value
 
 		self:CallOnRemove("CleanNetVar", function()
-			net.Start("nut_EntityVarClean")
-				net.WriteUInt(self:EntIndex(), 16)
-			net.Broadcast()
+			netstream.Start(nil, "nut_EntityVar", self:EntIndex())
 		end)
 
 		if (self.nut_NetHooks and self.nut_NetHooks[key]) then
@@ -99,15 +89,13 @@ if (SERVER) then
 		self:SendVar(key)
 	end
 
-	net.Receive("nut_NetHandshake", function(length, client)
-		timer.Remove("nut_Net"..client:UniqueID()..net.ReadString())
+	netstream.Hook("nut_NetHandshake", function(client, data)
+		timer.Remove("nut_Net"..client:UniqueID()..data)
 	end)
 	
 	-- Clean up player vars.
 	hook.Add("PlayerDisconnected", "cn_PlayerVarClean", function(client)
-		net.Start("nut_EntityVarClean")
-			net.WriteUInt(client:EntIndex(), 16)
-		net.Broadcast()
+		netstream.Start(nil, "nut_EntityVarClean", client:EntIndex())
 	end)
 else
 	local function replacePlaceHolders(value)
@@ -124,15 +112,14 @@ else
 
 	NUT_ENT_REGISTRY = NUT_ENT_REGISTRY or {}
 
-	net.Receive("nut_EntityVarClean", function(length)
-		NUT_ENT_REGISTRY[net.ReadUInt(16)] = nil
+	netstream.Hook("nut_EntityVarClean", function(data)
+		NUT_ENT_REGISTRY[data] = nil
 	end)
 
-	net.Receive("nut_EntityVar", function(length)
-		local entIndex = net.ReadUInt(16)
-		local key = net.ReadString()
-		local index = net.ReadUInt(8)
-		local value = net.ReadType(index)
+	netstream.Hook("nut_EntityVar", function(data)
+		local entIndex = data[1]
+		local key = data[2]
+		local value = data[3]
 
 		NUT_ENT_REGISTRY[entIndex] = NUT_ENT_REGISTRY[entIndex] or {}
 
@@ -152,9 +139,7 @@ else
 			end
 		end
 
-		net.Start("nut_NetHandshake")
-			net.WriteString(entIndex..key)
-		net.SendToServer()
+		netstream.Start("nut_NetHandshake", entIndex..key)
 	end)
 end
 

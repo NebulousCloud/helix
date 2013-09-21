@@ -53,20 +53,12 @@ if (CLIENT) then
 		end
 	end
 
-	net.Receive("nut_ScrollData", function(length)
-		nut.scroll.Add(net.ReadString())
+	netstream.Hook("nut_ScrollData", function(data)
+		nut.scroll.Add(data)
 	end)
 else
-	util.AddNetworkString("nut_ScrollData")
-
 	function nut.scroll.Send(text, receiver, callback)
-		net.Start("nut_ScrollData")
-			net.WriteString(text)
-		if (receiver) then
-			net.Send(receiver)
-		else
-			net.Broadcast()
-		end
+		netstream.Start(receiver, "nut_ScrollData", text)
 
 		timer.Simple(CHAR_DELAY*string.len(text) + 4, function()
 			if (callback) then

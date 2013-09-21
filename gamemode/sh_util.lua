@@ -3,6 +3,8 @@
 	framework files.
 --]]
 
+include("libs/sh_netstream.lua")
+
 nut.util = {}
 
 --[[
@@ -194,37 +196,27 @@ if (SERVER) then
 		return {}
 	end
 
-	util.AddNetworkString("nut_Notice")
-
 	function nut.util.Notify(message, ...)
 		local receivers = {...}
 
-		net.Start("nut_Notice")
-			net.WriteString(message)
 		if (#receivers == 0) then
 			MsgN(message)
-			
-			net.Broadcast()
-		elseif (#receivers == 1) then
-			net.Send(receivers[1])
-		else
-			net.Send(receivers)
+			receivers = nil
 		end
-	end
 
-	util.AddNetworkString("nut_FadeIntro")
+		netstream.Start(receivers, "nut_Notice", message)
+	end
 
 	function nut.util.SendIntroFade(client)
 		if (nut.schema.Call("PlayerShouldSeeIntro", client) == false) then
 			return
 		end
 
-		net.Start("nut_FadeIntro")
-		net.Send(client)
+		netstream.Start(client, "nut_FadeIntro")
 	end
 else
-	net.Receive("nut_Notice", function(length)
-		nut.util.Notify(net.ReadString())
+	netstream.Hook("nut_Notice", function(data)
+		nut.util.Notify(data)
 	end)
 
 	nut.notices = nut.notices or {}

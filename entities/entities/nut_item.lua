@@ -25,9 +25,7 @@ if (SERVER) then
 
 	function ENT:Use(activator)
 		if (nut.schema.Call("PlayerCanUseItem", activator, self) != false) then
-			net.Start("nut_ShowItemMenu")
-				net.WriteEntity(self)
-			net.Send(activator)
+			netstream.Start(activator, "nut_ShowItemMenu", self)
 		end
 	end
 end

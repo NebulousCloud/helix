@@ -38,11 +38,7 @@ end
 
 if CLIENT then return end
 
-
-util.AddNetworkString("nut_CraftItem")
-
-net.Receive("nut_CraftItem", function(length, client)
-	local item = net.ReadString()
+netstream.Hook("nut_CraftItem", function(client, item)
 	if RECIPES:CanCraft( client, item ) then
 		client:CraftItem( item )
 	else

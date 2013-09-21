@@ -5,6 +5,10 @@
 	other stuff, such as the stamina plugin.
 --]]
 
+if (!netstream) then
+	include("sh_netstream.lua")
+end
+
 nut.bar = nut.bar or {}
 
 if (CLIENT) then
@@ -105,9 +109,9 @@ if (CLIENT) then
 		end
 	end
 
-	net.Receive("nut_MainBar", function(length)
-		local text = net.ReadString()
-		local time = net.ReadUInt(16)
+	netstream.Hook("nut_MainBar", function(data)
+		local text = data[1]
+		local time = data[2]
 
 		if (time == 0) then
 			nut.bar.KillMainBar()
@@ -116,17 +120,12 @@ if (CLIENT) then
 		end
 	end)
 else
-	util.AddNetworkString("nut_MainBar")
-
 	local playerMeta = FindMetaTable("Player")
 
 	function playerMeta:SetMainBar(text, time)
 		text = text or ""
 		time = time or 0
 
-		net.Start("nut_MainBar")
-			net.WriteString(text)
-			net.WriteUInt(time, 16)
-		net.Send(self)
+		netstream.Start(self, "nut_MainBar", {text, time})
 	end
 end

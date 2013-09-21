@@ -57,9 +57,9 @@ local PANEL = {}
 							if (icon.disabled) then
 								return
 							end
-							net.Start("nut_CraftItem")
-								net.WriteString( class )
-							net.SendToServer()
+
+							netstream.Start("nut_CraftItem", class)
+
 							icon.disabled = true
 							icon:SetAlpha(70)
 							timer.Simple(nut.config.buyDelay, function()
@@ -97,9 +97,9 @@ local PANEL = {}
 						if (icon.disabled) then
 							return
 						end
-						net.Start("nut_CraftItem")
-							net.WriteString(class)
-						net.SendToServer()
+
+						netstream.Start("nut_CraftItem", class)
+						
 						icon.disabled = true
 						icon:SetAlpha(70)
 						timer.Simple(nut.config.buyDelay, function()

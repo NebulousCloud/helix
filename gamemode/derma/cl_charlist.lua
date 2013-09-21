@@ -135,9 +135,7 @@ local PANEL = {}
 				nut.gui.inv:Remove()
 			end
 
-			net.Start("nut_CharChoose")
-				net.WriteUInt(LocalPlayer().characters[self.currentIndex].id, 16)
-			net.SendToServer()
+			netstream.Start("nut_CharChoose", LocalPlayer().characters[self.currentIndex].id)
 		end
 
 		self.delete = self.menu:Add("nut_MenuButton")
@@ -157,9 +155,7 @@ local PANEL = {}
 			Derma_Query(nut.lang.Get("delete_question", self.name:GetText()), nut.lang.Get("delete"), nut.lang.Get("no"), function()
 			end, nut.lang.Get("yes"), function()
 				if (selection) then
-					net.Start("nut_CharDelete")
-						net.WriteUInt(LocalPlayer().characters[self.currentIndex].id, 8)
-					net.SendToServer()
+					netstream.Start("nut_CharDelete", LocalPlayer().characters[self.currentIndex].id)
 
 					table.remove(LocalPlayer().characters, self.currentIndex)
 

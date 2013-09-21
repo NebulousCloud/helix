@@ -77,7 +77,7 @@ if (CLIENT) then
 		end
 	end
 
-	net.Receive("nut_Vendor", function(length)
+	netstream.Hook("nut_Vendor", function(data)
 		if (IsValid(nut.gui.vendor)) then
 			nut.gui.vendor:Remove()
 
@@ -85,31 +85,25 @@ if (CLIENT) then
 		end
 
 		nut.gui.vendor = vgui.Create("nut_Vendor")
-		nut.gui.vendor:SetEntity(net.ReadEntity())
+		nut.gui.vendor:SetEntity(data)
 	end)
 else
-	util.AddNetworkString("nut_Vendor")
-	util.AddNetworkString("nut_VendorData")
-	util.AddNetworkString("nut_VendorBuy")
-
 	function ENT:Use(activator)
-		net.Start("nut_Vendor")
-			net.WriteEntity(self)
-		net.Send(activator)
+		netstream.Start(activator, "nut_Vendor", self)
 	end
 
-	net.Receive("nut_VendorData", function(length, client)
+	netstream.Hook("nut_VendorData", function(client, data)
 		if (!client:IsAdmin()) then
 			return
 		end
 
-		local entity = net.ReadEntity()
-		local data = net.ReadTable()
-		local factionData = net.ReadTable()
-		local classData = net.ReadTable()
-		local name = net.ReadString()
-		local desc = net.ReadString()
-		local model = net.ReadString()
+		local entity = data[1]
+		local data = data[2]
+		local factionData = data[3]
+		local classData = data[4]
+		local name = data[5]
+		local desc = data[6]
+		local model = data[7]
 
 		if (IsValid(entity)) then
 			entity:SetNetVar("data", data)
@@ -124,9 +118,9 @@ else
 		end
 	end)
 
-	net.Receive("nut_VendorBuy", function(length, client)
-		local entity = net.ReadEntity()
-		local class = net.ReadString()
+	netstream.Hook("nut_VendorBuy", function(client, data)
+		local entity = data[1]
+		local class = data[2]
 		local itemTable = nut.item.Get(class)
 
 		if (!IsValid(entity) or entity:GetPos():Distance(client:GetPos()) > 128 or !itemTable) then

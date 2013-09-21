@@ -36,10 +36,9 @@ BASE.functions.Eat = {
 				--** If you ate Entity
 				entity:GetData().usenum = entity:GetData().usenum or 1
 				entity:GetData().usenum = entity:GetData().usenum - 1
-				net.Start( "nut_UpdateData" )
-					net.WriteEntity( entity )
-					net.WriteFloat( entity:GetData().usenum )
-				net.Broadcast()
+
+				netstream.Start(nil, "nut_UpdateData", {entity, entity:GetData().usenum})
+
 				if entity:GetData().usenum <= 0 then
 					entity:Remove()
 					return true
@@ -85,10 +84,7 @@ BASE.functions.Cook = {
 				if (IsValid(entity) and entity:GetClass() == "nut_stove") then
 					if entity:GetNetVar( "active" ) then
 						nut.util.Notify( Format( cookmod["notice_cooked"], itemTable.name ) , client)
-						net.Start("nut_CookItem")
-							net.WriteUInt(index, 8)
-							net.WriteString( itemTable.uniqueID )
-						net.SendToServer()
+						netstream.Start("nut_CookItem", {index, itemTable.uniqueID})
 					else
 						nut.util.Notify( Format( cookmod["notice_turnonstove"], itemTable.name ) , client)
 					end
@@ -108,9 +104,6 @@ BASE.functions.Cook = {
 }
 
 if SERVER then
-
-	util.AddNetworkString("nut_CookItem")
-
 	local cookTable = {
 		[0] = nut.lang.Get("food_uncook"),
 		[1] = nut.lang.Get("food_worst"),
@@ -124,9 +117,9 @@ if SERVER then
 		[9] = nut.lang.Get("food_best"),
 	}
 	
-	net.Receive("nut_CookItem", function(length, client)
-		local index = net.ReadUInt(8)
-		local uid = net.ReadString()
+	netstream.Hook("nut_CookItem", function(client, data)
+		local index = data[1]
+		local uid = data[2]
 		local item = client:GetItem(uid, index)
 
 		if (item) then
@@ -143,19 +136,13 @@ if SERVER then
 			client:UpdateInv(uid, 1, data)
 		end
 	end)
-	
-	util.AddNetworkString("nut_UpdateData")
 else
-
-	net.Receive("nut_UpdateData", function(length, client) --** For updating dropped Entity's usenum.
-	
-		local ent = net.ReadEntity()
-		local var = net.ReadFloat()
+	netstream.Hook("nut_UpdateData", function(client, data) --** For updating dropped Entity's usenum.
+		local ent = data[1]
+		local var = data[2]
 		
-		if ( ent && ent:IsValid() ) then
+		if (IsValid(ent)) then
 			ent:GetData().usenum = var
 		end
-		
 	end)
-
 end

@@ -17,6 +17,10 @@ if (!von) then
 	include("sh_von.lua")
 end
 
+if (!netstream) then
+	include("sh_netstream.lua")
+end
+
 do
 	-- Overwrite the player:Name() function to return the character name if it exists,
 	-- otherwise return the original Steam name.
@@ -217,11 +221,7 @@ function META:Send(variable, receiver, noDelta)
 			self.deltas[variable] = table.Copy(oldValue)
 		end
 
-		net.Start("nut_LocalCharData")
-			net.WriteString(variable)
-			net.WriteType(privateValue)
-			net.WriteBit(noDelta or false)
-		net.Send(self.player)
+		netstream.Start(self.player, "nut_LocalCharData", {variable, privateValue, noDelta})
 	elseif (publicValue) then
 		if (!noDelta and type(publicValue) == "table") then
 			local oldValue = publicValue
@@ -230,16 +230,7 @@ function META:Send(variable, receiver, noDelta)
 			self.deltas[variable] = table.Copy(oldValue)
 		end
 
-		net.Start("nut_CharData")
-			net.WriteEntity(self.player)
-			net.WriteString(variable)
-			net.WriteType(publicValue)
-			net.WriteBit(noDelta or false)
-		if (receiver) then
-			net.Send(receiver)
-		else
-			net.Broadcast()
-		end
+		netstream.Start(receiver, "nut_CharData", {self.player, variable, publicValue, noDelta})
 	else
 		error("Attempted to send unknown character data!")
 	end
@@ -308,16 +299,6 @@ if (SERVER) then
 	local function sameSchema()
 		return " AND rpschema = '"..SCHEMA.uniqueID.."'"
 	end
-
-	-- Precache the character net messages.
-	util.AddNetworkString("nut_CharData")
-	util.AddNetworkString("nut_LocalCharData")
-	util.AddNetworkString("nut_CharCreate")
-	util.AddNetworkString("nut_CharCreateAuthed")
-	util.AddNetworkString("nut_CharInfo")
-	util.AddNetworkString("nut_CharChoose")
-	util.AddNetworkString("nut_CharDelete")
-	util.AddNetworkString("nut_CharMenu")
 
 	--[[
 		Purpose: A function to insert a new character into the database with predefined
@@ -435,13 +416,7 @@ if (SERVER) then
 					client.characters = client.characters or {};
 					table.insert(client.characters, tonumber(data.id))
 					
-					net.Start("nut_CharInfo")
-						net.WriteString(data.charname)
-						net.WriteString(data.description)
-						net.WriteString(data.model)
-						net.WriteUInt(data.faction, 8)
-						net.WriteUInt(data.id, 8)
-					net.Send(client)
+					netstream.Start(client, "nut_CharInfo", {data.charname, data.description, data.model, data.faction, data.id})
 				else
 					error("Attempt to load an invalid character ("..client:Name().." #"..index..")")
 				end
@@ -498,7 +473,7 @@ if (SERVER) then
 
 	-- Validate the character creation request and sends a message to close the creation
 	-- menu when the character has been inserted into the database.
-	net.Receive("nut_CharCreate", function(length, client)
+	netstream.Hook("nut_CharCreate", function(client, data)
 		if (!IsValid(client)) then
 			return
 		end
@@ -507,12 +482,12 @@ if (SERVER) then
 			return
 		end
 
-		local name = string.sub(net.ReadString(), 1, 70)
-		local gender = string.lower( net.ReadString() )
-		local desc = string.sub(net.ReadString(), 1, 240)
-		local model = net.ReadString()
-		local faction = net.ReadUInt(8)
-		local attributes = net.ReadTable() or {}
+		local name = string.sub(data.name, 1, 70)
+		local gender = string.lower(data.gender)
+		local desc = string.sub(data.desc, 1, 240)
+		local model = data.model
+		local faction = data.faction
+		local attributes = data.attribs or {}
 
 		local totalPoints = 0
 
@@ -568,8 +543,7 @@ if (SERVER) then
 				nut.char.SendInfo(client, id)
 
 				timer.Simple(math.max(client:Ping() / 100, 0.1), function()
-					net.Start("nut_CharCreateAuthed")
-					net.Send(client)
+					netstream.Start(client, "nut_CharCreateAuthed")
 				end)
 
 				print("Created new character '"..name.."' for "..client:RealName()..".")
@@ -578,18 +552,14 @@ if (SERVER) then
 	end)
 
 	-- Spawns the player with their appropriate character and closes the main menu.
-	net.Receive("nut_CharChoose", function(length, client)
-		local index = net.ReadUInt(8)
-		
+	netstream.Hook("nut_CharChoose", function(client, index)
 		if (client.character and client.character.index != index) then
 			nut.char.Save(client)
 			nut.schema.Call("OnCharChanged", client)
 		end
 
 		nut.char.LoadID(client, index, function(sameChar)
-			net.Start("nut_CharMenu")
-				net.WriteBit(false)
-			net.Send(client)
+			netstream.Start(client, "nut_CharMenu", false)
 
 			if (!sameChar) then
 				client:Spawn()
@@ -600,9 +570,7 @@ if (SERVER) then
 	end)
 
 	-- Deletes a character from the database if it exists.
-	net.Receive("nut_CharDelete", function(length, client)
-		local index = net.ReadUInt(8)
-
+	netstream.Hook("nut_CharDelete", function(client, index)
 		if (client.characters and table.HasValue(client.characters, index)) then
 			nut.db.Query("DELETE FROM "..nut.config.dbTable.." WHERE steamid = "..client:SteamID64().." AND id = "..index..sameSchema(), function(data)
 				if (IsValid(client) and client.character and client.character.index == index) then
@@ -613,9 +581,7 @@ if (SERVER) then
 					client.character = nil
 					client:KillSilent()
 
-					net.Start("nut_CharMenu")
-						net.WriteBit(true)
-					net.Send(client)
+					netstream.Start(client, "nut_CharMenu", true)
 				end
 
 				print("Deleted character #"..index.." for "..client:Name()..".")
@@ -626,12 +592,11 @@ if (SERVER) then
 	end)
 else
 	-- CharData needs a valid player.
-	net.Receive("nut_CharData", function(length)
-		local client = net.ReadEntity()
-		local key = net.ReadString()
-		local index = net.ReadUInt(8)
-		local value = net.ReadType(index)
-		local noDelta = net.ReadBit() == 1
+	netstream.Hook("nut_CharData", function(data)
+		local client = data[1]
+		local key = data[2]
+		local value = data[3]
+		local noDelta = data[4]
 
 		if (!IsValid(client)) then
 			return
@@ -661,11 +626,10 @@ else
 
 	-- Local data is meant for the character's owner and uses Localplayer instead of an
 	-- entity.
-	net.Receive("nut_LocalCharData", function(length)
-		local key = net.ReadString()
-		local index = net.ReadUInt(8)
-		local value = net.ReadType(index)
-		local noDelta = net.ReadBit() == 1
+	netstream.Hook("nut_LocalCharData", function(data)
+		local key = data[1]
+		local value = data[2]
+		local noDelta = data[3]
 
 		if (!LocalPlayer().character) then
 			LocalPlayer().character = nut.char.New(LocalPlayer())
@@ -690,12 +654,12 @@ else
 	end)
 
 	-- Receives the character information from the server to be displayed in the character listing.
-	net.Receive("nut_CharInfo", function(length)
-		local name = net.ReadString()
-		local description = net.ReadString()
-		local model = net.ReadString()
-		local faction = net.ReadUInt(8)
-		local id = net.ReadUInt(8)
+	netstream.Hook("nut_CharInfo", function(data)
+		local name = data[1]
+		local description = data[2]
+		local model = data[3]
+		local faction = data[4]
+		local id = data[5]
 
 		LocalPlayer().characters = LocalPlayer().characters or {}
 		table.insert(LocalPlayer().characters, {

@@ -1,13 +1,9 @@
-util.AddNetworkString("nut_ShowMenu")
-util.AddNetworkString("nut_CurTime")
-
 function GM:ShowHelp(client)
 	if (!client.character) then
 		return
 	end
 	
-	net.Start("nut_ShowMenu")
-	net.Send(client)
+	netstream.Start(client, "nut_ShowMenu")
 end
 
 function GM:GetDefaultInv(inventory, client, data)
@@ -27,9 +23,7 @@ function GM:PlayerInitialSpawn(client)
 			return
 		end
 
-		net.Start("nut_CurTime")
-			net.WriteUInt(nut.util.GetTime(), 32)
-		net.Send(client)
+		netstream.Start(client, "nut_CurTime", nut.util.GetTime())
 
 		client:KillSilent()
 		client:StripWeapons()
@@ -50,9 +44,7 @@ function GM:PlayerInitialSpawn(client)
 
 		nut.char.Load(client, function()
 			timer.Simple(math.max(client:Ping() / 100, 0.1), function()
-				net.Start("nut_CharMenu")
-					net.WriteBit(false)
-				net.Send(client)
+				netstream.Start(client, "nut_CharMenu")
 			end)
 
 			local uniqueID = "nut_SaveChar"..client:SteamID()

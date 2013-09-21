@@ -39,10 +39,7 @@ ITEM.functions.Freq = {
 					return
 				end
 
-				net.Start("nut_RadioFreq")
-					net.WriteUInt(index, 8)
-					net.WriteString(match)
-				net.SendToServer()
+				netstream.Start("nut_RadioFreq", {index, match})
 			end)
 		end
 
@@ -51,11 +48,9 @@ ITEM.functions.Freq = {
 }
 
 if (SERVER) then
-	util.AddNetworkString("nut_RadioFreq")
-
-	net.Receive("nut_RadioFreq", function(length, client)
-		local index = net.ReadUInt(8)
-		local frequency = net.ReadString()
+	netstream.Hook("nut_RadioFreq", function(client, data)
+		local index = data[1]
+		local frequency = data[2]
 		local item = client:GetItem("radio", index)
 
 		if (item) then

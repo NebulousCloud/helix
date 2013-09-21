@@ -3,6 +3,10 @@
 	loading, and player's inventory functions and handles item interaction.
 --]]
 
+if (!netstream) then
+	include("sh_netstream.lua")
+end
+
 nut.item = nut.item or {}
 nut.item.buffer = nut.item.buffer or {}
 nut.item.list = nut.item.list or {}
@@ -397,19 +401,15 @@ end
 -- Handle item interaction networking and menus.
 do
 	if (SERVER) then
-		util.AddNetworkString("nut_ItemAction")
-		util.AddNetworkString("nut_EntityAction")
-		util.AddNetworkString("nut_ShowItemMenu")
-
-		net.Receive("nut_ItemAction", function(length, client)
-			local class = net.ReadString()
+		netstream.Hook("nut_ItemAction", function(client, data)
+			local class = data[1]
 			
 			if (!client:HasItem(class)) then
 				return
 			end
 
-			local index = net.ReadUInt(16)
-			local action = net.ReadString()
+			local index = data[2]
+			local action = data[3]
 			local itemTable = nut.item.Get(class)
 			local item = client:GetItem(class, index)
 			local itemFunction = itemTable.functions[action]
@@ -439,8 +439,8 @@ do
 			end
 		end)
 
-		net.Receive("nut_EntityAction", function(length, client)
-			local entity = net.ReadEntity()
+		netstream.Hook("nut_EntityAction", function(client, data)
+			local entity = data[1]
 
 			if (!IsValid(entity) or entity:GetPos():Distance(client:GetPos()) > 64) then
 				return
@@ -448,7 +448,7 @@ do
 
 			entity.client = nil
 
-			local action = net.ReadString()
+			local action = data[2]
 			local itemTable = entity:GetItemTable()
 			local data = entity:GetData()
 			local itemFunction = itemTable.functions[action]
@@ -497,11 +497,7 @@ do
 						local material = v.icon or "icon16/plugin_go.png"
 
 						local option = menu:AddOption(v.text or k, function()
-							net.Start("nut_ItemAction")
-								net.WriteString(itemTable.uniqueID)
-								net.WriteUInt(index, 16)
-								net.WriteString(k)
-							net.SendToServer()
+							netstream.Start("nut_ItemAction", {itemTable.uniqueID, index, k})
 
 							if (v.run) then
 								if (itemTable.hooks and itemTable.hooks[k]) then
@@ -549,10 +545,7 @@ do
 						local material = v.icon or "icon16/plugin_go.png"
 
 						local option = menu:AddOption(v.text or k, function()
-							net.Start("nut_EntityAction")
-								net.WriteEntity(entity)
-								net.WriteString(k)
-							net.SendToServer()
+							netstream.Start("nut_EntityAction", {entity, k})
 
 							if (v.run) then
 								if (itemTable.hooks and itemTable.hooks[k]) then
@@ -575,8 +568,8 @@ do
 			menu:Center()
 		end
 
-		net.Receive("nut_ShowItemMenu", function(length)
-			nut.item.OpenEntityMenu(net.ReadEntity())
+		netstream.Hook("nut_ShowItemMenu", function(entity)
+			nut.item.OpenEntityMenu(entity)
 		end)
 	end
 end
@@ -584,10 +577,7 @@ end
 -- Tie in the business stuff with the items.
 do
 	if (SERVER) then
-		util.AddNetworkString("nut_BuyItem")
-
-		net.Receive("nut_BuyItem", function(length, client)
-			local class = net.ReadString()
+		netstream.Hook("nut_BuyItem", function(client, class)
 			local itemTable = nut.item.Get(class)
 
 			if (!itemTable) then

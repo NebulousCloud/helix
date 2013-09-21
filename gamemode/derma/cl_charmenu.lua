@@ -171,9 +171,7 @@ local PANEL = {}
 					self.characters[self.id]:Remove()
 					self.characters[self.id] = nil
 
-					net.Start("nut_CharDelete")
-						net.WriteUInt(self.id, 8)
-					net.SendToServer()
+					netstream.Start("nut_CharDelete", self.id)
 
 					for k, v in pairs(LocalPlayer().characters) do
 						if (v.id == self.id) then
@@ -206,9 +204,7 @@ local PANEL = {}
 
 		self.choose.OnClick = function(panel)
 			if (self.id) then
-				net.Start("nut_CharChoose")
-					net.WriteUInt(self.id, 16)
-				net.SendToServer()
+				netstream.Start("nut_CharChoose", self.id)
 			else
 				return false
 			end
@@ -304,9 +300,7 @@ local PANEL = {}
 	end
 vgui.Register("nut_CharMenu", PANEL, "DPanel")
 
-net.Receive("nut_CharMenu", function(length)
-	local forced = net.ReadBit() == 1
-
+netstream.Hook("nut_CharMenu", function(forced)
 	if (IsValid(nut.gui.charMenu)) then
 		nut.gui.charMenu:FadeOutMusic()
 		nut.gui.charMenu:Remove()

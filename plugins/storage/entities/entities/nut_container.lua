@@ -6,15 +6,6 @@ ENT.Author = "Chessnut and rebel1324"
 ENT.Spawnable = false
 
 if (SERVER) then
-	util.AddNetworkString("nut_Storage")
-	util.AddNetworkString("nut_StorageUpdate")
-	util.AddNetworkString("nut_TransferMoney")
-	util.AddNetworkString("nut_RequestStorageMenu")
-	util.AddNetworkString("nut_OpenStorage")
-	util.AddNetworkString("nut_VerifyPassword")
-	util.AddNetworkString("nut_RequestPassword")
-	util.AddNetworkString("nut_RequestLock")
-
 	function ENT:Initialize()
 		self:SetModel("models/props_lab/filecabinet02.mdl")
 		self:SetNetVar("max", 10)
@@ -31,9 +22,7 @@ if (SERVER) then
 	end
 
 	function ENT:Use(activator)
-		net.Start("nut_ShowStorageMenu")
-			net.WriteEntity(self)
-		net.Send(activator)
+		netstream.Start(activator, "nut_ShowStorageMenu", self)
 	end
 
 	function ENT:UpdateInv(class, quantity, data)
@@ -80,10 +69,10 @@ if (SERVER) then
 		return false
 	end
 	
-	net.Receive( "nut_RequestLock", function( length, client )
-		local entity = net.ReadEntity()
-		local classic = net.ReadBit()
-		local password = net.ReadString()
+	netstream.Hook( "nut_RequestLock", function(client, data)
+		local entity = data[1]
+		local classic = data[2]
+		local password = data[3]
 		if entity.world then return nut.util.Notify( nut.lang.Get( "lock_itsworld" )  , client) end
 		if !client.nextLock or client.nextLock <= CurTime() then
 			if entity.lock then return nut.util.Notify( nut.lang.Get( "lock_locked" )  , client) end
@@ -109,51 +98,42 @@ if (SERVER) then
 		
 	end)
 	
-	net.Receive( "nut_VerifyPassword", function( length, client )
-		local entity = net.ReadEntity()
-		local password = net.ReadString()
+	netstream.Hook( "nut_VerifyPassword", function(client, data)
+		local entity = data[1]
+		local password = data[2]
 		if entity.lock == password then
-			net.Start("nut_Storage")
-				net.WriteEntity( entity )
-			net.Send(client)
+			netstream.Start(client, "nut_Storage", entity)
 		else
-				nut.util.Notify( nut.lang.Get( "lock_wrong" ), client)	
-				entity:EmitSound( "doors/door_metal_thin_open1.wav" )
+			nut.util.Notify( nut.lang.Get( "lock_wrong" ), client)	
+			entity:EmitSound( "doors/door_metal_thin_open1.wav" )
 		end
 	end)
 	
-	net.Receive("nut_RequestStorageMenu", function(length, client)
-		local entity = net.ReadEntity()
+	netstream.Hook("nut_RequestStorageMenu", function(client, entity)
 		--** Request Storage Menu Enterance
 		if entity.lock then --** Check if is locked or not
 			if entity.classic then --** If the lock is classic lock
 				if entity:KeyOpen( client ) then --** Search for the key.
-					net.Start("nut_Storage") --** If found a key, Open the storage.
-						net.WriteEntity( entity )
-					net.Send(client)
+					netstream.Start(client, "nut_Storage", entity)
 				else
 					nut.util.Notify( nut.lang.Get( "lock_try" ) , client)	-- If couldn't found a key, Reject the request.
 					entity:EmitSound( "doors/door_metal_thin_open1.wav" )
 					return
 				end
 			else
-					--** If the lock is digital lock ( digit lock )
-					net.Start("nut_RequestPassword") --** Request Password
-						net.WriteEntity( entity )
-					net.Send( client )
+				--** If the lock is digital lock ( digit lock )
+				netstream.Start(client, "nut_RequestPassword", entity)
 			end
 		else
-			net.Start("nut_Storage") --** If it's not locked, Open the contianer
-				net.WriteEntity( entity )
-			net.Send(client)
+			netstream.Start(client, "nut_Storage", entity)
 		end
 	end)
 	
-	net.Receive("nut_StorageUpdate", function(length, client)
-		local entity = net.ReadEntity()
-		local class = net.ReadString()
-		local quantity = net.ReadInt(8)
-		local data = net.ReadTable()
+	netstream.Hook("nut_StorageUpdate", function(client, data)
+		local entity = data[1]
+		local class = data[2]
+		local quantity = data[3]
+		local data = data[4]
 		local itemTable = nut.item.Get(class)
 		
 		if (itemTable and IsValid(entity) and entity:GetPos():Distance(client:GetPos()) <= 128) then
@@ -177,9 +157,9 @@ if (SERVER) then
 		end
 	end)
 
-	net.Receive("nut_TransferMoney", function(length, client)
-		local entity = net.ReadEntity()
-		local amount = net.ReadInt(16)
+	netstream.Hook("nut_TransferMoney", function(client, data)
+		local entity = data[1]
+		local amount = data[2]
 
 		amount = math.floor(amount)
 
@@ -198,19 +178,13 @@ if (SERVER) then
 		end
 	end)
 	
-	net.Receive("nut_Storage", function(length, client)
-		local entity = net.ReadEntity()
+	netstream.Hook("nut_Storage", function(client, entity)
 		if client:IsAdmin() then
-			net.Start("nut_Storage") --** If it's not locked, Open the contianer
-				net.WriteEntity( entity )
-			net.Send(client)
+			netstream.Start(client, "nut_Storage", entity)
 		end
 	end)
 else
-	
-	net.Receive("nut_Storage", function(length)
-	
-		local entity = net.ReadEntity()
+	netstream.Hook("nut_Storage", function(entity)
 		surface.PlaySound( "doors/door_metal_thin_close2.wav" )
 		if (IsValid(entity)) then
 			nut.gui.storage = vgui.Create("nut_Storage")
@@ -235,7 +209,6 @@ else
 				end
 			end)
 		end
-		
 	end)
 end
 

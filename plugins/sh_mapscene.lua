@@ -4,9 +4,9 @@ PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Adds different camera positions to the menu."
 
 if (CLIENT) then
-	net.Receive("nut_MapScenePos", function(length)
-		PLUGIN.position = net.ReadVector()
-		PLUGIN.angles = net.ReadAngle()
+	netstream.Hook("nut_MapScenePos", function(data)
+		PLUGIN.position = data[1]
+		PLUGIN.angles = data[2]
 	end)
 
 	function PLUGIN:CalcView(client, origin, angles, fov)
@@ -19,8 +19,6 @@ if (CLIENT) then
 		end
 	end
 else
-	util.AddNetworkString("nut_MapScenePos")
-
 	PLUGIN.positions = PLUGIN.positions or {}
 
 	function PLUGIN:LoadData()
@@ -35,10 +33,7 @@ else
 		if (#self.positions > 0) then
 			local data = table.Random(self.positions)
 
-			net.Start("nut_MapScenePos")
-				net.WriteVector(data.position)
-				net.WriteAngle(data.angles)
-			net.Send(client)
+			netstream.Start(client, "nut_MapScenePos", {data.position, data.angles})
 
 			client:SetNutVar("mapScenePos", data.position)
 		end

@@ -144,14 +144,14 @@ local PANEL = {}
 				return
 			end
 
-			net.Start("nut_CharCreate")
-				net.WriteString(name)
-				net.WriteString(gender)
-				net.WriteString(desc)
-				net.WriteString(model)
-				net.WriteUInt(faction, 8)
-				net.WriteTable(attribs)
-			net.SendToServer()
+			netstream.Start("nut_CharCreate", {
+				name = name,
+				gender = gender,
+				desc = desc,
+				model = model,
+				faction = faction,
+				attribs = attribs
+			})
 
 			self:ShowCloseButton(false)
 			panel:SetDisabled(true)
@@ -221,7 +221,7 @@ local PANEL = {}
 	end
 vgui.Register("nut_CharCreate", PANEL, "DFrame")
 
-net.Receive("nut_CharCreateAuthed", function(length)
+netstream.Hook("nut_CharCreateAuthed", function()
 	nut.gui.charCreate:Remove()
 
 	surface.PlaySound("buttons/button9.wav")

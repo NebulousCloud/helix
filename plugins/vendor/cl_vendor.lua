@@ -91,10 +91,7 @@ local PANEL = {}
 						return
 					end
 					
-					net.Start("nut_VendorBuy")
-						net.WriteEntity(entity)
-						net.WriteString(class)
-					net.SendToServer()
+					netstream.Start("nut_VendorBuy", {entity, class})
 
 					icon.disabled = true
 					icon:SetAlpha(70)
@@ -327,15 +324,7 @@ local PANEL = {}
 					end
 				end
 
-				net.Start("nut_VendorData")
-					net.WriteEntity(entity)
-					net.WriteTable(data)
-					net.WriteTable(factionData)
-					net.WriteTable(classData)
-					net.WriteString(self.name:GetText())
-					net.WriteString(self.desc:GetText())
-					net.WriteString(self.model:GetText() or entity:GetModel())
-				net.SendToServer()
+				netstream.Start("nut_VendorData", {entity, data, factionData, classData, self.name:GetText(), self.desc:GetText(), self.model:GetText() or entity:GetModel()})
 
 				timer.Simple(LocalPlayer():Ping() / 100, function()
 					local parent = nut.gui.vendor

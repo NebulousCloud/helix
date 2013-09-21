@@ -95,6 +95,9 @@ nut.config.buyDelay = 2
 -- If any player can see the business menu.
 nut.config.businessEnabled = true
 
+-- The maximum number of characters in a chat message.
+nut.config.maxChatLength = 500
+
 -- The initial date that is used by the time system.
 nut.config.dateStartMonth = 1
 nut.config.dateStartDay = 1
