@@ -261,7 +261,7 @@ else
 	function nut.util.DrawText(x, y, text, color, font, xalign, yalign)
 		color = color or Color(255, 255, 255)
 
-		draw.SimpleTextOutlined(text, font or "nut_TargetFont", x, y, color, xalign or 1, yalign or 1, 1, Color(0, 0, 0, color.a * 0.7))
+		draw.SimpleTextOutlined(tostring(text), font or "nut_TargetFont", x, y, color, xalign or 1, yalign or 1, 1, Color(0, 0, 0, color.a * 0.7))
 	end
 
 	--[[
