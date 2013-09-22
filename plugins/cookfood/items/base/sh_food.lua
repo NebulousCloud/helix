@@ -14,7 +14,7 @@ BASE.cookable = true
 -- You can use hunger table? i guess? 
 BASE.functions = {}
 BASE.functions.Eat = {
-	alias = "Eat",
+	alias = "Consume",
 	tip = "Eat the food.",
 	icon = "icon16/cup.png",
 	run = function(itemTable, client, data, entity)
