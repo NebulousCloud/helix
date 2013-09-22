@@ -25,7 +25,7 @@ ITEM.functions.Toggle = {
 	end
 }
 ITEM.functions.Freq = {
-	alias = "Set Freq",
+	text = "Set Freq",
 	icon = "icon16/tag_blue_edit.png",
 	menuOnly = true,
 	run = function(itemTable, client, data, entity, index)
