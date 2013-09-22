@@ -162,6 +162,10 @@ local PANEL = {}
 		self.choose:SetToolTip(nut.lang.Get("choose_tip"))
 
 		self.delete.OnClick = function(panel)
+			if (IsValid(nut.gui.charCreate)) then
+				return false
+			end
+			
 			if (!self.id) then
 				return false
 			end
@@ -195,6 +199,10 @@ local PANEL = {}
 
 		self.leave.OnClick = function(panel)
 			if (LocalPlayer().character) then
+				if (IsValid(nut.gui.charCreate)) then
+					return false
+				end
+
 				self:FadeOutMusic()
 				self:Remove()
 			else
@@ -203,6 +211,10 @@ local PANEL = {}
 		end
 
 		self.choose.OnClick = function(panel)
+			if (IsValid(nut.gui.charCreate)) then
+				return false
+			end
+				
 			if (self.id) then
 				netstream.Start("nut_CharChoose", self.id)
 			else
