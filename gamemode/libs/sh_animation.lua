@@ -20,7 +20,7 @@ end
 	Purpose: Translates the model and returns the animation class.
 --]]
 function nut.anim.GetClass(model)
-	return nut.anim.classes[model]
+	return nut.anim.classes[model] or (string.find(model, "female") and "citizen_female" or "citizen_male")
 end
 
 --[[
