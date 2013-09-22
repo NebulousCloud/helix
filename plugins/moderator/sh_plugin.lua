@@ -84,17 +84,21 @@ function PLUGIN:SetUserGroup(steamID, group, client)
 		if (IsValid(client)) then
 			client:SetUserGroup(group)
 		end
+
+		nut.util.WriteTable("users", self.users, true, true)
 	end
 end
 
 function PLUGIN:CreateRank(group, immunity)
 	self.ranks[group] = immunity
+	nut.util.WriteTable("ranks", self.ranks, true, true)
 end
 
 function PLUGIN:RemoveRank(group)
 	for k, v in pairs(self.ranks) do
 		if (nut.util.StringMatches(group, k)) then
 			self.ranks[k] = nil
+			nut.util.WriteTable("ranks", self.ranks, true, true)
 
 			return true, k
 		end
@@ -131,11 +135,17 @@ function PLUGIN:BanPlayer(steamID, time, reason)
 
 		client:Kick("You have been banned "..time.." with the reason: "..reason)
 	end
+
+	nut.util.WriteTable("bans", self.bans, true, true)
 end
 
 function PLUGIN:UnbanPlayer(steamID)
 	local found = self.bans[steamID] != nil
 	self.bans[steamID] = nil
+
+	if (found) then
+		nut.util.WriteTable("bans", self.bans, true, true)
+	end
 
 	return found
 end
@@ -156,13 +166,6 @@ function PLUGIN:player_connect(data)
 	else
 		self.bans[data.networkid] = nil
 	end
-end
-
-function PLUGIN:SaveData()
-	-- When saving ranks, we will allow all schemas to use the ranks and regardless of map.
-	nut.util.WriteTable("ranks", self.ranks, true, true)
-	nut.util.WriteTable("users", self.users, true, true)
-	nut.util.WriteTable("bans", self.bans, true, true)
 end
 
 nut.util.Include("sh_commands.lua")
