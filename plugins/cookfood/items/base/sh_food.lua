@@ -137,7 +137,7 @@ if SERVER then
 		end
 	end)
 else
-	netstream.Hook("nut_UpdateData", function(client, data) --** For updating dropped Entity's usenum.
+	netstream.Hook("nut_UpdateData", function(data) --** For updating dropped Entity's usenum.
 		local ent = data[1]
 		local var = data[2]
 		
