@@ -31,8 +31,12 @@ local PANEL = {}
 		self.name = self.form:TextEntry(nut.lang.Get("name"))
 
 		if (faction.GetDefaultName) then
-			self.name:SetEditable(false)
-			self.name:SetText(faction:GetDefaultName())
+			local name, editable = faction:GetDefaultName(self.name)
+
+			if (name) then
+				self.name:SetEditable(editable or false)
+				self.name:SetText(name)
+			end
 		end
 
 		self.models = {}
@@ -46,8 +50,14 @@ local PANEL = {}
 
 			self:SetupModels(faction[gender.."Models"])
 		end
-		self.gender:AddChoice("Male")
-		self.gender:AddChoice("Female")
+
+		if (faction.maleModels and #faction.maleModels > 0) then
+			self.gender:AddChoice("Male")
+		end
+
+		if (faction.femaleModels and #faction.femaleModels > 0) then
+			self.gender:AddChoice("Female")
+		end
 
 		local label = vgui.Create("DLabel")
 		label:SetText(nut.lang.Get("model"))
