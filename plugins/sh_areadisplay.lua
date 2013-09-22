@@ -50,9 +50,9 @@ end
 
 nut.command.Register({
 	adminOnly = true,
-	syntax = "[bool showTime]",
+	syntax = "<string name> [bool showTime]",
 	onRun = function(client, arguments)
-		local name = arguments[1]
+		local name = arguments[1] or "Area"
 		local showTime = util.tobool(arguments[2] or "true")
 
 		if (!client:GetNutVar("areaMin")) then
