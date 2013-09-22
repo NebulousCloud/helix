@@ -121,6 +121,10 @@ function GM:PlayerDisconnected(client)
 	timer.Remove("nut_SaveChar"..client:SteamID())
 end
 
+function GM:PlayerSpray(client)
+	return false
+end
+
 function GM:PlayerShouldTakeDamage()
 	return true
 end
