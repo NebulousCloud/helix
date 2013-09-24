@@ -159,6 +159,8 @@ end
 function nut.item.Load(directory)
 	for k, v in pairs(file.Find(directory.."/items/base/*.lua", "LUA")) do
 		BASE = {folderName = string.sub(v, 4, -5)}
+			BASE.uniqueID = BASE.folderName
+
 			function BASE:Hook(uniqueID, callback)
 				self.hooks = self.hooks or {}
 				self.hooks[uniqueID] = self.hooks[uniqueID] or {}
@@ -179,6 +181,8 @@ function nut.item.Load(directory)
 
 			for k2, v2 in pairs(files) do
 				ITEM = table.Inherit({}, v)
+					ITEM.uniqueID = string.sub(v2, 4, -5)
+
 					function ITEM:Hook(uniqueID, callback)
 						self.hooks = self.hooks or {}
 						self.hooks[uniqueID] = self.hooks[uniqueID] or {}
@@ -198,6 +202,8 @@ function nut.item.Load(directory)
 
 	for k, v in pairs(file.Find(directory.."/items/*.lua", "LUA")) do
 		ITEM =  {}
+			ITEM.uniqueID = string.sub(v, 4, -5)
+			
 			function ITEM:Hook(uniqueID, callback)
 				self.hooks = self.hooks or {}
 				self.hooks[uniqueID] = self.hooks[uniqueID] or {}
