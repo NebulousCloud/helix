@@ -114,12 +114,7 @@ function SWEP:PrimaryAttack()
 	end
 
 	self:EmitSound("npc/vort/claw_swing"..math.random(1, 2)..".wav")
-	
-	local data = {}
-		data.start = self.Owner:GetShootPos()
-		data.endpos = data.start + self.Owner:GetAimVector() * 72
-		data.filter = self.Owner
-	local trace = util.TraceLine(data)
+
 	local damage = self.Primary.Damage
 
 	self:DoPunchAnimation()
@@ -128,7 +123,17 @@ function SWEP:PrimaryAttack()
 	self.Owner:ViewPunch( Angle(self.LastHand + 2, self.LastHand + 5, 0.125) )
 
 	timer.Simple(0.085, function()
-		if (IsValid(self) and IsValid(self.Owner) and self.Owner:GetPos():Distance(trace.HitPos or vector_origin) <= 108) then
+		if (IsValid(self) and IsValid(self.Owner)) then
+			local data = {}
+				data.start = self.Owner:GetShootPos()
+				data.endpos = data.start + self.Owner:GetAimVector() * 72
+				data.filter = self.Owner
+			local trace = util.TraceLine(data)
+
+			if (self.Owner:GetPos():Distance(trace.HitPos or vector_origin) >= 108) then
+				return
+			end
+			
 			local shoot = false
 
 			if (trace.Hit) then
