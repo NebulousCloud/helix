@@ -12,9 +12,18 @@ function nut.plugin.IncludeEntities(directory)
 
 	for k, v in pairs(entityFolders) do
 		ENT = {}
+			ENT.Type = "anim"
 			ENT.ClassName = v
-			nut.util.Include(directory.."/entities/entities/"..ENT.ClassName.."/init.lua", "server")
-			nut.util.Include(directory.."/entities/entities/"..ENT.ClassName.."/cl_init.lua")
+
+			local directory2 = directory.."/entities/entities/"..ENT.ClassName.."/"
+
+			if (file.Exists(directory2.."cl_init.lua", "LUA")) then
+				nut.util.Include(directory2.."init.lua", "server")
+				nut.util.Include(directory2.."cl_init.lua", "client")
+			else
+				nut.util.Include(directory2.."shared.lua")
+			end
+
 			scripted_ents.Register(ENT, ENT.ClassName)
 		ENT = nil
 	end
@@ -35,9 +44,19 @@ function nut.plugin.IncludeWeapons(directory)
 		SWEP = {}
 			SWEP.Folder = v
 			SWEP.Base = "weapon_base"
-			nut.util.Include(directory.."/entities/weapons/"..SWEP.Folder.."/init.lua", "server")
-			nut.util.Include(directory.."/entities/weapons/"..SWEP.Folder.."/cl_init.lua")
-			weapons.Register(SWEP, SWEP.ClassName)
+			SWEP.Primary = {}
+			SWEP.Secondary = {}
+
+			local directory2 = directory.."/entities/weapons/"..SWEP.Folder.."/"
+
+			if (file.Exists(directory2.."cl_init.lua", "LUA")) then
+				nut.util.Include(directory2.."init.lua", "server")
+				nut.util.Include(directory2.."cl_init.lua", "client")
+			else
+				nut.util.Include(directory2.."shared.lua")
+			end
+
+			weapons.Register(SWEP, SWEP.Folder)
 		SWEP = nil
 	end
 
@@ -61,17 +80,30 @@ function nut.plugin.IncludeEffects(directory)
 	for k, v in pairs(effectFolders) do
 		EFFECT = {}
 			EFFECT.ClassName = v
-			nut.util.Include(directory.."/entities/effects/"..EFFECT.ClassName.."/init.lua", "server")
-			nut.util.Include(directory.."/entities/effects/"..EFFECT.ClassName.."/cl_init.lua")
-			effects.Register(EFFECT, EFFECT.ClassName)
+
+			local directory2 = directory.."/entities/effects/"..EFFECT.ClassName.."/"
+
+			if (file.Exists(directory2.."cl_init.lua", "LUA")) then
+				nut.util.Include(directory2.."init.lua", "server")
+				nut.util.Include(directory2.."cl_init.lua", "client")
+			else
+				nut.util.Include(directory2.."shared.lua")
+			end
+
+			if (CLIENT) then
+				effects.Register(EFFECT, EFFECT.ClassName)
+			end
 		EFFECT = nil
 	end
 
 	for k, v in pairs(effectFiles) do
 		EFFECT = {}
 			EFFECT.ClassName = string.sub(v, 1, -4)
-			nut.util.Include(directory.."/entities/effects/"..EFFECT.ClassName..".lua", "shared")
-			effect.Register(EFFECT, EFFECT.ClassName)
+			nut.util.Include(directory.."/entities/effects/"..EFFECT.ClassName..".lua", "client")
+
+			if (CLIENT) then
+				effects.Register(EFFECT, EFFECT.ClassName)
+			end
 		EFFECT = nil
 	end
 end
