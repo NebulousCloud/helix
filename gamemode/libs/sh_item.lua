@@ -280,7 +280,7 @@ do
 
 				if (self:GetNutVar("nextItemSave", 0) < CurTime()) then
 					shouldSave = true
-					self:SetNutVar("nextItemSave", CurTime() + 30)
+					self:SetNutVar("nextItemSave", CurTime() + 120)
 				end
 
 				if (shouldSave) then
@@ -419,7 +419,7 @@ do
 			local itemTable = nut.item.Get(class)
 			local item = client:GetItem(class, index)
 			local itemFunction = itemTable.functions[action]
-
+			
 			if (item and itemFunction) then
 				local result = true
 
