@@ -142,7 +142,7 @@ else
 				return false
 			end,
 			func = function( entity )
-				Derma_Query( "Which lock you want to use?", "Confirmation", "Normal Padlock", function() lck1( entity ) end, "Digital Lock", function() lck2( entity ) end )
+				Derma_Query( "Which lock you want to use?", "Confirmation", "Normal Padlock", function() lck1( entity ) end, "Digital Lock", function() lck2( entity ) end, "Cancel", function() end )
 			end,
 		},
 	}
