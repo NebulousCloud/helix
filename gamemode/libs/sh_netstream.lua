@@ -46,24 +46,26 @@ if (SERVER) then
 		local bShouldSend = false;
 
 		if (type(player) != "table") then
-			if (!player) then
-				player = _player.GetAll();
-			else
+			if (player) then
 				player = {player};
 			end;
 		end;
 		
-		for k, v in pairs(player) do
-			if (type(v) == "Player") then
-				recipients[#recipients + 1] = v;
+		if (player) then
+			for k, v in pairs(player) do
+				if (type(v) == "Player") then
+					recipients[#recipients + 1] = v;
+					
+					bShouldSend = true;
+				elseif (type(k) == "Player") then
+					recipients[#recipients + 1] = k;
 				
-				bShouldSend = true;
-			elseif (type(k) == "Player") then
-				recipients[#recipients + 1] = k;
-			
-				bShouldSend = true;
+					bShouldSend = true;
+				end;
 			end;
-		end;
+		else
+			bShouldSend = true
+		end
 
 		if (data == nil) then
 			data = 0 -- Fill the data so the length isn't 0.
@@ -78,10 +80,14 @@ if (SERVER) then
 				net.WriteString(name);
 				net.WriteUInt(#encodedData, 32);
 				net.WriteData(encodedData, #encodedData);
-			net.Send(recipients);
+			if (player) then
+				net.Send(recipients);
+			else
+				net.Broadcast()
+			end
 		end;
 	end;
-	
+
 	net.Receive("NetStreamDS", function(length, player)
 		local NS_DS_NAME = net.ReadString();
 		local NS_DS_LENGTH = net.ReadUInt(32);
