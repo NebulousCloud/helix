@@ -103,6 +103,9 @@ nut.config.dateStartMonth = 1
 nut.config.dateStartDay = 1
 nut.config.dateStartYear = 2014
 
+-- If true, then you can't have multiple rifles, pistols, etc...
+nut.config.noMultipleWepSlots = true
+
 -- How many seconds are in a minute.
 nut.config.dateMinuteLength = 60
 
