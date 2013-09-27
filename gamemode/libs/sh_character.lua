@@ -157,9 +157,12 @@ end
 --[[
 	Purpose: A quick utility method to set a member of the data field and send it to the receiver.
 --]]
-function META:SetData(key, value, receiver)
+function META:SetData(key, value, receiver, noSend)
 	self:GetVar("chardata")[key] = value
-	self:Send("chardata", receiver)
+
+	if (!noSend) then
+		self:Send("chardata", receiver)
+	end
 end
 
 --[[
@@ -202,6 +205,24 @@ function META:Send(variable, receiver, noDelta)
 	local privateValue = self.privateVars[variable]
 	local publicValue = self.publicVars[variable]
 	local deltaValue = self.deltas[variable]
+
+	if (variable == "inv") then
+		local oldValue = self.privateVars.inv
+		local value = self.privateVars.inv
+
+		if (!noDelta) then
+			value = nut.util.GetTableDelta(value, self.deltas.inv or {})
+		end
+
+		net.Start("nut_InvUpdate")
+			net.WriteTable(value)
+			net.WriteBit(noDelta)
+		net.Send(self.player)
+
+		self.deltas.inv = table.Copy(oldValue)
+
+		return
+	end
 
 	if (!variable) then
 		for k, v in pairs(self.publicVars) do

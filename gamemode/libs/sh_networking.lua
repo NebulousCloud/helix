@@ -1,6 +1,8 @@
 local entityMeta = FindMetaTable("Entity")
 
 if (SERVER) then
+	util.AddNetworkString("nut_InvUpdate")
+
 	function entityMeta:SyncVars(client, noDelta)
 		if (self.nut_NetVars) then
 			for k, v in pairs(self.nut_NetVars) do
@@ -111,6 +113,26 @@ else
 	end
 
 	NUT_ENT_REGISTRY = NUT_ENT_REGISTRY or {}
+
+	net.Receive("nut_InvUpdate", function(length)
+		local value = net.ReadTable()
+		local noDelta = net.ReadBit() == 1
+		
+		if (!LocalPlayer().character) then
+			LocalPlayer().character = nut.char.New(LocalPlayer())
+		end
+
+		local character = LocalPlayer().character
+		
+		if (!noDelta) then
+			local currentValue = character.privateVars.inv or {}
+
+			value = table.Merge(currentValue, value)
+			value = replacePlaceHolders(value)
+		end
+
+		character:SetVar("inv", value)
+	end)
 
 	netstream.Hook("nut_EntityVarClean", function(data)
 		NUT_ENT_REGISTRY[data] = nil
