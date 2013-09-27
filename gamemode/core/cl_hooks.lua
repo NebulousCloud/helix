@@ -310,5 +310,5 @@ function GM:PlayerCanSeeBusiness()
 end
 
 netstream.Hook("nut_CurTime", function(data)
-	net.curTime = data
+	nut.curTime = data
 end)
