@@ -185,8 +185,9 @@ if (SERVER) then
 	end)
 else
 	netstream.Hook("nut_Storage", function(entity)
-		surface.PlaySound( "doors/door_metal_thin_close2.wav" )
 		if (IsValid(entity)) then
+			nut.schema.Call("ContainerOpened", entity)
+			
 			nut.gui.storage = vgui.Create("nut_Storage")
 			nut.gui.storage:SetEntity(entity)
 
@@ -214,23 +215,26 @@ end
 
 function ENT:GetInvWeight()
 	local weight, maxWeight = 0, self:GetNetVar("max", nut.config.defaultInvWeight)
+	local inventory = self:GetNetVar("inv")
 
-	for uniqueID, items in pairs(self:GetNetVar("inv")) do
-		local itemTable = nut.item.Get(uniqueID)
+	if (inventory) then
+		for uniqueID, items in pairs(inventory) do
+			local itemTable = nut.item.Get(uniqueID)
 
-		if (itemTable) then
-			local quantity = 0
+			if (itemTable) then
+				local quantity = 0
 
-			for k, v in pairs(items) do
-				quantity = quantity + v.quantity
-			end
+				for k, v in pairs(items) do
+					quantity = quantity + v.quantity
+				end
 
-			local addition = itemTable.weight * quantity
+				local addition = itemTable.weight * quantity
 
-			if (itemTable.weight < 0) then
-				maxWeight = maxWeight + addition
-			else
-				weight = weight + addition
+				if (itemTable.weight < 0) then
+					maxWeight = maxWeight + addition
+				else
+					weight = weight + addition
+				end
 			end
 		end
 	end
