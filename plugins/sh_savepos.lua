@@ -7,8 +7,8 @@ function PLUGIN:PlayerDisconnected(client)
 		return
 	end
 
-	client.character:SetData("pos", client:GetPos())
-	client.character:SetData("posmap", game.GetMap())
+	client.character:SetData("pos", client:GetPos(), nil, true)
+	client.character:SetData("posmap", game.GetMap(), nil, true)
 end
 
 function PLUGIN:PlayerSpawn(client)
@@ -24,7 +24,7 @@ function PLUGIN:PlayerSpawn(client)
 			client:SetPos(position + Vector(0, 0, 8))
 		end
 
-		client.character:SetData("posmap", nil)
-		client.character:SetData("pos", nil)
+		client.character:SetData("posmap", nil, nil, true)
+		client.character:SetData("pos", nil, nil, true)
 	end)
 end
