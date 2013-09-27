@@ -19,9 +19,9 @@ function nut.plugin.IncludeEntities(directory)
 
 			if (file.Exists(directory2.."cl_init.lua", "LUA")) then
 				nut.util.Include(directory2.."init.lua", "server")
-				nut.util.Include(directory2.."cl_init.lua", "client")
+				nut.util.Include(directory2.."cl_init.lua")
 			else
-				nut.util.Include(directory2.."shared.lua")
+				nut.util.Include(directory2.."shared.lua", "shared")
 			end
 
 			scripted_ents.Register(ENT, ENT.ClassName)
@@ -51,9 +51,9 @@ function nut.plugin.IncludeWeapons(directory)
 
 			if (file.Exists(directory2.."cl_init.lua", "LUA")) then
 				nut.util.Include(directory2.."init.lua", "server")
-				nut.util.Include(directory2.."cl_init.lua", "client")
+				nut.util.Include(directory2.."cl_init.lua")
 			else
-				nut.util.Include(directory2.."shared.lua")
+				nut.util.Include(directory2.."shared.lua", "shared")
 			end
 
 			weapons.Register(SWEP, SWEP.Folder)
@@ -85,9 +85,9 @@ function nut.plugin.IncludeEffects(directory)
 
 			if (file.Exists(directory2.."cl_init.lua", "LUA")) then
 				nut.util.Include(directory2.."init.lua", "server")
-				nut.util.Include(directory2.."cl_init.lua", "client")
-			else
-				nut.util.Include(directory2.."shared.lua")
+				nut.util.Include(directory2.."cl_init.lua")
+			elseif (file.Exists(directory2.."shared.lua", "LUA")) then
+				nut.util.Include(directory2.."shared.lua", "shared")
 			end
 
 			if (CLIENT) then
