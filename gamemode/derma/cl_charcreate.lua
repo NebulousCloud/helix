@@ -137,7 +137,7 @@ local PANEL = {}
 				fault = "You need to provide a valid name."
 			elseif (!gender or (gender != "male" and gender != "female")) then
 				fault = "You need to provide a valid gender."
-			elseif (!desc or string.len(desc) < nut.config.descMinChars or !string.find(desc, "[^%s+]")) then
+			elseif (!desc or #desc < nut.config.descMinChars or !string.find(desc, "[^%s+]")) then
 				fault = "You need to provide a valid description."
 			elseif (!model) then
 				fault = "You need to pick a valid model."

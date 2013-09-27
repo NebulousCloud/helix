@@ -54,7 +54,7 @@ if (SERVER) then
 		adminOnly = true,
 		syntax = "<string text> [number scale]",
 		onRun = function(client, arguments)
-			if (!arguments[1] or string.len(arguments[1]) < 1) then
+			if (!arguments[1] or #arguments[1] < 1) then
 				nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
 
 				return

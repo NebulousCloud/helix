@@ -288,7 +288,7 @@ else
 		for k, v in pairs(nut.chat.classes) do
 			if (type(v.prefix) == "table") then
 				for k2, v2 in pairs(v.prefix) do
-					local length = string.len(v2) + 1
+					local length = #v2 + 1
 
 					if (string.Left(text2, length) == v2.." ") then
 						mode = k
@@ -298,7 +298,7 @@ else
 					end
 				end
 			elseif (v.prefix) then
-				local length = string.len(v.prefix) + 1
+				local length = #v.prefix + 1
 
 				if (string.Left(text2, length) == v.prefix.." ") then
 					mode = k

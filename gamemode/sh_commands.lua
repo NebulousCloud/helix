@@ -32,7 +32,7 @@ nut.command.Register({
 			return
 		end
 
-		if (string.len(text) < nut.config.descMinChars) then
+		if (#text < nut.config.descMinChars) then
 			nut.util.Notify("Your description needs to be at least "..nut.config.descMinChars.." character(s).")
 
 			return

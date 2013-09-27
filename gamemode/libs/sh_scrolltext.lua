@@ -11,14 +11,14 @@ if (CLIENT) then
 		local index = table.insert(nut.scroll.buffer, info)
 		local i = 1
 
-		timer.Create("nut_Scroll"..tostring(info), CHAR_DELAY, string.len(text), function()
+		timer.Create("nut_Scroll"..tostring(info), CHAR_DELAY, #text, function()
 			if (info) then
 				info.text = string.sub(text, 1, i)
 				i = i + 1
 
 				LocalPlayer():EmitSound("common/talk.wav", NUT_CVAR_SCROLLVOL:GetInt(), math.random(120, 140))
 
-				if (i >= string.len(text)) then
+				if (i >= #text) then
 					info.char = ""
 					info.start = CurTime() + 3
 					info.finish = CurTime() + 5
@@ -60,7 +60,7 @@ else
 	function nut.scroll.Send(text, receiver, callback)
 		netstream.Start(receiver, "nut_ScrollData", text)
 
-		timer.Simple(CHAR_DELAY*string.len(text) + 4, function()
+		timer.Simple(CHAR_DELAY*#text + 4, function()
 			if (callback) then
 				callback()
 			end

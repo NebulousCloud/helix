@@ -62,7 +62,7 @@ do
 		--]]
 		function playerMeta:GiveFlag(flag)
 			if (self.character) then
-				if (string.len(flag) > 1) then
+				if (#flag > 1) then
 					for k, v in pairs(string.Explode("", flag)) do
 						self:GiveFlag(v)
 					end
@@ -87,7 +87,7 @@ do
 		--]]
 		function playerMeta:TakeFlag(flag)
 			if (self.character) then
-				if (string.len(flag) > 1) then
+				if (#flag > 1) then
 					for k, v in pairs(string.Explode("", flag)) do
 						self:TakeFlag(v)
 					end
