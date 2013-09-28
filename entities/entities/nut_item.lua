@@ -1,6 +1,9 @@
 AddCSLuaFile()
 
 ENT.Type = "anim"
+ENT.PrintName = "Item"
+ENT.Category = "NutScript"
+ENT.Author = "Chessnut"
 
 function ENT:SetupDataTables()
 	self:NetworkVar("String", 0, "InternalData")
