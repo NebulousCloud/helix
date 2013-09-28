@@ -206,24 +206,6 @@ function META:Send(variable, receiver, noDelta)
 	local publicValue = self.publicVars[variable]
 	local deltaValue = self.deltas[variable]
 
-	if (variable == "inv") then
-		local oldValue = self.privateVars.inv
-		local value = self.privateVars.inv
-
-		if (!noDelta) then
-			value = nut.util.GetTableDelta(value, self.deltas.inv or {})
-		end
-
-		net.Start("nut_InvUpdate")
-			net.WriteTable(value)
-			net.WriteBit(noDelta)
-		net.Send(self.player)
-
-		self.deltas.inv = table.Copy(oldValue)
-
-		return
-	end
-
 	if (!variable) then
 		for k, v in pairs(self.publicVars) do
 			self:Send(k, receiver, noDelta)

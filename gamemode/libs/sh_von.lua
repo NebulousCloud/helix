@@ -1,6 +1,10 @@
---[[
+--[[	vON 1.1.1
+
 	Copyright 2012-2013 Alexandru-Mihai Maftei
 					aka Vercas
+
+	GitHub Repository:
+		https://github.com/vercas/vON
 
 	You may use this for any purpose as long as:
 	-	You don't remove this copyright notice.
@@ -8,9 +12,10 @@
 	-	You properly credit the author (Vercas) if you publish your work based on (and/or using) this.
 
 	If you modify the code for any purpose, the above obligations still apply.
+	If you make any interesting modifications, try forking the GitHub repository instead.
 
 	Instead of copying this code over for sharing, rather use the link:
-		https://dl.dropbox.com/u/1217587/GMod/Lua/von%20for%20GMOD.lua
+		https://github.com/vercas/vON/blob/master/von%20for%20GMod.lua
 
 	The author may not be held responsible for any damage or losses directly or indirectly caused by
 	the use of vON.
@@ -24,6 +29,7 @@
 										Suggested an excellent new way of deserializing strings.
 										Lead me to finding an extreme flaw in string parsing.
 		-	pennerlord					Provided some performance tests to help me improve the code.
+		-	Chessnut					Reported bug with handling of nil values when deserializing array components.
 
 -----------------------------------------------------------------------------------------------------------------------------
 	
@@ -44,12 +50,7 @@
 -----------------------------------------------------------------------------------------------------------------------------
 	
 	New in this version:
-		-	Fixed errors on vector and angle deserializing.
-		-	Added Player datatype.
-			It's saved just like an entity, by it's ID, except it's prefixed with "p" instead of "e"
-		-	Added errors on (de)serialization when passwing the wrong data type.
-		-	Removed two redundant arguments in the serialization functable.
-		-	Fixed distribution link pointing to the pure Lua version.
+		-	Fixed problem with handling of nils in array tables.
 --]]
 
 local _deserialize, _serialize, _d_meta, _s_meta, d_findVariable, s_anyVariable
@@ -158,7 +159,7 @@ _deserialize = {
 --	Well, tables are very loose...
 --	The first table doesn't have to begin and end with { and }.
 	["table"] = function(s, i, len, unnecessaryEnd)
-		local ret, numeric, i, c, lastType, val, ind, expectValue, key = {}, true, i or 1
+		local ret, numeric, i, c, lastType, val, ind, expectValue, key = {}, true, i or 1, nil, nil, nil, 1
 		--	Locals, locals, locals, locals, locals, locals, locals, locals and locals.
 
 		--	Keep looping.
@@ -176,7 +177,7 @@ _deserialize = {
 			end
 
 			--	Cache the character.
-			c = sub(s,i,i)
+			c = sub(s, i, i)
 			--print(i, "table char:", c, tostring(unnecessaryEnd))
 
 			--	If it's the end of a table definition, return.
@@ -196,7 +197,9 @@ _deserialize = {
 				--	Find a variable and it's value
 				val, i, lastType = d_findVariable(s, i, len, lastType)
 				--	Add it to the table.
-				ret[#ret + 1] = val
+				ret[ind] = val
+
+				ind = ind + 1
 
 			--	Otherwise, if it's the key:value component...
 			else
