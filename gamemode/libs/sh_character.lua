@@ -449,6 +449,10 @@ if (SERVER) then
 		Purpose: Saves the active character of a player to the database.
 	--]]
 	function nut.char.Save(client)
+		if (!IsValid(client)) then
+			return
+		end
+		
 		local steamID = client:SteamID64()
 		local character = client.character
 
