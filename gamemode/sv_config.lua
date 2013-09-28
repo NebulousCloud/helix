@@ -63,3 +63,6 @@ nut.config.oocDelay = 0
 
 -- Clears the map of unwanted entities. (props, vehicles, etc...)
 nut.config.clearMaps = true
+
+-- The model for dropped money.
+nut.config.moneyModel = "models/props_lab/box01a.mdl"

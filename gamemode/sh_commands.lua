@@ -73,6 +73,85 @@ nut.command.Register({
 }, "flaggive")
 
 nut.command.Register({
+	syntax = "<number amount>",
+	onRun = function(client, arguments)
+		local data = {}
+			data.start = client:GetShootPos()
+			data.endpos = data.start + client:GetAimVector()*84
+			data.filter = client
+		local trace = util.TraceLine(data)
+		local entity = trace.Entity
+
+		if (IsValid(entity) and entity:IsPlayer() and entity.character) then
+			local amount = tonumber(arguments[1])
+
+			if (!amount) then
+				nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
+
+				return
+			end
+
+			if (amount <= 5) then
+				nut.util.Notify("The amount needs to be greater than 5.", client)
+
+				return
+			end
+
+			if (client:GetMoney() - amount < 0) then
+				nut.util.Notify("You do not have enough money to give that amount.", client)
+
+				return
+			end
+
+			client:GiveMoney(amount)
+			entity:TakeMoney(amount)
+		else
+			nut.util.Notify("You are not looking at a valid player.", client)
+		end
+	end
+}, "givemoney")
+
+nut.command.Register({
+	syntax = "<number amount>",
+	onRun = function(client, arguments)
+		local amount = tonumber(arguments[1])
+
+		if (!amount) then
+			nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
+
+			return
+		end
+
+		if (amount <= 5) then
+			nut.util.Notify("The amount needs to be greater than 5.", client)
+
+			return
+		end
+
+		if (client:GetMoney() - amount < 0) then
+			nut.util.Notify("You do not have enough money to drop that amount.", client)
+
+			return
+		end
+
+		local data = {}
+			data.start = client:GetShootPos()
+			data.endpos = data.start + client:GetAimVector()*54
+			data.filter = client
+		local trace = util.TraceLine(data)
+		local position = trace.HitPos
+
+		if (position) then
+			local entity = nut.currency.Spawn(amount, position + Vector(0, 0, 16))
+
+			if (IsValid(entity)) then
+				client:TakeMoney(amount)
+			end
+		end
+	end
+}, "dropmoney")
+
+nut.command.Register({
 	allowDead = true,
 	adminOnly = true,
 	syntax = "<string name> <string flag>",

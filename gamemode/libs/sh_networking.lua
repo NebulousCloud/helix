@@ -79,7 +79,7 @@ if (SERVER) then
 		self.nut_NetVars[key] = value
 
 		self:CallOnRemove("CleanNetVar", function()
-			netstream.Start(nil, "nut_EntityVar", self:EntIndex())
+			netstream.Start(nil, "nut_EntityVarClean", self:EntIndex())
 		end)
 
 		if (self.nut_NetHooks and self.nut_NetHooks[key]) then

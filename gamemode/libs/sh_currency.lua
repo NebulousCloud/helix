@@ -103,3 +103,19 @@ function nut.currency.GetName(amount, upper)
 		return name
 	end
 end
+
+if (SERVER) then
+	function nut.currency.Spawn(amount, position)
+		if (amount <= 0) then
+			return
+		end
+
+		local entity = ents.Create("nut_money")
+		entity:SetPos(position or vector_origin)
+		entity:Spawn()
+		entity:Activate()
+		entity:SetMoney(amount)
+
+		return entity
+	end
+end
