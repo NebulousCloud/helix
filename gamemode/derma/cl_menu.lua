@@ -38,7 +38,9 @@ local PANEL = {}
 			gui.EnableScreenClicker(false)
 
 			timer.Create("nut_CloseMenu", 0.25, 1, function()
-				self:SetVisible(false)
+				if (IsValid(self)) then
+					self:SetVisible(false)
+				end
 			end)
 		end
 		self.close:DockMargin(0, 0, 0, 64)
