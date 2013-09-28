@@ -230,7 +230,7 @@ else
 		notice:SetText(message)
 		notice:SetPos(ScrW() * 0.3, -24)
 		notice:SetWide(ScrW() * 0.4)
-		notice:LerpPositions(2, true)
+		notice:LerpPositions(1.5, true)
 		notice:SetPos(ScrW() * 0.3, ScrH() - ((#nut.notices + 1) * 28))
 
 		notice:CallOnRemove(function()
