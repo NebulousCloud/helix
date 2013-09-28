@@ -136,7 +136,7 @@ function GM:CanArmDupe()
 end
 
 function GM:GetGameDescription()
-	return "NutScript - "..(SCHEMA and SCHEMA.name or "Unknown")
+	return "NS - "..(SCHEMA and SCHEMA.name or "Unknown")
 end
 
 function GM:GetFallDamage(client, speed)

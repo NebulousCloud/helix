@@ -174,22 +174,10 @@ if (CLIENT) then
 			frame:SetPos(CHAT_X, CHAT_Y)
 			frame:SetSize(CHAT_W, CHAT_H)
 			frame:SetDrawBackground(false)
-			frame.Paint = function(panel, w, h)
-				if (nut.chat.open) then
-					surface.SetDrawColor(50, 50, 50, 10)
-					surface.DrawRect(0, 0, w, h)
-				end
-			end
 
 			local content = frame:Add("DScrollPanel")
 			content:Dock(FILL)
 			content:DockMargin(8, 8, 8, 38)
-			content.Paint = function(panel, w, h)
-				if (nut.chat.open) then
-					surface.SetDrawColor(70, 70, 70, 50)
-					surface.DrawRect(0, 0, w, h)
-				end
-			end
 			content.VBar:SetWide(0)
 
 			nut.chat.panel.frame = frame
@@ -209,6 +197,7 @@ if (CLIENT) then
 			entry:SetWide(CHAT_W - 16)
 			entry:MakePopup()
 			entry:RequestFocus()
+			entry:SetTall(24)
 			entry:SetAllowNonAsciiCharacters(true)
 			entry.OnEnter = function(panel)
 				nut.chat.Toggle(false)
@@ -226,6 +215,20 @@ if (CLIENT) then
 			end
 			entry.OnTextChanged = function(panel)
 				hook.Run("ChatTextChanged", panel:GetText())
+			end
+			entry.Paint = function(panel, w, h)
+				surface.SetDrawColor(70, 70, 70, 245)
+				surface.DrawRect(0, 0, w, h)
+
+				surface.SetDrawColor(25, 25, 25, 235)
+				surface.DrawOutlinedRect(0, 0, w, h)
+
+				-- For some reason, it refuses to use the main color so we
+				-- have to recreate it.
+				local highlight = nut.config.mainColor
+				local color = Color(highlight.r, highlight.g, highlight.b)
+
+				panel:DrawTextEntryText(color_white, color, color_white)
 			end
 
 			hook.Run("ChatOpened")

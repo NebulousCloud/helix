@@ -115,8 +115,8 @@ end
 	plugin's unique id.
 --]]
 function nut.plugin.Load(directory)
-	local files, folders = file.Find(directory.."/plugins/*", "LUA")
-
+	local _, folders = file.Find(directory.."/plugins/*", "LUA")
+	
 	for k, v in pairs(folders) do
 		PLUGIN = nut.plugin.Get(v) or {}
 			function PLUGIN:WriteTable(data, ignoreMap, global)
@@ -138,6 +138,8 @@ function nut.plugin.Load(directory)
 			nut.plugin.buffer[v] = PLUGIN
 		PLUGIN = nil
 	end
+
+	local files = file.Find(directory.."/plugins/*.lua", "LUA")
 
 	for k, v in pairs(files) do
 		local cleanName = string.sub(v, 4, -5)

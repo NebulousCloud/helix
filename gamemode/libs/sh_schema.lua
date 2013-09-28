@@ -16,7 +16,7 @@ nut.schema = nut.schema or {}
 	include other files and define custom schema names, authors, etc.
 --]]
 function nut.schema.Init()
-	SCHEMA = {
+	SCHEMA = SCHEMA or {
 		name = "Sample",
 		author = "Chessnut",
 		desc = "An example schema!",

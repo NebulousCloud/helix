@@ -12,8 +12,11 @@ if (SERVER) then
 				local angles = v.angles
 				local itemTable = nut.item.Get(v.uniqueID)
 				local data = v.data
+
 				if itemTable then
-					nut.item.Spawn(position, angles, itemTable, data)
+					local entity = nut.item.Spawn(position, angles, itemTable, data)
+
+					nut.schema.Call("ItemRestored", itemTable, entity)
 				end
 			end
 		end
@@ -23,12 +26,16 @@ if (SERVER) then
 		local data = {}
 
 		for k, v in pairs(ents.FindByClass("nut_item")) do
-			data[#data + 1] = {
-				position = v:GetPos(),
-				angles = v:GetAngles(),
-				uniqueID = v:GetItemTable().uniqueID,
-				data = v:GetData()
-			}
+			if (nut.schema.Call("ItemShouldSave", v) != false) then
+				data[#data + 1] = {
+					position = v:GetPos(),
+					angles = v:GetAngles(),
+					uniqueID = v:GetItemTable().uniqueID,
+					data = v:GetData()
+				}
+
+				nut.schema.Call("ItemSaved", v)
+			end
 		end
 
 		nut.util.WriteTable("saveditems", data)
