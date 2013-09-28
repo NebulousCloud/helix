@@ -31,7 +31,7 @@ SWEP.Secondary.DefaultClip = 0
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = ""
 
-SWEP.ViewModel = Model("models/props_junk/watermelon01.mdl")
+SWEP.ViewModel = ""
 SWEP.WorldModel = ""
 
 SWEP.AlwaysRaised = true
