@@ -108,6 +108,28 @@ function GM:CalcMainActivity(client, velocity)
 	end
 end
 
+function GM:PhysgunPickup(client, entity)
+	if (client:IsAdmin()) then
+		if (entity:IsPlayer()) then
+			entity:SetMoveType(MOVETYPE_NOCLIP)
+		end
+
+		return true
+	end
+
+	if (entity.PhysgunDisable) then
+		return false
+	end
+
+	return !entity:IsPlayer() and !entity:IsNPC()
+end
+
+function GM:PhysgunDrop(client, entity)
+	if (entity:IsPlayer()) then
+		entity:SetMoveType(MOVETYPE_WALK)
+	end
+end
+
 function GM:DoAnimationEvent(client, event, data)
 	local model = string.lower(client:GetModel())
 
