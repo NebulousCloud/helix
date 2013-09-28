@@ -97,7 +97,9 @@ if (SERVER) then
 				if (itemTable and itemTable.class) then
 					for k, v in pairs(items) do
 						if (v.data.Equipped) then
-							client:Give(itemTable.class)
+							local weapon = client:Give(itemTable.class)
+							
+							client:SetNutVar(itemTable.type, weapon)
 						end
 					end
 				end
