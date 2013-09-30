@@ -168,7 +168,14 @@ function GM:HUDPaintTargetID(entity)
 					color.a = alpha
 
 					if (v:IsTyping()) then
-						nut.util.DrawText(position.x, position.y - nut.config.targetTall, nut.config.showTypingText and v:GetNetVar("typing") or "Typing...", Color(255, 255, 255, alpha), "nut_TargetFontSmall")
+						local text = "Typing..."
+						local typingText = v:GetNetVar("typing", "")
+
+						if (nut.config.showTypingText and type(typingText) == "string") then
+							text = "("..typingText..")"
+						end
+
+						nut.util.DrawText(position.x, position.y - nut.config.targetTall, text, Color(255, 255, 255, alpha), "nut_TargetFontSmall")
 					end
 
 					nut.util.DrawText(position.x, position.y, v:Name(), color)
