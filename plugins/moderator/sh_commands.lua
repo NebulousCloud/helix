@@ -279,7 +279,12 @@ PLUGIN:CreateCommand({
 	group = "admin",
 	syntax = "[string reason]",
 	onRun = function(client, arguments, target)
-		local reason = arguments[1] or "no reason"
+		local reason = "no reason"
+
+		if (#arguments < 1) then
+			reason = table.concat(arguments, " ")
+		end
+		
 		local name = target:Name()
 
 		target:Kick("Kicked by "..client:Name().." ("..client:SteamID()..") for: "..reason)
