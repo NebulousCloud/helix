@@ -98,20 +98,20 @@ else
 		end
 
 		local entity = data[1]
-		local data = data[2]
+		local itemData = data[2]
 		local factionData = data[3]
 		local classData = data[4]
 		local name = data[5]
 		local desc = data[6]
 		local model = data[7]
-
+		
 		if (IsValid(entity)) then
-			entity:SetNetVar("data", data)
+			entity:SetNetVar("data", itemData)
 			entity:SetNetVar("factiondata", factionData)
 			entity:SetNetVar("classdata", classData)
 			entity:SetNetVar("name", name)
 			entity:SetNetVar("desc", desc)
-			entity:SetModel(model)
+			entity:SetModel(model or entity:GetModel())
 			entity:SetAnim()
 
 			nut.util.Notify("You have updated this vendor's data.", client)
