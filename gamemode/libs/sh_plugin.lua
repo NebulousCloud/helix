@@ -127,15 +127,18 @@ function nut.plugin.Load(directory)
 				return nut.util.ReadTable(v, ignoreMap, forceRefresh)
 			end
 
-			nut.util.Include(directory.."/plugins/"..v.."/sh_plugin.lua")
-
 			local pluginDir = directory.."/plugins/"..v
-			nut.plugin.IncludeEntities(pluginDir)
-			nut.plugin.IncludeWeapons(pluginDir)
-			nut.plugin.IncludeEffects(pluginDir)
 
-			nut.item.Load(pluginDir)
-			nut.plugin.buffer[v] = PLUGIN
+			if (file.Exists(pluginDir.."/sh_plugin.lua", "LUA")) then
+				nut.util.Include(pluginDir.."/sh_plugin.lua")
+
+				nut.plugin.IncludeEntities(pluginDir)
+				nut.plugin.IncludeWeapons(pluginDir)
+				nut.plugin.IncludeEffects(pluginDir)
+
+				nut.item.Load(pluginDir)
+				nut.plugin.buffer[v] = PLUGIN
+			end
 		PLUGIN = nil
 	end
 
