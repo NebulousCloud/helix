@@ -1,0 +1,6 @@
+# Ignore configuration files since they are changed often.
+sv_config.lua
+sh_config.lua
+
+# Ignore the translations since servers may vary.
+sh_translations.lua
