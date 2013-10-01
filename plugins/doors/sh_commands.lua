@@ -153,7 +153,7 @@ nut.command.Register({
 
 		if (IsValid(entity) and PLUGIN:IsDoor(entity)) then
 			PLUGIN:LockDoor(entity)
-			nut.util.Notify("Door locked.")
+			nut.util.Notify("Door locked.", client)
 		else
 			nut.util.Notify("You are not looking at a valid door.", client)
 		end
@@ -172,7 +172,7 @@ nut.command.Register({
 
 		if (IsValid(entity) and PLUGIN:IsDoor(entity)) then
 			PLUGIN:UnlockDoor(entity)
-			nut.util.Notify("Door unlocked.")
+			nut.util.Notify("Door unlocked.", client)
 		else
 			nut.util.Notify("You are not looking at a valid door.", client)
 		end
