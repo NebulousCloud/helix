@@ -29,11 +29,11 @@ function GM:PlayerInitialSpawn(client)
 		client:StripWeapons()
 		client:InitializeData()
 
-		local fraction = client:Ping() / 100
-
 		for k, v in ipairs(nut.char.GetAll()) do
+			local fraction = client:Ping() / 100
+			
 			timer.Simple(k * fraction, function()
-				if (IsValid(client)) then
+				if (IsValid(client) and IsValid(v)) then
 					v:Send(nil, client, true)
 				end
 			end)
