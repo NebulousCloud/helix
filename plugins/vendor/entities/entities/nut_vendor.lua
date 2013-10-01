@@ -1,5 +1,7 @@
 AddCSLuaFile()
 
+local PLUGIN = PLUGIN
+
 ENT.Type = "anim"
 ENT.PrintName = "Vendor"
 ENT.Author = "Chessnut"
@@ -114,6 +116,7 @@ else
 			entity:SetModel(model or entity:GetModel())
 			entity:SetAnim()
 
+			PLUGIN:SaveData()
 			nut.util.Notify("You have updated this vendor's data.", client)
 		end
 	end)
