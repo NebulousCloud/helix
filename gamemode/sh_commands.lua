@@ -91,8 +91,8 @@ nut.command.Register({
 				return
 			end
 
-			if (amount <= 5) then
-				nut.util.Notify("The amount needs to be greater than 5.", client)
+			if (amount < 5) then
+				nut.util.Notify("The amount must be at least "..nut.currency.GetName(5)..".", client)
 
 				return
 			end
@@ -122,8 +122,8 @@ nut.command.Register({
 			return
 		end
 
-		if (amount <= 5) then
-			nut.util.Notify("The amount needs to be greater than 5.", client)
+		if (amount < 5) then
+			nut.util.Notify("The amount must be at least "..nut.currency.GetName(5)..".", client)
 
 			return
 		end
