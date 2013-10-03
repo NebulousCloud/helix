@@ -80,9 +80,14 @@ local PANEL = {}
 				icon:SetModel(itemTable.model or "models/error.mdl")
 
 				local cost = "Price: Free"
+				local price = itemTable.price
 
 				if (data[class] and data[class].price and data[class].price > 0) then
-					cost = "Price: "..nut.currency.GetName(data[class].price)
+					price = data[class.price]
+				end
+
+				if (price and price > 0) then
+					cost = "Price: "..nut.currency.GetName(price)
 				end
 
 				icon:SetToolTip("Description: "..itemTable:GetDesc().."\n"..cost)
