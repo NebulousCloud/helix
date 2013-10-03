@@ -103,8 +103,8 @@ nut.command.Register({
 				return
 			end
 
-			client:GiveMoney(amount)
-			entity:TakeMoney(amount)
+			entity:GiveMoney(amount)
+			client:TakeMoney(amount)
 		else
 			nut.util.Notify("You are not looking at a valid player.", client)
 		end
