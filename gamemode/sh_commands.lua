@@ -272,7 +272,7 @@ nut.command.Register({
 
 			target:SetModel(model)
 			target:SetSkin(tonumber(arguments[3]) or 0)
-			target.character:SetVar("model", model)
+			target.character.model = model
 			
 			nut.util.Notify(client:Name().." has changed "..target:Name().."'s model to "..arguments[2]..".")
 		end
