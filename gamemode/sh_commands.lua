@@ -412,17 +412,17 @@ nut.command.Register({
 			if (v.id > 0 and (tostring(v.id) == group or nut.util.StringMatches(group, v.name))) then
 				if (active) then
 					target:SetBodygroup(v.id, 1)
+					groups[v.id] = 1
 					target.character:SetData("groups", groups)
 
-					groups[v.id] = 1
 					nut.util.Notify(client:Name().." has enabled "..target:Name().."'s "..v.name.." bodygroup.")
 
 					return
 				else
 					target:SetBodygroup(v.id, 0)
+					groups[v.id] = 0
 					target.character:SetData("groups", groups)
 
-					groups[v.id] = 0
 					nut.util.Notify(client:Name().." has disabled "..target:Name().."'s "..v.name.." bodygroup.")
 
 					return
