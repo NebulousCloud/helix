@@ -489,9 +489,9 @@ if (SERVER) then
 			return
 		end
 
-		local name = string.sub(data.name, 1, 70)
+		local name = string.sub(data.name, 1, nut.config.maxNameLength or 70)
 		local gender = string.lower(data.gender)
-		local desc = string.sub(data.desc, 1, 240)
+		local desc = string.sub(data.desc, 1, nut.config.maxDescLength or 240)
 		local model = data.model
 		local faction = data.faction
 		local attributes = data.attribs or {}

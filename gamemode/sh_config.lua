@@ -106,6 +106,12 @@ nut.config.dateStartYear = 2014
 -- If true, then you can't have multiple rifles, pistols, etc...
 nut.config.noMultipleWepSlots = true
 
+-- The maximum number of characters in a name.
+nut.config.maxNameLength = 70
+
+-- The maximum number of characters in a description.
+nut.config.maxDescLength = 240
+
 -- How many seconds are in a minute.
 nut.config.dateMinuteLength = 60
 
