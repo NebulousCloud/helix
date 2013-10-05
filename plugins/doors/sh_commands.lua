@@ -140,3 +140,41 @@ nut.command.Register({
 		end
 	end
 }, "doorsetownable")
+
+nut.command.Register({
+	adminOnly = true,
+	onRun = function(client, arguments)
+		local data = {}
+			data.start = client:GetShootPos()
+			data.endpos = data.start + client:GetAimVector() * 84
+			data.filter = client
+		local trace = util.TraceLine(data)
+		local entity = trace.Entity
+
+		if (IsValid(entity) and PLUGIN:IsDoor(entity)) then
+			PLUGIN:LockDoor(entity)
+			nut.util.Notify("Door locked.", client)
+		else
+			nut.util.Notify("You are not looking at a valid door.", client)
+		end
+	end
+}, "doorlock")
+
+nut.command.Register({
+	adminOnly = true,
+	onRun = function(client, arguments)
+		local data = {}
+			data.start = client:GetShootPos()
+			data.endpos = data.start + client:GetAimVector() * 84
+			data.filter = client
+		local trace = util.TraceLine(data)
+		local entity = trace.Entity
+
+		if (IsValid(entity) and PLUGIN:IsDoor(entity)) then
+			PLUGIN:UnlockDoor(entity)
+			nut.util.Notify("Door unlocked.", client)
+		else
+			nut.util.Notify("You are not looking at a valid door.", client)
+		end
+	end
+}, "doorunlock")
