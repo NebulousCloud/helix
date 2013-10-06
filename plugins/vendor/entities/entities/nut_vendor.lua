@@ -143,11 +143,12 @@ else
 		end
 
 		local data = entity:GetNetVar("data", {})
-		local price = 0
 
 		if (!data[class] or !data[class].selling) then
 			return
 		end
+
+		local price = itemTable.price or 0
 
 		if (data[class] and data[class].price) then
 			price = data[class].price
