@@ -31,7 +31,7 @@ SWEP.Secondary.DefaultClip = 0
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = ""
 
-SWEP.ViewModel = ""
+SWEP.ViewModel = Model("models/weapons/v_fists.mdl")
 SWEP.WorldModel = ""
 
 SWEP.AlwaysRaised = true
