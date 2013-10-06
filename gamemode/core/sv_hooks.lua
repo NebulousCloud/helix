@@ -14,11 +14,14 @@ function GM:GetDefaultMoney(client, data)
 end
 
 function GM:PlayerInitialSpawn(client)
+	local delay = 0
+	
 	if (IsValid(client)) then
 		client:KillSilent()
+		delay = client:Ping() / 50
 	end
 	
-	timer.Simple(5, function()
+	timer.Simple(5 + delay, function()
 		if (!IsValid(client)) then
 			return
 		end
@@ -29,20 +32,22 @@ function GM:PlayerInitialSpawn(client)
 		client:StripWeapons()
 		client:InitializeData()
 
-		for k, v in ipairs(nut.char.GetAll()) do
-			local fraction = client:Ping() / 100
-			
-			timer.Simple(k * fraction, function()
-				if (IsValid(client) and IsValid(v)) then
-					v:Send(nil, client, true)
-				end
-			end)
-		end
-
 		player_manager.SetPlayerClass(client, "player_nut")
 		player_manager.RunClass(client, "Spawn")
 
 		nut.char.Load(client, function()
+			for k, v in pairs(player.GetAll()) do
+				if (v.character and v != client) then
+					local fraction = math.max(client:Ping() / 100, 0.75)
+
+					timer.Simple(k * fraction, function()
+						if (IsValid(client) and IsValid(v)) then
+							v.character:Send(nil, client, true)
+						end
+					end)
+				end
+			end
+		
 			timer.Simple(math.max(client:Ping() / 100, 0.1), function()
 				netstream.Start(client, "nut_CharMenu")
 			end)
