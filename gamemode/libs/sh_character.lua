@@ -233,7 +233,7 @@ function META:Send(variable, receiver, noDelta)
 			self.deltas[variable] = table.Copy(oldValue)
 		end
 
-		netstream.Start(receiver, "nut_CharData", {self.player, variable, publicValue, noDelta})
+		netstream.Start(receiver, "nut_CharData", {self.player:EntIndex(), variable, publicValue, noDelta})
 	else
 		error("Attempted to send unknown character data!")
 	end
@@ -600,15 +600,48 @@ if (SERVER) then
 else
 	-- CharData needs a valid player.
 	netstream.Hook("nut_CharData", function(data)
-		local client = data[1]
+		local index = data[1]
+		local client = player.GetByID(index)
 		local key = data[2]
 		local value = data[3]
 		local noDelta = data[4]
 
 		if (!IsValid(client)) then
+			local uniqueID = "nut_CharData"..index..key
+
+			timer.Create(uniqueID, 5, 12, function()
+				local client = player.GetByID(index)
+
+				if (IsValid(client)) then
+					if (!client.character) then
+						client.character = nut.char.New(client)
+					end
+
+					local character = client.character
+
+					if (!noDelta and type(value) == "table") then
+						local currentValue
+
+						if (character.privateVars[key]) then
+							currentValue = character.privateVars[key]
+						elseif (character.publicVars[key]) then
+							currentValue = character.publicVars[key]
+						end
+
+						value = table.Merge(currentValue, value)
+						value = replacePlaceHolders(value)
+					end
+
+					client.character:SetVar(key, value)
+					timer.Remove(uniqueID)
+
+					return
+				end
+			end)
+
 			return
 		end
-		
+
 		if (!client.character) then
 			client.character = nut.char.New(client)
 		end
