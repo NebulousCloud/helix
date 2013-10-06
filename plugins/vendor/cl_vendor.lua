@@ -79,11 +79,11 @@ local PANEL = {}
 
 				icon:SetModel(itemTable.model or "models/error.mdl")
 
-				local cost = "Price: Free"
-				local price = itemTable.price
+				local price = itemTable.price or 0
+				local cost = "Price: "..nut.currency.GetName(price)
 
 				if (data[class] and data[class].price and data[class].price > 0) then
-					price = data[class.price]
+					price = data[class].price
 				end
 
 				if (price and price > 0) then
