@@ -553,6 +553,8 @@ if (SERVER) then
 					netstream.Start(client, "nut_CharCreateAuthed")
 				end)
 
+				nut.schema.Call("PlayerCreatedChar", client, charData)
+				
 				print("Created new character '"..name.."' for "..client:RealName()..".")
 			end)
 		end)
