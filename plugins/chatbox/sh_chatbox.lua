@@ -47,6 +47,17 @@ if (CLIENT) then
 					local color = team.GetColor(v:Team())
 
 					data = data.."<color="..color.r..","..color.g..","..color.b..">"..v:Name().."</color>"
+				elseif (type(v) == "IMaterial" or type(v) == "table" and type(v[1]) == "IMaterial") then
+					local w, h = 16, 16
+					local material = v
+
+					if (type(v) == "table" and v[2] and v[3]) then
+						material = v[1]
+						w = v[2]
+						h = v[3]
+					end
+
+					data = data.."<img="..material:GetName()..".png,"..w.."x"..h.."> "
 				else
 					v = tostring(v)
 					v = string.gsub(v, "&", "&amp;")
@@ -61,28 +72,10 @@ if (CLIENT) then
 				data = data.."</font>"
 			end
 
-			self.markup = markup.Parse(data, self.maxWidth)
+			self.markup = nut.markup.Parse(data, self.maxWidth)
 
-			function self.markup:Draw(xOffset, yOffset, hAlign, vAlign, alphaoverride)
-				for i,blk in pairs(self.blocks) do
-					local y = yOffset + (blk.height - blk.thisY) + blk.offset.y
-					local x = xOffset
-
-					if (halign == TEXT_ALIGN_CENTER) then		x = x - (self.totalWidth / 2) 
-					elseif (halign == TEXT_ALIGN_RIGHT) then	x = x - (self.totalWidth)
-					end
-
-					x = x + blk.offset.x
-
-					if (valign == TEXT_ALIGN_CENTER) then		y = y - (self.totalHeight / 2)
-					elseif (valign == TEXT_ALIGN_BOTTOM) then	y = y - (self.totalHeight)
-					end
-
-					local alpha = blk.colour.a
-					if (alphaoverride) then alpha = alphaoverride end
-
-					draw.SimpleTextOutlined(blk.text, blk.font, x, y, blk.colour, hAlign, vAlign, 1, OUTLINE_COLOR)
-				end
+			function self.markup:DrawText(text, font, x, y, color, hAlign, vAlign, alpha)
+				draw.SimpleTextOutlined(text, font, x, y, color, hAlign, vAlign, 1, OUTLINE_COLOR)
 			end
 
 			self:SetSize(self.markup:GetWidth(), self.markup:GetHeight())
@@ -142,6 +135,17 @@ if (CLIENT) then
 		nut.chat.AddText(unpack(data))
 
 		surface.PlaySound("common/talk.wav")
+
+		for k, v in ipairs(data) do
+			if (type(v) == "Player") then
+				local client = v
+				local index = k
+				
+				table.remove(data, k)
+				table.insert(data, index, team.GetColor(client:Team()))
+				table.insert(data, index + 1, client:Name())
+			end
+		end
 
 		return chat.NutAddText(unpack(data))
 	end
