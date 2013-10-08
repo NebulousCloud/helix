@@ -185,5 +185,13 @@ end
 	Purpose: A function that inserts a command into the command system.
 --]]
 function nut.command.Register(commandTable, command)
+	if (!command) then
+		error("No command name provided.")
+	end
+
+	if (!commandTable) then
+		error("No command table provided.")
+	end
+	
 	nut.command.buffer[command] = commandTable
 end
