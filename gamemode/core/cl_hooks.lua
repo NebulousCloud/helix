@@ -118,7 +118,7 @@ end
 
 function GM:HUDPaintTargetID(entity)
 	for k, v in pairs(ents.GetAll()) do
-		if (v != LocalPlayer() and v:IsPlayer() or v:GetClass() == "nut_item" or nut.schema.Call("ShouldDrawTargetEntity", v) == true) then
+		if (v != LocalPlayer() and v:IsPlayer() or nut.schema.Call("ShouldDrawTargetEntity", v) == true or v.DrawTargetID) then
 			local target = 0
 			local inRange = false
 
@@ -129,7 +129,7 @@ function GM:HUDPaintTargetID(entity)
 			if (inRange and entity == v) then
 				target = 255
 			end
-
+			
 			v.approachAlpha = math.Approach(v.approachAlpha or 0, target, FrameTime() * 150)
 
 			local offset = Vector(0, 0, 8)
@@ -144,26 +144,7 @@ function GM:HUDPaintTargetID(entity)
 			local color = Color(mainColor.r, mainColor.g, mainColor.b, alpha)
 
 			if (alpha > 0) then
-				if (v:GetClass() == "nut_item") then
-					local itemTable = v:GetItemTable()
-
-					if (itemTable) then
-						local data = v:GetData()
-
-						nut.util.DrawText(position.x, position.y, itemTable.name, color)
-
-						position.y = position.y + nut.config.targetTall
-						color = Color(255, 255, 255, alpha)
-
-						nut.util.DrawText(position.x, position.y, string.gsub(itemTable:GetDesc(data), "\n", ""), color, "nut_TargetFontSmall")
-
-						if (itemTable.Paint) then
-							itemTable.data = data
-								itemTable:Paint(v, position.x, position.y + nut.config.targetTall, color)
-							itemTable.data = nil
-						end
-					end
-				elseif (v.character) then
+				if (v.character) then
 					local color = team.GetColor(v:Team())
 					color.a = alpha
 
@@ -194,6 +175,8 @@ function GM:HUDPaintTargetID(entity)
 					end
 
 					nut.util.DrawWrappedText(position.x, position.y, v:GetNutVar("descLines"), v:GetNutVar("lineH"), "nut_TargetFontSmall", 1, 1, alpha)
+				elseif (v.DrawTargetID) then
+					v:DrawTargetID(position.x, position.y, alpha)
 				else
 					nut.schema.Call("DrawTargetID", v, position.x, position.y, alpha)
 				end

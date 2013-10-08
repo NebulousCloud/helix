@@ -52,3 +52,29 @@ function ENT:GetItemTable()
 		return self.itemTable
 	end
 end
+
+if (CLIENT) then
+	local mainColor = nut.config.mainColor
+
+	function ENT:DrawTargetID(x, y, alpha)
+		local itemTable = self:GetItemTable()
+
+		if (itemTable) then
+			local color = Color(mainColor.r, mainColor.g, mainColor.b, alpha)
+			local data = self:GetData()
+
+			nut.util.DrawText(x, y, itemTable.name, color)
+
+			y = y + nut.config.targetTall
+			color = Color(255, 255, 255, alpha)
+
+			nut.util.DrawText(x, y, string.gsub(itemTable:GetDesc(data), "\n", ""), color, "nut_TargetFontSmall")
+
+			if (itemTable.Paint) then
+				itemTable.data = data
+					itemTable:Paint(self, x, y + nut.config.targetTall, color)
+				itemTable.data = nil
+			end
+		end
+	end
+end
