@@ -19,6 +19,8 @@ if (SERVER) then
 		if (IsValid(physObj)) then
 			physObj:Wake()
 		end
+
+		nut.schema.Call("MoneyEntityCreated", self)
 	end
 
 	function ENT:SetMoney(amount)
@@ -32,11 +34,15 @@ if (SERVER) then
 	function ENT:Use(activator)
 		local amount = self:GetNetVar("amount", 0)
 
-		if (amount > 0 and IsValid(activator) and activator:IsPlayer()) then
+		if (amount > 0 and IsValid(activator) and activator:IsPlayer() and nut.schema.Call("PlayerCanPickupMoney", activator, self) != false) then
 			activator:GiveMoney(amount)
 			nut.util.Notify("You have picked up "..nut.currency.GetName(amount)..".", activator)
 
 			self:Remove()
 		end
+	end
+else
+	function ENT:DrawTargetID(x, y, alpha)
+		nut.util.DrawText(x, y, nut.currency.GetName(self:GetNetVar("amount", 0)), Color(255, 255, 255, alpha))
 	end
 end
