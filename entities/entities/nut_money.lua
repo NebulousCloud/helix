@@ -43,6 +43,6 @@ if (SERVER) then
 	end
 else
 	function ENT:DrawTargetID(x, y, alpha)
-		nut.util.DrawText(x, y, nut.currency.GetName(self:GetNetVar("amount", 0)), Color(255, 255, 255, alpha))
+		nut.util.DrawText(x, y, nut.currency.GetName(self:GetNetVar("amount", 0), true), Color(255, 255, 255, alpha))
 	end
 end
