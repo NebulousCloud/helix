@@ -584,6 +584,10 @@ end
 do
 	if (SERVER) then
 		netstream.Hook("nut_BuyItem", function(client, class)
+			if (!nut.config.businessEnabled) then
+				return
+			end
+			
 			local itemTable = nut.item.Get(class)
 
 			if (!itemTable) then
