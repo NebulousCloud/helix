@@ -8,18 +8,21 @@ local PANEL = {}
 		self.property = self:Add("DPropertySheet")
 		self.property:Dock(FILL)
 
-		self.admin = vgui.Create("nut_VendorAdminMenu")
 		self.menu = vgui.Create("nut_VendorMenu")
 
 		self.menuTab = self.property:AddSheet("Vendor", self.menu, "icon16/application_view_tile.png")
 
 		if (LocalPlayer():IsAdmin()) then
+			self.admin = vgui.Create("nut_VendorAdminMenu")
 			self.property:AddSheet("Admin", self.admin, "icon16/star.png")
 		end
 	end
 
 	function PANEL:SetEntity(entity)
-		self.admin:SetEntity(entity)
+		if (IsValid(self.admin)) then
+			self.admin:SetEntity(entity)
+		end
+		
 		self.menu:SetEntity(entity)
 	end
 vgui.Register("nut_Vendor", PANEL, "DFrame")
