@@ -71,6 +71,72 @@ nut.command.Register({
 }, "setvoicemail")
 
 nut.command.Register({
+	adminOnly = true,
+	allowDead = true,
+	syntax = "<string name> <number amount>",
+	onRun = function(client, arguments)
+		local target = nut.command.FindPlayer(client, arguments[1])
+
+		if (target) then
+			local amount = tonumber(arguments[2])
+
+			if (!amount) then
+				nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
+
+				return
+			end
+
+			target:GiveMoney(amount)
+			nut.util.Notify(client:Name().." has given "..nut.currency.GetName(amount).." to "..target:Name()..".")
+		end
+	end
+}, "chargivemoney")
+
+nut.command.Register({
+	adminOnly = true,
+	allowDead = true,
+	syntax = "<string name> <number amount>",
+	onRun = function(client, arguments)
+		local target = nut.command.FindPlayer(client, arguments[1])
+
+		if (target) then
+			local amount = tonumber(arguments[2])
+
+			if (!amount) then
+				nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
+
+				return
+			end
+
+			target:GiveMoney(-amount)
+			nut.util.Notify(client:Name().." has taken "..nut.currency.GetName(amount).." from "..target:Name()..".")
+		end
+	end
+}, "chartakemoney")
+
+nut.command.Register({
+	adminOnly = true,
+	allowDead = true,
+	syntax = "<string name> <number amount>",
+	onRun = function(client, arguments)
+		local target = nut.command.FindPlayer(client, arguments[1])
+
+		if (target) then
+			local amount = tonumber(arguments[2])
+
+			if (!amount) then
+				nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
+
+				return
+			end
+
+			target:SetMoney(amount)
+			nut.util.Notify(client:Name().." has set "..target:Name().."'s money to "..amount..".")
+		end
+	end
+}, "charsetmoney")
+
+nut.command.Register({
 	allowDead = true,
 	onRun = function(client, arguments)
 		local text = table.concat(arguments, " ")
