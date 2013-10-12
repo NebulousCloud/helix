@@ -167,21 +167,24 @@ if (SERVER) then
 	timer.Create("nut_PayTick", 1, 0, function()
 		for k, v in pairs(player.GetAll()) do
 			local faction = nut.faction.GetByID(v:Team())
-			local nextPay = v:GetNutVar("nextPay")
 
-			if (!nextPay) then
-				v:SetNutVar("nextPay", CurTime() + faction.payTime)
-				nextPay = v:GetNutVar("nextPay")
-			end
-			
-			if (faction and faction.pay > 0 and nextPay < CurTime()) then
-				if (nut.schema.Call("ShouldReceivePay", v) != false) then
-					v:GiveMoney(faction.pay)
+			if (faction) then
+				local nextPay = v:GetNutVar("nextPay")
 
-					nut.util.Notify("You've received a pay of "..nut.currency.GetName(faction.pay)..".", v)
+				if (!nextPay) then
+					v:SetNutVar("nextPay", CurTime() + faction.payTime)
+					nextPay = v:GetNutVar("nextPay")
 				end
+				
+				if (faction.pay > 0 and nextPay < CurTime()) then
+					if (nut.schema.Call("ShouldReceivePay", v) != false) then
+						v:GiveMoney(faction.pay)
 
-				v:SetNutVar("nextPay", CurTime() + faction.payTime)
+						nut.util.Notify("You've received a pay of "..nut.currency.GetName(faction.pay)..".", v)
+					end
+
+					v:SetNutVar("nextPay", CurTime() + faction.payTime)
+				end
 			end
 		end
 	end)
