@@ -217,8 +217,20 @@ if (CLIENT) then
 				panel:SetText("")
 				panel:Remove()
 			end
-			entry.OnTextChanged = function(panel)
-				hook.Run("ChatTextChanged", panel:GetText())
+			entry.OnKeyCodePressed = function(panel, key)
+				print(key)
+				if (key == KEY_ESCAPE) then
+					nut.chat.Toggle(false)
+					panel:SetText("")
+					panel:Remove()
+				end
+			end
+			entry.Think = function(panel)
+				if (gui.IsGameUIVisible()) then
+					nut.chat.Toggle(false)
+					panel:SetText("")
+					panel:Remove()
+				end
 			end
 			entry.Paint = function(panel, w, h)
 				surface.SetDrawColor(70, 70, 70, 245)
