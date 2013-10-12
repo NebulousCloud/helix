@@ -91,7 +91,7 @@ else
 		local markupText = "<font=nut_ScaledFont>"..string.gsub(text, "\\n", "\n")
 		markupText = string.gsub(markupText, "\\t", "\t")
 		markupText = markupText.."</font>"
-		local markupObj = markup.Parse(markupText)
+		local markupObj = nut.markup.Parse(markupText)
 		PLUGIN.text[#PLUGIN.text + 1] = {pos = position, angle = angle, text = text, scale = scale, markup = markupObj}
 	end)
 
