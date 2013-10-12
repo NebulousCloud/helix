@@ -121,9 +121,9 @@ local function ExtractParams(p1,p2,p3)
 			local material = exploded[1] or p2
 			local p3 = exploded[2]
 			local texture = Material(material)
-			local w, h = string.Explode("x", p3 or "16,16")
-			w = tonumber(w) or 16
-			h = tonumber(h) or 16
+			local sizeData = string.Explode("x", p3 or "16,16")
+			w = tonumber(sizeData[1]) or 16
+			h = tonumber(sizeData[2]) or 16
 
 			if (texture) then
 				table.insert(blocks, {
@@ -226,6 +226,14 @@ function MarkupObject:Draw(xOffset, yOffset, halign, valign, alphaoverride)
 		if (blk.texture) then
 			local y = yOffset + (blk.h - blk.thisY) + blk.offset.y
 			local x = xOffset + blk.offset.x
+
+			if (halign == TEXT_ALIGN_CENTER) then		x = x - (self.totalWidth / 2) 
+			elseif (halign == TEXT_ALIGN_RIGHT) then	x = x - (self.totalWidth)
+			end
+
+			if (valign == TEXT_ALIGN_CENTER) then
+				y = y - (blk.h / 2)
+			end
 
 			surface.SetDrawColor(blk.colour.r, blk.colour.g, blk.colour.b, alphaoverride or blk.colour.a or 255)
 			surface.SetMaterial(blk.texture)
