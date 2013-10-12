@@ -270,10 +270,36 @@ PLUGIN:CreateCommand({
 			target:SetPos(position)
 			nut.util.Notify(client:Name().." has teleported "..target:Name().." to "..(toAimPos and "their aim position" or "their position")..".")
 		else
-			nut.util.Notify(target:Name().." can not be teleported there.", client)
+			nut.util.Notify(target:Name().." could not be teleported.", client)
 		end
 	end
 }, "tp")
+
+PLUGIN:CreateCommand({
+	group = "admin",
+	syntax = "[bool toAimPos]",
+	onRun = function(client, arguments, target)
+		local position = target:GetEyeTraceNoCursor().HitPos
+		local toAimPos = util.tobool(arguments[1])
+
+		if (!toAimPos) then
+			local data = {}
+				data.start = target:GetShootPos() + target:GetAimVector() * 32
+				data.endpos = target:GetShootPos() + target:GetAimVector() * 72
+				data.filter = target
+			local trace = util.TraceLine(data)
+
+			position = trace.HitPos
+		end
+
+		if (position) then
+			client:SetPos(position)
+			nut.util.Notify(client:Name().." has teleported to "..target:Name().."'s "..(toAimPos and "aim position" or "position")..".")
+		else
+			nut.util.Notify("A position could not be found for you.", client)
+		end
+	end
+}, "goto")
 
 PLUGIN:CreateCommand({
 	group = "admin",
