@@ -28,7 +28,7 @@ vgui.Register("nut_Moderator", PANEL, "DFrame")
 
 function PLUGIN:CreateMenuButtons(menu, addButton)
 	addButton("mod", "Moderator", function()
-		nut.gui.inv = vgui.Create("nut_Moderator", menu)
-		menu:SetCurrentMenu(nut.gui.inv)
+		nut.gui.mod = vgui.Create("nut_Moderator", menu)
+		menu:SetCurrentMenu(nut.gui.mod)
 	end)
 end
