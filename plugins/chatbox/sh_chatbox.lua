@@ -110,6 +110,7 @@ if (CLIENT) then
 	nut.chat = nut.chat or {}
 	nut.chat.messages = nut.chat.messages or {}
 	nut.chat.panel = nut.chat.panel or {}
+	nut.chat.history = nut.chat.history or {}
 
 	local CHAT_X, CHAT_Y = 64, ScrH() * 0.4
 	local CHAT_W, CHAT_H = ScrW() * 0.4, ScrH() * 0.375
@@ -202,6 +203,8 @@ if (CLIENT) then
 			entry:MakePopup()
 			entry:RequestFocus()
 			entry:SetTall(24)
+			entry.History = nut.chat.history
+			entry:SetHistoryEnabled(true)
 			entry:SetAllowNonAsciiCharacters(true)
 			entry.OnEnter = function(panel)
 				nut.chat.Toggle(false)
@@ -210,6 +213,7 @@ if (CLIENT) then
 
 				if (string.find(text, "%S")) then
 					netstream.Start("nut_PlayerSay", string.sub(text, 1, nut.config.maxChatLength))
+					table.insert(nut.chat.history, text)
 
 					hook.Run("FinishChat")
 				end
