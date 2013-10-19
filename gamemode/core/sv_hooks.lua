@@ -73,6 +73,7 @@ function GM:PlayerLoadedChar(client)
 	client:SetSkin(client.character:GetData("skin", 0))
 
 	if (!client:GetNutVar("sawCredits")) then
+		nut.schema.Call("PlayerFirstLoaded", client)
 		client:SetNutVar("sawCredits", true)
 
 		nut.util.SendIntroFade(client)
