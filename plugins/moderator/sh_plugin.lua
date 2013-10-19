@@ -172,5 +172,7 @@ nut.util.Include("sh_commands.lua")
 nut.util.Include("cl_derma.lua")
 
 function PLUGIN:PlayerNoClip(client)
-	return self:IsAllowed(client, "operator")
+	if (!self:IsAllowed(client, "operator")) then
+		return false
+	end
 end
