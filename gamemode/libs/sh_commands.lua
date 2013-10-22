@@ -193,5 +193,5 @@ function nut.command.Register(commandTable, command)
 		error("No command table provided.")
 	end
 	
-	nut.command.buffer[command] = commandTable
+	nut.command.buffer[string.lower(command)] = commandTable
 end
