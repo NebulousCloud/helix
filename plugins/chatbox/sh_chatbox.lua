@@ -112,8 +112,21 @@ if (CLIENT) then
 	nut.chat.panel = nut.chat.panel or {}
 	nut.chat.history = nut.chat.history or {}
 
-	local CHAT_X, CHAT_Y = 64, ScrH() * 0.4
+	NUT_CVAR_CHATX = CreateClientConVar("nut_chatx", "32", true)
+	NUT_CVAR_CHATY = CreateClientConVar("nut_chaty", "0.5", true)
+
+	local CHAT_X, CHAT_Y = NUT_CVAR_CHATX:GetInt(), ScrH() * NUT_CVAR_CHATY:GetFloat()
 	local CHAT_W, CHAT_H = ScrW() * 0.4, ScrH() * 0.375
+
+	cvars.AddChangeCallback("nut_chatx", function(conVar, oldValue, value)
+		CHAT_X = NUT_CVAR_CHATX:GetInt()
+		nut.chat.panel.frame:SetPos(CHAT_X, CHAT_Y)
+	end)
+
+	cvars.AddChangeCallback("nut_chaty", function(conVar, oldValue, value)
+		CHAT_Y = ScrH() * NUT_CVAR_CHATY:GetFloat()
+		nut.chat.panel.frame:SetPos(CHAT_X, CHAT_Y)
+	end)
 
 	chat.NutAddText = chat.NutAddText or chat.AddText
 
