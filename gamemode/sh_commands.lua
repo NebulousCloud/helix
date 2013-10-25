@@ -528,7 +528,7 @@ nut.command.Register({
 				if (active) then
 					target:SetBodygroup(v.id, 1)
 					groups[v.id] = 1
-					target.character:SetData("groups", groups)
+					target.character:SetData("groups", groups, nil, true)
 
 					nut.util.Notify(client:Name().." has enabled "..target:Name().."'s "..v.name.." bodygroup.")
 
@@ -536,7 +536,7 @@ nut.command.Register({
 				else
 					target:SetBodygroup(v.id, 0)
 					groups[v.id] = 0
-					target.character:SetData("groups", groups)
+					target.character:SetData("groups", groups, nil, true)
 
 					nut.util.Notify(client:Name().." has disabled "..target:Name().."'s "..v.name.." bodygroup.")
 

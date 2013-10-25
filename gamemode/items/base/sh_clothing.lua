@@ -42,7 +42,7 @@ BASE.functions.Wear = {
 				end
 			end
 
-			client.character:SetData("oldModel", lowerPlyModel)
+			client.character:SetData("oldModel", lowerPlyModel, nil, true)
 			client.character.model = model
 			client:SetModel(model)
 
@@ -67,7 +67,7 @@ BASE.functions.TakeOff = {
 			local model = client.character:GetData("oldModel", client:GetModel())
 				client.character.model = model
 				client:SetModel(model)
-			client.character:SetData("oldModel", nil)
+			client.character:SetData("oldModel", nil, nil, true)
 
 			local newData = table.Copy(data)
 			newData.Equipped = false
