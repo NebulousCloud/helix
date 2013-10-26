@@ -57,7 +57,7 @@ function nut.class.Load(directory)
 		local index = #nut.class.buffer + 1
 
 		CLASS = nut.class.GetByStringID(uniqueID) or {uniqueID = uniqueID}
-			nut.util.Include(directpry.."/classes/"..v)
+			nut.util.Include(directory.."/classes/"..v)
 			nut.class.Register(index, CLASS)
 		CLASS = nil
 	end
