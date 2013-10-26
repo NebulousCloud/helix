@@ -244,8 +244,8 @@ netstream.Hook("nut_FadeIntro", function(data)
 end)
 
 function GM:RenderScreenspaceEffects()
-	local brightness = 0
-	local color2 = 0
+	local brightness = 0.01
+	local color2 = 0.25
 	local curTime = CurTime()
 
 	if (nut.fadeStart and nut.fadeFinish) then
@@ -267,15 +267,15 @@ function GM:RenderScreenspaceEffects()
 	end
 
 	local color = {}
-	color["$pp_colour_addr"] = 0.02
-	color["$pp_colour_addg"] = 0.01
-	color["$pp_colour_addb"] = 0.07
-	color["$pp_colour_brightness"] = -0.02 - (brightness * 1)
-	color["$pp_colour_contrast"] = 1.3
+	color["$pp_colour_addr"] = 0
+	color["$pp_colour_addg"] = 0
+	color["$pp_colour_addb"] = 0
+	color["$pp_colour_brightness"] = brightness * -1
+	color["$pp_colour_contrast"] = 1.25
 	color["$pp_colour_colour"] = math.Clamp(0.7 - color2, 0, 1)
-	color["$pp_colour_mulr"] = 0.1
+	color["$pp_colour_mulr"] = 0
 	color["$pp_colour_mulg"] = 0
-	color["$pp_colour_mulb"] = 0.1
+	color["$pp_colour_mulb"] = 0
 
 	nut.schema.Call("ModifyColorCorrection", color)
 
