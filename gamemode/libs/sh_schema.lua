@@ -20,6 +20,7 @@ function nut.schema.Init()
 		name = "Sample",
 		author = "Chessnut",
 		desc = "An example schema!",
+		uniqueID = GM.FolderName,
 		folderName = GM.FolderName
 	}
 
