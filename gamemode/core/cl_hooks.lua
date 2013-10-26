@@ -102,11 +102,11 @@ function GM:CreateSideMenu(menu)
 		menu.time:DockMargin(4, 4, 4, 4)
 	end
 
-	if (nut.config.showMoney) then
+	if (nut.config.showMoney and nut.currency.IsSet()) then
 		menu.money = menu:Add("DLabel")
 		menu.money:Dock(TOP)
 		menu.money.Think = function(label)
-			label:SetText(nut.currency.GetName(LocalPlayer():GetMoney(), true))
+			label:SetText(nut.currency.GetName(LocalPlayer():GetMoney(), true) or "Unknown")
 		end
 		menu.money:SetContentAlignment(6)
 		menu.money:SetTextColor(color_white)
