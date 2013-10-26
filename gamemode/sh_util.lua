@@ -37,6 +37,24 @@ function nut.util.GetAlphaFromDist(position, goal, maxDistance, maxAlpha)
 end
 
 --[[
+	Purpose: Creates a string of random numbers by added random numbers to a string
+	x times, where x is the number of digits specified.
+--]]
+function nut.util.GetRandomNum(digits)
+	if (digits <= 1) then
+		error("Number of digits must be greater than 1.")
+	end
+
+	local output = ""
+
+	for i = 1, digits do
+		output = output..math.random(0, 9)
+	end
+
+	return output
+end
+
+--[[
 	Purpose: Will find all the files in the schema or framework,
 	if isBase is true, and include them based of their prefixes. This is
 	used for including stuff like directories with a lot of files in them like libs.
