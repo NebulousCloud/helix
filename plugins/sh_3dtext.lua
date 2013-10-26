@@ -101,10 +101,14 @@ else
 		for i = 1, #self.text do
 			local data = self.text[i]
 
-			if (data and position:Distance(data.pos) <= 1024) then
-				cam.Start3D2D(data.pos, data.angle, data.scale or 0.25)
-					data.markup:Draw(0, 0, 1, 1)
-				cam.End3D2D()
+			if (data) then
+				local alpha = nut.util.GetAlphaFromDist(position, data.pos, 1024)
+
+				if (alpha > 0) then
+					cam.Start3D2D(data.pos, data.angle, data.scale or 0.25)
+						data.markup:Draw(0, 0, 1, 1, alpha)
+					cam.End3D2D()
+				end
 			end
 		end
 	end

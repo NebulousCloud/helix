@@ -27,6 +27,16 @@ function nut.util.Include(fileName, state)
 end
 
 --[[
+	Purpose: Gets the appropriate alpha value for colors using two vectors.
+--]]
+function nut.util.GetAlphaFromDist(position, goal, maxDistance, maxAlpha)
+	maxAlpha = maxAlpha or 255
+	local distance = goal:Distance(position)
+
+	return (1 - distance / maxDistance) * maxAlpha
+end
+
+--[[
 	Purpose: Will find all the files in the schema or framework,
 	if isBase is true, and include them based of their prefixes. This is
 	used for including stuff like directories with a lot of files in them like libs.
