@@ -63,6 +63,13 @@ do
 end
 
 --[[
+	Purpose: Determines whether or not at least one currency has been registered.
+--]]
+function nut.currency.IsSet()
+	return nut.currency.data != nil
+end
+
+--[[
 	Purpose: Registers a new type of currency and adds it to the list of currencies available.
 --]]
 function nut.currency.SetUp(singular, plural, symbol)
