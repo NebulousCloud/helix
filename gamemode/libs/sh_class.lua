@@ -10,7 +10,7 @@ end
 nut.class = nut.class or {}
 nut.class.buffer = {}
 
-function nut.class.Register(classTable)
+function nut.class.Register(index, classTable)
 	if (!classTable.faction) then
 		error("Attempt to register class without faction! ("..(classTable.uniqueID or "unknown")..")")
 	end
@@ -40,7 +40,27 @@ function nut.class.Register(classTable)
 		end
 	end
 
-	return table.insert(nut.class.buffer, classTable)
+	nut.class.buffer[index] = classTable
+end
+
+function nut.class.GetByStringID(uniqueID)
+	for k, v in pairs(nut.class.buffer) do
+		if (v.uniqueID == uniqueID) then
+			return v
+		end
+	end
+end
+
+function nut.class.Load(directory)
+	for k, v in pairs(file.Find(directory.."/classes/*.lua", "LUA")) do
+		local uniqueID = string.sub(v, 4, -5)
+		local index = #nut.class.buffer + 1
+
+		CLASS = nut.class.GetByStringID(uniqueID) or {uniqueID = uniqueID}
+			nut.util.Include(directpry.."/classes/"..v)
+			nut.class.Register(index, CLASS)
+		CLASS = nil
+	end
 end
 
 function nut.class.GetAll()

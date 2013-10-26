@@ -4,7 +4,7 @@
 --]]
 
 nut.faction = nut.faction or {}
-nut.faction.buffer = nut.faction.buffer or {}
+nut.faction.buffer = {}
 
 local playerMeta = FindMetaTable("Player")
 
@@ -137,16 +137,12 @@ end
 	variables if the faction does not already contain it, like models. A team
 	will also be set up for the faction so it makes it easier to network.
 --]]
-function nut.faction.Register(index, faction)
-	if (!index) then
-		error("Attempt to register faction without an index!")
-	end
-
+function nut.faction.Register(index, uniqueID, faction)
 	if (!faction) then
 		error("Attempt to register faction without an actual faction table!")
 	end
 	
-	faction.index = index
+	faction.uniqueID = uniqueID
 
 	if (faction.isDefault == nil) then
 		faction.isDefault = true
@@ -161,6 +157,26 @@ function nut.faction.Register(index, faction)
 	team.SetUp(index, faction.name, faction.color)
 	
 	nut.faction.buffer[index] = faction
+end
+
+function nut.faction.GetByStringID(uniqueID)
+	for k, v in pairs(nut.faction.buffer) do
+		if (v.uniqueID == uniqueID) then
+			return v
+		end
+	end
+end
+
+function nut.faction.Load(directory)
+	for k, v in pairs(file.Find(directory.."/factions/*.lua", "LUA")) do
+		local uniqueID = string.sub(v, 4, -5)
+		local index = #nut.faction.buffer + 1
+
+		FACTION = nut.faction.GetByStringID(uniqueID) or {index = index}
+			nut.util.Include(directory.."/factions/"..v)
+			nut.faction.Register(index, uniqueID, FACTION)
+		FACTION = nil
+	end
 end
 
 if (SERVER) then
