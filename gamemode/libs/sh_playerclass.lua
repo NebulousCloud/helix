@@ -50,6 +50,12 @@ do
 		return self.GetNutWepRaised and self:GetNutWepRaised() or false
 	end
 
+	function playerMeta:IsRunning()
+		local runSpeed = nut.config.runSpeed - 5
+
+		return self:GetVelocity():Length2D() >= runSpeed	
+	end
+
 	if (SERVER) then
 		function playerMeta:SetWepRaised(raised, weapon)
 			if (!IsValid(self) or !self.character) then
