@@ -15,7 +15,7 @@ local PANEL = {}
 		nut.schema.Call("BusinessPrePopulateItems", self)
 
 		for class, itemTable in SortedPairs(nut.item.GetAll()) do
-			if (!itemTable.noBusiness and (!itemTable.ShouldShowOnBusiness or (itemTable.ShouldShowOnBusiness and itemTable:ShouldShowOnBusiness(LocalPlayer()) != false))) then
+			if (nut.schema.Call("ShouldItemDisplay", itemTable) != false and !itemTable.noBusiness and (!itemTable.ShouldShowOnBusiness or (itemTable.ShouldShowOnBusiness and itemTable:ShouldShowOnBusiness(LocalPlayer()) != false))) then
 				local category = itemTable.category
 				local category2 = string.lower(category)
 
@@ -38,6 +38,10 @@ local PANEL = {}
 						local cost = "Price: Free"
 
 						if (itemTable.price and itemTable.price > 0) then
+							if (!nut.currency.IsSet()) then
+								error("Item has price but no currency is set!")
+							end
+						
 							cost = "Price: "..nut.currency.GetName(itemTable.price or 0)
 						end
 
@@ -72,6 +76,10 @@ local PANEL = {}
 					local cost = "Price: Free"
 
 					if (itemTable.price and itemTable.price > 0) then
+						if (!nut.currency.IsSet()) then
+							error("Item has price but no currency is set!")
+						end
+
 						cost = "Price: "..nut.currency.GetName(itemTable.price or 0)
 					end
 
