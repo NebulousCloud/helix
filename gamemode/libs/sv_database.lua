@@ -12,6 +12,10 @@ local dbModule = nut.config.dbModule
 if (dbModule != "sqlite") then
 	require(nut.config.dbModule)
 else
+	local SQL_CURR_VERSION = 0
+	local SQL_CONFIRMING = 0
+	SQL_LOCAL_VERSION = SQL_LOCAL_VERSION or tonumber(file.Read("nutscript/db.txt", "DATA") or 0)
+
 	-- But it does require the script to setup a table.
 	local QUERY_CREATE = [[
 	CREATE TABLE ]]..nut.config.dbTable..[[ (
@@ -37,27 +41,73 @@ else
 	);
 	]]
 
-	if (!sql.TableExists(nut.config.dbTable)) then
-		local result = sql.Query(QUERY_CREATE)
+	local function initializeTables(recreate)
+		local success = true
 
-		if (result == false) then
-			MsgC(Color(255, 0, 0), "NutScript could not create characters table!\n")
-			print(sql.LastError())
+		if (recreate) then
+			sql.Query("DROP TABLE "..nut.config.dbTable)
+			sql.Query("DROP TABLE "..nut.config.dbPlyTable)
+		end
+
+		if (!sql.TableExists(nut.config.dbTable)) then
+			local result = sql.Query(QUERY_CREATE)
+
+			if (result == false) then
+				MsgC(Color(255, 0, 0), "NutScript could not create characters table!\n")
+				print(sql.LastError())
+				success = false
+			else
+				MsgC(Color(0, 255, 0), "NutScript has created characters table.\n")
+			end
 		else
-			MsgC(Color(0, 255, 0), "NutScript has created characters table.\n")
+			success = false
+		end
+
+		if (!sql.TableExists(nut.config.dbPlyTable)) then
+			local result = sql.Query(QUERY_CREATE_PLAYERS)
+
+			if (result == false) then
+				MsgC(Color(255, 0, 0), "NutScript could not create players table!\n")
+				print(sql.LastError())
+				success = false
+			else
+				MsgC(Color(0, 255, 0), "NutScript has created players table.\n")
+			end
+		else
+			success = false
+		end
+
+		if (success) then
+			MsgC(Color(0, 255, 0), "NutScript has created database tables correctly!\n")
+			file.Write("nutscript/db.txt", SQL_CURR_VERSION)
+			SQL_LOCAL_VERSION = SQL_CURR_VERSION
 		end
 	end
 
-	if (!sql.TableExists(nut.config.dbPlyTable)) then
-		local result = sql.Query(QUERY_CREATE_PLAYERS)
+	initializeTables()
 
-		if (result == false) then
-			MsgC(Color(255, 0, 0), "NutScript could not create players table!\n")
-			print(sql.LastError())
-		else
-			MsgC(Color(0, 255, 0), "NutScript has created players table.\n")
-		end
+	if (SQL_LOCAL_VERSION != SQL_CURR_VERSION) then
+		MsgC(Color(255, 255, 0), "\nNutScript has had its database tables updated.\n")
+		MsgC(Color(255, 255, 0), "You will need to enter the command: "); MsgN("nut_recreatedb")
+		MsgC(Color(255, 255, 0), "You will need to enter the command: "); MsgN("nut_recreatedb")
+		MsgC(Color(255, 255, 0), "Updating the tables will remove ALL pre-existing data.\n")
+		MsgC(Color(255, 255, 0), "Not updating the tables MAY CAUSE SAVING/LOADED ERRORS!\n\n")
 	end
+
+	concommand.Add("nut_recreatedb", function(client, command, arguments)
+		if (!IsValid(client) or client:IsListenServerHost()) then
+			if ((!SQL_CONFIRMING or SQL_CONFIRMING < CurTime()) and SQL_LOCAL_VERSION == SQL_CURR_VERSION) then
+				MsgN("NutScript has verified that the table versions match.")
+				MsgN("If you would like to recreate the tables, type the command again within 10 seconds.")
+				SQL_CONFIRMING = CurTime() + 10
+
+				return
+			end
+
+			initializeTables(true)
+			SQL_CONFIRMING = 0
+		end
+	end)
 end
 
 --[[
