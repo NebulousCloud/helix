@@ -299,6 +299,14 @@ function GM:PlayerCanSeeBusiness()
 	return true
 end
 
+function GM:PlayerBindPress(client, bind, pressed)
+	local entity = Entity(client:GetNetVar("ragdoll", -1))
+
+	if (!client:GetNetVar("gettingUp") and IsValid(entity) and string.find(bind, "+jump") and pressed) then
+		RunConsoleCommand("nut", "chargetup")
+	end
+end
+
 netstream.Hook("nut_CurTime", function(data)
 	nut.curTime = data
 end)

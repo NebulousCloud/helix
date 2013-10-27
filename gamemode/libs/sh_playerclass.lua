@@ -122,6 +122,10 @@ end
 -- Player ragdoll.
 do
 	function playerMeta:IsPenetrating()
+		if (!self:IsInWorld()) then
+			return false
+		end
+		
 		local physicsObject = self:GetPhysicsObject()
 		local position = self:GetPos()
 		local entities = ents.FindInBox(position + Vector(-32, -32, 0), position + Vector(32, 32, 84))
@@ -181,6 +185,7 @@ do
 			self:Freeze(true)
 			self:SetNetVar("ragdoll", self.ragdoll:EntIndex())
 			self:SetNoDraw(true)
+			self:SetNotSolid(true)
 
 			local uniqueID = "nut_RagSafePos"..self:EntIndex()
 
@@ -226,6 +231,7 @@ do
 			self:SetNetVar("ragdoll", 0)
 			self:DropToFloor()
 			self:SetMainBar()
+			self:SetNotSolid(false)
 			self:SetNutVar("lastPos", nil)
 
 			if (isValid) then
@@ -297,12 +303,6 @@ do
 			end
 		end)
 	end
-
-	hook.Add("ShouldCollide", "nut_RagdollPlayer", function(entity, entity2)
-		if (entity:IsPlayer() and entity:GetNetVar("ragdoll", 0) != 0 and !entity2:IsWorld()) then
-			return false
-		end
-	end)
 end
 
 -- Player nut variable accessors.
