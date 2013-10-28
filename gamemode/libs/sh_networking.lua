@@ -71,6 +71,8 @@ if (SERVER) then
 					end
 				end
 			end
+		elseif (self.nut_NetVars) then
+			netstream.Start(receiver, "nut_EntityNilVar", {self:EntIndex(), key})
 		end
 	end
 
@@ -116,6 +118,12 @@ else
 
 	netstream.Hook("nut_EntityVarClean", function(data)
 		NUT_ENT_REGISTRY[data] = nil
+	end)
+
+	netstream.Hook("nut_EntityNilVar", function(data)
+		if (NUT_ENT_REGISTRY[data[1]]) then
+			NUT_ENT_REGISTRY[data[1]][data[2]] = nil
+		end
 	end)
 
 	netstream.Hook("nut_EntityVar", function(data)
