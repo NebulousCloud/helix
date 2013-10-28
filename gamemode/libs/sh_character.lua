@@ -56,14 +56,6 @@ CHAR_PUBLIC = 1
 CHAR_PRIVATE = 2
 
 --[[
-	Purpose: A nice name for printing characters rather than just stating
-	it is a table.
---]]
-function META:__tostring()
-	return "Character ["..(IsValid(character.player) and character.player:Name() or "NULL").."]["..self:GetVar("charname", "John Doe").."]"
-end
-
---[[
 	Purpose: Predefines a variable and places it in the correct table for type
 	of variables that will be used for networking. It also sets a default value
 	with the second argument.
@@ -145,9 +137,9 @@ end
 	value if the second argument is specified.
 --]]
 function META:GetVar(name, default)
-	if (self.privateVars[name]) then
+	if (self.privateVars and self.privateVars[name]) then
 		return self.privateVars[name]
-	elseif (self.publicVars[name]) then
+	elseif (self.publicVars and self.publicVars[name]) then
 		return self.publicVars[name]
 	else
 		return default
@@ -239,7 +231,20 @@ function META:Send(variable, receiver, noDelta)
 	end
 end
 
-setmetatable(META, {})
+--[[
+	Purpose: A nice name for printing characters rather than just stating
+	it is a table.
+--]]
+function META.__tostring(character)
+	return "Character ["..(IsValid(character.player) and character.player:SteamName() or "NULL").."]["..character:GetVar("charname", "John Doe").."]"
+end
+
+setmetatable(META, {
+	__tostring = function(character)
+		return "Character ["..(IsValid(character.player) and character.player:SteamName() or "NULL").."]["..character:GetVar("charname", "John Doe").."]"
+	end
+})
+debug.getregistry().Character = META
 
 --[[
 	Purpose: Returns a new character that has the owner set to the first argument,
