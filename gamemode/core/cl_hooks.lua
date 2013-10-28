@@ -150,9 +150,9 @@ function GM:HUDPaintTargetID(entity)
 
 					if (v:IsTyping()) then
 						local text = "Typing..."
-						local typingText = v:GetNetVar("typing", "")
+						local typingText = v:GetNetVar("typing")
 
-						if (nut.config.showTypingText and type(typingText) == "string") then
+						if (nut.config.showTypingText and typingText and type(typingText) == "string") then
 							text = "("..typingText..")"
 						end
 

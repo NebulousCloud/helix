@@ -215,12 +215,12 @@ if (CLIENT) then
 
 	hook.Add("ChatOpened", "nut_Typing", function(teamChat)
 		if (!nut.config.showTypingText) then
-			netstream.Start("nut_Typing", "1")
+			netstream.Start("nut_Typing", true)
 		end
 	end)
 
 	hook.Add("FinishChat", "nut_Typing", function(teamChat)
-		netstream.Start("nut_Typing", "")
+		netstream.Start("nut_Typing", nil)
 	end)
 
 	local nextSend = 0
