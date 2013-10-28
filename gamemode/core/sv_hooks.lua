@@ -329,6 +329,14 @@ function GM:SaveTime()
 	nut.util.WriteTable("date", tostring(nut.util.GetTime()), true)
 end
 
+function GM:PlayerUse(client, entity)
+	if (entity.NoUse) then
+		return false
+	end
+
+	return true
+end
+
 function GM:KeyPress(client, key)
 	local config = nut.config
 
