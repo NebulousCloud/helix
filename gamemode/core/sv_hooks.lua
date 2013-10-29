@@ -323,6 +323,10 @@ function GM:Initialize()
 	else
 		nut.curTime = date[1] or time
 	end
+
+	if (!nut.config.noPersist) then
+		game.ConsoleCommand("sbox_persist 1\n")
+	end
 end
 
 function GM:SaveTime()

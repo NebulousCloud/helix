@@ -64,5 +64,9 @@ nut.config.oocDelay = 0
 -- Clears the map of unwanted entities. (props, vehicles, etc...)
 nut.config.clearMaps = true
 
+-- Whether or not holding C and pressing Persist will NOT persist props.
+-- If set to false or nil, the gamemode will automatically turn on sbox_persist.
+nut.config.noPersist = false
+
 -- The model for dropped money.
 nut.config.moneyModel = "models/props_lab/box01a.mdl"
