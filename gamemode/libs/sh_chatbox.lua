@@ -82,7 +82,8 @@ do
 		prefix = {".//", "[[", "/looc"},
 		canSay = function(speaker)
 			return true
-		end
+		end,
+		noSpacing = true
 	})
 
 	nut.chat.Register("pm", {
@@ -161,7 +162,8 @@ do
 			nut.util.Notify("You must wait "..math.ceil(nextOOC - CurTime()).." more second(s) before using OOC.", client)
 
 			return false
-		end
+		end,
+		noSpacing = true
 	})
 
 	nut.chat.Register("event", {
@@ -314,9 +316,13 @@ else
 		for k, v in pairs(nut.chat.classes) do
 			if (type(v.prefix) == "table") then
 				for k2, v2 in pairs(v.prefix) do
-					local length = #v2 + 1
+					local length = #v2
 
-					if (string.Left(text2, length) == v2.." ") then
+					if (!v.noSpacing) then
+						length = length + 1
+					end
+
+					if (string.Left(text2, length) == v2..(!v.noSpacing and " " or "")) then
 						mode = k
 						text = string.sub(text, length + 1)
 
