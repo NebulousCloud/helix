@@ -38,7 +38,21 @@ function GM:PaintBar(value, color, x, y, width, height)
 	return y - height - 2
 end
 
-local BAR_WIDTH, BAR_HEIGHT = ScrW() * 0.27, 10
+local NUT_CVAR_BWIDTH = CreateClientConVar("nut_barwscale", "0.27", true)
+local NUT_CVAR_BHEIGHT = CreateClientConVar("nut_barh", "10", true)
+local BAR_WIDTH, BAR_HEIGHT = ScrW() * NUT_CVAR_BWIDTH:GetFloat(), NUT_CVAR_BHEIGHT:GetInt()
+
+cvars.AddChangeCallback("nut_barwscale", function(conVar, oldValue, value)
+	if (NUT_CVAR_BWIDTH:GetFloat() == 0) then
+		BAR_WIDTH = 0
+	else
+		BAR_WIDTH = math.max(ScrW() * NUT_CVAR_BWIDTH:GetFloat(), 8)
+	end
+end)
+
+cvars.AddChangeCallback("nut_barh", function(conVar, oldValue, value)
+	BAR_HEIGHT = math.max(NUT_CVAR_BHEIGHT:GetInt(), 3)
+end)
 
 function GM:HUDPaint()
 	if (!nut.loaded) then
