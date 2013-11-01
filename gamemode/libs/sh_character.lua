@@ -490,7 +490,7 @@ if (SERVER) then
 			return
 		end
 
-		if (client.characters and #client.characters >= nut.config.maxChars) then
+		if (client.characters and table.Count(client.characters) >= nut.config.maxChars) then
 			return
 		end
 
@@ -586,6 +586,12 @@ if (SERVER) then
 	-- Deletes a character from the database if it exists.
 	netstream.Hook("nut_CharDelete", function(client, index)
 		if (client.characters and table.HasValue(client.characters, index)) then
+			for k, v in pairs(client.characters) do
+				if (v == index) then
+					client.characters[k] = nil
+				end
+			end
+
 			nut.db.Query("DELETE FROM "..nut.config.dbTable.." WHERE steamid = "..client:SteamID64().." AND id = "..index..sameSchema(), function(data)
 				if (IsValid(client) and client.character and client.character.index == index) then
 					if (client.nut_CachedChars) then

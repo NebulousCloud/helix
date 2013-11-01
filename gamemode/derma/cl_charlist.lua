@@ -3,7 +3,7 @@ local PANEL = {}
 		local index = self.currentIndex + (nextChar and 1 or -1)
 		local characters = LocalPlayer().characters
 
-		if (!characters or #characters < 1) then
+		if (!characters or table.Count(characters) < 1) then
 			self.model:Remove()
 			self.prev:Remove()
 			self.next:Remove()
@@ -58,7 +58,7 @@ local PANEL = {}
 
 		local characters = LocalPlayer().characters
 
-		if (!characters or #characters < 1) then
+		if (!characters or table.Count(characters) < 1) then
 			self.fault = self:Add("DLabel")
 			self.fault:SetText("You do not have any characters.")
 			self.fault:SetFont("nut_MenuButtonFont")

@@ -61,7 +61,7 @@ local PANEL = {}
 
 		self.characters = {}
 
-		if (LocalPlayer().characters and #LocalPlayer().characters > 0) then
+		if (LocalPlayer().characters and table.Count(LocalPlayer().characters) > 0) then
 			for k, v in SortedPairsByMemberValue(LocalPlayer().characters, "id", true) do
 				local color = nut.config.mainColor
 				local r, g, b = color.r, color.g, color.b
@@ -107,7 +107,7 @@ local PANEL = {}
 					return false
 				end
 
-				if (LocalPlayer().characters and #LocalPlayer().characters >= nut.config.maxChars) then
+				if (LocalPlayer().characters and table.Count(LocalPlayer().characters) >= nut.config.maxChars) then
 					return false
 				end
 
