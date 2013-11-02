@@ -3,7 +3,7 @@ NutScript
 
 A free role-play framework for Garry's Mod. Please note that this version is under development and should only be used for developing a schema early, or assisting with development on the schema.
 
-#### Check out the wiki @ http://ns.chessnut.info/
+#### Check out the official website @ http://chessnut.info/
 
 Installation
 =========
