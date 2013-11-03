@@ -302,6 +302,14 @@ do
 			doesn't actually remove the item from an inventory.
 		--]]
 		function nut.item.Spawn(position, angles, itemTable, data)
+			if (type(itemTable) == "string") then
+				itemTable = nut.item.Get(itemTable)
+			end
+
+			if (!itemTable) then
+				error("Attempt to spawn item without itemtable!")
+			end
+			
 			local entity = ents.Create("nut_item")
 			entity:SetPos(position)
 			entity:SetAngles(angles or Angle())
