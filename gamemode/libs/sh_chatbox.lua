@@ -87,7 +87,7 @@ do
 	})
 
 	nut.chat.Register("pm", {
-		canHear = nut.config.chatRange,
+		canHear = function() return false end,
 		deadCanTalk = true,
 		onChat = function(speaker, text)
 			chat.AddText(Color(220, 220, 220), "[PM] ", Color(132, 98, 128), text)
