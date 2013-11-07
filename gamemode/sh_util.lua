@@ -628,3 +628,10 @@ function nut.util.GetTime()
 
 	return 0
 end
+
+local date = os.date
+local time = os.time
+
+function nut.util.GetUTCTime()
+	return time(date("!*t"))
+end
