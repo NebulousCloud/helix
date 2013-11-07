@@ -68,7 +68,7 @@ if (CLIENT) then
 			y = y + nut.config.targetTall
 			color = Color(255, 255, 255, alpha)
 
-			nut.util.DrawText(x, y, string.gsub(itemTable:GetDesc(data), "\n", ""), color, "nut_TargetFontSmall")
+			nut.util.DrawText(x, y, string.gsub(itemTable:GetDesc(data), "\n", " "), color, "nut_TargetFontSmall")
 
 			if (itemTable.Paint) then
 				itemTable.data = data
