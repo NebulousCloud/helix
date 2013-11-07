@@ -1,3 +1,5 @@
+PLUGIN.commands = {}
+
 local timeData = {
 	{"y", 525600},
 	{"mo", 43200},
@@ -55,6 +57,8 @@ function PLUGIN:CreateCommand(data, command)
 		allowDead = true
 	end
 
+	self.commands[command] = data
+	
 	nut.command.Register({
 		syntax = (hasTarget and "<string target> " or "")..syntax,
 		allowDead = allowDead,
