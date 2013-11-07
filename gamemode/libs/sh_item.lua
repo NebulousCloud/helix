@@ -54,7 +54,8 @@ function nut.item.Register(itemTable, isBase)
 					}
 					local trace = util.TraceLine(data2)
 					local position = trace.HitPos + Vector(0, 0, 16)
-
+					
+					client:EmitSound("physics/body/body_medium_impact_soft"..math.random(1, 3)..".wav")
 					nut.item.Spawn(position, client:EyeAngles(), itemTable, data)
 				end
 			end
@@ -67,6 +68,7 @@ function nut.item.Register(itemTable, isBase)
 				if (SERVER) then
 					local itemTable = entity:GetItemTable()
 					local data = entity:GetData()
+					client:EmitSound("physics/body/body_medium_impact_soft"..math.random(5, 7)..".wav")
 
 					return client:UpdateInv(itemTable.uniqueID, 1, data)
 				end
@@ -404,7 +406,11 @@ do
 
 		index = index or 1
 
-		return self:GetInventory()[class][index]
+		if (index == 1) then
+			return table.GetFirstValue(self:GetInventory()[class])
+		else
+			return self:GetInventory()[class][index]
+		end
 	end
 
 	function playerMeta:GetItemsByClass(class)
