@@ -147,7 +147,13 @@ do
 				icon = ICON_HEART
 			end
 
-			chat.AddText(icon, Color(250, 40, 40), "[OOC] ", speaker, color_white, ": "..text)
+			local override = nut.schema.Call("GetUserIcon", speaker)
+
+			if (override and type(override) != "IMaterial") then
+				override = Material(override)
+			end
+
+			chat.AddText(override or icon, Color(250, 40, 40), "[OOC] ", speaker, color_white, ": "..text)
 		end,
 		prefix = {"//", "/ooc"},
 		deadCanTalk = true,
