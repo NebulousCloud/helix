@@ -112,16 +112,20 @@ function GM:PhysgunPickup(client, entity)
 	if (client:IsAdmin()) then
 		if (entity:IsPlayer()) then
 			entity:SetMoveType(MOVETYPE_NOCLIP)
-		end
 
-		return true
+			return true
+		end
 	end
 
 	if (entity.PhysgunDisable) then
+		if (entity.PhysgunAllowAdmin and client:IsAdmin()) then
+			return  true
+		end
+		
 		return false
 	end
 
-	return !entity:IsPlayer() and !entity:IsNPC()
+	return entity:IsAdmin() or (!entity:IsPlayer() and !entity:IsNPC())
 end
 
 function GM:PhysgunDrop(client, entity)
