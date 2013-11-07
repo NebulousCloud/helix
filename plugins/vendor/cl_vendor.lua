@@ -80,7 +80,7 @@ local PANEL = {}
 				local list = self.categories[category2].list
 				local icon = list:Add("SpawnIcon")
 
-				icon:SetModel(itemTable.model or "models/error.mdl")
+				icon:SetModel(itemTable.model or "models/error.mdl", itemTable.skin)
 
 				local price = itemTable.price or 0
 				local cost = "Price: "..nut.currency.GetName(price)

@@ -33,7 +33,7 @@ local PANEL = {}
 						end
 					category3:SetContents(list)
 						local icon = list:Add("SpawnIcon")
-						icon:SetModel(itemTable.model or "models/error.mdl")
+						icon:SetModel(itemTable.model or "models/error.mdl", itemTable.skin)
 
 						local cost = "Price: Free"
 
@@ -71,7 +71,7 @@ local PANEL = {}
 				else
 					local list = self.categories[category2].list
 					local icon = list:Add("SpawnIcon")
-					icon:SetModel(itemTable.model or "models/error.mdl")
+					icon:SetModel(itemTable.model or "models/error.mdl", itemTable.skin)
 
 					local cost = "Price: Free"
 
