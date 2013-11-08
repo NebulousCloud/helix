@@ -262,6 +262,8 @@ if (CLIENT) then
 else
 	netstream.Hook("nut_Typing", function(client, data)
 		client:SetNetVar("typing", data)
+
+		nut.schema.Call("PlayerTyping", client, data)
 	end)
 
 	-- Send a chat class to the clients that can hear it based off the classes's canHear function.
