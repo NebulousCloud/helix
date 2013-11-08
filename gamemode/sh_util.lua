@@ -59,10 +59,12 @@ function nut.util.GetRandomNum(digits)
 		error("Number of digits must be greater than 1.")
 	end
 
+	math.randomseed(CurTime())
+
 	local output = ""
 
 	for i = 1, digits do
-		output = output..math.random(0, 9)
+		output = output..math.Clamp(math.Round(math.random(0, 999) / 100), 0, 9)
 	end
 
 	return output
