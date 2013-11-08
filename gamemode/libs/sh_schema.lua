@@ -24,8 +24,9 @@ function nut.schema.Init()
 		folderName = GM.FolderName
 	}
 
+	nut.util.IncludeDir("schema/libs")
 	nut.util.Include("schema/sh_schema.lua")
-
+	
 	nut.faction.Load(SCHEMA.folderName.."/gamemode/schema")
 	nut.class.Load(SCHEMA.folderName.."/gamemode/schema")
 	
