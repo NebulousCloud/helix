@@ -12,12 +12,13 @@ if (SERVER) then
 		if (#areas > 0) then
 			for k = 1, #areas do
 				local v = areas[k]
-				
-				for k2, v2 in pairs(ents.FindInBox(v.min, v.max)) do
+				local entities = ents.FindInBox(v.min, v.max)
+
+				for k2, v2 in pairs(entities) do
 					if (v2:IsPlayer() and v2.character and v2:GetNetVar("area", "") != v.name) then
 						v2:SetNetVar("area", v.name)
 
-						nut.schema.Call("PlayerEnterArea", v2, v)
+						nut.schema.Call("PlayerEnterArea", v2, v, entities)
 						netstream.Start(nil, "nut_PlayerEnterArea", v2)
 					end
 				end
