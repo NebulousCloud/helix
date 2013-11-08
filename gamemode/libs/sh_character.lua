@@ -579,6 +579,7 @@ if (SERVER) then
 				client:Spawn()
 
 				nut.schema.Call("PlayerLoadedChar", client)
+				nut.schema.Call("PostPlayerSpawn", client)
 			end
 		end)
 	end)
