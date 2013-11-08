@@ -20,7 +20,7 @@ if (SERVER) then
 	end)
 
 	local function initiateHandShake(client, entity, key)
-		if (!key or !IsValid(entity)) then
+		if (!IsValid(client) or !key or !IsValid(entity)) then
 			return
 		end
 
