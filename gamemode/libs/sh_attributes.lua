@@ -76,6 +76,8 @@ do
 				if (attribute.setup) then
 					attribute.setup(self, current + value)
 				end
+
+				nut.schema.Call("PlayerAttribUpdated", self, index, value, current + value)
 			end
 		end
 	end
