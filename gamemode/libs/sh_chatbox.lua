@@ -165,7 +165,7 @@ do
 				return true
 			end
 
-			nut.util.Notify("You must wait "..math.ceil(nextOOC - CurTime()).." more second(s) before using OOC.", client)
+			nut.util.Notify("You must wait "..math.ceil(nextOOC - CurTime()).." more second(s) before using OOC.", speaker)
 
 			return false
 		end,
@@ -266,14 +266,21 @@ else
 		nut.schema.Call("PlayerTyping", client, data)
 	end)
 
+	-- Returns whether or not a player can use a certain chat class.
+	function nut.chat.CanSay(client, mode)
+		local class = nut.chat.classes[mode]
+
+		if (!class) then
+			return false
+		end
+
+		return class.canSay(client)
+	end
+
 	-- Send a chat class to the clients that can hear it based off the classes's canHear function.
 	function nut.chat.Send(client, mode, text)
 		local listeners = {client}
 		local class = nut.chat.classes[mode]
-
-		if (!class.canSay(client)) then
-			return ""
-		end
 
 		for k, v in pairs(player.GetAll()) do
 			if (class.canHear(client, v)) then
@@ -355,10 +362,13 @@ else
 			if (value) then
 				return value
 			end
-
-			text = nut.schema.Call("PrePlayerSay", client, text, mode) or text
 		end
 
+		if (!nut.chat.CanSay(client, mode)) then
+			return ""
+		end
+
+		text = nut.schema.Call("PrePlayerSay", client, text, mode) or text
 		nut.chat.Send(client, mode, text)
 
 		return ""
