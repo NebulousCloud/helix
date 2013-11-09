@@ -59,7 +59,7 @@ nut.config.allowVoice = false
 nut.config.voice3D = false
 
 -- The delay between OOC messages for a player in seconds.
-nut.config.oocDelay = 0
+nut.config.oocDelay = 10
 
 -- Clears the map of unwanted entities. (props, vehicles, etc...)
 nut.config.clearMaps = true
