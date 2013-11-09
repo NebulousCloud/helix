@@ -125,7 +125,7 @@ function GM:PhysgunPickup(client, entity)
 		return false
 	end
 
-	return entity:IsAdmin() or (!entity:IsPlayer() and !entity:IsNPC())
+	return client:IsAdmin() or (!entity:IsPlayer() and !entity:IsNPC())
 end
 
 function GM:PhysgunDrop(client, entity)
