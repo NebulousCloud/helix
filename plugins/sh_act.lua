@@ -138,6 +138,10 @@ if (SERVER) then
 	function PLUGIN:PlayerDeath(client)
 		self:PlayerExitSeq(client)
 	end
+
+	function PLUGIN:PlayerSpawn(client)
+		self:PlayerExitSeq(client)
+	end
 else
 
 	PLUGIN.AngMod = Angle( 0, 0, 0 )
