@@ -90,6 +90,26 @@ function GM:HUDPaint()
 
 	nut.schema.Call("HUDPaintTargetID", trace.Entity)
 
+	if (nut.config.crosshair) then
+		local x, y = ScrW() * 0.5 - 2, ScrH() * 0.5 - 2
+		local size = nut.config.crossSize or 1
+		local size2 = size + 2
+		local spacing = nut.config.crossSpacing or 5
+		local alpha = nut.config.crossAlpha or 150
+
+		surface.SetDrawColor(25, 25, 25, alpha)
+		surface.DrawOutlinedRect(x-1 - spacing, y-1 - spacing, size2, size2)
+		surface.DrawOutlinedRect(x-1 + spacing, y-1 - spacing, size2, size2)
+		surface.DrawOutlinedRect(x-1 - spacing, y-1 + spacing, size2, size2)
+		surface.DrawOutlinedRect(x-1 + spacing, y-1 + spacing, size2, size2)
+
+		surface.SetDrawColor(230, 230, 230, alpha)
+		surface.DrawRect(x - spacing, y - spacing, size, size)
+		surface.DrawRect(x + spacing, y - spacing, size, size)
+		surface.DrawRect(x - spacing, y + spacing, size, size)
+		surface.DrawRect(x + spacing, y + spacing, size, size)
+	end
+
 	local x = 8
 	local y = ScrH() - BAR_HEIGHT - 8
 

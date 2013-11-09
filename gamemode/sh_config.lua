@@ -124,6 +124,19 @@ if (CLIENT) then
 
 	-- If set to false, then color correction will not be enabled.
 	nut.config.sadColors = true
+
+	-- Whether or not to enable the crosshair.
+	nut.config.crosshair = true
+
+	-- The dot size of the crosshair.
+	nut.config.crossSize = 1
+
+	-- The amount of spacing beween each crosshair dot in pixels.
+	nut.config.crossSpacing = 6
+
+	-- How 'see-through' the crosshair is from 0-255, where 0 is invisible and 255 is fully
+	-- visible.
+	nut.config.crossAlpha = 150
 	
 	hook.Add("SchemaInitialized", "nut_FontConfig", function()
 		surface.SetFont("nut_TargetFontSmall")
