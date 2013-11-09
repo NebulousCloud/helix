@@ -348,6 +348,7 @@ else
 		end
 
 		mode = mode or "ic"
+		text = nut.schema.Call("PrePlayerSay", client, text, mode) or text
 
 		if (mode == "ic") then
 			local value = nut.command.ParseCommand(client, text)

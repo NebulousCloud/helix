@@ -317,7 +317,6 @@ else
 	netstream.Hook("nut_PlayerSay", function(client, data)
 		if ((client.nextTalk or 0) < CurTime()) then
 			client.nextTalk = CurTime() + 0.5
-			data = nut.schema.Call("PrePlayerSay", client, data) or data
 
 			-- Hacky method of allowing large text.
 			hook.Run("PlayerSay", client, data, true)
