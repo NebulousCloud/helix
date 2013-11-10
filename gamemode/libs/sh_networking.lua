@@ -162,9 +162,21 @@ end
 
 function entityMeta:GetNetVar(key, default)
 	if (SERVER and self.nut_NetVars) then
-		return self.nut_NetVars[key] or default
+		local value = self.nut_NetVars[key]
+
+		if (value == nil) then
+			return default
+		end
+
+		return value
 	elseif (CLIENT and NUT_ENT_REGISTRY[self:EntIndex()]) then
-		return NUT_ENT_REGISTRY[self:EntIndex()][key] or default
+		local value = NUT_ENT_REGISTRY[self:EntIndex()][key] 
+
+		if (value == nil) then
+			return default
+		end
+		
+		return value
 	end
 
 	return default
