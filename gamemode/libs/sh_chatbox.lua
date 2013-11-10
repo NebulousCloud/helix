@@ -277,14 +277,37 @@ else
 		return class.canSay(client)
 	end
 
+	-- Returns a table of players that can hear a speaker.
+	function nut.chat.GetListeners(client, mode, excludeClient)
+		local class = nut.chat.classes[mode]
+		local listeners = excludeClient and {} or {client}
+
+		if (class) then
+			for k, v in pairs(player.GetAll()) do
+				if (class.canHear(client, v)) then
+					listeners[#listeners + 1] = v
+				end
+			end
+		end
+
+		return listeners
+	end
+
 	-- Send a chat class to the clients that can hear it based off the classes's canHear function.
-	function nut.chat.Send(client, mode, text)
-		local listeners = {client}
+	function nut.chat.Send(client, mode, text, listeners)
 		local class = nut.chat.classes[mode]
 
-		for k, v in pairs(player.GetAll()) do
-			if (class.canHear(client, v)) then
-				listeners[#listeners + 1] = v
+		if (!class) then
+			return
+		end
+
+		if (!listeners) then
+			listeners = {client}
+
+			for k, v in pairs(player.GetAll()) do
+				if (class.canHear(client, v) and v != client) then
+					listeners[#listeners + 1] = v
+				end
 			end
 		end
 
@@ -315,6 +338,8 @@ else
 		MsgC(color_white, ": ")
 		MsgC(Color(200, 200, 200), "("..string.upper(mode)..") ")
 		MsgC(color_white, text.."\n")
+
+		return listeners
 	end
 
 	-- Proccess the text and see if it is a chat class or chat command.
@@ -368,8 +393,10 @@ else
 			return ""
 		end
 
-		text = nut.schema.Call("PrePlayerSay", client, text, mode) or text
-		nut.chat.Send(client, mode, text)
+		local listeners = nut.chat.GetListeners(client, mode)
+
+		text = nut.schema.Call("PrePlayerSay", client, text, mode, listeners) or text
+		nut.chat.Send(client, mode, text, listeners)
 
 		return ""
 	end
