@@ -41,6 +41,13 @@ if (SERVER) then
 			self:Remove()
 		end
 	end
+
+	function ENT:StartTouch(entity)
+		if (entity:GetClass() == "nut_money") then
+			self:SetMoney(self:GetNetVar("amount", 0) + entity:GetNetVar("amount", 0))
+			entity:Remove()
+		end
+	end
 else
 	function ENT:DrawTargetID(x, y, alpha)
 		nut.util.DrawText(x, y, nut.currency.GetName(self:GetNetVar("amount", 0), true), Color(255, 255, 255, alpha))
