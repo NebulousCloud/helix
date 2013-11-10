@@ -315,6 +315,7 @@ do
 			local entity = ents.Create("nut_item")
 			entity:SetPos(position)
 			entity:SetAngles(angles or Angle())
+			entity:SetSkin(itemTable.skin or 0)
 			entity:Spawn()
 			entity:SetModel(itemTable.GetDropModel and itemTable:GetDropModel() or itemTable.model)
 			entity:PhysicsInit(SOLID_VPHYSICS)
