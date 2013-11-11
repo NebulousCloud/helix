@@ -140,29 +140,39 @@ nut.command.Register({
 	allowDead = true,
 	onRun = function(client, arguments)
 		local text = table.concat(arguments, " ")
-		
-		if (!text) then
-			nut.util.Notify("You provided an invalid description.", client)
+		local function changeDesc()
+			if (!text) then
+				nut.util.Notify("You provided an invalid description.", client)
+				
+				return
+			end
+
+			if (#text < nut.config.descMinChars) then
+				nut.util.Notify("Your description needs to be at least "..nut.config.descMinChars.." character(s).", client)
+
+				return
+			end
+
+			local description = client.character:GetVar("description", "")
 			
-			return
-		end
-
-		if (#text < nut.config.descMinChars) then
-			nut.util.Notify("Your description needs to be at least "..nut.config.descMinChars.." character(s).", client)
-
-			return
-		end
-
-		local description = client.character:GetVar("description", "")
-		
-		if (string.lower(description) == string.lower(text)) then
-			nut.util.Notify("You need to provide a different description.", client)
+			if (string.lower(description) == string.lower(text)) then
+				nut.util.Notify("You need to provide a different description.", client)
+				
+				return
+			end
 			
-			return
+			client.character:SetVar("description", text)
+			nut.util.Notify("You have changed your character's description.", client)
 		end
-		
-		client.character:SetVar("description", text)
-		nut.util.Notify("You have changed your character's description.", client)
+
+		if (!string.find(text, "%S")) then
+			client:StringRequest("Change Description", "Entire your desired description.", function(text2)
+				text = text2
+				changeDesc()
+			end, nil, client.character:GetVar("description", ""))
+		else
+			changeDesc()
+		end
 	end
 }, "chardesc")
 
@@ -272,17 +282,28 @@ nut.command.Register({
 	syntax = "<string name> <string flag>",
 	onRun = function(client, arguments)
 		local target = nut.command.FindPlayer(client, arguments[1])
+		local flags = table.concat(arguments, " ", 2)
+		local function takeFlag()
+			if (IsValid(target)) then
+				if (!flags) then
+					nut.util.Notify(nut.lang.Get("missing_arg", 2), client)
 
-		if (IsValid(target)) then
-			if (!arguments[2]) then
-				nut.util.Notify(nut.lang.Get("missing_arg", 2), client)
+					return
+				end
 
-				return
+				target:TakeFlag(flags)
+
+				nut.util.Notify(nut.lang.Get("flags_take", client:Name(), flags, target:Name()))
 			end
+		end
 
-			target:TakeFlag(arguments[2])
-
-			nut.util.Notify(nut.lang.Get("flags_take", client:Name(), arguments[2], target:Name()))
+		if (!string.find(flags, "%S")) then
+			client:StringRequest("Take Flags", "Enter the flag(s) to take from the player.", function(text)
+				flags = text
+				takeFlag()
+			end, nil, target:GetFlagString())
+		else
+			takeFlag()
 		end
 	end
 }, "flagtake")
@@ -405,14 +426,28 @@ nut.command.Register({
 			table.remove(arguments, 1)
 
 			local name = table.concat(arguments, " ")
+			local function changeName(text)
+				if (!IsValid(target) or !IsValid(client)) then
+					return
+				end
 
-			if (name and string.find(name, "%S")) then
-				local oldName = target:Name()
-				target.character:SetVar("charname", name)
+				if (name and string.find(name, "%S")) then
+					local oldName = target:Name()
+					target.character:SetVar("charname", name)
 
-				nut.util.Notify(client:Name().." has changed "..oldName.."'s name to "..name..".")
+					nut.util.Notify(client:Name().." has changed "..oldName.."'s name to "..name..".")
+				else
+					nut.util.Notify("You provided an invalid name.", client)
+				end
+			end
+
+			if (!string.find(name, "%S")) then
+				client:StringRequest("Change Name", "Enter the player's new name.", function(text)
+					name = text
+					changeName()
+				end, nil, target:Name())
 			else
-				nut.util.Notify("You provided an invalid name.", client)
+				changeName()
 			end
 		end
 	end
