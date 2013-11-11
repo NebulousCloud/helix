@@ -609,6 +609,10 @@ do
 				return
 			end
 
+			if (itemTable:ShouldShowOnBusiness(client) == false) then
+				return
+			end
+
 			local price = itemTable.price
 
 			if (client:CanAfford(price)) then
