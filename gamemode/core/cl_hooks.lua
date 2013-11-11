@@ -9,11 +9,9 @@ function GM:HUDShouldDraw(element)
 	if (element == "CHudHealth" or element == "CHudBattery" or element == "CHudAmmo" or element == "CHudSecondaryAmmo") then
 		return false
 	end
-
-	if (IsValid(nut.gui.charMenu)) then
-		if (element == "CHudCrosshair") then
-			return false
-		end
+	
+	if (element == "CHudCrosshair") then
+		return false
 	end
 
 	return true
