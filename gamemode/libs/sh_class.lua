@@ -117,7 +117,8 @@ do
 					if (result == false) then
 						return
 					end
-					
+
+					self.character.model = class.model or self.character.model
 					self.character:SetData("class", index)
 				end
 			end
