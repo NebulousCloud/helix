@@ -77,7 +77,7 @@ if (SERVER) then
 		if !client.nextLock or client.nextLock <= CurTime() then
 			if entity.lock then return nut.util.Notify( nut.lang.Get( "lock_locked" )  , client) end
 			
-			if ( classic == 1 ) then
+			if ( classic == true ) then
 				local locknum = math.random( 1, 999999 )
 				entity.lock = locknum
 				entity.classic = true
@@ -85,7 +85,7 @@ if (SERVER) then
 					lock = locknum
 				} )
 				client:UpdateInv( "classic_locker_1", -1 )
-			elseif ( classic == 0 ) then
+			elseif ( classic == false ) then
 				entity.lock = password
 				client:UpdateInv( "digital_locker_1", -1 )
 			end	
