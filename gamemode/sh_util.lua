@@ -637,3 +637,60 @@ local time = os.time
 function nut.util.GetUTCTime()
 	return time(date("!*t"))
 end
+
+if (SERVER) then
+	local playerMeta = FindMetaTable("Player")
+
+	function playerMeta:StringRequest(title, text, onConfirm, onCancel, default)
+		self:SetNutVar("reqConfirm", onConfirm)
+		self:SetNutVar("reqCancel", onCancel)
+
+		title = title or "String Request"
+		text = text or "No message"
+		
+		if (!onConfirm) then
+			error("Attempt to create string request without confirm callback.")
+		end
+
+		netstream.Start(self, "nut_StringRequest", {title, text, default})
+	end
+
+	netstream.Hook("nut_StringRequest", function(client, data)
+		local responseCode = data[1]
+		local text = data[2]
+
+		if (responseCode and text) then
+			if (responseCode == 0) then
+				local onConfirm = client:GetNutVar("reqConfirm")
+
+				if (onConfirm) then
+					onConfirm(text)
+				end
+
+				client:SetNutVar("reqConfirm", nil)
+				client:SetNutVar("reqCancel", nil)
+			elseif (responseCode == 1) then
+				local onCancel = client:GetNutVar("reqCancel")
+
+				if (onCancel) then
+					onCancel(text)
+				end
+
+				client:SetNutVar("reqConfirm", nil)
+				client:SetNutVar("reqCancel", nil)
+			end
+		end
+	end)
+else
+	netstream.Hook("nut_StringRequest", function(data)
+		local function confirm(text)
+			netstream.Start("nut_StringRequest", {0, text})
+		end
+
+		local function cancel(text)
+			netstream.Start("nut_StringRequest", {1, text})
+		end
+
+		Derma_StringRequest(data[1], data[2], data[3], confirm, cancel)
+	end)
+end
