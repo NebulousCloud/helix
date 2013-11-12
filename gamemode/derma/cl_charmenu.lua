@@ -128,10 +128,14 @@ local PANEL = {}
 
 				for k, v in ipairs(nut.faction.GetAll()) do
 					if (nut.faction.CanBe(LocalPlayer(), v.index)) then
+						if (!v.name) then
+							ErrorNoHalt("Faction with ID "..k.." ("..(faction.uniqueID or "unknown").." missing name!\n")
+						end
+
 						local button = self.selector:Add("nut_MenuButton")
-						button:SetText(v.name)
+						button:SetText(v.name or (v.uniqueID or "unknown"))
 						button:DockMargin(5, 0, 5, 5)
-						button:SetToolTip(v.desc)
+						button:SetToolTip(v.desc or nut.lang.Get("no_desc"))
 						button:Dock(BOTTOM)
 						button.OnClick = function(panel)
 							nut.gui.charCreate = vgui.Create("nut_CharCreate")
