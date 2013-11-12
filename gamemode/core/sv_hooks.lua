@@ -117,8 +117,20 @@ function GM:PlayerSpawn(client)
 		client:SetBodygroup(k, v)
 	end
 
+	nut.schema.Call("PlayerLoadout", client)
+	
 	nut.flag.OnSpawn(client)
 	nut.attribs.OnSpawn(client)
+
+	local index = client:CharClass()
+
+	if (index) then
+		local classTable = nut.class.Get(index)
+
+		if (classTable and classTable.OnSpawn) then
+			classTable:OnSpawn(client)
+		end
+	end
 end
 
 function GM:PlayerDisconnected(client)
