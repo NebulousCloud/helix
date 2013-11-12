@@ -1,3 +1,4 @@
+local PLUGIN = PLUGIN
 PLUGIN.name = "Persistent Props"
 PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Allows administrators to set props to be persistent through restarts."
@@ -48,6 +49,8 @@ nut.command.Register({
 				else
 					nut.util.Notify("This entity is no longer persisted.", client)
 				end
+
+				PLUGIN:SaveData()
 			else
 				nut.util.Notify("That entity can not be persisted.", client)
 			end
