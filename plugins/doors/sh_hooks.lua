@@ -28,14 +28,8 @@ if (SERVER) then
 		end
 	end
 
-	function PLUGIN:PlayerSpawn(client)
-		timer.Simple(0.1, function()
-			if (!IsValid(client)) then
-				return
-			end
-
-			client:Give("nut_keys")
-		end)
+	function PLUGIN:PlayerLoadout(client)
+		client:Give("nut_keys")
 	end
 
 	function PLUGIN:OnCharChanged(client)
