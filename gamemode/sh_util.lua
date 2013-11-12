@@ -655,6 +655,17 @@ if (SERVER) then
 		netstream.Start(self, "nut_StringRequest", {title, text, default})
 	end
 
+	function playerMeta:ScreenFadeIn(time, color)
+		time = time or 5
+		color = color or Color(25, 25, 25)
+
+		netstream.Start(self, "nut_FadeIn", {color, time})
+	end
+
+	function playerMeta:ScreenFadeOut(time)
+		netstream.Start(self, "nut_FadeOut", {time or 5})
+	end
+
 	netstream.Hook("nut_StringRequest", function(client, data)
 		local responseCode = data[1]
 		local text = data[2]
@@ -692,5 +703,44 @@ else
 		end
 
 		Derma_StringRequest(data[1], data[2], data[3], confirm, cancel)
+	end)
+
+	netstream.Hook("nut_FadeIn", function(data)
+		local color = data[1]
+		local r, g, b, a = color.r, color.g, color.b, color.a or 255
+		local time = data[2]
+		local start = CurTime()
+		local finish = start + time
+
+		nut.fadeColor = color
+
+		hook.Add("HUDPaint", "nut_FadeIn", function()
+			local fraction = math.TimeFraction(start, finish, CurTime())
+
+			surface.SetDrawColor(r, g, b, fraction * a)
+			surface.DrawRect(0, 0, ScrW(), ScrH())
+		end)
+	end)
+
+	netstream.Hook("nut_FadeOut", function(data)
+		local color = nut.fadeColor
+
+		if (color) then
+			local r, g, b, a = color.r, color.g, color.b, color.a or 255
+			local time = data[1]
+			local start = CurTime()
+			local finish = start + time
+
+			hook.Add("HUDPaint", "nut_FadeIn", function()
+				local fraction = 1 - math.TimeFraction(start, finish, CurTime())
+
+				if (fraction < 0) then
+					return hook.Remove("HUDPaint", "nut_FadeIn")
+				end
+
+				surface.SetDrawColor(r, g, b, fraction * a)
+				surface.DrawRect(0, 0, ScrW(), ScrH())		
+			end)
+		end
 	end)
 end

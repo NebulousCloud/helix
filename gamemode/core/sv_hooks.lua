@@ -94,6 +94,7 @@ end
 
 function GM:PlayerSpawn(client)
 	client:SetMainBar()
+	client:ScreenFadeOut()
 
 	if (!client.character) then
 		return
@@ -239,6 +240,7 @@ function GM:PlayerDeath(victim, weapon, attacker)
 
 	timer.Simple(0, function()
 		victim:SetMainBar("You are now respawning.", nut.config.deathTime)
+		victim:ScreenFadeIn(nut.config.deathTime * 0.25)
 	end)
 end
 
