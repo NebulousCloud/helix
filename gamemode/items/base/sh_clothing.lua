@@ -46,6 +46,10 @@ BASE.functions.Wear = {
 			client.character.model = model
 			client:SetModel(model)
 
+			if (itemTable.OnWear) then
+				itemTable:OnWear(client, data)
+			end
+
 			local newData = table.Copy(data)
 			newData.Equipped = true
 
