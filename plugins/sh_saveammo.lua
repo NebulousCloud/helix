@@ -46,7 +46,7 @@ function PLUGIN:PlayerFirstLoaded(client)
 
 	if (ammo) then
 		for ammoType, amount in pairs(ammo) do
-			client:SetAmmo(ammoType, tonumber(amount) or 0)
+			client:SetAmmo(tonumber(amount) or 0, ammoType)
 		end
 
 		client.character:SetData("ammo", {})
