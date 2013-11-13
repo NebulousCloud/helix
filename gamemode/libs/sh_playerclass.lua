@@ -307,12 +307,14 @@ end
 
 -- Player nut variable accessors.
 do
-	function playerMeta:SetNutVar(key, value)
+	local entityMeta = FindMetaTable("Entity")
+
+	function entityMeta:SetNutVar(key, value)
 		self.nut = self.nut or {}
 		self.nut[key] = value
 	end
 
-	function playerMeta:GetNutVar(key, default)
+	function entityMeta:GetNutVar(key, default)
 		self.nut = self.nut or {}
 
 		return self.nut[key] or default
