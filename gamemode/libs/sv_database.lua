@@ -116,7 +116,10 @@ end
 --]]
 function nut.db.Connect()
 	if (dbModule == "sqlite") then
+		if (nut.db.sqliteInit == true) then return end
+		
 		print("NutScript using SQLite for database.")
+		nut.db.sqliteInit = true
 
 		return
 	end
