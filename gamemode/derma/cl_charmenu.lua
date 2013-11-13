@@ -51,13 +51,32 @@ local PANEL = {}
 		self.rightPanel:DockMargin(0, ScrH() * 0.3, 32, ScrH() * 0.15)
 		self.rightPanel:SetPaintBackground(false)
 
+		local MODEL_ANGLE = Angle(0, 60, 0)
+
 		self.model = self:Add("DModelPanel")
+		self.model:ParentToHUD()
 		self.model:Dock(FILL)
-		self.model:DockMargin(ScrW() * 0.4, ScrH() * 0.05, 0, ScrH() * 0.05)
-		self.model:SetFOV(55)
+		self.model:DockMargin(ScrW() * 0.175, ScrH() * 0.05, 0, ScrH() * 0.05)
+		self.model:SetFOV(105)
 		self.model.OnCursorEntered = function() end
 		self.model:SetDisabled(true)
 		self.model:SetCursor("none")
+		self.model.LayoutEntity = function(panel, entity)
+			if (!IsValid(nut.gui.charMenu)) then
+				panel:Remove()
+
+				return
+			end
+			
+			local xRatio = gui.MouseX() / ScrW()
+			local yRatio = gui.MouseY() / ScrH()
+
+			entity:SetPoseParameter("head_pitch", yRatio*60 - 30)
+			entity:SetPoseParameter("head_yaw", (xRatio - 0.75)*60)
+			entity:SetAngles(MODEL_ANGLE)
+
+			panel:RunAnimation()
+		end
 
 		self.characters = {}
 
@@ -192,6 +211,11 @@ local PANEL = {}
 					timer.Simple(0, function()
 						if (IsValid(nut.gui.charMenu)) then
 							nut.gui.charMenu:FadeOutMusic()
+
+							if (IsValid(nut.gui.charMenu.model)) then
+								nut.gui.charMenu.model:Remove()
+							end
+
 							nut.gui.charMenu:Remove()
 						end
 
@@ -208,6 +232,11 @@ local PANEL = {}
 				end
 
 				self:FadeOutMusic()
+
+				if (IsValid(self.model)) then
+					self.model:Remove()
+				end
+
 				self:Remove()
 			else
 				RunConsoleCommand("disconnect")
@@ -319,6 +348,11 @@ vgui.Register("nut_CharMenu", PANEL, "DPanel")
 netstream.Hook("nut_CharMenu", function(forced)
 	if (IsValid(nut.gui.charMenu)) then
 		nut.gui.charMenu:FadeOutMusic()
+
+		if (IsValid(nut.gui.charMenu.model)) then
+			nut.gui.charMenu.model:Remove()
+		end
+
 		nut.gui.charMenu:Remove()
 
 		if (!forced) then
