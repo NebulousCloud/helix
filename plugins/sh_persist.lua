@@ -10,7 +10,7 @@ if (SERVER) then
 				local entities, constraints = duplicator.Paste(nil, data.Entities or {}, data.Contraints or {})
 
 				for k, v in pairs(entities) do
-					v:SetPersistent(true)
+					v:SetNutVar("persist", true)
 				end
 			end
 		end
@@ -20,8 +20,8 @@ if (SERVER) then
 		local data = {}
 
 		for k, v in pairs(ents.GetAll()) do
-			if (v:GetPersistent()) then
-				data[k] = v
+			if (v:GetNutVar("persist")) then
+				data[#data + 1] = v
 			end
 		end
 
@@ -42,9 +42,9 @@ nut.command.Register({
 			local class = entity:GetClass()
 
 			if (string.find(class, "prop_") and !string.find(class, "door")) then
-				entity:SetPersistent(!util.tobool(arguments[1]))
+				entity:SetNutVar("persist", !util.tobool(arguments[1]))
 
-				if (entity:GetPersistent()) then
+				if (entity:GetNutVar("persist")) then
 					nut.util.Notify("This entity is now persisted.", client)
 				else
 					nut.util.Notify("This entity is no longer persisted.", client)
