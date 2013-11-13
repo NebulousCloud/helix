@@ -29,11 +29,6 @@ function _PLAYER:UpdateWeaponAttachments()
 	for _,weapon in pairs( self:GetWeapons() ) do
 		local class = weapon:GetClass();
 		if ( not self.WeaponAttachments[class] and not table.HasValue(nut.Attachment.blacklist, class)) then
-			local attachment = ents.Create("nut_attachment");
-			local offsetpos, offsetang, bone = Vector(-3.96, 4.95, -2.97), Angle(0,0,0), "ValveBiped.Bip01_Spine";
-			local ht = weapon:GetHoldType();
-			local model = weapon:GetModel();
-			
 			if ( nut.Attachment.modelreg[model] ) then
 				offsetpos = nut.Attachment.modelreg[model][2];
 				offsetang = nut.Attachment.modelreg[model][3];
@@ -43,12 +38,27 @@ function _PLAYER:UpdateWeaponAttachments()
 				offsetang = nut.Attachment.htreg[ht][3];
 				bone = nut.Attachment.htreg[ht][1];
 			end;
+
+			if (!bone) then
+				return
+			end
+			
+			local boneIndex = self:LookupBone(bone)
+
+			if (!boneIndex) then
+				return
+			end
+
+			local attachment = ents.Create("nut_attachment");
+			local offsetpos, offsetang, bone = Vector(-3.96, 4.95, -2.97), Angle(0,0,0), "ValveBiped.Bip01_Spine";
+			local ht = weapon:GetHoldType();
+			local model = weapon:GetModel();
 			
 			attachment:SetModel(model);
 			attachment:SetAttachParent(self);
 			attachment:SetAttachOffset(offsetpos);
 			attachment:SetAttachAngles(offsetang);
-			attachment:SetAttachBoneIndex( self:LookupBone(bone) );
+			attachment:SetAttachBoneIndex(boneIndex);
 			attachment:SetAttachClass(weapon:GetClass() );
 			attachment:SetParent(self);
 			
