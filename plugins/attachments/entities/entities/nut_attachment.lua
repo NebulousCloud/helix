@@ -18,6 +18,7 @@ if (SERVER) then
 		self:SetModel("models/props_junk/watermelon01.mdl");
 		self:SetSolid(SOLID_NONE);
 		self:PhysicsInit(SOLID_NONE);
+		self:DrawShadow(false)
 		self:SetMoveType(MOVETYPE_NONE);
 
 		local physicsObject = self:GetPhysicsObject();
@@ -61,6 +62,10 @@ function ENT:Draw()
 	local ap = self:GetAttachParent();
 	local active = ap:GetActiveWeapon();
 	
+	if (ap == LocalPlayer() and !LocalPlayer():ShouldDrawLocalPlayer()) then
+		return
+	end
+
 	if ( active and active != NULL ) then
 		if ( active:GetClass() == self:GetAttachClass() or not ap:Alive() ) then
 			return;
