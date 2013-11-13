@@ -1,17 +1,25 @@
-local PLUGIN = PLUGIN
 PLUGIN.name = "Persistent Props"
 PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Allows administrators to set props to be persistent through restarts."
 
 if (SERVER) then
-	function PLUGIN:LoadData()
-		for k, data in pairs(self:ReadTable("props")) do
-			if (data) then
-				local entities, constraints = duplicator.Paste(nil, data.Entities or {}, data.Contraints or {})
+	file.CreateDir("persist")
+	file.CreateDir("persist/nutscript")
 
-				for k, v in pairs(entities) do
-					v:SetNutVar("persist", true)
-				end
+	function PLUGIN:LoadData()
+		local contents = file.Read("persist/nutscript/"..SCHEMA.uniqueID.."/"..game.GetMap()..".txt", "DATA")
+
+		if (!contents) then
+			return
+		end
+
+		local data = util.JSONToTable(contents)
+
+		if (data) then
+			local entities, constraints = duplicator.Paste(nil, data.Entities or {}, data.Contraints or {})
+
+			for k, v in pairs(entities) do
+				v:SetNutVar("persist", true)
 			end
 		end
 	end
@@ -26,10 +34,19 @@ if (SERVER) then
 		end
 
 		if (#data > 0) then
-			self:WriteTable("props", duplicator.CopyEnts(data))
+			local persistData = duplicator.CopyEnts(data)
+
+			if (!persistData) then
+				return
+			end
+
+			file.CreateDir("persist/nutscript/"..SCHEMA.uniqueID)
+			file.Write("persist/nutscript/"..SCHEMA.uniqueID.."/"..game.GetMap()..".txt", util.TableToJSON(persistData))
 		end
 	end
 end
+
+local PLUGIN = PLUGIN
 
 nut.command.Register({
 	syntax = "[bool disabled]",
