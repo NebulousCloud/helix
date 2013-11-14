@@ -576,9 +576,8 @@ if (SERVER) then
 			netstream.Start(client, "nut_CharMenu", false)
 
 			if (!sameChar) then
-				client:Spawn()
-
 				nut.schema.Call("PlayerLoadedChar", client)
+					client:Spawn()
 				nut.schema.Call("PostPlayerSpawn", client)
 			end
 		end)
