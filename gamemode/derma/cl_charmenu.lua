@@ -61,6 +61,36 @@ local PANEL = {}
 		self.model.OnCursorEntered = function() end
 		self.model:SetDisabled(true)
 		self.model:SetCursor("none")
+
+		local SetModel = self.model.SetModel
+
+		self.model.SetModel = function(panel, model)
+			SetModel(panel, model)
+
+			local entity = panel.Entity
+			local sequence = entity:LookupSequence("idle")
+
+			if (sequence <= 0) then
+				sequence = entity:LookupSequence("idle_subtle")
+			end
+
+			if (sequence <= 0) then
+				sequence = entity:LookupSequence("batonidle2")
+			end
+
+			if (sequence <= 0) then
+				sequence = entity:LookupSequence("idle_unarmed")
+			end
+
+			if (sequence <= 0) then
+				sequence = entity:LookupSequence("idle01")
+			end
+
+			if (sequence > 0) then
+				entity:ResetSequence(sequence)
+			end
+		end
+
 		self.model.LayoutEntity = function(panel, entity)
 			if (!IsValid(nut.gui.charMenu)) then
 				panel:Remove()
