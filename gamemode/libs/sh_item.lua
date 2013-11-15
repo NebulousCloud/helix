@@ -491,7 +491,7 @@ do
 					result = itemFunction.run(itemTable, client, data or {}, entity)
 				end
 
-				local result2 = itemTable:Call(action, client, item.data, entity)
+				local result2 = itemTable:Call(action, client, data, entity)
 
 				if (result2 != nil) then
 					result = result2
