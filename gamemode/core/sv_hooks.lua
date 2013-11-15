@@ -223,7 +223,15 @@ function GM:PlayerSpawnVehicle(client, model, name, vehicle)
 end
 
 function GM:PlayerSwitchFlashlight(client, state)
-	return nut.config.flashlight
+	if (!client:CanUseFlashlight()) then
+		return false
+	end
+	
+	if (nut.config.flashlight) then
+		return true
+	end
+
+	return false
 end
 
 function GM:RemoveEntitiesByClass(class)
