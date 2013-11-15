@@ -88,7 +88,7 @@ function GM:HUDPaint()
 
 	nut.schema.Call("HUDPaintTargetID", trace.Entity)
 
-	if (nut.config.crosshair) then
+	if (nut.schema.Call("ShouldDrawCrosshair") != false and nut.config.crosshair) then
 		local x, y = ScrW() * 0.5 - 2, ScrH() * 0.5 - 2
 		local size = nut.config.crossSize or 1
 		local size2 = size + 2
