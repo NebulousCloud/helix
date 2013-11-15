@@ -75,6 +75,18 @@ function nut.item.Register(itemTable, isBase)
 			end
 		}
 
+		function itemTable:Call(action, client, data, entity, index)
+			if (self.hooks and self.hooks[action]) then
+				for k, v in pairs(self.hooks[action]) do
+					local result = v(self, client, data or {}, entity or NULL, index)
+
+					if (result != nil) then
+						return result
+					end
+				end
+			end
+		end
+
 		if (!itemTable.ShouldShowOnBusiness) then
 			function itemTable:ShouldShowOnBusiness(client)
 				if (self.faction) then
@@ -334,6 +346,10 @@ do
 				physicsObject:Wake()
 			end
 
+			if (itemTable.OnEntityCreated) then
+				itemTable:OnEntityCreated(entity)
+			end
+
 			return entity
 		end
 	end
@@ -441,13 +457,7 @@ do
 				if (itemFunction.run) then
 					result = itemFunction.run(itemTable, client, item.data or {}, NULL, index)
 
-					local result2
-
-					if (itemTable.hooks and itemTable.hooks[action]) then
-						for k, v in pairs(itemTable.hooks[action]) do
-							result2 = v(itemTable, client, item.data or {}, NULL, index)
-						end
-					end
+					local result2 = itemTable:Call(action, client, item.data, NULL, index)
 
 					if (result2 != nil) then
 						result = result2
@@ -481,13 +491,7 @@ do
 					result = itemFunction.run(itemTable, client, data or {}, entity)
 				end
 
-				local result2
-
-				if (itemTable.hooks and itemTable.hooks[action]) then
-					for k, v in pairs(itemTable.hooks[action]) do
-						result2 = v(itemTable, client, item.data or {}, entity)
-					end
-				end
+				local result2 = itemTable:Call(action, client, item.data, entity)
 
 				if (result2 != nil) then
 					result = result2
@@ -521,12 +525,7 @@ do
 							netstream.Start("nut_ItemAction", {itemTable.uniqueID, index, k})
 
 							if (v.run) then
-								if (itemTable.hooks and itemTable.hooks[k]) then
-									for k2, v2 in pairs(itemTable.hooks[k]) do
-										v2(itemTable, LocalPlayer(), item.data or {}, entity)
-									end
-								end
-
+								itemTable:Call(k, LocalPlayer(), item.data, NULL, index)
 								v.run(itemTable, LocalPlayer(), item.data or {}, NULL, index)
 							end
 						end)
@@ -569,12 +568,7 @@ do
 							netstream.Start("nut_EntityAction", {entity, k})
 
 							if (v.run) then
-								if (itemTable.hooks and itemTable.hooks[k]) then
-									for k2, v2 in pairs(itemTable.hooks[k]) do
-										v2(itemTable, LocalPlayer(), entity:GetData() or {}, entity)
-									end
-								end
-
+								itemTable:Call(k, LocalPlayer(), entity:GetData(), entity)
 								v.run(itemTable, LocalPlayer(), entity:GetData() or {}, entity)
 							end
 						end)
