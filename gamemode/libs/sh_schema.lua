@@ -36,8 +36,6 @@ function nut.schema.Init()
 	nut.item.Load(SCHEMA.folderName.."/gamemode/schema")
 
 	hook.Run("SchemaInitialized")
-	
-	print("Loading schema '"..SCHEMA.name.."' created by "..SCHEMA.author..".")
 end
 
 --[[

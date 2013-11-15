@@ -3,6 +3,8 @@
 	gamemode files and prepares schemas.
 --]]
 
+local startTime = CurTime()
+
 -- Allows us to use the spawn menu and toolgun.
 DeriveGamemode("sandbox")
 

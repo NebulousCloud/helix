@@ -3,6 +3,8 @@
 	the framework without GM.BaseClass since it the baseclass is not defined in time.
 --]]
 
+local startTime = os.clock()
+
 if (game.SinglePlayer()) then
 	error("NutScript can not be ran in single-player, sorry.")
 end
@@ -43,3 +45,5 @@ include("shared.lua")
 
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
+
+MsgN("NutScript took "..math.Round(os.clock() - startTime, 3).. " second(s) to initialize.")
