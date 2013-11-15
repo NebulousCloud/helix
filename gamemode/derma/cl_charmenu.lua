@@ -4,6 +4,8 @@ local PANEL = {}
 	local gradient3 = surface.GetTextureID("gui/center_gradient")
 
 	function PANEL:Init()
+		timer.Remove("nut_FadeMenuMusic")
+		
 		self:SetSize(ScrW(), ScrH())
 		self:SetDrawBackground(false)
 		self:MakePopup()
@@ -376,6 +378,14 @@ local PANEL = {}
 vgui.Register("nut_CharMenu", PANEL, "DPanel")
 
 netstream.Hook("nut_CharMenu", function(forced)
+	if (type(forced) == "table") then
+		if (forced[2] == true) then
+			LocalPlayer().character = nil
+		end
+
+		forced = forced[1]
+	end
+
 	if (IsValid(nut.gui.charMenu)) then
 		nut.gui.charMenu:FadeOutMusic()
 

@@ -46,6 +46,7 @@ end
 nut.char = nut.char or {}
 nut.char.buffer = nut.char.buffer or {}
 nut.char.hooks = nut.char.hooks or {}
+nut.char.dataTypes = nut.char.dataTypes or {}
 
 -- We begin our metatable here.
 local META = {}
@@ -601,7 +602,9 @@ if (SERVER) then
 					client.character = nil
 					client:KillSilent()
 
-					netstream.Start(client, "nut_CharMenu", true)
+					timer.Simple(0, function()
+						netstream.Start(client, "nut_CharMenu", {true, true})
+					end)
 				end
 
 				print("Deleted character #"..index.." for "..client:Name()..".")
