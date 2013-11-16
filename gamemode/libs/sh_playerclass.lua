@@ -10,6 +10,10 @@ for k, v in pairs(player_manager.AllValidModels()) do
 	modelList[string.lower(v)] = k
 end
 
+function PLAYER:Loadout()
+	return
+end
+
 function PLAYER:SetupDataTables()
 	self.Player:NetworkVar("Bool", 0, "NutWepRaised")
 
