@@ -662,8 +662,8 @@ if (SERVER) then
 		netstream.Start(self, "nut_FadeIn", {color, time})
 	end
 
-	function playerMeta:ScreenFadeOut(time)
-		netstream.Start(self, "nut_FadeOut", {time or 5})
+	function playerMeta:ScreenFadeOut(time, color)
+		netstream.Start(self, "nut_FadeOut", {time or 5, color})
 	end
 
 	netstream.Hook("nut_StringRequest", function(client, data)
@@ -723,7 +723,7 @@ else
 	end)
 
 	netstream.Hook("nut_FadeOut", function(data)
-		local color = nut.fadeColor
+		local color = data[2] or nut.fadeColor
 
 		if (color) then
 			local r, g, b, a = color.r, color.g, color.b, color.a or 255
@@ -743,4 +743,17 @@ else
 			end)
 		end
 	end)
+end
+
+function nut.util.SplitString(text, size)
+	local output = {}
+
+	while (#text > size) do
+		output[#output + 1] = string.sub(text, 1, size)
+		text = string.sub(text, size)
+	end
+
+	output[#output + 1] = text
+
+	return output
 end
