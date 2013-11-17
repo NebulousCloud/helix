@@ -159,6 +159,10 @@ function nut.faction.Register(index, uniqueID, faction)
 	nut.faction.buffer[index] = faction
 end
 
+--[[
+	Purpose: Returns a faction based upon the unique ID it was registered with, rather
+	than the numeric ID.
+--]]
 function nut.faction.GetByStringID(uniqueID)
 	for k, v in pairs(nut.faction.buffer) do
 		if (v.uniqueID == uniqueID) then
@@ -167,6 +171,10 @@ function nut.faction.GetByStringID(uniqueID)
 	end
 end
 
+--[[
+	Purpose: Loads all of the factions within the directory's faction sub-directory.
+	A global table, FACTION, will be defined and then registered with nut.faction.Register
+--]]
 function nut.faction.Load(directory)
 	for k, v in pairs(file.Find(directory.."/factions/*.lua", "LUA")) do
 		local uniqueID = string.sub(v, 4, -5)

@@ -6,7 +6,10 @@
 nut.plugin = nut.plugin or {}
 nut.plugin.buffer = nut.plugin.buffer or {}
 
-
+--[[
+	Purpose: Library to load plugins from the framework and schema and retrieve plugins
+	that have been loaded.
+--]]
 function nut.plugin.IncludeEntities(directory)
 	local entityFiles, entityFolders = file.Find(directory.."/entities/entities/*", "LUA")
 
@@ -37,6 +40,10 @@ function nut.plugin.IncludeEntities(directory)
 	end
 end
 
+--[[
+	Purpose: Includes the effects within the plugin's entities/weapons sub-directory and
+	registers them.
+--]]
 function nut.plugin.IncludeWeapons(directory)
 	local weaponFiles, weaponFolders = file.Find(directory.."/entities/weapons/*", "LUA")
 
@@ -74,6 +81,10 @@ function nut.plugin.IncludeWeapons(directory)
 	end
 end
 
+--[[
+	Purpose: Includes the effects within the plugin's entities/effects sub-directory and
+	registers them.
+--]]
 function nut.plugin.IncludeEffects(directory)
 	local effectFiles, effectFolders = file.Find(directory.."/entities/effects/*", "LUA")
 

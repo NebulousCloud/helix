@@ -1,5 +1,5 @@
 --[[
-	Purpose: Library for console and chat command adding and proccessing.
+	Purpose: Library for console and chat command adding and processing.
 --]]
 
 nut.command = nut.command or {}
@@ -139,7 +139,7 @@ if (SERVER) then
 	end
 
 	--[[
-		Purpose: Makes an attempt to find a player based off the givens tring with
+		Purpose: Makes an attempt to find a player based off the given string with
 		nut.util.FindPlayer, otherwise it notifies the given player that the person
 		could not be found.
 	--]]

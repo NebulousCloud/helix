@@ -1,6 +1,6 @@
 --[[
 	Purpose: Quick library to add phrases based off a key or retrieve it.
-	Used throughout the framework to make language customizations easier,
+	Used throughout the framework to make language customization easier,
 	rather than searching through the files.
 --]]
 

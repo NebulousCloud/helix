@@ -1,3 +1,8 @@
+--[[
+	Purpose: Provides an interface for drawing and sending 'scrolling text.'
+	Scrolling text simply is just text that 'types' itself.
+--]]
+
 nut.scroll = nut.scroll or {}
 nut.scroll.buffer = nut.scroll.buffer or {}
 
@@ -6,6 +11,11 @@ local CHAR_DELAY = 0.1
 if (CLIENT) then
 	NUT_CVAR_SCROLLVOL = CreateClientConVar("nut_scrollvol", 40, true)
 
+	--[[
+		Purpose: Adds the text into the scrolling queue so it will draw.
+		If a callback is provided, then it will be called once the text has
+		finished typing and no longer draws.
+	--]]
 	function nut.scroll.Add(text, callback)
 		local info = {text = "", callback = callback, nextChar = 0, char = ""}
 		local index = table.insert(nut.scroll.buffer, info)
@@ -30,6 +40,10 @@ if (CLIENT) then
 	local SCROLL_X = ScrW() * 0.9
 	local SCROLL_Y = ScrH() * 0.7
 
+	--[[
+		Purpose: Called internally in the HUDPaint hook, it loops through the
+		scrolling text and draws the text accordingly.
+	--]]
 	function nut.scroll.Paint()
 		for k, v in pairs(nut.scroll.buffer) do
 			local alpha = 255
@@ -57,6 +71,10 @@ if (CLIENT) then
 		nut.scroll.Add(data)
 	end)
 else
+	--[[
+		Purpose: Sends a net message to call nut.scroll.Add client-side. If
+		provided a callback, it will be called once the text finishes 'typing.'
+	--]]
 	function nut.scroll.Send(text, receiver, callback)
 		netstream.Start(receiver, "nut_ScrollData", text)
 
