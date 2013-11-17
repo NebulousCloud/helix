@@ -120,6 +120,8 @@ do
 
 					self.character.model = class.model or self.character.model
 					self.character:SetData("class", index)
+
+					nut.schema.Call("PlayerClassSet", client, index)
 				end
 			end
 		end
