@@ -65,7 +65,7 @@ local PANEL = {}
 
 		self.class = class
 
-		local model = class.model
+		local model = class:GetModel()
 
 		if (!model and class.faction) then
 			local faction = nut.faction.GetByID(class.faction)
