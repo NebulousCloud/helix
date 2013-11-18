@@ -21,24 +21,24 @@ function nut.class.Register(index, classTable)
 		end
 	end
 
-	if (!classTable.OnSet) then
-		function classTable:GetModel(client)
-			if (CLIENT) then
-				client = LocalPlayer()
-			end
-
-			local model = self.model
-
-			if (!model and self.faction) then
-				local faction = nut.faction.GetByID(self.faction)
-				local gender = client.character:GetVar("gender", "male")
-
-				model = table.Random(faction[gender.."Models"])
-			end
-
-			return self.PlayerGetModel and self:PlayerGetModel(client) or self.model or model
+	function classTable:GetModel(client)
+		if (CLIENT) then
+			client = LocalPlayer()
 		end
 
+		local model = self.model
+
+		if (!model and self.faction) then
+			local faction = nut.faction.GetByID(self.faction)
+			local gender = client.character:GetVar("gender", "male")
+
+			model = table.Random(faction[gender.."Models"])
+		end
+
+		return self.PlayerGetModel and self:PlayerGetModel(client) or self.model or model
+	end
+
+	if (!classTable.OnSet) then
 		function classTable:OnSet(client)
 			local model = self:GetModel(client)
 
