@@ -9,6 +9,12 @@ PLUGIN.bans = PLUGIN.bans or {}
 local playerMeta = FindMetaTable("Player")
 
 function playerMeta:GetUserGroup()
+	if (self:IsSuperAdmin()) then
+		return "superadmin"
+	elseif (self:IsAdmin()) then
+		return "admin"
+	end
+
 	return self:GetNWString("usergroup", "user")
 end
 
@@ -38,11 +44,11 @@ playerMeta.ModIsAdmin = playerMeta.ModIsAdmin or playerMeta.IsAdmin
 playerMeta.ModIsSuperAdmin = playerMeta.ModIsSuperAdmin or playerMeta.IsSuperAdmin
 
 function playerMeta:IsSuperAdmin()
-	return PLUGIN:IsAllowed(self, "superadmin") or self:ModIsSuperAdmin()
+	return PLUGIN:IsAllowed(self, "superadmin") or self:ModIsSuperAdmin() or self:MidIsSuperAdmin()
 end
 
 function playerMeta:IsAdmin()
-	return PLUGIN:IsAllowed(self, "admin") or self:ModIsAdmin()
+	return PLUGIN:IsAllowed(self, "admin") or self:ModIsAdmin() or self:ModIsAdmin()
 end
 
 function PLUGIN:LoadData()
