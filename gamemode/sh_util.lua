@@ -759,11 +759,11 @@ function nut.util.SplitString(text, size)
 end
 
 if (SERVER) then
-	function nut.util.PlaySound(source, receiver)
-		netstream.Start(receiver, "nut_PlaySound", source)
+	function nut.util.PlaySound(source, receiver, volume, pitch)
+		netstream.Start(receiver, "nut_PlaySound", {source, volume, pitch})
 	end
 else
 	netstream.Hook("nut_PlaySound", function(data)
-		LocalPlayer():EmitSound(data)
+		LocalPlayer():EmitSound(data[1], data[2], data[3])
 	end)
 end
