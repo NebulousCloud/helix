@@ -378,6 +378,11 @@ function nut.item.Load(directory)
 
 					nut.item.PrepareItemTable(ITEM)
 					nut.util.Include(directory.."/items/"..parent.."/"..v2)
+
+					if (v.OnRegister) then
+						v:OnRegister(ITEM)
+					end
+
 					nut.item.Register(ITEM)
 				ITEM = nil
 			end

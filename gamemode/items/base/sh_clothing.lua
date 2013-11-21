@@ -13,9 +13,8 @@ BASE.functions.Wear = {
 
 				return false
 			end
-			
-			-- Backwards compatability.
-			local model = itemTable.outfitModel or itemTable.model
+
+			local model = itemTable.model
 
 			if (!model) then
 				error("Clothing item without valid model! ("..(itemTable.uniqueID or "null")..")")
@@ -117,4 +116,10 @@ end
 
 function BASE:GetDropModel()
 	return "models/props_c17/suitCase_passenger_physics.mdl"
+end
+
+function BASE:OnRegister(itemTable)
+	if (itemTable.outfitModel) then
+		error("ITEM.outfitModel is now deprecated. Change it to ITEM.model")
+	end
 end
