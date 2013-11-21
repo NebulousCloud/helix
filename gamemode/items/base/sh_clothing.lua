@@ -8,16 +8,17 @@ BASE.functions = {}
 BASE.functions.Wear = {
 	run = function(itemTable, client, data)
 		if (SERVER) then
+			local model = itemTable.model
+
+			if (!model) then
+				client.character:SetData("oldModel", nil, nil, true)
+				error("Clothing item without valid model! ("..(itemTable.uniqueID or "null")..")")
+			end
+
 			if (client.character:GetData("oldModel")) then
 				nut.util.Notify("You are already wearing another set of clothing.", client)
 
 				return false
-			end
-
-			local model = itemTable.model
-
-			if (!model) then
-				error("Clothing item without valid model! ("..(itemTable.uniqueID or "null")..")")
 			end
 
 			local replacement = itemTable.replacement
