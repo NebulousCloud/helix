@@ -9,12 +9,6 @@ PLUGIN.bans = PLUGIN.bans or {}
 local playerMeta = FindMetaTable("Player")
 
 function playerMeta:GetUserGroup()
-	if (self:IsSuperAdmin()) then
-		return "superadmin"
-	elseif (self:IsAdmin()) then
-		return "admin"
-	end
-
 	return self:GetNWString("usergroup", "user")
 end
 
