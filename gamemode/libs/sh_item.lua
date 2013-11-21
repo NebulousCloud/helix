@@ -11,6 +11,151 @@ nut.item = nut.item or {}
 nut.item.buffer = nut.item.buffer or {}
 nut.item.list = nut.item.list or {}
 nut.item.bases = nut.item.bases or {}
+nut.item.queries = {}
+
+function nut.item.RegisterQuery(query, callback, ignoreAction)
+	local arguments = {}
+
+	for k, v in ipairs(string.Explode("%s+", query, true)) do
+		if (string.match(v, "%b{}")) then
+			arguments[k] = true
+		end
+	end
+
+	nut.item.queries[query] = {
+		callback = callback,
+		arguments = arguments,
+		match = string.gsub(query, "%b{}", "(%%w+)"),
+		ignoreAction = ignoreAction
+	}
+end
+
+nut.item.RegisterQuery("{1} {2} health", function(itemTable, arguments)
+	local client = itemTable.player
+
+	if (!IsValid(client)) then
+		return
+	end
+
+	local action = arguments[1]
+	local amount = tonumber(arguments[2]) or 100
+
+	if (action == "give" or action == "add") then
+		amount = client:Health() + amount
+	elseif (action == "take" or action == "sub") then
+		amount = client:Health() - amount
+	end
+
+	client:SetHealth(math.max(amount, 1))
+end)
+
+nut.item.RegisterQuery("{1} {2} armor", function(itemTable, arguments)
+	local client = itemTable.player
+
+	if (!IsValid(client)) then
+		return
+	end
+
+	local action = arguments[1]
+	local amount = tonumber(arguments[2]) or 100
+
+	if (action == "give" or action == "add") then
+		amount = client:Armor() + amount
+	elseif (action == "take" or action == "sub") then
+		amount = client:Armor() - amount
+	end
+
+	client:SetArmor(math.max(amount, 0))
+end)
+
+nut.item.RegisterQuery("{1} {2} stamina", function(itemTable, arguments)
+	local client = itemTable.player
+
+	if (!IsValid(client)) then
+		return
+	end
+
+	local action = arguments[1]
+	local amount = tonumber(arguments[2]) or 100
+	local stamina = client.character:GetVar("stamina", 100)
+
+	if (action == "give" or action == "add") then
+		amount = stamina + amount
+	elseif (action == "take" or action == "sub") then
+		amount = stamina - amount
+	end
+
+	client.character:SetVar("stamina", math.max(amount, 0))
+end)
+
+nut.item.RegisterQuery("{1} {2} money", function(itemTable, arguments)
+	local client = itemTable.player
+
+	if (!IsValid(client)) then
+		return
+	end
+
+	local action = arguments[1]
+	local amount = tonumber(arguments[2]) or 100
+	local money = client:GetMoney()
+
+	if (action == "give" or action == "add") then
+		amount = money + amount
+	elseif (action == "take" or action == "sub") then
+		amount = money - amount
+	end
+
+	client:SetMoney(math.max(math.floor(amount), 0))
+end)
+
+nut.item.RegisterQuery("set sound to {1}", function(itemTable, arguments)
+	itemTable.useSound = arguments[1]
+end)
+
+function nut.item.ProcessQuery(itemTable, action, client, data, entity, index)
+	if (!itemTable.queries) then
+		return
+	end
+
+	action = string.lower(action)
+
+	for k, v in pairs(itemTable.queries) do
+		for k2, query in pairs(nut.item.queries) do
+			local actionMatch = "on "..action
+			local matchLength = #actionMatch
+
+			if (query.ignoreAction or string.Left(v, matchLength + 1) == (actionMatch..":") or string.Right(v, matchLength) == actionMatch) then
+				if (string.match(v, query.match)) then
+					local exploded = string.Explode("%s+", v, true)
+					local queryArgs = query.arguments
+					local arguments = {}
+
+					for i = 1, #exploded do
+						if (queryArgs[i]) then
+							arguments[#arguments + 1] = exploded[i]
+						end
+					end
+
+					itemTable.player = client
+					itemTable.data = data
+					itemTable.entity = entity
+					itemTable.index = index
+
+					local result = query.callback(itemTable, arguments)
+
+					itemTable.player = nil
+					itemTable.data = nil
+					itemTable.entity = nil
+					itemTable.index = nil
+
+					if (result != nil) then
+						return result
+					end
+				end
+			end
+		end
+	end
+end
 
 --[[
 	Purpose: If isBase is true, the item will be inserted into the table of available bases
@@ -76,6 +221,8 @@ function nut.item.Register(itemTable, isBase)
 		}
 
 		function itemTable:Call(action, client, data, entity, index)
+			nut.item.ProcessQuery(itemTable, action, client, data, entity, index)
+
 			if (self.hooks and self.hooks[action]) then
 				for k, v in pairs(self.hooks[action]) do
 					local result = v(self, client, data or {}, entity or NULL, index)
@@ -138,6 +285,24 @@ function nut.item.Register(itemTable, isBase)
 			end
 		end
 
+		if (itemTable.queries) then
+			for k, query in pairs(itemTable.queries) do
+				local action = string.match(query, "on (%w+)")
+				local actionID = string.upper(string.sub(action, 1, 1))..string.sub(action, 2)
+
+				if (action and !itemTable.functions[actionID]) then
+					itemTable.functions[actionID] = {
+						icon = "icon16/world.png",
+						run = function(itemTable, client, data)
+							if (SERVER) then
+								client:EmitSound(itemTable.useSound or "items/battery_pickup.wav")
+							end
+						end
+					}
+				end
+			end
+		end
+
 		nut.item.buffer[itemTable.uniqueID] = itemTable
 	end
 end
@@ -164,6 +329,26 @@ function nut.item.GetBases()
 	return nut.item.bases
 end
 
+function nut.item.PrepareItemTable(itemTable)
+	function itemTable:Hook(uniqueID, callback)
+		self.hooks = self.hooks or {}
+		self.hooks[uniqueID] = self.hooks[uniqueID] or {}
+
+		table.insert(self.hooks[uniqueID], callback)
+	end
+
+	function itemTable:AddQuery(query)
+		if (!query) then
+			error("No query provided! ("..(itemTable.uniqueID or "null")..")")
+		end
+
+		query = string.lower(query)
+
+		self.queries = self.queries or {}
+		self.queries[#self.queries + 1] = string.lower(query)
+	end
+end
+
 --[[
 	Purpose: Loads all of the bases within the items/base folder relative to the
 	specified directory. For each base, it will look for items within items/<base name>
@@ -175,13 +360,7 @@ function nut.item.Load(directory)
 		BASE = {folderName = string.sub(v, 4, -5)}
 			BASE.uniqueID = BASE.folderName
 
-			function BASE:Hook(uniqueID, callback)
-				self.hooks = self.hooks or {}
-				self.hooks[uniqueID] = self.hooks[uniqueID] or {}
-
-				table.insert(self.hooks[uniqueID], callback)
-			end
-
+			nut.item.PrepareItemTable(BASE)
 			nut.util.Include(directory.."/items/base/"..v)
 			nut.item.Register(BASE, true)
 		BASE = nil
@@ -195,17 +374,10 @@ function nut.item.Load(directory)
 
 			for k2, v2 in pairs(files) do
 				ITEM = table.Inherit({}, v)
-					ITEM.uniqueID = string.sub(v2, 4, -5)
+					ITEM.uniqueID = parent.."_"..string.sub(v2, 4, -5)
 
-					function ITEM:Hook(uniqueID, callback)
-						self.hooks = self.hooks or {}
-						self.hooks[uniqueID] = self.hooks[uniqueID] or {}
-
-						table.insert(self.hooks[uniqueID], callback)
-					end
-
+					nut.item.PrepareItemTable(ITEM)
 					nut.util.Include(directory.."/items/"..parent.."/"..v2)
-
 					nut.item.Register(ITEM)
 				ITEM = nil
 			end
@@ -218,15 +390,8 @@ function nut.item.Load(directory)
 		ITEM =  {}
 			ITEM.uniqueID = string.sub(v, 4, -5)
 			
-			function ITEM:Hook(uniqueID, callback)
-				self.hooks = self.hooks or {}
-				self.hooks[uniqueID] = self.hooks[uniqueID] or {}
-
-				table.insert(self.hooks[uniqueID], callback)
-			end
-
+			nut.item.PrepareItemTable(ITEM)
 			nut.util.Include(directory.."/items/"..v)
-
 			nut.item.Register(ITEM)
 		ITEM = nil
 	end
