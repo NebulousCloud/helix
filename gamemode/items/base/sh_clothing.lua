@@ -16,6 +16,11 @@ BASE.functions.Wear = {
 			
 			-- Backwards compatability.
 			local model = itemTable.outfitModel or itemTable.model
+
+			if (!model) then
+				error("Clothing item without valid model! ("..(itemTable.uniqueID or "null")..")")
+			end
+
 			local replacement = itemTable.replacement
 			local lowerPlyModel = string.lower(client:GetModel())
 
