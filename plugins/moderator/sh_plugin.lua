@@ -38,11 +38,11 @@ playerMeta.ModIsAdmin = playerMeta.ModIsAdmin or playerMeta.IsAdmin
 playerMeta.ModIsSuperAdmin = playerMeta.ModIsSuperAdmin or playerMeta.IsSuperAdmin
 
 function playerMeta:IsSuperAdmin()
-	return PLUGIN:IsAllowed(self, "superadmin") or self:ModIsSuperAdmin() or self:MidIsSuperAdmin()
+	return PLUGIN:IsAllowed(self, "superadmin") or self:ModIsSuperAdmin()
 end
 
 function playerMeta:IsAdmin()
-	return PLUGIN:IsAllowed(self, "admin") or self:ModIsAdmin() or self:ModIsAdmin()
+	return PLUGIN:IsAllowed(self, "admin") or self:ModIsAdmin()
 end
 
 function PLUGIN:LoadData()
