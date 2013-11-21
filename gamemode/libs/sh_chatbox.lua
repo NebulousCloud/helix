@@ -405,5 +405,7 @@ end
 local playerMeta = FindMetaTable("Player")
 
 function playerMeta:IsTyping()
-	return self:GetNetVar("typing", "") != ""
+	local typing = self:GetNetVar("typing")
+	
+	return typing and typing != ""
 end
