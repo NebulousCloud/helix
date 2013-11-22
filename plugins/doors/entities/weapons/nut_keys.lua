@@ -36,6 +36,49 @@ SWEP.WorldModel = ""
 
 SWEP.AlwaysRaised = true
 SWEP.DrawViewModel = false
+SWEP.UseHands = true
+SWEP.LowerAngles = Angle(0, 5, -10)
+
+function SWEP:PreDrawViewModel(viewModel, weapon, client)
+	local hands = player_manager.RunClass(client, "GetHandsModel")
+
+	if (hands and hands.model) then
+		viewModel:SetModel(hands.model)
+	end
+end
+
+ACT_VM_FISTS_DRAW = 3
+ACT_VM_FISTS_HOLSTER = 2
+
+function SWEP:Deploy()
+	if ( !IsValid(self.Owner) ) then
+		return
+	end
+
+	local viewModel = self.Owner:GetViewModel()
+
+	if ( IsValid(viewModel) ) then
+		viewModel:SetPlaybackRate(0.5)
+		viewModel:ResetSequence(ACT_VM_FISTS_DRAW)
+	end
+
+	return true
+end
+
+function SWEP:Holster()
+	if ( !IsValid(self.Owner) ) then
+		return
+	end
+
+	local viewModel = self.Owner:GetViewModel()
+
+	if ( IsValid(viewModel) ) then
+		viewModel:SetPlaybackRate(0.5)
+		viewModel:ResetSequence(ACT_VM_FISTS_HOLSTER)
+	end
+
+	return true
+end
 
 function SWEP:Precache()
 	util.PrecacheSound("npc/vort/claw_swing1.wav")
