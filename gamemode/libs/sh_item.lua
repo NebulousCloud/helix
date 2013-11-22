@@ -787,6 +787,12 @@ do
 			else
 				nut.util.Notify(nut.lang.Get("no_afford"), client)
 			end
+
+			nut.schema.Call("PlayerBoughtItem", client, itemTable)
+
+			if (itemTable.OnBought) then
+				itemTable:OnBought(client)
+			end
 		end)
 	end
 end
