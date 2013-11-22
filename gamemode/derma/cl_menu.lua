@@ -40,6 +40,7 @@ local PANEL = {}
 			timer.Create("nut_CloseMenu", 0.25, 1, function()
 				if (IsValid(self)) then
 					self:SetVisible(false)
+					self.currentMenu:Remove()
 				end
 			end)
 		end
@@ -110,30 +111,34 @@ local PANEL = {}
 		end
 	end
 
-	function PANEL:SetCurrentMenu(panel)
-		local transitionTime = 0.2
-
-		if (IsValid(self.currentMenu)) then
-			local x, y = self.currentMenu:GetPos()
-			local menu = self.currentMenu
-
-			menu:MoveTo(x, ScrH(), transitionTime, 0, 0.5)
-
-			timer.Simple(0.25, function()
-				if (IsValid(menu)) then
-					menu:Remove()
-				end
-			end)
-		end
-
-		if (IsValid(panel)) then
-			local x, y = panel:GetPos()
-			local w, h = panel:GetSize()
-
-			panel:SetPos(x, -h)
-			panel:MoveTo(x, y, transitionTime, 0.15, 0.5)
-
+	function PANEL:SetCurrentMenu(panel, noAnim)
+		if (noAnim) then
 			self.currentMenu = panel
+		else
+			local transitionTime = 0.2
+
+			if (IsValid(self.currentMenu)) then
+				local x, y = self.currentMenu:GetPos()
+				local menu = self.currentMenu
+
+				menu:MoveTo(x, ScrH(), transitionTime, 0, 0.5)
+
+				timer.Simple(0.25, function()
+					if (IsValid(menu)) then
+						menu:Remove()
+					end
+				end)
+			end
+
+			if (IsValid(panel)) then
+				local x, y = panel:GetPos()
+				local w, h = panel:GetSize()
+
+				panel:SetPos(x, -h)
+				panel:MoveTo(x, y, transitionTime, 0.15, 0.5)
+
+				self.currentMenu = panel
+			end
 		end
 	end
 

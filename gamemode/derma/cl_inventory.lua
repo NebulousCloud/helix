@@ -117,5 +117,6 @@ local PANEL = {}
 		self:Remove()
 
 		nut.gui.inv = vgui.Create("nut_Inventory", parent)
+		nut.gui.menu:SetCurrentMenu(nut.gui.inv, true)
 	end
 vgui.Register("nut_Inventory", PANEL, "DFrame")
