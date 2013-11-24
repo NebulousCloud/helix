@@ -345,7 +345,7 @@ if (SERVER) then
 			end)
 		end
 
-		return time
+		return time, realSeq
 	end
 
 	function playerMeta:ResetOverrideSeq()
