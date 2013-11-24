@@ -77,6 +77,12 @@ do
 					time = 0.8
 				end
 
+				if (raised and weapon.OnRaised) then
+					weapon:OnRaised()
+				elseif (!raised and weapon.OnLowered) then
+					weapon:OnLowered()
+				end
+
 				weapon:SetNextPrimaryFire(CurTime() + time)
 				weapon:SetNextSecondaryFire(CurTime() + time)
 			end
