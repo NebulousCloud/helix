@@ -35,6 +35,7 @@ local PANEL = {}
 		self.next:SetVisible(characters[self.currentIndex + 1] != nil)
 
 		self.model:SetModel(character.model)
+		self.model:SetSkin(character.skin)
 
 		local faction = nut.faction.GetByID(character.faction).name or "No faction name."
 		local name = character.name or "John Doe"

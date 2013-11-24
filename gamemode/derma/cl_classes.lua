@@ -75,7 +75,7 @@ local PANEL = {}
 		end
 
 		if (model) then
-			self.icon:SetModel(model, class.skin)
+			self.icon:SetModel(model, class:GetSkin())
 		end
 
 		self.name:SetText(class.name)

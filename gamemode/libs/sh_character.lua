@@ -386,9 +386,17 @@ if (SERVER) then
 			if (IsValid(client)) then
 				if (data) then
 					if (!sameChar) then
+						if (string.find(data.model, ";")) then
+							local exploded = string.Explode(";", data.model)
+
+							data.model = exploded[1]
+							data.skin = tonumber(exploded[2])
+						end
+
 						local character = nut.char.New(client)
 						character.index = index
 						character.model = data.model
+						character.skin = data.skin
 
 						for k, v in pairs(data) do
 							character:SetVar(k, v, nil, true)
@@ -425,7 +433,14 @@ if (SERVER) then
 					client.characters = client.characters or {};
 					table.insert(client.characters, tonumber(data.id))
 					
-					netstream.Start(client, "nut_CharInfo", {data.charname, data.description, data.model, data.faction, data.id})
+					if (string.find(data.model, ";")) then
+						local exploded = string.Explode(";", data.model)
+
+						data.model = exploded[1]
+						data.skin = tonumber(exploded[2])
+					end
+
+					netstream.Start(client, "nut_CharInfo", {data.charname, data.description, data.model, data.faction, data.id, data.skin})
 				else
 					error("Attempt to load an invalid character ("..client:Name().." #"..index..")")
 				end
@@ -477,6 +492,10 @@ if (SERVER) then
 		local index = character.index
 		local data = character:GetVars()
 		data.model = client:GetModel()
+
+		if (data.skin) then
+			data.model = data.model..";"..data.skin
+		end
 
 		nut.db.UpdateTable("steamid = "..steamID.." AND id = "..index..sameSchema(), data)
 		client:SaveData()
@@ -716,6 +735,7 @@ else
 		local model = data[3]
 		local faction = data[4]
 		local id = data[5]
+		local skin = data[6]
 
 		LocalPlayer().characters = LocalPlayer().characters or {}
 		table.insert(LocalPlayer().characters, {
@@ -723,7 +743,8 @@ else
 			desc = description,
 			model = model,
 			faction = faction,
-			id = id
+			id = id,
+			skin = skin
 		})
 	end)
 end

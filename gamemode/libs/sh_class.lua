@@ -38,6 +38,10 @@ function nut.class.Register(index, classTable)
 		return self.PlayerGetModel and self:PlayerGetModel(client) or self.model or model
 	end
 
+	function classTable:GetSkin()
+		return self.skin or 0
+	end
+
 	if (!classTable.OnSet) then
 		function classTable:OnSet(client)
 			local model = self:GetModel(client)
@@ -131,9 +135,11 @@ do
 					local model = class:GetModel(self)
 
 					self.character.model = model or self.character.model
+					self:SetModel(self.character.model)
 					self.character:SetData("class", index)
+					self:SetSkin(class:GetSkin(self))
 
-					nut.schema.Call("PlayerClassSet", client, index)
+					nut.schema.Call("PlayerClassSet", self, index)
 				end
 			end
 		end
