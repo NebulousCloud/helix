@@ -63,8 +63,8 @@ if (CLIENT) then
 		return y
 	end
 
-	function nut.bar.SetMainBar(text, time)
-		nut.bar.mainStart = CurTime()
+	function nut.bar.SetMainBar(text, time, timePassed)
+		nut.bar.mainStart = CurTime() - (timePassed or 0)
 		nut.bar.mainFinish = nut.bar.mainStart + time
 		nut.bar.mainText = text
 	end
@@ -112,20 +112,21 @@ if (CLIENT) then
 	netstream.Hook("nut_MainBar", function(data)
 		local text = data[1]
 		local time = data[2]
+		local timePassed = data[3]
 
 		if (time == 0) then
 			nut.bar.KillMainBar()
 		else
-			nut.bar.SetMainBar(text, time)
+			nut.bar.SetMainBar(text, time, timePassed)
 		end
 	end)
 else
 	local playerMeta = FindMetaTable("Player")
 
-	function playerMeta:SetMainBar(text, time)
+	function playerMeta:SetMainBar(text, time, timePassed)
 		text = text or ""
 		time = time or 0
 
-		netstream.Start(self, "nut_MainBar", {text, time})
+		netstream.Start(self, "nut_MainBar", {text, time, timePassed})
 	end
 end
