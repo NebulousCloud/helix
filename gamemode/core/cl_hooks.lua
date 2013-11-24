@@ -27,11 +27,13 @@ function GM:PaintBar(value, color, x, y, width, height)
 
 	width = width * (math_Clamp(value, 0, 100) / 100) - 2
 
-	surface.SetDrawColor(color)
-	surface.DrawRect(x + 1, y + 1, width, height - 2)
+	if (width > 0) then
+		surface.SetDrawColor(color)
+		surface.DrawRect(x + 1, y + 1, width, height - 2)
 
-	surface.SetDrawColor(255, 255, 255, 50)
-	surface.DrawOutlinedRect(x + 1, y + 1, width, height - 2)
+		surface.SetDrawColor(255, 255, 255, 50)
+		surface.DrawOutlinedRect(x + 1, y + 1, width, height - 2)
+	end
 
 	return y - height - 2
 end
