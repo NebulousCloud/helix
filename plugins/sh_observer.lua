@@ -8,9 +8,11 @@ if (SERVER) then
 			if (client:GetMoveType() == MOVETYPE_WALK) then
 				client:SetNutVar("noclipPos", client:GetPos())
 				client:SetNoDraw(true)
+				client:DrawShadow(false)
 				client:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 			else
 				client:SetNoDraw(false)
+				client:DrawShadow(true)
 				client:SetCollisionGroup(COLLISION_GROUP_PLAYER)
 
 				if (client:GetInfoNum("nut_observetp", 0) > 0) then
