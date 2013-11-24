@@ -10,6 +10,10 @@ BASE.functions.Wear = {
 		if (SERVER) then
 			local model = itemTable.model
 
+			if ((string.find(model, "female") or nut.anim.GetClass(model) == "citizen_female") and itemTable.femaleModel) then
+				model = itemTable.femaleModel
+			end
+
 			if (!model) then
 				client.character:SetData("oldModel", nil, nil, true)
 				error("Clothing item without valid model! ("..(itemTable.uniqueID or "null")..")")
@@ -35,6 +39,8 @@ BASE.functions.Wear = {
 						{"group01", "group03"},
 						{"group02", "group03"}
 					}
+
+					You can also use regular expressions.
 				--]]
 				if (#replacement == 2 and type(replacement[1]) == "string" and type(replacement[2]) == "string") then
 					model = string.gsub(lowerPlyModel, replacement[1], replacement[2])
