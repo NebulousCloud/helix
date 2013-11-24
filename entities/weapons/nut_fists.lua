@@ -122,59 +122,39 @@ function SWEP:PrimaryAttack()
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
 	self.Owner:ViewPunch( Angle(self.LastHand + 2, self.LastHand + 5, 0.125) )
 
-	timer.Simple(0.085, function()
+	timer.Simple(0.055, function()
 		if (IsValid(self) and IsValid(self.Owner)) then
+			local damage = self.Primary.Damage
+			local result = nut.schema.Call("PlayerGetFistDamage", self.Owner, damage)
+
+			if (result != nil) then
+				damage = result
+			end
+
 			local data = {}
 				data.start = self.Owner:GetShootPos()
-				data.endpos = data.start + self.Owner:GetAimVector() * 72
+				data.endpos = data.start + self.Owner:GetAimVector()*96
 				data.filter = self.Owner
-			local trace = util.TraceLine(data)
+				data.mins = Vector(-16, -16, -16)
+				data.maxs = Vector(36, 36, 36)
+			local trace = util.TraceHull(data)
 
-			if (self.Owner:GetPos():Distance(trace.HitPos or vector_origin) >= 108) then
-				return
-			end
-			
-			local shoot = false
+			if (SERVER and trace.Hit) then
+				local entity = trace.Entity
 
-			if (trace.Hit) then
-				if ( IsValid(trace.Entity) ) then
-					if ( trace.Entity:IsPlayer() ) then
-						shoot = true
-					end
-
-					local class = string.lower( trace.Entity:GetClass() )
-
-					if ( string.find(class, "breakable") ) then
-						shoot = true
-					end
+				if (IsValid(entity)) then
+					local damageInfo = DamageInfo()
+						damageInfo:SetAttacker(self.Owner)
+						damageInfo:SetInflictor(self)
+						damageInfo:SetDamage(damage)
+						damageInfo:SetDamageType(DMG_SLASH)
+						damageInfo:SetDamagePosition(trace.HitPos)
+						damageInfo:SetDamageForce(self.Owner:GetAimVector()*10000)
+					entity:DispatchTraceAttack(damageInfo, data.start, data.endpos)
 				end
 			end
 
-			if (shoot) then
-				local damage = self.Primary.Damage
-				local result = nut.schema.Call("PlayerGetFistDamage", self.Owner, damage)
-
-				if (result != nil) then
-					damage = result
-				end
-
-				local bullet = {}
-				bullet.Num = 1
-				bullet.Src = self.Owner:GetShootPos()
-				bullet.Dir = self.Owner:GetAimVector()
-				bullet.Spread = Vector(0, 0, 0)
-				bullet.Tracer = 0
-				bullet.Force = 5
-				bullet.Damage = damage
-
-				self.Owner:FireBullets(bullet)
-			elseif ( IsValid(trace.Entity) ) then
-				if ( IsValid( trace.Entity:GetPhysicsObject() ) ) then
-					trace.Entity:GetPhysicsObject():ApplyForceOffset(self.Owner:GetAimVector() * 500, trace.HitPos)
-				end
-			end
-
-			nut.schema.Call("PlayerThrowPunch", self.Owner, shoot)
+			nut.schema.Call("PlayerThrowPunch", self.Owner, trace.Hit)
 		end
 	end)
 end
