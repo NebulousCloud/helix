@@ -463,12 +463,10 @@ nut.command.Register({
 		else
 			time = math.max(tonumber(arguments[1] or "") or 5, 5)
 		end
-
-		local entity = Entity(client:GetNetVar("ragdoll", -1))
 		
 		if nut.schema.Call( "CanFallOver", client ) == false then return end --** to prevent some bugs with charfallover.
 		
-		if (!IsValid(entity)) then
+		if (!client:IsRagdolled()) then
 			client:SetTimedRagdoll(time)
 			client:SetNutVar("fallGrace", CurTime() + 5)
 		else
@@ -479,15 +477,19 @@ nut.command.Register({
 
 nut.command.Register({
 	onRun = function(client, arguments)
+		if (client:GetNutVar("noGetUp")) then
+			return
+		end
+
 		if (client:GetNutVar("fallGrace", 0) >= CurTime()) then
 			nut.util.Notify("You must wait before getting up.", client)
 
 			return
 		end
-		
-		local entity = Entity(client:GetNetVar("ragdoll", -1))
 
-		if (IsValid(entity) and !client:GetNetVar("gettingUp")) then
+		local ragdolled, entity = client:IsRagdolled()
+
+		if (IsValid(entity) and ragdolled and !client:GetNetVar("gettingUp")) then
 			local velocity = entity:GetVelocity():Length2D()
 
 			if (velocity <= 8) then

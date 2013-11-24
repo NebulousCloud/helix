@@ -157,6 +157,18 @@ do
 		return true
 	end
 
+	function playerMeta:IsRagdolled()
+		local index = self:GetNetVar("ragdoll", -1)
+		local entity = Entity(index)
+
+		if (SERVER) then
+			return IsValid(entity), entity
+		end
+
+		return IsValid(entity) or index > 0, entity
+	end
+
+
 	if (SERVER) then
 		function playerMeta:ForceRagdoll()
 			self.ragdoll = ents.Create("prop_ragdoll")
@@ -174,7 +186,7 @@ do
 					self:UnRagdoll()
 				end
 			end)
-			self.ragdoll.grace = CurTime() + 1
+			self.ragdoll.grace = CurTime() + 4
 
 			for i = 0, self.ragdoll:GetPhysicsObjectCount() do
 				local physicsObject = self.ragdoll:GetPhysicsObjectNum(i)
@@ -221,7 +233,7 @@ do
 		end
 
 		function playerMeta:UnRagdoll(samePos)
-			if (self:GetNetVar("ragdoll") == 0) then
+			if (!self:IsRagdolled()) then
 				return
 			end
 			
@@ -265,21 +277,38 @@ do
 			timer.Remove("nut_RagTime"..self:EntIndex())
 		end
 
-		function playerMeta:SetTimedRagdoll(time)
-			local suffix = "s"
-
-			if (time == 1) then
-				suffix = ""
-			end
-
+		function playerMeta:SetTimedRagdoll(time, noGetUp)
 			self:ForceRagdoll()
 
 			if (time > 0) then
+				self:SetNutVar("noGetUp", noGetUp)
 				self:SetMainBar("You are regaining conciousness.", time)
 
-				timer.Create("nut_RagTime"..self:EntIndex(), time, 1, function()
+				local time2 = 0
+
+				timer.Create("nut_RagTime"..self:EntIndex(), 1, 0, function()
 					if (IsValid(self)) then
-						self:UnRagdoll()
+						local ragdoll = self.ragdoll
+
+						if (ragdoll:GetVelocity():Length2D() >= 4 and ragdoll.grace <= CurTime()) then
+							if (!ragdoll.paused) then
+								ragdoll.paused = true
+								self:SetMainBar()
+							end
+
+							return
+						elseif (ragdoll.paused) then
+							self:SetMainBar("You are regaining conciousness.", time, time2)
+							ragdoll.paused = nil
+						end
+
+						time2 = time2 + 1
+
+						if (time2 >= time) then
+							self:UnRagdoll()
+							self:SetNutVar("noGetUp", nil)
+							timer.Remove("nut_RagTime"..self:EntIndex())
+						end
 					end
 				end)
 			end
@@ -291,25 +320,25 @@ do
 
 		hook.Add("EntityTakeDamage", "nut_FallenOver", function(entity, damageInfo)
 			if (IsValid(entity.player) and (entity.grace or 0) < CurTime()) then
+				if (damageInfo:IsDamageType(DMG_CRUSH) and damageInfo:GetDamage() <= 20) then
+					damageInfo:SetDamage(0)
+				end
+
 				entity.player:TakeDamageInfo(damageInfo)
 			end
 		end)
 	else
 		hook.Add("CalcView", "nut_RagdollView", function(client, origin, angles, fov)
-			local entIndex = client:GetNetVar("ragdoll")
+			local ragdolled, entity = client:IsRagdolled()
 
-			if (entIndex and entIndex > 0) then
-				local entity = Entity(entIndex)
+			if (ragdolled and IsValid(entity)) then
+				local index = entity:LookupAttachment("eyes")
+				local attachment = entity:GetAttachment(index)
 
-				if (IsValid(entity)) then
-					local index = entity:LookupAttachment("eyes")
-					local attachment = entity:GetAttachment(index)
-
-					local view = {}
-						view.origin = attachment.Pos
-						view.angles = attachment.Ang
-					return view
-				end
+				local view = {}
+					view.origin = attachment.Pos
+					view.angles = attachment.Ang
+				return view
 			end
 		end)
 	end

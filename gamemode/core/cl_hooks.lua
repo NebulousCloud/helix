@@ -334,9 +334,7 @@ function GM:PlayerCanSeeBusiness()
 end
 
 function GM:PlayerBindPress(client, bind, pressed)
-	local entity = Entity(client:GetNetVar("ragdoll", -1))
-
-	if (!client:GetNetVar("gettingUp") and IsValid(entity) and string.find(bind, "+jump") and pressed) then
+	if (!client:GetNetVar("gettingUp") and client:IsRagdolled() and string.find(bind, "+jump") and pressed) then
 		RunConsoleCommand("nut", "chargetup")
 	end
 end
