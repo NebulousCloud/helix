@@ -416,6 +416,22 @@ end
 do
 	local playerMeta = FindMetaTable("Player")
 
+	function playerMeta:HasInvSpace(itemTable, quantity, forced, noMessage)
+		local weight, maxWeight = self:GetInvWeight()
+		quantity = quantity or 1
+
+		-- Cannot add more items.
+		if (!forced and (quantity > 0 and weight + itemTable.weight > maxWeight)) then
+			if (!noMessage) then
+				nut.util.Notify(nut.lang.Get("no_invspace"), self)
+			end
+
+			return false
+		end
+
+		return true
+	end
+
 	if (SERVER) then
 		--[[
 			Purpose: Very important inventory function as this handles the way items
@@ -438,12 +454,7 @@ do
 
 			quantity = quantity or 1
 
-			local weight, maxWeight = self:GetInvWeight()
-
-			-- Cannot add more items.
-			if (!forced and (quantity > 0 and weight + itemTable.weight > maxWeight)) then
-				nut.util.Notify(nut.lang.Get("no_invspace"), self)
-
+			if (!self:HasInvSpace(itemTable, quantity, forced)) then
 				return false
 			end
 
@@ -779,8 +790,20 @@ do
 
 			local price = itemTable.price
 
+			if (!client:HasInvSpace(itemTable)) then
+				return
+			end
+
+			local data
+
+			data = nut.schema.Call("GetBusinessItemData", client, itemTable, data)
+
+			if (itemTable.GetBusinessData) then
+				data = itemTable:GetBusinessData(client, data)
+			end
+			
 			if (client:CanAfford(price)) then
-				client:UpdateInv(class)
+				client:UpdateInv(class, nil, data)
 				client:TakeMoney(price)
 
 				nut.util.Notify(nut.lang.Get("purchased", itemTable.name), client)
