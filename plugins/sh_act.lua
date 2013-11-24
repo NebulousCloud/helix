@@ -114,8 +114,10 @@ if (SERVER) then
 
 				time = client:SetOverrideSeq(act[1], time, function()
 					client:Freeze(true)
+					client:SetNetVar("seqCam", true)
 				end, function()
 					client:Freeze(false)
+					client:SetNetVar("seqCam", nil)
 				end)
 
 				if (time and time > 0) then
@@ -157,7 +159,7 @@ else
 	end
 	
 	function PLUGIN:CalcView(client, origin, angles, fov)
-		if (client:GetOverrideSeq()) then
+		if (client:GetOverrideSeq() and client:GetNetVar("seqCam")) then
 			local view = {}
 			local at = client:LookupAttachment( "eyes" )
 			if at == 0 then at = client:LookupAttachment( "eye" ) end
@@ -180,7 +182,7 @@ else
 	end
 
 	function PLUGIN:ShouldDrawLocalPlayer()
-		if (LocalPlayer():GetOverrideSeq()) then
+		if (LocalPlayer():GetOverrideSeq() and LocalPlayer():GetNetVar("seqCam")) then
 			return true
 		end
 	end
