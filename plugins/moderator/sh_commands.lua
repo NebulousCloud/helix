@@ -329,6 +329,7 @@ PLUGIN:CreateCommand({
 		local time = PLUGIN:GetTimeByString(arguments[1])
 		local reason = arguments[2] or "no reason"
 
+		nut.util.Notify(client:Name().." has banned "..target:Name().." for "..reason..".")
 		PLUGIN:BanPlayer(target, time, reason)
 	end
 }, "ban")
