@@ -40,7 +40,10 @@ local PANEL = {}
 			timer.Create("nut_CloseMenu", 0.25, 1, function()
 				if (IsValid(self)) then
 					self:SetVisible(false)
-					self.currentMenu:Remove()
+
+					if (IsValid(self.currentMenu)) then
+						self.currentMenu:Remove()
+					end
 				end
 			end)
 		end
