@@ -228,7 +228,7 @@ function ENT:GetInvWeight()
 					quantity = quantity + v.quantity
 				end
 
-				local addition = itemTable.weight * quantity
+				local addition = math.abs(itemTable.weight) * quantity
 
 				if (itemTable.weight < 0) then
 					maxWeight = maxWeight + addition
