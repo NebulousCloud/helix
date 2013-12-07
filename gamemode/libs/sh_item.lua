@@ -126,6 +126,10 @@ function nut.item.ProcessQuery(itemTable, action, client, data, entity, index)
 
 			if (query.ignoreAction or string.Left(v, matchLength + 1) == (actionMatch..":") or string.Right(v, matchLength) == actionMatch) then
 				if (string.match(v, query.match)) then
+					if (string.Left(v, matchLength + 1) == (actionMatch..":")) then
+						v = string.sub(v, matchLength + 1)
+					end
+
 					local exploded = string.Explode("%s+", v, true)
 					local queryArgs = query.arguments
 					local arguments = {}
