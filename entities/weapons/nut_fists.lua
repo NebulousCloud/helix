@@ -135,9 +135,7 @@ function SWEP:PrimaryAttack()
 				data.start = self.Owner:GetShootPos()
 				data.endpos = data.start + self.Owner:GetAimVector()*96
 				data.filter = self.Owner
-				data.mins = Vector(-16, -16, -16)
-				data.maxs = Vector(36, 36, 36)
-			local trace = util.TraceHull(data)
+			local trace = util.TraceLine(data)
 
 			if (SERVER and trace.Hit) then
 				local entity = trace.Entity
@@ -151,6 +149,7 @@ function SWEP:PrimaryAttack()
 						damageInfo:SetDamagePosition(trace.HitPos)
 						damageInfo:SetDamageForce(self.Owner:GetAimVector()*10000)
 					entity:DispatchTraceAttack(damageInfo, data.start, data.endpos)
+					self.Owner:EmitSound("physics/body/body_medium_impact_hard"..math.random(1, 6)..".wav", 80)
 				end
 			end
 
