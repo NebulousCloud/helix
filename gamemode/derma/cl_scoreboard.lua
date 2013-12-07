@@ -36,24 +36,47 @@ local PANEL = {}
 	end
 
 	function PANEL:PopulateList()
-		for k, v in ipairs(team.GetAllTeams()) do
-			if (team.NumPlayers(k) > 0) then
-				local title = self.list:Add("DLabel")
-				title:Dock(TOP)
-				title:DockMargin(4, 0, 4, 4)
-				title:SetText(v.Name)
-				title:SetFont("nut_ScoreTeamFont")
-				title:SizeToContents()
-				title:SetTextColor(color_white)
-				title:SetExpensiveShadow(1, color_black)
+		self.teamList = {}
 
-				for k2, v2 in ipairs(team.GetPlayers(k)) do
-					if (v2.character) then
-						local panel = self.list:Add("nut_PlayerScore")
-						panel:DockMargin(4, 0, 4, 2)
-						panel:Dock(TOP)
-						panel:SetPlayer(v2)
-					end
+		local players = player.GetAll()
+
+		table.sort(players, function(a, b)
+			return a:Team() > b:Team()
+		end)
+
+		for k, v in ipairs(players) do
+			if (v.character) then
+				local customClass = v:GetNetVar("customClass")
+
+				if (customClass == "") then
+					customClass = nil
+				end
+
+				local teamName = customClass or team.GetName(v:Team())
+
+				if (!IsValid(self.teamList[teamName])) then
+					self.teamList[teamName] = self.list:Add("DPanel")
+					self.teamList[teamName]:Dock(TOP)
+					self.teamList[teamName]:SetDrawBackground(false)
+
+					local title = self.teamList[teamName]:Add("DLabel")
+					title:Dock(TOP)
+					title:DockMargin(4, 0, 4, 4)
+					title:SetText(teamName)
+					title:SetFont("nut_ScoreTeamFont")
+					title:SizeToContents()
+					title:SetTextColor(color_white)
+					title:SetExpensiveShadow(1, color_black)
+				end
+
+				local panel = self.teamList[teamName]
+
+				if (IsValid(panel)) then
+					local panel2 = panel:Add("nut_PlayerScore")
+					panel2:DockMargin(4, 0, 4, 2)
+					panel2:Dock(TOP)
+					panel2:SetPlayer(v)
+					panel:SetTall(panel:GetTall() + 68 + 8)
 				end
 			end
 		end
