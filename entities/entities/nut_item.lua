@@ -54,9 +54,8 @@ function ENT:GetItemTable()
 end
 
 if (CLIENT) then
-	local mainColor = nut.config.mainColor
-
 	function ENT:DrawTargetID(x, y, alpha)
+		local mainColor = nut.config.mainColor
 		local itemTable = self:GetItemTable()
 
 		if (itemTable) then
