@@ -72,6 +72,14 @@ function GM:PlayerLoadedChar(client)
 	client:SetTeam(faction)
 	client:SetSkin(client.character:GetData("skin", 0))
 
+	local customClass = client.character:GetData("customClass")
+
+	if (customClass and customClass != "") then
+		client:SetNetVar("customClass", customClass)
+	else
+		client:SetNetVar("customClass", nil)
+	end
+
 	if (!client:GetNutVar("sawCredits")) then
 		nut.schema.Call("PlayerFirstLoaded", client)
 		client:SetNutVar("sawCredits", true)
@@ -164,6 +172,10 @@ function GM:GetFallDamage(client, speed)
 end
 
 function GM:ShutDown()
+	MsgN("NutScript is shutting down...")
+
+	nut.shuttingDown = true
+
 	for k, v in pairs(player.GetAll()) do
 		nut.char.Save(v)
 	end

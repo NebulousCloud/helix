@@ -83,6 +83,23 @@ function META:NewVar(name, value, state, noSave)
 	end
 end
 
+if (SERVER) then
+	local playerMeta = FindMetaTable("Player")
+
+	function playerMeta:UpdateCharInfo()
+		if (self.character) then
+			netstream.Start(client, "nut_CharInfo", {
+				self.character:GetVar("charname", "John Doe"),
+				self.character:GetVar("description", "No description available."),
+				self:GetModel(),
+				self:Team(),
+				self.character.index,
+				self:GetSkin()
+			})
+		end
+	end
+end
+
 --[[
 	Purpose: Sets the actual variable that is defined by :NewVar and networks it
 	to the receiver which is either a player, table, or nil. Using nil as the receiver
@@ -102,6 +119,10 @@ function META:SetVar(name, value, receiver, convert)
 
 	if (SERVER) then
 		self:Send(name, receiver)
+
+		if (name == "charname" or name == "description" or name == "model" or name == "chardata") then
+			self.player:UpdateCharInfo()
+		end
 	end
 
 	if (nut.char.hooks[name]) then
@@ -489,6 +510,14 @@ if (SERVER) then
 
 		nut.schema.Call("CharacterSave", client)
 
+		local customClass = client:GetNetVar("customClass")
+
+		if (customClass and customClass != "") then
+			client.character:SetData("customClass", customClass)
+		else
+			client.character:SetData("customClass", nil)
+		end
+
 		local index = character.index
 		local data = character:GetVars()
 		data.model = client:GetModel()
@@ -738,6 +767,22 @@ else
 		local skin = data[6]
 
 		LocalPlayer().characters = LocalPlayer().characters or {}
+
+		for k, v in pairs(LocalPlayer().characters) do
+			if (v.id == id) then
+				LocalPlayer().characters[k] = {
+					name = name,
+					desc = description,
+					model = model,
+					faction = faction,
+					id = id,
+					skin = skin
+				}
+
+				return
+			end
+		end
+
 		table.insert(LocalPlayer().characters, {
 			name = name,
 			desc = description,

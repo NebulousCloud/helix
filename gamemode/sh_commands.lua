@@ -409,11 +409,33 @@ nut.command.Register({
 			target:SetModel(model)
 			target:SetSkin(tonumber(arguments[3]) or 0)
 			target.character.model = model
+			target:UpdateCharInfo()
 			
 			nut.util.Notify(client:Name().." has changed "..target:Name().."'s model to "..arguments[2]..".")
 		end
 	end
 }, "charsetmodel")
+
+nut.command.Register({
+	adminOnly = true,
+	allowDead = true,
+	syntax = "<string name> [string customClass]",
+	onRun = function(client, arguments)
+		local target = nut.command.FindPlayer(client, arguments[1])
+
+		if (IsValid(target)) then
+			table.remove(arguments, 1)
+			local customClass = table.concat(arguments, " ")
+
+			if (customClass == "") then
+				customClass = nil
+			end
+
+			target:SetNetVar("customClass", customClass)
+			nut.util.Notify(client:Name().." has changed "..target:Name().."'s custom class to "..(customClass or "nothing")..".")
+		end
+	end	
+}, "charsetcustomclass")
 
 nut.command.Register({
 	adminOnly = true,
