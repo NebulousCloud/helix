@@ -28,6 +28,7 @@ BASE.functions.Consume = {
 			end)
 
 			client:EmitSound("items/battery_pickup.wav")
+			client:ScreenFadeOut(1, Color(255, 255, 255, 175))
 		end
 	end
 }
