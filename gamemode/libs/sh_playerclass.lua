@@ -1,6 +1,10 @@
 -- ALl of this just for hands that match the player model.
 -- And we'll include some misc. player stuff too.
 
+if (CLIENT) then
+   	CreateConVar("cl_weaponcolor", "0.30 1.80 2.10", {FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTRECORD}, "The value is a Vector - so between 0-1 - not between 0-255")
+end
+
 local PLAYER = {}
 PLAYER.DisplayName = "NutScript Player"
 
@@ -11,7 +15,10 @@ for k, v in pairs(player_manager.AllValidModels()) do
 end
 
 function PLAYER:Loadout()
-	return
+	local color = self.Player:GetInfo("cl_weaponcolor")
+    self.Player:SetWeaponColor(Vector(color))
+
+    return
 end
 
 function PLAYER:SetupDataTables()
