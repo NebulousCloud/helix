@@ -549,7 +549,7 @@ function nut.util.StackInv(inventory, class, quantity, data)
 			index = k
 
 			break
-		elseif (!data and !v.data and class2 == class) then
+		elseif (!data and !v.data) then
 			stack = v
 			index = k
 
@@ -570,7 +570,7 @@ function nut.util.StackInv(inventory, class, quantity, data)
 	elseif (stack) then
 		-- A stack already exists, so add or take from it.
 		stack.quantity = stack.quantity + quantity
-
+		
 		-- If the quantity is negative, meaning we take from the stack, remove
 		-- the stack from the inventory.
 		if (stack.quantity <= 0) then

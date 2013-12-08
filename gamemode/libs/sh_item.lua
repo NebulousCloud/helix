@@ -225,14 +225,36 @@ function nut.item.Register(itemTable, isBase)
 		}
 
 		function itemTable:Call(action, client, data, entity, index)
+			data = data or {}
+
+			local itemFunction = self.functions[action]
+
+			if (itemFunction and itemFunction.run) then
+				self.player = client
+				self.data = data
+				self.entity = entity
+				self.index = index
+
+				local result, result2 = itemFunction.run(self, client, data, entity or NULL, index)
+
+				self.player = nil
+				self.data = nil
+				self.entity = nil
+				self.index = nil
+
+				if (result != nil) then
+					return result, result2
+				end
+			end
+
 			nut.item.ProcessQuery(itemTable, action, client, data, entity, index)
 
 			if (self.hooks and self.hooks[action]) then
 				for k, v in pairs(self.hooks[action]) do
-					local result = v(self, client, data or {}, entity or NULL, index)
+					local result, result2 = v(self, client, data or {}, entity or NULL, index)
 
 					if (result != nil) then
-						return result
+						return result, result2
 					end
 				end
 			end
@@ -425,7 +447,7 @@ do
 		quantity = quantity or 1
 
 		-- Cannot add more items.
-		if (!forced and (quantity > 0 and weight + itemTable.weight > maxWeight)) then
+		if (!forced and quantity > 0 and weight + itemTable.weight > maxWeight) then
 			if (!noMessage) then
 				nut.util.Notify(nut.lang.Get("no_invspace"), self)
 			end
@@ -634,20 +656,9 @@ do
 			local action = data[3]
 			local itemTable = nut.item.Get(class)
 			local item = client:GetItem(class, index)
-			local itemFunction = itemTable.functions[action]
 			
-			if (item and itemFunction) then
-				local result = true
-
-				if (itemFunction.run) then
-					result = itemFunction.run(itemTable, client, item.data or {}, NULL, index)
-
-					local result2 = itemTable:Call(action, client, item.data, NULL, index)
-
-					if (result2 != nil) then
-						result = result2
-					end
-				end
+			if (item) then
+				local result = itemTable:Call(action, client, item.data, NULL, index)
 
 				if (result != false) then
 					client:UpdateInv(class, -1, item.data)
@@ -670,19 +681,13 @@ do
 			local itemFunction = itemTable.functions[action]
 
 			if (itemFunction) then
-				local result = true
-
-				if (itemFunction.run) then
-					result = itemFunction.run(itemTable, client, data or {}, entity)
-				end
-
-				local result2 = itemTable:Call(action, client, data, entity)
-
-				if (result2 != nil) then
-					result = result2
-				end
+				local result, result2 = itemTable:Call(action, client, data, entity)
 
 				if (result != false) then
+					client:UpdateInv(itemTable.uniqueID, -1, data)
+				end
+
+				if (result2 != false) then
 					entity:Remove()
 				end
 			end
@@ -706,13 +711,10 @@ do
 					if (!v.entityOnly) then
 						local material = v.icon or "icon16/plugin_go.png"
 
-						local option = menu:AddOption(v.text or k, function()
+						local option = menu:AddOption(v.alias or v.text or k, function()
 							netstream.Start("nut_ItemAction", {itemTable.uniqueID, index, k})
 
-							if (v.run) then
-								itemTable:Call(k, LocalPlayer(), item.data, NULL, index)
-								v.run(itemTable, LocalPlayer(), item.data or {}, NULL, index)
-							end
+							itemTable:Call(k, LocalPlayer(), item.data, NULL, index)
 						end)
 						option:SetImage(material)
 
@@ -749,12 +751,11 @@ do
 					if (!v.menuOnly) then
 						local material = v.icon or "icon16/plugin_go.png"
 
-						local option = menu:AddOption(v.text or k, function()
+						local option = menu:AddOption(v.alias or v.text or k, function()
 							netstream.Start("nut_EntityAction", {entity, k})
 
 							if (v.run) then
 								itemTable:Call(k, LocalPlayer(), entity:GetData(), entity)
-								v.run(itemTable, LocalPlayer(), entity:GetData() or {}, entity)
 							end
 						end)
 						option:SetImage(material)
