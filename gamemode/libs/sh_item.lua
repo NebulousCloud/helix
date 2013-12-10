@@ -141,14 +141,14 @@ function nut.item.ProcessQuery(itemTable, action, client, data, entity, index)
 					end
 
 					itemTable.player = client
-					itemTable.data = data
+					itemTable.itemData = data
 					itemTable.entity = entity
 					itemTable.index = index
 
 					local result = query.callback(itemTable, arguments)
 
 					itemTable.player = nil
-					itemTable.data = nil
+					itemTable.itemData = nil
 					itemTable.entity = nil
 					itemTable.index = nil
 
@@ -213,13 +213,11 @@ function nut.item.Register(itemTable, isBase)
 			entityOnly = true,
 			tip = "Put the item in your inventory.",
 			icon = "icon16/box.png",
-			run = function(itemTable, client, data, entity)
+			run = function(item)
 				if (SERVER) then
-					local itemTable = entity:GetItemTable()
-					local data = entity:GetData()
-					client:EmitSound("physics/body/body_medium_impact_soft"..math.random(5, 7)..".wav")
+					item.player:EmitSound("physics/body/body_medium_impact_soft"..math.random(5, 7)..".wav")
 
-					return client:UpdateInv(itemTable.uniqueID, 1, data)
+					return item.player:UpdateInv(item.uniqueID, 1, item.itemData)
 				end
 			end
 		}
@@ -304,7 +302,7 @@ function nut.item.Register(itemTable, isBase)
 						return data[key]
 					end
 
-					return self.data[key] or exploded[2]
+					return self.data and self.data[key] or exploded[2]
 				end)
 
 				return description
@@ -681,13 +679,9 @@ do
 			local itemFunction = itemTable.functions[action]
 
 			if (itemFunction) then
-				local result, result2 = itemTable:Call(action, client, data, entity)
+				local result = itemTable:Call(action, client, data, entity)
 
 				if (result != false) then
-					client:UpdateInv(itemTable.uniqueID, -1, data)
-				end
-
-				if (result2 != false) then
 					entity:Remove()
 				end
 			end

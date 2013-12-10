@@ -540,6 +540,7 @@ end
 
 function nut.util.StackInv(inventory, class, quantity, data)
 	local stack, index
+	quantity = quantity or 1
 
 	inventory[class] = inventory[class] or {}
 	
@@ -556,7 +557,7 @@ function nut.util.StackInv(inventory, class, quantity, data)
 			break
 		end
 	end
-
+	
 	-- Here we see if the item should be added or removed.
 	if (!stack and quantity > 0) then
 		-- Create a new stack of a specific item here.
