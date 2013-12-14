@@ -64,7 +64,7 @@ do
 	function playerMeta:IsRunning()
 		local runSpeed = nut.config.runSpeed - 5
 
-		return self:GetVelocity():Length2D() >= runSpeed	
+		return self:GetVelocity():Length2D() >= runSpeed and self:KeyDown(IN_SPEED)
 	end
 
 	if (SERVER) then
