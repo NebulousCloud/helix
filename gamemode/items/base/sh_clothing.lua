@@ -53,6 +53,10 @@ BASE.functions.Wear = {
 				end
 			end
 
+			if (model == lowerPlyModel) then
+				model = itemTable.model
+			end
+
 			client.character:SetData("oldModel", lowerPlyModel, nil, true)
 			client.character.model = model
 			client:SetModel(model)
@@ -64,7 +68,7 @@ BASE.functions.Wear = {
 			local newData = table.Copy(data)
 			newData.Equipped = true
 
-			client:UpdateInv(itemTable.uniqueID, 1, newData)
+			client:UpdateInv(itemTable.uniqueID, 1, newData, true)
 		end
 	end,
 	shouldDisplay = function(itemTable, data, entity)
@@ -87,7 +91,7 @@ BASE.functions.TakeOff = {
 			local newData = table.Copy(data)
 			newData.Equipped = false
 
-			client:UpdateInv(itemTable.uniqueID, 1, newData)
+			client:UpdateInv(itemTable.uniqueID, 1, newData, true)
 
 			return true
 		end
