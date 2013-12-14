@@ -233,6 +233,17 @@ function nut.item.Register(itemTable, isBase)
 				self.entity = entity
 				self.index = index
 
+				if (nut.schema.Call("PlayerCanUseItem", client, self) == false) then
+					self.player = nil
+					self.itemData = nil
+					self.entity = nil
+					self.index = nil
+
+					nut.util.Notify("You can not do this when tied.", client)
+					
+					return false, false
+				end
+
 				local result, result2 = itemFunction.run(self, client, data, entity or NULL, index)
 
 				self.player = nil
@@ -463,7 +474,7 @@ do
 			is how many to give (or take if it is negative). Data is a table that is for
 			persistent item data. noSave and noSend are self-explanatory.
 		--]]
-		function playerMeta:UpdateInv(class, quantity, data, noSave, noSend, forced)
+		function playerMeta:UpdateInv(class, quantity, data, forced, noSave, noSend)
 			if (!self.character) then
 				return false
 			end
@@ -658,7 +669,7 @@ do
 			local action = data[3]
 			local itemTable = nut.item.Get(class)
 			local item = client:GetItem(class, index)
-			
+
 			if (item) then
 				local result = itemTable:Call(action, client, item.data, NULL, index)
 
