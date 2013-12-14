@@ -124,6 +124,7 @@ end
 
 function GM:PlayerSpawn(client)
 	client:SetMainBar()
+	client:SetNetVar("drunk", 0)
 	client:ScreenFadeOut()
 
 	if (!client.character) then
@@ -389,7 +390,12 @@ function GM:SaveTime()
 end
 
 function GM:PlayerUse(client, entity)
-	if (entity.NoUse) then
+	if (entity.NoUse or client:GetNetVar("tied")) then
+		if (client:GetNetVar("tied") and SERVER and client:GetNutVar("nextTieMsg", 0) < CurTime()) then
+			nut.util.Notify("You can not do this when tied.", client)
+			client:SetNutVar("nextTieMsg", CurTime() + 1)
+		end
+
 		return false
 	end
 
@@ -401,6 +407,11 @@ function GM:KeyPress(client, key)
 
 	-- PlayerUse hook doesn't get called on doors that don't allow +use :c
 	if (key == IN_USE) then
+		if (client:GetNetVar("tied") and SERVER and client:GetNutVar("nextTieMsg", 0) < CurTime()) then
+			nut.util.Notify("You can not do this when tied.", client)
+			client:SetNutVar("nextTieMsg", CurTime() + 1)
+		end
+
 		local data = {}
 			data.start = client:GetShootPos()
 			data.endpos = data.start + client:GetAimVector() * 56

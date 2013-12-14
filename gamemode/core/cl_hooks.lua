@@ -117,6 +117,10 @@ function GM:HUDPaint()
 		surface.DrawRect(x + spacing, y + spacing, size, size)
 	end
 
+	if (LocalPlayer():GetNetVar("tied")) then
+		nut.util.DrawText(ScrW() * 0.5, ScrH() * 0.25, "You have been tied.")
+	end
+
 	local x = 8
 	local y = ScrH() - BAR_HEIGHT - 8
 
@@ -155,6 +159,20 @@ function GM:CreateSideMenu(menu)
 		menu.money:SetFont("nut_TargetFont")
 		menu.money:DockMargin(4, 4, 4, 4)
 	end
+end
+
+local deltaAngle
+
+function GM:CalcView(client, origin, angles, fov)
+	local view = {}
+		local drunk = client:GetNetVar("drunk", 0)
+
+		if (drunk > 0) then
+			deltaAngle = LerpAngle(math.max(0.8 - drunk, 0.025), deltaAngle or angles, angles)
+			view.angles = deltaAngle + Angle(math.cos(RealTime() * 0.9) * drunk*4, math.sin(RealTime() * 0.9) * drunk*7.5, math.cos(RealTime() * 0.9) * drunk*5)
+			view.fov = fov + math.sin(RealTime() * 0.5) * (drunk * 5)
+		end
+	return view
 end
 
 function GM:HUDPaintTargetID(entity)
@@ -321,6 +339,12 @@ function GM:RenderScreenspaceEffects()
 	nut.schema.Call("ModifyColorCorrection", color)
 
 	DrawColorModify(color)
+
+	local drunk = LocalPlayer():GetNetVar("drunk", 0)
+
+	if (drunk > 0) then
+		DrawMotionBlur(0.075, drunk, 0.025)
+	end
 end
 
 function GM:ModifyColorCorrection(color)

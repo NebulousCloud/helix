@@ -58,6 +58,10 @@ do
 			RunConsoleCommand("ns_sendplydt")
 		end
 		
+		if (self:GetNetVar("tied")) then
+			return false
+		end
+		
 		return self.GetNutWepRaised and self:GetNutWepRaised() or false
 	end
 
