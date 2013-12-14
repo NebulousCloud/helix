@@ -88,7 +88,7 @@ if (SERVER) then
 
 	function playerMeta:UpdateCharInfo()
 		if (self.character) then
-			netstream.Start(client, "nut_CharInfo", {
+			netstream.Start(self, "nut_CharInfo", {
 				self.character:GetVar("charname", "John Doe"),
 				self.character:GetVar("description", "No description available."),
 				self:GetModel(),
@@ -407,7 +407,7 @@ if (SERVER) then
 			if (IsValid(client)) then
 				if (data) then
 					if (!sameChar) then
-						if (string.find(data.model, ";")) then
+						if (data.model and string.find(data.model, ";")) then
 							local exploded = string.Explode(";", data.model)
 
 							data.model = exploded[1]
