@@ -1,5 +1,6 @@
 -- Auto-reload will remove the variable if it doesn't get reset.
 nut.loaded = nut.loaded or false
+nut.loadingText = nut.loadingText or {}
 
 local surface = surface
 local draw = draw
@@ -60,6 +61,12 @@ function GM:HUDPaint()
 		surface.DrawRect(0, 0, ScrW(), ScrH())
 
 		draw.SimpleText("Loading NutScript", "nut_HeaderFont", ScrW() * 0.5, ScrH() * 0.5, color_white, 1, 1)
+
+		for i = #nut.loadingText, 1, -1 do
+			local alpha = (1-i / #nut.loadingText) * 255
+
+			draw.SimpleText(nut.loadingText[i], "nut_TargetFont", ScrW() * 0.5, ScrH() * 0.6 + (i * 36), Color(255, 255, 255, alpha), 1, 1)
+		end
 
 		nut.schema.Call("DrawLoadingScreen")
 
@@ -341,4 +348,18 @@ end
 
 netstream.Hook("nut_CurTime", function(data)
 	nut.curTime = data
+end)
+
+netstream.Hook("nut_LoadingData", function(data)
+	if (data == "") then
+		nut.loadingText = {}
+
+		return
+	end
+
+	table.insert(nut.loadingText, 1, data)
+
+	if (#nut.loadingText > 4) then
+		table.remove(nut.loadingText, 5)
+	end
 end)

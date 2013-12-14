@@ -21,34 +21,56 @@ function GM:PlayerInitialSpawn(client)
 		delay = client:Ping() / 50
 	end
 	
-	timer.Simple(5 + delay, function()
+	netstream.Start(client, "nut_LoadingData", "Waiting for local player.")
+
+	timer.Simple(3 + delay, function()
 		if (!IsValid(client)) then
 			return
 		end
 
+		netstream.Start(client, "nut_LoadingData", "Sending current time.")
 		netstream.Start(client, "nut_CurTime", nut.util.GetTime())
 
 		client:KillSilent()
 		client:StripWeapons()
+
+		netstream.Start(client, "nut_LoadingData", "Initializing player data.")
 		client:InitializeData()
 
 		player_manager.SetPlayerClass(client, "player_nut")
 		player_manager.RunClass(client, "Spawn")
 
+		netstream.Start(client, "nut_LoadingData", "Loading characters.")
 		nut.char.Load(client, function()
+			netstream.Start(client, "nut_LoadingData", "Loading other characters.")
+
+			local total = 0
+			local time = 0.1
+
 			for k, v in pairs(player.GetAll()) do
 				if (v.character and v != client) then
-					local fraction = math.max(client:Ping() / 100, 0.75)
+					total = total + 1
+				end
+			end
+
+			local i = 0
+
+			for k, v in pairs(player.GetAll()) do
+				if (v.character and v != client) then
+					local fraction = math.max(client:Ping() / 100, 0.75) + 0.5
+					i = i + 1
+					time = time + fraction
 
 					timer.Simple(k * fraction, function()
 						if (IsValid(client) and IsValid(v)) then
+							netstream.Start(client, "nut_LoadingData", "Networking characters... "..math.Round((i / total) * 100).."%")
 							v.character:Send(nil, client, true)
 						end
 					end)
 				end
 			end
 		
-			timer.Simple(math.max(client:Ping() / 100, 0.1), function()
+			timer.Simple(time + math.max(client:Ping() / 100, 0.1) + 0.1, function()
 				netstream.Start(client, "nut_CharMenu")
 			end)
 
