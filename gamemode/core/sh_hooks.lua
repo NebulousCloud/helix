@@ -18,11 +18,18 @@ end
 WEAPON_LOWERED = 1
 WEAPON_RAISED = 2
 
-function GM:CalcMainActivity(client, velocity)
-	local model = string.lower(client:GetModel())
-	local class = nut.anim.GetClass(model)
+local math_NormalizeAngle = math.NormalizeAngle
+local string_find = string.find
+local string_lower = string.lower
+local getAnimClass = nut.anim.GetClass
+local getHoldType = nut.util.GetHoldType
+local config = nut.config
 
-	if (string.find(model, "/player/") or string.find(model, "/playermodel") or class == "player") then
+function GM:CalcMainActivity(client, velocity)
+	local model = string_lower(client:GetModel())
+	local class = getAnimClass(model)
+
+	if (string_find(model, "/player/") or string_find(model, "/playermodel") or class == "player") then
 		return self.BaseClass:CalcMainActivity(client, velocity)
 	end
 
@@ -35,7 +42,7 @@ function GM:CalcMainActivity(client, velocity)
 		
 		local length2D = velocity:Length2D()
 
-		if (length2D >= nut.config.runSpeed - 10) then
+		if (length2D >= config.runSpeed - 10) then
 			action = "run"
 		elseif (length2D >= 5) then
 			action = "walk"
@@ -48,9 +55,9 @@ function GM:CalcMainActivity(client, velocity)
 		local state = WEAPON_LOWERED
 
 		if (IsValid(weapon)) then
-			holdType = nut.util.GetHoldType(weapon)
+			holdType = getHoldType(weapon)
 
-			if (weapon.AlwaysRaised or nut.config.alwaysRaised[weapon:GetClass()]) then
+			if (weapon.AlwaysRaised or config.alwaysRaised[weapon:GetClass()]) then
 				state = WEAPON_RAISED
 			end
 		end
@@ -59,25 +66,27 @@ function GM:CalcMainActivity(client, velocity)
 			state = WEAPON_RAISED
 		end
 		
-		if (!nut.anim[class]) then
+		local animClass = nut.anim[class]
+
+		if (!animClass) then
 			class = "citizen_male"
 		end
 
-		if (!nut.anim[class][holdType]) then
+		if (!animClass[holdType]) then
 			holdType = "normal"
 		end
 
-		if (!nut.anim[class][holdType][action]) then
+		if (!animClass[holdType][action]) then
 			action = "idle"
 		end
 
-		local animation = nut.anim[class][holdType][action]
+		local animation = animClass[holdType][action]
 		local value = ACT_IDLE
 
 		if (!client:OnGround()) then
-			client.CalcIdeal = nut.anim[class].glide or ACT_GLIDE
+			client.CalcIdeal = animClass.glide or ACT_GLIDE
 		elseif (client:InVehicle()) then
-			client.CalcIdeal = nut.anim[class].normal.idle_crouch[1]
+			client.CalcIdeal = animClass.normal.idle_crouch[1]
 		elseif (animation) then
 			value = animation[state]
 
@@ -100,7 +109,7 @@ function GM:CalcMainActivity(client, velocity)
 
 		local eyeAngles = client:EyeAngles()
 		local yaw = velocity:Angle().yaw
-		local normalized = math.NormalizeAngle(yaw - eyeAngles.y)
+		local normalized = math_NormalizeAngle(yaw - eyeAngles.y)
 
 		client:SetPoseParameter("move_yaw", normalized)
 
@@ -194,4 +203,10 @@ end
 
 function GM:CanProperty(client, property, entity)
 	return client:IsAdmin()
+end
+
+function GM:PlayerCanUseItem(client, item)
+	if (client:GetNetVar("tied") and !item.allowUseOnTied) then
+		return false
+	end
 end
