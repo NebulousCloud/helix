@@ -229,14 +229,14 @@ function nut.item.Register(itemTable, isBase)
 
 			if (itemFunction and itemFunction.run) then
 				self.player = client
-				self.data = data
+				self.itemData = data
 				self.entity = entity
 				self.index = index
 
 				local result, result2 = itemFunction.run(self, client, data, entity or NULL, index)
 
 				self.player = nil
-				self.data = nil
+				self.itemData = nil
 				self.entity = nil
 				self.index = nil
 
@@ -472,6 +472,10 @@ do
 
 			if (!itemTable) then
 				ErrorNoHalt("Attempt to give invalid item '"..class.."'\n")
+
+				if (IsValid(self)) then
+					nut.util.Notify("Attempt to give invalid item '"..class.."'!", self)
+				end
 
 				return false
 			end

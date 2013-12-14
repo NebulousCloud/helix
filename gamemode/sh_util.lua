@@ -557,24 +557,19 @@ function nut.util.StackInv(inventory, class, quantity, data)
 			break
 		end
 	end
-	
+
 	-- Here we see if the item should be added or removed.
 	if (!stack and quantity > 0) then
-		-- Create a new stack of a specific item here.
-		local item = {quantity = quantity}
-
-		if (data) then
-			item.data = data
-		end
-
-		table.insert(inventory[class], item)
-	elseif (stack) then
+		table.insert(inventory[class], {quantity = quantity, data = data})
+	else
+		stack = stack or {}
+		index = index or table.GetFirstKey(inventory[class])
 		-- A stack already exists, so add or take from it.
-		stack.quantity = stack.quantity + quantity
+		stack.quantity = (stack.quantity or 0) + quantity
 		
 		-- If the quantity is negative, meaning we take from the stack, remove
 		-- the stack from the inventory.
-		if (stack.quantity <= 0) then
+		if (stack.quantity <= 0 and inventory[class][index]) then
 			inventory[class][index] = nil
 		end
 
