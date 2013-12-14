@@ -39,9 +39,6 @@ function nut.chat.Register(class, structure)
 		end
 	end
 
-	structure.onChat = structure.onChat or function(speaker, text)
-		chat.AddText(speaker, Color(255, 255, 255), ": "..text)
-	end
 	structure.canSay = structure.canSay or function(speaker)
 		local result = nut.schema.Call("ChatClassCanSay", class, structure, speaker)
 
@@ -301,17 +298,23 @@ else
 			return
 		end
 
-		if (!listeners) then
-			listeners = {client}
+		if (class.onChat) then
+			if (!listeners) then
+				listeners = {client}
 
-			for k, v in pairs(player.GetAll()) do
-				if (class.canHear(client, v) and v != client) then
-					listeners[#listeners + 1] = v
+				for k, v in pairs(player.GetAll()) do
+					if (class.canHear(client, v) and v != client) then
+						listeners[#listeners + 1] = v
+					end
 				end
 			end
+
+			netstream.Start(listeners, "nut_ChatMessage", {client, mode, text})
 		end
 
-		netstream.Start(listeners, "nut_ChatMessage", {client, mode, text})
+		if (class.onSaid) then
+			class.onSaid(client, text, listeners)
+		end
 
 		local color = team.GetColor(client:Team())
 		local channel = "r"
