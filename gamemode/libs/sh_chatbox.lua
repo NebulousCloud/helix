@@ -66,7 +66,7 @@ do
 	nut.chat.Register("whisper", {
 		canHear = nut.config.whisperRange,
 		onChat = function(speaker, text)
-			chat.AddText(Color(r - 25, g - 25, b - 25), speaker:Name()..": "..text)
+			chat.AddText(Color(r - 25, g - 25, b - 25), nut.schema.Call("GetPlayerName", speaker, "whisper")..": "..text)
 		end,
 		prefix = {"/w", "/whisper"}
 	})
@@ -103,14 +103,14 @@ do
 	nut.chat.Register("ic", {
 		canHear = nut.config.chatRange,
 		onChat = function(speaker, text)
-			chat.AddText(Color(r, g, b), speaker:Name()..": "..text)
+			chat.AddText(Color(r, g, b), nut.schema.Call("GetPlayerName", speaker, "ic")..": "..text)
 		end
 	})
 
 	nut.chat.Register("yell", {
 		canHear = nut.config.yellRange,
 		onChat = function(speaker, text)
-			chat.AddText(Color(r + 35, g + 35, b + 35), speaker:Name()..": "..text)
+			chat.AddText(Color(r + 35, g + 35, b + 35), nut.schema.Call("GetPlayerName", speaker, "yell")..": "..text)
 		end,
 		prefix = {"/y", "/yell"}
 	})
@@ -118,7 +118,7 @@ do
 	nut.chat.Register("me", {
 		canHear = nut.config.chatRange,
 		onChat = function(speaker, text)
-			chat.AddText(Color(r, g, b), "**"..speaker:Name().." "..text)
+			chat.AddText(Color(r, g, b), "**"..nut.schema.Call("GetPlayerName", speaker, "me").." "..text)
 		end,
 		prefix = {"/me", "/action"},
 		font = "nut_ChatFontAction"

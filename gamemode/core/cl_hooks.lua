@@ -218,7 +218,7 @@ function GM:HUDPaintTargetID(entity)
 						nut.util.DrawText(position.x, position.y - nut.config.targetTall, text, Color(255, 255, 255, alpha), "nut_TargetFontSmall")
 					end
 
-					nut.util.DrawText(position.x, position.y, v:Name(), color)
+					nut.util.DrawText(position.x, position.y, nut.schema.Call("GetPlayerName", v), color)
 					position.y = position.y + nut.config.targetTall
 					color = Color(255, 255, 255, alpha)
 

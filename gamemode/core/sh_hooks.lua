@@ -13,6 +13,11 @@ function GM:CreateCharVars(character)
 	character:NewVar("inv", {}, CHAR_PRIVATE)
 	character:NewVar("chardata", {}, CHAR_PRIVATE)
 	character:NewVar("gender", "male", CHAR_PUBLIC)
+	character:NewVar("id", 0, CHAR_PUBLIC, true)
+end
+
+function GM:GetPlayerName(client, mode)
+	return client:Name()
 end
 
 WEAPON_LOWERED = 1

@@ -359,11 +359,11 @@ if (SERVER) then
 				data.id = 1
 			end
 
-			nut.db.InsertTable(data)
-
-			if (callback) then
-				callback(data.id)
-			end
+			nut.db.InsertTable(data, function()
+				if (callback) then
+					callback(data.id)
+				end
+			end)
 		end)
 	end
 
