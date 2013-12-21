@@ -175,7 +175,47 @@ function GM:CalcView(client, origin, angles, fov)
 	return view
 end
 
+function GM:HUDPaintTargetPlayer(client, x, y, alpha)
+	local color = team.GetColor(client:Team())
+	color.a = alpha
+
+	if (client:IsTyping()) then
+		local text = "Typing..."
+		local typingText = client:GetNetVar("typing")
+
+		if (nut.config.showTypingText and typingText and type(typingText) == "string") then
+			text = "("..typingText..")"
+		end
+
+		nut.util.DrawText(x, y - nut.config.targetTall, text, Color(255, 255, 255, alpha), "nut_TargetFontSmall")
+	end
+
+	nut.util.DrawText(x, y, nut.schema.Call("GetPlayerName", client), color)
+	y = y + nut.config.targetTall
+	color = Color(255, 255, 255, alpha)
+
+	local description = client.character:GetVar("description", nut.lang.Get("no_desc"))
+
+	if (!client:GetNutVar("descLines") or description != (client:GetNutVar("descText") or "")) then
+		client:SetNutVar("descText", description)
+
+		local descLines, _, lineH = nut.util.WrapText("nut_TargetFontSmall", ScrW() * 0.4, client:GetNutVar("descText"))
+
+		client:SetNutVar("descLines", descLines)
+		client:SetNutVar("lineH", lineH)
+	end
+
+	nut.util.DrawWrappedText(x, y, client:GetNutVar("descLines"), client:GetNutVar("lineH"), "nut_TargetFontSmall", 1, 1, alpha)
+end
+
+local OFFSET_NORMAL = Vector(0, 0, 8)
+local OFFSET_PLAYER = Vector(0, 0, 48)
+local math_Approach = math.Approach
+local ents = ents
+
 function GM:HUDPaintTargetID(entity)
+	local frameTime = FrameTime()
+
 	for k, v in pairs(ents.GetAll()) do
 		if (v != LocalPlayer() and v:IsPlayer() or nut.schema.Call("ShouldDrawTargetEntity", v) == true or v.DrawTargetID) then
 			local target = 0
@@ -189,58 +229,46 @@ function GM:HUDPaintTargetID(entity)
 				target = 255
 			end
 			
-			v.approachAlpha = math.Approach(v.approachAlpha or 0, target, FrameTime() * 150)
+			v.approachAlpha = math_Approach(v.approachAlpha or 0, target, frameTime * 150)
 
-			local offset = Vector(0, 0, 8)
+			local offset = OFFSET_NORMAL
 
 			if (v:IsPlayer()) then
-				offset = Vector(0, 0, 48)
+				offset = OFFSET_PLAYER
 			end
 
 			local position = (v:LocalToWorld(v:OBBCenter()) + offset):ToScreen()
 			local alpha = v.approachAlpha
 			local mainColor = nut.config.mainColor
 			local color = Color(mainColor.r, mainColor.g, mainColor.b, alpha)
+			local x, y = position.x, position.y
 
 			if (alpha > 0) then
 				if (v.character) then
-					local color = team.GetColor(v:Team())
-					color.a = alpha
-
-					if (v:IsTyping()) then
-						local text = "Typing..."
-						local typingText = v:GetNetVar("typing")
-
-						if (nut.config.showTypingText and typingText and type(typingText) == "string") then
-							text = "("..typingText..")"
-						end
-
-						nut.util.DrawText(position.x, position.y - nut.config.targetTall, text, Color(255, 255, 255, alpha), "nut_TargetFontSmall")
-					end
-
-					nut.util.DrawText(position.x, position.y, nut.schema.Call("GetPlayerName", v), color)
-					position.y = position.y + nut.config.targetTall
-					color = Color(255, 255, 255, alpha)
-
-					local description = v.character:GetVar("description", nut.lang.Get("no_desc"))
-
-					if (!v:GetNutVar("descLines") or description != (v:GetNutVar("descText") or "")) then
-						v:SetNutVar("descText", description)
-
-						local descLines, _, lineH = nut.util.WrapText("nut_TargetFontSmall", ScrW() * 0.4, v:GetNutVar("descText"))
-
-						v:SetNutVar("descLines", descLines)
-						v:SetNutVar("lineH", lineH)
-					end
-
-					nut.util.DrawWrappedText(position.x, position.y, v:GetNutVar("descLines"), v:GetNutVar("lineH"), "nut_TargetFontSmall", 1, 1, alpha)
+					self:HUDPaintTargetPlayer(v, x, y, alpha)
 				elseif (v.DrawTargetID) then
-					v:DrawTargetID(position.x, position.y, alpha)
+					v:DrawTargetID(x, y, alpha)
 				else
-					nut.schema.Call("DrawTargetID", v, position.x, position.y, alpha)
+					local result = nut.schema.Call("DrawTargetID", v, x, y, alpha)
+
+					if (!result) then
+						local client = entity:GetNetVar("player")
+
+						if (IsValid(client) and client:IsPlayer() and client.character) then
+							self:HUDPaintTargetPlayer(client, x, y, alpha)
+
+							return true
+						end
+					end
 				end
 			end
 		end
+	end
+end
+
+function GM:ShouldDrawTargetEntity(entity)
+	if (entity:GetNetVar("player")) then
+		return true
 	end
 end
 
