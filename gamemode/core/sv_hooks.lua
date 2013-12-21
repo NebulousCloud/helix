@@ -125,6 +125,7 @@ function GM:PlayerLoadedChar(client)
 end
 
 function GM:PlayerSpawn(client)
+	client:UnRagdoll(true)
 	client:SetMainBar()
 	client:SetNetVar("drunk", 0)
 	client:ScreenFadeOut()
