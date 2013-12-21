@@ -192,6 +192,7 @@ do
 			self.ragdoll:Activate()
 			self.ragdoll:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 			self.ragdoll.player = self
+			self.ragdoll:SetNetVar("player", self)
 			self.ragdoll:CallOnRemove("RestorePlayer", function()
 				if (IsValid(self)) then
 					self:UnRagdoll()
