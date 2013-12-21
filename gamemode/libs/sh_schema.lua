@@ -42,6 +42,9 @@ end
 	Purpose: Similar to hook.Call, calls a hook in the schema and uses the returns
 	whatever was returned by the hook itself.
 --]]
+
+local unpack = unpack
+
 function nut.schema.Call(name, ...)
 	if (name == "PlayerSpawn") then
 		local arguments = {...}
@@ -55,28 +58,28 @@ function nut.schema.Call(name, ...)
 	if (nut.plugin) then
 		for k, v in pairs(nut.plugin.GetAll()) do
 			if (v[name]) then
-				local result = v[name](v, ...)
+				local result = {v[name](v, ...)}
 
-				if (result != nil) then
-					return result
+				if (#result > 0) then
+					return unpack(result)
 				end
 			end
 		end
 	end
 
 	if (SCHEMA and SCHEMA[name]) then
-		local result = SCHEMA[name](SCHEMA, ...)
+		local result = {SCHEMA[name](SCHEMA, ...)}
 
-		if (result != nil) then
-			return result
+		if (#result > 0) then
+			return unpack(result)
 		end
 	end
 
 	if (nut and nut[name]) then
-		local result = nut[name](nut, ...)
+		local result = {nut[name](nut, ...)}
 
-		if (result != nil) then
-			return result
+		if (#result > 0) then
+			return unpack(result)
 		end
 	end
 end
