@@ -230,7 +230,7 @@ function META:Send(variable, receiver, noDelta)
 				self:Send(k, self.player, noDelta)
 			end
 		end
-	elseif (privateValue) then
+	elseif (privateValue != nil) then
 		if (!noDelta and type(privateValue) == "table") then
 			local oldValue = privateValue
 			privateValue = nut.util.GetTableDelta(privateValue, self.deltas[variable] or {})
@@ -239,7 +239,7 @@ function META:Send(variable, receiver, noDelta)
 		end
 
 		netstream.Start(self.player, "nut_LocalCharData", {variable, privateValue, noDelta})
-	elseif (publicValue) then
+	elseif (publicValue != nil) then
 		if (!noDelta and type(publicValue) == "table") then
 			local oldValue = publicValue
 			publicValue = nut.util.GetTableDelta(publicValue, self.deltas[variable] or {})
@@ -525,6 +525,8 @@ if (SERVER) then
 		if (data.skin) then
 			data.model = data.model..";"..data.skin
 		end
+
+		client.character:SetData("id", client.character:GetVar("id", math.floor(os.clock() + client:UniqueID())))
 
 		nut.db.UpdateTable("steamid = "..steamID.." AND id = "..index..sameSchema(), data)
 		client:SaveData()

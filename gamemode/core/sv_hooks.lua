@@ -94,6 +94,8 @@ function GM:PlayerLoadedChar(client)
 	client:SetTeam(faction)
 	client:SetSkin(client.character:GetData("skin", 0))
 
+	client.character:SetVar("id", math.floor(client.character:GetData("id", os.clock() + client:UniqueID())))
+
 	local customClass = client.character:GetData("customClass")
 
 	if (customClass and customClass != "") then
