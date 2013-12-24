@@ -14,6 +14,9 @@ function GM:GetDefaultMoney(client, data)
 end
 
 function GM:PlayerInitialSpawn(client)
+	client:SetRenderMode(4)
+	client:SetColor(Color(0, 0, 0, 0))
+
 	local delay = 0
 	
 	if (IsValid(client)) then
@@ -126,7 +129,9 @@ end
 
 function GM:PlayerSpawn(client)
 	client:UnRagdoll(true)
-	client:SetMainBar()
+	client:SetNoDraw(false)
+	client:SetRenderMode(4)
+	client:SetColor(Color(255, 255, 255))
 	client:SetNetVar("drunk", 0)
 	client:ScreenFadeOut()
 
@@ -410,11 +415,6 @@ function GM:KeyPress(client, key)
 
 	-- PlayerUse hook doesn't get called on doors that don't allow +use :c
 	if (key == IN_USE) then
-		if (client:GetNetVar("tied") and SERVER and client:GetNutVar("nextTieMsg", 0) < CurTime()) then
-			nut.util.Notify("You can not do this when tied.", client)
-			client:SetNutVar("nextTieMsg", CurTime() + 1)
-		end
-
 		local data = {}
 			data.start = client:GetShootPos()
 			data.endpos = data.start + client:GetAimVector() * 56
@@ -422,12 +422,23 @@ function GM:KeyPress(client, key)
 		local trace = util.TraceLine(data)
 		local entity = trace.Entity
 
-		if (IsValid(entity) and string.find(entity:GetClass(), "door")) then
+		if (IsValid(entity) and client:GetNetVar("tied")) then
+			if (client:GetNutVar("nextTieMsg", 0) < CurTime() and SERVER) then
+				nut.util.Notify("You can not do this when tied.", client)
+				client:SetNutVar("nextTieMsg", CurTime() + 1)
+			end
+
+			return false
+		end
+
+		if (IsValid(entity) and entity:IsDoor()) then
 			if (nut.schema.Call("PlayerCanUseDoor", client, entity) == false) then
 				return
 			end
 
-			nut.schema.Call("PlayerUseDoor", client, entity)
+			return nut.schema.Call("PlayerUseDoor", client, entity)
+		elseif (entity:IsPlayer()) then
+			return nut.schema.Call("PlayerInteract", client, entity)
 		end
 	elseif (config.holdReloadToToggle and key == IN_RELOAD) then
 		timer.Create("nut_ToggleTime"..client:UniqueID(), config.holdReloadTime, 1, function()
