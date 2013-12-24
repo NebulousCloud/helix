@@ -164,7 +164,7 @@ end
 local deltaAngle
 
 function GM:CalcView(client, origin, angles, fov)
-	local view = {}
+	local view = self.BaseClass:CalcView(client, origin, angles, fov)
 		local drunk = client:GetNetVar("drunk", 0)
 
 		if (drunk > 0) then
@@ -172,6 +172,20 @@ function GM:CalcView(client, origin, angles, fov)
 			view.angles = deltaAngle + Angle(math.cos(RealTime() * 0.9) * drunk*4, math.sin(RealTime() * 0.9) * drunk*7.5, math.cos(RealTime() * 0.9) * drunk*5)
 			view.fov = fov + math.sin(RealTime() * 0.5) * (drunk * 5)
 		end
+
+		local entity = client:GetRagdollEntity()
+
+		if (IsValid(entity)) then
+			local index = entity:LookupAttachment("eyes")
+
+			if (index and index > 0) then
+				local attachment = entity:GetAttachment(index)
+
+				view.origin = attachment.Pos
+				view.angles = attachment.Ang
+			end
+		end
+
 	return view
 end
 
