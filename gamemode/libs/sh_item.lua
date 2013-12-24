@@ -239,7 +239,9 @@ function nut.item.Register(itemTable, isBase)
 					self.entity = nil
 					self.index = nil
 
-					nut.util.Notify("You can not do this when tied.", client)
+					if (SERVER) then
+						nut.util.Notify("You can not do this when tied.", client)
+					end
 					
 					return false, false
 				end
