@@ -42,6 +42,8 @@ end
 local NUT_CVAR_BWIDTH = CreateClientConVar("nut_barwscale", "0.27", true)
 local NUT_CVAR_BHEIGHT = CreateClientConVar("nut_barh", "10", true)
 local BAR_WIDTH, BAR_HEIGHT = ScrW() * NUT_CVAR_BWIDTH:GetFloat(), NUT_CVAR_BHEIGHT:GetInt()
+local lastFPS = 0
+local avgFPS = 0
 
 cvars.AddChangeCallback("nut_barwscale", function(conVar, oldValue, value)
 	if (NUT_CVAR_BWIDTH:GetFloat() == 0) then
@@ -55,17 +57,27 @@ cvars.AddChangeCallback("nut_barh", function(conVar, oldValue, value)
 	BAR_HEIGHT = math.max(NUT_CVAR_BHEIGHT:GetInt(), 3)
 end)
 
+local vignette = Material("nutscript/vignette.png")
+
 function GM:HUDPaint()
+	local scrW, scrH = surface.ScreenWidth(), surface.ScreenHeight()
+
+	if (nut.config.drawVignette) then
+		surface.SetDrawColor(255, 255, 255, 210)
+		surface.SetMaterial(vignette)
+		surface.DrawTexturedRect(0, 0, scrW, scrH)
+	end
+
 	if (!nut.loaded) then
 		surface.SetDrawColor(0, 0, 0, 255)
-		surface.DrawRect(0, 0, ScrW(), ScrH())
+		surface.DrawRect(0, 0, scrW, scrH)
 
-		draw.SimpleText("Loading NutScript", "nut_HeaderFont", ScrW() * 0.5, ScrH() * 0.5, color_white, 1, 1)
+		draw.SimpleText("Loading NutScript", "nut_HeaderFont", scrW * 0.5, scrH * 0.5, color_white, 1, 1)
 
 		for i = #nut.loadingText, 1, -1 do
 			local alpha = (1-i / #nut.loadingText) * 255
 
-			draw.SimpleText(nut.loadingText[i], "nut_TargetFont", ScrW() * 0.5, ScrH() * 0.6 + (i * 36), Color(255, 255, 255, alpha), 1, 1)
+			draw.SimpleText(nut.loadingText[i], "nut_TargetFont", scrW * 0.5, scrH * 0.6 + (i * 36), Color(255, 255, 255, alpha), 1, 1)
 		end
 
 		nut.schema.Call("DrawLoadingScreen")
@@ -87,8 +99,8 @@ function GM:HUDPaint()
 		surface.SetFont("nut_TitleFont")
 		local _, h = surface.GetTextSize(bigTitle)
 
-		draw.SimpleText(bigTitle, "nut_TitleFont", ScrW() * 0.5, ScrH() * 0.35, color, 1, 1)
-		draw.SimpleText(nut.config.smallIntroText or SCHEMA.desc, "nut_TargetFont", ScrW() * 0.5, (ScrH() * 0.35) + h, color, 1, 1)
+		draw.SimpleText(bigTitle, "nut_TitleFont", scrW * 0.5, scrH * 0.35, color, 1, 1)
+		draw.SimpleText(nut.config.smallIntroText or SCHEMA.desc, "nut_TargetFont", scrW * 0.5, (scrH * 0.35) + h, color, 1, 1)
 
 		return
 	end
@@ -98,7 +110,7 @@ function GM:HUDPaint()
 	nut.schema.Call("HUDPaintTargetID", trace.Entity)
 
 	if (nut.schema.Call("ShouldDrawCrosshair") != false and nut.config.crosshair) then
-		local x, y = ScrW() * 0.5 - 2, ScrH() * 0.5 - 2
+		local x, y = scrW * 0.5 - 2, scrH * 0.5 - 2
 		local size = nut.config.crossSize or 1
 		local size2 = size + 2
 		local spacing = nut.config.crossSpacing or 5
@@ -118,11 +130,11 @@ function GM:HUDPaint()
 	end
 
 	if (LocalPlayer():GetNetVar("tied")) then
-		nut.util.DrawText(ScrW() * 0.5, ScrH() * 0.25, "You have been tied.")
+		nut.util.DrawText(scrW * 0.5, scrH * 0.25, "You have been tied.")
 	end
 
 	local x = 8
-	local y = ScrH() - BAR_HEIGHT - 8
+	local y = scrH - BAR_HEIGHT - 8
 
 	y = nut.bar.Paint(x, y, BAR_WIDTH, BAR_HEIGHT)
 

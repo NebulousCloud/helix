@@ -137,6 +137,9 @@ if (CLIENT) then
 	-- How 'see-through' the crosshair is from 0-255, where 0 is invisible and 255 is fully
 	-- visible.
 	nut.config.crossAlpha = 150
+
+	-- Whether or not to draw the vignette.
+	nut.config.drawVignette = true
 	
 	hook.Add("SchemaInitialized", "nut_FontConfig", function()
 		surface.SetFont("nut_TargetFontSmall")
