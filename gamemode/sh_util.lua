@@ -260,7 +260,7 @@ if (SERVER) then
 	end
 
 	function nut.util.BlastDoor(door, direction, time, noCheck)
-		if (!string.find(door:GetClass(), "door")) then
+		if (!door:IsDoor()) then
 			return
 		end
 
@@ -762,4 +762,27 @@ else
 	netstream.Hook("nut_PlaySound", function(data)
 		LocalPlayer():EmitSound(data[1], data[2], data[3])
 	end)
+end
+
+
+local entityMeta = FindMetaTable("Entity")
+
+function entityMeta:IsDoor()
+	return string.find(self:GetClass(), "door")
+end
+
+function entityMeta:GetDoorPartner()
+	if (!self:IsDoor()) then
+		error("Attempt to get partner of a non-door entity.")
+	end
+
+	local partners = {}
+
+	for k, v in pairs(ents.FindInSphere(self:GetPos(), 128)) do
+		if (v != self and v:IsDoor()) then
+			partners[#partners + 1] = v
+		end
+	end
+
+	return partners
 end
