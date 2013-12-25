@@ -10,7 +10,7 @@ nut.command.Register({
 		local trace = util.TraceLine(data)
 		local entity = trace.Entity
 
-		if (IsValid(entity) and PLUGIN:IsDoor(entity)) then
+		if (IsValid(entity) and PLUGIN:IsDoor(entity) and !entity:GetNetVar("hidden")) then
 			if (entity:GetNetVar("unownable")) then
 				nut.util.Notify("This door can not be owned.", client)
 
@@ -49,7 +49,7 @@ nut.command.Register({
 		local trace = util.TraceLine(data)
 		local entity = trace.Entity
 
-		if (IsValid(entity) and PLUGIN:IsDoor(entity)) then
+		if (IsValid(entity) and PLUGIN:IsDoor(entity) and !entity:GetNetVar("hidden")) then
 			if (PLUGIN:GetOwner(entity) == client) then
 				entity:SetNetVar("owner", NULL)
 				entity:SetNetVar("title", "Door for Sale")
@@ -120,6 +120,23 @@ nut.command.Register({
 		end
 	end
 }, "doorsetunownable")
+
+nut.command.Register({
+	adminOnly = true,
+	onRun = function(client, arguments)
+		local trace = client:GetEyeTraceNoCursor()
+		local entity = trace.Entity
+
+		if (IsValid(entity) and entity:IsDoor()) then
+			local hidden = util.tobool(arguments[1])
+
+			PLUGIN:DoorSetHidden(entity, hidden)
+			nut.util.Notify("You have made this door "..(hidden and "hidden" or "unhidden")..".", client)
+		else
+			nut.util.Notify("You are not looking at a valid door.", client)
+		end
+	end
+}, "doorsethidden")
 
 nut.command.Register({
 	adminOnly = true,

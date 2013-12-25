@@ -7,22 +7,8 @@ nut.config.doorSellAmount = 25
 
 if (SERVER) then
 	function PLUGIN:DoorSetUnownable(entity)
-		self.data = nut.util.ReadTable("doors")
-
-		local title = entity:GetNetVar("title", "Unownable Door")
-
-		for k, v in pairs(self.data) do
-			if (v.position == entity:GetPos()) then
-				v.title = title
-
-				return
-			end
-		end
-
-		self.data[#self.data + 1] = {title = title, position = entity:GetPos()}
-		nut.util.WriteTable("doors", self.data)
-
 		entity:SetNetVar("unownable", true)
+		self:SaveData()
 	end
 
 	function PLUGIN:LockDoor(entity)
@@ -45,32 +31,47 @@ if (SERVER) then
 	end
 
 	function PLUGIN:DoorSetOwnable(entity)
-		self.data = nut.util.ReadTable("doors")
+		entity:SetNetVar("unownable", nil)
+		self:SaveData()
+	end
 
-		for k, v in pairs(self.data) do
-			if (v.position == entity:GetPos()) then
-				entity:SetNetVar("unownable", nil)
-				table.remove(self.data, k)
-
-				nut.util.WriteTable("doors", self.data)
-
-				return
-			end
-		end
+	function PLUGIN:DoorSetHidden(entity, hidden)
+		entity:SetNetVar("hidden", hidden)
+		self:SaveData()
 	end
 
 	function PLUGIN:LoadData()
-		self.data = nut.util.ReadTable("doors")
+		self.data = self:ReadTable()
 
 		for k, v in pairs(self.data) do
-			local entities = ents.FindInSphere(v.position, 4)
+			local entities = ents.FindInSphere(v.position, 8)
 			local entity = entities[1]
 
 			if (IsValid(entity)) then
 				entity:SetNetVar("title", v.title)
 				entity:SetNetVar("unownable", true)
+
+				if (v.hidden) then
+					entity:SetNetVar("hidden", true)
+				end
 			end
 		end
+	end
+
+	function PLUGIN:SaveData()
+		local data = {}
+
+		for k, v in pairs(ents.GetAll()) do
+			if (v:IsDoor() and (v:GetNetVar("unownable") or v:GetNetVar("hidden"))) then
+				data[#data + 1] = {
+					position = v:GetPos(),
+					title = v:GetNetVar("title"),
+					hidden = v:GetNetVar("hidden")
+				}
+			end
+		end
+
+		self:WriteTable(data)
 	end
 end
 

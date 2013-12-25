@@ -48,7 +48,7 @@ else
 	end
 
 	function PLUGIN:DrawTargetID(entity, x, y, alpha)
-		if (self:IsDoor(entity)) then
+		if (self:IsDoor(entity) and !entity:GetNetVar("hidden")) then
 			local mainColor = nut.config.mainColor
 			local color = Color(mainColor.r, mainColor.g, mainColor.b, alpha)
 
