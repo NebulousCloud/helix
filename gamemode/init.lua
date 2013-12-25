@@ -3,7 +3,7 @@
 	the framework without GM.BaseClass since it the baseclass is not defined in time.
 --]]
 
-resource.AddFile("materials/nutscript/vignette.png")
+resource.AddWorkshop("207739713")
 
 local startTime = os.clock()
 
