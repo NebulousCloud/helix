@@ -472,10 +472,13 @@ else
 						lastColor = Color(v.r, v.g, v.b, alpha)
 					else
 						nut.util.DrawText(x + lastX, y + (k2 - 1) * lineHeight, v, lastColor, font, xAlign, yAlign)
+						y = y + lineHeight
 						lastX = lastX + surface.GetTextSize(v)
 					end
 				end
 			end
+
+			return y
 		end
 	end
 
