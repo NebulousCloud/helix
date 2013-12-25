@@ -51,7 +51,7 @@ if (CLIENT) then
 			if (v.start and v.finish) then
 				alpha = 255 - math.Clamp(math.TimeFraction(v.start, v.finish, CurTime()) * 255, 0, 255)
 			elseif (v.nextChar < CurTime()) then
-				v.nextChar = CurTime() + 0.025
+				v.nextChar = CurTime() + 0.01
 				v.char = string.char(math.random(47, 90))
 			end
 
