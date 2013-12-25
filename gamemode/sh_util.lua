@@ -462,6 +462,7 @@ else
 		if (lines) then
 			alpha = alpha or 255
 
+			local y2 = y
 			local lastColor = Color(255, 255, 255, alpha)
 
 			for k2, v2 in ipairs(lines) do
@@ -472,13 +473,13 @@ else
 						lastColor = Color(v.r, v.g, v.b, alpha)
 					else
 						nut.util.DrawText(x + lastX, y + (k2 - 1) * lineHeight, v, lastColor, font, xAlign, yAlign)
-						y = y + lineHeight
+						y2 = y2 + lineHeight
 						lastX = lastX + surface.GetTextSize(v)
 					end
 				end
 			end
 
-			return y
+			return y2
 		end
 	end
 
