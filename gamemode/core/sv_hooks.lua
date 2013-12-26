@@ -133,6 +133,9 @@ function GM:PlayerSpawn(client)
 	client:SetRenderMode(4)
 	client:SetColor(Color(255, 255, 255))
 	client:SetNetVar("drunk", 0)
+	client:SetNetVar("tied", false)
+	client:SetNetVar("noDepress", 0)
+	client:SetNetVar("blur", 0)
 	client:ScreenFadeOut()
 
 	if (!client.character) then
