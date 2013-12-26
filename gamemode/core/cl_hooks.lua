@@ -58,12 +58,25 @@ cvars.AddChangeCallback("nut_barh", function(conVar, oldValue, value)
 end)
 
 local vignette = Material("nutscript/vignette.png")
+local vignetteAlpha = 0
 
 function GM:HUDPaint()
 	local scrW, scrH = surface.ScreenWidth(), surface.ScreenHeight()
 
 	if (nut.config.drawVignette) then
-		surface.SetDrawColor(255, 255, 255, 210)
+		local alpha = 235
+		local data = {}
+			data.start = LocalPlayer():GetPos()
+			data.endpos = data.start + Vector(0, 0, 1000)
+		local trace = util.TraceLine(data)
+
+		if (!trace.Hit or trace.HitSky) then
+			alpha = 150
+		end
+
+		vignetteAlpha = math.Approach(vignetteAlpha, alpha, FrameTime() * 75)
+
+		surface.SetDrawColor(255, 255, 255, vignetteAlpha)
 		surface.SetMaterial(vignette)
 		surface.DrawTexturedRect(0, 0, scrW, scrH)
 	end
