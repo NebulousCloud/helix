@@ -364,10 +364,11 @@ else
 
 		local notice = vgui.Create("nut_Notification")
 		notice:SetText(message)
+		notice:SetAlpha(0)
 		notice:SetPos(ScrW() * 0.3, -24)
 		notice:SetWide(ScrW() * 0.4)
-		notice:LerpPositions(1.5, true)
-		notice:SetPos(ScrW() * 0.3, ScrH() - ((#nut.notices + 1) * 28))
+		notice:MoveTo(ScrW() * 0.3, ScrH() - ((#nut.notices + 1) * 28), 0.35, 0, 0.25)
+		notice:AlphaTo(255, 0.2, 0)
 
 		notice:CallOnRemove(function()
 			for k, v in pairs(nut.notices) do
@@ -377,7 +378,7 @@ else
 			end
 
 			for k, v in pairs(nut.notices) do
-				v:SetPos(ScrW() * 0.3, ScrH() - (k * 28))
+				v:MoveTo(ScrW() * 0.3, ScrH() - (k * 28), 0.35, 0, 0.25)
 			end
 
 			nut.schema.Call("NoticeRemoved", notice)

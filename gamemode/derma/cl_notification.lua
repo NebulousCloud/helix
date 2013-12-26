@@ -29,6 +29,10 @@ local PANEL = {}
 		if (self.start and self.finish) then
 			local fraction = 1 - math.TimeFraction(self.start, self.finish, CurTime())
 			local color = nut.config.mainColor
+			color.a = 50
+
+			surface.SetDrawColor(color)
+			surface.DrawRect(0, 21, w, 3)
 
 			color.a = 225
 
@@ -39,8 +43,9 @@ local PANEL = {}
 
 	function PANEL:Think()
 		if (self.start and self.finish and CurTime() > self.finish) then
-			self:SetPos(ScrW(), ScrH() - 28)
-
+			self:MoveTo(ScrW(), ScrH() - 25, 1.5, 0.1, 0.35)
+			self:AlphaTo(0, 0.35, 0)
+			
 			timer.Simple(0.25, function()
 				if (IsValid(self)) then
 					if (self.callback) then
