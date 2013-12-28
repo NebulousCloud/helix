@@ -136,7 +136,7 @@ else
 			cond = function( entity )
 				for _, item in pairs( locks ) do
 					if LocalPlayer():HasItem( item ) then
-						return true
+						return !entity:GetNetVar( "locked" )
 					end
 				end
 				return false
