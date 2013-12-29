@@ -64,14 +64,14 @@ function GM:HUDPaint()
 	local scrW, scrH = surface.ScreenWidth(), surface.ScreenHeight()
 
 	if (nut.config.drawVignette) then
-		local alpha = 235
+		local alpha = 240
 		local data = {}
 			data.start = LocalPlayer():GetPos()
 			data.endpos = data.start + Vector(0, 0, 1000)
 		local trace = util.TraceLine(data)
 
 		if (!trace.Hit or trace.HitSky) then
-			alpha = 150
+			alpha = 125
 		end
 
 		vignetteAlpha = math.Approach(vignetteAlpha, alpha, FrameTime() * 75)
