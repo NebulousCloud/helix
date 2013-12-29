@@ -106,10 +106,16 @@ function SWEP:DoPunchAnimation()
 	end
 end
 
-function SWEP:PrimaryAttack()	
+function SWEP:PrimaryAttack()
+	if (!self.Owner.character) then
+		return
+	end
+
 	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
 
-	if (!self.Owner:WepRaised()) then
+	local stamina = math.Clamp(self.Owner.character:GetVar("stamina", 100) - 10, 0, 100)
+
+	if (!self.Owner:WepRaised() or stamina <= 0) then
 		return
 	end
 
@@ -119,6 +125,7 @@ function SWEP:PrimaryAttack()
 
 	self:DoPunchAnimation()
 
+	self.Owner.character:SetVar("stamina", stamina)
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
 	self.Owner:ViewPunch( Angle(self.LastHand + 2, self.LastHand + 5, 0.125) )
 
