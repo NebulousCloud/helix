@@ -197,13 +197,27 @@ if (SERVER) then
 			value = {value}
 		end
 
+		if (table.Count(value) < 1) then
+			return
+		end
+
 		local encoded = von.serialize(value)
-		local map = !ignoreMap and game.GetMap() or ""
+		local map = game.GetMap()
 
 		if (!global) then
-			file.Write("nutscript/"..SCHEMA.uniqueID.."/"..map..uniqueID..".txt", encoded)
+			if (ignoreMap) then
+				file.Write("nutscript/"..SCHEMA.uniqueID.."/"..uniqueID..".txt", encoded)
+			else
+				file.CreateDir("nutscript/"..SCHEMA.uniqueID.."/"..map)
+				file.Write("nutscript/"..SCHEMA.uniqueID.."/"..map.."/"..uniqueID..".txt", encoded)
+			end
 		else
-			file.Write("nutscript/data/"..map..uniqueID..".txt", encoded)
+			if (ignoreMap) then
+				file.Write("nutscript/data/"..uniqueID..".txt", encoded)
+			else
+				file.CreateDir("nutscript/data/"..map)
+				file.Write("nutscript/data/"..map.."/"..uniqueID..".txt", encoded)
+			end
 		end
 
 		nut.util.cachedTable[uniqueID] = value
@@ -215,16 +229,42 @@ if (SERVER) then
 		encoded data and cache it. If it does exist, then the cached copy will be returned.
 	--]]
 	function nut.util.ReadTable(uniqueID, ignoreMap, forceRefresh)
-		local map = !ignoreMap and game.GetMap() or ""
+		local map = game.GetMap()
 
 		if (!forceRefresh and nut.util.cachedTable[uniqueID]) then
 			return nut.util.cachedTable[uniqueID]
 		end
 
-		local contents = file.Read("nutscript/data/"..map..uniqueID..".txt", "DATA")
+		local contents
 
-		if (!contents or contents == "") then
-			contents = file.Read("nutscript/"..SCHEMA.uniqueID.."/"..map..uniqueID..".txt", "DATA")
+		if (!ignoreMap) then
+			if (file.Exists("nutscript/data/"..map..uniqueID..".txt", "DATA")) then
+				contents = file.Read("nutscript/data/"..map..uniqueID..".txt", "DATA")
+
+				file.Delete("nutscript/data/"..map..uniqueID..".txt", "DATA")
+				file.CreateDir("nutscript/data/"..map.."/"..uniqueID)
+				file.Write("nutscript/data/"..map.."/"..uniqueID..".txt", contents)
+			else
+				contents = file.Read("nutscript/data/"..map.."/"..uniqueID..".txt", "DATA")
+			end
+
+			if (!contents or contents == "") then
+				if (file.Exists("nutscript/"..SCHEMA.uniqueID.."/"..map..uniqueID..".txt", "DATA")) then
+					contents = file.Read("nutscript/"..SCHEMA.uniqueID.."/"..map..uniqueID..".txt", "DATA")
+
+					file.Delete("nutscript/"..SCHEMA.uniqueID.."/"..map..uniqueID..".txt", "DATA")
+					file.CreateDir("nutscript/"..SCHEMA.uniqueID.."/"..map)
+					file.Write("nutscript/"..SCHEMA.uniqueID.."/"..map.."/"..uniqueID..".txt", contents)
+				else
+					contents = file.Read("nutscript/"..SCHEMA.uniqueID.."/"..map.."/"..uniqueID..".txt", "DATA")
+				end
+			end
+		else
+			contents = file.Read("nutscript/data/"..uniqueID..".txt", "DATA")
+
+			if (!contents or contents == "") then
+				contents = file.Read("nutscript/data/"..SCHEMA.uniqueID.."/"..uniqueID..".txt", "DATA")
+			end
 		end
 
 		if (contents) then
