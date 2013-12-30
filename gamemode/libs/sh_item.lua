@@ -207,6 +207,9 @@ function nut.item.Register(itemTable, isBase)
 					client:EmitSound("physics/body/body_medium_impact_soft"..math.random(1, 3)..".wav")
 					nut.item.Spawn(position, client:EyeAngles(), itemTable, data)
 				end
+			end,
+			shouldDisplay = function(itemTable, data, entity)
+				return !itemTable.cantdrop
 			end
 		}
 		itemTable.functions.Take = {
@@ -219,6 +222,9 @@ function nut.item.Register(itemTable, isBase)
 
 					return item.player:UpdateInv(item.uniqueID, 1, item.itemData)
 				end
+			end,
+			shouldDisplay = function(itemTable, data, entity)
+				return !itemTable.canttake
 			end
 		}
 
