@@ -13,6 +13,11 @@ if (SERVER) then
 			local data = v.data
 			local factionData = v.factionData
 			local classData = v.classData
+			
+			local vendorAction = v.vendorAction
+			local cashadjustment = v.cashadjustment
+			local money = v.money
+			
 			local name = v.name
 			local desc = v.desc
 			local model = v.model
@@ -27,6 +32,11 @@ if (SERVER) then
 			entity:SetNetVar("classdata", classData)
 			entity:SetNetVar("name", name)
 			entity:SetNetVar("desc", desc)
+			
+			entity:SetNetVar("vendoraction", vendorAction)
+			entity:SetNetVar("buyadjustment", cashadjustment)
+			entity:SetNetVar("money", money)
+			
 			entity:SetModel(model)
 			entity:SetAnim()
 		end
@@ -40,6 +50,11 @@ if (SERVER) then
 				pos = v:GetPos(),
 				angles = v:GetAngles(),
 				data = v:GetNetVar("data", {}),
+				
+				vendorAction = v:GetNetVar("vendoraction", { sell = true, buy = false } ),
+				cashadjustment = v:GetNetVar("buyadjustment", .5),
+				money = v:GetNetVar("money", 0),
+				
 				factionData = v:GetNetVar("factiondata", {}),
 				classData = v:GetNetVar("classdata", {}),
 				name = v:GetNetVar("name", "John Doe"),
