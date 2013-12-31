@@ -101,14 +101,20 @@ else
 
 		local entity = data[1]
 		local itemData = data[2]
-		local factionData = data[3]
-		local classData = data[4]
-		local name = data[5]
-		local desc = data[6]
-		local model = data[7]
+		local vendorAction = data[3]
+		local cashadjustment = data[4]
+		local money = data[5]
+		local factionData = data[6]
+		local classData = data[7]
+		local name = data[8]
+		local desc = data[9]
+		local model = data[10]
 		
 		if (IsValid(entity)) then
 			entity:SetNetVar("data", itemData)
+			entity:SetNetVar("vendoraction", vendorAction)
+			entity:SetNetVar("buyadjustment", cashadjustment)
+			entity:SetNetVar("money", money)
 			entity:SetNetVar("factiondata", factionData)
 			entity:SetNetVar("classdata", classData)
 			entity:SetNetVar("name", name)
@@ -120,7 +126,7 @@ else
 			nut.util.Notify("You have updated this vendor's data.", client)
 		end
 	end)
-
+-------------------------------------
 	netstream.Hook("nut_VendorBuy", function(client, data)
 		local entity = data[1]
 		local class = data[2]
@@ -157,10 +163,61 @@ else
 		if (client:CanAfford(price)) then
 			client:UpdateInv(class)
 			client:TakeMoney(price)
-
-			nut.util.Notify(nut.lang.Get("purchased", itemTable.name), client)
+			entity:SetNetVar( "money", entity:GetNetVar( "money", 0 ) + price )
+			netstream.Start(client, "nut_CashUpdate")
+			nut.util.Notify(nut.lang.Get("purchased_for", itemTable.name, nut.currency.GetName(price)), client)
 		else
 			nut.util.Notify(nut.lang.Get("no_afford"), client)
+		end
+	end)
+	---------------------------
+	netstream.Hook("nut_VendorSell", function(client, data)
+		local entity = data[1]
+		local class = data[2]
+		local itemTable = nut.item.Get(class)
+
+		if (!IsValid(entity) or entity:GetPos():Distance(client:GetPos()) > 128 or !itemTable) then
+			return
+		end
+
+		local factionData = entity:GetNetVar("factiondata", {})
+
+		if (!factionData[client:Team()]) then
+			return
+		end
+
+		local classData = entity:GetNetVar("classdata", {})
+
+		if (table.Count(classData) > 0 and !classData[client:CharClass()]) then
+			return
+		end
+
+		local data = entity:GetNetVar("data", {})
+
+		if (!data[class] or !data[class].buying) then
+			return
+		end
+		
+		local adj = entity:GetNetVar("buyadjustment", .5)
+		local price = math.Round( itemTable.price * adj )  or 0
+
+		if (data[class] and data[class].price) then
+			price = data[class].price
+		end
+		
+		if ( tonumber( entity:GetNetVar( "money", 0 ) ) < price ) then
+			nut.util.Notify(nut.lang.Get("vendor_no_afford"), client)
+			return
+		end
+		
+		if ( client:HasItem( class, 1 ) ) then
+			client:UpdateInv( class, -1 )
+			client:GiveMoney(price)
+			entity:SetNetVar( "money", entity:GetNetVar( "money", 0 ) - price )
+			netstream.Start(client, "nut_CashUpdate")
+			nut.util.Notify(nut.lang.Get("sold", itemTable.name, nut.currency.GetName(price)), client)
+		else
+			nut.util.Notify(nut.lang.Get("notenoughitem", itemTable.name), client)
 		end
 	end)
 end

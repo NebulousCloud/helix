@@ -828,7 +828,7 @@ do
 				client:UpdateInv(class, nil, data)
 				client:TakeMoney(price)
 
-				nut.util.Notify(nut.lang.Get("purchased", itemTable.name), client)
+				nut.util.Notify(nut.lang.Get("purchased_for", itemTable.name, nut.currency.GetName(price)), client)
 			else
 				nut.util.Notify(nut.lang.Get("no_afford"), client)
 			end
