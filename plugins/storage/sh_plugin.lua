@@ -219,7 +219,7 @@ nut.command.Register({
 				end
 				nut.util.Notify("Container's status updated: isworldcontainer = " .. tostring( entity.world ) , client)			
 			else
-				nut.util.Notify("You have to face an container to use this command!", client)			
+				nut.util.Notify("You have to face a container to use this command!", client)			
 			end
 		else
 			nut.util.Notify("You have to face an entity to use this command!", client)
@@ -255,7 +255,7 @@ nut.command.Register({
 					nut.util.Notify("Unlocked the Container.", client)		
 				end
 			else
-				nut.util.Notify("You have to face an container to use this command!", client)			
+				nut.util.Notify("You have to face a container to use this command!", client)			
 			end
 		else
 			nut.util.Notify("You have to face an entity to use this command!", client)
@@ -279,9 +279,9 @@ nut.command.Register({
 		
 		if entity && entity:IsValid() then
 			if entity:GetClass() == "nut_container" then
-				nut.util.Notify("Container's status: isworldcontainer = " .. tostring( entity.world ) , client)			
+				nut.util.Notify("Is this World Container? = " .. tostring( entity.world ) , client)			
 			else
-				nut.util.Notify("You have to face an container to use this command!", client)			
+				nut.util.Notify("You have to face a container to use this command!", client)			
 			end
 		else
 			nut.util.Notify("You have to face an entity to use this command!", client)
