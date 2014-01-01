@@ -58,9 +58,7 @@ if (SERVER) then
 					entity:SetAngles(angles)
 					entity:Spawn()
 					entity:Activate()
-					if !v.world then
-						entity:SetNetVar("inv", inventory)
-					end
+					entity:SetNetVar("inv", inventory)
 					entity:SetNetVar("name", itemTable.name)
 					entity.itemID = v.uniqueID
 					entity.lock = v.lock
