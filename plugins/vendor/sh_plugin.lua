@@ -7,10 +7,10 @@ nut.util.Include("cl_vendor.lua")
 
 if (SERVER) then
 	function PLUGIN:LoadData()
-		for k, v in pairs(nut.util.ReadTable("talkers")) do
+		for k, v in pairs(nut.util.ReadTable("vendors")) do
 			local position = v.pos
 			local angles = v.angles
-			local dialogue = v.dialogue
+			local data = v.data
 			local factionData = v.factionData
 			local classData = v.classData
 			
@@ -28,14 +28,14 @@ if (SERVER) then
 			entity:SetAngles(angles)
 			entity:Spawn()
 			entity:Activate()
-			entity:SetNetVar("dialogue", dialogue)
+			entity:SetNetVar("data", data)
 			entity:SetNetVar("factiondata", factionData)
 			entity:SetNetVar("classdata", classData)
 			entity:SetNetVar("name", name)
 			entity:SetNetVar("desc", desc)			
 			
 			entity:SetNetVar("vendoraction", vendorAction)
-			entity:SetNetVar("buyadjustment", cashadjustment)
+			entity:SetNetVar("buyadjustment", buyadjustment)
 			entity:SetNetVar("money", money)
 			
 			entity:SetModel(model)
@@ -43,6 +43,8 @@ if (SERVER) then
 		end
 	end
 
+	
+	
 	function PLUGIN:SaveData()
 		local data = {}
 
@@ -50,7 +52,7 @@ if (SERVER) then
 			data[#data + 1] = {
 				pos = v:GetPos(),
 				angles = v:GetAngles(),
-				dialogue = v:GetNetVar("dialogue", {}),			
+				data = v:GetNetVar("data", {}),			
 				factionData = v:GetNetVar("factiondata", {}),
 				classData = v:GetNetVar("classdata", {}),
 				
@@ -63,23 +65,9 @@ if (SERVER) then
 				model = v:GetModel()
 			}
 		end
-		nut.util.WriteTable("talkers", data)
+		nut.util.WriteTable("vendors", data)
 	end
 end
-
-nut.command.Register({
-	adminOnly = true,
-	onRun = function(client, arguments)
-		local trace = client:GetEyeTraceNoCursor()
-		local entity = trace.Entity
-
-		if (IsValid(entity) and entity:GetClass() == "nut_talker") then
-			netstream.Start(client, "nut_DialogueEditor", entity)
-		else
-			nut.util.Notify("You are not looking at a valid nut_talker!", client)
-		end
-	end
-}, "talkersetting")
 
 nut.command.Register({
 	adminOnly = true,
@@ -89,7 +77,7 @@ nut.command.Register({
 		angles.p = 0
 		angles.y = angles.y - 180
 
-		local entity = ents.Create("nut_talker")
+		local entity = ents.Create("nut_vendor")
 		entity:SetPos(position)
 		entity:SetAngles(angles)
 		entity:Spawn()
@@ -97,9 +85,10 @@ nut.command.Register({
 
 		PLUGIN:SaveData()
 
-		nut.util.Notify("You have added a talker.", client)
+		nut.util.Notify("You have added a vendor.", client)
 	end
-}, "talkeradd")
+}, "vendoradd")
+
 
 nut.command.Register({
 	adminOnly = true,
@@ -107,14 +96,14 @@ nut.command.Register({
 		local trace = client:GetEyeTraceNoCursor()
 		local entity = trace.Entity
 
-		if (IsValid(entity) and entity:GetClass() == "nut_talker") then
+		if (IsValid(entity) and entity:GetClass() == "nut_vendor") then
 			entity:Remove()
 
 			PLUGIN:SaveData()
 
-			nut.util.Notify("You have removed this nut_talker.", client)
+			nut.util.Notify("You have removed this vendor.", client)
 		else
-			nut.util.Notify("You are not looking at a valid nut_talker!", client)
+			nut.util.Notify("You are not looking at a valid vendor!", client)
 		end
 	end
-}, "talkerremove")
+}, "vendorremove")
