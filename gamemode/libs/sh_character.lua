@@ -378,7 +378,9 @@ if (SERVER) then
 		local sameChar = false
 
 		if (client.character and client.character.index == index) then
-			sameChar = true
+			nut.util.Notify("You are already using that character.", client)
+			
+			return
 		end
 
 		client.nut_CachedChars = client.nut_CachedChars or {}
