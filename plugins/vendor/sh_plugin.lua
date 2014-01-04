@@ -13,6 +13,12 @@ if (SERVER) then
 			local data = v.data
 			local factionData = v.factionData
 			local classData = v.classData
+			
+			
+			local vendorAction = v.vendorAction
+			local buyadjustment = v.buyadjustment
+			local money = v.money
+			
 			local name = v.name
 			local desc = v.desc
 			local model = v.model
@@ -26,12 +32,19 @@ if (SERVER) then
 			entity:SetNetVar("factiondata", factionData)
 			entity:SetNetVar("classdata", classData)
 			entity:SetNetVar("name", name)
-			entity:SetNetVar("desc", desc)
+			entity:SetNetVar("desc", desc)			
+			
+			entity:SetNetVar("vendoraction", vendorAction)
+			entity:SetNetVar("buyadjustment", buyadjustment)
+			entity:SetNetVar("money", money)
+			
 			entity:SetModel(model)
 			entity:SetAnim()
 		end
 	end
 
+	
+	
 	function PLUGIN:SaveData()
 		local data = {}
 
@@ -39,15 +52,19 @@ if (SERVER) then
 			data[#data + 1] = {
 				pos = v:GetPos(),
 				angles = v:GetAngles(),
-				data = v:GetNetVar("data", {}),
+				data = v:GetNetVar("data", {}),			
 				factionData = v:GetNetVar("factiondata", {}),
 				classData = v:GetNetVar("classdata", {}),
+				
+				vendorAction = v:GetNetVar("vendoraction", { sell = true, buy = false} ),
+				buyadjustment = v:GetNetVar("buyadjustment", .5),
+				money = v:GetNetVar("money", 100),
+				
 				name = v:GetNetVar("name", "John Doe"),
 				desc = v:GetNetVar("desc", nut.lang.Get("no_desc")),
 				model = v:GetModel()
 			}
 		end
-
 		nut.util.WriteTable("vendors", data)
 	end
 end
@@ -71,6 +88,7 @@ nut.command.Register({
 		nut.util.Notify("You have added a vendor.", client)
 	end
 }, "vendoradd")
+
 
 nut.command.Register({
 	adminOnly = true,

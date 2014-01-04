@@ -205,8 +205,12 @@ function nut.item.Register(itemTable, isBase)
 					local position = trace.HitPos + Vector(0, 0, 16)
 					
 					client:EmitSound("physics/body/body_medium_impact_soft"..math.random(1, 3)..".wav")
-					nut.item.Spawn(position, client:EyeAngles(), itemTable, data)
+					local ent = nut.item.Spawn(position, client:EyeAngles(), itemTable, data)
+					nut.schema.Call("OnItemDropped", client, itemTable, ent )
 				end
+			end,
+			shouldDisplay = function(itemTable, data, entity)
+				return !itemTable.cantdrop
 			end
 		}
 		itemTable.functions.Take = {
@@ -219,6 +223,9 @@ function nut.item.Register(itemTable, isBase)
 
 					return item.player:UpdateInv(item.uniqueID, 1, item.itemData)
 				end
+			end,
+			shouldDisplay = function(itemTable, data, entity)
+				return !itemTable.canttake
 			end
 		}
 
@@ -822,7 +829,7 @@ do
 				client:UpdateInv(class, nil, data)
 				client:TakeMoney(price)
 
-				nut.util.Notify(nut.lang.Get("purchased", itemTable.name), client)
+				nut.util.Notify(nut.lang.Get("purchased_for", itemTable.name, nut.currency.GetName(price)), client)
 			else
 				nut.util.Notify(nut.lang.Get("no_afford"), client)
 			end

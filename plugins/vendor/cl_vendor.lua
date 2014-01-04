@@ -1,3 +1,4 @@
+-- VGUI needs to be re-done ;_;
 local PANEL = {}
 	function PANEL:Init()
 		self:SetSize(ScrW() * nut.config.menuWidth, ScrH() * nut.config.menuHeight)
@@ -8,27 +9,63 @@ local PANEL = {}
 		self.property = self:Add("DPropertySheet")
 		self.property:Dock(FILL)
 
-		self.menu = vgui.Create("nut_VendorMenu")
+	end
 
-		self.menuTab = self.property:AddSheet("Vendor", self.menu, "icon16/application_view_tile.png")
-
+	function PANEL:SetEntity(entity)
+		
+		self.vendorentity = entity
+		local vendorAction = entity:GetNetVar("vendoraction", { sell = true, buy = false })
+		if vendorAction.sell then
+			self.selling = vgui.Create("nut_VendorMenu")
+			self.selling:SetEntity(entity, false)
+			self.sellingTab = self.property:AddSheet("Selling", self.selling, "icon16/coins_delete.png")
+		end
+		if vendorAction.buy then
+			self.buying = vgui.Create("nut_VendorMenu")
+			self.buying:SetEntity(entity, true)
+			self.buyingTab = self.property:AddSheet("Buying", self.buying, "icon16/coins_add.png")
+		end
+		
 		if (LocalPlayer():IsAdmin()) then
 			self.admin = vgui.Create("nut_VendorAdminMenu")
 			self.property:AddSheet("Admin", self.admin, "icon16/star.png")
 		end
-	end
-
-	function PANEL:SetEntity(entity)
 		if (IsValid(self.admin)) then
 			self.admin:SetEntity(entity)
 		end
-		
-		self.menu:SetEntity(entity)
+
 	end
 vgui.Register("nut_Vendor", PANEL, "DFrame")
 
+-- PLEASE
+netstream.Hook("nut_CashUpdate", function( data )
+	local v = nut.gui.vendor
+	if v then
+		if v.buying then
+			v.buying.money.desc:SetText( nut.lang.Get( "vendor_cash", nut.currency.GetName( v.vendorentity:GetNetVar("money", 0) ) ) )
+		end
+		if v.selling then
+			v.selling.money.desc:SetText( nut.lang.Get( "vendor_cash", nut.currency.GetName( v.vendorentity:GetNetVar("money", 0) ) ) )
+		end
+	end
+end)
+
+-- VENDOR CONTENT
 local PANEL = {}
 	function PANEL:Init()
+		self.money = self:Add("DPanel")
+		self.money:Dock(TOP)
+		self.money:DockMargin(0, 7, 2, 7)
+		self.money:SetDrawBackground(false)
+		
+		self.money.desc = self.money:Add("DLabel")
+		self.money.desc:DockMargin(16, 2, 2, 2)
+		self.money.desc:Dock(TOP)
+		self.money.desc:SetTextColor(Color(60, 60, 60))
+		self.money.desc:SetFont("nut_TargetFont")
+		self.money.desc:SizeToContents()
+		self.money:Dock(TOP)
+		
 		self.list = self:Add("DScrollPanel")
 		self.list:Dock(FILL)
 		self.list:SetDrawBackground(true)
@@ -36,11 +73,12 @@ local PANEL = {}
 		self.categories = {}
 		self.nextBuy = 0
 	end
-
-	function PANEL:SetEntity(entity)
+	
+	function PANEL:SetEntity(entity, boolBuying)
 		self.entity = entity
 
 		local data = entity:GetNetVar("data", {})
+		self.money.desc:SetText( nut.lang.Get( "vendor_cash", nut.currency.GetName( entity:GetNetVar("money", 0) ) ) )
 
 		for class, itemTable in SortedPairs(nut.item.GetAll()) do
 			local factionData = entity:GetNetVar("factiondata", {})
@@ -55,7 +93,8 @@ local PANEL = {}
 				continue
 			end
 
-			if (data[class] and data[class].selling) then
+			--- SELLING STUFFS
+			if (data[class] and data[class].selling and !boolBuying ) then
 				local category = itemTable.category
 				local category2 = string.lower(category)
 
@@ -100,6 +139,12 @@ local PANEL = {}
 					end
 					
 					netstream.Start("nut_VendorBuy", {entity, class})
+					timer.Simple(LocalPlayer():Ping() / 500, function()
+						if self and self.money and self.money.desc then
+							self.money.desc:SetText( nut.lang.Get( "vendor_cash", nut.currency.GetName( entity:GetNetVar("money", 0) ) ) )
+						end
+					end)
+
 
 					icon.disabled = true
 					icon:SetAlpha(70)
@@ -112,18 +157,83 @@ local PANEL = {}
 					end)
 				end
 			end
+
+			-- BUYING
+			if (data[class] and data[class].buying and boolBuying) then
+				local category = itemTable.category
+				local category2 = string.lower(category)
+
+				if (!self.categories[category2]) then
+					local category3 = self.list:Add("DCollapsibleCategory")
+					category3:Dock(TOP)
+					category3:SetLabel(category)
+					category3:DockMargin(5, 5, 5, 5)
+					category3:SetPadding(5)
+
+					local list = vgui.Create("DIconLayout")
+						list.Paint = function(list, w, h)
+							surface.SetDrawColor(0, 0, 0, 25)
+							surface.DrawRect(0, 0, w, h)
+						end
+					category3:SetContents(list)
+					category3:InvalidateLayout(true)
+
+					self.categories[category2] = {list = list, category = category3, panel = panel}
+				end
+
+				local list = self.categories[category2].list
+				local icon = list:Add("SpawnIcon")
+
+				icon:SetModel(itemTable.model or "models/error.mdl", itemTable.skin)
+
+				local price = itemTable.price or 0
+				local cost = "Price: "..nut.currency.GetName(price)
+
+				if (data[class] and data[class].price and data[class].price > 0) then
+					price = data[class].price
+				end
+
+				if (price and price > 0) then
+					cost = "Price: "..nut.currency.GetName(price)
+				end
+
+				icon:SetToolTip("Description: "..itemTable:GetDesc().."\n"..cost)
+				icon.DoClick = function(panel)
+					if (icon.disabled) then
+						return
+					end
+					
+					netstream.Start("nut_VendorSell", {entity, class})
+					timer.Simple(LocalPlayer():Ping() / 500, function()
+						if self and self.money and self.money.desc then
+							self.money.desc:SetText( nut.lang.Get( "vendor_cash", nut.currency.GetName( entity:GetNetVar("money", 0) ) ) )
+						end
+					end)
+					icon.disabled = true
+					icon:SetAlpha(70)
+
+					timer.Simple(nut.config.buyDelay, function()
+						if (IsValid(icon)) then
+							icon.disabled = false
+							icon:SetAlpha(255)
+						end
+					end)
+				end
+			end
+
 		end
 	end
 
-	function PANEL:Reload()
+	function PANEL:Reload( boolBuying )
 		if (IsValid(self.entity)) then
 			self:Clear(true)
 			self:Init()
-			self:SetEntity(self.entity)
+			self:SetEntity(self.entity, boolBuying)
 		end
 	end
 vgui.Register("nut_VendorMenu", PANEL, "DPanel")
 
+-- ADMIN
 local PANEL = {}
 	function PANEL:Init()
 		self:SetDrawBackground(false)
@@ -154,13 +264,30 @@ local PANEL = {}
 		self.list:AddColumn("Name")
 		self.list:AddColumn("Unique ID")
 		self.list:AddColumn("Selling")
+		self.list:AddColumn("Buying")
 		self.list:AddColumn("Price")
 		self.list:SetMultiSelect(false)
 		self.list.OnClickLine = function(panel, line, selected)
 			if (input.IsMouseDown(MOUSE_LEFT)) then
+				local menu = DermaMenu()
+				menu:AddOption( "Toggle Buying", function()
+					line.buying = !line.buying
+					line:SetValue(4, line.buying and "✔" or "")
+				end):SetImage("icon16/money_add.png")
+				menu:AddOption( "Toggle Selling", function()
+					line.selling = !line.selling
+					line:SetValue(3, line.selling and "✔" or "")
+				end):SetImage("icon16/money_delete.png")
+				menu:Open()
+			end
+			
+			/* -- old code: Chessnut
+			if (input.IsMouseDown(MOUSE_LEFT)) then
 				line.selling = !line.selling
 				line:SetValue(3, line.selling and "✔" or "")
 			end
+			*/
+			
 		end
 		self.list.OnRowRightClick = function(parent, index, line)
 			Derma_StringRequest(line.itemTable.name, "What would you like the price to be?", "0", function(text)
@@ -168,7 +295,7 @@ local PANEL = {}
 
 				if (IsValid(line)) then
 					line.price = math.max(math.floor(amount), 0)
-					line:SetValue(4, line.price)
+					line:SetValue(5, line.price)
 				end
 			end)
 		end
@@ -177,18 +304,24 @@ local PANEL = {}
 			local line = self.list:AddLine(v.name, v.uniqueID, "")
 			line.itemTable = v
 			line.price = 0
-			line:SetValue(4, line.price)
+			line:SetValue(5, line.price)
 
 			if (data[v.uniqueID]) then
 				if (data[v.uniqueID].price) then
 					line.price = data[v.uniqueID].price
-					line:SetValue(4, line.price)
+					line:SetValue(5, line.price)
 				end
 
 				if (data[v.uniqueID].selling) then
 					line:SetValue(3, "✔")
 					line.selling = true
 				end
+				
+				if (data[v.uniqueID].buying) then
+					line:SetValue(4, "✔")
+					line.buying = true
+				end
+				
 			end
 		end
 
@@ -258,7 +391,68 @@ local PANEL = {}
 		self.name:Dock(TOP)
 		self.name:DockMargin(3, 3, 3, 3)
 		self.name:SetText(entity:GetNetVar("name", "John Doe"))
-
+		
+		-- Set sell only, buy only
+		local action = self.scroll:Add("DLabel")
+		action:SetText("Sell/Buy")
+		action:DockMargin(3, 3, 3, 3)
+		action:Dock(TOP)
+		action:SetTextColor(Color(60, 60, 60))
+		action:SetFont("nut_ScoreTeamFont")
+		action:SizeToContents()
+		
+		local vendorAction = entity:GetNetVar("vendoraction", { sell = true, buy = false })
+		
+		self.sell = self.scroll:Add("DCheckBoxLabel")
+		self.sell:Dock(TOP)
+		self.sell:SetText( "Do Sell Item to player" )
+		self.sell:SetValue(0)
+		self.sell:DockMargin(12, 3, 3, 3)
+		self.sell:SetDark(true)
+		if ( vendorAction.sell ) then
+			self.sell:SetChecked( vendorAction.sell )
+		end
+		
+		self.buy = self.scroll:Add("DCheckBoxLabel")
+		self.buy:Dock(TOP)
+		self.buy:SetText( "Do Buy Item from player" )
+		self.buy:SetValue(0)
+		self.buy:DockMargin(12, 3, 3, 3)
+		self.buy:SetDark(true)
+		if ( vendorAction.buy ) then
+			self.buy:SetChecked( vendorAction.buy )
+		end
+		
+		
+		-- Set vendor's money
+		local adj = self.scroll:Add("DLabel")
+		adj:SetText("Buying Money Adjustment")
+		adj:DockMargin(3, 3, 3, 3)
+		adj:Dock(TOP)
+		adj:SetTextColor(Color(60, 60, 60))
+		adj:SetFont("nut_ScoreTeamFont")
+		adj:SizeToContents()
+		
+		self.adj = self.scroll:Add("DTextEntry")
+		self.adj:Dock(TOP)
+		self.adj:DockMargin(3, 3, 3, 3)
+		self.adj:SetText(entity:GetNetVar("buyadjustment", .5))
+		
+		-- Set vendor's money
+		local money = self.scroll:Add("DLabel")
+		money:SetText("Vendor's Money")
+		money:DockMargin(3, 3, 3, 3)
+		money:Dock(TOP)
+		money:SetTextColor(Color(60, 60, 60))
+		money:SetFont("nut_ScoreTeamFont")
+		money:SizeToContents()
+		
+		self.money = self.scroll:Add("DTextEntry")
+		self.money:Dock(TOP)
+		self.money:DockMargin(3, 3, 3, 3)
+		self.money:SetText(entity:GetNetVar("money", 100))
+		
+		-- Description
 		local desc = self.scroll:Add("DLabel")
 		desc:SetText("Description")
 		desc:DockMargin(3, 3, 3, 3)
@@ -272,6 +466,7 @@ local PANEL = {}
 		self.desc:DockMargin(3, 3, 3, 3)
 		self.desc:SetText(entity:GetNetVar("desc", nut.lang.Get("no_desc")))
 
+		-- Model
 		local model = self.scroll:Add("DLabel")
 		model:SetText("Model")
 		model:DockMargin(3, 3, 3, 3)
@@ -285,6 +480,7 @@ local PANEL = {}
 		self.model:DockMargin(3, 3, 3, 3)
 		self.model:SetText(entity:GetModel())
 
+		-- Save
 		self.save = self:Add("DButton")
 		self.save:Dock(BOTTOM)
 		self.save:DockMargin(0, 5, 0, 0)
@@ -298,9 +494,12 @@ local PANEL = {}
 				for k, v in pairs(self.list:GetLines()) do
 					local price
 					local selling = v.selling
+					local buying = v.buying
 
 					if (selling != true) then
 						selling = nil
+					elseif (buying != true) then
+						buying = nil
 					else
 						price = v.price
 
@@ -309,7 +508,7 @@ local PANEL = {}
 						end
 					end
 
-					local value = {price = price, selling = selling}
+					local value = { price = price, selling = selling, buying = buying }
 
 					if (table.Count(value) > 0) then
 						data[v.itemTable.uniqueID] = value
@@ -331,14 +530,24 @@ local PANEL = {}
 						classData[k] = true
 					end
 				end
+				
+				local vendorAction = {}
+				vendorAction.buy = self.buy:GetChecked()
+				vendorAction.sell = self.sell:GetChecked()
+				
+				local cashadjustment = self.adj:GetValue()
+				local money = self.money:GetValue()
+				-- need to add money
+				netstream.Start("nut_VendorData", {entity, data, vendorAction, cashadjustment, money, factionData, classData, self.name:GetText(), self.desc:GetText(), self.model:GetText() or entity:GetModel()})
 
-				netstream.Start("nut_VendorData", {entity, data, factionData, classData, self.name:GetText(), self.desc:GetText(), self.model:GetText() or entity:GetModel()})
-
-				timer.Simple(LocalPlayer():Ping() / 100, function()
+				timer.Simple(LocalPlayer():Ping() / 50, function()
 					local parent = nut.gui.vendor
 
-					if (IsValid(parent.menu)) then
-						parent.menu:Reload()
+					if (IsValid(parent.buying)) then
+						parent.buying:Reload( true )
+					end
+					if (IsValid(parent.selling)) then
+						parent.selling:Reload()
 					end
 				end)
 			end
