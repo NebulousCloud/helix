@@ -10,6 +10,7 @@ if (SERVER) then
 				client:SetNoDraw(true)
 				client:DrawShadow(false)
 				client:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+				client:SetNutVar("noclipping", true)
 			else
 				client:SetNoDraw(false)
 				client:DrawShadow(true)
@@ -26,9 +27,34 @@ if (SERVER) then
 				end
 
 				client:SetNutVar("noclipPos", nil)
+				client:SetNutVar("noclipping", nil)
+			end
+		end
+	end
+
+	function PLUGIN:SetupPlayerVisibility(client)
+		if (client:GetNutVar("noclipping")) then
+			for k, v in pairs(player.GetAll()) do
+				AddOriginToPVS(v:GetPos())
 			end
 		end
 	end
 else
 	CreateClientConVar("nut_observetp", "0", true, true)
+	local showESP = CreateClientConVar("nut_observeesp", "1", true, true)
+
+	function PLUGIN:HUDPaint()
+		local client = LocalPlayer()
+
+		if (client:GetMoveType() != MOVETYPE_WALK and showESP:GetInt() > 0) then
+			for k, v in pairs(player.GetAll()) do
+				if (v != client) then
+					local position = v:LocalToWorld(v:OBBCenter()):ToScreen()
+					local x, y = position.x, position.y
+
+					nut.util.DrawText(x, y, v:Name(), team.GetColor(v:Team()))
+				end
+			end
+		end
+	end
 end
