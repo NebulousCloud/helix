@@ -98,11 +98,7 @@ nut.command.Register({
 nut.command.Register({
 	adminOnly = true,
 	onRun = function(client, arguments)
-		local data = {}
-			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector() * 84
-			data.filter = client
-		local trace = util.TraceLine(data)
+		local trace = client:GetEyeTraceNoCursor()
 		local entity = trace.Entity
 
 		if (IsValid(entity) and PLUGIN:IsDoor(entity)) then
@@ -141,11 +137,7 @@ nut.command.Register({
 nut.command.Register({
 	adminOnly = true,
 	onRun = function(client, arguments)
-		local data = {}
-			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector() * 84
-			data.filter = client
-		local trace = util.TraceLine(data)
+		local trace = client:GetEyeTraceNoCursor()
 		local entity = trace.Entity
 
 		if (IsValid(entity) and PLUGIN:IsDoor(entity)) then
