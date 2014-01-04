@@ -61,8 +61,9 @@ if ( CLIENT ) then
 function ENT:Draw()
 	local ap = self:GetAttachParent();
 	local active = ap:GetActiveWeapon();
-	
-	if (ap == LocalPlayer() and !LocalPlayer():ShouldDrawLocalPlayer()) then
+	local client = LocalPlayer()
+
+	if (ap == client and !client:ShouldDrawLocalPlayer()) then
 		return
 	end
 

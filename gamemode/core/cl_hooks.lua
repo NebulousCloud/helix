@@ -61,12 +61,13 @@ local vignette = Material("nutscript/vignette.png")
 local vignetteAlpha = 0
 
 function GM:HUDPaint()
+	local client = LocalPlayer()
 	local scrW, scrH = surface.ScreenWidth(), surface.ScreenHeight()
 
 	if (nut.config.drawVignette) then
 		local alpha = 240
 		local data = {}
-			data.start = LocalPlayer():GetPos()
+			data.start = client:GetPos()
 			data.endpos = data.start + Vector(0, 0, 1000)
 		local trace = util.TraceLine(data)
 
@@ -118,7 +119,7 @@ function GM:HUDPaint()
 		return
 	end
 
-	local trace = LocalPlayer():GetEyeTrace()
+	local trace = client:GetEyeTrace()
 
 	nut.schema.Call("HUDPaintTargetID", trace.Entity)
 
@@ -142,7 +143,7 @@ function GM:HUDPaint()
 		surface.DrawRect(x + spacing, y + spacing, size, size)
 	end
 
-	if (LocalPlayer():GetNetVar("tied")) then
+	if (client:GetNetVar("tied")) then
 		nut.util.DrawText(scrW * 0.5, scrH * 0.25, "You have been tied.")
 	end
 
@@ -257,14 +258,15 @@ local math_Approach = math.Approach
 local ents = ents
 
 function GM:HUDPaintTargetID(entity)
+	local client = LocalPlayer()
 	local frameTime = FrameTime()
 
 	for k, v in pairs(ents.GetAll()) do
-		if (v != LocalPlayer() and v:IsPlayer() or nut.schema.Call("ShouldDrawTargetEntity", v) == true or v.DrawTargetID) then
+		if (v != client and v:IsPlayer() or nut.schema.Call("ShouldDrawTargetEntity", v) == true or v.DrawTargetID) then
 			local target = 0
 			local inRange = false
 
-			if (IsValid(entity) and entity:GetPos():Distance(LocalPlayer():GetPos()) <= 360) then
+			if (IsValid(entity) and entity:GetPos():Distance(client:GetPos()) <= 360) then
 				inRange = true
 			end
 
@@ -297,7 +299,7 @@ function GM:HUDPaintTargetID(entity)
 					if (!result) then
 						local client = entity:GetNetVar("player")
 
-						if (IsValid(client) and client:IsPlayer() and client.character and client != LocalPlayer()) then
+						if (IsValid(client) and client:IsPlayer() and client.character and client != client) then
 							self:HUDPaintTargetPlayer(client, x, y, alpha)
 
 							return true
