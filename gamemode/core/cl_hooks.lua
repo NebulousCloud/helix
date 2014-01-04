@@ -297,7 +297,7 @@ function GM:HUDPaintTargetID(entity)
 					if (!result) then
 						local client = entity:GetNetVar("player")
 
-						if (IsValid(client) and client:IsPlayer() and client.character) then
+						if (IsValid(client) and client:IsPlayer() and client.character and client != LocalPlayer()) then
 							self:HUDPaintTargetPlayer(client, x, y, alpha)
 
 							return true
