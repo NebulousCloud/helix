@@ -198,7 +198,7 @@ do
 					self:UnRagdoll()
 				end
 			end)
-			self.ragdoll.grace = CurTime() + 4
+			self.ragdoll.grace = CurTime() + 0.5
 
 			for i = 0, self.ragdoll:GetPhysicsObjectCount() do
 				local physicsObject = self.ragdoll:GetPhysicsObjectNum(i)
@@ -332,8 +332,14 @@ do
 
 		hook.Add("EntityTakeDamage", "nut_FallenOver", function(entity, damageInfo)
 			if (IsValid(entity.player) and (entity.grace or 0) < CurTime()) then
-				if (damageInfo:IsDamageType(DMG_CRUSH) and damageInfo:GetDamage() <= 20) then
-					damageInfo:SetDamage(0)
+				damageInfo:ScaleDamage(0.45)
+
+				if (damageInfo:IsDamageType(DMG_CRUSH)) then
+					entity.grace = CurTime() + 0.5
+
+					if (damageInfo:GetDamage() <= 10) then
+						damageInfo:SetDamage(0)
+					end
 				end
 
 				entity.player:TakeDamageInfo(damageInfo)
