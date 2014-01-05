@@ -1,6 +1,6 @@
 surface.CreateFont("nut_NotiFont", {
 	font = "Myriad Pro",
-	size = 15,
+	size = 16,
 	weight = 500,
 	antialias = true
 })
@@ -44,7 +44,7 @@ function PANEL:Init()
 	self.text:SetTextColor( color_white )
 	self.text:SizeToContents()
 	self.text:Dock( FILL )
-	self.text:DockMargin( 2, self.text:GetTall()*.3, 2, 5 )
+	self.text:DockMargin( self.text:GetTall()*.5, self.text:GetTall()*.3, 2, self.text:GetTall()*.5 )
 	self:SetTall( self.text:GetTall()*1.6 )
 end
 function PANEL:SetType( num )

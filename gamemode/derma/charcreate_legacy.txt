@@ -1,0 +1,249 @@
+
+local PANEL = {}
+	function PANEL:Init()
+		self:SetSize(ScrW() * 0.325, ScrH() * 0.725)
+		self:SetTitle("Character Creation")
+		self:MakePopup()
+		self:Center()
+		self:SetBackgroundBlur(true)
+		self:LoadGWENFile( "ns_gwen.png", "" )
+	end
+
+	function PANEL:SetupFaction(index)
+		if (!index) then
+			return
+		end
+
+		local faction = nut.faction.GetByID(index)
+
+		if (!faction) then
+			return
+		end
+
+		self.scroll = self:Add("DScrollPanel")
+		self.scroll:Dock(FILL)
+		self.scroll:SetDrawBackground(true)
+
+		self.form = self.scroll:Add("DForm")
+		self.form:Dock(FILL)
+		self.form:DockMargin(3, 3, 3, 3)
+		self.form:SetName("Character")
+		
+		self.label = self.form:Help(nut.lang.Get("char_create_tip"))
+		self.name = self.form:TextEntry(nut.lang.Get("name"))
+
+		if (faction.GetDefaultName) then
+			local name, editable = faction:GetDefaultName(self.name)
+
+			if (name) then
+				self.name:SetEditable(editable or false)
+				self.name:SetText(name)
+			end
+		end
+
+		self.models = {}
+
+		self.desc = self.form:TextEntry(nut.lang.Get("desc"))
+		self.desc:SetToolTip(nut.lang.Get("desc_char_req", nut.config.descMinChars))
+
+		self.gender = self.form:ComboBox(nut.lang.Get("gender"))
+		self.gender.OnSelect = function(panel, index, value, data)
+			local gender = string.lower(value)
+
+			self:SetupModels(faction[gender.."Models"])
+		end
+
+		if (faction.maleModels and #faction.maleModels > 0) then
+			self.gender:AddChoice("Male")
+		end
+
+		if (faction.femaleModels and #faction.femaleModels > 0) then
+			self.gender:AddChoice("Female")
+		end
+
+		local label = vgui.Create("DLabel")
+		label:SetText(nut.lang.Get("model"))
+		label:SetDark(true)
+
+		self.modelScroll = vgui.Create("DScrollPanel")
+			self.modelScroll:Dock(TOP)
+			self.modelScroll:SetTall(128)
+
+			self.model = self.modelScroll:Add("DIconLayout")
+			self.model:Dock(FILL)
+
+			self:SetupModels(faction.maleModels)
+		self.form:AddItem(label, self.modelScroll)
+
+		self.gender:ChooseOptionID(1)
+
+		local points = nut.config.startingPoints
+		local pointsLeft = points
+
+		local pointsLabel = self.form:Help(nut.lang.Get("points_left", pointsLeft))
+		pointsLabel:SetFont("DermaDefaultBold")
+
+		self.bars = {}
+
+		for k, v in ipairs(nut.attribs.GetAll()) do
+			local attribute = nut.attribs.Get(k)
+
+			local bar = vgui.Create("nut_AttribBar")
+			bar:Dock(TOP)
+			bar:SetMax(nut.config.startingPoints)
+			bar:SetText(attribute.name)
+			bar:SetToolTip(attribute.desc)
+			bar.OnChanged = function(panel2, hindered)
+				if (hindered) then
+					pointsLeft = pointsLeft + 1
+				else
+					pointsLeft = pointsLeft - 1
+				end
+
+				pointsLabel:SetText(nut.lang.Get("points_left", pointsLeft))
+			end
+			bar.CanChange = function(panel2, hindered)
+				if (hindered) then
+					return true
+				end
+
+				return pointsLeft > 0
+			end
+
+			self.form:AddItem(bar)
+			self.bars[k] = bar
+		end
+
+		self.finish = self:Add("DButton")
+		self.finish:Dock(BOTTOM)
+		self.finish:DockMargin(0, 4, 0, 0)
+		self.finish:SetText(nut.lang.Get("finish"))
+		self.finish:SetImage("icon16/building_go.png")
+		self.finish:SetTall(28)
+		self.finish.DoClick = function(panel)
+			local name = self.name:GetText()
+			local gender = string.lower(self.gender:GetValue())
+			local desc = self.desc:GetText()
+			local model = IsValid(self.selectedModel) and self.selectedModel.model
+			local faction = index
+			local attribs = {}
+
+			for k, v in pairs(self.bars) do
+				attribs[k] = v:GetValue()
+			end
+
+			local fault
+
+			-- Huge if that verifies values for characters.
+			if (!name or !string.find(name, "[^%s+]") or name == "") then
+				fault = "You need to provide a valid name."
+			elseif (!gender or (gender != "male" and gender != "female")) then
+				fault = "You need to provide a valid gender."
+			elseif (!desc or #desc < nut.config.descMinChars or !string.find(desc, "[^%s+]")) then
+				fault = "You need to provide a valid description."
+			elseif (!model) then
+				fault = "You need to pick a valid model."
+			elseif (!faction or !nut.faction.GetByID(faction)) then
+				fault = "You did not choose a valid faction."
+			end
+
+			if (fault) then
+				surface.PlaySound("buttons/button8.wav")
+
+				self.label:SetTextColor(Color(255, 0, 0))
+				self.label:SetText(fault)
+
+				return
+			end
+
+			netstream.Start("nut_CharCreate", {
+				name = name,
+				gender = gender,
+				desc = desc,
+				model = model,
+				faction = faction,
+				attribs = attribs
+			})
+
+			self:ShowCloseButton(false)
+			panel:SetDisabled(true)
+
+			timer.Simple(7.5, function()
+				if (IsValid(self)) then
+					self:Remove()
+
+					chat.AddText(Color(255, 0, 0), "Character creation request timed out!")
+				end
+			end)
+		end
+	end
+
+	function PANEL:SetupModels(models)
+		local highlight = table.Copy(nut.config.mainColor)
+		highlight.a = 200
+
+		for k, v in pairs(self.models) do
+			v:Remove()
+		end
+
+		self.selectedModel = nil
+
+		local selected = false
+
+		for k, v in ipairs(models) do
+			local icon = self.model:Add("SpawnIcon")
+			icon:SetModel(v)
+			icon.model = v
+			icon.PaintOver = function(panel, w, h)
+				local model = self.selectedModel
+
+				if (IsValid(model) and model == panel) then
+					surface.SetDrawColor(highlight)
+
+					for i = 1, 3 do
+						local i2 = i * 2
+
+						surface.DrawOutlinedRect(i, i, w - i2, h - i2)
+					end
+				end
+			end
+			icon.DoClick = function(panel)
+				surface.PlaySound("garrysmod/ui_click.wav")
+
+				self.selectedModel = panel
+			end
+
+			if (!selected) then
+				self.selectedModel = icon
+
+				selected = true
+			end
+
+			self.models[#self.models + 1] = icon
+		end
+
+		self.modelScroll.VBar:SetEnabled(true)
+		self.modelScroll.VBar:SetScroll(0)
+	end
+
+	function PANEL:Think()
+		if (!self:IsActive()) then
+			self:MakePopup()
+		end
+	end
+vgui.Register("nut_CharCreate", PANEL, "DFrame")
+
+netstream.Hook("nut_CharCreateAuthed", function()
+	nut.gui.charCreate:Remove()
+
+	surface.PlaySound("buttons/button9.wav")
+
+	timer.Simple(0.1, function()
+		if (IsValid(nut.gui.charMenu)) then
+			nut.gui.charMenu:FadeOutMusic()
+			nut.gui.charMenu:Remove()
+		end
+		
+		nut.gui.charMenu = vgui.Create("nut_CharMenu")
+	end)
+end)
