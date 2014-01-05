@@ -1,9 +1,10 @@
 surface.CreateFont("nut_NotiFont", {
 	font = "Myriad Pro",
-	size = ScreenScale(5.5),
+	size = 15,
 	weight = 500,
 	antialias = true
 })
+
 local PANEL = {}
 PANEL.pnlTypes = {
 	[1] = { -- NOT ALLOWED
