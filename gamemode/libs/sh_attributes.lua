@@ -74,8 +74,6 @@ do
 				self.character:SetData("attrib_"..attribute.uniqueID, current + value)
 				
 				if (attribute.setup) then
-					print( current )
-					print( ( attribute.limit or nut.config.maximumPoints ) )
 					attribute.setup(self, math.Clamp( current + value, 0, ( attribute.limit or nut.config.maximumPoints ) ))
 				end
 
