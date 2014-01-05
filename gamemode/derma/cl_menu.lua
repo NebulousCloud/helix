@@ -59,6 +59,7 @@ local PANEL = {}
 			self[id] = button
 		end
 
+		
 		addButton("char", nut.lang.Get("characters"), function()
 			nut.gui.charMenu = vgui.Create("nut_CharMenu")
 
@@ -71,6 +72,11 @@ local PANEL = {}
 
 		self.currentMenu = NULL
 
+		addButton("att", nut.lang.Get("attribute"), function()
+			nut.gui.att = vgui.Create("nut_Attribute", self)
+			self:SetCurrentMenu(nut.gui.att)
+		end)
+		
 		if (nut.config.businessEnabled and nut.schema.Call("PlayerCanSeeBusiness")) then
 			addButton("business", nut.lang.Get("business"), function()
 				nut.gui.business = vgui.Create("nut_Business", self)

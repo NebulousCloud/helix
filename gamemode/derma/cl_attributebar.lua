@@ -94,16 +94,75 @@ local PANEL = {}
 		return true
 	end
 vgui.Register("nut_AttribBar", PANEL, "DPanel")
+local PANEL = {}
+	function PANEL:Init()
+		self:SetDrawBackground(false)
 
-concommand.Add("test_bar", function()
-	local frame = vgui.Create("DFrame")
-	frame:SetSize(ScrW() * 0.5, ScrH() * 0.7)
-	frame:MakePopup()
-	frame:Center()
+		self.amount = 0
+		self.max = 10
+		self.min = 0
 
-	for i = 1, 10 do
-		local bar = frame:Add("nut_AttribBar")
-		bar:Dock(TOP)
-		bar:SetToolTip("Affects "..i)
+		self.deltaWidth = 0
+
+		local border = 3
+
+		self.content = self:Add("DPanel")
+		self.content:Dock(FILL)
+		self.content.Paint = function(panel, w, h)
+			surface.SetDrawColor(5, 5, 5, 40)
+			surface.DrawRect(1, 1, w - 2, h - 2)
+
+			if (self.max == 0) then
+				self.max = 1
+			end
+
+			local newWidth = w * (self.amount / self.max)
+				self.deltaWidth = math.Approach(self.deltaWidth, newWidth, FrameTime() * 500)
+			local width = self.deltaWidth
+			local change = 0
+
+			if (newWidth != self.deltaWidth) then
+				change = 20
+			end
+
+			local color = nut.config.mainColor
+
+			surface.SetDrawColor(color.r + change, color.g + change, color.b + change, 225 + (change / 2))
+			surface.DrawRect(1 + border, 1 + border, width - (2 + border*2), h - (2 + border*2))
+		end
+
+		self.label = self.content:Add("DLabel")
+		self.label:SetText("")
+		self.label:SetTextColor(color_black)
+		self.label:SetContentAlignment(5)
+		self.label:Dock(FILL)
+		--self.label:SetExpensiveShadow(1, color_black)
 	end
-end)
+
+	function PANEL:SetText(text)
+		self.label:SetText(text)
+	end
+
+	function PANEL:SetMax(max)
+		self.max = max
+	end
+
+	function PANEL:SetMin(min)
+		self.min = min
+	end
+
+	function PANEL:SetValue(value)
+		self.amount = value
+	end
+
+	function PANEL:GetValue()
+		return self.amount
+	end
+
+	function PANEL:OnChanged()
+	end
+
+	function PANEL:CanChange()
+		return true
+	end
+vgui.Register("nut_AttribBarVisOnly", PANEL, "DPanel")
