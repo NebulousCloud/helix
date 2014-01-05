@@ -74,3 +74,6 @@ nut.lang.Add("model", "Model")
 nut.lang.Add("points_left", "You have %s point(s) left.")
 nut.lang.Add("char_create_tip", "Please fill all the fields then press the 'Finish' button below.")
 nut.lang.Add("finish", "Finish")
+
+nut.lang.Add("inv_tip", "You can use items in inventory with left click.")
+nut.lang.Add("business_tip", "You can buy some allowed items from the business menu.")
