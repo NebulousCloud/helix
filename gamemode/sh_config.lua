@@ -48,6 +48,9 @@ nut.config.descMinChars = 16
 -- How many attribute points a player gets when creating a character.
 nut.config.startingPoints = 20
 
+-- Caps attribute points a player gets when a character is gaining attribute experience.
+nut.config.maximumPoints = 40
+
 -- When the player is able to run again after stamina has been depleted. (0 = disable)
 nut.config.staminaRestore = 50
 

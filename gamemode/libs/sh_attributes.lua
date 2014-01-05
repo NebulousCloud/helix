@@ -11,8 +11,8 @@ nut.attribs.buffer = {}
 	Purpose: Sets up an attribute, inserts it into the list of attributes, and returns the
 	index to be used as an enum.
 --]]
-function nut.attribs.SetUp(name, desc, uniqueID, setup)
-	return table.insert(nut.attribs.buffer, {name = name, desc = desc, uniqueID = uniqueID, setup = setup})
+function nut.attribs.SetUp(name, desc, uniqueID, setup, limit)
+	return table.insert(nut.attribs.buffer, {name = name, desc = desc, uniqueID = uniqueID, setup = setup, limit = ( limit or nut.config.maximumPoints ) })
 end
 
 --[[
@@ -74,7 +74,9 @@ do
 				self.character:SetData("attrib_"..attribute.uniqueID, current + value)
 				
 				if (attribute.setup) then
-					attribute.setup(self, current + value)
+					print( current )
+					print( ( attribute.limit or nut.config.maximumPoints ) )
+					attribute.setup(self, math.Clamp( current + value, 0, ( attribute.limit or nut.config.maximumPoints ) ))
 				end
 
 				nut.schema.Call("PlayerAttribUpdated", self, index, value, current + value)
