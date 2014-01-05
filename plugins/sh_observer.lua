@@ -46,7 +46,7 @@ else
 	function PLUGIN:HUDPaint()
 		local client = LocalPlayer()
 
-		if (client:IsAdmin() and !IsValid(client:GetObserverTarget()) and client.character and client:GetMoveType() != MOVETYPE_WALK and showESP:GetInt() > 0) then
+		if (client:IsAdmin() and !IsValid(client:GetObserverTarget()) and client.character and client:GetMoveType() == MOVETYPE_NOCLIP and showESP:GetInt() > 0) then
 			for k, v in pairs(player.GetAll()) do
 				if (v != client and v.character) then
 					local position = v:LocalToWorld(v:OBBCenter()):ToScreen()
