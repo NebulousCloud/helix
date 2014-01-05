@@ -60,7 +60,7 @@ function GM:PlayerInitialSpawn(client)
 
 			for k, v in pairs(player.GetAll()) do
 				if (v.character and v != client) then
-					local fraction = math.max(client:Ping() / 100, 0.75) + 0.5
+					local fraction = math.max(client:Ping() / 100, 0.1) + 0.05
 					i = i + 1
 					time = time + fraction
 
