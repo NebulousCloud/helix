@@ -22,7 +22,7 @@ function PLUGIN:ChooseSpawn(client, spawns)
 end
 
 function PLUGIN:PlayerSpawn(client)
-	timer.Simple(0, function()
+	timer.Simple(0.1, function()
 		if (!IsValid(client)) then
 			return
 		end
@@ -38,24 +38,26 @@ function PLUGIN:PlayerSpawn(client)
 				end
 			end
 
-			self:ChooseSpawn(client, spawns)
-		else
+			if (#spawns > 0) then
+				return self:ChooseSpawn(client, spawns)
+			end
+		end
+
+		for k, v in pairs(self.points) do
+			if (v.faction == faction) then
+				spawns[#spawns + 1] = v
+			end
+		end
+
+		if (#spawns < 1) then
 			for k, v in pairs(self.points) do
-				if (v.faction == faction) then
+				if (!v.faction) then
 					spawns[#spawns + 1] = v
 				end
 			end
-
-			if (#spawns < 1) then
-				for k, v in pairs(self.points) do
-					if (!v.faction) then
-						spawns[#spawns + 1] = v
-					end
-				end
-			end
-
-			self:ChooseSpawn(client, spawns)
 		end
+
+		self:ChooseSpawn(client, spawns)
 	end)
 end
 
