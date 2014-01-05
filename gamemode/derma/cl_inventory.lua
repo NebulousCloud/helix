@@ -5,6 +5,12 @@ local PANEL = {}
 		self:MakePopup()
 		self:SetTitle(nut.lang.Get("inventory"))
 
+		local p = self:Add( "nut_NoticePanel" )
+		p:Dock( TOP )
+		p:DockMargin( 0, 0, 0, 5 )
+		p:SetType( 4 )
+		p:SetText( nut.lang.Get("inv_tip") )
+	
 		self.weight = self:Add("DPanel")
 		self.weight:Dock(TOP)
 		self.weight:SetTall(18)
