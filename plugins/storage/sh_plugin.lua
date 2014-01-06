@@ -18,6 +18,7 @@ if (SERVER) then
 		local data = {}
 
 		for k, v in pairs(ents.FindByClass("nut_container")) do
+			if v.generated then continue end
 			if (v.itemID) then
 				local inventory = v:GetNetVar("inv")
 				data[#data + 1] = {
