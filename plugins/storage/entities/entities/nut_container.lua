@@ -154,6 +154,7 @@ if (SERVER) then
 					entity:UpdateInv(class, -1, data)
 				end
 			end
+			nut.schema.Call("OnItemTransfered", client, entity, itemTable )
 		end
 	end)
 

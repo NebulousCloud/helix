@@ -262,7 +262,7 @@ local PANEL = {}
 						if (itemTable.CanTransfer and itemTable:CanTransfer(LocalPlayer(), v.data) == false) then
 							return false
 						end
-
+						
 						netstream.Start("nut_StorageUpdate", {self.entity, class, 1, v.data or {}})
 					end
 				end
