@@ -202,6 +202,7 @@ function SWEP:DoPickup(entity)
 end
 
 function SWEP:SecondaryAttack()
+	if !IsFirstTimePredicted( ) then return end
 	local trace = self.Owner:GetEyeTraceNoCursor()
 	local entity = trace.Entity
 
@@ -225,6 +226,8 @@ function SWEP:SecondaryAttack()
 			self:SetNextSecondaryFire(CurTime() + 0.4)
 			self:SetNextPrimaryFire(CurTime() + 1)
 		elseif (!entity:IsPlayer() and !entity:IsNPC() and self:CanCarry(entity)) then
+			local phys = entity:GetPhysicsObject()
+			phys:Wake()
 			self:DoPickup(entity)
 		end
 	end
