@@ -319,7 +319,7 @@ function PANEL:infoAddDesc( name )
 	p:DockMargin( 10,0,10,5 )
 	return p
 end
-vgui.Register( "nut_charCreate", PANEL, "DFrame" )
+vgui.Register( "nut_CharCreate", PANEL, "DFrame" )
 
 netstream.Hook("nut_CharCreateAuthed", function()
 	nut.gui.charCreate:Remove()
