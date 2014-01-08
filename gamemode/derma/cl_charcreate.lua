@@ -73,11 +73,11 @@ function PANEL:SetupFaction( index )
 		end)
 	end
 		
-	local ltab = self:Add( "DPanel" )
-	ltab:SetWide( self:GetWide() / 3*2 )
-	ltab:DockMargin( 0, 0, 5, 0 )
-	ltab:Dock( LEFT )
-	self.charInfo = ltab:Add( "DScrollPanel" )
+	local leftTab = self:Add( "DPanel" )
+	leftTab:SetWide( self:GetWide() / 3*2 )
+	leftTab:DockMargin( 0, 0, 5, 0 )
+	leftTab:Dock( LEFT )
+	self.charInfo = leftTab:Add( "DScrollPanel" )
 	self.charInfo:Dock( FILL )
 	self:SetupInformation()
 	
@@ -89,38 +89,38 @@ end
 function PANEL:SetupModel()
 	
 	/*
-	local lp = self.charVisual:Add( "DPanel" )
-	lp:Dock( BOTTOM )
-	lp:SetTall( self:GetTall() / 4 )
-	local sp = self.charVisual:Add( "DScrollPanel" )
-	sp:Dock( FILL )
-	local p = sp:Add( "nut_NoticePanel" )
-	p:Dock( TOP )
-	p:DockMargin( 5, 5, 5, 0 )
-	p:SetText( "Disabled." )
+		local lp = self.charVisual:Add( "DPanel" )
+		lp:Dock( BOTTOM )
+		lp:SetTall( self:GetTall() / 4 )
+		local sp = self.charVisual:Add( "DScrollPanel" )
+		sp:Dock( FILL )
+		local p = sp:Add( "nut_NoticePanel" )
+		p:Dock( TOP )
+		p:DockMargin( 5, 5, 5, 0 )
+		p:SetText( "Disabled." )
 	*/ -- Planned Update.
 	
-	local u = self.charVisual:Add( "DPanel" )
-	u:Dock( FILL )
-	u:DockMargin( 0, 0, 0, 5 )
+	local rightpanel = self.charVisual:Add( "DPanel" )
+	rightpanel:Dock( FILL )
+	rightpanel:DockMargin( 0, 0, 0, 5 )
 	
-	local ua = u:Add( "DPanel" )
-	ua:Dock( FILL )
-	ua.Paint = function( p, w, h)
+	local uppermodel = rightpanel:Add( "DPanel" )
+	uppermodel:Dock( FILL )
+	uppermodel.Paint = function( p, w, h)
 		surface.SetDrawColor(0, 0, 0, 200)
 		surface.SetTexture(gradient3)
 		surface.DrawTexturedRect(w * 0.25, 0, w * 0.5, h)
 	end
 	
 	local MODEL_ANGLE = Angle(10, 50, 0)
-	self.mvis = ua:Add("DModelPanel")
-	self.mvis:Dock(FILL)
-	self.mvis:SetFOV(45)
-	self.mvis.OnCursorEntered = function() end
-	self.mvis:SetDisabled(true)
-	self.mvis:SetCursor("none")
-	local SetModel = self.mvis.SetModel
-	self.mvis.SetModel = function(panel, model)
+	self.modelpanel = uppermodel:Add("DModelPanel")
+	self.modelpanel:Dock(FILL)
+	self.modelpanel:SetFOV(45)
+	self.modelpanel.OnCursorEntered = function() end
+	self.modelpanel:SetDisabled(true)
+	self.modelpanel:SetCursor("none")
+	local SetModel = self.modelpanel.SetModel
+	self.modelpanel.SetModel = function(panel, model)
 		SetModel(panel, model)
 		local entity = panel.Entity
 		local sequence = entity:LookupSequence("idle")
@@ -140,8 +140,8 @@ function PANEL:SetupModel()
 			entity:ResetSequence(sequence)
 		end
 	end
-	self.mvis.LayoutEntity = function(panel, entity)
-		if (!IsValid(self.mvis)) then
+	self.modelpanel.LayoutEntity = function(panel, entity)
+		if (!IsValid(self.modelpanel)) then
 			panel:Remove()
 			return
 		end
@@ -157,19 +157,19 @@ function PANEL:SetupModel()
 end
 -- INFORMATION SECTION
 function PANEL:SetupInformation()
-	local p = self.charInfo:Add( "nut_NoticePanel" )
-	p:Dock( TOP )
-	p:DockMargin( 5, 5, 5, 0 )
-	p:SetText(  nut.lang.Get("char_create_warn")  )
+	local noticePanel = self.charInfo:Add( "nut_NoticePanel" )
+	noticePanel:Dock( TOP )
+	noticePanel:DockMargin( 5, 5, 5, 0 )
+	noticePanel:SetText(  nut.lang.Get("char_create_warn")  )
 	
-	local p = self.charInfo:Add( "nut_NoticePanel" )
-	p:Dock( TOP )
-	p:DockMargin( 5, 5, 5, 5 )
-	p:SetType( 4 )
-	p:SetText( nut.lang.Get("char_create_tip") )
+	local noticePanel = self.charInfo:Add( "nut_NoticePanel" )
+	noticePanel:Dock( TOP )
+	noticePanel:DockMargin( 5, 5, 5, 5 )
+	noticePanel:SetType( 4 )
+	noticePanel:SetText( nut.lang.Get("char_create_tip") )
 	
-	self:infoAddName( nut.lang.Get("name") )	
-	self:infoAddDesc( nut.lang.Get("name_desc") )
+	self:InfoAddName( nut.lang.Get("name") )	
+	self:InfoAddDesc( nut.lang.Get("name_desc") )
 	self.name = self.charInfo:Add("DTextEntry")
 	self.name:Dock(TOP)
 	self.name:DockMargin(10,0,10,0)
@@ -183,22 +183,22 @@ function PANEL:SetupInformation()
 		end
 	end
 		
-	self:infoAddName( nut.lang.Get("desc") )
-	self:infoAddDesc( nut.lang.Get("desc_char_req", nut.config.descMinChars) )
+	self:InfoAddName( nut.lang.Get("desc") )
+	self:InfoAddDesc( nut.lang.Get("desc_char_req", nut.config.descMinChars) )
 	self.desc = self.charInfo:Add("DTextEntry")
 	self.desc:Dock(TOP)
 	self.desc:DockMargin(10,0,10,0)
 	self.desc:SetAllowNonAsciiCharacters(true)
 	self.desc:SetText( "" )
 	
-	self:infoAddName( nut.lang.Get("gender") )
-	self:infoAddDesc( nut.lang.Get("gender_desc") )
+	self:InfoAddName( nut.lang.Get("gender") )
+	self:InfoAddDesc( nut.lang.Get("gender_desc") )
 	self.gender = self.charInfo:Add( "DComboBox" )
 	self.gender:Dock(TOP)
 	self.gender:DockMargin(10,0,10,0)
 	self.gender.OnSelect = function(panel, index, value, data)
 		local gender = string.lower(value)
-		self:updateModels(self.faction[gender.."Models"])
+		self:UpdateModels(self.faction[gender.."Models"])
 	end
 	if (self.faction.maleModels and #self.faction.maleModels > 0) then
 		self.gender:AddChoice("Male")
@@ -209,8 +209,8 @@ function PANEL:SetupInformation()
 	-- Update model list when it's value is changed.
 	
 	self.models = {}
-	self:infoAddName( nut.lang.Get("model") )
-	self:infoAddDesc( nut.lang.Get("model_desc") )
+	self:InfoAddName( nut.lang.Get("model") )
+	self:InfoAddDesc( nut.lang.Get("model_desc") )
 	self.modelList = self.charInfo:Add( "DScrollPanel" )
 	self.modelList:Dock(TOP)
 	self.modelList:SetTall(128)
@@ -263,7 +263,7 @@ function PANEL:Think()
 		self:MakePopup()
 	end
 end
-function PANEL:updateModels( models )
+function PANEL:UpdateModels( models )
 		local highlight = table.Copy(nut.config.mainColor)
 		highlight.a = 200
 		for k, v in pairs(self.models) do
@@ -288,7 +288,7 @@ function PANEL:updateModels( models )
 			icon.DoClick = function(panel)
 				surface.PlaySound("garrysmod/ui_click.wav")
 				self.selectedModel = panel
-				self.mvis:SetModel( v )
+				self.modelpanel:SetModel( v )
 			end
 			if (!selected) then
 				self.selectedModel = icon
@@ -299,25 +299,25 @@ function PANEL:updateModels( models )
 		self.modelList.VBar:SetEnabled(true)
 		self.modelList.VBar:SetScroll(0)
 end
-function PANEL:infoAddName( name )
-	local p = self.charInfo:Add( "DLabel" )
-	p:SetFont( "nut_ScoreTeamFont" )
-	p:SetTextColor( color_black )
-	p:SetText( name )
-	p:SizeToContents()
-	p:Dock( TOP )
-	p:DockMargin( 10,5,10,0 )
-	return p
+function PANEL:InfoAddName( name )
+	local label = self.charInfo:Add( "DLabel" )
+	label:SetFont( "nut_ScoreTeamFont" )
+	label:SetTextColor( color_black )
+	label:SetText( name )
+	label:SizeToContents()
+	label:Dock( TOP )
+	label:DockMargin( 10,5,10,0 )
+	return label
 end
-function PANEL:infoAddDesc( name )
-	local p = self.charInfo:Add( "DLabel" )
-	p:SetFont( "nut_FactionDesc" )
-	p:SetTextColor( color_black )
-	p:SetText( name )
-	p:SizeToContents()
-	p:Dock( TOP )
-	p:DockMargin( 10,0,10,5 )
-	return p
+function PANEL:InfoAddDesc( name )
+	local label = self.charInfo:Add( "DLabel" )
+	label:SetFont( "nut_FactionDesc" )
+	label:SetTextColor( color_black )
+	label:SetText( name )
+	label:SizeToContents()
+	label:Dock( TOP )
+	label:DockMargin( 10,0,10,5 )
+	return label
 end
 vgui.Register( "nut_CharCreate", PANEL, "DFrame" )
 
