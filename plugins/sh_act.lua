@@ -51,9 +51,26 @@ sequences["citizen_male"] = {
 	["pant"] = {"d2_coast03_postbattle_idle02", true},
 	["leanback"] = {"lean_back", true, lean},
 	["sit"] = {"sit_ground", true},
-	["sitknees"] = {"sitcouchknees1", true}
+	["lying"] = {"Lying_Down", true},
+	["examineground"] = {"d1_town05_Daniels_Kneel_Idle", true},
+	["injured1"] = {"injured3", true},
+	["injured2"] = {"d1_town05_Wounded_Idle_1", true},
+	["injured3"] = {"d1_town05_Wounded_Idle_2", true},
+	["injured4"] = {"injured3", true},
+	["injuredwall"] = {"injured1", true, lean},
+	["sitknees"] = {"sitcouchknees1", true},
+	["wat"] = {"d3_c17_03_climb_rope", true}
 }
 sequences["citizen_female"] = table.Copy(sequences["citizen_male"])
+local notsupported = {
+	"injured3",
+	"injured4",
+	"injured1",
+	"examineground",
+}
+for _, str in pairs( sequences["citizen_female"] ) do
+	sequences["citizen_female"][ str ] = nil
+end
 
 if (SERVER) then
 
