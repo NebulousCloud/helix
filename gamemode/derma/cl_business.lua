@@ -5,11 +5,11 @@ local PANEL = {}
 		self:MakePopup()
 		self:SetTitle(nut.lang.Get("business"))
 
-		local p = self:Add( "nut_NoticePanel" )
-		p:Dock( TOP )
-		p:DockMargin( 0, 0, 0, 5 )
-		p:SetType( 4 )
-		p:SetText( nut.lang.Get("business_tip") )
+		local noticePanel = self:Add( "nut_NoticePanel" )
+		noticePanel:Dock( TOP )
+		noticePanel:DockMargin( 0, 0, 0, 5 )
+		noticePanel:SetType( 4 )
+		noticePanel:SetText( nut.lang.Get("business_tip") )
 		
 		self.list = self:Add("DScrollPanel")
 		self.list:Dock(FILL)
