@@ -107,7 +107,9 @@ function SWEP:DoPunchAnimation()
 end
 
 function SWEP:PrimaryAttack()
-	if !IsFirstTimePredicted( ) then return end
+	if ( !IsFirstTimePredicted() ) then
+	 return
+	end
 	if (!self.Owner.character) then
 		return
 	end
@@ -202,7 +204,9 @@ function SWEP:DoPickup(entity)
 end
 
 function SWEP:SecondaryAttack()
-	if !IsFirstTimePredicted( ) then return end
+	if ( !IsFirstTimePredicted() ) then
+	 return
+	end
 	local trace = self.Owner:GetEyeTraceNoCursor()
 	local entity = trace.Entity
 
