@@ -7,6 +7,24 @@ local timeData = {
 	{"d", 1440},
 	{"m", 60}
 }
+local times = {
+	{1,"1 Years","69y"},
+	{2,"1 Month","1mo"},
+	{3,"1 Week","1w"},
+	{4,"1 Day","1d"},
+	{5,"30 Mins","30m"},
+	{6,"1 Min","1m"},
+}
+local reasons = {
+	"Not respecting staffs.",
+	"Not doing correct RP.",
+	"Metagaming.",
+	"Powergaming.",
+	"Unrespectful RP.",
+	"Cheater.",
+	"Violation of DMCA",
+	"Fuck you.",
+}
 
 function PLUGIN:GetTimeByString(data)
 	if (!data) then
@@ -56,7 +74,11 @@ function PLUGIN:CreateCommand(data, command)
 	if (allowDead == nil) then
 		allowDead = true
 	end
-
+	data.onMenu = data.onMenu or function( menu, icon, client, command )
+		menu:AddOption(client:Name(), function()
+			LocalPlayer():ConCommand( 'say /mod'..command..' "'..client:Name()..'"' )
+		end):SetImage(nut.schema.Call("GetUserIcon", client) or icon)
+	end
 	self.commands[command] = data
 	
 	nut.command.Register({
@@ -91,12 +113,17 @@ function PLUGIN:CreateCommand(data, command)
 	}, "mod"..command)
 end
 
+
 local PLUGIN = PLUGIN
 
 PLUGIN:CreateCommand({
+	text = "Create Rank",
+	desc = "Create a new rank." ,
 	group = "owner",
 	syntax = "<string name> [number immunity]",
 	hasTarget = false,
+	onMenu = function( menu, icon, client, command )
+	end,
 	onRun = function(client, arguments)
 		local name = arguments[1]
 		local immunity = tonumber(arguments[2] or "0") or 0
@@ -115,9 +142,13 @@ PLUGIN:CreateCommand({
 }, "newrank")
 
 PLUGIN:CreateCommand({
+	text = "Delete Rank",
+	desc = "Delete exisiting rank." ,
 	group = "owner",
 	syntax = "<string name>",
 	hasTarget = false,
+	onMenu = function( menu, icon, client, command )
+	end,
 	onRun = function(client, arguments)
 		local name = arguments[1]
 
@@ -139,6 +170,8 @@ PLUGIN:CreateCommand({
 }, "delrank")
 
 PLUGIN:CreateCommand({
+	text = "Slap Player",
+	desc = "Slap player with certain amount of force and damage." ,
 	group = "operator",
 	syntax = "[number force]",
 	onRun = function(client, arguments, target)
@@ -156,6 +189,8 @@ PLUGIN:CreateCommand({
 }, "slap")
 
 PLUGIN:CreateCommand({
+	text = "Slay Player",
+	desc = "Kill player with moderation power.",
 	group = "operator",
 	onRun = function(client, arguments, target)
 		target:Kill()
@@ -165,6 +200,8 @@ PLUGIN:CreateCommand({
 }, "slay")
 
 PLUGIN:CreateCommand({
+	text = "Freeze Player",
+	desc = "Disallow player to control it's character.",
 	group = "operator",
 	onRun = function(client, arguments, target)
 		target:Lock()
@@ -174,6 +211,8 @@ PLUGIN:CreateCommand({
 }, "freeze")
 
 PLUGIN:CreateCommand({
+	text = "Unfreeze Player",
+	desc = "Allow player to control it's character.",
 	group = "operator",
 	onRun = function(client, arguments, target)
 		target:UnLock()
@@ -183,6 +222,8 @@ PLUGIN:CreateCommand({
 }, "unfreeze")
 
 PLUGIN:CreateCommand({
+	text = "Ignite Player",
+	desc = "Set player on fire with moderation power.",
 	group = "admin",
 	syntax = "[number time]",
 	onRun = function(client, arguments, target)
@@ -194,6 +235,8 @@ PLUGIN:CreateCommand({
 }, "ignite")
 
 PLUGIN:CreateCommand({
+	text = "Unignite Player",
+	desc = "Extinguish the fire on the player.",
 	group = "admin",
 	syntax = "[number time]",
 	onRun = function(client, arguments, target)
@@ -204,8 +247,18 @@ PLUGIN:CreateCommand({
 }, "unignite")
 
 PLUGIN:CreateCommand({
+	text = "Set Health",
+	desc = "Set player's health.",
 	group = "operator",
 	syntax = "[number health]",
+	onMenu = function( menu, icon, client, command )
+		local submenu = menu:AddSubMenu( client:Name() )
+		for i = 1, 10 do
+			submenu:AddOption(i*10, function()
+				LocalPlayer():ConCommand( 'say /mod'..command..' "'..client:Name()..'" '.. i*10 )
+			end):SetImage(nut.schema.Call("GetUserIcon", client) or icon)
+		end
+	end,
 	onRun = function(client, arguments, target)
 		-- No point of 0 HP, might as well just slay.
 		local health = math.max(tonumber(arguments[1] or "100"), 1)
@@ -216,6 +269,8 @@ PLUGIN:CreateCommand({
 }, "hp")
 
 PLUGIN:CreateCommand({
+	text = "Strip Player Weapons",
+	desc = "Remove all of player's weapons.",
 	group = "admin",
 	onRun = function(client, arguments, target)
 		target:StripWeapons()
@@ -225,6 +280,8 @@ PLUGIN:CreateCommand({
 }, "strip")
 
 PLUGIN:CreateCommand({
+	text = "Arm Player",
+	desc = "Give player default gears.",
 	group = "admin",
 	onRun = function(client, arguments, target)
 		target:SetMainBar()
@@ -243,8 +300,18 @@ PLUGIN:CreateCommand({
 }, "arm")
 
 PLUGIN:CreateCommand({
+	text = "Set Armor",
+	desc = "Set player's armor.",
 	group = "operator",
 	syntax = "[number armor]",
+	onMenu = function( menu, icon, client, command )
+		local submenu = menu:AddSubMenu( client:Name() )
+		for i = 1, 10 do
+			submenu:AddOption(i*10, function()
+				LocalPlayer():ConCommand( 'say /mod'..command..' "'..client:Name()..'" '.. i*10 )
+			end):SetImage(nut.schema.Call("GetUserIcon", client) or icon)
+		end
+	end,
 	onRun = function(client, arguments, target)
 		local armor = math.max(tonumber(arguments[1] or "100"), 0)
 		target:SetArmor(armor)
@@ -254,6 +321,8 @@ PLUGIN:CreateCommand({
 }, "armor")
 
 PLUGIN:CreateCommand({
+	text = "Teleport Player",
+	desc = "Teleport player A to player B.",
 	group = "admin",
 	syntax = "[bool toAimPos]",
 	onRun = function(client, arguments, target)
@@ -280,6 +349,8 @@ PLUGIN:CreateCommand({
 }, "tp")
 
 PLUGIN:CreateCommand({
+	text = "Go to Player",
+	desc = "Go to player.",
 	group = "admin",
 	syntax = "[bool toAimPos]",
 	onRun = function(client, arguments, target)
@@ -306,12 +377,22 @@ PLUGIN:CreateCommand({
 }, "goto")
 
 PLUGIN:CreateCommand({
+	text = "Kick Player",
+	desc = "Kick out player from the server.",
 	group = "admin",
 	syntax = "[string reason]",
+	onMenu = function( menu, icon, client, command )
+		local submenu = menu:AddSubMenu( client:Name() )
+		for _, why in pairs( reasons ) do
+			submenu:AddOption(why, function()
+				LocalPlayer():ConCommand( 'say /mod'..command..' "'..client:Name()..'" '.. why )
+			end):SetImage(nut.schema.Call("GetUserIcon", client) or icon)
+		end
+	end,
 	onRun = function(client, arguments, target)
 		local reason = "no reason"
 
-		if (#arguments < 1) then
+		if (#arguments > 0) then
 			reason = table.concat(arguments, " ")
 		end
 		
@@ -323,11 +404,28 @@ PLUGIN:CreateCommand({
 }, "kick")
 
 PLUGIN:CreateCommand({
+	text = "Ban Player",
+	desc = "Kick out player and disallow rejoin to your server.",
 	group = "admin",
 	syntax = "[string time] [string reason]",
+	onMenu = function( menu, icon, client, command )
+		local submenu = menu:AddSubMenu( client:Name() )
+		for _, why in pairs( reasons ) do
+			local reasonmenu = submenu:AddSubMenu( why )
+			for _, tdat in SortedPairsByMemberValue( times, 1 ) do
+				reasonmenu:AddOption(tdat[2], function()
+					LocalPlayer():ConCommand( 'say /mod'..command..' "'..client:Name()..'" "'.. tdat[3] .. '" "'.. why .. '"' )
+				end):SetImage(nut.schema.Call("GetUserIcon", client) or icon)
+			end
+		end
+	end,
 	onRun = function(client, arguments, target)
 		local time = PLUGIN:GetTimeByString(arguments[1])
-		local reason = arguments[2] or "no reason"
+		table.remove( arguments, 1 )
+		local reason = "no reason"
+		if (#arguments > 0) then
+			reason = table.concat(arguments, " ")
+		end
 
 		nut.util.Notify(client:Name().." has banned "..target:Name().." for "..reason..".")
 		PLUGIN:BanPlayer(target, time, reason)
@@ -335,9 +433,13 @@ PLUGIN:CreateCommand({
 }, "ban")
 
 PLUGIN:CreateCommand({
+	text = "Change Server's Map",
+	desc = "Change server's map.",
 	group = "superadmin",
 	syntax = "<string map> [number time]",
 	hasTarget = false,
+	onMenu = function( menu, icon, client, command )
+	end,
 	onRun = function(client, arguments)
 		local map = arguments[1]
 		local time = math.Clamp(tonumber(arguments[2] or "5"), 5, 60)
@@ -365,8 +467,12 @@ PLUGIN:CreateCommand({
 }, "map")
 
 PLUGIN:CreateCommand({
+	text = "Unban Player",
+	desc = "Allows to rejoin certain kicked out player.",
 	group = "admin",
 	syntax = "<string steamID>",
+	onMenu = function( menu, icon, client, command )
+	end,
 	onRun = function(client, arguments, target)
 		local steamID = arguments[1]
 
@@ -387,9 +493,19 @@ PLUGIN:CreateCommand({
 }, "unban")
 
 PLUGIN:CreateCommand({
+	text = "Set Rank",
+	desc = "Set player's rank.",
 	group = "owner",
 	syntax = "<string name/steamID> [string group]",
 	hasTarget = false,
+	onMenu = function( menu, icon, client, command )
+		local submenu = menu:AddSubMenu( client:Name() )
+		for uid, power in pairs( PLUGIN.ranks ) do
+			submenu:AddOption(uid, function()
+				LocalPlayer():ConCommand( 'say /mod'..command..' "'..client:Name()..'" '.. uid )
+			end):SetImage(nut.schema.Call("GetUserIcon", client) or icon)
+		end
+	end,
 	onRun = function(client, arguments)
 		local steamID = arguments[1]
 		local group = arguments[2] or "user"

@@ -18,7 +18,7 @@ local PANEL = {}
 		self.list:SetDrawBackground(true)
 
 		self.catCommands = self.list:Add("Commands")
-		self.catCommands:SetExpanded(false)
+		self.catCommands:SetExpanded(true)
 
 		for k, v in SortedPairs(PLUGIN.commands) do
 			if (!LocalPlayer():Alive() and !v.allowDead) then
@@ -27,26 +27,25 @@ local PANEL = {}
 
 			if (PLUGIN:IsAllowed(LocalPlayer(), v.group)) then
 				local button = self.catCommands:Add("DButton")
-				button:SetText(v.niceName or k)
+				button:SetText(v.text or k)
 				button:Dock(TOP)
 				button:DockMargin(2, 2, 2, 2)
 				button.DoClick = function(panel)
 					local menu = DermaMenu()
-						for k, v in SortedPairs(player.GetAll()) do
-							if (PLUGIN:IsAllowed(LocalPlayer(), v)) then
+						for _, client in SortedPairs(player.GetAll()) do
+							if (PLUGIN:IsAllowed(LocalPlayer(), client)) then
 								local icon = ICON_USER
 
-								if (v:IsSuperAdmin()) then
+								if (client:IsSuperAdmin()) then
 									icon = ICON_SHIELD
-								elseif (v:IsAdmin()) then
+								elseif (client:IsAdmin()) then
 									icon = ICON_STAR
-								elseif (v:IsUserGroup("operator")) then
+								elseif (client:IsUserGroup("operator")) then
 									icon = ICON_WRENCH
-								elseif (v:IsUserGroup("donator")) then
+								elseif (client:IsUserGroup("donator")) then
 									icon = ICON_HEART
 								end
-
-								menu:AddOption(v:Name()):SetImage(nut.schema.Call("GetUserIcon", v) or icon)
+								v.onMenu( menu, icon, client, k )
 							end
 						end
 					menu:Open()
