@@ -64,6 +64,59 @@ local vignetteAlpha = 0
 local DrawRect = surface.DrawRect
 local SetDrawColor = surface.SetDrawColor
 local SetDrawMaterial = surface.SetMaterial
+local logo = Material("nutscript/logo.png")
+local glow = Material("nutscript/logo_glow.png")
+
+nut.loadAlpha = nut.loadAlpha or 0
+nut.loadScreenAlpha = nut.loadScreenAlpha or 255
+
+function GM:PostRenderVGUI()
+	if (!gui.IsGameUIVisible() and nut.loadScreenAlpha > 0) then
+		local scrW, scrH = surface.ScreenWidth(), surface.ScreenHeight()
+		local goal = 0
+
+		if (nut.loaded) then
+			goal = 255
+		end
+
+		nut.loadAlpha = math.Approach(nut.loadAlpha, goal, FrameTime() * 60)
+
+		if (nut.loadAlpha == 255 and goal == 255) then
+			if (nut.loadScreenAlpha == 255) then
+				LocalPlayer():EmitSound("friends/friend_online.wav", 160, 51)
+			end
+
+			nut.loadScreenAlpha = math.Approach(nut.loadScreenAlpha, 0, FrameTime() * 60)
+		end
+
+		local alpha = nut.loadScreenAlpha
+
+		if (alpha > 0) then
+			SetDrawColor(10, 10, 14, alpha)
+			DrawRect(0, 0, scrW, scrH)
+
+			local x, y, w, h = scrW*0.5 - 128, scrH*0.4 - 128, 256, 256
+
+			surface.SetDrawColor(255, 255, 255, alpha)
+			surface.SetMaterial(logo)
+			surface.DrawTexturedRect(x, y, w, h)
+
+			surface.SetDrawColor(255, 255, 255, (nut.loadAlpha/255 * 150 + math.sin(RealTime() * 2)*25) * (alpha / 255))
+			surface.SetMaterial(glow)
+			surface.DrawTexturedRect(x, y, w, h)
+
+			for i = #nut.loadingText, 1, -1 do
+				local alpha2 = (1-i / #nut.loadingText) * alpha
+
+				draw.SimpleText(nut.loadingText[i], "nut_TargetFont", scrW * 0.5, scrH * 0.6 + (i * 36), Color(255, 255, 255, alpha2), 1, 1)
+			end
+
+			nut.schema.Call("DrawLoadingScreen")
+
+			do return end
+		end
+	end
+end
 
 function GM:HUDPaint()
 	local client = LocalPlayer()
@@ -85,23 +138,6 @@ function GM:HUDPaint()
 		SetDrawColor(255, 255, 255, vignetteAlpha)
 		SetDrawMaterial(vignette)
 		surface.DrawTexturedRect(0, 0, scrW, scrH)
-	end
-
-	if (!nut.loaded) then
-		SetDrawColor(0, 0, 0, 255)
-		DrawRect(0, 0, scrW, scrH)
-
-		draw.SimpleText("Loading NutScript", "nut_HeaderFont", scrW * 0.5, scrH * 0.5, color_white, 1, 1)
-
-		for i = #nut.loadingText, 1, -1 do
-			local alpha = (1-i / #nut.loadingText) * 255
-
-			draw.SimpleText(nut.loadingText[i], "nut_TargetFont", scrW * 0.5, scrH * 0.6 + (i * 36), Color(255, 255, 255, alpha), 1, 1)
-		end
-
-		nut.schema.Call("DrawLoadingScreen")
-
-		return
 	end
 
 	if (IsValid(nut.gui.charMenu)) then
