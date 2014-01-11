@@ -258,68 +258,78 @@ function PANEL:SetupInformation()
 	local dummy = self.charInfo:Add( "Panel" )
 	dummy:Dock( TOP )
 end
+
 function PANEL:Think()
 	if (!self:IsActive()) then
 		self:MakePopup()
 	end
 end
+
 function PANEL:UpdateModels( models )
-		local highlight = table.Copy(nut.config.mainColor)
-		highlight.a = 200
-		for k, v in pairs(self.models) do
-			v:Remove()
-		end
-		self.selectedModel = nil
-		local selected = false
-		for k, v in ipairs(models) do
-			local icon = self.model:Add("SpawnIcon")
-			icon:SetModel(v)
-			icon.model = v
-			icon.PaintOver = function(panel, w, h)
-				local model = self.selectedModel
-				if (IsValid(model) and model == panel) then
-					surface.SetDrawColor(highlight)
-					for i = 1, 3 do
-						local i2 = i * 2
-						surface.DrawOutlinedRect(i, i, w - i2, h - i2)
-					end
+	local highlight = table.Copy(nut.config.mainColor)
+	highlight.a = 200
+
+	for k, v in pairs(self.models) do
+		v:Remove()
+	end
+
+	self.selectedModel = nil
+	local selected = false
+
+	for k, v in ipairs(models) do
+		local icon = self.model:Add("SpawnIcon")
+		icon:SetModel(v)
+		icon.model = v
+		icon.PaintOver = function(panel, w, h)
+			local model = self.selectedModel
+			if (IsValid(model) and model == panel) then
+				surface.SetDrawColor(highlight)
+				for i = 1, 3 do
+					local i2 = i * 2
+					surface.DrawOutlinedRect(i, i, w - i2, h - i2)
 				end
 			end
-			icon.DoClick = function(panel)
-				surface.PlaySound("garrysmod/ui_click.wav")
-				self.selectedModel = panel
-				self.modelpanel:SetModel( v )
-			end
-			if (!selected) then
-				self.selectedModel = icon
-				selected = true
-			end
-			self.models[#self.models + 1] = icon
 		end
-		self.modelList.VBar:SetEnabled(true)
-		self.modelList.VBar:SetScroll(0)
+		icon.DoClick = function(panel)
+			surface.PlaySound("garrysmod/ui_click.wav")
+			self.selectedModel = panel
+			self.modelpanel:SetModel( v )
+		end
+
+		if (!selected) then
+			self.selectedModel = icon
+			selected = true
+		end
+
+		self.models[#self.models + 1] = icon
+	end
+
+	self.modelList.VBar:SetEnabled(true)
+	self.modelList.VBar:SetScroll(0)
 end
-function PANEL:InfoAddName( name )
-	local label = self.charInfo:Add( "DLabel" )
-	label:SetFont( "nut_ScoreTeamFont" )
-	label:SetTextColor( color_black )
-	label:SetText( name )
-	label:SizeToContents()
-	label:Dock( TOP )
-	label:DockMargin( 10,5,10,0 )
+
+function PANEL:InfoAddName(name)
+	local label = self.charInfo:Add("DLabel")
+		label:SetFont("nut_ScoreTeamFont")
+		label:SetTextColor(color_black)
+		label:SetText(name)
+		label:SizeToContents()
+		label:Dock(TOP)
+		label:DockMargin(10, 5, 10, 0)
 	return label
 end
+
 function PANEL:InfoAddDesc( name )
-	local label = self.charInfo:Add( "DLabel" )
-	label:SetFont( "nut_FactionDesc" )
-	label:SetTextColor( color_black )
-	label:SetText( name )
-	label:SizeToContents()
-	label:Dock( TOP )
-	label:DockMargin( 10,0,10,5 )
+	local label = self.charInfo:Add("DLabel")
+		label:SetTextColor(color_black)
+		label:SetText(name)
+		label:SizeToContents()
+		label:Dock( TOP )
+		label:DockMargin(10, 0, 10, 5)
 	return label
 end
-vgui.Register( "nut_CharCreate", PANEL, "DFrame" )
+
+vgui.Register("nut_CharCreate", PANEL, "DFrame")
 
 netstream.Hook("nut_CharCreateAuthed", function()
 	nut.gui.charCreate:Remove()
