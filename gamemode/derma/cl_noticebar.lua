@@ -44,8 +44,9 @@ function PANEL:Init()
 	self.text:SetTextColor( color_white )
 	self.text:SizeToContents()
 	self.text:Dock( FILL )
-	self.text:DockMargin( self.text:GetTall()*.5, self.text:GetTall()*.3, 2, self.text:GetTall()*.5 )
-	self:SetTall( self.text:GetTall()*1.6 )
+	self.text:DockMargin(2, 2, 2, 2)
+	self.text:SetExpensiveShadow(1, Color(25, 25, 25, 120))
+	self:SetTall(28)
 end
 function PANEL:SetType( num )
 	self.type = num
@@ -58,21 +59,17 @@ function PANEL:SetFont( str )
 	self.text:SetFont( str )
 end
 function PANEL:Paint()
+	self.material = self.material or Material( self.pnlTypes[ self.type ].icon )
 	local col = self.pnlTypes[ self.type ].col
-	local mat = Material( self.pnlTypes[ self.type ].icon )
+	local mat = self.material
 	local size = self:GetTall()*.6
 	local marg = 3
 	draw.RoundedBox( 4, 0, 0, self:GetWide(), self:GetTall(), col )	
 	if mat then
 		surface.SetDrawColor( color_white )
 		surface.SetMaterial( mat )
-		surface.DrawTexturedRect( size/2, self:GetTall()/2-size/2, size, size )
+		surface.DrawTexturedRect( size/2, self:GetTall()/2-size/2 + 1, size, size )
 	end
 end
-/*
-function PANEL:OnCursorEntered()
-end
-function PANEL:OnCursorExited()
-end
-*/
+
 vgui.Register("nut_NoticePanel", PANEL, "DPanel")
