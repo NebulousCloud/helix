@@ -101,7 +101,7 @@ do
 	end
 end
 
-ATTRIB_ACR = nut.attribs.SetUp("Acrobatics", "Affects how fast high you can jump.", "acr", function(client, points)
+ATTRIB_ACR = nut.attribs.SetUp("Acrobatics", "Affects how high you can jump.", "acr", function(client, points)
 	client:SetJumpPower(nut.config.jumpPower + points*5)
 end)
 
