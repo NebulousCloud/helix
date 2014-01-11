@@ -5,6 +5,7 @@ nut.loadingText = nut.loadingText or {}
 local surface = surface
 local draw = draw
 local pairs = pairs
+local nut = nut
 
 function GM:HUDShouldDraw(element)
 	if (element == "CHudHealth" or element == "CHudBattery" or element == "CHudAmmo" or element == "CHudSecondaryAmmo") then
@@ -60,6 +61,10 @@ end)
 local vignette = Material("nutscript/vignette.png")
 local vignetteAlpha = 0
 
+local DrawRect = surface.DrawRect
+local SetDrawColor = surface.SetDrawColor
+local SetDrawMaterial = surface.SetMaterial
+
 function GM:HUDPaint()
 	local client = LocalPlayer()
 	local scrW, scrH = surface.ScreenWidth(), surface.ScreenHeight()
@@ -77,14 +82,14 @@ function GM:HUDPaint()
 
 		vignetteAlpha = math.Approach(vignetteAlpha, alpha, FrameTime() * 75)
 
-		surface.SetDrawColor(255, 255, 255, vignetteAlpha)
-		surface.SetMaterial(vignette)
+		SetDrawColor(255, 255, 255, vignetteAlpha)
+		SetDrawMaterial(vignette)
 		surface.DrawTexturedRect(0, 0, scrW, scrH)
 	end
 
 	if (!nut.loaded) then
-		surface.SetDrawColor(0, 0, 0, 255)
-		surface.DrawRect(0, 0, scrW, scrH)
+		SetDrawColor(0, 0, 0, 255)
+		DrawRect(0, 0, scrW, scrH)
 
 		draw.SimpleText("Loading NutScript", "nut_HeaderFont", scrW * 0.5, scrH * 0.5, color_white, 1, 1)
 
@@ -130,17 +135,17 @@ function GM:HUDPaint()
 		local spacing = nut.config.crossSpacing or 5
 		local alpha = nut.config.crossAlpha or 150
 
-		surface.SetDrawColor(25, 25, 25, alpha)
+		SetDrawColor(25, 25, 25, alpha)
 		surface.DrawOutlinedRect(x-1 - spacing, y-1 - spacing, size2, size2)
 		surface.DrawOutlinedRect(x-1 + spacing, y-1 - spacing, size2, size2)
 		surface.DrawOutlinedRect(x-1 - spacing, y-1 + spacing, size2, size2)
 		surface.DrawOutlinedRect(x-1 + spacing, y-1 + spacing, size2, size2)
 
-		surface.SetDrawColor(230, 230, 230, alpha)
-		surface.DrawRect(x - spacing, y - spacing, size, size)
-		surface.DrawRect(x + spacing, y - spacing, size, size)
-		surface.DrawRect(x - spacing, y + spacing, size, size)
-		surface.DrawRect(x + spacing, y + spacing, size, size)
+		SetDrawColor(230, 230, 230, alpha)
+		DrawRect(x - spacing, y - spacing, size, size)
+		DrawRect(x + spacing, y - spacing, size, size)
+		DrawRect(x - spacing, y + spacing, size, size)
+		DrawRect(x + spacing, y + spacing, size, size)
 	end
 
 	if (client:GetNetVar("tied")) then
@@ -188,15 +193,17 @@ function GM:CreateSideMenu(menu)
 end
 
 local deltaAngle
+local sin, cos = math.sin, math.cos
 
 function GM:CalcView(client, origin, angles, fov)
 	local view = self.BaseClass:CalcView(client, origin, angles, fov)
 		local drunk = client:GetNetVar("drunk", 0)
+		local realTime = RealTime()
 
 		if (drunk > 0) then
 			deltaAngle = LerpAngle(math.max(0.8 - drunk, 0.025), deltaAngle or angles, angles)
-			view.angles = deltaAngle + Angle(math.cos(RealTime() * 0.9) * drunk*4, math.sin(RealTime() * 0.9) * drunk*7.5, math.cos(RealTime() * 0.9) * drunk*5)
-			view.fov = fov + math.sin(RealTime() * 0.5) * (drunk * 5)
+			view.angles = deltaAngle + Angle(cos(realTime * 0.9) * drunk*4, sin(realTime * 0.9) * drunk*7.5, cos(realTime * 0.9) * drunk*5)
+			view.fov = fov + sin(realTime * 0.5) * (drunk * 5)
 		end
 
 		local entity = client:GetRagdollEntity()
@@ -257,6 +264,8 @@ local OFFSET_PLAYER = Vector(0, 0, 48)
 local math_Approach = math.Approach
 local ents = ents
 
+local GetVectorDistance = FindMetaTable("Vector").Distance
+
 function GM:HUDPaintTargetID(entity)
 	local client = LocalPlayer()
 	local frameTime = FrameTime()
@@ -266,7 +275,7 @@ function GM:HUDPaintTargetID(entity)
 			local target = 0
 			local inRange = false
 
-			if (IsValid(entity) and entity:GetPos():Distance(client:GetPos()) <= 360) then
+			if (IsValid(entity) and GetVectorDistance(entity:GetPos(), client:GetPos()) <= 360) then
 				inRange = true
 			end
 
@@ -299,7 +308,7 @@ function GM:HUDPaintTargetID(entity)
 					if (!result) then
 						local client = entity:GetNetVar("player")
 
-						if (IsValid(client) and client:IsPlayer() and client.character and client != client) then
+						if (IsValid(client) and client:IsPlayer() and client.character and entity != client) then
 							self:HUDPaintTargetPlayer(client, x, y, alpha)
 
 							return true
@@ -358,7 +367,7 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 	eyeAngles:RotateAroundAxis(eyeAngles:Forward(), rotation.y * fraction)
 	eyeAngles:RotateAroundAxis(eyeAngles:Right(), rotation.r * fraction)
 
-	client.raisedFrac = math.Approach(client.raisedFrac or 0, value, FrameTime() * 175)
+	client.raisedFrac = math.Approach(client.raisedFrac or 0, value, FrameTime() * 150)
 
 	viewModel:SetAngles(eyeAngles)
 end

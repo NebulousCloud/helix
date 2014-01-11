@@ -30,6 +30,8 @@ local getAnimClass = nut.anim.GetClass
 local getHoldType = nut.util.GetHoldType
 local config = nut.config
 
+local Length2D = FindMetaTable("Vector").Length2D
+
 function GM:CalcMainActivity(client, velocity)
 	local model = string_lower(client:GetModel())
 	local class = getAnimClass(model)
@@ -44,8 +46,7 @@ function GM:CalcMainActivity(client, velocity)
 		local weapon = client:GetActiveWeapon()
 		local holdType = "normal"
 		local action = "idle"
-		
-		local length2D = velocity:Length2D()
+		local length2D = Length2D(velocity)
 
 		if (length2D >= config.runSpeed - 10) then
 			action = "run"
@@ -149,9 +150,10 @@ function GM:PhysgunDrop(client, entity)
 end
 
 function GM:DoAnimationEvent(client, event, data)
-	local model = string.lower(client:GetModel())
+	local model = string_lower(client:GetModel())
+	local class = getAnimClass(model)
 
-	if (string.find(model, "/player/") or string.find(model, "/playermodel")) then
+	if (string_find(model, "/player/") or string_find(model, "/playermodel") or class == "player") then
 		return self.BaseClass:DoAnimationEvent(client, event, data)
 	end
 

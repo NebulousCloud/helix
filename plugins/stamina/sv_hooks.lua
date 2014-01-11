@@ -1,6 +1,8 @@
 local PLUGIN = PLUGIN
 local math_min = math.min
 local math_Clamp = math.Clamp
+local GetVelocity = FindMetaTable("Entity").GetVelocity
+local Length2D = FindMetaTable("Vector").Length2D
 
 function PLUGIN:PlayerLoadedChar(client)
 	local uniqueID = "nut_Stamina"..client:SteamID()
@@ -16,7 +18,7 @@ function PLUGIN:PlayerLoadedChar(client)
 		local runSpeed = nut.config.runSpeed - 10
 
 		if (client:GetMoveType() != MOVETYPE_NOCLIP and client.character) then
-			local length2D = client:GetVelocity():Length2D()
+			local length2D = Length2D(GetVelocity(client))
 			local value = 3
 
 			if (length2D >= runSpeed) then

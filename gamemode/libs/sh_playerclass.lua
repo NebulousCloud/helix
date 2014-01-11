@@ -65,10 +65,13 @@ do
 		return self.GetNutWepRaised and self:GetNutWepRaised() or false
 	end
 
+	local GetVelocity = FindMetaTable("Entity").GetVelocity
+	local Length2D = FindMetaTable("Vector").Length2D
+
 	function playerMeta:IsRunning()
 		local runSpeed = nut.config.runSpeed - 5
 
-		return self:GetVelocity():Length2D() >= runSpeed and self:KeyDown(IN_SPEED)
+		return Length2D(GetVelocity(self)) >= runSpeed
 	end
 
 	if (SERVER) then
