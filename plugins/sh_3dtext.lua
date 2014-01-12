@@ -37,8 +37,7 @@ if (SERVER) then
 
 	function PLUGIN:Remove(position, radius)
 		local i = 0
-
-		for k, v in ipairs(self.text) do
+		for k, v in pairs(self.text) do
 			if (v.pos:Distance(position) <= radius) then
 				netstream.Start(nil, "nut_TextRemove", k)
 
