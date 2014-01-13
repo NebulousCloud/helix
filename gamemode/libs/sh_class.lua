@@ -131,6 +131,7 @@ do
 					if (result == false) then
 						return
 					end
+					
 
 					local model = class:GetModel(self)
 

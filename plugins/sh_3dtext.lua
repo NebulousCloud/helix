@@ -6,7 +6,7 @@ PLUGIN.text = PLUGIN.text or {}
 
 if (SERVER) then
 	function PLUGIN:PlayerLoadedData(client)
-		for k, v in ipairs(self.text) do
+		for k, v in pairs(self.text) do
 			netstream.Start(client, "nut_TextData", {v.pos, v.angle, v.text, v.scale})
 		end
 	end
