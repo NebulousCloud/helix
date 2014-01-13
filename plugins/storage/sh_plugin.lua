@@ -53,6 +53,7 @@ if (SERVER) then
 				end
 				
 				if ( amt == 0 && !v.world && !v.lock ) then continue end
+
 				if (itemTable) then
 					local entity = ents.Create("nut_container")
 					entity:SetPos(position)
@@ -69,13 +70,18 @@ if (SERVER) then
 					end
 					entity.world = v.world
 					entity.type = v.type
-
+					entity:SetModel(itemTable.model)
+					entity:PhysicsInit(SOLID_VPHYSICS)
 					if (itemTable.maxWeight) then
 						entity:SetNetVar("max", itemTable.maxWeight)
 					end
+					if v.world then
+						local phys = entity:GetPhysicsObject()
+						if phys and phys:IsValid() then
+							phys:EnableMotion(false)
+						end
+					end
 
-					entity:SetModel(itemTable.model)
-					entity:PhysicsInit(SOLID_VPHYSICS)
 				end
 			end
 		end
