@@ -32,9 +32,24 @@ else
 	local function CanDrawParts( player )
 		return ( player:IsValid() && player.character )
 	end
+	local function hasWeapon( player, class )
+		local tbl = player:GetWeapons()
+		for k, v in pairs( tbl ) do
+			if v:GetClass() == class then
+				return true
+			end
+		end
+		return false
+	end
+	-- DRAWCODE MUST BE IMPROVED.
+	-- AWWW SHIT
+	-- I'm such a bad coder.
+	
 	function DrawPlayerParts( player )
 		player.drawing = player.drawing or {}
 		if !CanDrawParts( player ) then return end
+
+		-- For generic parts
 		local models = player:GetPartModels()
 		for k, v in pairs( models ) do
 			if !( player.drawing[k] ) then -- If clientside part model is not exists.
@@ -68,6 +83,55 @@ else
 				end
 			end
 		end
+
+		-- For Weapons( eww.. look at this code. )
+		for class, itbl in pairs( player:GetInventory() ) do
+			local itemTable = nut.item.Get(class)
+			if itemTable and itemTable.wep_partdata then
+				local drawdat = itemTable.wep_partdata
+				local uid = "w_"..class
+				local wepclass = itemTable.class
+				if wepclass and hasWeapon( player, wepclass ) and !(player:GetActiveWeapon():GetClass() == wepclass) then
+					if !( player.drawing[uid] ) then -- If clientside part model is not exists.
+						-- holla holla create model.
+						player.drawing[uid] = ClientsideModel( drawdat.model, RENDERGROUP_BOTH )
+						player.drawing[uid]:SetNoDraw( true )
+						player.drawing[uid]:SetSkin( drawdat.skin or 0 )
+						player.drawing[uid]:SetColor( drawdat.color or color_white )
+						player.drawing[uid]:ManipulateBoneScale( 0, drawdat.scale )
+						if drawdat.scale then
+							local matrix = Matrix()
+							matrix:Scale( (drawdat.scale or Vector( 1, 1, 1 ))*(drawdat.size or 1) )
+							player.drawing[uid]:EnableMatrix("RenderMultiply", matrix)
+						end
+						if drawdat.material then
+							player.drawing[uid]:SetMaterial( drawdat.material )
+						end
+					else
+						-- update position and status.
+						if player:LookupBone( drawdat.bone ) then
+							local pos, ang = player:GetBonePosition( player:LookupBone( drawdat.bone ) )
+							local drawingmodel = player.drawing[uid] -- localize
+							pos = pos + ang:Forward()*drawdat.position.x + ang:Up()*drawdat.position.z + ang:Right()*-drawdat.position.y
+							local ang2 = ang
+							ang2:RotateAroundAxis( ang:Right(), drawdat.angle.pitch ) -- pitch
+							ang2:RotateAroundAxis( ang:Up(),  drawdat.angle.yaw )-- yaw
+							ang2:RotateAroundAxis( ang:Forward(), drawdat.angle.roll )-- roll
+							drawingmodel:SetRenderOrigin( pos )
+							drawingmodel:SetRenderAngles( ang )
+							drawingmodel:DrawModel()
+						end
+					end
+				else
+					if ( player.drawing[uid] ) then -- If clientside part model is exists.
+						player.drawing[uid]:Remove()
+						player.drawing[uid] = nil
+					end
+				end
+			end
+		end
+
+
 	end
 	hook.Add( "PostPlayerDraw", "Nut_BlackTea_PartDrawer", DrawPlayerParts ) -- JVS, thanks for letting me know this awesome hook.
 end
