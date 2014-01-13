@@ -1,0 +1,14 @@
+ITEM.name = "Test Hoverball"
+ITEM.partdata = { -- You can use PAC3 to setup the part.
+	model = "models/dav0r/hoverball.mdl",
+	bone = "ValveBiped.Bip01_Spine1",
+	position = Vector( 20, -7.351, 0 ),
+	angle = Angle( 0, 0, 0 ),
+	scale = Vector( 1, 1, 1 ),
+	size = 1,
+	--material = "",
+	--skin = "",
+	--bodygroup = ""
+}
+ITEM.model = Model("models/dav0r/hoverball.mdl")
+ITEM.desc = "A Part."
