@@ -370,7 +370,7 @@ end
 
 function GM:OnPlayerHitGround(client, inWater, onFloater, fallSpeed)
 	if (!inWater and !onFloater) then
-		client:UpdateAttrib(ATTRIB_ACR, 0.01)
+		client:UpdateAttrib(ATTRIB_ACR, 0.005)
 	end
 end
 

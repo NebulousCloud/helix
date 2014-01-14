@@ -27,8 +27,8 @@ function PLUGIN:PlayerLoadedChar(client)
 				client:SetNutVar("runDist", client:GetNutVar("runDist", 0) + 1)
 
 				if (client:GetNutVar("runDist") > 5) then
-					client:UpdateAttrib(ATTRIB_END, 0.05)
-					client:UpdateAttrib(ATTRIB_SPD, 0.025)
+					client:UpdateAttrib(ATTRIB_END, 0.025)
+					client:UpdateAttrib(ATTRIB_SPD, 0.0125)
 					client:SetNutVar("runDist", 0)
 				end
 			elseif (length2D <= 10) then
