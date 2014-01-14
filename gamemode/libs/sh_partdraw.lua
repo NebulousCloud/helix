@@ -44,7 +44,6 @@ else
 	-- DRAWCODE MUST BE IMPROVED.
 	-- AWWW SHIT
 	-- I'm such a bad coder.
-	
 	function DrawPlayerParts( player )
 		player.drawing = player.drawing or {}
 		if !CanDrawParts( player ) then return end

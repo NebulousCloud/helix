@@ -23,6 +23,8 @@ if (SERVER) then
 		if (IsValid(physicsObject)) then
 			physicsObject:EnableMotion(true)
 			physicsObject:Wake()
+		else
+			self:PhysicsInitBox( Vector( -2, -2, -2 ), Vector( 2, 2, 2 ) )
 		end
 	end
 
