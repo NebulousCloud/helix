@@ -1,6 +1,7 @@
 BASE.name = "Base Parts"
 BASE.uniqueID = "base_part"
 BASE.category = "Appearance"
+--BASE.type = "hat" -- Optional.
 BASE.data = {
 	Equipped = false
 }
@@ -12,6 +13,14 @@ BASE.functions.Equip = {
 				nut.util.Notify("You already has this part equipped.", client)
 
 				return false
+			end
+			if (itemTable.type and IsValid(client:GetNutVar(itemTable.type))) then
+				nut.util.Notify("You already have a part in the "..itemTable.type.." slot.", client)
+
+				return false
+			end
+			if itemTable.type then
+				client:SetNutVar(itemTable.type, itemTable.unequID)
 			end
 			client:AddPartModel(itemTable.uniqueID, itemTable.partdata)
 			local newData = table.Copy(data)
@@ -26,6 +35,9 @@ BASE.functions.Equip = {
 BASE.functions.Unequip = {
 	run = function(itemTable, client, data)
 		if (SERVER) then
+			if itemTable.type then
+				client:SetNutVar(itemTable.type, nil)
+			end
 			client:RemovePartModel(itemTable.uniqueID, itemTable.partdata)
 			local newData = table.Copy(data)
 			newData.Equipped = false
