@@ -32,7 +32,7 @@ BASE.functions.Equip = {
 			local newData = table.Copy(data)
 			newData.Equipped = true
 
-			client:UpdateInv(itemTable.uniqueID, 1, newData)
+			client:UpdateInv(itemTable.uniqueID, 1, newData, true)
 		end
 	end,
 	shouldDisplay = function(itemTable, data, entity)
@@ -50,7 +50,7 @@ BASE.functions.Unequip = {
 			local newData = table.Copy(data)
 			newData.Equipped = false
 
-			client:UpdateInv(itemTable.uniqueID, 1, newData)
+			client:UpdateInv(itemTable.uniqueID, 1, newData, true)
 
 			return true
 		end
