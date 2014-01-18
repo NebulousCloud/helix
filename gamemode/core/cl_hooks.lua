@@ -202,6 +202,10 @@ function GM:ShouldDrawTargetEntity(entity)
 	return false
 end
 
+function GM:PostProcessPermitted(element)
+	return false
+end
+
 function GM:CreateSideMenu(menu)
 	if (nut.config.showTime) then
 		menu.time = menu:Add("DLabel")
