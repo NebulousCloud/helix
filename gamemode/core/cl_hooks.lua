@@ -118,6 +118,8 @@ function GM:PostRenderVGUI()
 	end
 end
 
+local DrawOutlinedRect = surface.DrawOutlinedRect
+
 function GM:HUDPaint()
 	local client = LocalPlayer()
 	local scrW, scrH = surface.ScreenWidth(), surface.ScreenHeight()
@@ -160,9 +162,9 @@ function GM:HUDPaint()
 		return
 	end
 
-	local trace = client:GetEyeTrace()
+	local entity = client:GetEyeTraceNoCursor().Entity
 
-	nut.schema.Call("HUDPaintTargetID", trace.Entity)
+	nut.schema.Call("HUDPaintTargetID", entity)
 
 	if (nut.schema.Call("ShouldDrawCrosshair") != false and nut.config.crosshair) then
 		local x, y = scrW * 0.5 - 2, scrH * 0.5 - 2
@@ -172,10 +174,10 @@ function GM:HUDPaint()
 		local alpha = nut.config.crossAlpha or 150
 
 		SetDrawColor(25, 25, 25, alpha)
-		surface.DrawOutlinedRect(x-1 - spacing, y-1 - spacing, size2, size2)
-		surface.DrawOutlinedRect(x-1 + spacing, y-1 - spacing, size2, size2)
-		surface.DrawOutlinedRect(x-1 - spacing, y-1 + spacing, size2, size2)
-		surface.DrawOutlinedRect(x-1 + spacing, y-1 + spacing, size2, size2)
+		DrawOutlinedRect(x-1 - spacing, y-1 - spacing, size2, size2)
+		DrawOutlinedRect(x-1 + spacing, y-1 - spacing, size2, size2)
+		DrawOutlinedRect(x-1 - spacing, y-1 + spacing, size2, size2)
+		DrawOutlinedRect(x-1 + spacing, y-1 + spacing, size2, size2)
 
 		SetDrawColor(230, 230, 230, alpha)
 		DrawRect(x - spacing, y - spacing, size, size)
@@ -301,17 +303,26 @@ local math_Approach = math.Approach
 local ents = ents
 
 local GetVectorDistance = FindMetaTable("Vector").Distance
+local VectorLocalToWorld = FindMetaTable("Entity").LocalToWorld
+local VectorToScreen = FindMetaTable("Vector").ToScreen
+local drawnEntities = {}
+local colorCache = {}
 
 function GM:HUDPaintTargetID(entity)
 	local client = LocalPlayer()
 	local frameTime = FrameTime()
+	local targetIsValid = IsValid(entity)
 
-	for k, v in pairs(ents.GetAll()) do
-		if (v != client and v:IsPlayer() or nut.schema.Call("ShouldDrawTargetEntity", v) == true or v.DrawTargetID) then
+	if (targetIsValid and (!drawnEntities[entity] and entity != client and entity:IsPlayer() or nut.schema.Call("ShouldDrawTargetEntity", entity) == true or entity.DrawTargetID)) then
+		drawnEntities[entity] = true
+	end
+
+	for v in pairs(drawnEntities) do
+		if (IsValid(v) and v != client and (v:IsPlayer() or nut.schema.Call("ShouldDrawTargetEntity", v) == true or v.DrawTargetID)) then
 			local target = 0
 			local inRange = false
 
-			if (IsValid(entity) and GetVectorDistance(entity:GetPos(), client:GetPos()) <= 360) then
+			if (targetIsValid and GetVectorDistance(entity:GetPos(), client:GetPos()) <= 360) then
 				inRange = true
 			end
 
@@ -327,10 +338,12 @@ function GM:HUDPaintTargetID(entity)
 				offset = OFFSET_PLAYER
 			end
 
-			local position = (v:LocalToWorld(v:OBBCenter()) + offset):ToScreen()
+			local origin = VectorLocalToWorld(v, v:OBBCenter()) + offset
+			local position = VectorToScreen(origin, origin)
 			local alpha = v.approachAlpha
 			local mainColor = nut.config.mainColor
-			local color = Color(mainColor.r, mainColor.g, mainColor.b, alpha)
+			colorCache[alpha] = colorCache[alpha] or Color(mainColor.r, mainColor.g, mainColor.b, alpha)
+			local color = colorCache[alpha]
 			local x, y = position.x, position.y
 
 			if (alpha > 0) then
@@ -352,6 +365,8 @@ function GM:HUDPaintTargetID(entity)
 					end
 				end
 			end
+		else
+			drawnEntities[v] = nil
 		end
 	end
 end
