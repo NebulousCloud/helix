@@ -26,7 +26,7 @@ if (SERVER) then
 
 		local uniqueID = "nut_Net"..client:UniqueID()..entity:EntIndex()..key
 		
-		timer.Create(uniqueID, client:Ping() / 75, 25, function()
+		timer.Create(uniqueID, math.max(client:Ping() / 75, 0.75), 25, function()
 			if (!IsValid(client) or !IsValid(entity)) then
 				timer.Remove(uniqueID)
 
@@ -76,7 +76,7 @@ if (SERVER) then
 		end
 	end
 
-	function entityMeta:SetNetVar(key, value)
+	function entityMeta:SetNetVar(key, value, origin)
 		self.nut_NetVars = self.nut_NetVars or {}
 		self.nut_NetVars[key] = value
 
@@ -90,7 +90,7 @@ if (SERVER) then
 			end
 		end
 
-		self:SendVar(key)
+		self:SendVar(key, origin)
 	end
 
 	netstream.Hook("nut_NetHandshake", function(client, data)

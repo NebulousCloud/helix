@@ -258,7 +258,7 @@ if (CLIENT) then
 	end)
 else
 	netstream.Hook("nut_Typing", function(client, data)
-		client:SetNetVar("typing", data)
+		client:SetNetVar("typing", data, client:GetPos())
 
 		nut.schema.Call("PlayerTyping", client, data)
 	end)

@@ -44,14 +44,17 @@ if (SERVER) then
 	function netstream.Start(player, name, data)
 		local recipients = {};
 		local bShouldSend = false;
+		local sendPVS = false
 
-		if (type(player) != "table") then
+		if (type(player) == "Vector") then
+			sendPVS = true
+		elseif (type(player) != "table") then
 			if (player) then
 				player = {player};
 			end;
 		end;
 		
-		if (player) then
+		if (player and !sendPVS) then
 			for k, v in pairs(player) do
 				if (type(v) == "Player") then
 					recipients[#recipients + 1] = v;
@@ -71,9 +74,8 @@ if (SERVER) then
 			data = 0 -- Fill the data so the length isn't 0.
 		end
 
-		local dataTable = {data = data};
-		local vonData = von.serialize(dataTable);
-		local encodedData = util.Compress(vonData);
+		local dataTable = {data}
+		local encodedData = von.serialize(dataTable);
 
 		if (encodedData and #encodedData > 0 and bShouldSend) then
 			net.Start("NetStreamDS");
@@ -81,7 +83,11 @@ if (SERVER) then
 				net.WriteUInt(#encodedData, 32);
 				net.WriteData(encodedData, #encodedData);
 			if (player) then
-				net.Send(recipients);
+				if (sendPVS) then
+					net.SendPVS(player)
+				else
+					net.Send(recipients);
+				end
 			else
 				net.Broadcast()
 			end
@@ -94,8 +100,6 @@ if (SERVER) then
 		local NS_DS_DATA = net.ReadData(NS_DS_LENGTH);
 		
 		if (NS_DS_NAME and NS_DS_DATA and NS_DS_LENGTH) then
-			NS_DS_DATA = util.Decompress(NS_DS_DATA);
-			
 			if (!NS_DS_DATA) then
 				error("NetStream: The data failed to decompress!");
 				
@@ -112,7 +116,7 @@ if (SERVER) then
 					local bStatus, value = pcall(von.deserialize, player.nsDataStreamData);
 					
 					if (bStatus) then
-						netstream.stored[player.nsDataStreamName](player, value.data);
+						netstream.stored[player.nsDataStreamName](player, value[1]);
 					else
 						ErrorNoHalt("NetStream: '"..NS_DS_NAME.."'\n"..value.."\n");
 					end;
@@ -128,9 +132,8 @@ if (SERVER) then
 else
 	-- A function to start a net stream.
 	function netstream.Start(name, data)
-		local dataTable = {data = data};
-		local vonData = von.serialize(dataTable);
-		local encodedData = util.Compress(vonData);
+		local dataTable = {data};
+		local encodedData = von.serialize(dataTable);
 		
 		if (encodedData and #encodedData > 0) then
 			net.Start("NetStreamDS");
@@ -147,9 +150,6 @@ else
 		NS_DS_DATA = net.ReadData(NS_DS_LENGTH);
 		
 		if (NS_DS_NAME and NS_DS_DATA and NS_DS_LENGTH) then
-			NS_DS_DATA = util.Decompress(NS_DS_DATA);
-
-
 			if (!NS_DS_DATA) then
 				error("NetStream: The data failed to decompress!");
 				
@@ -160,7 +160,7 @@ else
 				local bStatus, value = pcall(von.deserialize, NS_DS_DATA);
 			
 				if (bStatus) then
-					netstream.stored[NS_DS_NAME](value.data);
+					netstream.stored[NS_DS_NAME](value[1]);
 				else
 					ErrorNoHalt("NetStream: '"..NS_DS_NAME.."'\n"..value.."\n");
 				end;
