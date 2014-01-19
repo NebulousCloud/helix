@@ -94,7 +94,8 @@ if (SERVER) then
 				self:GetModel(),
 				self:Team(),
 				self.character.index,
-				self:GetSkin()
+				self:GetSkin(),
+				self.character:GetData("banned", false)
 			})
 		end
 	end
@@ -242,9 +243,10 @@ function META:Send(variable, receiver, noDelta)
 	elseif (publicValue != nil) then
 		if (!noDelta and type(publicValue) == "table") then
 			local oldValue = publicValue
-			publicValue = nut.util.GetTableDelta(publicValue, self.deltas[variable] or {})
+			local deltaID = variable..tostring(receiver)
 
-			self.deltas[variable] = table.Copy(oldValue)
+			publicValue = nut.util.GetTableDelta(publicValue, self.deltas[deltaID] or {})
+			self.deltas[deltaID] = table.Copy(oldValue)
 		end
 
 		netstream.Start(receiver, "nut_CharData", {self.player:EntIndex(), variable, publicValue, noDelta})
@@ -322,6 +324,12 @@ end
 function nut.char.HookVar(variable, uniqueID, callback)
 	nut.char.hooks[variable] = nut.char.hooks[variable] or {}
 	nut.char.hooks[variable][uniqueID] = callback
+end
+
+function nut.char.UnHookVar(variable, uniqueID)
+	if (nut.char.hooks[variable]) then
+		nut.char.hooks[variable][uniqueID] = nil
+	end
 end
 
 if (SERVER) then
@@ -448,7 +456,7 @@ if (SERVER) then
 	function nut.char.SendInfo(client, index)
 		local steamID = client:SteamID64()
 		local condition = "steamid = "..steamID.." AND id = "..index..sameSchema()
-		local tables = "charname, faction, id, description, model"
+		local tables = "charname, faction, id, description, model, chardata"
 		
 		nut.db.FetchTable(condition, tables, function(data)
 			if (IsValid(client)) then
@@ -463,7 +471,17 @@ if (SERVER) then
 						data.skin = tonumber(exploded[2])
 					end
 
-					netstream.Start(client, "nut_CharInfo", {data.charname, data.description, data.model, data.faction, data.id, data.skin})
+					local banned = false
+
+					if (data.chardata) then
+						local decoded = von.deserialize(data.chardata)
+
+						if (decoded and decoded.banned == true) then
+							banned = true
+						end
+					end
+
+					netstream.Start(client, "nut_CharInfo", {data.charname, data.description, data.model, data.faction, data.id, data.skin, banned})
 				else
 					error("Attempt to load an invalid character ("..client:Name().." #"..index..")")
 				end
@@ -673,7 +691,7 @@ else
 		local key = data[2]
 		local value = data[3]
 		local noDelta = data[4]
-
+		
 		if (!IsValid(client)) then
 			local uniqueID = "nut_CharData"..index..key
 
@@ -769,6 +787,7 @@ else
 		local faction = data[4]
 		local id = data[5]
 		local skin = data[6]
+		local banned = data[7]
 
 		LocalPlayer().characters = LocalPlayer().characters or {}
 
@@ -780,7 +799,8 @@ else
 					model = model,
 					faction = faction,
 					id = id,
-					skin = skin
+					skin = skin,
+					banned = banned
 				}
 
 				return
@@ -793,7 +813,8 @@ else
 			model = model,
 			faction = faction,
 			id = id,
-			skin = skin
+			skin = skin,
+			banned = banned
 		})
 	end)
 end
