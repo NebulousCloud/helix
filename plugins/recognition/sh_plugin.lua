@@ -4,10 +4,14 @@ PLUGIN.desc = "Allows players to recognize others."
 
 if (CLIENT) then
 	function PLUGIN:IsPlayerRecognized(client)
-		local recognized = LocalPlayer().character:GetData("recog", {})
+		local localPlayer = LocalPlayer()
 
-		if (recognized[client.character:GetVar("id", 0)] == true) then
-			return true
+		if (IsValid(localPlayer) and localPlayer.character) then
+			local recognized = localPlayer.character:GetData("recog", {})
+
+			if (recognized[client.character:GetVar("id", 0)] == true) then
+				return true
+			end
 		end
 	end
 
