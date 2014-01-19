@@ -132,6 +132,7 @@ if (SERVER) then
 else
 	-- A function to start a net stream.
 	function netstream.Start(name, data)
+		data = data or ""
 		local dataTable = {data};
 		local encodedData = von.serialize(dataTable);
 		
