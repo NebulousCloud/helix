@@ -602,10 +602,10 @@ do
 		retrieving the config for default max weight and adding the absolute value
 		of negative weight items.
 	--]]
-	function playerMeta:GetInvWeight()
+	function playerMeta:GetInvWeight(inventory)
 		local weight, maxWeight = 0, nut.config.defaultInvWeight
 
-		for uniqueID, items in pairs(self:GetInventory()) do
+		for uniqueID, items in pairs(inventory or self:GetInventory()) do
 			local itemTable = nut.item.Get(uniqueID)
 
 			if (itemTable) then
