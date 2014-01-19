@@ -6,6 +6,10 @@ if (SERVER) then
 	function entityMeta:SyncVars(client, noDelta)
 		if (self.nut_NetVars) then
 			for k, v in pairs(self.nut_NetVars) do
+				if (v.nut_NetReceiver and v.nut_NetReceiver[k]) then
+					continue
+				end
+
 				self:SendVar(k, client, nil, noDelta)
 			end
 		end
@@ -79,6 +83,8 @@ if (SERVER) then
 	function entityMeta:SetNetVar(key, value, receiver)
 		self.nut_NetVars = self.nut_NetVars or {}
 		self.nut_NetVars[key] = value
+		self.nut_NetReceiver = self.nut_NetReceiver or {}
+		self.nut_NetReceiver[key] = receiver
 
 		self:CallOnRemove("CleanNetVar", function()
 			netstream.Start(nil, "nut_EntityVarClean", self:EntIndex())
