@@ -76,7 +76,7 @@ end
 	used for including stuff like directories with a lot of files in them like libs.
 --]]
 function nut.util.IncludeDir(directory, isBase)
-	if (string.find(directory, "schema/") and !SCHEMA) then
+	if ((!isBase or string.find(directory, "schema/")) and !SCHEMA) then
 		error("Too early to use the schema!")
 	end
 
@@ -579,7 +579,7 @@ end
 	same values by checking their delta. If there are any differences,
 	the function will return false.
 --]]
-function nut.util.IsSimiarTable(a, b)
+function nut.util.IsSimilarTable(a, b)
 	return table.Count(nut.util.GetTableDelta(a, b)) == 0
 end
 
@@ -590,7 +590,7 @@ function nut.util.StackInv(inventory, class, quantity, data)
 	inventory[class] = inventory[class] or {}
 	
 	for k, v in pairs(inventory[class]) do
-		if (data and v.data and nut.util.IsSimiarTable(v.data, data)) then
+		if (data and v.data and nut.util.IsSimilarTable(v.data, data)) then
 			stack = v
 			index = k
 
