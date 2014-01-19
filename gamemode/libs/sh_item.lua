@@ -645,17 +645,30 @@ do
 		the class and an index. If it an index isn't provided, it wil look
 		up the first item with the same class in the player's inventory.
 	--]]
-	function playerMeta:GetItem(class, index)
+	function playerMeta:GetItem(class, index, data)
 		if (!self:HasItem(class)) then
 			return false
 		end
 
 		index = index or 1
 
+		local entries = self:GetInventory()[class]
+
+		if (data) then
+			local oldEntries = entries
+			entries = {}
+
+			for k, v in pairs(oldEntries) do
+				if (v.data and nut.util.IsSimilarTable(data, v.data)) then
+					entries[k] = v
+				end
+			end
+		end
+
 		if (index == 1) then
-			return table.GetFirstValue(self:GetInventory()[class])
+			return table.GetFirstValue(entries)
 		else
-			return self:GetInventory()[class][index]
+			return entries[index]
 		end
 	end
 
