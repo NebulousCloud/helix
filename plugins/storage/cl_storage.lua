@@ -25,14 +25,21 @@ local PANEL = {}
 		self.weight:SetTall(18)
 		self.weight:DockMargin(3, 3, 3, 4)
 		self.weight.Paint = function(panel, w, h)
-			local width = self.weightValue or 0
+			local target = 0
+
+			if (IsValid(self.entity)) then
+				target = self.entity:GetNetVar("weight", 0) / 100
+			end
+
+			panel.width = math.Approach(panel.width or 0, target, FrameTime() * 0.75)
+
 			local color = nut.config.mainColor
 
 			surface.SetDrawColor(color.r, color.g, color.b, 200)
-			surface.DrawRect(0, 0, w * width, h)
+			surface.DrawRect(0, 0, w * panel.width, h)
 
 			surface.SetDrawColor(255, 255, 255, 20)
-			surface.DrawRect(0, 0, w * width, h * 0.4)
+			surface.DrawRect(0, 0, w * panel.width, h * 0.4)
 
 			surface.SetDrawColor(25, 25, 25, 170)
 			surface.DrawOutlinedRect(0, 0, w, h)
@@ -56,14 +63,14 @@ local PANEL = {}
 		self.weight2:SetTall(18)
 		self.weight2:DockMargin(3, 3, 3, 4)
 		self.weight2.Paint = function(panel, w, h)
-			local width = self.weightValue2 or 0
+			panel.width = math.Approach(panel.width or 0, self.weightValue2, FrameTime() * 0.75)
 			local color = nut.config.mainColor
 
 			surface.SetDrawColor(color.r, color.g, color.b, 200)
-			surface.DrawRect(0, 0, w * width, h)
+			surface.DrawRect(0, 0, w * panel.width, h)
 
 			surface.SetDrawColor(255, 255, 255, 20)
-			surface.DrawRect(0, 0, w * width, h * 0.4)
+			surface.DrawRect(0, 0, w * panel.width, h * 0.4)
 
 			surface.SetDrawColor(25, 25, 25, 170)
 			surface.DrawOutlinedRect(0, 0, w, h)
@@ -101,12 +108,13 @@ local PANEL = {}
 		return self.entity
 	end
 
+	function PANEL:OnClose()
+		netstream.Start("nut_ContainerClosed")
+	end
+
 	function PANEL:SetEntity(entity)
 		self.entity = entity
 		self:SetupInv()
-
-		local weight, maxWeight = entity:GetInvWeight()
-		self.weightValue = weight / maxWeight
 
 		self:SetTitle(entity:GetNetVar("name", "Storage"))
 
@@ -114,7 +122,7 @@ local PANEL = {}
 		self.weightText:Dock(FILL)
 		self.weightText:SetDark(true)
 		self.weightText:SetContentAlignment(5)
-		self.weightText:SetText(math.ceil(self.weightValue * 100).."%")
+		self.weightText:SetText(entity:GetNetVar("weight", 0).."%")
 
 		local transfer
 
@@ -274,11 +282,15 @@ local PANEL = {}
 		local parent = self:GetParent()
 		local entity = self:GetEntity()
 		local x, y = self:GetPos()
+		local oldWidth = self.weight.width
+		local oldWidth2 = self.weight2.width
 
 		self:Remove()
 
 		nut.gui.storage = vgui.Create("nut_Storage", parent)
 		nut.gui.storage:SetPos(x, y)
+		nut.gui.storage.weight.width = oldWidth
+		nut.gui.storage.weight2.width = oldWidth2
 
 		if (IsValid(entity)) then
 			nut.gui.storage:SetEntity(entity)
@@ -299,11 +311,9 @@ function PLUGIN:DrawTargetID(entity, x, y, alpha)
 
 		nut.util.DrawText(x, y, entity:GetNetVar("name", "Storage"), color)
 			y = y + nut.config.targetTall
+		nut.util.DrawText(x, y, "Has "..entity:GetNetVar("weight", 0).."% of storage used.", Color(255, 255, 255, alpha), "nut_TargetFontSmall")
 
-			local weight, max = entity:GetInvWeight()
-		nut.util.DrawText(x, y, "Has "..math.ceil(weight/max * 100).."% of storage used.", Color(255, 255, 255, alpha), "nut_TargetFontSmall")
-		--nut.util.DrawText(x, y, nut.lang.Get( "stor_info", 1 ), Color(255, 255, 255, alpha), "nut_TargetFontSmall")
-		if entity:GetNetVar( "locked", false ) then
+		if (entity:GetNetVar("locked", false)) then
 			nut.util.DrawText(x, y + 16, nut.lang.Get( "lock_locked" ), Color(255, 30, 30, alpha), "nut_TargetFontSmall")
 		end
 	end

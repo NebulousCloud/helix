@@ -21,6 +21,7 @@ if (SERVER) then
 			if v.generated then continue end
 			if (v.itemID) then
 				local inventory = v:GetNetVar("inv")
+
 				data[#data + 1] = {
 					position = v:GetPos(),
 					angles = v:GetAngles(),
@@ -34,11 +35,11 @@ if (SERVER) then
 			end
 		end
 
-		nut.util.WriteTable("storage", data)
+		self:WriteTable(data)
 	end
 
 	function PLUGIN:LoadData()
-		local storage = nut.util.ReadTable("storage")
+		local storage = self:ReadTable()
 
 		if (storage) then
 			for k, v in pairs(storage) do
@@ -51,7 +52,7 @@ if (SERVER) then
 				for _, __ in pairs( inventory ) do
 					amt = amt + 1
 				end
-				
+
 				if ( amt == 0 && !v.world && !v.lock ) then continue end
 
 				if (itemTable) then
@@ -62,6 +63,10 @@ if (SERVER) then
 					entity:Activate()
 					entity:SetNetVar("inv", inventory)
 					entity:SetNetVar("name", itemTable.name)
+
+					local weight, max = entity:GetInvWeight()
+					entity:SetNetVar("weight", math.ceil((weight / max) * 100))
+					
 					entity.itemID = v.uniqueID
 					entity.lock = v.lock
 					entity.classic = v.classic
@@ -81,7 +86,6 @@ if (SERVER) then
 							phys:EnableMotion(false)
 						end
 					end
-
 				end
 			end
 		end

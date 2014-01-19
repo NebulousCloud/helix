@@ -13,6 +13,7 @@ if (SERVER) then
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetUseType(SIMPLE_USE)
+		self.recipients = {}
 
 		local physicsObject = self:GetPhysicsObject()
 
@@ -39,8 +40,9 @@ if (SERVER) then
 
 		if (weight > max) then
 			inventory = oldInventory
-		else
-			self:SetNetVar("inv", inventory)
+		elseif (#self.recipients > 0) then
+			self:SetNetVar("weight", math.ceil((weight / max) * 100))
+			self:SetNetVar("inv", inventory, self.recipients)
 		end
 	end
 
@@ -98,10 +100,18 @@ if (SERVER) then
 		
 	end)
 	
+	local function OnStorageSend(client, entity)
+		entity.recipients[#entity.recipients + 1] = client
+		entity:SendVar("inv", client)
+		
+		client:SetNutVar("container", entity)
+	end
+
 	netstream.Hook( "nut_VerifyPassword", function(client, data)
 		local entity = data[1]
 		local password = data[2]
 		if entity.lock == password then
+			OnStorageSend(client, entity)
 			netstream.Start(client, "nut_Storage", entity)
 		else
 			nut.util.Notify( nut.lang.Get( "lock_wrong" ), client)	
@@ -114,6 +124,7 @@ if (SERVER) then
 		if entity.lock then --** Check if is locked or not
 			if entity.classic then --** If the lock is classic lock
 				if entity:KeyOpen( client ) then --** Search for the key.
+					OnStorageSend(client, entity)
 					netstream.Start(client, "nut_Storage", entity)
 				else
 					nut.util.Notify( nut.lang.Get( "lock_try" ) , client)	-- If couldn't found a key, Reject the request.
@@ -125,6 +136,7 @@ if (SERVER) then
 				netstream.Start(client, "nut_RequestPassword", entity)
 			end
 		else
+			OnStorageSend(client, entity)
 			netstream.Start(client, "nut_Storage", entity)
 		end
 	end)
@@ -155,6 +167,14 @@ if (SERVER) then
 				end
 			end
 			nut.schema.Call("OnItemTransfered", client, entity, itemTable )
+		end
+	end)
+
+	netstream.Hook("nut_ContainerClosed", function(client, data)
+		local container = client:GetNutVar("container")
+
+		if (IsValid(container)) then
+			table.RemoveByValue(container.recipients, client)
 		end
 	end)
 
