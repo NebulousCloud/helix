@@ -297,7 +297,9 @@ function GM:HUDPaintTargetPlayer(client, x, y, alpha)
 	y = nut.util.DrawWrappedText(x, y, client:GetNutVar("descLines"), client:GetNutVar("lineH"), "nut_TargetFontSmall", 1, 1, alpha)
 
 	if (client:GetNetVar("tied")) then
-		nut.util.DrawText(x, y, "Press <Use> to untie.", Color(255, 165, 30, math.sin(RealTime() * 3)*100 + 150), "nut_TargetFontSmall")
+		local add = math.sin(RealTime() * 3)*25 + 50
+
+		nut.util.DrawText(x, y, "Press <Use> to untie.", Color(math.min(255 + add, 255), math.min(165 + add, 255), math.min(30 + add, 255)), "nut_TargetFontSmall")
 	end
 end
 
