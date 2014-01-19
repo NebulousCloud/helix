@@ -147,8 +147,6 @@ function nut.plugin.Load(directory)
 				nut.plugin.IncludeWeapons(pluginDir)
 				nut.plugin.IncludeEffects(pluginDir)
 
-				nut.util.IncludeDir(pluginDir.."/derma", SCHEMA == nil)
-
 				nut.item.Load(pluginDir)
 				nut.plugin.buffer[v] = PLUGIN
 			end
