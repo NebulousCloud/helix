@@ -151,7 +151,7 @@ local PANEL = {}
 		end
 
 		if (nut.faction.Count() > 0) then
-			addLowerButton("create", "Create", LEFT)
+			addLowerButton("create", nut.lang.Get("create"), LEFT)
 
 			self.create.OnClick = function(panel)
 				if (IsValid(nut.gui.charCreate)) then
