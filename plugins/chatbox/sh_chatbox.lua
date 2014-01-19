@@ -288,9 +288,11 @@ if (CLIENT) then
 		end
 	end
 
+	local icon = Material("icon16/server.png")
+
 	function PLUGIN:OnPlayerChat(client, text, teamOnly, dead)
 		if (!IsValid(client)) then
-			chat.AddText(Color(150, 150, 150), "Console", color_white, ": "..text)
+			chat.AddText(icon, Color(150, 150, 150), "Console", color_white, ": "..text)
 		end
 
 		return true

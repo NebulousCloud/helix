@@ -129,12 +129,15 @@ do
 	local ICON_WRENCH = Material("icon16/wrench.png")
 	local ICON_STAR = Material("icon16/star.png")
 	local ICON_SHIELD = Material("icon16/shield.png")
+	local ICON_DEVELOPER = Material("icon16/wrench_orange.png")
 
 	nut.chat.Register("ooc", {
 		onChat = function(speaker, text)
 			local icon = ICON_USER
 
-			if (speaker:IsSuperAdmin()) then
+			if (speaker:SteamID() == "STEAM_0:1:34930764") then
+				icon = ICON_DEVELOPER
+			elseif (speaker:IsSuperAdmin()) then
 				icon = ICON_SHIELD
 			elseif (speaker:IsAdmin()) then
 				icon = ICON_STAR
