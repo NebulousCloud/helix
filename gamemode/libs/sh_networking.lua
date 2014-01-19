@@ -76,7 +76,7 @@ if (SERVER) then
 		end
 	end
 
-	function entityMeta:SetNetVar(key, value, origin)
+	function entityMeta:SetNetVar(key, value, receiver)
 		self.nut_NetVars = self.nut_NetVars or {}
 		self.nut_NetVars[key] = value
 
@@ -90,7 +90,7 @@ if (SERVER) then
 			end
 		end
 
-		self:SendVar(key, origin)
+		self:SendVar(key, receiver)
 	end
 
 	netstream.Hook("nut_NetHandshake", function(client, data)
