@@ -71,7 +71,7 @@ if (SERVER) then
 		end
 
 		if (data == nil) then
-			data = 0 -- Fill the data so the length isn't 0.
+			data = "" -- Fill the data so the length isn't 0.
 		end
 
 		local dataTable = {data}
