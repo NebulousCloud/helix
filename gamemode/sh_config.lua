@@ -12,6 +12,9 @@ end
 -- Defines a table to store all the configurations.
 nut.config = nut.config or {}
 
+-- What language NutScript shall use.
+nut.config.language = "english"
+
 -- The default walk speed.
 nut.config.walkSpeed = 90
 

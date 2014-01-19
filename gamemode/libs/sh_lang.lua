@@ -11,8 +11,11 @@ nut.lang.phrases = nut.lang.phrases or {}
 	Purpose: Adds a phrase that can be identified by a key to the list
 	of phrases.
 --]]
-function nut.lang.Add(key, value)
-	nut.lang.phrases[key] = value
+function nut.lang.Add(key, value, language)
+	language = language or "english"
+
+	nut.lang.phrases[language] = nut.lang.phrases[language] or {}
+	nut.lang.phrases[language][key] = value
 end
 
 --[[
@@ -28,8 +31,10 @@ end
 			> NutScript is awesome, just like pie.
 --]]
 function nut.lang.Get(key, ...)
-	if (nut.lang.phrases[key]) then
-		return string.format(nut.lang.phrases[key], ...)
+	local language = nut.config.language or "english"
+
+	if (nut.lang.phrases[language] and nut.lang.phrases[language][key]) then
+		return string.format(nut.lang.phrases[language][key], ...)
 	else
 		return "<missing "..key..">"
 	end
