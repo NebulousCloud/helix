@@ -6,7 +6,7 @@ if (SERVER) then
 	function entityMeta:SyncVars(client, noDelta)
 		if (self.nut_NetVars) then
 			for k, v in pairs(self.nut_NetVars) do
-				if (v.nut_NetReceiver and v.nut_NetReceiver[k]) then
+				if (self.nut_NetReceiver and self.nut_NetReceiver[k]) then
 					continue
 				end
 
