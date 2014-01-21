@@ -67,7 +67,7 @@ local notsupported = {
 	"injured1",
 	"examineground",
 }
-for _, str in pairs( sequences["citizen_female"] ) do
+for _, str in pairs( notsupported ) do
 	sequences["citizen_female"][ str ] = nil
 end
 
