@@ -41,7 +41,7 @@ local recognizeCommand = {
 				end
 			end
 
-			nut.util.Notify("People in a "..text.." range now recognize you.")
+			nut.util.Notify("People in a "..text.." range now recognize you.", client)
 		end
 	end
 }
