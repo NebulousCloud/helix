@@ -59,7 +59,6 @@ sequences["citizen_male"] = {
 	["injured4"] = {"injured3", true},
 	["injuredwall"] = {"injured1", true, lean},
 	["sitknees"] = {"sitcouchknees1", true},
-	["wat"] = {"d3_c17_03_climb_rope", true}
 }
 sequences["citizen_female"] = table.Copy(sequences["citizen_male"])
 local notsupported = {
