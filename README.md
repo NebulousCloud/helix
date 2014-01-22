@@ -8,7 +8,12 @@ A free role-play framework for Garry's Mod. Please note that this version is und
 Installation
 =========
 
-Installation instructions can be found on the wiki.
+Installation instructions can be found on the wiki. (http://chessnut.info/wiki)
+
+Pull Requests
+=========
+
+Pull requests are open to be accepted. Please make sure that they are tested and follow the coding style guidelines, which can be found here: http://goo.gl/2SXzzJ
 
 License
 =========
