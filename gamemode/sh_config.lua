@@ -70,7 +70,7 @@ nut.config.chatRange = 540
 -- The maximum distance in Source units to hear someone yell.
 nut.config.yellRange = 720
 
--- THe text color for game messages like joining/leaving or console text.
+-- The text color for game messages like joining/leaving or console text.
 -- Uses a color object which goes red, green, blue. Each ranges from 0 to 255.
 nut.config.gameMsgColor = Color(230, 230, 230)
 
