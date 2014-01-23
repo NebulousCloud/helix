@@ -263,7 +263,7 @@ if (SERVER) then
 			contents = file.Read("nutscript/data/"..uniqueID..".txt", "DATA")
 
 			if (!contents or contents == "") then
-				contents = file.Read("nutscript/data/"..SCHEMA.uniqueID.."/"..uniqueID..".txt", "DATA")
+				contents = file.Read("nutscript/"..SCHEMA.uniqueID.."/"..uniqueID..".txt", "DATA")
 			end
 		end
 
