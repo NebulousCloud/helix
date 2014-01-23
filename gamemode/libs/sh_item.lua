@@ -616,7 +616,7 @@ do
 				local quantity = 0
 
 				for k, v in pairs(items) do
-					quantity = quantity + v.quantity
+					quantity = quantity + (v.quantity or 0)
 				end
 
 				local addition = math.abs(itemTable.weight) * quantity
