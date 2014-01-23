@@ -102,7 +102,7 @@ if (SERVER) then
 	
 	local function OnStorageSend(client, entity)
 		entity.recipients[#entity.recipients + 1] = client
-		entity:SendVar("inv", client)
+		entity:SendVar("inv", client, true, true)
 		
 		client:SetNutVar("container", entity)
 	end
