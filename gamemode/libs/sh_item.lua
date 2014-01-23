@@ -221,7 +221,11 @@ function nut.item.Register(itemTable, isBase)
 				if (SERVER) then
 					item.player:EmitSound("physics/body/body_medium_impact_soft"..math.random(5, 7)..".wav")
 
-					return item.player:UpdateInv(item.uniqueID, 1, item.itemData)
+					local result = nut.schema.Call("OnItemTaken", table.Copy(item))
+						if (result == nil) then
+							result = item.player:UpdateInv(item.uniqueID, 1, item.itemData)
+						end
+					return result
 				end
 			end,
 			shouldDisplay = function(itemTable, data, entity)
