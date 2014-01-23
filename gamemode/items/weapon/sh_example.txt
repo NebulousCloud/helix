@@ -1,5 +1,6 @@
 ITEM.name = "Crowbar"
 ITEM.class = "weapon_crowbar"
+ITEM.uniqueID = ITEM.class -- class and uniqueid must be synced.
 ITEM.type = "melee"
 ITEM.model = Model("models/weapons/w_crowbar.mdl")
 ITEM.desc = "A Crowbar ( EXAMPLE ITEM )"

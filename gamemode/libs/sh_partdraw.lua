@@ -84,13 +84,14 @@ else
 		end
 
 		-- For Weapons( eww.. look at this code. )
-		for class, itbl in pairs( player:GetInventory() ) do
+		-- temp fix.
+		for _, wep in pairs( player:GetWeapons() ) do
+			local class = wep:GetClass()
 			local itemTable = nut.item.Get(class)
 			if itemTable and itemTable.wep_partdata then
 				local drawdat = itemTable.wep_partdata
 				local uid = "w_"..class
-				local wepclass = itemTable.class
-				if wepclass and hasWeapon( player, wepclass ) and !(player:GetActiveWeapon():GetClass() == wepclass) then
+				if !(player:GetActiveWeapon():GetClass() == class) then
 					if !( player.drawing[uid] ) then -- If clientside part model is not exists.
 						-- holla holla create model.
 						player.drawing[uid] = ClientsideModel( drawdat.model, RENDERGROUP_BOTH )
