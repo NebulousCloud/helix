@@ -142,7 +142,7 @@ else
 
 		local registry = NUT_ENT_REGISTRY[entIndex]
 		if (type(value) == "table") then
-			if !override then
+			if (!override) then
 				value = replacePlaceHolders(table.Merge(registry[key] or {}, value)) -- Temp fix for Storage Left Over.
 				-- To generate that bug follow this step
 				-- 1. Enter NS Server with 2 player and 1 storage and at least 1 item.
