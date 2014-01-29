@@ -198,7 +198,9 @@ function PANEL:SetupInformation()
 	self.gender:DockMargin(10,0,10,0)
 	self.gender.OnSelect = function(panel, index, value, data)
 		local gender = string.lower(value)
-		self:UpdateModels(self.faction[gender.."Models"])
+		timer.Simple(0, function()
+			self:UpdateModels(self.faction[gender.."Models"])
+		end)
 	end
 	if (self.faction.maleModels and #self.faction.maleModels > 0) then
 		self.gender:AddChoice("Male")
