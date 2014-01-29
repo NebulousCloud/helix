@@ -83,7 +83,6 @@ else
 				local drawdat = itemTable.wep_partdata
 				local uid = "w_"..class
 				if (client:GetActiveWeapon():GetClass() != class) then
-					print(12314)
 					if (!client.drawing[uid]) then -- If clientside part model is not exists.
 						-- holla holla create model.
 						client.drawing[uid] = ClientsideModel( drawdat.model, RENDERGROUP_BOTH )
