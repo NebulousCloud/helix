@@ -2,6 +2,7 @@ local PLUGIN = PLUGIN
 PLUGIN.name = "Player Acts"
 PLUGIN.author = "Chessnut and rebel1324"
 PLUGIN.desc = "Adds animations that can be performed by players."
+PLUGIN.sequences = {}
 
 local function lean(client)
 	local data = {
@@ -19,7 +20,7 @@ local function lean(client)
 end
 
 local sequences = {}
-sequences["metrocop"] = {
+PLUGIN.sequences["metrocop"] = {
 	["threat"] = {"plazathreat1"},
 	["lean"] = {"plazalean", true, lean},
 	["crossarms"] = {"plazathreat2", true},
@@ -30,7 +31,7 @@ sequences["metrocop"] = {
 	["moleft"] = {"motionleft"},
 	["moright"] = {"motionright"}
 }
-sequences["overwatch"] = {
+PLUGIN.sequences["overwatch"] = {
 	["type"] = {"console_type_loop", true},
 	["sigadv"] = {"signal_advance"},
 	["sigfor"] = {"signal_forward"},
@@ -40,7 +41,7 @@ sequences["overwatch"] = {
 	["sigright"] = {"signal_right"},
 	["sigcover"] = {"signal_takecover"}
 }
-sequences["citizen_male"] = {
+PLUGIN.sequences["citizen_male"] = {
 	["arrestlow"] = {"arrestidle", true},
 	["cheer"] = {"cheer1"},
 	["clap"] = {"cheer2"},
@@ -60,7 +61,7 @@ sequences["citizen_male"] = {
 	["injuredwall"] = {"injured1", true, lean},
 	["sitknees"] = {"sitcouchknees1", true},
 }
-sequences["citizen_female"] = table.Copy(sequences["citizen_male"])
+PLUGIN.sequences["citizen_female"] = table.Copy(PLUGIN.sequences["citizen_male"])
 local notsupported = {
 	"injured3",
 	"injured4",
@@ -68,7 +69,7 @@ local notsupported = {
 	"examineground",
 }
 for _, str in pairs( notsupported ) do
-	sequences["citizen_female"][ str ] = nil
+	PLUGIN.sequences["citizen_female"][ str ] = nil
 end
 
 if (SERVER) then
@@ -99,10 +100,13 @@ if (SERVER) then
 
 			return
 		end
+		if (nut.schema.Call( "CanStartSeq", client ) == false) then
+			return
+		end
 
 		local override = client:GetOverrideSeq()
 		local class = nut.anim.GetClass(string.lower(client:GetModel()))
-		local list = sequences[class]
+		local list = self.sequences[class]
 
 		if (class and list) then
 			if (override) then
@@ -204,7 +208,7 @@ else
 	end
 end
 
-for k, v in pairs(sequences) do
+for k, v in pairs(PLUGIN.sequences) do
 	for k2, v2 in pairs(v) do
 		nut.command.Register({
 			onRun = function(client, arguments)
