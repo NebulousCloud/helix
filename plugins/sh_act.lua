@@ -21,45 +21,42 @@ end
 
 local sequences = {}
 PLUGIN.sequences["metrocop"] = {
-	["threat"] = {"plazathreat1"},
-	["lean"] = {"plazalean", true, lean},
-	["crossarms"] = {"plazathreat2", true},
-	["point"] = {"point"},
-	["block"] = {"blockentry", false, lean},
-	["startle"] = {"canal5breact1"},
-	["warn"] = {"luggagewarn"},
-	["moleft"] = {"motionleft"},
-	["moright"] = {"motionright"}
+	["threat"] = {"plazathreat1", name = "Melee Threat"},
+	["lean"] = {"plazalean", true, lean, name = "Lean Back"},
+	["crossarms"] = {"plazathreat2", false, name = "Cross Arms"},
+	["point"] = {"point", name = "Point"},
+	["block"] = {"blockentry", false, lean, name = "Block Entry"},
+	["startle"] = {"canal5breact1", name = "Startle"},
+	["warn"] = {"luggagewarn", name = "Warning"},
+	["moleft"] = {"motionleft", name = "Motion Left"},
+	["moright"] = {"motionright", name = "Motion Right"}
 }
 PLUGIN.sequences["overwatch"] = {
-	["type"] = {"console_type_loop", true},
-	["sigadv"] = {"signal_advance"},
-	["sigfor"] = {"signal_forward"},
-	["siggroup"] = {"signal_group"},
-	["sighalt"] = {"signal_halt"},
-	["sigleft"] = {"signal_left"},
-	["sigright"] = {"signal_right"},
-	["sigcover"] = {"signal_takecover"}
+	["type"] = {"console_type_loop", true, name = "Type Console"},
+	["sigadv"] = {"signal_advance", name = "Advance"},
+	["sigfor"] = {"signal_forward", name = "Forward"},
+	["siggroup"] = {"signal_group", name = "Regroup"},
+	["sighalt"] = {"signal_halt", name = "Halt"},
+	["sigleft"] = {"signal_left", name = "Left"},
+	["sigright"] = {"signal_right", name = "Right"},
+	["sigcover"] = {"signal_takecover", name = "Cover"}
 }
 PLUGIN.sequences["citizen_male"] = {
-	["arrestlow"] = {"arrestidle", true},
-	["cheer"] = {"cheer1"},
-	["clap"] = {"cheer2"},
-	["sitwall"] = {"plazaidle4", true, lean},
-	["stand"] = {"d1_t01_breakroom_watchclock"},
-	["standpockets"] = {"d1_t02_playground_cit2_pockets", true},
-	["showid"] = {"d1_t02_plaza_scan_id"},
-	["pant"] = {"d2_coast03_postbattle_idle02", true},
-	["leanback"] = {"lean_back", true, lean},
-	["sit"] = {"sit_ground", true},
-	["lying"] = {"Lying_Down", true},
-	["examineground"] = {"d1_town05_Daniels_Kneel_Idle", true},
-	["injured1"] = {"injured3", true},
-	["injured2"] = {"d1_town05_Wounded_Idle_1", true},
-	["injured3"] = {"d1_town05_Wounded_Idle_2", true},
-	["injured4"] = {"injured3", true},
-	["injuredwall"] = {"injured1", true, lean},
-	["sitknees"] = {"sitcouchknees1", true},
+	["arrestlow"] = {"arrestidle", true, name = "Arrest Idle"},
+	["cheer"] = {"cheer1", name = "Cheer"},
+	["clap"] = {"cheer2", name = "Clap"},
+	["sitwall"] = {"plazaidle4", true, lean, name = "Sit Wall"},
+	["stand"] = {"d1_t01_breakroom_watchclock", name = "Stand"},
+	["standpockets"] = {"d1_t02_playground_cit2_pockets", true, name = "Stand Pockets"},
+	["showid"] = {"d1_t02_plaza_scan_id", name = "Show ID"},
+	["pant"] = {"d2_coast03_postbattle_idle02", true, name = "Pant"},
+	["leanback"] = {"lean_back", true, lean, name = "Lean Back"},
+	["sit"] = {"sit_ground", true, name = "Sit"},
+	["lying"] = {"Lying_Down", true, name = "Lying"},
+	["examineground"] = {"d1_town05_Daniels_Kneel_Idle", true, name = "Examine Ground"},
+	["injured2"] = {"d1_town05_Wounded_Idle_1", true, name = "Injured 1"},
+	["injured3"] = {"d1_town05_Wounded_Idle_2", true, name = "Injured 2"},
+	["injuredwall"] = {"injured1", true, lean, name = "Injured Wall"},
 }
 PLUGIN.sequences["citizen_female"] = table.Copy(PLUGIN.sequences["citizen_male"])
 local notsupported = {
@@ -67,6 +64,7 @@ local notsupported = {
 	"injured4",
 	"injured1",
 	"examineground",
+	"standpockets",
 }
 for _, str in pairs( notsupported ) do
 	PLUGIN.sequences["citizen_female"][ str ] = nil
@@ -88,12 +86,13 @@ if (SERVER) then
 			return
 		end
 
-		local data = {
-			start = client:GetPos(),
-			endpos = client:GetPos() - Vector(0, 0, 16),
-			filter = client
-		}
-		local trace = util.TraceLine(data)
+		local data = {}
+		data.start = client:GetPos()
+		data.endpos = data.start - Vector(0, 0, 1)
+		data.filter = client
+		data.mins = Vector(-16, -16, 0)
+		data.maxs = Vector(16, 16, 16)
+		local trace = util.TraceHull(data)
 
 		if (!trace.Hit) then
 			nut.util.Notify("You must be on the ground to perform acts.", client)
@@ -179,7 +178,7 @@ else
 	end
 	
 	function PLUGIN:CalcView(client, origin, angles, fov)
-		if (client:GetOverrideSeq() and client:GetNetVar("seqCam")) then
+		if (client:GetViewEntity() == client and client:GetOverrideSeq() and client:GetNetVar("seqCam")) then
 			local view = {}
 			local at = client:LookupAttachment( "eyes" )
 			if at == 0 then at = client:LookupAttachment( "eye" ) end
@@ -206,6 +205,43 @@ else
 			return true
 		end
 	end
+
+	function PLUGIN:CreateQuickMenu(panel)
+		local label = panel:Add("DLabel")
+		label:Dock(TOP)
+		label:SetText(" Quick Acts")
+		label:SetFont("nut_TargetFont")
+		label:SetTextColor(Color(233, 233, 233))
+		label:SizeToContents()
+		label:SetExpensiveShadow(2, Color(0, 0, 0))
+		local category = panel:Add("DPanel")
+		category:Dock(TOP)
+		category:DockPadding(5, 5, 5, 5)
+		category:DockMargin(0, 5, 0, 5)
+		category:SetTall(35)
+		panel.quickact = category:Add("DButton")
+		panel.quickact:Dock(FILL)
+		panel.quickact:SetText("Load List >>")
+		panel.quickact:SetTextColor(Color(5, 5, 5))
+		panel.quickact:SetFont("nut_TargetFontSmall")
+		panel.quickact.DoClick = function(pnl)
+			local class = nut.anim.GetClass(string.lower(LocalPlayer():GetModel()))
+			local list = self.sequences[class]
+			local menu = DermaMenu()
+			if (list) then
+				for uid, actdata in SortedPairs(list) do
+					if (list) then
+						menu:AddOption((actdata.name or uid), function()
+							LocalPlayer():ConCommand(Format("say /act%s", uid))
+						end)
+					end
+				end
+			end
+			menu:Open()
+			menu:SetParent(pnl)
+		end
+	end
+
 end
 
 for k, v in pairs(PLUGIN.sequences) do
