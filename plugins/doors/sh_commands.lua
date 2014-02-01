@@ -141,7 +141,7 @@ nut.command.Register({
 		local entity = trace.Entity
 
 		if (IsValid(entity) and PLUGIN:IsDoor(entity)) then
-			entity:SetNetVar("title", "Door for Sale")
+			entity:SetNetVar("title", #arguments > 0 and table.concat(arguments, " ") or "Door for Sale")
 			PLUGIN:DoorSetOwnable(entity)
 			nut.util.Notify("You have made this door ownable.", client)
 		else
