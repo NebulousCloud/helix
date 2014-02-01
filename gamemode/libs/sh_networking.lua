@@ -55,7 +55,7 @@ if (SERVER) then
 			end
 
 			if (receiver) then
-				netstream.Start(receiver, "nut_EntityVar", {self:EntIndex(), key, value})
+				netstream.Start(receiver, "nut_EntityVar", {self:EntIndex(), key, value, noDelta}) -- nodelta == override. Description in nut_EntityVar netstream.
 
 				if (!noHandShake) then
 					if (type(receiver) == "Player") then
@@ -136,13 +136,22 @@ else
 		local entIndex = data[1]
 		local key = data[2]
 		local value = data[3]
+		local override = data[4] -- table override
 
 		NUT_ENT_REGISTRY[entIndex] = NUT_ENT_REGISTRY[entIndex] or {}
 
 		local registry = NUT_ENT_REGISTRY[entIndex]
-
 		if (type(value) == "table") then
-			value = replacePlaceHolders(table.Merge(registry[key] or {}, value))
+			if (!override) then
+				value = replacePlaceHolders(table.Merge(registry[key] or {}, value)) -- Temp fix for Storage Left Over.
+				-- To generate that bug follow this step
+				-- 1. Enter NS Server with 2 player and 1 storage and at least 1 item.
+				-- 2. Make one player get items into the storage.
+				-- 3. Make another player look into the storage and get out.
+				-- 4. One player takes any item in the storage.
+				-- 5. When another player look into the storage, It seems normal but you can't get items that one player took out.
+				-- 6. Server says It's gone but client sees it's still there.
+			end
 		end
 
 		registry[key] = value
