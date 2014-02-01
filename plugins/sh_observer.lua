@@ -11,6 +11,7 @@ if (SERVER) then
 				client:DrawShadow(false)
 				client:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 				client:SetNutVar("noclipping", true)
+				nut.util.AddLog(Format("%s entered observer mode.", client:Name()), LOG_FILTER_CONCOMMAND)
 			else
 				client:SetNoDraw(false)
 				client:DrawShadow(true)
@@ -28,6 +29,7 @@ if (SERVER) then
 
 				client:SetNutVar("noclipPos", nil)
 				client:SetNutVar("noclipping", nil)
+				nut.util.AddLog(Format("%s quit observer mode.", client:Name()), LOG_FILTER_CONCOMMAND)
 			end
 		end
 	end

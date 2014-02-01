@@ -26,6 +26,7 @@ BASE.functions.Equip = {
 			local newData = table.Copy(data)
 			newData.Equipped = true
 			client:UpdateInv(itemTable.uniqueID, 1, newData, true)
+			nut.schema.Call("OnPartEquipped", client, itemTable, true)
 		end
 	end,
 	shouldDisplay = function(itemTable, data, entity)
@@ -42,6 +43,7 @@ BASE.functions.Unequip = {
 			local newData = table.Copy(data)
 			newData.Equipped = false
 			client:UpdateInv(itemTable.uniqueID, 1, newData, true)
+			nut.schema.Call("OnPartEquipped", client, itemTable, false)
 			return true
 		end
 	end,

@@ -404,7 +404,7 @@ if (SERVER) then
 				end
 			client.character:Send(nil, nil, true)
 
-			print("Restoring cached character '"..client.character:GetVar("charname").."' for "..client:RealName()..".")
+			nut.util.AddLog("Restoring cached character '"..client.character:GetVar("charname").."' for "..client:RealName()..".", LOG_FILTER_MAJOR)
 
 			if (callback) then
 				callback(sameChar)
@@ -436,14 +436,14 @@ if (SERVER) then
 						client.character = character
 						client.nut_CachedChars[index] = client.character
 
-						print("Loaded character '"..client.character:GetVar("charname").."' for "..client:RealName()..".")
+						nut.util.AddLog("Loaded character '"..client.character:GetVar("charname").."' for "..client:RealName()..".", LOG_FILTER_MAJOR)
 					end
 
 					if (callback) then
 						callback(sameChar)
 					end
 				else
-					error("Attempt to load an invalid character ("..client:Name().." #"..index..")")
+					nut.util.AddLog("Attempt to load an invalid character ("..client:Name().." #"..index..")", LOG_FILTER_MAJOR)
 				end
 			end
 		end)
@@ -483,7 +483,7 @@ if (SERVER) then
 
 					netstream.Start(client, "nut_CharInfo", {data.charname, data.description, data.model, data.faction, data.id, data.skin, banned})
 				else
-					error("Attempt to load an invalid character ("..client:Name().." #"..index..")")
+					nut.util.AddLog("Attempt to load an invalid character ("..client:Name().." #"..index..")", LOG_FILTER_MAJOR)
 				end
 			end
 		end)
@@ -551,7 +551,7 @@ if (SERVER) then
 		nut.db.UpdateTable("steamid = "..steamID.." AND id = "..index..sameSchema(), data)
 		client:SaveData()
 
-		print("Saved '"..client.character:GetVar("charname").."' for "..client:RealName()..".")
+		nut.util.AddLog("Saved '"..client.character:GetVar("charname").."' for "..client:RealName()..".", LOG_FILTER_REPETIVE)
 	end
 
 	-- Validate the character creation request and sends a message to close the creation
@@ -631,7 +631,7 @@ if (SERVER) then
 
 				nut.schema.Call("PlayerCreatedChar", client, charData)
 				
-				print("Created new character '"..name.."' for "..client:RealName()..".")
+				nut.util.AddLog("Created new character '"..name.."' for "..client:RealName()..".", LOG_FILTER_MAJOR)
 			end)
 		end)
 	end)
@@ -677,7 +677,7 @@ if (SERVER) then
 					end)
 				end
 
-				print("Deleted character #"..index.." for "..client:Name()..".")
+				nut.util.AddLog("Deleted character #"..index.." for "..client:Name()..".", LOG_FILTER_MAJOR)
 			end)
 		else
 			ErrorNoHalt("Attempt to delete invalid character! ("..index..")")

@@ -59,9 +59,9 @@ if (SERVER) then
 
 				if (!silent) then
 					if (#arguments > 0) then
-						print(client:Name().." has ran command '"..action.." "..table.concat(arguments, " ").."'")
+						nut.util.AddLog(client:Name().." has ran command '"..action.." "..table.concat(arguments, " ").."'", LOG_FILTER_CONCOMMAND)
 					else
-						print(client:Name().." has ran command '"..action.."'")
+						nut.util.AddLog(client:Name().." has ran command '"..action.."'", LOG_FILTER_CONCOMMAND)
 					end
 				end
 			end

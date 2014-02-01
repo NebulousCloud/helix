@@ -308,6 +308,11 @@ function GM:PlayerDeath(victim, weapon, attacker)
 		victim:SetMainBar("You are now respawning.", nut.config.deathTime)
 		victim:ScreenFadeIn(nut.config.deathTime * 0.25)
 	end)
+	if (attacker:IsPlayer()) then
+		nut.util.AddLog(Format("%s(%s) killed by %s(%s) with %s.", victim:Name(), victim:SteamID(), attacker:Name(), attacker:SteamID(), weapon:GetClass()), LOG_FILTER_MAJOR)
+	else
+		nut.util.AddLog(Format("%s(%s) dead by %s.", victim:Name(), victim:SteamID(), attacker:GetClass()), LOG_FILTER_MAJOR)
+	end
 end
 
 function GM:PlayerDeathSound(client)
