@@ -5,6 +5,7 @@ local textColor = Color(255, 255, 255)
 
 if SERVER then
 	local serverLog = {}
+	local autosavePerLines = 1000
 
 	-- for later filter use.
 	LOG_FILTER_DEVELOPER = 0
@@ -30,6 +31,9 @@ if SERVER then
 				netstream.Start(client, "nut_SendLogLine", string)
 			end
 		end
+		if (#serverLog >= autosavePerLines) then
+			nut.util.SaveLog()
+		end
 	end
 	--[[
 		Purpose: Get the current log
@@ -46,7 +50,7 @@ if SERVER then
 	--[[
 		Purpose: Save the log to the server.
 	--]]
-	function nut.util.SaveLog()
+	function nut.util.SaveLog(autosave)
 		/*
 		-- for later use.
 		local filename = string.Replace(os.date(),":","_")
@@ -57,7 +61,6 @@ if SERVER then
 		local string = ""
 		for k, v in pairs(serverLog) do
 			string = string .. v .. "\n"
-			print(string.byte(string,1))
 		end
 		local filename = string.Replace(os.date(),":","_")
 		filename = string.Replace(filename,"/","_")
