@@ -551,7 +551,7 @@ if (SERVER) then
 		nut.db.UpdateTable("steamid = "..steamID.." AND id = "..index..sameSchema(), data)
 		client:SaveData()
 
-		nut.util.AddLog("Saved '"..client.character:GetVar("charname").."' for "..client:RealName()..".", LOG_FILTER_REPETIVE)
+		nut.util.AddLog("Saved '"..client.character:GetVar("charname").."' for "..client:RealName()..".", LOG_FILTER_NOSAVE)
 	end
 
 	-- Validate the character creation request and sends a message to close the creation

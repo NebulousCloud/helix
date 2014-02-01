@@ -12,7 +12,7 @@ if SERVER then
 	LOG_FILTER_MAJOR = 2
 	LOG_FILTER_ITEM = 3
 	LOG_FILTER_CHAT = 4
-	LOG_FILTER_REPETIVE = 5
+	LOG_FILTER_NOSAVE = 5
 	LOG_FILTER_CONCOMMAND = 6
 	--[[
 		Purpose: Add a line to the log.
@@ -22,7 +22,9 @@ if SERVER then
 			MsgC(timeColor, "[" .. os.date() .. "] ")
 			MsgC(textColor, string .. "\n")
 		end
-		table.insert(serverLog, "[" .. os.date() .. "] " .. string)
+		if (filter != LOG_FILTER_NOSAVE) then
+			table.insert(serverLog, "[" .. os.date() .. "] " .. string)
+		end
 		for k, client in pairs(player.GetAll()) do
 			if (client:IsAdmin()) then
 				netstream.Start(client, "nut_SendLogLine", string)
