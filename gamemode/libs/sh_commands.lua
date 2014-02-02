@@ -57,7 +57,7 @@ if (SERVER) then
 					echo = true
 				end
 
-				if (!silent) then
+				if !(silent or commandTable.silent) then
 					if (#arguments > 0) then
 						nut.util.AddLog(client:Name().." has ran command '"..action.." "..table.concat(arguments, " ").."'", LOG_FILTER_CONCOMMAND)
 					else
@@ -143,11 +143,13 @@ if (SERVER) then
 		nut.util.FindPlayer, otherwise it notifies the given player that the person
 		could not be found.
 	--]]
-	function nut.command.FindPlayer(client, name)
+	function nut.command.FindPlayer(client, name, mute)
 		local fault = nut.lang.Get("no_ply")
 
 		if (!name) then
-			nut.util.Notify(fault, client)
+			if (!mute) then
+				nut.util.Notify(fault, client)
+			end
 
 			return
 		end
@@ -155,7 +157,9 @@ if (SERVER) then
 		local target = nut.util.FindPlayer(name)
 
 		if (!IsValid(target)) then
-			nut.util.Notify(fault, client)
+			if (!mute) then
+				nut.util.Notify(fault, client)
+			end
 		end
 
 		return target

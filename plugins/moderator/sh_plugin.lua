@@ -37,6 +37,34 @@ local PLUGIN = PLUGIN
 playerMeta.ModIsAdmin = playerMeta.ModIsAdmin or playerMeta.IsAdmin
 playerMeta.ModIsSuperAdmin = playerMeta.ModIsSuperAdmin or playerMeta.IsSuperAdmin
 
+PLUGIN.timeData = {
+	{"y", 60*60*24*365, "Year"},
+	{"mo", 60*60*24*30, "Month"},
+	{"w", 60*60*24*7, "Week"},
+	{"d", 60*60*24, "Day"},
+	{"h", 60*60, "Hour"},
+	{"m", 60, "Min"},
+	{"s", 1, "Second"}
+}
+
+function PLUGIN:SecondsToFormattedString(time)
+	local banstring = ""
+	for ind, d in ipairs(self.timeData) do
+		local subs = math.floor(time/d[2])
+		if (subs > 0 ) then
+			time = time - subs*d[2]
+			banstring = banstring .. subs .. " " .. d[3]
+			if (subs > 1) then
+				banstring = banstring .. "s"
+			end
+			if ind != #self.timeData then
+				banstring = banstring .. " "
+			end
+		end
+	end
+	return banstring
+end
+
 function playerMeta:IsSuperAdmin()
 	return PLUGIN:IsAllowed(self, "superadmin") or self:ModIsSuperAdmin()
 end
@@ -110,11 +138,6 @@ end
 function PLUGIN:BanPlayer(steamID, time, reason)
 	local client
 
-	if (type(steamID) == "Player") then
-		client = steamID
-		steamID = steamID:SteamID()
-	end
-
 	reason = reason or "no reason"
 	time = math.max(time or 0, 0)
 
@@ -126,11 +149,16 @@ function PLUGIN:BanPlayer(steamID, time, reason)
 
 	self.bans[steamID] = {expire = expireTime, reason = reason}
 
+	for k, v in ipairs(player.GetAll()) do
+		if (v:SteamID() == steamID) then
+			client = v
+		end
+	end
 	if (IsValid(client)) then
 		if (time == 0) then
 			time = "permanently"
 		else
-			time = "for "..string.ToMinutesSeconds(time).." minute(s)"
+			time = "for "..self:SecondsToFormattedString(time)
 		end
 
 		client:Kick("You have been banned "..time.." with the reason: "..reason)
@@ -140,7 +168,7 @@ function PLUGIN:BanPlayer(steamID, time, reason)
 end
 
 function PLUGIN:UnbanPlayer(steamID)
-	local found = self.bans[steamID] != nil
+	local found = (self.bans[steamID] != nil)
 	self.bans[steamID] = nil
 
 	if (found) then
@@ -156,7 +184,7 @@ function PLUGIN:player_connect(data)
 	local ban = self.bans[data.networkid]
 
 	if (ban and (ban.expire == 0 or ban.expire >= os.time())) then
-		local time = "expire in "..string.ToMinutesSeconds(math.floor(ban.expire - os.time())).." minute(s)"
+		local time = "expire in "..self:SecondsToFormattedString(math.floor(ban.expire - os.time()))
 
 		if (ban.expire == 0) then
 			time = "not expire"

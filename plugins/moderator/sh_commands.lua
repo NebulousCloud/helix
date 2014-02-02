@@ -1,14 +1,7 @@
 PLUGIN.commands = {}
 
-local timeData = {
-	{"y", 525600},
-	{"mo", 43200},
-	{"w", 10080},
-	{"d", 1440},
-	{"m", 60}
-}
 local times = {
-	{1,"1 Years","69y"},
+	{1,"1 Years","1y"},
 	{2,"1 Month","1mo"},
 	{3,"1 Week","1w"},
 	{4,"1 Day","1d"},
@@ -36,7 +29,7 @@ function PLUGIN:GetTimeByString(data)
 	local time = 0
 
 	for i = 1, 5 do
-		local info = timeData[i]
+		local info = self.timeData[i]
 
 		data = string.gsub(data, "(%d+)"..info[1], function(match)
 			local amount = tonumber(match)
@@ -55,6 +48,7 @@ function PLUGIN:GetTimeByString(data)
 
 	return math.max(time, 0)
 end
+
 
 function PLUGIN:CreateCommand(data, command)
 	if (!data or !command) then
@@ -87,6 +81,7 @@ function PLUGIN:CreateCommand(data, command)
 		hasPermission = function(client)
 			return self:IsAllowed(client, group)
 		end,
+		silent = (data.silent or false),
 		onRun = function(client, arguments)
 			local target
 
@@ -407,6 +402,7 @@ PLUGIN:CreateCommand({
 	text = "Ban Player",
 	desc = "Kick out player and disallow rejoin to your server.",
 	group = "admin",
+	hasTarget = false,
 	syntax = "[string time] [string reason]",
 	onMenu = function( menu, icon, client, command )
 		local submenu = menu:AddSubMenu( client:Name() )
@@ -419,16 +415,51 @@ PLUGIN:CreateCommand({
 			end
 		end
 	end,
-	onRun = function(client, arguments, target)
+	onRun = function(client, arguments)
+		local target = nut.command.FindPlayer(client, arguments[1], true)
+		local targetname
+		if (!target or !target:IsValid()) then
+			if (string.StartWith(arguments[1], "STEAM_0")) then
+				targetname = arguments[1]
+				table.remove(arguments, 1)
+			else
+				nut.util.Notify(nut.lang.Get("no_ply"), client)
+				return
+			end
+		else
+			if (target == client) then
+				nut.util.Notify("You tried to ban yourself. Provice more specific name.", client)
+				return
+			end
+			targetname = target:Name()
+			table.remove(arguments, 1)
+		end
 		local time = PLUGIN:GetTimeByString(arguments[1])
-		table.remove( arguments, 1 )
+		table.remove(arguments, 1)
+
 		local reason = "no reason"
 		if (#arguments > 0) then
 			reason = table.concat(arguments, " ")
 		end
+		
+		local timetext
+		if time == 0 then
+			timetext = "permanently"
+		else
+			timetext = PLUGIN:SecondsToFormattedString(time)
+		end
 
-		nut.util.Notify(client:Name().." has banned "..target:Name().." for "..reason..".")
-		PLUGIN:BanPlayer(target, time, reason)
+		local bantext = Format("%s has banned for %s (%s)", targetname, timetext, reason)
+		nut.util.AddLog(bantext, LOG_FILTER_MAJOR)
+		nut.util.Notify(bantext, unpack(player.GetAll()))
+
+		local steamid
+		if target and target:IsValid() then
+			steamid = target:SteamID()
+		else
+			steamid = targetname
+		end
+		PLUGIN:BanPlayer(steamid, time, reason)
 	end
 }, "ban")
 
@@ -470,6 +501,7 @@ PLUGIN:CreateCommand({
 	text = "Unban Player",
 	desc = "Allows to rejoin certain kicked out player.",
 	group = "admin",
+	hasTarget = false,
 	syntax = "<string steamID>",
 	onMenu = function( menu, icon, client, command )
 	end,
@@ -485,7 +517,9 @@ PLUGIN:CreateCommand({
 		local result = PLUGIN:UnbanPlayer(steamID)
 
 		if (result) then
-			nut.util.Notify(client:Name().." has unbanned '"..steamID.."' from the server.")
+			local bantext = Format("%s has unbanned %s from the server", client:Name(), steamID)
+			nut.util.AddLog(bantext, LOG_FILTER_MAJOR)
+			nut.util.Notify(bantext, unpack(player.GetAll()))
 		else
 			nut.util.Notify("No bans were found with that steamID.", client)
 		end
