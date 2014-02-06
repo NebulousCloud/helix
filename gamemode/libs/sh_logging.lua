@@ -22,14 +22,14 @@ if SERVER then
 		if (consoleprint != false) then
 			MsgC(timeColor, "[" .. os.date() .. "] ")
 			MsgC(textColor, string .. "\n")
+			for k, client in pairs(player.GetAll()) do
+				if (client:IsAdmin()) then
+					netstream.Start(client, "nut_SendLogLine", string)
+				end
+			end
 		end
 		if (filter != LOG_FILTER_NOSAVE) then
 			table.insert(serverLog, "[" .. os.date() .. "] " .. string)
-		end
-		for k, client in pairs(player.GetAll()) do
-			if (client:IsAdmin()) then
-				netstream.Start(client, "nut_SendLogLine", string)
-			end
 		end
 		if (#serverLog >= autosavePerLines) then
 			nut.util.SaveLog()
