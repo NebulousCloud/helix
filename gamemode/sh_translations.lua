@@ -34,11 +34,6 @@ nut.lang.Add("no", "No", language)
 nut.lang.Add("yes", "Yes", language)
 nut.lang.Add("male", "Male", language)
 nut.lang.Add("female", "Female", language)
-nut.lang.Add("gender_status", "I am a ", language)
-nut.lang.Add("name_status", "My name is ", language)
-nut.lang.Add("set_as", "Set As", language)
-nut.lang.Add("faction_status", "Member of the ", language)
-nut.lang.Add("desc_status", "I am described as ", language)
 nut.lang.Add("desc_char_req", "Your description needs to have at least %s character(s).", language)
 nut.lang.Add("char_validating", "Validating character with server...", language)
 nut.lang.Add("char_info", "Name: %s\nDescription: %s\nFaction: %s", language)
@@ -90,6 +85,7 @@ nut.lang.Add("char_create_tip", "Fill in all of the following fields then press 
 nut.lang.Add("char_create_warn", "Your character information must be appropriate.", language)
 nut.lang.Add("inv_tip", "You can use items in your inventory by left clicking on them.", language)
 nut.lang.Add("business_tip", "Click on the item(s) below to purchase them.", language)
+
 
 language = "french"
 
