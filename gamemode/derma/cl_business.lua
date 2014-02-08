@@ -52,7 +52,7 @@ local PANEL = {}
 								cost = "Price: "..nut.currency.GetName(itemTable.price or 0)
 							end
 
-							icon:SetToolTip("Description: "..itemTable:GetDesc().."\n"..cost)
+							icon:SetToolTip("Name: " .. itemTable.name .. "\nDescription: "..itemTable:GetDesc().."\n"..cost)
 							icon.DoClick = function(panel)
 								if (icon.disabled) then
 									return
@@ -90,7 +90,7 @@ local PANEL = {}
 							cost = "Price: "..nut.currency.GetName(itemTable.price or 0)
 						end
 
-						icon:SetToolTip("Description: "..itemTable:GetDesc().."\n"..cost)
+						icon:SetToolTip("Name: " .. itemTable.name .. "\nDescription: "..itemTable:GetDesc().."\n"..cost)
 						icon.DoClick = function(panel)
 							if (icon.disabled) then
 								return
