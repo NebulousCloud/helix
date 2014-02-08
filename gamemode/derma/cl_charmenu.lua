@@ -52,7 +52,7 @@ local PANEL = {}
 		self.rightPanel:SetWide(ScrW() * 0.25)
 		self.rightPanel:DockMargin(0, ScrH() * 0.3, 32, ScrH() * 0.15)
 		self.rightPanel:SetPaintBackground(false)
-
+		
 		local MODEL_ANGLE = Angle(0, 60, 0)
 
 		self.model = self:Add("DModelPanel")
