@@ -180,6 +180,12 @@ function nut.item.Register(itemTable, isBase)
 			end
 		end
 
+		if (nut.item.buffer[itemTable.uniqueID]) then
+			if (nut.item.buffer[itemTable.uniqueID].override) then 
+				return
+			end
+		end
+
 		itemTable.category = itemTable.category or nut.lang.Get("misc")
 		itemTable.price = itemTable.price or 0
 		itemTable.weight = itemTable.weight or 1
