@@ -176,7 +176,7 @@ function PANEL:SetupInformation()
 	self.name:SetAllowNonAsciiCharacters(true)
 	self.name:SetText( "" )
 	if (self.faction.GetDefaultName) then
-		local name, editable = self.faction:GetDefaultName(self.name)
+		local name, editable = self.faction:GetDefaultName(self.name, "male")
 		if (name) then
 			self.name:SetEditable(editable or false)
 			self.name:SetText(name)
@@ -200,6 +200,13 @@ function PANEL:SetupInformation()
 		local gender = string.lower(value)
 		timer.Simple(0, function()
 			self:UpdateModels(self.faction[gender.."Models"])
+			if (self.faction.GetDefaultName) then
+				local name, editable = self.faction:GetDefaultName(self.name, gender)
+				if (name) then
+					self.name:SetEditable(editable or false)
+					self.name:SetText(name)
+				end
+			end
 		end)
 	end
 	if (self.faction.maleModels and #self.faction.maleModels > 0) then
