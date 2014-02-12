@@ -219,7 +219,11 @@ end
 	enum.
 --]]
 function nut.faction.GetByID(index)
-	return nut.faction.buffer[index]
+	for k, v in ipairs(nut.faction.buffer) do
+		if (v.index == index) then
+			return nut.faction.buffer[k]
+		end
+	end
 end
 
 --[[
