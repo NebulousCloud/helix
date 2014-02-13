@@ -526,11 +526,11 @@ function GM:PlayerBindPress(client, bind, pressed)
 	-- Item Prediction
 	if (bind == "+use") then
 		local trace = client:GetEyeTraceNoCursor()
-		
+
 		if (trace.Entity:IsValid()) then
 			local dist = client:GetPos():Distance(trace.Entity:GetPos())
 
-			if (dist < 90) then
+			if (dist < 64) then
 				if (trace.Entity:GetClass() == "nut_item") then
 					nut.item.OpenEntityMenu(trace.Entity)
 				end
