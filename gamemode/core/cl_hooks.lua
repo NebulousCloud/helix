@@ -518,7 +518,9 @@ function GM:PlayerBindPress(client, bind, pressed)
 			end
 		end
 
-		nut.gui.menu = vgui.Create("nut_Menu")
+		if client.character then
+			nut.gui.menu = vgui.Create("nut_Menu")
+		end
 	end
 
 	if (!client:GetNetVar("gettingUp") and client:IsRagdolled() and string.find(bind, "+jump") and pressed) then
