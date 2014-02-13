@@ -811,10 +811,6 @@ do
 			menu:Open()
 			menu:Center()
 		end
-
-		netstream.Hook("nut_ShowItemMenu", function(entity)
-			nut.item.OpenEntityMenu(entity)
-		end)
 	end
 end
 
