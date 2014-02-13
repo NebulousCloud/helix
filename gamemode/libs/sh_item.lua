@@ -796,7 +796,9 @@ do
 							netstream.Start("nut_EntityAction", {entity, k})
 
 							if (v.run) then
-								itemTable:Call(k, LocalPlayer(), entity:GetData(), entity)
+								if (entity:IsValid()) then
+									itemTable:Call(k, LocalPlayer(), entity:GetData(), entity)
+								end
 							end
 						end)
 						option:SetImage(material)
