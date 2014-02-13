@@ -504,45 +504,27 @@ function GM:PlayerCanSeeBusiness()
 end
 
 function GM:PlayerBindPress(client, bind, pressed)
+
+	if (bind == "gm_showhelp") then
+		if (IsValid(nut.gui.charMenu)) then
+			return
+		end
+
+		if (IsValid(nut.gui.menu)) then
+			if nut.gui.menu:IsVisible() then
+				return
+			else
+				nut.gui.menu:Remove()
+			end
+		end
+
+		nut.gui.menu = vgui.Create("nut_Menu")
+	end
+
 	if (!client:GetNetVar("gettingUp") and client:IsRagdolled() and string.find(bind, "+jump") and pressed) then
 		RunConsoleCommand("nut", "chargetup")
 	end
-end
 
--- Clientside menu prediction. NO SHOWHELP!
-local menucall = function()
-	if (IsValid(nut.gui.charMenu)) then
-		return
-	end
-
-	if (IsValid(nut.gui.menu)) then
-		if nut.gui.menu:IsVisible() then
-			return
-		else
-			nut.gui.menu:Remove()
-		end
-	end
-
-	nut.gui.menu = vgui.Create("nut_Menu")
-end
-
-local keyfuncs = {}
-keyfuncs[KEY_F1] = menucall
-
-local keycaps = {}
-for k, _ in pairs(keyfuncs) do
-	keycaps[k] = false
-end
-
-function GM:Think()
-	for k, v in pairs(keyfuncs) do
-		if (input.IsKeyDown(k) and keycaps[k] == false) then
-			v()
-			keycaps[k] = true
-		elseif (!input.IsKeyDown(k) and keycaps[k] == true) then
-			keycaps[k] = false
-		end
-	end
 end
 
 netstream.Hook("nut_CurTime", function(data)
