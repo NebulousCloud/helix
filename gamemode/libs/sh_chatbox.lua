@@ -74,7 +74,7 @@ do
 	nut.chat.Register("looc", {
 		canHear = nut.config.chatRange,
 		onChat = function(speaker, text)
-			chat.AddText(Color(r, g, b), "[LOOC] "..speaker:Name()..": "..text)
+			chat.AddText(Color(250, 40, 40), "[LOOC] ", Color(r, g, b), speaker:Name()..": "..text)
 		end,
 		prefix = {".//", "[[", "/looc"},
 		canSay = function(speaker)
