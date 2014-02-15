@@ -1,7 +1,7 @@
 PLUGIN.name = "Recognition"
 PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Allows players to recognize others."
-
+ 
 if (CLIENT) then
 	function PLUGIN:IsPlayerRecognized(client)
 		local localPlayer = LocalPlayer()
@@ -25,8 +25,8 @@ if (CLIENT) then
 				if (mode) then
 					local description = client.character:GetVar("description", "")
 
-					if (#description > DESC_LENGTH) then
-						description = string.sub(description, 1, DESC_LENGTH - 3).."..."
+					if (string.utf8len(description) > DESC_LENGTH) then
+						description = string.utf8sub(description, 1, DESC_LENGTH - 3).."..."
 					end
 
 					fakeName = "["..description.."]"
