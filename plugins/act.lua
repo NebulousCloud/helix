@@ -71,7 +71,6 @@ for _, str in pairs( notsupported ) do
 end
 
 if (SERVER) then
-
 	function PLUGIN:CanFallOver( client )
 		if (client:GetOverrideSeq()) then
 			nut.util.Notify("You can't fallover while you're acting.", client)
@@ -99,7 +98,8 @@ if (SERVER) then
 
 			return
 		end
-		if (nut.schema.Call( "CanStartSeq", client ) == false) then
+
+		if (nut.schema.Call("CanStartSeq", client) == false) then
 			return
 		end
 
@@ -142,6 +142,8 @@ if (SERVER) then
 				if (time and time > 0) then
 					client:SetNutVar("nextAct", CurTime() + time + 1)
 				end
+
+				client:SetNutVar("inAct", true)
 			else
 				nut.util.Notify("Your model can not perform this act.", client)
 			end
@@ -154,6 +156,7 @@ if (SERVER) then
 		client:SetNutVar("nextAct", CurTime() + 1)
 		client:ResetOverrideSeq()
 		client:Freeze(false)
+		client:SetNutVar("inAct", false)
 	end
 	
 	function PLUGIN:PlayerDeath(client)
@@ -163,10 +166,16 @@ if (SERVER) then
 	function PLUGIN:PlayerSpawn(client)
 		self:PlayerExitSeq(client)
 	end
-else
 
+	concommand.Add("nut_leaveact", function(client, command, arguments)
+		if (IsValid(client) and client:GetNutVar("inAct") and CurTime() >= client:GetNutVar("nextAct", 0)) then
+			PLUGIN:PlayerExitSeq(client)
+		end
+	end)
+else
 	PLUGIN.AngMod = Angle( 0, 0, 0 )
 	PLUGIN.MouseSensitive = 20
+
 	function PLUGIN:InputMouseApply( cmd, x, y, ang )
 		if LocalPlayer():GetOverrideSeq() then
 			self.AngMod = self.AngMod - Angle( -y/self.MouseSensitive, x/self.MouseSensitive, 0 )
@@ -177,6 +186,22 @@ else
 		end
 	end
 	
+	function PLUGIN:PlayerBindPress(client, bind, pressed)
+		if (client:GetOverrideSeq() and bind == "+jump") then
+			if (client:GetNutVar("leavingAct")) then
+				client:SetNutVar("leavingAct", false)
+				timer.Remove("nut_LeavingAct")
+			else
+				client:SetNutVar("leavingAct", true)
+				timer.Create("nut_LeavingAct", 1, 1, function()
+					RunConsoleCommand("nut_leaveact")
+				end)
+			end
+
+			return true
+		end
+	end
+
 	function PLUGIN:CalcView(client, origin, angles, fov)
 		if (client:GetViewEntity() == client and client:GetOverrideSeq() and client:GetNetVar("seqCam")) then
 			local view = {}
