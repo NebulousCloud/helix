@@ -504,7 +504,6 @@ function GM:PlayerCanSeeBusiness()
 end
 
 function GM:PlayerBindPress(client, bind, pressed)
-
 	-- Menu Prediction
 	if (bind == "gm_showhelp") then
 		if (IsValid(nut.gui.charMenu)) then
