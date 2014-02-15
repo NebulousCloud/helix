@@ -504,9 +504,44 @@ function GM:PlayerCanSeeBusiness()
 end
 
 function GM:PlayerBindPress(client, bind, pressed)
+
+	-- Menu Prediction
+	if (bind == "gm_showhelp") then
+		if (IsValid(nut.gui.charMenu)) then
+			return
+		end
+
+		if (IsValid(nut.gui.menu)) then
+			if nut.gui.menu:IsVisible() then
+				return
+			else
+				nut.gui.menu:Remove()
+			end
+		end
+
+		if (client.character) then
+			nut.gui.menu = vgui.Create("nut_Menu")
+		end
+	end
+	-- Item Prediction
+	if (bind == "+use") then
+		local trace = client:GetEyeTraceNoCursor()
+
+		if (trace.Entity:IsValid()) then
+			local dist = client:GetPos():Distance(trace.Entity:GetPos())
+
+			if (dist < 64) then
+				if (trace.Entity:GetClass() == "nut_item") then
+					nut.item.OpenEntityMenu(trace.Entity)
+				end
+			end
+		end
+	end
+
 	if (!client:GetNetVar("gettingUp") and client:IsRagdolled() and string.find(bind, "+jump") and pressed) then
 		RunConsoleCommand("nut", "chargetup")
 	end
+
 end
 
 netstream.Hook("nut_CurTime", function(data)

@@ -29,7 +29,6 @@ if (SERVER) then
 	end
 
 	function ENT:Use(activator)
-		netstream.Start(activator, "nut_ShowItemMenu", self)
 	end
 end
 
