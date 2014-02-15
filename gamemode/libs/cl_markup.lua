@@ -249,7 +249,7 @@ function MarkupObject:Draw(xOffset, yOffset, halign, valign, alphaoverride)
 			x = x + blk.offset.x
 			
 			if (self.DrawText) then
-				self:DrawText(blk.text, blk.font, x, y, blk.colour, halign, valign, alpha, blk)
+				self:DrawText(blk.text, blk.font, x, y, blk.colour, halign, valign, alphaoverride, blk)
 			else
 				if (valign == TEXT_ALIGN_CENTER) then		y = y - (self.totalHeight / 2)
 				elseif (valign == TEXT_ALIGN_BOTTOM) then	y = y - (self.totalHeight)
