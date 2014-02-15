@@ -39,7 +39,7 @@ function PLUGIN:CharacterSave(client)
 	client.character:SetData("ammo", ammo)
 end
 
-function PLUGIN:PlayerFirstLoaded(client)
+function PLUGIN:PostPlayerSpawn(client)
 	client:RemoveAllAmmo()
 
 	local ammo = client.character:GetData("ammo")

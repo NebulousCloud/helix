@@ -156,7 +156,11 @@ function nut.plugin.Load(directory)
 	local files = file.Find(directory.."/plugins/*.lua", "LUA")
 
 	for k, v in pairs(files) do
-		local cleanName = string.sub(v, 4, -5)
+		local cleanName = string.sub(v, 1, -5)
+
+		if (cleanName:sub(1, 3) == "sh_") then
+			cleanName = cleanName:sub(4)
+		end
 
 		PLUGIN = nut.plugin.Get(cleanName) or {}
 			function PLUGIN:WriteTable(data, ignoreMap, global)
@@ -167,7 +171,7 @@ function nut.plugin.Load(directory)
 				return nut.util.ReadTable(cleanName, ignoreMap, forceRefresh)
 			end
 
-			nut.util.Include(directory.."/plugins/"..v)
+			nut.util.Include(directory.."/plugins/"..v, "shared")
 			nut.plugin.buffer[cleanName] = PLUGIN
 		PLUGIN = nil
 	end

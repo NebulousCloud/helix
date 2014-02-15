@@ -17,7 +17,7 @@ if (SERVER) then
 			pos = trace.HitPos + trace.HitNormal,
 			angle = trace.HitNormal:Angle(),
 			text = text,
-			scale = math.max(math.abs(scale or 0.25), 0.25)
+			scale = math.max(math.abs(scale or 0.25), 0.005)
 		}
 		data.angle:RotateAroundAxis(data.angle:Up(), 90)
 		data.angle:RotateAroundAxis(data.angle:Forward(), 90)
@@ -84,13 +84,16 @@ else
 		local angle = data[2]
 		local text = data[3]
 		local scale = data[4]
-
-		scale = math.max(scale, 0.25)
-
+		print(scale)
 		local markupText = "<font=nut_ScaledFont>"..string.gsub(text, "\\n", "\n")
 		markupText = string.gsub(markupText, "\\t", "\t")
 		markupText = markupText.."</font>"
 		local markupObj = nut.markup.Parse(markupText)
+			function markupObj:DrawText(text, font, x, y, color)
+				local color2 = Color(0, 0, 0, color.a)
+
+				draw.SimpleTextOutlined(text, font, x, y, color, 0, 1, 2, color2)
+			end
 		PLUGIN.text[#PLUGIN.text + 1] = {pos = position, angle = angle, text = text, scale = scale, markup = markupObj}
 	end)
 
