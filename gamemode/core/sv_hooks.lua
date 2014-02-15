@@ -1,9 +1,11 @@
 function GM:ShowHelp(client)
+	/*
 	if (!client.character) then
 		return
 	end
 	
 	netstream.Start(client, "nut_ShowMenu")
+	*/
 end
 
 function GM:GetDefaultInv(inventory, client, data)
