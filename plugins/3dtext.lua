@@ -84,13 +84,14 @@ else
 		local angle = data[2]
 		local text = data[3]
 		local scale = data[4]
-		print(scale)
+
 		local markupText = "<font=nut_ScaledFont>"..string.gsub(text, "\\n", "\n")
 		markupText = string.gsub(markupText, "\\t", "\t")
 		markupText = markupText.."</font>"
 		local markupObj = nut.markup.Parse(markupText)
-			function markupObj:DrawText(text, font, x, y, color)
-				local color2 = Color(0, 0, 0, color.a)
+			function markupObj:DrawText(text, font, x, y, color, hAlign, vAlign, alpha)
+				color.a = alpha
+				local color2 = Color(0, 0, 0, alpha)
 
 				draw.SimpleTextOutlined(text, font, x, y, color, 0, 1, 2, color2)
 			end
