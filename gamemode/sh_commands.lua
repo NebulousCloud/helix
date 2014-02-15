@@ -1,6 +1,10 @@
 --[[
 	Purpose: Creates default chat commands here.
 --]]
+--[[
+	Purpose: IC Essensial Chat Commands.
+	Any Chat Commands that related with character goes here.
+--]]
 
 nut.command.Register({
 	onRun = function(client, arguments)
@@ -20,6 +24,17 @@ nut.command.Register({
 		end
 	end
 }, "toggleraise")
+
+nut.command.Register({
+	onRun = function(client, arguments)
+		math.randomseed(CurTime())
+
+		local roll = math.random(1, 100)
+		roll = nut.schema.Call("GetRollAmount", client, roll) or roll
+
+		nut.chat.Send(client, "roll", client:Name().." has rolled "..roll..".")
+	end
+}, "roll")
 
 nut.command.Register({
 	allowDead = true,
@@ -69,133 +84,6 @@ nut.command.Register({
 		end
 	end
 }, "setvoicemail")
-
-nut.command.Register({
-	adminOnly = true,
-	allowDead = true,
-	syntax = "<string name> <number amount>",
-	onRun = function(client, arguments)
-		local target = nut.command.FindPlayer(client, arguments[1])
-
-		if (target) then
-			local amount = tonumber(arguments[2])
-
-			if (!amount) then
-				nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
-
-				return
-			end
-
-			target:GiveMoney(amount)
-			nut.util.Notify(client:Name().." has given "..nut.currency.GetName(amount).." to "..target:Name()..".")
-		end
-	end
-}, "chargivemoney")
-
-nut.command.Register({
-	adminOnly = true,
-	allowDead = true,
-	syntax = "<string name> <number amount>",
-	onRun = function(client, arguments)
-		local target = nut.command.FindPlayer(client, arguments[1])
-
-		if (target) then
-			local amount = tonumber(arguments[2])
-
-			if (!amount) then
-				nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
-
-				return
-			end
-
-			target:GiveMoney(-amount)
-			nut.util.Notify(client:Name().." has taken "..nut.currency.GetName(amount).." from "..target:Name()..".")
-		end
-	end
-}, "chartakemoney")
-
-nut.command.Register({
-	adminOnly = true,
-	allowDead = true,
-	syntax = "<string name> <number amount>",
-	onRun = function(client, arguments)
-		local target = nut.command.FindPlayer(client, arguments[1])
-
-		if (target) then
-			local amount = tonumber(arguments[2])
-
-			if (!amount) then
-				nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
-
-				return
-			end
-
-			target:SetMoney(amount)
-			nut.util.Notify(client:Name().." has set "..target:Name().."'s money to "..amount..".")
-		end
-	end
-}, "charsetmoney")
-
-nut.command.Register({
-	allowDead = true,
-	onRun = function(client, arguments)
-		local text = table.concat(arguments, " ")
-		local function changeDesc()
-			if (!text) then
-				nut.util.Notify("You provided an invalid description.", client)
-				
-				return
-			end
-
-			if (#text < nut.config.descMinChars) then
-				nut.util.Notify("Your description needs to be at least "..nut.config.descMinChars.." character(s).", client)
-
-				return
-			end
-
-			local description = client.character:GetVar("description", "")
-			
-			if (string.lower(description) == string.lower(text)) then
-				nut.util.Notify("You need to provide a different description.", client)
-				
-				return
-			end
-			
-			client.character:SetVar("description", text)
-			nut.util.Notify("You have changed your character's description.", client)
-		end
-
-		if (!string.find(text, "%S")) then
-			client:StringRequest("Change Description", "Entire your desired description.", function(text2)
-				text = text2
-				changeDesc()
-			end, nil, client.character:GetVar("description", ""))
-		else
-			changeDesc()
-		end
-	end
-}, "chardesc")
-
-nut.command.Register({
-	adminOnly = true,
-	allowDead = true,
-	syntax = "<string name> <string flag>",
-	onRun = function(client, arguments)
-		local target = nut.command.FindPlayer(client, arguments[1])
-
-		if (IsValid(target)) then
-			if (!arguments[2]) then
-				nut.util.Notify(nut.lang.Get("missing_arg", 2), client)
-
-				return
-			end
-
-			target:GiveFlag(arguments[2])
-
-			nut.util.Notify(nut.lang.Get("flags_give", client:Name(), arguments[2], target:Name()))
-		end
-	end
-}, "flaggive")
 
 nut.command.Register({
 	syntax = "<number amount>",
@@ -275,6 +163,38 @@ nut.command.Register({
 		end
 	end
 }, "dropmoney")
+
+
+
+--[[
+
+	Purpose: Actual Player related Chat Commands.
+	Any Chat Commands that related with character goes here.
+
+--]]
+
+
+
+nut.command.Register({
+	adminOnly = true,
+	allowDead = true,
+	syntax = "<string name> <string flag>",
+	onRun = function(client, arguments)
+		local target = nut.command.FindPlayer(client, arguments[1])
+
+		if (IsValid(target)) then
+			if (!arguments[2]) then
+				nut.util.Notify(nut.lang.Get("missing_arg", 2), client)
+
+				return
+			end
+
+			target:GiveFlag(arguments[2])
+
+			nut.util.Notify(nut.lang.Get("flags_give", client:Name(), arguments[2], target:Name()))
+		end
+	end
+}, "flaggive")
 
 nut.command.Register({
 	allowDead = true,
@@ -389,6 +309,125 @@ nut.command.Register({
 		end
 	end
 }, "plyunwhitelist")
+
+
+
+--[[
+
+
+	Purpose: Character Modification/Management related Chat Commands.
+	Any Chat Commands that related with character goes here.
+
+
+--]]
+
+
+
+nut.command.Register({
+	adminOnly = true,
+	allowDead = true,
+	syntax = "<string name> <number amount>",
+	onRun = function(client, arguments)
+		local target = nut.command.FindPlayer(client, arguments[1])
+
+		if (target) then
+			local amount = tonumber(arguments[2])
+
+			if (!amount) then
+				nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
+
+				return
+			end
+
+			target:GiveMoney(amount)
+			nut.util.Notify(client:Name().." has given "..nut.currency.GetName(amount).." to "..target:Name()..".")
+		end
+	end
+}, "chargivemoney")
+
+nut.command.Register({
+	adminOnly = true,
+	allowDead = true,
+	syntax = "<string name> <number amount>",
+	onRun = function(client, arguments)
+		local target = nut.command.FindPlayer(client, arguments[1])
+
+		if (target) then
+			local amount = tonumber(arguments[2])
+
+			if (!amount) then
+				nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
+
+				return
+			end
+
+			target:GiveMoney(-amount)
+			nut.util.Notify(client:Name().." has taken "..nut.currency.GetName(amount).." from "..target:Name()..".")
+		end
+	end
+}, "chartakemoney")
+
+nut.command.Register({
+	adminOnly = true,
+	allowDead = true,
+	syntax = "<string name> <number amount>",
+	onRun = function(client, arguments)
+		local target = nut.command.FindPlayer(client, arguments[1])
+
+		if (target) then
+			local amount = tonumber(arguments[2])
+
+			if (!amount) then
+				nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
+
+				return
+			end
+
+			target:SetMoney(amount)
+			nut.util.Notify(client:Name().." has set "..target:Name().."'s money to "..amount..".")
+		end
+	end
+}, "charsetmoney")
+
+nut.command.Register({
+	allowDead = true,
+	onRun = function(client, arguments)
+		local text = table.concat(arguments, " ")
+		local function changeDesc()
+			if (!text) then
+				nut.util.Notify("You provided an invalid description.", client)
+				
+				return
+			end
+
+			if (#text < nut.config.descMinChars) then
+				nut.util.Notify("Your description needs to be at least "..nut.config.descMinChars.." character(s).", client)
+
+				return
+			end
+
+			local description = client.character:GetVar("description", "")
+			
+			if (string.lower(description) == string.lower(text)) then
+				nut.util.Notify("You need to provide a different description.", client)
+				
+				return
+			end
+			
+			client.character:SetVar("description", text)
+			nut.util.Notify("You have changed your character's description.", client)
+		end
+
+		if (!string.find(text, "%S")) then
+			client:StringRequest("Change Description", "Entire your desired description.", function(text2)
+				text = text2
+				changeDesc()
+			end, nil, client.character:GetVar("description", ""))
+		else
+			changeDesc()
+		end
+	end
+}, "chardesc")
 
 nut.command.Register({
 	adminOnly = true,
@@ -558,17 +597,6 @@ nut.command.Register({
 		end
 	end
 }, "chargiveitem")
-
-nut.command.Register({
-	onRun = function(client, arguments)
-		math.randomseed(CurTime())
-
-		local roll = math.random(1, 100)
-		roll = nut.schema.Call("GetRollAmount", client, roll) or roll
-
-		nut.chat.Send(client, "roll", client:Name().." has rolled "..roll..".")
-	end
-}, "roll")
 
 nut.command.Register({
 	adminOnly = true,
