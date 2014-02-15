@@ -3,10 +3,6 @@
 	loading, and player's inventory functions and handles item interaction.
 --]]
 
-if (!netstream) then
-	include("sh_netstream.lua")
-end
-
 nut.item = nut.item or {}
 nut.item.buffer = nut.item.buffer or {}
 nut.item.list = nut.item.list or {}

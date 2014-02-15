@@ -3,10 +3,6 @@
 	players able to be whitelisted to certain factions.
 --]]
 
-if (!netstream) then
-	include("sh_netstream.lua")
-end
-
 nut.class = nut.class or {}
 nut.class.buffer = {}
 
