@@ -100,10 +100,8 @@ surface.CreateFont("nut_ChatFontAction", {
 
 surface.CreateFont("nut_ScaledFont", {
 	font = mainFont,
-	size = 50,
-	weight = 1000,
-	outline = true,
-	antialias = false
+	size = 150,
+	weight = 1000
 })
 
 timer.Destroy("HintSystem_OpeningMenu")
