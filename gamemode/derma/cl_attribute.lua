@@ -23,9 +23,8 @@ local PANEL = {}
 
 		self.bars = {}
 
-		for k, v in ipairs( nut.attribs.GetAll() ) do
-			local attribute = nut.attribs.Get( k )
-			local level = LocalPlayer():GetAttrib( k, 0)
+		for k, attribute in ipairs(nut.attribs.GetAll()) do
+			local level = LocalPlayer():GetAttrib(k, 0)
 			local bar = self.list:Add("nut_AttribBarVisOnly")
 			bar:Dock(TOP)
 			bar:DockMargin( 8, 10, 8, 0 )
