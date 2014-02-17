@@ -165,22 +165,70 @@ if (SERVER) then
 		return target
 	end
 else
-	hook.Add("BuildHelpOptions", "nut_CommandHelp", function(data)
-		data:AddHelp("Commands", function()
+	hook.Add("BuildHelpOptions", "nut_CommandHelp", function(data, tree)
+		local categories = {}
+		local contents = {}
+
+		data:AddHelp("Commands", function(tree)
 			local html = ""
 
 			for k, v in SortedPairs(nut.command.buffer) do
-				local syntax = v.syntax or "[none]"
-				syntax = string.gsub(syntax, "<", "&lt;")
-				syntax = string.gsub(syntax, ">", "&gt;")
-				syntax = string.gsub(syntax, "%b[]", function(tag)
-					return "<font color=\"#969696\">"..tag.."</font>"
-				end)
+				if (!v.category) then
+					if (v.adminOnly and !LocalPlayer():IsAdmin()) then
+						continue
+					end
 
-				html = html.."<p><b>/"..k.."</b><br /><hi><i>Syntax:</i> "..syntax.."</p>"
+					if (v.superAdminOnly and !LocalPlayer():IsSuperAdmin()) then
+						continue
+					end
+
+					local syntax = v.syntax or "[none]"
+					syntax = string.gsub(syntax, "<", "&lt;")
+					syntax = string.gsub(syntax, ">", "&gt;")
+					syntax = string.gsub(syntax, "%b[]", function(tag)
+						return "<font color=\"#969696\">"..tag.."</font>"
+					end)
+
+					html = html.."<p><b>/"..k.."</b><br /><hi><i>Syntax:</i> "..syntax.."</p>"
+				end
 			end
 
 			return html
+		end, "icon16/comments.png")
+
+		data:AddCallback("Commands", function(node, body)
+			for k, v in SortedPairs(nut.command.buffer) do
+				if (v.category) then
+					if (v.adminOnly and !LocalPlayer():IsAdmin()) then
+						continue
+					end
+
+					if (v.superAdminOnly and !LocalPlayer():IsSuperAdmin()) then
+						continue
+					end
+
+					if (!categories[v.category]) then
+						categories[v.category] = node:AddNode(v.category)
+					end
+
+					local html = ""
+						local syntax = v.syntax or "[none]"
+						syntax = string.gsub(syntax, "<", "&lt;")
+						syntax = string.gsub(syntax, ">", "&gt;")
+						syntax = string.gsub(syntax, "%b[]", function(tag)
+							return "<font color=\"#969696\">"..tag.."</font>"
+						end)
+
+						html = html.."<p><b>/"..k.."</b><br /><hi><i>Syntax:</i> "..syntax.."</p>"
+					contents[v.category] = (contents[v.category] or "")..html
+				end
+			end
+
+			for k, v in pairs(contents) do
+				categories[k].DoClick = function()
+					body:SetContents(v)
+				end
+			end
 		end)
 	end)
 end
@@ -197,5 +245,9 @@ function nut.command.Register(commandTable, command)
 		error("No command table provided.")
 	end
 	
+	if (PLUGIN and PLUGIN.name and !commandTable.category) then
+		commandTable.category = PLUGIN.name
+	end
+
 	nut.command.buffer[string.lower(command)] = commandTable
 end

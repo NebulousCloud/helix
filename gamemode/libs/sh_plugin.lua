@@ -201,6 +201,6 @@ if (CLIENT) then
 			end
 
 			return html
-		end)
+		end, "icon16/plugin.png")
 	end)
 end

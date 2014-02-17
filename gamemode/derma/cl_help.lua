@@ -8,35 +8,58 @@ local PANEL = {}
 		local data = {}
 		local help = {}
 
-		function data:AddHelp(key, callback)
-			help[key] = callback
+		self.tree = self:Add("DTree")
+		self.tree:Dock(LEFT)
+		self.tree:SetWide(ScrW() * 0.155)
+
+		self.body = self:Add("DHTML")
+		self.body:Dock(FILL)
+		self.body:DockMargin(4, 1, 1, 1)
+
+		function data:AddHelp(key, callback, icon)
+			help[key] = {callback, icon or "icon16/folder.png"}
 		end
 
-		hook.Run("BuildHelpOptions", data)
-
-		local header = [[<body bgcolor="F7F7F7" style="font-family: Trebuchet MS">]]
-
-		self.choice = self:Add("DComboBox")
-		self.choice:DockMargin(1, 1, 1, 1)
-		self.choice:Dock(TOP)
-		self.choice.OnSelect = function(panel, index, value, data)
-			if (help[value]) then
-				local content = help[value]()
-
-				self.html:SetHTML(header.."<h2>"..value.."</h2>"..content)
-			end
+		function data:AddCallback(key, callback)
+			help[key].callback = callback
 		end
 
-		self.html = self:Add("DHTML")
-		self.html:Dock(FILL)
-		self.html:DockMargin(2, 2, 2, 2)
+		hook.Run("BuildHelpOptions", data, self.tree)
 
-		local first = true
+		local prefix = [[
+			<head>
+				<style>
+					body {
+						background-color: #fbfcfc;
+						color: #2c3e50;
+						font-family: Verdana, Geneva, sans-serif;
+					}
+				</style>
+			</head>
+		]]
+
+		function self.body:SetContents(html)
+			self:SetHTML(prefix..html)
+		end
 
 		for k, v in SortedPairs(help) do
-			self.choice:AddChoice(k, nil, first)
+			local node = self.tree:AddNode(k)
+			node.Icon:SetImage(v[2])
+			node.DoClick = function()
+				local content = v[1](node)
 
-			first = false
+				if (content) then
+					if (content:sub(1, 4) == "http") then
+						self.body:OpenURL(content)
+					else
+						self.body:SetContents(content)
+					end
+				end
+			end
+
+			if (v.callback) then
+				v.callback(node, self.body)
+			end
 		end
 	end
 
