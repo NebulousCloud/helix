@@ -380,6 +380,16 @@ netstream.Hook("nut_CharMenu", function(forced)
 	if (type(forced) == "table") then
 		if (forced[2] == true) then
 			LocalPlayer().character = nil
+
+			if (forced[3]) then
+				PrintTable(LocalPlayer().characters)
+				
+				for k, v in pairs(LocalPlayer().characters) do
+					if (v.id == forced[3]) then
+						LocalPlayer().characters[k] = nil
+					end
+				end
+			end
 		end
 
 		forced = forced[1]

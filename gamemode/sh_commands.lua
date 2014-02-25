@@ -1,9 +1,14 @@
 --[[
+
 	Purpose: Creates default chat commands here.
+
 --]]
+
 --[[
-	Purpose: IC Essensial Chat Commands.
+
+	Category: IC Essensial Chat Commands.
 	Any Chat Commands that related with character goes here.
+
 --]]
 
 nut.command.Register({
@@ -168,7 +173,7 @@ nut.command.Register({
 
 --[[
 
-	Purpose: Actual Player related Chat Commands.
+	Category: Actual Player related Chat Commands.
 	Any Chat Commands that related with character goes here.
 
 --]]
@@ -314,14 +319,60 @@ nut.command.Register({
 
 --[[
 
-
-	Purpose: Character Modification/Management related Chat Commands.
+	Category: Character Modification/Management related Chat Commands.
 	Any Chat Commands that related with character goes here.
-
 
 --]]
 
+local function sameSchema() 
+	-- Brought from the sh_character.
 
+	return " AND rpschema = '"..SCHEMA.uniqueID.."'"
+end
+
+nut.command.Register({
+	adminOnly = true,
+	allowDead = true,
+	syntax = "<string name>",
+	onRun = function(client, arguments)
+		local target = nut.command.FindPlayer(client, arguments[1])
+
+		if (target) then
+
+			local index = target.character.index or nil	
+			local charname = target.character:GetVar("charname")
+
+			if (index and target.characters and table.HasValue(target.characters, index)) then
+				for k, v in pairs(target.characters) do
+					if (v == index) then
+						target.characters[k] = nil
+					end
+				end
+
+				nut.db.Query("DELETE FROM "..nut.config.dbTable.." WHERE steamid = "..target:SteamID64().." AND id = "..index..sameSchema(), function(data)
+					if (IsValid(target) and target.character and target.character.index == index) then
+						if (target.nut_CachedChars) then
+							target.nut_CachedChars[target.character.index] = nil
+						end
+						
+						target.character = nil
+						target:KillSilent()
+
+						timer.Simple(0, function()
+							netstream.Start(target, "nut_CharMenu", {true, true, index})
+						end)
+					end
+
+					nut.util.AddLog( client:Name().." Deleted character #"..index..", "..charname.."("..target:Name()..").", LOG_FILTER_MAJOR)
+				end)
+			else
+				ErrorNoHalt("Attempt to delete invalid character! ("..index..")")
+			end
+
+			nut.util.Notify(client:Name().." has removed "..charname.." from the world.")
+		end
+	end
+}, "chardelete")
 
 nut.command.Register({
 	adminOnly = true,
