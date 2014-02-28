@@ -227,7 +227,7 @@ nut.command.Register({
 
 				return
 			end
-
+			nut.util.Notify(client:Name().." has given you "..nut.currency.GetName(amount)..".", entity)
 			entity:GiveMoney(amount)
 			client:TakeMoney(amount)
 		else
