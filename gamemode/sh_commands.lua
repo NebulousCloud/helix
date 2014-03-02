@@ -160,7 +160,7 @@ nut.command.Register({
 		local position = trace.HitPos
 
 		if (position) then
-			local entity = nut.currency.Spawn(amount, position + Vector(0, 0, 16))
+			local entity = nut.currency.Spawn(amount, position + Vector(0, 0, 16), nil, client)
 
 			if (IsValid(entity)) then
 				client:TakeMoney(amount)

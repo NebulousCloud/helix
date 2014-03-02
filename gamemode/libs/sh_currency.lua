@@ -112,7 +112,7 @@ function nut.currency.GetName(amount, upper)
 end
 
 if (SERVER) then
-	function nut.currency.Spawn(amount, position, angles)
+	function nut.currency.Spawn(amount, position, angles, client)
 		if (amount <= 0) then
 			return
 		end
@@ -123,6 +123,14 @@ if (SERVER) then
 		entity:Spawn()
 		entity:Activate()
 		entity:SetMoney(amount)
+
+		if (client and client:IsValid()) then
+			entity.owner = client
+
+			if client.character then
+				entity.charindex = client.character.index
+			end
+		end
 
 		return entity
 	end
