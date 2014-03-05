@@ -1,24 +1,24 @@
 local PANEL = {}
-	local width = 64*5+10
-	local margin = 75
+local width = 64*5+10
+local margin = 75
 
-	function PANEL:Init()
-		--self:ParentToHUD()
-		self:SetSize(width, 10)
-		self:SetDrawBackground(false)
+function PANEL:Init()
+	--self:ParentToHUD()
+	self:SetSize(width, 10)
+	self:SetDrawBackground(false)
 
-		nut.schema.Call("CreateQuickMenu", self)
-	end
+	nut.schema.Call("CreateQuickMenu", self)
+end
 
-	function PANEL:PerformLayout()
-		--self:SetPos(margin, ScrH() - margin - self:GetTall())
-		local tall = ScrH() - margin - self:GetTall()
-		self:SetPos(margin, tall)
-		local x, y = self:ChildrenSize()
-		self:SetTall(y)
-	end
+function PANEL:PerformLayout()
+	--self:SetPos(margin, ScrH() - margin - self:GetTall())
+	local tall = ScrH() - margin - self:GetTall()
+	self:SetPos(margin, tall)
+	local x, y = self:ChildrenSize()
+	self:SetTall(y)
+end
 
-	local gradient = surface.GetTextureID("vgui/gradient-r")
+local gradient = surface.GetTextureID("vgui/gradient-r")
 
 vgui.Register("nut_QuickMenu", PANEL, "DPanel")	
 

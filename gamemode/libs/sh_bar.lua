@@ -5,10 +5,6 @@
 	other stuff, such as the stamina plugin.
 --]]
 
-if (!netstream) then
-	include("sh_netstream.lua")
-end
-
 nut.bar = nut.bar or {}
 
 if (CLIENT) then

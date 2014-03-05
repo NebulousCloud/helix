@@ -238,9 +238,7 @@ function PANEL:SetupInformation()
 	
 	self.bars = {}
 
-	for k, v in ipairs(nut.attribs.GetAll()) do
-		local attribute = nut.attribs.Get(k)
-
+	for k, attribute in ipairs(nut.attribs.GetAll()) do
 		local bar = self.charInfo:Add("nut_AttribBar")
 		bar:Dock(TOP)
 		bar:DockMargin( 8, 10, 8, 0 )

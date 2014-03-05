@@ -163,8 +163,9 @@ function GM:HUDPaint()
 	end
 
 	local entity = client:GetEyeTraceNoCursor().Entity
-
 	nut.schema.Call("HUDPaintTargetID", entity)
+
+	self.BaseClass:HUDPaint()
 
 	if (nut.schema.Call("ShouldDrawCrosshair") != false and nut.config.crosshair) then
 		local x, y = scrW * 0.5 - 2, scrH * 0.5 - 2
@@ -504,7 +505,6 @@ function GM:PlayerCanSeeBusiness()
 end
 
 function GM:PlayerBindPress(client, bind, pressed)
-
 	-- Menu Prediction
 	if (bind == "gm_showhelp") then
 		if (IsValid(nut.gui.charMenu)) then

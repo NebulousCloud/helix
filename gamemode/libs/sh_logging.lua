@@ -15,6 +15,7 @@ if SERVER then
 	LOG_FILTER_CHAT = 4
 	LOG_FILTER_NOSAVE = 5
 	LOG_FILTER_CONCOMMAND = 6
+
 	--[[
 		Purpose: Add a line to the log.
 	--]]
@@ -22,15 +23,18 @@ if SERVER then
 		if (consoleprint != false) then
 			MsgC(timeColor, "[" .. os.date() .. "] ")
 			MsgC(textColor, string .. "\n")
+			
 			for k, client in pairs(player.GetAll()) do
-				if (client:IsAdmin()) then
+				if (client:IsAdmin() and client:GetInfoNum("nut_showlogs", 1) > 0) then
 					netstream.Start(client, "nut_SendLogLine", string)
 				end
 			end
 		end
+
 		if (filter != LOG_FILTER_NOSAVE) then
 			table.insert(serverLog, "[" .. os.date() .. "] " .. string)
 		end
+
 		if (#serverLog >= autosavePerLines) then
 			nut.util.SaveLog()
 		end
@@ -41,12 +45,14 @@ if SERVER then
 	function nut.util.GetLog()
 		return serverLog
 	end
+
 	--[[
 		Purpose: Get a log.
 	--]]
 	function nut.util.SendLog(client)
 		-- body
 	end
+
 	--[[
 		Purpose: Save the log to the server.
 	--]]
@@ -87,6 +93,8 @@ if SERVER then
 		nut.util.SaveLog()
 	end)
 else
+	NUT_CVAR_SHOWLOGS = CreateClientConVar("nut_showlogs", "1", true, true)
+
 	netstream.Hook("nut_SendLogLine", function(string)
 		if (LocalPlayer():IsAdmin()) then
 			MsgC(timeColor, "[" .. os.date() .. "] ")

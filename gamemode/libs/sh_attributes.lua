@@ -26,6 +26,8 @@ end
 	Purpose: Takes an enum for an attribute and returns the table for the corresponding attribute.
 --]]
 function nut.attribs.Get(index)
+	ErrorNoHalt("nut.attribs.Get() is now a deprecated function.")
+	
 	return nut.attribs.buffer[index]
 end
 

@@ -3,10 +3,6 @@
 	loading, and player's inventory functions and handles item interaction.
 --]]
 
-if (!netstream) then
-	include("sh_netstream.lua")
-end
-
 nut.item = nut.item or {}
 nut.item.buffer = nut.item.buffer or {}
 nut.item.list = nut.item.list or {}
@@ -211,7 +207,7 @@ function nut.item.Register(itemTable, isBase)
 					local position = trace.HitPos + Vector(0, 0, 16)
 					
 					client:EmitSound("physics/body/body_medium_impact_soft"..math.random(1, 3)..".wav")
-					local ent = nut.item.Spawn(position, client:EyeAngles(), itemTable, data)
+					local ent = nut.item.Spawn(position, client:EyeAngles(), itemTable, data, client)
 					nut.schema.Call("OnItemDropped", client, itemTable, ent )
 				end
 			end,
@@ -229,6 +225,12 @@ function nut.item.Register(itemTable, isBase)
 
 					local result = nut.schema.Call("OnItemTaken", table.Copy(item))
 						if (result == nil) then
+							if (item.entity.owner == item.player and item.entity.charindex != item.player.character.index) then
+								nut.util.Notify("You can't pick up your other character's item.", activator)
+
+								return false
+							end
+
 							result = item.player:UpdateInv(item.uniqueID, 1, item.itemData)
 						end
 					return result
@@ -554,7 +556,7 @@ do
 			position and networks the itemtable and data. Note that this function
 			doesn't actually remove the item from an inventory.
 		--]]
-		function nut.item.Spawn(position, angles, itemTable, data)
+		function nut.item.Spawn(position, angles, itemTable, data, client)
 			if (type(itemTable) == "string") then
 				itemTable = nut.item.Get(itemTable)
 			end
@@ -587,6 +589,14 @@ do
 
 			if (itemTable.OnEntityCreated) then
 				itemTable:OnEntityCreated(entity)
+			end
+
+			if (client and client:IsValid()) then
+				entity.owner = client
+				
+				if client.character then
+					entity.charindex = client.character.index
+				end
 			end
 
 			return entity

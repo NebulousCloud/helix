@@ -34,7 +34,13 @@ if (SERVER) then
 	function ENT:Use(activator)
 		local amount = self:GetNetVar("amount", 0)
 
-		if (amount > 0 and IsValid(activator) and activator:IsPlayer() and nut.schema.Call("PlayerCanPickupMoney", activator, self) != false) then
+		if (amount > 0 and IsValid(activator) and activator.character and nut.schema.Call("PlayerCanPickupMoney", activator, self) != false) then
+			if (self.owner == activator and self.charindex != activator.character.index) then
+				nut.util.Notify("You can't pick up your other character's money.", activator)
+
+				return
+			end
+
 			activator:GiveMoney(amount)
 			nut.util.Notify("You have picked up "..nut.currency.GetName(amount)..".", activator)
 

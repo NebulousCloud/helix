@@ -47,11 +47,10 @@ local PANEL = {}
 			surface.DrawRect(0, 0, w, h)
 		end
 
-		self.rightPanel = self:Add("DPanel")
+		self.rightPanel = self:Add("DScrollPanel")
 		self.rightPanel:Dock(RIGHT)
 		self.rightPanel:SetWide(ScrW() * 0.25)
-		self.rightPanel:DockMargin(0, ScrH() * 0.3, 32, ScrH() * 0.15)
-		self.rightPanel:SetPaintBackground(false)
+		self.rightPanel:DockMargin(0, ScrH() * 0.45, 32, ScrH() * 0.075)
 		
 		local MODEL_ANGLE = Angle(0, 60, 0)
 
@@ -118,7 +117,7 @@ local PANEL = {}
 				local r, g, b = color.r, color.g, color.b
 
 				local panel = self.rightPanel:Add("nut_MenuButton")
-				panel:Dock(BOTTOM)
+				panel:Dock(TOP)
 				panel:DockMargin(0, 10, 0, 0)
 				panel:SetText(v.name)
 				panel:SetToolTip(v.desc)
@@ -381,6 +380,16 @@ netstream.Hook("nut_CharMenu", function(forced)
 	if (type(forced) == "table") then
 		if (forced[2] == true) then
 			LocalPlayer().character = nil
+
+			if (forced[3]) then
+				PrintTable(LocalPlayer().characters)
+				
+				for k, v in pairs(LocalPlayer().characters) do
+					if (v.id == forced[3]) then
+						LocalPlayer().characters[k] = nil
+					end
+				end
+			end
 		end
 
 		forced = forced[1]

@@ -4,10 +4,6 @@
 	chat classes.
 --]]
 
-if (!netstream) then
-	include("sh_netstream.lua")
-end
-
 nut.chat = nut.chat or {}
 nut.chat.classes = nut.chat.classes or {}
 

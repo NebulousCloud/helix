@@ -110,6 +110,12 @@ local PANEL = {}
 		end)
 
 		nut.schema.Call("CreateMenuButtons", self, addButton)
+
+		addButton("settings", nut.lang.Get("settings"), function()
+			nut.gui.settings = vgui.Create("nut_Settings", self)
+			self:SetCurrentMenu(nut.gui.settings)
+		end)
+
 	end
 
 	local gradient = surface.GetTextureID("gui/gradient")

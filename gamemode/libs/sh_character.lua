@@ -13,14 +13,6 @@ if (!nut.schema) then
 	include("sh_schema.lua")
 end
 
-if (!von) then
-	include("sh_von.lua")
-end
-
-if (!netstream) then
-	include("sh_netstream.lua")
-end
-
 do
 	-- Overwrite the player:Name() function to return the character name if it exists,
 	-- otherwise return the original Steam name.

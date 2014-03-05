@@ -3,8 +3,6 @@
 	framework files.
 --]]
 
-include("libs/sh_netstream.lua")
-
 nut.util = {}
 
 hook.Add("EntityKeyValue", "nut_StoreKeyValues", function(entity, key, value)
@@ -86,6 +84,8 @@ function nut.util.IncludeDir(directory, isBase)
 		nut.util.Include(directory.."/"..v)
 	end
 end
+
+nut.util.IncludeDir("libs/external", true)
 
 -- C++ Weapons do not have their holdtypes accessible by Lua.
 local holdTypes = {

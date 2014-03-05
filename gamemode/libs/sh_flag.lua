@@ -46,7 +46,7 @@ else
 			end
 
 			return html
-		end)
+		end, "icon16/flag_blue.png")
 	end)
 end
 

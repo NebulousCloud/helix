@@ -313,7 +313,7 @@ function GM:PlayerDeath(victim, weapon, attacker)
 	if (attacker:IsPlayer()) then
 		nut.util.AddLog(Format("%s(%s) killed by %s(%s) with %s.", victim:Name(), victim:SteamID(), attacker:Name(), attacker:SteamID(), weapon:GetClass()), LOG_FILTER_MAJOR)
 	else
-		nut.util.AddLog(Format("%s(%s) dead by %s.", victim:Name(), victim:SteamID(), attacker:GetClass()), LOG_FILTER_MAJOR)
+		nut.util.AddLog(Format("%s(%s) killed by %s.", victim:Name(), victim:SteamID(), attacker:GetClass()), LOG_FILTER_MAJOR)
 	end
 end
 
