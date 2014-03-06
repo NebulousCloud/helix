@@ -70,3 +70,6 @@ nut.config.noPersist = false
 
 -- The model for dropped money.
 nut.config.moneyModel = "models/props_lab/box01a.mdl"
+
+-- Whether or not server saves the chat.
+nut.config.savechat = true
