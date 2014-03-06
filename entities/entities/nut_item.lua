@@ -61,6 +61,10 @@ if (CLIENT) then
 			local color = Color(mainColor.r, mainColor.g, mainColor.b, alpha)
 			local data = self:GetData()
 
+			if itemTable.color != nil then
+				color = Color(itemTable.color.r, itemTable.color.g, itemTable.color.b, alpha)
+			end
+
 			nut.util.DrawText(x, y, itemTable.name, color)
 
 			y = y + nut.config.targetTall
