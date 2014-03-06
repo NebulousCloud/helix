@@ -199,6 +199,10 @@ function GM:HUDPaint()
 	nut.bar.PaintMain()
 end
 
+function GM:HUDDrawTargetID()
+	return false
+end
+
 function GM:ShouldDrawTargetEntity(entity)
 	return false
 end
