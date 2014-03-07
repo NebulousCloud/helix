@@ -75,6 +75,11 @@ local PANEL = {}
 				for k, v in SortedPairs(items) do
 					local icon = list:Add("SpawnIcon")
 					icon:SetModel(itemTable.model or "models/error.mdl", itemTable.skin)
+
+					for k, v in pairs(itemTable.bodygroup) do
+						icon:SetBodyGroup( k, v )
+					end
+
 					icon.PaintOver = function(icon, w, h)
 						surface.SetDrawColor(0, 0, 0, 45)
 						surface.DrawOutlinedRect(1, 1, w - 2, h - 2)
