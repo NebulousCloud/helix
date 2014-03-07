@@ -76,8 +76,10 @@ local PANEL = {}
 					local icon = list:Add("SpawnIcon")
 					icon:SetModel(itemTable.model or "models/error.mdl", itemTable.skin)
 
-					for k, v in pairs(itemTable.bodygroup) do
-						icon:SetBodyGroup( k, v )
+					if (itemTable.bodygroup) then
+						for k, v in pairs(itemTable.bodygroup) do
+							icon:SetBodyGroup( k, v )
+						end
 					end
 
 					icon.PaintOver = function(icon, w, h)
