@@ -27,7 +27,7 @@ FEMALE_MODELS = {
 	Model("models/humans/group02/female_01.mdl"),
 	Model("models/humans/group02/female_03.mdl"),
 	Model("models/humans/group02/female_06.mdl"),
-	Model("models/humans/group01/female_04")
+	Model("models/humans/group01/female_04.mdl")
 }
 
 -- Ditto, except they're men.
