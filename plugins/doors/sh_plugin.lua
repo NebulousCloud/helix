@@ -44,8 +44,19 @@ if (SERVER) then
 		self.data = self:ReadTable()
 
 		for k, v in pairs(self.data) do
-			local entities = ents.FindInSphere(v.position, 10)
-			local entity = entities[1]
+			local entity
+
+			if (v.position) then
+				entity = ents.FindInSphere(v.position, 10)[1]
+			elseif (v.index) then
+				for k2, v2 in pairs(ents.GetAll()) do
+					if (nut.util.GetCreationID(v2) == v.index) then
+						entity = v2
+
+						break
+					end
+				end
+			end
 
 			if (IsValid(entity)) then
 				entity:SetNetVar("title", v.title)
@@ -66,7 +77,7 @@ if (SERVER) then
 
 			if (v:IsDoor() and (v:GetNetVar("unownable") or v:GetNetVar("hidden") or (title and title != "" and title != "Door for Sale"))) then
 				data[#data + 1] = {
-					position = v:GetPos(),
+					index = nut.util.GetCreationID(v),
 					title = v:GetNetVar("title"),
 					hidden = v:GetNetVar("hidden", false)
 				}
