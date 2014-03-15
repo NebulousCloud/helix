@@ -280,6 +280,11 @@ if (SERVER) then
 		return {}
 	end
 
+	--[[
+		Purpose: Sends a notification with the message provided to the specified
+		players. The function uses varargs to specify multiple players. If no
+		players are specified, the notification will be broadcasted.
+	--]]
 	function nut.util.Notify(message, ...)
 		local receivers = {...}
 
@@ -291,6 +296,9 @@ if (SERVER) then
 		netstream.Start(receivers, "nut_Notice", message)
 	end
 
+	--[[
+		Purpose: Sends the schema's intro to the player.
+	--]]
 	function nut.util.SendIntroFade(client)
 		if (nut.schema.Call("PlayerShouldSeeIntro", client) == false) then
 			return
@@ -299,6 +307,11 @@ if (SERVER) then
 		netstream.Start(client, "nut_FadeIntro")
 	end
 
+	--[[
+		Purpose: Creates a dummy door which creates the effect that a door has just
+		been blown down. The door's 'ragdoll' will move in the direction if specified,
+		and the door will be restored after the time specified (default 3 minutes).
+	--]]
 	function nut.util.BlastDoor(door, direction, time, noCheck)
 		if (!door:IsDoor()) then
 			return
@@ -397,6 +410,11 @@ else
 
 	nut.notices = nut.notices or {}
 
+	--[[
+		Purpose: Creates a notification at the bottom of the screen using the
+		nut_Notification GUI control. The function also prints a message into
+		the console.
+	--]]
 	function nut.util.Notify(message)
 		if (nut.schema.Call("NoticeShouldAppear") == false) then
 			return
@@ -528,6 +546,9 @@ else
 		nut.connectTime = RealTime()
 	end)
 
+	--[[
+		Purpose: Returns how long the local player has been connected to the server.
+	--]]
 	function nut.util.TimeConnected()
 		local realTime = RealTime()
 
@@ -583,6 +604,11 @@ function nut.util.IsSimilarTable(a, b)
 	return table.Count(nut.util.GetTableDelta(a, b)) == 0
 end
 
+--[[
+	Purpose: Manages the modification of the inventory. It will handle
+	the stacks and quantity for items. This is used when a player's or
+	storage's inventory is updated.
+--]]
 function nut.util.StackInv(inventory, class, quantity, data)
 	local stack, index
 	quantity = quantity or 1
@@ -656,6 +682,10 @@ if (SERVER) then
 	end)
 end
 
+--[[
+	Purpose: Returns the time stamp for the IC time. The client may deviate
+	by a small amount. This is used for keeping track of time in-game.
+--]]
 function nut.util.GetTime()
 	local curTime = nut.curTime or 0
 	local length = nut.config.dateMinuteLength
@@ -675,6 +705,9 @@ end
 local date = os.date
 local time = os.time
 
+--[[
+	Purpose: Returns the current UTC time stamp.
+--]]
 function nut.util.GetUTCTime()
 	return time(date("!*t"))
 end
@@ -786,6 +819,9 @@ else
 	end)
 end
 
+--[[
+	Purpose: Splits a string into a table every n characters.
+--]]
 function nut.util.SplitString(text, size)
 	local output = {}
 
@@ -800,6 +836,9 @@ function nut.util.SplitString(text, size)
 end
 
 if (SERVER) then
+	--[[
+		Purpose: Emits a sound on for receivers with control over the volume and pitch.
+	--]]
 	function nut.util.PlaySound(source, receiver, volume, pitch)
 		netstream.Start(receiver, "nut_PlaySound", {source, volume, pitch})
 	end
@@ -808,7 +847,6 @@ else
 		LocalPlayer():EmitSound(data[1], data[2], data[3])
 	end)
 end
-
 
 local entityMeta = FindMetaTable("Entity")
 
@@ -830,4 +868,29 @@ function entityMeta:GetDoorPartner()
 	end
 
 	return partners
+end
+
+if (SERVER) then
+	game.NutCleanUpMap = game.NutCleanUpMap or game.CleanUpMap
+
+	-- Overwrite it so we can store the old creation ID which changes on clean up.
+	function game.CleanUpMap(...)
+		for k, v in pairs(ents.GetAll()) do
+			local index = v:MapCreationID()
+
+			if (index > 0 and !v.nutCreationID) then
+				v.nutCreationID = index
+			end
+		end
+
+		game.NutCleanUpMap(...)
+	end
+
+	--[[
+		Purpose: Returns the original map creation ID of an entity, which will always
+		stay the same regardless of map clean ups.
+	--]]
+	function nut.util.GetCreationID(entity)
+		return entity.nutCreationID or entity:MapCreationID()
+	end
 end
