@@ -14,6 +14,8 @@ nut.lang.Add("lock_itsworld", "World Container is cannot be locked.")
 nut.util.Include("cl_storage.lua")
 
 if (SERVER) then
+	local PLUGIN = PLUGIN
+
 	function PLUGIN:SaveData()
 		local data = {}
 
@@ -37,6 +39,10 @@ if (SERVER) then
 
 		self:WriteTable(data)
 	end
+
+	timer.Create("nut_SaveContainers", 600, 0, function()
+		PLUGIN:SaveData()
+	end)
 
 	function PLUGIN:LoadData()
 		local storage = self:ReadTable()
