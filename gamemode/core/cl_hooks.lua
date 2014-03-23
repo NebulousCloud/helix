@@ -165,7 +165,7 @@ function GM:HUDPaint()
 	local entity = client:GetEyeTraceNoCursor().Entity
 	nut.schema.Call("HUDPaintTargetID", entity)
 
-	self.BaseClass:HUDPaint()
+	self.BaseClass:PaintWorldTips()
 
 	if (nut.schema.Call("ShouldDrawCrosshair") != false and nut.config.crosshair) then
 		local x, y = scrW * 0.5 - 2, scrH * 0.5 - 2
