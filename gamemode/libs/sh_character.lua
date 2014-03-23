@@ -486,6 +486,10 @@ if (SERVER) then
 		a callback is provided, it will be ran with no arguments.
 	--]]
 	function nut.char.Load(client, callback)
+		if (client:IsBot()) then
+			return callback()
+		end
+		
 		nut.db.FetchTable("steamid = "..client:SteamID64()..sameSchema(), "id", function(_, data)
 			if (IsValid(client)) then
 				for k, v in SortedPairs(data) do

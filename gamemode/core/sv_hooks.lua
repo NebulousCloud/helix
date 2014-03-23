@@ -1,13 +1,3 @@
-function GM:ShowHelp(client)
-	/*
-	if (!client.character) then
-		return
-	end
-	
-	netstream.Start(client, "nut_ShowMenu")
-	*/
-end
-
 function GM:GetDefaultInv(inventory, client, data)
 end
 
@@ -62,12 +52,13 @@ function GM:PlayerInitialSpawn(client)
 
 			for k, v in pairs(player.GetAll()) do
 				if (v.character and v != client) then
-					local fraction = math.max(client:Ping() / 100, 0.1) + 0.05
-					i = i + 1
+					local fraction = math.max(client:Ping() / 100, 0.0001) + 0.0005
 					time = time + fraction
 
 					timer.Simple(k * fraction, function()
 						if (IsValid(client) and IsValid(v)) then
+							i = i + 1
+
 							netstream.Start(client, "nut_LoadingData", "Networking characters... "..math.Round((i / total) * 100).."%")
 							v.character:Send(nil, client, true)
 						end
@@ -75,7 +66,7 @@ function GM:PlayerInitialSpawn(client)
 				end
 			end
 		
-			timer.Simple(time + math.max(client:Ping() / 100, 0.1) + 0.1, function()
+			timer.Simple(time + math.max(client:Ping() / 100, 0.0005) + 0.001, function()
 				netstream.Start(client, "nut_CharMenu")
 			end)
 
@@ -90,6 +81,26 @@ function GM:PlayerInitialSpawn(client)
 
 				nut.char.Save(client)
 			end)
+
+			if (client:IsBot()) then
+				local character = nut.char.New(client)
+					character:SetVar("charname", client:Name())
+
+					for index, _ in RandomPairs(nut.faction.buffer) do
+						character.faction = index
+						client:SetTeam(index)
+
+						break
+					end
+
+					local factionTable = nut.faction.GetByID(character.faction)
+
+					character.model = table.Random(factionTable.maleModels)
+					character.index = 1
+					character.skin = 0
+				client.character = character
+				character:Send()
+			end
 		end)
 	end)
 end
