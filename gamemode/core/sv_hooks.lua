@@ -1,3 +1,7 @@
+function GM:ShowHelp(client)
+	-- Keep this here since the spawn menu will open by default.
+end
+
 function GM:GetDefaultInv(inventory, client, data)
 end
 
