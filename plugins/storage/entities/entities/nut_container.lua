@@ -46,6 +46,22 @@ if (SERVER) then
 		end
 	end
 
+	function ENT:HasPermission(client, password) // Now it's blocked mate.
+		if self:GetNetVar("locked") then
+			if client:IsAdmin() then
+				return true // Why would admin hack the storage if they got master key for all storage?	
+			end
+
+			if self.classic then
+				return self:KeyOpen(client)
+			else
+				return (self.lock == (password or ""))
+			end
+		end
+
+		return true
+	end
+
 	function ENT:GetItemsByClass(class)
 		return self:GetNetVar("inv")[class] or {}
 	end
@@ -60,14 +76,15 @@ if (SERVER) then
 		self:GiveMoney(-amount)
 	end
 	
-	function ENT:KeyOpen( activator )
-		if self.lock then
-			for index, idat in pairs( activator:GetItemsByClass( "key_generic" )  ) do
+	function ENT:KeyOpen(client)
+		if self:GetNetVar("locked") then
+			for index, idat in pairs(client:GetItemsByClass( "key_generic" )) do
 				if idat.data.lock == self.lock then
 					return true
 				end
 			end
 		end
+
 		return false
 	end
 	
@@ -75,25 +92,42 @@ if (SERVER) then
 		local entity = data[1]
 		local classic = data[2]
 		local password = data[3]
-		if entity.world then return nut.util.Notify( nut.lang.Get( "lock_itsworld" )  , client) end
+
+		if entity.world then 
+			return nut.util.Notify(nut.lang.Get( "lock_itsworld" ), client)
+		end
+
 		if !client.nextLock or client.nextLock <= CurTime() then
-			if entity.lock then return nut.util.Notify( nut.lang.Get( "lock_locked" )  , client) end
+			if entity.lock then return nut.util.Notify(nut.lang.Get( "lock_locked" ), client) end
 			
-			if ( classic == true ) then
+			if (classic) then
+				if (!client:HasItem("classic_locker_1")) then 
+					nut.util.Notify(nut.lang.Get("lock_noitem"), client)
+
+					return false
+				end
+
 				local locknum = math.random( 1, 999999 )
 				entity.lock = locknum
 				entity.classic = true
+
 				client:UpdateInv( "key_generic", 3, {
 					lock = locknum
 				} )
 				client:UpdateInv( "classic_locker_1", -1 )
-			elseif ( classic == false ) then
+			else
+				if (!client:HasItem("digital_locker_1")) then
+					nut.util.Notify("Lack of required item." , client)
+
+					return false
+				end
+
 				entity.lock = password
 				client:UpdateInv( "digital_locker_1", -1 )
 			end	
 			
 			entity:SetNetVar( "locked", true )
-			nut.util.Notify( nut.lang.Get( "lock_success" ) , client)	-- If couldn't found a key, Reject the request.
+			nut.util.Notify( nut.lang.Get( "lock_success" ) , client)// If server couldn't found a key from the client's inventory, Reject the storage open request.
 			entity:EmitSound( "doors/door_metal_thin_open1.wav" )
 			client.nextLock = CurTime() + 10
 		end
@@ -110,6 +144,7 @@ if (SERVER) then
 	netstream.Hook( "nut_VerifyPassword", function(client, data)
 		local entity = data[1]
 		local password = data[2]
+
 		if entity.lock == password then
 			OnStorageSend(client, entity)
 			netstream.Start(client, "nut_Storage", entity)
@@ -120,19 +155,19 @@ if (SERVER) then
 	end)
 	
 	netstream.Hook("nut_RequestStorageMenu", function(client, entity)
-		--** Request Storage Menu Enterance
-		if entity.lock then --** Check if is locked or not
-			if entity.classic then --** If the lock is classic lock
-				if entity:KeyOpen( client ) then --** Search for the key.
+		if entity.lock then // Check if is locked or not
+			if entity.classic then // If the lock is classic lock
+				if entity:KeyOpen( client ) then // Search for the key.
 					OnStorageSend(client, entity)
 					netstream.Start(client, "nut_Storage", entity)
 				else
-					nut.util.Notify( nut.lang.Get( "lock_try" ) , client)	-- If couldn't found a key, Reject the request.
-					entity:EmitSound( "doors/door_metal_thin_open1.wav" )
+					nut.util.Notify(nut.lang.Get("lock_try"), client)	// If couldn't found a key, Reject the request.
+					entity:EmitSound("doors/door_metal_thin_open1.wav")
+
 					return
 				end
 			else
-				--** If the lock is digital lock ( digit lock )
+				// If the lock is digital lock ( digit lock )
 				netstream.Start(client, "nut_RequestPassword", entity)
 			end
 		else
@@ -145,10 +180,12 @@ if (SERVER) then
 		local entity = data[1]
 		local class = data[2]
 		local quantity = data[3]
+		local password = data[5] or ""
 		local data = data[4]
+
 		local itemTable = nut.item.Get(class)
 		
-		if (itemTable and IsValid(entity) and entity:GetPos():Distance(client:GetPos()) <= 128) then
+		if (itemTable and IsValid(entity) and entity:GetPos():Distance(client:GetPos()) <= 128 and entity:HasPermission(client, password)) then
 			if (itemTable.CanTransfer and itemTable:CanTransfer(client, data) == false) then
 				return false
 			end
@@ -190,7 +227,7 @@ if (SERVER) then
 			return
 		end
 
-		if (client:HasMoney(amount) and amount > 0) then
+		if (client:HasMoney(amount) and amount > 0 and entity:HasPermission(client, password)) then
 			entity:GiveMoney(amount)
 			client:TakeMoney(amount)
 		elseif (entity:HasMoney(amount2)) then

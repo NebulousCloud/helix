@@ -10,6 +10,14 @@ nut.lang.Add("lock_wrong", "You've entered wrong password.")
 nut.lang.Add("lock_try", "The container is locked.")
 nut.lang.Add("lock_locked", "The container is locked.")
 nut.lang.Add("lock_itsworld", "World Container is cannot be locked.")
+nut.lang.Add("lock_unlocked", "Unlocked the container.")
+
+nut.lang.Add("ui_passwordlock", "Password Lock")
+nut.lang.Add("ui_enterpassword", "Enter the password for the container")
+nut.lang.Add("ui_locktype", "Which lock you want to use?")
+nut.lang.Add("ui_padlock", "Classic Padlock")
+nut.lang.Add("ui_digilock", "Digital Password Lock")
+nut.lang.Add("lock_noitem", "Not enough item for the action.")
 
 nut.util.Include("cl_storage.lua")
 
@@ -103,14 +111,24 @@ else
 		"digital_locker_1",
 	}
 	
-	local function lck1( entity )
-		if !LocalPlayer():HasItem( "classic_locker_1" ) then nut.util.Notify("Lack of required item." , client) return false end
+	local function lck1(entity)
+		if (!LocalPlayer():HasItem("classic_locker_1")) then 
+			nut.util.Notify(nut.lang.Get("lock_noitem"), client)
+
+			return false
+		end
+
 		netstream.Start("nut_RequestLock", {entity, true, ""})
 	end
 	
-	local function lck2( entity )
-		if !LocalPlayer():HasItem( "digital_locker_1" ) then nut.util.Notify("Lack of required item." , client) return false end
-		Derma_StringRequest( "Password Lock", "Enter the password for the container", "", function( pas ) 
+	local function lck2(entity)
+		if (!LocalPlayer():HasItem("digital_locker_1")) then
+			nut.util.Notify("Lack of required item." , client)
+
+			return false
+		end
+
+		Derma_StringRequest( nut.lang.Get("ui_passwordlock"), nut.lang.Get("ui_enterpassword"), "", function( pas ) 
 			netstream.Start("nut_RequestLock", {entity, false, pas})
 		end)
 	end
@@ -120,35 +138,38 @@ else
 			icon = "icon16/star.png",
 			name = "Admin Open",
 			tip = "Open the container.",
-			cond = function( entity )
+			cond = function(entity)
 				return LocalPlayer():IsAdmin()
 			end,
-			func = function( entity )
+			func = function(entity)
 				netstream.Start("nut_Storage", entity)
 			end,
 		},
+
 		open = {
 			name = "Open",
 			tip = "Open the container.",
-			cond = function( entity )
+			cond = function(entity)
 				return true
 			end,
-			func = function( entity )
+			func = function(entity)
 				netstream.Start("nut_RequestStorageMenu", entity)
 			end,
 		},
+
 		pick = {
 			name = "Force Unlock",
-			cond = function( entity )
+			cond = function(entity)
 				return false
 			end,
-			func = function( entity )
+			func = function(entity)
 			end,
 		},
+
 		lock = {
 			icon = "icon16/key.png",
 			name = "Lock",
-			cond = function( entity )
+			cond = function(entity)
 				for _, item in pairs( locks ) do
 					if LocalPlayer():HasItem( item ) then
 						return !entity:GetNetVar( "locked" )
@@ -156,8 +177,8 @@ else
 				end
 				return false
 			end,
-			func = function( entity )
-				Derma_Query( "Which lock you want to use?", "Confirmation", "Normal Padlock", function() lck1( entity ) end, "Digital Lock", function() lck2( entity ) end, "Cancel", function() end )
+			func = function(entity)
+				Derma_Query( nut.lang.Get("ui_locktype"), "Confirmation", nut.lang.Get("ui_padlock"), function() lck1(entity) end, nut.lang.Get("ui_digilock"), function() lck2(entity) end, "Cancel", function() end )
 			end,
 		},
 	}
@@ -198,8 +219,10 @@ else
 	end)
 		
 	netstream.Hook("nut_RequestPassword", function(entity)
-		Derma_StringRequest( "Password Lock", "Enter the password for the container", "", function( pas ) 
-			netstream.Start("nut_VerifyPassword", {entity, pas})
+		Derma_StringRequest( nut.lang.Get("ui_passwordlock"), nut.lang.Get("ui_enterpassword"), "", function(str) 
+			entity.lock = str // Storing correct password in client. You can't send malicious net-message to the server without setting the password via this menu.
+			print(entity, entity.lock)
+			netstream.Start("nut_VerifyPassword", {entity, str})
 		end)
 	end)
 		
@@ -218,23 +241,28 @@ nut.command.Register({
 		local trace = util.TraceLine(dat)
 		local entity = trace.Entity
 		
-		if entity && entity:IsValid() then
-			if entity:GetClass() == "nut_container" then
-				if arguments[1] then
-					if arguments[1] == "true" || arguments[1] == "false" then
-						if arguments[1] == "true" then
+		if (entity and entity:IsValid()) then
+			if (entity:GetClass() == "nut_container") then
+				if (arguments[1]) then
+					if (arguments[1] == "true" or arguments[1] == "false") then
+						if (arguments[1] == "true") then
 							entity.world = true
 						else
 							entity.world = false
 						end
 					else
-						nut.util.Notify("Must enter valid argument. ( true | false )", client)	
+						nut.util.Notify("Must enter valid argument. (true or false)", client)	
 						return
 					end
 				else
 					entity.world = !entity.world
 				end
-				nut.util.Notify("Container's status updated: isworldcontainer = " .. tostring( entity.world ) , client)			
+
+				if entity.world then
+					nut.util.Notify("This container is now world container.", client)		
+				else
+					nut.util.Notify("This container is now user-created container.", client)		
+				end	
 			else
 				nut.util.Notify("You have to face a container to use this command!", client)			
 			end
@@ -258,18 +286,20 @@ nut.command.Register({
 		local trace = util.TraceLine(dat)
 		local entity = trace.Entity
 		
-		if entity && entity:IsValid() then
-			if entity:GetClass() == "nut_container" then
-				if arguments[1] then
+		if (entity and entity:IsValid()) then
+			if (entity:GetClass() == "nut_container") then
+				if (arguments[1]) then
 					entity.classic = false
 					entity.lock = arguments[1]
 					entity:SetNetVar( "locked", true )
+
 					nut.util.Notify("Lock Set: ".. entity.lock, client)		
 				else
 					entity.classic = nil
 					entity.lock = nil
 					entity:SetNetVar( "locked", false )
-					nut.util.Notify("Unlocked the Container.", client)		
+
+					nut.util.Notify(nut.lang.Get("lock_unlocked"), client)		
 				end
 			else
 				nut.util.Notify("You have to face a container to use this command!", client)			
@@ -286,7 +316,6 @@ nut.command.Register({
 	adminOnly = true,
 	syntax = "",
 	onRun = function(client, arguments)
-
 		local dat = {}
 		dat.start = client:GetShootPos()
 		dat.endpos = dat.start + client:GetAimVector() * 96
@@ -294,9 +323,13 @@ nut.command.Register({
 		local trace = util.TraceLine(dat)
 		local entity = trace.Entity
 		
-		if entity && entity:IsValid() then
-			if entity:GetClass() == "nut_container" then
-				nut.util.Notify("Is this World Container? = " .. tostring( entity.world ) , client)			
+		if (entity and entity:IsValid()) then
+			if (entity:GetClass() == "nut_container") then
+				if entity.world then
+					nut.util.Notify("This container is world container.", client)		
+				else
+					nut.util.Notify("This container is user-created container.", client)		
+				end			
 			else
 				nut.util.Notify("You have to face a container to use this command!", client)			
 			end

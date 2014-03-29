@@ -199,7 +199,7 @@ local PANEL = {}
 
 					icon:SetToolTip(nut.lang.Get("item_info", itemTable.name, itemTable:GetDesc(v.data)))
 					icon.DoClick = function(icon)
-						netstream.Start("nut_StorageUpdate", {entity, class, -1, v.data or {}})
+						netstream.Start("nut_StorageUpdate", {entity, class, -1, v.data or {}, self.entity.lock})
 					end
 				end
 			end
@@ -270,8 +270,7 @@ local PANEL = {}
 						if (itemTable.CanTransfer and itemTable:CanTransfer(LocalPlayer(), v.data) == false) then
 							return false
 						end
-						
-						netstream.Start("nut_StorageUpdate", {self.entity, class, 1, v.data or {}})
+						netstream.Start("nut_StorageUpdate", {self.entity, class, 1, v.data or {}, self.entity.lock})
 					end
 				end
 			end
