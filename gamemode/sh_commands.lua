@@ -673,7 +673,7 @@ nut.command.Register({
 
 			if (v.id > 0 and (tostring(v.id) == group or nut.util.StringMatches(group, v.name))) then
 				if (active) then
-					target:SetBodygroup(v.id, 1)
+					target:SetBodygroup(v.id, active)
 					groups[v.id] = active
 					target.character:SetData("groups", groups, nil, true)
 
