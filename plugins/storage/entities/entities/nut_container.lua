@@ -245,7 +245,7 @@ if (SERVER) then
 else
 	netstream.Hook("nut_SendPassword", function(data)
 		data[1].lock = data[2]
-	end
+	end)
 	
 	netstream.Hook("nut_Storage", function(entity)
 		if (IsValid(entity)) then
