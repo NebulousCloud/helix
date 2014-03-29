@@ -134,6 +134,7 @@ else
 	end
 	
 	local storfuncs = {
+		/*
 		aopen = {
 			icon = "icon16/star.png",
 			name = "Admin Open",
@@ -145,6 +146,7 @@ else
 				netstream.Start("nut_Storage", entity)
 			end,
 		},
+		*/
 
 		open = {
 			name = "Open",
@@ -221,7 +223,7 @@ else
 	netstream.Hook("nut_RequestPassword", function(entity)
 		Derma_StringRequest( nut.lang.Get("ui_passwordlock"), nut.lang.Get("ui_enterpassword"), "", function(str) 
 			entity.lock = str // Storing correct password in client. You can't send malicious net-message to the server without setting the password via this menu.
-			print(entity, entity.lock)
+
 			netstream.Start("nut_VerifyPassword", {entity, str})
 		end)
 	end)

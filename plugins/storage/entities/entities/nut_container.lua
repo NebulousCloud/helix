@@ -47,11 +47,11 @@ if (SERVER) then
 	end
 
 	function ENT:HasPermission(client, password) // Now it's blocked mate.
-		if self:GetNetVar("locked") then
-			if client:IsAdmin() then
-				return true // Why would admin hack the storage if they got master key for all storage?	
-			end
+		if client:IsAdmin() then
+			return true // Why would admin hack the storage if they got master key for all storage?	
+		end
 
+		if self:GetNetVar("locked") then
 			if self.classic then
 				return self:KeyOpen(client)
 			else
@@ -238,10 +238,15 @@ if (SERVER) then
 	
 	netstream.Hook("nut_Storage", function(client, entity)
 		if client:IsAdmin() then
+			netstream.Start(client, "nut_SendPassword", {entity, entity.lock})
 			netstream.Start(client, "nut_Storage", entity)
 		end
 	end)
 else
+	netstream.Hook("nut_SendPassword", function(data)
+		data[1].lock = data[2]
+	end
+	
 	netstream.Hook("nut_Storage", function(entity)
 		if (IsValid(entity)) then
 			nut.schema.Call("ContainerOpened", entity)
