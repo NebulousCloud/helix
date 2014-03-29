@@ -677,7 +677,7 @@ nut.command.Register({
 					groups[v.id] = active
 					target.character:SetData("groups", groups, nil, true)
 
-					nut.util.Notify(client:Name().." has set "..target:Name().."'s "..v.name.." bodygroup state to "..active..".")
+					return nut.util.Notify(client:Name().." has set "..target:Name().."'s "..v.name.." bodygroup state to "..active..".")
 				end
 			end
 		end
