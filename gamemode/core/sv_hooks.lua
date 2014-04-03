@@ -333,14 +333,7 @@ function GM:PlayerDeath(victim, weapon, attacker)
 end
 
 function GM:PlayerDeathSound(client)
-	local model = string.lower(client:GetModel())
-	local gender = "male"
-
-	if (string.find(model, "female") or nut.anim.GetClass(model) == "citizen_female") then
-		gender = "female"
-	end
-
-	client:EmitSound("vo/npc/"..gender.."01/pain0"..math.random(7, 9)..".wav")
+	client:EmitSound("vo/npc/"..client:GetGender().."01/pain0"..math.random(7, 9)..".wav")
 
 	return true
 end
@@ -350,14 +343,7 @@ function GM:PlayerHurt(client, attacker, health, damage)
 		return true
 	end
 
-	local model = string.lower(client:GetModel())
-	local gender = "male"
-
-	if (string.find(model, "female") or nut.anim.GetClass(model) == "citizen_female") then
-		gender = "female"
-	end
-
-	client:EmitSound(nut.schema.Call("PlayerPainSound", client) or "vo/npc/"..gender.."01/pain0"..math.random(1, 6)..".wav")
+	client:EmitSound(nut.schema.Call("PlayerPainSound", client) or "vo/npc/"..client:GetGender().."01/pain0"..math.random(1, 6)..".wav")
 
 	return true
 end

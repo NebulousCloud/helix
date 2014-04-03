@@ -356,3 +356,14 @@ end
 function playerMeta:GetOverrideSeq()
 	return self:GetNetVar("seq", false)
 end
+
+function playerMeta:GetGender()
+	local model = string.lower(self:GetModel())
+	local gender = "male"
+
+	if (string.find(model, "female") or nut.anim.GetClass(model) == "citizen_female") then
+		gender = "female"
+	end
+
+	return gender
+end
