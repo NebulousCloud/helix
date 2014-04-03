@@ -16,7 +16,9 @@ end
 
 function PLAYER:Loadout()
 	local color = self.Player:GetInfo("cl_weaponcolor")
+
     self.Player:SetWeaponColor(Vector(color))
+    self.Player:SetupHands()
 
     return
 end

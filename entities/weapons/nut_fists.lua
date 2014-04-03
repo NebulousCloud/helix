@@ -13,7 +13,7 @@ SWEP.Instructions = "Primary Fire: [RAISED] Punch\nSecondary Fire: Knock/Pickup"
 SWEP.Purpose = "Hitting things and knocking on doors."
 SWEP.Drop = false
 
-SWEP.ViewModelFOV = 36
+SWEP.ViewModelFOV = 45
 SWEP.ViewModelFlip = false
 SWEP.AnimPrefix	 = "rpg"
 

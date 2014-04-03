@@ -432,6 +432,8 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 	client.raisedFrac = math.Approach(client.raisedFrac or 0, value, FrameTime() * 150)
 
 	viewModel:SetAngles(eyeAngles)
+
+	return oldEyePos, eyeAngles
 end
 
 local FADE_TIME = 7

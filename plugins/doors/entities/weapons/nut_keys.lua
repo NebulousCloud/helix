@@ -13,7 +13,7 @@ SWEP.Instructions = "Primary Fire: Lock\nSecondary Fire: Unlock"
 SWEP.Purpose = "Keys to doors you own."
 SWEP.Drop = false
 
-SWEP.ViewModelFOV = 36
+SWEP.ViewModelFOV = 45
 SWEP.ViewModelFlip = false
 SWEP.AnimPrefix	 = "rpg"
 
