@@ -691,7 +691,7 @@ else
 		if (!IsValid(client)) then
 			local uniqueID = "nut_CharData"..index..key
 
-			timer.Create(uniqueID, 5, 12, function()
+			timer.Create(uniqueID, 5, 60, function()
 				local client = player.GetByID(index)
 
 				if (IsValid(client)) then
