@@ -129,7 +129,7 @@ function nut.plugin.Load(directory)
 	local _, folders = file.Find(directory.."/plugins/*", "LUA")
 	
 	for k, v in pairs(folders) do
-		local blocked = nut.schema.Call( "BlockPlugins", tostring( v ) );
+		local blocked = nut.schema.Call( "BlockPlugins", v )
 
 		if( !blocked ) then
 			PLUGIN = nut.plugin.Get(v) or {}
@@ -166,7 +166,7 @@ function nut.plugin.Load(directory)
 			cleanName = cleanName:sub(4)
 		end
 
-		local blocked = nut.schema.Call( "BlockPlugins", tostring( cleanName ) );
+		local blocked = nut.schema.Call( "BlockPlugins", cleanName )
 
 		if( !blocked ) then
 			PLUGIN = nut.plugin.Get(cleanName) or {}

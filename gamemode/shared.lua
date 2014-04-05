@@ -60,4 +60,4 @@ nut.util.IncludeDir("derma", true)
 -- Include commands.
 nut.util.Include("sh_commands.lua")
 
-NSFolderName = GM.FolderName;
+NSFolderName = GM.FolderName
