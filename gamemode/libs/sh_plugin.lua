@@ -129,28 +129,32 @@ function nut.plugin.Load(directory)
 	local _, folders = file.Find(directory.."/plugins/*", "LUA")
 	
 	for k, v in pairs(folders) do
-		PLUGIN = nut.plugin.Get(v) or {}
-			function PLUGIN:WriteTable(data, ignoreMap, global)
-				return nut.util.WriteTable(v, data, ignoreMap, global)
-			end
+		local blocked = nut.schema.Call("BlockPlugins", v)
 
-			function PLUGIN:ReadTable(ignoreMap, forceRefresh)
-				return nut.util.ReadTable(v, ignoreMap, forceRefresh)
-			end
+		if( !blocked ) then
+			PLUGIN = nut.plugin.Get(v) or {}
+				function PLUGIN:WriteTable(data, ignoreMap, global)
+					return nut.util.WriteTable(v, data, ignoreMap, global)
+				end
 
-			local pluginDir = directory.."/plugins/"..v
+				function PLUGIN:ReadTable(ignoreMap, forceRefresh)
+					return nut.util.ReadTable(v, ignoreMap, forceRefresh)
+				end
 
-			if (file.Exists(pluginDir.."/sh_plugin.lua", "LUA")) then
-				nut.util.Include(pluginDir.."/sh_plugin.lua")
+				local pluginDir = directory.."/plugins/"..v
 
-				nut.plugin.IncludeEntities(pluginDir)
-				nut.plugin.IncludeWeapons(pluginDir)
-				nut.plugin.IncludeEffects(pluginDir)
+				if (file.Exists(pluginDir.."/sh_plugin.lua", "LUA")) then
+					nut.util.Include(pluginDir.."/sh_plugin.lua")
 
-				nut.item.Load(pluginDir)
-				nut.plugin.buffer[v] = PLUGIN
-			end
-		PLUGIN = nil
+					nut.plugin.IncludeEntities(pluginDir)
+					nut.plugin.IncludeWeapons(pluginDir)
+					nut.plugin.IncludeEffects(pluginDir)
+
+					nut.item.Load(pluginDir)
+					nut.plugin.buffer[v] = PLUGIN
+				end
+			PLUGIN = nil
+		end
 	end
 
 	local files = file.Find(directory.."/plugins/*.lua", "LUA")
@@ -162,18 +166,22 @@ function nut.plugin.Load(directory)
 			cleanName = cleanName:sub(4)
 		end
 
-		PLUGIN = nut.plugin.Get(cleanName) or {}
-			function PLUGIN:WriteTable(data, ignoreMap, global)
-				return nut.util.WriteTable(cleanName, data, ignoreMap, global)
-			end
+		local blocked = nut.schema.Call("BlockPlugins", cleanName)
 
-			function PLUGIN:ReadTable(ignoreMap, forceRefresh)
-				return nut.util.ReadTable(cleanName, ignoreMap, forceRefresh)
-			end
+		if( !blocked ) then
+			PLUGIN = nut.plugin.Get(cleanName) or {}
+				function PLUGIN:WriteTable(data, ignoreMap, global)
+					return nut.util.WriteTable(cleanName, data, ignoreMap, global)
+				end
 
-			nut.util.Include(directory.."/plugins/"..v, "shared")
-			nut.plugin.buffer[cleanName] = PLUGIN
-		PLUGIN = nil
+				function PLUGIN:ReadTable(ignoreMap, forceRefresh)
+					return nut.util.ReadTable(cleanName, ignoreMap, forceRefresh)
+				end
+
+				nut.util.Include(directory.."/plugins/"..v, "shared")
+				nut.plugin.buffer[cleanName] = PLUGIN
+			PLUGIN = nil
+		end
 	end
 end
 
