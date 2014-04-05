@@ -57,8 +57,7 @@ nut.util.IncludeDir("libs", true)
 nut.util.IncludeDir("core", true)
 nut.util.IncludeDir("derma", true)
 
--- Load plugins relative to the framework's folder.
-nut.plugin.Load(GM.FolderName)
-
 -- Include commands.
 nut.util.Include("sh_commands.lua")
+
+NSFolderName = GM.FolderName;
