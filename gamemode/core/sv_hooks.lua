@@ -161,7 +161,10 @@ function GM:PlayerSpawn(client)
 
 	client:StripWeapons()
 	client:SetModel(client.character.model)
-	client:Give("nut_fists")
+
+	if (nut.config.nutFists) then
+		client:Give("nut_fists")
+	end
 
 	player_manager.SetPlayerClass(client, "player_nut")
 	player_manager.RunClass(client, "Spawn")
