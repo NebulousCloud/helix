@@ -44,6 +44,9 @@ nut.config.fallDamageScale = 0.8
 -- Whether or not players can use the flashlight.
 nut.config.flashlight = true
 
+-- Whether or not players automatically get nut_fists
+nut.config.nutFists = true
+
 -- The starting amount of money.
 nut.config.startingAmount = 0
 

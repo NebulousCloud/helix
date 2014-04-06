@@ -102,6 +102,6 @@ if (CLIENT) then
 	end
 else
 	concommand.Add("nut_selectwep", function(client, command, arguments)
-		client:SelectWeapon(arguments[1] or "nut_fists")
+		client:SelectWeapon(arguments[1] or (nut.config.nutFists and "nut_fists" or "nut_keys"))
 	end)
 end
