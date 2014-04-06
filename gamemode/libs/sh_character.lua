@@ -521,7 +521,7 @@ if (SERVER) then
 		local skin = client:GetSkin()
 
 		if (skin > 0) then
-			client.character:SetData("skin", skin)
+			character:SetData("skin", skin)
 		end
 
 		nut.schema.Call("CharacterSave", client)
@@ -529,9 +529,9 @@ if (SERVER) then
 		local customClass = client:GetNetVar("customClass")
 
 		if (customClass and customClass != "") then
-			client.character:SetData("customClass", customClass)
+			character:SetData("customClass", customClass)
 		else
-			client.character:SetData("customClass", nil)
+			character:SetData("customClass", nil)
 		end
 
 		local index = character.index
@@ -541,13 +541,15 @@ if (SERVER) then
 		if (data.skin) then
 			data.model = data.model..";"..data.skin
 		end
+		
+		if (steamID) then
+			character:SetData("id", character:GetVar("id", math.floor(os.clock() + client:UniqueID())))
 
-		client.character:SetData("id", client.character:GetVar("id", math.floor(os.clock() + client:UniqueID())))
+			nut.db.UpdateTable("steamid = "..steamID.." AND id = "..index..sameSchema(), data)
+			client:SaveData()
 
-		nut.db.UpdateTable("steamid = "..steamID.." AND id = "..index..sameSchema(), data)
-		client:SaveData()
-
-		nut.util.AddLog("Saved '"..client.character:GetVar("charname").."' for "..client:RealName()..".", LOG_FILTER_NOSAVE)
+			nut.util.AddLog("Saved '"..character:GetVar("charname").."' for "..client:RealName()..".", LOG_FILTER_NOSAVE)
+		end
 	end
 
 	-- Validate the character creation request and sends a message to close the creation
