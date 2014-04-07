@@ -32,7 +32,7 @@ function PLAYER:SetupDataTables()
 end
 
 function PLAYER:GetHandsModel()
-	local hands = nut.schema.Call("PlayerGetHandsModel", self.Player)
+	local hands = hook.Run("PlayerGetHandsModel", self.Player)
 
 	if (hands) then
 		return hands

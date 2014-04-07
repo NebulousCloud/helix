@@ -71,7 +71,7 @@ function PLUGIN:CreateCommand(data, command)
 	data.onMenu = data.onMenu or function( menu, icon, client, command )
 		menu:AddOption(client:Name(), function()
 			LocalPlayer():ConCommand( 'say /mod'..command..' "'..client:Name()..'"' )
-		end):SetImage(nut.schema.Call("GetUserIcon", client) or icon)
+		end):SetImage(hook.Run("GetUserIcon", client) or icon)
 	end
 	self.commands[command] = data
 	
@@ -251,7 +251,7 @@ PLUGIN:CreateCommand({
 		for i = 1, 10 do
 			submenu:AddOption(i*10, function()
 				LocalPlayer():ConCommand( 'say /mod'..command..' "'..client:Name()..'" '.. i*10 )
-			end):SetImage(nut.schema.Call("GetUserIcon", client) or icon)
+			end):SetImage(hook.Run("GetUserIcon", client) or icon)
 		end
 	end,
 	onRun = function(client, arguments, target)
@@ -304,7 +304,7 @@ PLUGIN:CreateCommand({
 		for i = 1, 10 do
 			submenu:AddOption(i*10, function()
 				LocalPlayer():ConCommand( 'say /mod'..command..' "'..client:Name()..'" '.. i*10 )
-			end):SetImage(nut.schema.Call("GetUserIcon", client) or icon)
+			end):SetImage(hook.Run("GetUserIcon", client) or icon)
 		end
 	end,
 	onRun = function(client, arguments, target)
@@ -381,7 +381,7 @@ PLUGIN:CreateCommand({
 		for _, why in pairs( reasons ) do
 			submenu:AddOption(why, function()
 				LocalPlayer():ConCommand( 'say /mod'..command..' "'..client:Name()..'" '.. why )
-			end):SetImage(nut.schema.Call("GetUserIcon", client) or icon)
+			end):SetImage(hook.Run("GetUserIcon", client) or icon)
 		end
 	end,
 	onRun = function(client, arguments, target)
@@ -411,7 +411,7 @@ PLUGIN:CreateCommand({
 			for _, tdat in SortedPairsByMemberValue( times, 1 ) do
 				reasonmenu:AddOption(tdat[2], function()
 					LocalPlayer():ConCommand( 'say /mod'..command..' "'..client:Name()..'" "'.. tdat[3] .. '" "'.. why .. '"' )
-				end):SetImage(nut.schema.Call("GetUserIcon", client) or icon)
+				end):SetImage(hook.Run("GetUserIcon", client) or icon)
 			end
 		end
 	end,
@@ -537,7 +537,7 @@ PLUGIN:CreateCommand({
 		for uid, power in pairs( PLUGIN.ranks ) do
 			submenu:AddOption(uid, function()
 				LocalPlayer():ConCommand( 'say /mod'..command..' "'..client:Name()..'" '.. uid )
-			end):SetImage(nut.schema.Call("GetUserIcon", client) or icon)
+			end):SetImage(hook.Run("GetUserIcon", client) or icon)
 		end
 	end,
 	onRun = function(client, arguments)

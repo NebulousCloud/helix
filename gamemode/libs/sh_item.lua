@@ -4,9 +4,9 @@
 --]]
 
 nut.item = nut.item or {}
-nut.item.buffer = nut.item.buffer or {}
-nut.item.list = nut.item.list or {}
-nut.item.bases = nut.item.bases or {}
+nut.item.buffer = {}
+nut.item.list = {}
+nut.item.bases = {}
 nut.item.queries = {}
 
 function nut.item.RegisterQuery(query, callback, ignoreAction)
@@ -207,8 +207,9 @@ function nut.item.Register(itemTable, isBase)
 					local position = trace.HitPos + Vector(0, 0, 16)
 					
 					client:EmitSound("physics/body/body_medium_impact_soft"..math.random(1, 3)..".wav")
-					local ent = nut.item.Spawn(position, client:EyeAngles(), itemTable, data, client)
-					nut.schema.Call("OnItemDropped", client, itemTable, ent )
+
+					local entity = nut.item.Spawn(position, client:EyeAngles(), itemTable, data, client)
+					hook.Run("OnItemDropped", client, itemTable, entity)
 				end
 			end,
 			shouldDisplay = function(itemTable, data, entity)
@@ -223,10 +224,10 @@ function nut.item.Register(itemTable, isBase)
 				if (SERVER) then
 					item.player:EmitSound("physics/body/body_medium_impact_soft"..math.random(5, 7)..".wav")
 
-					local result = nut.schema.Call("OnItemTaken", table.Copy(item))
+					local result = hook.Run("OnItemTaken", table.Copy(item))
 						if (result == nil) then
 							if (item.entity.owner == item.player and item.entity.charindex != item.player.character.index) then
-								nut.util.Notify("You can't pick up your other character's item.", activator)
+								nut.util.Notify(nut.lang.Get("item_pickup_samechar"), activator)
 
 								return false
 							end
@@ -252,14 +253,14 @@ function nut.item.Register(itemTable, isBase)
 				self.entity = entity
 				self.index = index
 
-				if (nut.schema.Call("PlayerCanUseItem", client, self) == false) then
+				if (hook.Run("PlayerCanUseItem", client, self) == false) then
 					self.player = nil
 					self.itemData = nil
 					self.entity = nil
 					self.index = nil
 
-					if (SERVER) then
-						nut.util.Notify("You can not do this when tied.", client)
+					if (SERVER and client:GetNetVar("tied")) then
+						nut.util.Notify(nut.lang.Get("no_perm_tied"), client)
 					end
 					
 					return false, false
@@ -850,7 +851,7 @@ do
 
 			local data
 
-			data = nut.schema.Call("GetBusinessItemData", client, itemTable, data)
+			data = hook.Run("GetBusinessItemData", client, itemTable, data)
 
 			if (itemTable.GetBusinessData) then
 				data = itemTable:GetBusinessData(client, data)
@@ -865,7 +866,7 @@ do
 				nut.util.Notify(nut.lang.Get("no_afford"), client)
 			end
 
-			nut.schema.Call("PlayerBoughtItem", client, itemTable)
+			hook.Run("PlayerBoughtItem", client, itemTable)
 
 			if (itemTable.OnBought) then
 				itemTable:OnBought(client)

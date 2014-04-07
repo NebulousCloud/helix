@@ -41,8 +41,12 @@ nut.lang.Add("char_create_tip", "Fill in all of the following fields then press 
 nut.lang.Add("char_create_warn", "Your character information must be appropriate.", language)
 nut.lang.Add("inv_tip", "You can use items in your inventory by left clicking on them.", language)
 nut.lang.Add("business_tip", "Click on the item(s) below to purchase them.", language)
-
-
+nut.lang.Add("scoreboard", "Scoreboard")
+nut.lang.Add("class_joined", "You have joined the %s class.")
+nut.lang.Add("class_failed", "You can not join this class.")
+nut.lang.Add("pay_received", "You've received a pay of %s.")
+nut.lang.Add("item_pickup_samechar", "You can't pick up your other character's item.")
+nut.lang.Add("no_perm_tied", "You can not do that when tied.")
 nut.lang.Add("no", "No", language)
 nut.lang.Add("yes", "Yes", language)
 nut.lang.Add("male", "Male", language)

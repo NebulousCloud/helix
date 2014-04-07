@@ -203,7 +203,8 @@ if (SERVER) then
 					entity:UpdateInv(class, -1, data)
 				end
 			end
-			nut.schema.Call("OnItemTransfered", client, entity, itemTable )
+
+			hook.Run("OnItemTransfered", client, entity, itemTable)
 		end
 	end)
 
@@ -249,7 +250,7 @@ else
 	
 	netstream.Hook("nut_Storage", function(entity)
 		if (IsValid(entity)) then
-			nut.schema.Call("ContainerOpened", entity)
+			hook.Run("ContainerOpened", entity)
 			
 			nut.gui.storage = vgui.Create("nut_Storage")
 			nut.gui.storage:SetEntity(entity)

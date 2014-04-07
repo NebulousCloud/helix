@@ -49,9 +49,9 @@ function PLUGIN:PlayerLoadedChar(client)
 				client:SetRunSpeed(nut.config.walkSpeed)
 				client:SetNutVar("outOfStam", true)
 
-				nut.schema.Call("PlayerLostStamina", client)
+				hook.Run("PlayerLostStamina", client)
 				
-				if (nut.config.breathing == true and nut.schema.Call("PlayerShouldBreathe", client) != false) then
+				if (nut.config.breathing == true and hook.Run("PlayerShouldBreathe", client) != false) then
 					local breathing = CreateSound(client, "player/breathe1.wav")
 					breathing:Play()
 					breathing:ChangeVolume(0.5, 0)

@@ -18,7 +18,7 @@ if (SERVER) then
 					if (v2:IsPlayer() and v2.character and v2:GetNetVar("area", "") != v.name) then
 						v2:SetNetVar("area", v.name)
 
-						nut.schema.Call("PlayerEnterArea", v2, v, entities)
+						hook.Run("PlayerEnterArea", v2, v, entities)
 						netstream.Start(nil, "nut_PlayerEnterArea", v2)
 					end
 				end
@@ -45,7 +45,7 @@ if (SERVER) then
 	end
 else
 	netstream.Hook("nut_PlayerEnterArea", function(data)
-		nut.schema.Call("PlayerEnterArea", data)
+		hook.Run("PlayerEnterArea", data)
 	end)
 end
 

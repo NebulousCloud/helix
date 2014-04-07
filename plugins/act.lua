@@ -99,7 +99,7 @@ if (SERVER) then
 			return
 		end
 
-		if (nut.schema.Call("CanStartSeq", client) == false) then
+		if (hook.Run("CanStartSeq", client) == false) then
 			return
 		end
 

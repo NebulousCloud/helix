@@ -79,7 +79,7 @@ do
 					attribute.setup(self, math.Clamp( current + value, 0, ( attribute.limit or nut.config.maximumPoints ) ))
 				end
 
-				nut.schema.Call("PlayerAttribUpdated", self, index, value, current + value)
+				hook.Run("PlayerAttribUpdated", self, index, value, current + value)
 			end
 		end
 	end

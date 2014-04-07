@@ -129,7 +129,7 @@ local PANEL = {}
 		self.choose:SetToolTip(nut.lang.Get("choose_tip"))
 		self.choose.OnClick = function()
 			if (LocalPlayer().character) then
-				nut.schema.Call("OnCharChanged", LocalPlayer())
+				hook.Run("OnCharChanged", LocalPlayer())
 			end
 
 			if (IsValid(nut.gui.inv)) then

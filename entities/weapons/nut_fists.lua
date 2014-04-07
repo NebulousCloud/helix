@@ -51,13 +51,13 @@ ACT_VM_FISTS_DRAW = 3
 ACT_VM_FISTS_HOLSTER = 2
 
 function SWEP:Deploy()
-	if ( !IsValid(self.Owner) ) then
+	if (!IsValid(self.Owner)) then
 		return
 	end
 
 	local viewModel = self.Owner:GetViewModel()
 
-	if ( IsValid(viewModel) ) then
+	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(0.5)
 		viewModel:ResetSequence(ACT_VM_FISTS_DRAW)
 	end
@@ -66,13 +66,13 @@ function SWEP:Deploy()
 end
 
 function SWEP:Holster()
-	if ( !IsValid(self.Owner) ) then
+	if (!IsValid(self.Owner)) then
 		return
 	end
 
 	local viewModel = self.Owner:GetViewModel()
 
-	if ( IsValid(viewModel) ) then
+	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(0.5)
 		viewModel:ResetSequence(ACT_VM_FISTS_HOLSTER)
 	end
@@ -100,16 +100,17 @@ function SWEP:DoPunchAnimation()
 	local sequence = 4 + self.LastHand
 	local viewModel = self.Owner:GetViewModel()
 
-	if ( IsValid(viewModel) ) then
+	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(0.525)
 		viewModel:SetSequence(sequence)
 	end
 end
 
 function SWEP:PrimaryAttack()
-	if ( !IsFirstTimePredicted() ) then
-	 return
+	if (!IsFirstTimePredicted()) then
+		return
 	end
+
 	if (!self.Owner.character) then
 		return
 	end
@@ -130,12 +131,12 @@ function SWEP:PrimaryAttack()
 
 	self.Owner.character:SetVar("stamina", stamina)
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
-	self.Owner:ViewPunch( Angle(self.LastHand + 2, self.LastHand + 5, 0.125) )
+	self.Owner:ViewPunch(Angle(self.LastHand + 2, self.LastHand + 5, 0.125))
 
 	timer.Simple(0.055, function()
 		if (IsValid(self) and IsValid(self.Owner)) then
 			local damage = self.Primary.Damage
-			local result = nut.schema.Call("PlayerGetFistDamage", self.Owner, damage)
+			local result = hook.Run("PlayerGetFistDamage", self.Owner, damage)
 
 			if (result != nil) then
 				damage = result
@@ -159,11 +160,12 @@ function SWEP:PrimaryAttack()
 						damageInfo:SetDamagePosition(trace.HitPos)
 						damageInfo:SetDamageForce(self.Owner:GetAimVector()*10000)
 					entity:DispatchTraceAttack(damageInfo, data.start, data.endpos)
+
 					self.Owner:EmitSound("physics/body/body_medium_impact_hard"..math.random(1, 6)..".wav", 80)
 				end
 			end
 
-			nut.schema.Call("PlayerThrowPunch", self.Owner, trace.Hit)
+			hook.Run("PlayerThrowPunch", self.Owner, trace.Hit)
 		end
 	end)
 end
@@ -204,9 +206,10 @@ function SWEP:DoPickup(entity)
 end
 
 function SWEP:SecondaryAttack()
-	if ( !IsFirstTimePredicted() ) then
-	 return
+	if (!IsFirstTimePredicted()) then
+		return
 	end
+
 	local trace = self.Owner:GetEyeTraceNoCursor()
 	local entity = trace.Entity
 
@@ -218,11 +221,11 @@ function SWEP:SecondaryAttack()
 		end
 
 		if (string.find(entity:GetClass(), "door")) then
-			if (nut.schema.Call("PlayerCanKnock", self.Owner, entity) == false) then
+			if (hook.Run("PlayerCanKnock", self.Owner, entity) == false) then
 				return
 			end
 
-			self.Owner:ViewPunch( Angle(-1.3, 1.8, 0) )
+			self.Owner:ViewPunch(Angle(-1.3, 1.8, 0))
 			self.Owner:EmitSound("physics/plastic/plastic_box_impact_hard"..math.random(1, 4)..".wav")	
 			self.Owner:SetAnimation(PLAYER_ATTACK1)
 
@@ -230,8 +233,9 @@ function SWEP:SecondaryAttack()
 			self:SetNextSecondaryFire(CurTime() + 0.4)
 			self:SetNextPrimaryFire(CurTime() + 1)
 		elseif (!entity:IsPlayer() and !entity:IsNPC() and self:CanCarry(entity)) then
-			local phys = entity:GetPhysicsObject()
-			phys:Wake()
+			local physObj = entity:GetPhysicsObject()
+			physObj:Wake()
+
 			self:DoPickup(entity)
 		end
 	end

@@ -87,14 +87,14 @@ if (SERVER) then
 	netstream.Hook("nut_ChooseClass", function(client, index)
 		local class = nut.class.Get(index)
 
-		if (class and client:CharClass() != class and class:PlayerCanJoin(client) and nut.schema.Call("PlayerCanJoinClass", client, class) != false) then
-			nut.schema.Call("PlayerPreJoinClass", client, class)
+		if (class and client:CharClass() != class and class:PlayerCanJoin(client) and hook.Run("PlayerCanJoinClass", client, class) != false) then
+			hook.Run("PlayerPreJoinClass", client, class)
 				client:SetCharClass(index)
-			nut.schema.Call("PlayerPostJoinClass", client, class)
+			hook.Run("PlayerPostJoinClass", client, class)
 
-			nut.util.Notify("You have joined the "..class.name.." class.", client)
+			nut.util.Notify(nut.lang.Get("class_joined", class.name), client)
 		else
-			nut.util.Notify("You can not join this class.", client)
+			nut.util.Notify(nut.lang.Get("class_failed"), client)
 		end
 	end)
 end
@@ -136,7 +136,7 @@ do
 					self.character:SetData("class", index)
 					self:SetSkin(class:GetSkin(self))
 
-					nut.schema.Call("PlayerClassSet", self, index)
+					hook.Run("PlayerClassSet", self, index)
 				end
 			end
 		end

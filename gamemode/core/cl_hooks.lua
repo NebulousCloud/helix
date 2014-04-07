@@ -111,7 +111,7 @@ function GM:PostRenderVGUI()
 				draw.SimpleText(nut.loadingText[i], "nut_TargetFont", scrW * 0.5, scrH * 0.6 + (i * 36), Color(255, 255, 255, alpha2), 1, 1)
 			end
 
-			nut.schema.Call("DrawLoadingScreen")
+			hook.Run("DrawLoadingScreen")
 
 			do return end
 		end
@@ -163,11 +163,11 @@ function GM:HUDPaint()
 	end
 
 	local entity = client:GetEyeTraceNoCursor().Entity
-	nut.schema.Call("HUDPaintTargetID", entity)
+	hook.Run("HUDPaintTargetID", entity)
 
 	self.BaseClass:PaintWorldTips()
 
-	if (nut.schema.Call("ShouldDrawCrosshair") != false and nut.config.crosshair) then
+	if (hook.Run("ShouldDrawCrosshair") != false and nut.config.crosshair) then
 		local x, y = scrW * 0.5 - 2, scrH * 0.5 - 2
 		local size = nut.config.crossSize or 1
 		local size2 = size + 2
@@ -284,7 +284,7 @@ function GM:HUDPaintTargetPlayer(client, x, y, alpha)
 		nut.util.DrawText(x, y - nut.config.targetTall, text, Color(255, 255, 255, alpha), "nut_TargetFontSmall")
 	end
 
-	nut.util.DrawText(x, y, nut.schema.Call("GetPlayerName", client), color)
+	nut.util.DrawText(x, y, hook.Run("GetPlayerName", client), color)
 	y = y + nut.config.targetTall
 	color = Color(255, 255, 255, alpha)
 
@@ -324,12 +324,12 @@ function GM:HUDPaintTargetID(entity)
 	local frameTime = FrameTime()
 	local targetIsValid = IsValid(entity)
 
-	if (targetIsValid and (!drawnEntities[entity] and entity != client and entity:IsPlayer() or nut.schema.Call("ShouldDrawTargetEntity", entity) == true or entity.DrawTargetID)) then
+	if (targetIsValid and (!drawnEntities[entity] and entity != client and entity:IsPlayer() or hook.Run("ShouldDrawTargetEntity", entity) == true or entity.DrawTargetID)) then
 		drawnEntities[entity] = true
 	end
 
 	for v in pairs(drawnEntities) do
-		if (IsValid(v) and v != client and (v:IsPlayer() or nut.schema.Call("ShouldDrawTargetEntity", v) == true or v.DrawTargetID)) then
+		if (IsValid(v) and v != client and (v:IsPlayer() or hook.Run("ShouldDrawTargetEntity", v) == true or v.DrawTargetID)) then
 			local target = 0
 			local inRange = false
 
@@ -363,7 +363,7 @@ function GM:HUDPaintTargetID(entity)
 				elseif (v.DrawTargetID) then
 					v:DrawTargetID(x, y, alpha)
 				else
-					local result = nut.schema.Call("DrawTargetID", v, x, y, alpha)
+					local result = hook.Run("DrawTargetID", v, x, y, alpha)
 
 					if (!result) then
 						local client = entity:GetNetVar("player")
@@ -445,7 +445,7 @@ netstream.Hook("nut_FadeIntro", function(data)
 	nut.fadeColorStart = CurTime() + FADE_TIME + 5
 	nut.fadeColorFinish = CurTime() + FADE_TIME + 10
 
-	nut.schema.Call("DoSchemaIntro")
+	hook.Run("DoSchemaIntro")
 end)
 
 function GM:RenderScreenspaceEffects()
@@ -482,7 +482,7 @@ function GM:RenderScreenspaceEffects()
 	color["$pp_colour_mulg"] = 0
 	color["$pp_colour_mulb"] = 0
 
-	nut.schema.Call("ModifyColorCorrection", color)
+	hook.Run("ModifyColorCorrection", color)
 
 	DrawColorModify(color)
 
@@ -511,7 +511,6 @@ function GM:PlayerCanSeeBusiness()
 end
 
 function GM:PlayerBindPress(client, bind, pressed)
-	-- Menu Prediction
 	if (bind == "gm_showhelp") then
 		if (IsValid(nut.gui.charMenu)) then
 			return
@@ -529,17 +528,16 @@ function GM:PlayerBindPress(client, bind, pressed)
 			nut.gui.menu = vgui.Create("nut_Menu")
 		end
 	end
-	-- Item Prediction
+
 	if (bind == "+use") then
 		local trace = client:GetEyeTraceNoCursor()
+		local entity = trace.Entity
 
-		if (trace.Entity:IsValid()) then
-			local dist = client:GetPos():Distance(trace.Entity:GetPos())
+		if (IsValid(entity)) then
+			local distance = client:GetPos():Distance(entity:GetPos())
 
-			if (dist < 64) then
-				if (trace.Entity:GetClass() == "nut_item") then
-					nut.item.OpenEntityMenu(trace.Entity)
-				end
+			if (distance <= 64 and entity:GetClass() == "nut_item") then
+				nut.item.OpenEntityMenu(entity)
 			end
 		end
 	end
@@ -547,8 +545,62 @@ function GM:PlayerBindPress(client, bind, pressed)
 	if (!client:GetNetVar("gettingUp") and client:IsRagdolled() and string.find(bind, "+jump") and pressed) then
 		RunConsoleCommand("nut", "chargetup")
 	end
-
 end
+
+-- Purpose: Whether or not a new nut_Notification element should be created.
+function GM:NoticeShouldAppear(message) return true end
+
+-- Purpose: Called right before a notification is actually removed.
+function GM:NoticeRemoved(notice) end
+
+-- Purpose: Called after a notification has been created from nut.util.Notify()
+function GM:NoticeCreated(notice) end
+
+-- Purpose: Called before business items are added so the menu can be modified.
+function GM:BusinessPrePopulateItems(panel) end
+
+-- Purpose: Whether or not an item will display in the business menu.
+function GM:ShouldItemDisplay(itemTable) return true end
+
+-- Purpose: Called after a new DCollapsibleCategory has been created.
+function GM:BusinessCategoryCreated(category) end
+
+-- Purpose: Called after a new item has been added to the business.
+function GM:BusinessItemCreated(itemTable, panel) end
+
+-- Purpose: Called once the business menu has been finalized.
+function GM:BusinessPostPopulateItems(panel) end
+
+-- Purpose: Whether or not the business tab button should be created.
+function GM:PlayerCanSeeBusiness() return true end
+
+-- Purpose: Called once the side menu of the F1 menu has been created.
+function GM:CreateSideMenu() end
+
+-- Purpose: Called when the quick menu panel is created.
+function GM:CreateQuickMenu() end
+
+-- Purpose: Called to determine if a bar should be painted on the HUD. Return false to hide.
+function GM:HUDShouldPaintBar(bar) return true end
+
+-- Purpose: Called to get the user icon infront of an OOC message.
+function GM:GetUserIcon(speaker) return "icon16/user.png" end
+
+-- Purpose: Called before a chat message is added. Return true to block the message.
+function GM:ChatClassPreText(class, speaker, text, mode) end
+
+-- Purpose: Called after a chat message has bee added.
+function GM:ChatClassPostText(class, speaker, text, mode) end
+
+-- Purpose: Called by the recognition plugin to see if a player is recognized.
+function GM:IsPlayerRecognized(client) return false end
+
+-- Purpose: Called by the recognition plugin to get the fake name displayed 
+-- if a player is recognized.
+function GM:GetUnknownPlayerName(client) return "Unknown" end
+
+-- Purpose: Called by the storage plugin before the storage menu is created.
+function GM:ContainerOpened(entity) end
 
 netstream.Hook("nut_CurTime", function(data)
 	nut.curTime = data

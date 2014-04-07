@@ -300,7 +300,7 @@ if (SERVER) then
 		Purpose: Sends the schema's intro to the player.
 	--]]
 	function nut.util.SendIntroFade(client)
-		if (nut.schema.Call("PlayerShouldSeeIntro", client) == false) then
+		if (hook.Run("PlayerShouldSeeIntro", client) == false) then
 			return
 		end
 
@@ -416,7 +416,7 @@ else
 		the console.
 	--]]
 	function nut.util.Notify(message)
-		if (nut.schema.Call("NoticeShouldAppear") == false) then
+		if (hook.Run("NoticeShouldAppear", message) == false) then
 			return
 		end
 
@@ -439,14 +439,14 @@ else
 				v:MoveTo(ScrW() * 0.3, ScrH() - (k * 28), 0.35, 0, 0.25)
 			end
 
-			nut.schema.Call("NoticeRemoved", notice)
+			hook.Run("NoticeRemoved", notice)
 		end)
 
 		table.insert(nut.notices, notice)
 
 		MsgC(Color(92, 232, 250), message.."\n")
 
-		nut.schema.Call("NoticeCreated", notice)
+		hook.Run("NoticeCreated", notice)
 	end
 
 	--[[

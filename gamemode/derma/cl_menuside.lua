@@ -8,7 +8,7 @@ local PANEL = {}
 		self:SetDrawBackground(false)
 		self:MoveTo(ScrW() - width, 0, 0.25, 0, 0.125)
 
-		nut.schema.Call("CreateSideMenu", self)
+		hook.Run("CreateSideMenu", self)
 	end
 
 	function PANEL:SlideOut()

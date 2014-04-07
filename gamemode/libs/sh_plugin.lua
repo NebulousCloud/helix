@@ -131,7 +131,7 @@ function nut.plugin.Load(directory)
 	for k, v in pairs(folders) do
 		local blocked = nut.schema.Call("BlockPlugins", v, directory)
 
-		if( !blocked ) then
+		if (!blocked) then
 			PLUGIN = nut.plugin.Get(v) or {}
 				function PLUGIN:WriteTable(data, ignoreMap, global)
 					return nut.util.WriteTable(v, data, ignoreMap, global)
@@ -168,7 +168,7 @@ function nut.plugin.Load(directory)
 
 		local blocked = nut.schema.Call("BlockPlugins", cleanName, directory)
 
-		if( !blocked ) then
+		if (!blocked) then
 			PLUGIN = nut.plugin.Get(cleanName) or {}
 				function PLUGIN:WriteTable(data, ignoreMap, global)
 					return nut.util.WriteTable(cleanName, data, ignoreMap, global)

@@ -8,7 +8,7 @@
 nut.bar = nut.bar or {}
 
 if (CLIENT) then
-	nut.bar.buffer = nut.bar.buffer or {}
+	nut.bar.buffer = {}
 	nut.bar.mainStart = nut.bar.mainStart or 0
 	nut.bar.mainFinish = nut.bar.mainFinish or 0
 	nut.bar.mainText = nut.bar.mainText or ""
@@ -36,7 +36,7 @@ if (CLIENT) then
 	--]]
 	function nut.bar.Paint(x, y, width, height)
 		for k, v in SortedPairsByMemberValue(nut.bar.buffer, "id", true) do
-			if (nut.schema.Call("HUDShouldPaintBar", k) != false and v.getValue) then
+			if (hook.Run("HUDShouldPaintBar", k) != false and v.getValue) then
 				local realValue = v.getValue()
 
 				v.deltaValue = math.Approach(v.deltaValue or 0, realValue, FrameTime() * 80)
@@ -52,7 +52,7 @@ if (CLIENT) then
 					continue
 				end
 
-				y = nut:PaintBar(v.deltaValue, color, x, y, width, height)
+				y = GAMEMODE:PaintBar(v.deltaValue, color, x, y, width, height)
 			end
 		end
 

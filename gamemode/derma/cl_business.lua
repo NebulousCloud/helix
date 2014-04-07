@@ -18,11 +18,11 @@ local PANEL = {}
 		self.categories = {}
 		self.nextBuy = 0
 
-		local result = nut.schema.Call("BusinessPrePopulateItems", self)
+		local result = hook.Run("BusinessPrePopulateItems", self)
 
 		if (result != false) then
 			for class, itemTable in SortedPairs(nut.item.GetAll()) do
-				if (nut.schema.Call("ShouldItemDisplay", itemTable) != false and !itemTable.noBusiness and (!itemTable.ShouldShowOnBusiness or (itemTable.ShouldShowOnBusiness and itemTable:ShouldShowOnBusiness(LocalPlayer()) != false))) then
+				if (hook.Run("ShouldItemDisplay", itemTable) != false and !itemTable.noBusiness and (!itemTable.ShouldShowOnBusiness or (itemTable.ShouldShowOnBusiness and itemTable:ShouldShowOnBusiness(LocalPlayer()) != false))) then
 					local category = itemTable.category
 					local category2 = string.lower(category)
 
@@ -72,7 +72,7 @@ local PANEL = {}
 							end
 						category3:InvalidateLayout(true)
 
-						nut.schema.Call("BusinessCategoryCreated", category3)
+						hook.Run("BusinessCategoryCreated", category3)
 
 						self.categories[category2] = {list = list, category = category3, panel = panel}
 					else
@@ -109,13 +109,13 @@ local PANEL = {}
 							end)
 						end
 
-						nut.schema.Call("BusinessItemCreated", itemTable, icon)			
+						hook.Run("BusinessItemCreated", itemTable, icon)			
 					end
 				end
 			end
 		end
 
-		nut.schema.Call("BusinessPostPopulateItems", self)
+		hook.Run("BusinessPostPopulateItems", self)
 	end
 
 	function PANEL:Think()

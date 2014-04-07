@@ -280,7 +280,7 @@ function nut.char.New(client, send)
 		deltas = {}
 	}, META)
 
-	nut.schema.Call("CreateCharVars", character)
+	hook.Run("CreateCharVars", character)
 
 	if (SERVER and send) then
 		character:Send(nil, nil, true)
@@ -521,17 +521,17 @@ if (SERVER) then
 		local skin = client:GetSkin()
 
 		if (skin > 0) then
-			client.character:SetData("skin", skin)
+			character:SetData("skin", skin)
 		end
 
-		nut.schema.Call("CharacterSave", client)
+		hook.Run("CharacterSave", client)
 
 		local customClass = client:GetNetVar("customClass")
 
 		if (customClass and customClass != "") then
-			client.character:SetData("customClass", customClass)
+			character:SetData("customClass", customClass)
 		else
-			client.character:SetData("customClass", nil)
+			character:SetData("customClass", nil)
 		end
 
 		local index = character.index
@@ -541,13 +541,15 @@ if (SERVER) then
 		if (data.skin) then
 			data.model = data.model..";"..data.skin
 		end
+		
+		if (steamID) then
+			character:SetData("id", character:GetVar("id", math.floor(os.clock() + client:UniqueID())))
 
-		client.character:SetData("id", client.character:GetVar("id", math.floor(os.clock() + client:UniqueID())))
+			nut.db.UpdateTable("steamid = "..steamID.." AND id = "..index..sameSchema(), data)
+			client:SaveData()
 
-		nut.db.UpdateTable("steamid = "..steamID.." AND id = "..index..sameSchema(), data)
-		client:SaveData()
-
-		nut.util.AddLog("Saved '"..client.character:GetVar("charname").."' for "..client:RealName()..".", LOG_FILTER_NOSAVE)
+			nut.util.AddLog("Saved '"..character:GetVar("charname").."' for "..client:RealName()..".", LOG_FILTER_NOSAVE)
+		end
 	end
 
 	-- Validate the character creation request and sends a message to close the creation
@@ -612,10 +614,10 @@ if (SERVER) then
 			self.buffer = nut.util.StackInv(self.buffer, class, quantity, data2)
 		end
 
-		nut.schema.Call("GetDefaultInv", inventory, client, charData)
+		hook.Run("GetDefaultInv", inventory, client, charData)
 
 		charData.inv = inventory.buffer
-		charData.money = nut.schema.Call("GetDefaultMoney", client, charData)
+		charData.money = hook.Run("GetDefaultMoney", client, charData)
 
 		nut.char.Create(client, charData, function(id)
 			timer.Simple(math.max(client:Ping() / 100, 0.1), function()
@@ -625,7 +627,7 @@ if (SERVER) then
 					netstream.Start(client, "nut_CharCreateAuthed")
 				end)
 
-				nut.schema.Call("PlayerCreatedChar", client, charData)
+				hook.Run("PlayerCreatedChar", client, charData)
 				
 				nut.util.AddLog("Created new character '"..name.."' for "..client:RealName()..".", LOG_FILTER_MAJOR)
 			end)
@@ -636,16 +638,16 @@ if (SERVER) then
 	netstream.Hook("nut_CharChoose", function(client, index)
 		if (client.character and client.character.index != index) then
 			nut.char.Save(client)
-			nut.schema.Call("OnCharChanged", client)
+			hook.Run("OnCharChanged", client)
 		end
 
 		nut.char.LoadID(client, index, function(sameChar)
 			netstream.Start(client, "nut_CharMenu", false)
 
 			if (!sameChar) then
-				nut.schema.Call("PlayerLoadedChar", client)
+				hook.Run("PlayerLoadedChar", client)
 					client:Spawn()
-				nut.schema.Call("PostPlayerSpawn", client)
+				hook.Run("PostPlayerSpawn", client)
 			end
 		end)
 	end)

@@ -16,7 +16,7 @@ if (SERVER) then
 				if itemTable then
 					local entity = nut.item.Spawn(position, angles, itemTable, data)
 
-					nut.schema.Call("ItemRestored", itemTable, entity)
+					hook.Run("ItemRestored", itemTable, entity)
 				end
 			end
 		end
@@ -26,7 +26,7 @@ if (SERVER) then
 		local data = {}
 
 		for k, v in pairs(ents.FindByClass("nut_item")) do
-			if (nut.schema.Call("ItemShouldSave", v) != false) then
+			if (hook.Run("ItemShouldSave", v) != false) then
 				data[#data + 1] = {
 					position = v:GetPos(),
 					angles = v:GetAngles(),
@@ -34,7 +34,7 @@ if (SERVER) then
 					data = v:GetData()
 				}
 
-				nut.schema.Call("ItemSaved", v)
+				hook.Run("ItemSaved", v)
 			end
 		end
 

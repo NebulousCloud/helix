@@ -7,7 +7,7 @@ function PANEL:Init()
 	self:SetSize(width, 10)
 	self:SetDrawBackground(false)
 
-	nut.schema.Call("CreateQuickMenu", self)
+	hook.Run("CreateQuickMenu", self)
 end
 
 function PANEL:PerformLayout()

@@ -104,17 +104,19 @@ function hook.Call(name, gamemode, ...)
 		end
 	end
 
-	for k, v in pairs(nut.plugin.GetAll()) do
-		if (v[name]) then
-			local result = v[name](v, ...)
+	if (nut.plugin) then
+		for k, v in pairs(nut.plugin.GetAll()) do
+			if (v[name]) then
+				local result = v[name](v, ...)
 
-			if (result != nil) then
-				return result
+				if (result != nil) then
+					return result
+				end
 			end
 		end
 	end
 
-	if (SCHEMA[name]) then
+	if (SCHEMA and SCHEMA[name]) then
 		local result = SCHEMA[name](SCHEMA, ...)
 
 		if (result != nil) then

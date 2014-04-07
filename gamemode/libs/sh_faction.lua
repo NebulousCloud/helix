@@ -32,7 +32,7 @@ do
 						netstream.Start(self, "nut_WhitelistData", self.whitelists)
 					end
 
-					nut.schema.Call("PlayerLoadedData", self)
+					hook.Run("PlayerLoadedData", self)
 				else
 					nut.db.InsertTable({
 						steamid = self:SteamID64(),
@@ -201,10 +201,10 @@ if (SERVER) then
 				end
 				
 				if (faction.pay > 0 and nextPay < CurTime()) then
-					if (nut.schema.Call("ShouldReceivePay", v) != false) then
+					if (hook.Run("ShouldReceivePay", v) != false) then
 						v:GiveMoney(faction.pay)
 
-						nut.util.Notify("You've received a pay of "..nut.currency.GetName(faction.pay)..".", v)
+						nut.util.Notify(nut.lang.Get("pay_received", nut.currency.GetName(faction.pay)), v)
 					end
 
 					v:SetNutVar("nextPay", CurTime() + faction.payTime)

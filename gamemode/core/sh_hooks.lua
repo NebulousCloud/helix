@@ -23,9 +23,9 @@ function GM:Initialize()
 			game.ConsoleCommand("sbox_persist 1\n")
 		end
 	end
-
-	self:SetupAttributes()
 end
+
+hook.Run("SetupAttributes")
 
 --[[
 	Purpose: Allows schemas and plugins to register their attributes through a hook
@@ -40,7 +40,7 @@ function GM:SetupAttributes()
 		ATTRIB_STR = nut.attribs.SetUp("Strength", "Affects how powerful your actions are.", "str")
 	end
 
-	nut.schema.Call("RegisterAttributes")
+	hook.Run("RegisterAttributes")
 end
 
 --[[

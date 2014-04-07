@@ -36,7 +36,7 @@ function nut.chat.Register(class, structure)
 	end
 
 	structure.canSay = structure.canSay or function(speaker)
-		local result = nut.schema.Call("ChatClassCanSay", class, structure, speaker)
+		local result = hook.Run("ChatClassCanSay", class, structure, speaker)
 
 		if (result != nil) then
 			return result
@@ -51,7 +51,7 @@ function nut.chat.Register(class, structure)
 		return true
 	end
 
-	nut.schema.Call("ChatClassRegister", class, structure)
+	hook.Run("ChatClassRegister", class, structure)
 	nut.chat.classes[class] = structure
 end
 
@@ -62,7 +62,7 @@ do
 	nut.chat.Register("whisper", {
 		canHear = nut.config.whisperRange,
 		onChat = function(speaker, text)
-			chat.AddText(Color(r - 25, g - 25, b - 25), nut.schema.Call("GetPlayerName", speaker, "whisper", text)..": "..text)
+			chat.AddText(Color(r - 25, g - 25, b - 25), hook.Run("GetPlayerName", speaker, "whisper", text)..": "..text)
 		end,
 		prefix = {"/w", "/whisper"}
 	})
@@ -99,14 +99,14 @@ do
 	nut.chat.Register("ic", {
 		canHear = nut.config.chatRange,
 		onChat = function(speaker, text)
-			chat.AddText(Color(r, g, b), nut.schema.Call("GetPlayerName", speaker, "ic", text)..": "..text)
+			chat.AddText(Color(r, g, b), hook.Run("GetPlayerName", speaker, "ic", text)..": "..text)
 		end
 	})
 
 	nut.chat.Register("yell", {
 		canHear = nut.config.yellRange,
 		onChat = function(speaker, text)
-			chat.AddText(Color(r + 35, g + 35, b + 35), nut.schema.Call("GetPlayerName", speaker, "yell", text)..": "..text)
+			chat.AddText(Color(r + 35, g + 35, b + 35), hook.Run("GetPlayerName", speaker, "yell", text)..": "..text)
 		end,
 		prefix = {"/y", "/yell"}
 	})
@@ -114,7 +114,7 @@ do
 	nut.chat.Register("me", {
 		canHear = nut.config.chatRange,
 		onChat = function(speaker, text)
-			chat.AddText(Color(r, g, b), "**"..nut.schema.Call("GetPlayerName", speaker, "me", text).." "..text)
+			chat.AddText(Color(r, g, b), "**"..hook.Run("GetPlayerName", speaker, "me", text).." "..text)
 		end,
 		prefix = {"/me", "/action"},
 		font = "nut_ChatFontAction"
@@ -143,7 +143,7 @@ do
 				icon = ICON_HEART
 			end
 
-			local override = nut.schema.Call("GetUserIcon", speaker)
+			local override = hook.Run("GetUserIcon", speaker)
 
 			if (override and type(override) != "IMaterial") then
 				override = Material(override)
@@ -249,17 +249,17 @@ if (CLIENT) then
 			return
 		end
 
-		if !nut.schema.Call("ChatClassPreText", class, speaker, text, mode) then --** allows you inturrupt the text when the hook is returned true ( can be used for Non-RP Chat filter or Curse word filter. )
+		if (!hook.Run("ChatClassPreText", class, speaker, text, mode)) then
 			class.onChat(speaker, text)
 		end
 
-		nut.schema.Call("ChatClassPostText", class, speaker, text, mode)
+		hook.Run("ChatClassPostText", class, speaker, text, mode)
 	end)
 else
 	netstream.Hook("nut_Typing", function(client, data)
 		client:SetNetVar("typing", data, client:GetPos())
 
-		nut.schema.Call("PlayerTyping", client, data)
+		hook.Run("PlayerTyping", client, data)
 	end)
 
 	-- Returns whether or not a player can use a certain chat class.
@@ -397,7 +397,7 @@ else
 
 		local listeners = nut.chat.GetListeners(client, mode)
 
-		text = nut.schema.Call("PrePlayerSay", client, text, mode, listeners) or text
+		text = hook.Run("PrePlayerSay", client, text, mode, listeners) or text
 		nut.chat.Send(client, mode, text, listeners)
 
 		return ""

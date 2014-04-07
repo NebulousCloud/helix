@@ -5,10 +5,8 @@
 --]]
 
 --[[
-
 	Category: IC Essensial Chat Commands.
 	Any Chat Commands that related with character goes here.
-
 --]]
 
 nut.command.Register({
@@ -35,7 +33,7 @@ nut.command.Register({
 		math.randomseed(CurTime())
 
 		local roll = math.random(1, 100)
-		roll = nut.schema.Call("GetRollAmount", client, roll) or roll
+		roll = hook.Run("GetRollAmount", client, roll) or roll
 
 		nut.chat.Send(client, "roll", client:Name().." has rolled "..roll..".")
 	end
@@ -576,7 +574,7 @@ nut.command.Register({
 			time = math.max(tonumber(arguments[1] or "") or 5, 5)
 		end
 		
-		if nut.schema.Call( "CanFallOver", client ) == false then return end --** to prevent some bugs with charfallover.
+		if (hook.Run("CanFallOver", client) == false) then return end
 		
 		if (!client:IsRagdolled()) then
 			client:SetTimedRagdoll(time)
