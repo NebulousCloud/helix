@@ -40,7 +40,7 @@ function GM:SetupAttributes()
 		ATTRIB_STR = nut.attribs.SetUp("Strength", "Affects how powerful your actions are.", "str")
 	end
 
-	nut.schema.Call("RegisterAttributes")
+	hook.Run("RegisterAttributes")
 end
 
 --[[
