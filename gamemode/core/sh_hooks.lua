@@ -23,9 +23,24 @@ function GM:Initialize()
 			game.ConsoleCommand("sbox_persist 1\n")
 		end
 	end
+
+	hook.Run("SetupAttributes")
 end
 
-hook.Run("SetupAttributes")
+--[[
+	Purpose: Called when an auto-refresh has occurred, a timer is used to give the game time
+	to load the schemas config files.
+--]]
+function GM:OnReloaded()
+	if (SERVER) then
+		nut.util.AddLog("NutScript has been auto-refreshed.", LOG_FILTER_MAJOR)
+	end
+	
+	timer.Simple(0.5, function()
+		hook.Run("SetupAttributes")
+		hook.Run("Refresh")
+	end)
+end
 
 --[[
 	Purpose: Allows schemas and plugins to register their attributes through a hook

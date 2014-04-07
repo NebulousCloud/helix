@@ -12,6 +12,12 @@ nut.attribs.buffer = {}
 	index to be used as an enum.
 --]]
 function nut.attribs.SetUp(name, desc, uniqueID, setup, limit)
+	local index = nut.attribs.Exists(uniqueID)
+
+	if (index) then
+		return index
+	end
+
 	return table.insert(nut.attribs.buffer, {name = name, desc = desc, uniqueID = uniqueID, setup = setup, limit = ( limit or nut.config.maximumPoints ) })
 end
 
@@ -23,12 +29,23 @@ function nut.attribs.GetAll()
 end
 
 --[[
-	Purpose: Takes an enum for an attribute and returns the table for the corresponding attribute.
+Purpose: Takes an enum for an attribute and returns the table for the corresponding attribute.
 --]]
 function nut.attribs.Get(index)
 	ErrorNoHalt("nut.attribs.Get() is now a deprecated function.")
-	
+
 	return nut.attribs.buffer[index]
+end
+
+--[[
+	Purpose: Takes a uniqueID for an attribute and returns the table index for the corresponding attribute.
+--]]
+function nut.attribs.Exists(id)
+	for k,v in pairs(nut.attribs.buffer) do
+		if (v.uniqueID == id) then
+			return k
+		end
+	end
 end
 
 if (SERVER) then
