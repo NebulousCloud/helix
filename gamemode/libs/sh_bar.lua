@@ -24,6 +24,15 @@ if (CLIENT) then
 	end
 
 	--[[
+		Purpose: Removes a bar from the list of bars based on its ID.
+	--]]
+	function nut.bar.Remove(uniqueID)
+		if (nut.bar.buffer[uniqueID]) then
+			nut.bar.buffer[uniqueID] = nil
+		end
+	end
+
+	--[[
 		Purpose: Return the data for a specific bar based off the uniqueID provided.
 	--]]
 	function nut.bar.Get(uniqueID)
