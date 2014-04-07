@@ -584,7 +584,7 @@ function GM:CreateQuickMenu() end
 function GM:HUDShouldPaintBar(bar) return true end
 
 -- Purpose: Called to get the user icon infront of an OOC message.
-function GM:GetUserIcon(speaker) return "icon16/user.png" end
+function GM:GetUserIcon(speaker) end
 
 -- Purpose: Called before a chat message is added. Return true to block the message.
 function GM:ChatClassPreText(class, speaker, text, mode) end
