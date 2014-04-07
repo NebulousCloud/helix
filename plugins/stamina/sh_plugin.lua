@@ -18,10 +18,13 @@ if (CLIENT) then
 	})
 end
 
-ATTRIB_SPD = nut.attribs.SetUp("Speed", "Affects how fast you can run.", "spd", function(client, points)
-	client:SetRunSpeed(nut.config.runSpeed + points*3)
-end)
-ATTRIB_END = nut.attribs.SetUp("Endurance", "Affects how long you can run for.", "end")
+function PLUGIN:RegisterAttributes()
+	ATTRIB_SPD = nut.attribs.SetUp("Speed", "Affects how fast you can run.", "spd", function(client, points)
+		client:SetRunSpeed(nut.config.runSpeed + points*3)
+	end)
+
+	ATTRIB_END = nut.attribs.SetUp("Endurance", "Affects how long you can run for.", "end")
+end
 
 function PLUGIN:CreateCharVars(character)
 	character:NewVar("stamina", 100, CHAR_PRIVATE, true)

@@ -385,28 +385,6 @@ function GM:OnPlayerHitGround(client, inWater, onFloater, fallSpeed)
 	end
 end
 
-function GM:Initialize()
-	local date = nut.util.ReadTable("date", true)
-	local time = os.time({
-		month = nut.config.dateStartMonth,
-		day = nut.config.dateStartDay,
-		year = nut.config.dateStartYear
-	})
-
-	if (#date < 1) then
-		time = time * (nut.config.dateMinuteLength / 60)
-
-		nut.util.WriteTable("date", time, true)
-		nut.curTime = time
-	else
-		nut.curTime = date[1] or time
-	end
-
-	if (!nut.config.noPersist) then
-		game.ConsoleCommand("sbox_persist 1\n")
-	end
-end
-
 function GM:SaveTime()
 	nut.util.WriteTable("date", tostring(nut.util.GetTime()), true)
 end

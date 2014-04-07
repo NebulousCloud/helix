@@ -1,6 +1,48 @@
 nut.util.Include("sv_hooks.lua")
 nut.util.Include("cl_hooks.lua")
 
+function GM:Initialize()
+	if (SERVER) then
+		local date = nut.util.ReadTable("date", true)
+		local time = os.time({
+			month = nut.config.dateStartMonth,
+			day = nut.config.dateStartDay,
+			year = nut.config.dateStartYear
+		})
+
+		if (#date < 1) then
+			time = time * (nut.config.dateMinuteLength / 60)
+
+			nut.util.WriteTable("date", time, true)
+			nut.curTime = time
+		else
+			nut.curTime = date[1] or time
+		end
+
+		if (!nut.config.noPersist) then
+			game.ConsoleCommand("sbox_persist 1\n")
+		end
+	end
+
+	self:SetupAttributes()
+end
+
+--[[
+	Purpose: Allows schemas and plugins to register their attributes through a hook
+	so that schemas can easily override this behavior without editing nutscript itself.
+--]]
+function GM:SetupAttributes()
+	if (nut.config.baseAttributes) then
+		ATTRIB_ACR = nut.attribs.SetUp("Acrobatics", "Affects how high you can jump.", "acr", function(client, points)
+			client:SetJumpPower(nut.config.jumpPower + points*3)
+		end)
+
+		ATTRIB_STR = nut.attribs.SetUp("Strength", "Affects how powerful your actions are.", "str")
+	end
+
+	nut.schema.Call("RegisterAttributes")
+end
+
 --[[
 	Purpose: Similar to an entity's SetupDataTables, this prepares any variables that
 	are to be networked. This can be called on the schema to make custom variables, but

@@ -30,6 +30,9 @@ nut.config.alwaysRaised = {
 -- If set to true, holding your reload key will toggleraise.
 nut.config.holdReloadToToggle = true
 
+-- If set to true, nut will register its default attributes.
+nut.config.baseAttributes = true
+
 -- How many seconds must the player hold reload for to toggleraise.
 nut.config.holdReloadTime = 0.8
 
