@@ -555,6 +555,21 @@ else
 		-- Subtract five since we have the 5 second delay for loading.
 		return realTime - (nut.connectTime or realTime) - 5
 	end
+
+	--[[
+		Purpose: A method to get a material and ensure it is cached if used multiple times.
+	--]]
+	function nut.util.GetMaterial(materialPath)
+		if (!nut.util.cachedMaterials) then
+			nut.util.cachedMaterials = {}
+		end
+
+		if (!nut.util.cachedMaterials[materialPath]) then
+			nut.util.cachedMaterials[materialPath] = Material(materialPath)
+		end
+
+		return nut.util.cachedMaterials[materialPath]
+	end
 end
 
 --[[
