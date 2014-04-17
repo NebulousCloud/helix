@@ -8,6 +8,8 @@
 -- French translations by Contamination Breaker (http://steamcommunity.com/id/xaxa29/)
 -- Norwegian translations by Atebite (http://steamcommunity.com/id/atebite/)
 -- Finnish translations by MikkoK (http://steamcommunity.com/id/MLemieux/)
+-- Spanish translation by Devastation (http://steamcommunity.com/id/CodeAddict)
+-- Spanish corrections and improvements by Omega (Member of Chessnut's Forums)
 
 if (!nut.lang) then
 	include("libs/sh_lang.lua")
