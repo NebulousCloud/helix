@@ -654,6 +654,10 @@ if (SERVER) then
 
 	-- Deletes a character from the database if it exists.
 	netstream.Hook("nut_CharDelete", function(client, index)
+		if (client:GetMoney() < nut.config.startingAmount) then
+			return false
+		end
+		
 		if (client.characters and table.HasValue(client.characters, index)) then
 			for k, v in pairs(client.characters) do
 				if (v == index) then
