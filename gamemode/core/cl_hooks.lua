@@ -211,6 +211,7 @@ function GM:PostProcessPermitted(element)
 	return false
 end
 
+-- Purpose: Called once the side menu of the F1 menu has been created.
 function GM:CreateSideMenu(menu)
 	if (nut.config.showTime) then
 		menu.time = menu:Add("DLabel")
@@ -491,6 +492,12 @@ function GM:RenderScreenspaceEffects()
 	if (drunk > 0) then
 		DrawMotionBlur(0.075, drunk, 0.025)
 	end
+
+	local charMenu = nut.gui.charMenu
+
+	if (IsValid(charMenu) and charMenu.RenderScreenspaceEffects) then
+		charMenu:RenderScreenspaceEffects(color)
+	end
 end
 
 function GM:ModifyColorCorrection(color)
@@ -573,9 +580,6 @@ function GM:BusinessPostPopulateItems(panel) end
 
 -- Purpose: Whether or not the business tab button should be created.
 function GM:PlayerCanSeeBusiness() return true end
-
--- Purpose: Called once the side menu of the F1 menu has been created.
-function GM:CreateSideMenu() end
 
 -- Purpose: Called when the quick menu panel is created.
 function GM:CreateQuickMenu() end
