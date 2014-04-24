@@ -76,3 +76,6 @@ nut.config.moneyModel = "models/props_lab/box01a.mdl"
 
 -- Whether or not server saves the chat.
 nut.config.savechat = true
+
+-- The lifetime of the dropped item.
+nut.config.itemTime = 1200

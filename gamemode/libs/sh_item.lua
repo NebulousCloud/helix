@@ -597,6 +597,14 @@ do
 				
 				if client.character then
 					entity.charindex = client.character.index
+
+					if nut.config.itemTime and nut.config.itemTime > 0 then 
+						timer.Simple(nut.config.itemTime, function()
+							if entity:IsValid() then
+								entity:Remove()
+							end
+						end)
+					end
 				end
 			end
 
