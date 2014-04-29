@@ -179,7 +179,7 @@ local PANEL = {}
 				for k, v in pairs(nut.faction.GetAll()) do
 					if (nut.faction.CanBe(LocalPlayer(), v.index)) then
 						if (!v.name) then
-							ErrorNoHalt("Faction with ID "..k.." ("..(faction.uniqueID or "unknown").." missing name!\n")
+							ErrorNoHalt("Faction with ID "..k.." ("..(v.uniqueID or "unknown").." missing name!\n")
 						end
 
 						local button = self.selector:Add("nut_MenuButton")
