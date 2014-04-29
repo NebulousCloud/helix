@@ -84,7 +84,7 @@ end
 	If the amount is different than one, it will use the plural form of the currency's
 	name. If the currency has a symbol, it wil place the symbol infront of the amount.
 	
-	nut.currency.SetUp(dollar", "dollars", "$")
+	nut.currency.SetUp("dollar", "dollars", "$")
 	print(nut.currency.GetName(1337))
 
 	Would return:
