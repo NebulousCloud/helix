@@ -434,6 +434,20 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 
 	viewModel:SetAngles(eyeAngles)
 
+	if (weapon.GetViewModelPosition) then
+		local position, angles = weapon:GetViewModelPosition(eyePos, eyeAngles)
+
+		oldEyePos = position or oldEyePos
+		eyeAngles = angles or eyeAngles
+	end
+	
+	if (weapon.CalcViewModelView) then
+		local position, angles = weapon:CalcViewModelView(viewModel, oldEyePos, oldEyeAngles, eyePos, eyeAngles)
+
+		oldEyePos = position or oldEyePos
+		eyeAngles = angles or eyeAngles
+	end
+
 	return oldEyePos, eyeAngles
 end
 
