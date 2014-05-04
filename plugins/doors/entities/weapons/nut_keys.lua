@@ -34,10 +34,10 @@ SWEP.Secondary.Ammo = ""
 SWEP.ViewModel = Model("models/weapons/v_fists.mdl")
 SWEP.WorldModel = ""
 
-SWEP.AlwaysRaised = true
+SWEP.FireWhenLowered = true
 SWEP.DrawViewModel = false
 SWEP.UseHands = true
-SWEP.LowerAngles = Angle(0, 5, -10)
+SWEP.LowerAngles = Angle(0, 5, -14)
 SWEP.HoldType = "normal"
 
 function SWEP:PreDrawViewModel(viewModel, weapon, client)
