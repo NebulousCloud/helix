@@ -38,6 +38,7 @@ SWEP.UseHands = true
 SWEP.LowerAngles = Angle(0, 5, -20)
 
 SWEP.FireWhenLowered = true
+SWEP.HoldType = "fist"
 
 function SWEP:PreDrawViewModel(viewModel, weapon, client)
 	local hands = player_manager.RunClass(client, "GetHandsModel")
@@ -90,7 +91,7 @@ function SWEP:Precache()
 end
 
 function SWEP:Initialize()
-	self:SetWeaponHoldType("fist")
+	self:SetWeaponHoldType(self.HoldType)
 	self.LastHand = 0
 end
 

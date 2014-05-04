@@ -89,44 +89,84 @@ local config = nut.config
 
 local Length2D = FindMetaTable("Vector").Length2D
 
+local NORMAL_HOLDTYPES = {
+	normal = true,
+	fist = true,
+	melee = true,
+	revolver = true,
+	pistol = true,
+	slam = true,
+	knife = true,
+	grenade = true
+}
+
+function GM:GrabEarAnimation(client)
+	if (nut.config.allowEarGrab) then
+		return self.BaseClass:GrabEarAnimation(client)
+	end
+end
+
 function GM:CalcMainActivity(client, velocity)
 	local model = string_lower(client:GetModel())
 	local class = getAnimClass(model)
+	local weapon = client:GetActiveWeapon()
+	local holdType = "normal"
+	local state = WEAPON_LOWERED
+	local action = "idle"
+	local length2D = Length2D(velocity)
+
+	if (length2D >= config.runSpeed - 10) then
+		action = "run"
+	elseif (length2D >= 5) then
+		action = "walk"
+	end
+
+	if (IsValid(weapon)) then
+		holdType = getHoldType(weapon)
+
+		if (weapon.AlwaysRaised or config.alwaysRaised[weapon:GetClass()]) then
+			state = WEAPON_RAISED
+		end
+	end
+
+	if (client:WepRaised()) then
+		state = WEAPON_RAISED
+	end
 
 	if (string_find(model, "/player/") or string_find(model, "/playermodel") or class == "player") then
-		return self.BaseClass:CalcMainActivity(client, velocity)
+		local calcIdeal, calcOverride = self.BaseClass:CalcMainActivity(client, velocity)
+
+		if (state == WEAPON_LOWERED) then
+			if (client:Crouching()) then
+				action = action.."_crouch"
+			end
+
+			if (!client:OnGround()) then
+				action = "jump"
+			end
+
+			if (!NORMAL_HOLDTYPES[holdType]) then
+				calcIdeal = _G["ACT_HL2MP_"..string.upper(action).."_PASSIVE"]
+			else
+				if (action == "jump") then
+					calcIdeal = ACT_HL2MP_JUMP_PASSIVE
+				else
+					calcIdeal = _G["ACT_HL2MP_"..string.upper(action)]
+				end
+			end
+		end
+
+		client.CalcIdeal = calcIdeal
+		client.CalcSeqOverride = calcOverride
+
+		return client.CalcIdeal, client.CalcSeqOverride
 	end
 
 	if (client.character and client:Alive()) then
 		client.CalcSeqOverride = -1
 
-		local weapon = client:GetActiveWeapon()
-		local holdType = "normal"
-		local action = "idle"
-		local length2D = Length2D(velocity)
-
-		if (length2D >= config.runSpeed - 10) then
-			action = "run"
-		elseif (length2D >= 5) then
-			action = "walk"
-		end
-
 		if (client:Crouching()) then
 			action = action.."_crouch"
-		end
-
-		local state = WEAPON_LOWERED
-
-		if (IsValid(weapon)) then
-			holdType = getHoldType(weapon)
-
-			if (weapon.AlwaysRaised or config.alwaysRaised[weapon:GetClass()]) then
-				state = WEAPON_RAISED
-			end
-		end
-
-		if (client:WepRaised()) then
-			state = WEAPON_RAISED
 		end
 		
 		local animClass = nut.anim[class]

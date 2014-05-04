@@ -38,6 +38,7 @@ SWEP.AlwaysRaised = true
 SWEP.DrawViewModel = false
 SWEP.UseHands = true
 SWEP.LowerAngles = Angle(0, 5, -10)
+SWEP.HoldType = "normal"
 
 function SWEP:PreDrawViewModel(viewModel, weapon, client)
 	local hands = player_manager.RunClass(client, "GetHandsModel")
@@ -51,13 +52,13 @@ ACT_VM_FISTS_DRAW = 3
 ACT_VM_FISTS_HOLSTER = 2
 
 function SWEP:Deploy()
-	if ( !IsValid(self.Owner) ) then
+	if (!IsValid(self.Owner)) then
 		return
 	end
 
 	local viewModel = self.Owner:GetViewModel()
 
-	if ( IsValid(viewModel) ) then
+	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(0.5)
 		viewModel:ResetSequence(ACT_VM_FISTS_DRAW)
 	end
@@ -66,13 +67,13 @@ function SWEP:Deploy()
 end
 
 function SWEP:Holster()
-	if ( !IsValid(self.Owner) ) then
+	if (!IsValid(self.Owner)) then
 		return
 	end
 
 	local viewModel = self.Owner:GetViewModel()
 
-	if ( IsValid(viewModel) ) then
+	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(0.5)
 		viewModel:ResetSequence(ACT_VM_FISTS_HOLSTER)
 	end
@@ -92,7 +93,7 @@ function SWEP:Precache()
 end
 
 function SWEP:Initialize()
-	self:SetWeaponHoldType("fist")
+	self:SetWeaponHoldType(self.HoldType)
 	self.LastHand = 0
 end
 
