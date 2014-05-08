@@ -138,6 +138,10 @@ function GM:PlayerLoadedChar(client)
 	end
 end
 
+function GM:PlayerShouldTaunt(client, act)
+	return nut.config.allowTaunts
+end
+
 function GM:PlayerSpawn(client)
 	client:UnRagdoll(true)
 	client:SetNoDraw(false)
@@ -148,7 +152,8 @@ function GM:PlayerSpawn(client)
 	client:SetNetVar("noDepress", 0)
 	client:SetNetVar("blur", 0)
 	client:ScreenFadeOut()
-
+	client:SetMainBar()
+	
 	if (!client.character) then
 		return
 	end

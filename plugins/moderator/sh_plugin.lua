@@ -92,7 +92,11 @@ PLUGIN.ranks.user = 0
 
 function PLUGIN:PlayerSpawn(client)
 	if (!client:GetNutVar("modInit")) then
-		self:SetUserGroup(client:SteamID(), self.users[client:SteamID()] or "user", client)
+		local group = self.users[client:SteamID()] or "user"
+
+		if (group != "user") then
+			self:SetUserGroup(client:SteamID(), group, client)
+		end
 
 		client:ChatPrint("You are currently in the '"..client:GetUserGroup().."' group of the server.")
 		client:SetNutVar("modInit", true)
