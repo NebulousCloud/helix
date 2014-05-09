@@ -449,7 +449,7 @@ PLUGIN:CreateCommand({
 			timetext = PLUGIN:SecondsToFormattedString(time)
 		end
 
-		local bantext = Format("%s has banned for %s (%s)", targetname, timetext, reason)
+		local bantext = Format("%s has been banned for %s (%s)", targetname, timetext, reason)
 		nut.util.AddLog(bantext, LOG_FILTER_MAJOR)
 		nut.util.Notify(bantext, unpack(player.GetAll()))
 
