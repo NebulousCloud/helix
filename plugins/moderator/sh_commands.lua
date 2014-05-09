@@ -9,11 +9,11 @@ local times = {
 	{6,"1 Min","1m"},
 }
 local reasons = {
-	"Not respecting staffs.",
-	"Not doing correct RP.",
+	"Admin disrespect.",
+	"FailRP.",
 	"Metagaming.",
 	"Powergaming.",
-	"Unrespectful RP.",
+	"Disrespectful RP.",
 	"Cheater.",
 	"Violation of DMCA",
 	"Fuck you.",
