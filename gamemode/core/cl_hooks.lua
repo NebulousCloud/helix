@@ -615,7 +615,9 @@ function GM:IsPlayerRecognized(client) return false end
 
 -- Purpose: Called by the recognition plugin to get the fake name displayed 
 -- if a player is recognized.
-function GM:GetUnknownPlayerName(client) return "Unknown" end
+function GM:GetUnknownPlayerName(client)
+	-- return "Unknown"
+end
 
 -- Purpose: Called by the storage plugin before the storage menu is created.
 function GM:ContainerOpened(entity) end
