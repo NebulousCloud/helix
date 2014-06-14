@@ -289,7 +289,7 @@ nut.command.Register({
 			local faction
 
 			for k, v in pairs(nut.faction.GetAll()) do
-				if (nut.util.StringMatches(arguments[2], v.name)) then
+				if (nut.util.StringMatches(v.name, arguments[2])) then
 					faction = v
 
 					break
