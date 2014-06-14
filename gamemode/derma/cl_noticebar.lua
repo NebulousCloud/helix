@@ -24,7 +24,7 @@ PANEL.pnlTypes = {
 		icon = "icon16/book.png"
 	},
 	[5] = { -- ERROR
-		col = Color( 255, 255, 100 ),
+		col = Color( 220, 200, 110 ),
 		icon = "icon16/error.png"
 	},
 	[6] = { -- YES
@@ -59,7 +59,7 @@ function PANEL:SetFont( str )
 	self.text:SetFont( str )
 end
 function PANEL:Paint()
-	self.material = self.material or Material( self.pnlTypes[ self.type ].icon )
+	self.material = nut.util.GetMaterial(self.pnlTypes[self.type].icon)
 	local col = self.pnlTypes[ self.type ].col
 	local mat = self.material
 	local size = self:GetTall()*.6

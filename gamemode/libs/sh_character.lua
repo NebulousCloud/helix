@@ -576,13 +576,28 @@ if (SERVER) then
 			totalPoints = totalPoints + v
 		end
 
-		if (!name or (gender != "male" and gender != "female") or
-			!desc or !model or !faction or !nut.faction.GetByID(faction)
-			or !nut.faction.CanBe(client, faction) or !attributes
-			or totalPoints > nut.config.startingPoints) then
-			client:ChatPrint("Invalid character creation response!")
+		local code
 
-			return
+		if (!name) then
+			code = 1
+		elseif (gender != "male" and gender != "female") then
+			code = 2
+		elseif (!desc) then
+			code = 3
+		elseif (!model) then
+			code = 4
+		elseif (!faction) then
+			code = 5
+		elseif (!nut.faction.GetByID(faction)) then
+			code = 6
+		elseif (!attributes) then
+			code = 7
+		elseif (totalPoints > nut.config.startingPoints) then
+			code = 8
+		end
+
+		if (code) then
+			return client:ChatPrint("Character creation response is not valid! (Error "..code..")")
 		end
 
 		local data = {}
@@ -654,7 +669,7 @@ if (SERVER) then
 
 	-- Deletes a character from the database if it exists.
 	netstream.Hook("nut_CharDelete", function(client, index)
-		if (client:GetMoney() < nut.config.startingAmount) then
+		if (client.character and client:GetMoney() < nut.config.startingAmount) then
 			return false
 		end
 		
@@ -662,6 +677,8 @@ if (SERVER) then
 			for k, v in pairs(client.characters) do
 				if (v == index) then
 					client.characters[k] = nil
+
+					break
 				end
 			end
 
@@ -673,10 +690,6 @@ if (SERVER) then
 					
 					client.character = nil
 					client:KillSilent()
-
-					timer.Simple(0, function()
-						netstream.Start(client, "nut_CharMenu", {true, true})
-					end)
 				end
 
 				nut.util.AddLog("Deleted character #"..index.." for "..client:Name()..".", LOG_FILTER_MAJOR)

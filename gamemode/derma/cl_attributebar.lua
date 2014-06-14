@@ -13,12 +13,36 @@ local PANEL = {}
 		self.minus:SetText("")
 		self.minus:SetSize(24, 24)
 		self.minus:SetImage("icon16/delete.png")
-		self.minus.DoClick =  function(panel, w, h)
-			if (self.amount - 1 >= self.min and self:CanChange(true)) then
-				self.amount = self.amount - 1
-				self:OnChanged(true)
+		self.minus.OnMousePressed =  function(panel)
+			panel.pressed = true
+
+			if (self.OnPressed) then
+				self:OnPressed()
 			end
 		end
+		self.minus.OnMouseReleased = function(panel)
+			panel.pressed = false
+
+			if (self.OnReleased) then
+				self:OnReleased()
+			end
+		end
+		self.minus.OnCursorExited = function(panel)
+			panel.pressed = false
+		end
+		self.minus.Think = function(panel)
+			if ((panel.nextTick or 0) < CurTime()) then
+				if (panel.pressed) then
+					if (self.amount - 1 >= self.min and self:CanChange(true)) then
+						self.amount = self.amount - 1
+						self:OnChanged(true)
+					end
+				end
+
+				panel.nextTick = CurTime() + 0.15
+			end
+		end
+		self.minus.Paint = function() end
 
 		local border = 3
 
@@ -52,19 +76,43 @@ local PANEL = {}
 		self.plus:SetText("")
 		self.plus:SetSize(24, 24)
 		self.plus:SetImage("icon16/add.png")
-		self.plus.DoClick = function(panel)
-			if (self.amount + 1 <= self.max and self:CanChange()) then
-				self.amount = self.amount + 1
-				self:OnChanged()
+		self.plus.OnMousePressed =  function(panel)
+			panel.pressed = true
+
+			if (self.OnPressed) then
+				self:OnPressed()
 			end
 		end
+		self.plus.OnCursorExited = function(panel)
+			panel.pressed = false
+		end
+		self.plus.OnMouseReleased = function(panel)
+			panel.pressed = false
+
+			if (self.OnReleased) then
+				self:OnReleased()
+			end
+		end
+		self.plus.Think = function(panel)
+			if ((panel.nextTick or 0) < CurTime()) then
+				if (panel.pressed) then
+					if (self.amount + 1 <= self.max and self:CanChange()) then
+						self.amount = self.amount + 1
+						self:OnChanged()
+					end
+				end
+
+				panel.nextTick = CurTime() + 0.15
+			end
+		end
+		self.plus.Paint = function() end
 
 		self.label = self.content:Add("DLabel")
 		self.label:SetText("")
-		self.label:SetTextColor(color_black)
+		self.label:SetTextColor(color_white)
 		self.label:SetContentAlignment(5)
 		self.label:Dock(FILL)
-		--self.label:SetExpensiveShadow(1, color_black)
+		self.label:SetExpensiveShadow(1, color_black)
 	end
 
 	function PANEL:SetText(text)

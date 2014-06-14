@@ -10,7 +10,7 @@ if (CLIENT) then
 	end)
 
 	function PLUGIN:CalcView(client, origin, angles, fov)
-		if (PLUGIN.position and PLUGIN.angles and !client.character) then
+		if (PLUGIN.position and PLUGIN.angles and IsValid(nut.gui.charMenu)) then
 			local view = {}
 			view.origin = PLUGIN.position
 			view.angles = PLUGIN.angles
@@ -57,6 +57,7 @@ nut.command.Register({
 		}
 
 		table.insert(PLUGIN.positions, data)
+		netstream.Start(nil, "nut_MapScenePos", {data.position, data.angles})
 
 		PLUGIN:SaveData()
 		nut.util.Notify("You've added a new map scene.", client)

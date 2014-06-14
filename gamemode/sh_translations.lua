@@ -39,7 +39,7 @@ nut.lang.Add("settings_tip", "This window allows you to modify the personal conf
 nut.lang.Add("attribute", "Attribute", language)
 nut.lang.Add("attribute_tip", "This window displays your character's attribute.", language)
 nut.lang.Add("attribute_tip2", "Your character's attribute can be increased through certain actions.", language)
-nut.lang.Add("char_create_tip", "Fill in all of the following fields then press 'Finish'.", language)
+nut.lang.Add("char_create_tip", "Fill in all of the following fields, then press 'Finish'.", language)
 nut.lang.Add("char_create_warn", "Your character information must be appropriate.", language)
 nut.lang.Add("inv_tip", "You can use items in your inventory by left clicking on them.", language)
 nut.lang.Add("business_tip", "Click on the item(s) below to purchase them.", language)
@@ -95,7 +95,10 @@ nut.lang.Add("gender", "Gender", language)
 nut.lang.Add("gender_desc", "Your character's gender.", language)
 nut.lang.Add("model", "Model", language)
 nut.lang.Add("model_desc", "How your character will appear in-game.", language)
-
+nut.lang.Add("attribs", "Attributes")
+nut.lang.Add("provide_valid", "You need to provide a valid")
+nut.lang.Add("char_creating", "Your character is being created by the server.")
+nut.lang.Add("faction", "Faction")
 
 language = "french"
 

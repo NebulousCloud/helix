@@ -337,18 +337,3 @@ function PANEL:InfoAddDesc( name )
 end
 
 vgui.Register("nut_CharCreate", PANEL, "DFrame")
-
-netstream.Hook("nut_CharCreateAuthed", function()
-	nut.gui.charCreate:Remove()
-
-	surface.PlaySound("buttons/button9.wav")
-
-	timer.Simple(0.1, function()
-		if (IsValid(nut.gui.charMenu)) then
-			nut.gui.charMenu:FadeOutMusic()
-			nut.gui.charMenu:Remove()
-		end
-		
-		nut.gui.charMenu = vgui.Create("nut_CharMenu")
-	end)
-end)
