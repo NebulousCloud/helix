@@ -22,7 +22,17 @@ local PANEL = {}
 
 		if (result != false) then
 			for class, itemTable in SortedPairs(nut.item.GetAll()) do
-				if (hook.Run("ShouldItemDisplay", itemTable) != false and !itemTable.noBusiness and (!itemTable.ShouldShowOnBusiness or (itemTable.ShouldShowOnBusiness and itemTable:ShouldShowOnBusiness(LocalPlayer()) != false))) then
+				local allowed = true
+
+				if (itemTable.faction) then
+					if (type(itemTable.faction) == "number" and itemTable.faction != LocalPlayer():Team()) then
+						allowed = false
+					elseif (type(itemTable.faction) == "table" and !table.HasValue(itemTable.faction, LocalPlayer():Team())) then
+						allowed = false
+					end
+				end
+
+				if (allowed and hook.Run("ShouldItemDisplay", itemTable) != false and !itemTable.noBusiness and (!itemTable.ShouldShowOnBusiness or (itemTable.ShouldShowOnBusiness and itemTable:ShouldShowOnBusiness(LocalPlayer()) != false))) then
 					local category = itemTable.category
 					local category2 = string.lower(category)
 

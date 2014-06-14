@@ -857,6 +857,14 @@ do
 				return
 			end
 
+			if (itemTable.faction) then
+				if (type(itemTable.faction) == "number" and itemTable.faction != client:Team()) then
+					return
+				elseif (type(itemTable.faction) == "table" and !table.HasValue(itemTable.faction, client:Team())) then
+					return
+				end
+			end
+
 			local data
 
 			data = hook.Run("GetBusinessItemData", client, itemTable, data)
