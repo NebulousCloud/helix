@@ -505,8 +505,12 @@ local PANEL = {}
 					self.bottom:SetDrawBackground(false)
 
 					local charIndex = 1
+
 					local function ChooseClick(this)
+						if (nut.lastCharIndex == charIndex) then return end
+
 						if (!self.choosing) then
+							nut.lastCharIndex = charIndex
 							netstream.Start("nut_CharChoose", charIndex)
 							self.choosing = true
 						end
@@ -579,7 +583,7 @@ local PANEL = {}
 					local first = true
 
 					for k, v in ipairs(LocalPlayer().characters) do
-						if (!v.banned) then
+						if (!v.banned and k != nut.lastCharIndex) then
 							AddButton(v.name, function()
 								if (k != charIndex) then
 									SetupCharacter(k)
@@ -787,6 +791,5 @@ netstream.Hook("nut_CharCreateAuthed", function()
 		nut.gui.charMenu.creating = false
 		nut.gui.charMenu.creatingCallback()
 		nut.gui.charMenu.creatingCallback = nil
-		print("Woop")
 	end
 end)
