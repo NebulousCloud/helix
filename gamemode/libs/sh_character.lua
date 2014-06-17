@@ -372,13 +372,13 @@ if (SERVER) then
 		If the character does not exist, an error will be created.
 	--]]
 	function nut.char.LoadID(client, index, callback)
-		local steamID = client:SteamID64()
-		local loadid = client.characters[index]
-		if !loadid then
-			Error("Tried to call non existent character")
+		if (!table.HasValue(client.characters, index)) then
+			return ErrorNoHalt("Attempt to call non-existent character! ("..index..")")
 		end
-		local condition = "steamid = "..steamID.." AND id = "..loadid..sameSchema()
-		local tables = "money, chardata, charname, inv, description, faction, id, model"
+		
+		local steamID = client:SteamID64()
+		local condition = "steamid = "..steamID.." AND id = "..index..sameSchema()
+		local tables = "money, chardata, charname, inv, description, faction, model"
 		local sameChar = false
 
 		if (client.character and client.character.index == index) then
@@ -386,7 +386,7 @@ if (SERVER) then
 			
 			return
 		end
-		/*
+
 		client.nut_CachedChars = client.nut_CachedChars or {}
 
 		if (client.nut_CachedChars[index]) then
@@ -408,7 +408,6 @@ if (SERVER) then
 
 			return
 		end
-		*/
 		
 		nut.db.FetchTable(condition, tables, function(data)
 			if (IsValid(client)) then
@@ -431,7 +430,7 @@ if (SERVER) then
 						end
 						
 						client.character = character
-						--client.nut_CachedChars[index] = client.character
+						client.nut_CachedChars[index] = client.character
 
 						nut.util.AddLog("Loaded character '"..client.character:GetVar("charname").."' for "..client:RealName()..".", LOG_FILTER_MAJOR)
 					end
@@ -808,10 +807,11 @@ else
 		local id = data[5]
 		local skin = data[6]
 		local banned = data[7]
+
 		LocalPlayer().characters = LocalPlayer().characters or {}
 
 		for k, v in pairs(LocalPlayer().characters) do
-			if (k == id) then
+			if (v.id == id) then
 				LocalPlayer().characters[k] = {
 					name = name,
 					desc = description,

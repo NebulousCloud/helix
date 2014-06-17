@@ -593,7 +593,7 @@ local PANEL = {}
 						self.name:SetTextColor(team.GetColor(info.faction))
 						self.model:SetModel(info.model)
 
-						charIndex = index
+						charIndex = info.id
 					end
 
 					width = width - 16
@@ -601,15 +601,14 @@ local PANEL = {}
 					local first = true
 
 					for k, v in SortedPairsByMemberValue(LocalPlayer().characters, "id") do
-						if (k != "__SortedIndex" and !v.banned and k != nut.lastCharIndex) then
+						if (k != "__SortedIndex" and !v.banned and v.id != nut.lastCharIndex) then
 							AddButton(v.name, function()
-								if (k != charIndex) then
+								if (v.id != charIndex) then
 									SetupCharacter(k)
 								end
 							end, true)
 
 							if (first) then
-								charIndex = k
 								SetupCharacter(charIndex)
 								first = false
 							end
