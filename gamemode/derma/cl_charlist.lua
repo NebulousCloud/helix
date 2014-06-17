@@ -157,9 +157,7 @@ local PANEL = {}
 			end, nut.lang.Get("yes"), function()
 				if (selection) then
 					netstream.Start("nut_CharDelete", LocalPlayer().characters[self.currentIndex].id)
-
-					table.remove(LocalPlayer().characters, self.currentIndex)
-
+					LocalPlayer().characters[self.currentIndex] = nil
 					self.currentIndex = self.currentIndex - 1
 
 					if (LocalPlayer().characters[self.currentIndex + 1]) then

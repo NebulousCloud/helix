@@ -151,7 +151,7 @@ local PANEL = {}
 				end
 			end
 
-			if (#factions > 0) then
+			if (#factions > 0 and (LocalPlayer().character and table.Count(LocalPlayer().characters) or 0) < nut.config.maxChars) then
 				AddButton("create", function()
 					i = 0
 
@@ -221,12 +221,25 @@ local PANEL = {}
 							self.notice:SetType(6)
 							self.notice:SetText(nut.lang.Get("char_creating"))
 
+							local faulted = false
+
+							netstream.Hook("nut_CharCreateFault", function(fault)
+								if (IsValid(self.notice)) then
+									self.notice:SetType(2)
+									self.notice:SetText(fault)
+
+									faulted = true
+								end
+							end)
+
 							timer.Simple(10, function()
 								if (IsValid(self) and self.creating) then
 									self.creating = false
 
-									self.notice:SetType(5)
-									self.notice:SetText("Character creation request timed out.")
+									if (!faulted) then
+										self.notice:SetType(5)
+										self.notice:SetText("Character creation request timed out.")
+									end
 								end
 							end)
 						end)
@@ -424,7 +437,7 @@ local PANEL = {}
 
 			local MODEL_ANGLE = Angle(0, 45, 0)
 
-			if (LocalPlayer().characters and table.Count(LocalPlayer().characters) > 0) then
+			if (LocalPlayer().characters and table.Count(LocalPlayer().characters) > (LocalPlayer().character and 1 or 0)) then
 				local function LoadCallback()
 					i = 0
 
@@ -523,7 +536,7 @@ local PANEL = {}
 							self.name:SetText(nut.lang.Get("delete").." "..oldName.."?")
 							self.choose:SetText(nut.lang.Get("yes"))
 							self.choose.DoClick = function(this)
-								table.remove(LocalPlayer().characters, charIndex)
+								LocalPlayer().characters[charIndex] = nil
 								netstream.Start("nut_CharDelete", charIndex)
 
 								self.choosing = false
@@ -532,7 +545,11 @@ local PANEL = {}
 									self.content:Remove()
 								end
 
-								LoadCallback()
+								if (table.Count(LocalPlayer().characters) > (LocalPlayer().character and 1 or 0)) then
+									LoadCallback()
+								else
+									CreateMainButtons()
+								end
 							end
 							self.delete:SetText(nut.lang.Get("no"))
 							self.delete.DoClick = function(this)
@@ -583,8 +600,8 @@ local PANEL = {}
 
 					local first = true
 
-					for k, v in ipairs(LocalPlayer().characters) do
-						if (!v.banned and k != nut.lastCharIndex) then
+					for k, v in SortedPairsByMemberValue(LocalPlayer().characters, "id") do
+						if (k != "__SortedIndex" and !v.banned and k != nut.lastCharIndex) then
 							AddButton(v.name, function()
 								if (k != charIndex) then
 									SetupCharacter(k)

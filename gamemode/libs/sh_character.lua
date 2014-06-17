@@ -519,7 +519,7 @@ if (SERVER) then
 		local steamID = client:SteamID64()
 		local character = client.character
 
-		if (!character) then
+		if (!character or !character.index or (client.characters and !table.HasValue(client.character, character.index))) then
 			return
 		end
 
@@ -564,8 +564,10 @@ if (SERVER) then
 			return
 		end
 
+		local code
+
 		if (client.characters and table.Count(client.characters) >= nut.config.maxChars) then
-			return
+			return netstream.Start(client, "nut_CharCreateFault", "Error creating character! (Over max characters)")
 		end
 
 		local name = string.sub(data.name, 1, nut.config.maxNameLength or 70)
@@ -580,8 +582,6 @@ if (SERVER) then
 		for k, v in pairs(attributes) do
 			totalPoints = totalPoints + v
 		end
-
-		local code
 
 		if (!name) then
 			code = 1
@@ -602,7 +602,7 @@ if (SERVER) then
 		end
 
 		if (code) then
-			return client:ChatPrint("Character creation response is not valid! (Error "..code..")")
+			return netstream.Start(client, "nut_CharCreateFault", "Error creating character! ("..code..")")
 		end
 
 		local data = {}
