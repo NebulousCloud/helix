@@ -461,6 +461,7 @@ local PANEL = {}
 						entity:SetPoseParameter("head_pitch", yRatio*80 - 40)
 						entity:SetPoseParameter("head_yaw", (xRatio - 0.75)*70 + 23)
 						entity:SetAngles(MODEL_ANGLE)
+						entity:SetIK(false)
 
 						panel:RunAnimation()
 					end
