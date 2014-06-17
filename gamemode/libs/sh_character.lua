@@ -373,7 +373,11 @@ if (SERVER) then
 	--]]
 	function nut.char.LoadID(client, index, callback)
 		local steamID = client:SteamID64()
-		local condition = "steamid = "..steamID.." AND id = "..index..sameSchema()
+		local loadid = client.characters[index]
+		if !loadid then
+			Error("Tried to call non existent character")
+		end
+		local condition = "steamid = "..steamID.." AND id = "..loadid..sameSchema()
 		local tables = "money, chardata, charname, inv, description, faction, id, model"
 		local sameChar = false
 
@@ -382,11 +386,11 @@ if (SERVER) then
 			
 			return
 		end
-
+		
 		client.nut_CachedChars = client.nut_CachedChars or {}
 
-		if (client.nut_CachedChars[index]) then
-			client.character = client.nut_CachedChars[index]
+		if (client.nut_CachedChars[loadid]) then
+			client.character = client.nut_CachedChars[loadid]
 				for name, _ in pairs(client.character:GetVars()) do
 					if (nut.char.hooks[name]) then
 						for k, v in pairs(nut.char.hooks[name]) do
@@ -426,7 +430,7 @@ if (SERVER) then
 						end
 						
 						client.character = character
-						client.nut_CachedChars[index] = client.character
+						client.nut_CachedChars[loadid] = client.character
 
 						nut.util.AddLog("Loaded character '"..client.character:GetVar("charname").."' for "..client:RealName()..".", LOG_FILTER_MAJOR)
 					end
