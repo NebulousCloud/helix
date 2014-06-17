@@ -389,8 +389,8 @@ if (SERVER) then
 		/*
 		client.nut_CachedChars = client.nut_CachedChars or {}
 
-		if (client.nut_CachedChars[loadid]) then
-			client.character = client.nut_CachedChars[loadid]
+		if (client.nut_CachedChars[index]) then
+			client.character = client.nut_CachedChars[index]
 				for name, _ in pairs(client.character:GetVars()) do
 					if (nut.char.hooks[name]) then
 						for k, v in pairs(nut.char.hooks[name]) do
@@ -409,6 +409,7 @@ if (SERVER) then
 			return
 		end
 		*/
+		
 		nut.db.FetchTable(condition, tables, function(data)
 			if (IsValid(client)) then
 				if (data) then
@@ -430,7 +431,7 @@ if (SERVER) then
 						end
 						
 						client.character = character
-						--client.nut_CachedChars[loadid] = client.character
+						--client.nut_CachedChars[index] = client.character
 
 						nut.util.AddLog("Loaded character '"..client.character:GetVar("charname").."' for "..client:RealName()..".", LOG_FILTER_MAJOR)
 					end
@@ -807,11 +808,10 @@ else
 		local id = data[5]
 		local skin = data[6]
 		local banned = data[7]
-
 		LocalPlayer().characters = LocalPlayer().characters or {}
 
 		for k, v in pairs(LocalPlayer().characters) do
-			if (v.id == id) then
+			if (k == id) then
 				LocalPlayer().characters[k] = {
 					name = name,
 					desc = description,
