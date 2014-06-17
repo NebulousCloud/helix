@@ -386,7 +386,7 @@ if (SERVER) then
 			
 			return
 		end
-		
+		/*
 		client.nut_CachedChars = client.nut_CachedChars or {}
 
 		if (client.nut_CachedChars[loadid]) then
@@ -408,7 +408,7 @@ if (SERVER) then
 
 			return
 		end
-
+		*/
 		nut.db.FetchTable(condition, tables, function(data)
 			if (IsValid(client)) then
 				if (data) then
@@ -430,7 +430,7 @@ if (SERVER) then
 						end
 						
 						client.character = character
-						client.nut_CachedChars[loadid] = client.character
+						--client.nut_CachedChars[loadid] = client.character
 
 						nut.util.AddLog("Loaded character '"..client.character:GetVar("charname").."' for "..client:RealName()..".", LOG_FILTER_MAJOR)
 					end
