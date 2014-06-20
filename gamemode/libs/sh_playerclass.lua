@@ -78,6 +78,12 @@ do
 
 			weapon = weapon or self:GetActiveWeapon()
 
+			if (IsValid(weapon) and weapon.AlwaysLowered) then
+				self:SetNetVar("wepRaised", false)
+			else
+				self:SetNetVar("wepRaised", raised)
+			end
+
 			if (IsValid(weapon)) then
 				local time = 9001
 
@@ -93,13 +99,7 @@ do
 
 				weapon:SetNextPrimaryFire(CurTime() + time)
 				weapon:SetNextSecondaryFire(CurTime() + time)
-
-				if (weapon.AlwaysLowered) then
-					raised = false
-				end
 			end
-
-			self:SetNetVar("wepRaised", raised)
 		end
 
 		hook.Add("PlayerSwitchWeapon", "nut_AutoLower", function(client, oldWeapon, newWeapon)
