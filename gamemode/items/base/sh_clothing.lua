@@ -61,6 +61,8 @@ BASE.functions.Wear = {
 			client.character.model = model
 			client:SetModel(model)
 
+			hook.Run("PlayerSetHandsModel", client, client:GetHands())
+
 			if (itemTable.OnWear) then
 				itemTable:OnWear(client, data)
 			end
@@ -87,6 +89,8 @@ BASE.functions.TakeOff = {
 			local model = client.character:GetData("oldModel", client:GetModel())
 				client.character.model = model
 				client:SetModel(model)
+
+				hook.Run("PlayerSetHandsModel", client, client:GetHands())
 			client.character:SetData("oldModel", nil, nil, true)
 
 			local newData = table.Copy(data)

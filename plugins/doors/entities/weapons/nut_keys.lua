@@ -35,8 +35,9 @@ SWEP.ViewModel = Model("models/weapons/v_fists.mdl")
 SWEP.WorldModel = ""
 
 SWEP.FireWhenLowered = true
+SWEP.AlwaysLowered = true
 SWEP.DrawViewModel = false
-SWEP.UseHands = true
+SWEP.UseHands = false
 SWEP.LowerAngles = Angle(0, 5, -14)
 SWEP.HoldType = "normal"
 
@@ -45,6 +46,8 @@ function SWEP:PreDrawViewModel(viewModel, weapon, client)
 
 	if (hands and hands.model) then
 		viewModel:SetModel(hands.model)
+		viewModel:SetSkin(hands.skin)
+		viewModel:SetBodyGroups(hands.body)
 	end
 end
 

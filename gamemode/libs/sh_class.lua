@@ -44,6 +44,8 @@ function nut.class.Register(index, classTable)
 
 			if (model) then
 				client:SetModel(model)
+
+				hook.Run("PlayerSetHandsModel", client, client:GetHands())
 			end
 
 			client:SetSkin(self.skin or 0)
@@ -137,6 +139,7 @@ do
 					self:SetSkin(class:GetSkin(self))
 
 					hook.Run("PlayerClassSet", self, index)
+					hook.Run("PlayerSetHandsModel", self, client:GetHands())
 				end
 			end
 		end

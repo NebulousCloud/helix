@@ -34,7 +34,7 @@ SWEP.Secondary.Ammo = ""
 SWEP.ViewModel = Model("models/weapons/v_fists.mdl")
 SWEP.WorldModel = ""
 
-SWEP.UseHands = true
+SWEP.UseHands = false
 SWEP.LowerAngles = Angle(0, 5, -20)
 
 SWEP.FireWhenLowered = true
@@ -45,6 +45,8 @@ function SWEP:PreDrawViewModel(viewModel, weapon, client)
 
 	if (hands and hands.model) then
 		viewModel:SetModel(hands.model)
+		viewModel:SetSkin(hands.skin)
+		viewModel:SetBodyGroups(hands.body)
 	end
 end
 
@@ -102,7 +104,7 @@ function SWEP:DoPunchAnimation()
 	local viewModel = self.Owner:GetViewModel()
 
 	if (IsValid(viewModel)) then
-		viewModel:SetPlaybackRate(0.525)
+		viewModel:SetPlaybackRate(0.5)
 		viewModel:SetSequence(sequence)
 	end
 end

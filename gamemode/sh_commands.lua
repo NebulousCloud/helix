@@ -498,6 +498,8 @@ nut.command.Register({
 			target:SetSkin(tonumber(arguments[3]) or 0)
 			target.character.model = model
 			target:UpdateCharInfo()
+
+			hook.Run("PlayerSetHandsModel", target, target:GetHands())
 			
 			nut.util.Notify(client:Name().." has changed "..target:Name().."'s model to "..arguments[2]..".")
 		end

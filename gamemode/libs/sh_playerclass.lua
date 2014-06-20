@@ -23,14 +23,6 @@ function PLAYER:Loadout()
     return
 end
 
-function PLAYER:SetupDataTables()
-	self.Player:NetworkVar("Bool", 0, "NutWepRaised")
-
-	if (SERVER and #player.GetAll() > 1) then
-		netstream.Start(nil, "nut_PlayerDataTables")
-	end
-end
-
 function PLAYER:GetHandsModel()
 	local hands = hook.Run("PlayerGetHandsModel", self.Player)
 
@@ -40,11 +32,17 @@ function PLAYER:GetHandsModel()
 
 	local model = string.lower(self.Player:GetModel())
 
-	for k, v in pairs(modelList) do
-		if (string.find(string.gsub(model, "_", ""), v)) then
-			model = v
+	if (model:find("police")) then
+		model = "combine"
+	else
+		local niceName = string.gsub(model, "_", "")
 
-			break
+		for k, v in pairs(modelList) do
+			if (nut.util.StringMatches(niceName, v)) then
+				model = v
+
+				break
+			end
 		end
 	end
 
@@ -56,15 +54,11 @@ local playerMeta = FindMetaTable("Player")
 -- Weapon raising/lowering stuff.
 do
 	function playerMeta:WepRaised()
-		if (CLIENT and self != LocalPlayer() and !self.GetNutWepRaised) then
-			RunConsoleCommand("ns_sendplydt")
-		end
-		
 		if (self:GetNetVar("tied")) then
 			return false
 		end
 		
-		return self.GetNutWepRaised and self:GetNutWepRaised() or false
+		return self:GetNetVar("wepRaised", false)
 	end
 
 	local GetVelocity = FindMetaTable("Entity").GetVelocity
@@ -81,8 +75,6 @@ do
 			if (!IsValid(self) or !self.character) then
 				return
 			end
-
-			self:SetNutWepRaised(raised)
 
 			weapon = weapon or self:GetActiveWeapon()
 
@@ -101,7 +93,13 @@ do
 
 				weapon:SetNextPrimaryFire(CurTime() + time)
 				weapon:SetNextSecondaryFire(CurTime() + time)
+
+				if (weapon.AlwaysLowered) then
+					raised = false
+				end
 			end
+
+			self:SetNetVar("wepRaised", raised)
 		end
 
 		hook.Add("PlayerSwitchWeapon", "nut_AutoLower", function(client, oldWeapon, newWeapon)
@@ -120,26 +118,6 @@ do
 				end)
 			else
 				client:SetWepRaised(true, newWeapon)
-			end
-		end)
-
-		concommand.Add("ns_sendplydt", function(client, command, arguments)
-			if (#player.GetAll() < 2) then
-				return
-			end
-			
-			if (client:GetNutVar("nextUpdate", 0) < CurTime()) then
-				netstream.Start(client, "nut_PlayerDataTables")
-
-				client:SetNutVar("nextUpdate", CurTime() + 10)
-			end
-		end)
-	else
-		netstream.Hook("nut_PlayerDataTables", function(data)
-			for k, v in pairs(player.GetAll()) do
-				if (v != LocalPlayer() and !v.GetNutWepRaised) then
-					player_manager.RunClass(v, "SetupDataTables")
-				end
 			end
 		end)
 	end
