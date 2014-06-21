@@ -139,7 +139,7 @@ do
 					self:SetSkin(class:GetSkin(self))
 
 					hook.Run("PlayerClassSet", self, index)
-					hook.Run("PlayerSetHandsModel", self, client:GetHands())
+					hook.Run("PlayerSetHandsModel", self, self:GetHands())
 				end
 			end
 		end
