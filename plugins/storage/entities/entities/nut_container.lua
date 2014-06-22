@@ -204,6 +204,10 @@ if (SERVER) then
 				end
 			end
 
+			if (itemTable.OnTransfer) then
+				itemTable:OnTransfer(client, entity)
+			end
+			
 			hook.Run("OnItemTransfered", client, entity, itemTable)
 		end
 	end)
