@@ -5,11 +5,7 @@
 
 resource.AddWorkshop("207739713")
 
-local startTime = os.clock()
-
-if (game.SinglePlayer()) then
-	error("NutScript can not be ran in single-player, sorry.")
-end
+local startTime = SysTime()
 
 if (string.lower(GetConVarString("gamemode")) == "nutscript") then
 	MsgC(Color(255, 0, 0), "FATAL WARNING! CHANGE +GAMEMODE TO YOUR SCHEMA, NOT NUTSCRIPT!\n")
@@ -48,4 +44,4 @@ include("shared.lua")
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 
-MsgN("NutScript took "..math.Round(os.clock() - startTime, 3).. " second(s) to initialize.")
+MsgN("NutScript took "..math.Round(SysTime() - startTime, 3).. " second(s) to initialize.")

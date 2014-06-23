@@ -336,11 +336,11 @@ if (SERVER) then
 		is already calculated when calling this and the steamid and schema are defined.
 	--]]
 	function nut.char.Create(client, data, callback)
-		local steamID = client:SteamID64()
+		local steamID = client:SteamID64() or 0
 		local condition = "steamid = "..steamID..sameSchema()
 
 		nut.db.FetchTable(condition, "id", function(_, data3)
-			data.steamid = client:SteamID64()
+			data.steamid = client:SteamID64() or 0
 			data.rpschema = SCHEMA.uniqueID
 
 			local highest = 0
@@ -376,7 +376,7 @@ if (SERVER) then
 			return ErrorNoHalt("Attempt to call non-existent character! ("..index..")")
 		end
 		
-		local steamID = client:SteamID64()
+		local steamID = client:SteamID64() or 0
 		local condition = "steamid = "..steamID.." AND id = "..index..sameSchema()
 		local tables = "money, chardata, charname, inv, description, faction, model"
 		local sameChar = false
@@ -450,7 +450,7 @@ if (SERVER) then
 		listing.
 	--]]
 	function nut.char.SendInfo(client, index)
-		local steamID = client:SteamID64()
+		local steamID = client:SteamID64() or 0
 		local condition = "steamid = "..steamID.." AND id = "..index..sameSchema()
 		local tables = "charname, faction, id, description, model, chardata"
 		
@@ -494,7 +494,7 @@ if (SERVER) then
 			return callback()
 		end
 		
-		nut.db.FetchTable("steamid = "..client:SteamID64()..sameSchema(), "id", function(_, data)
+		nut.db.FetchTable("steamid = "..(client:SteamID64() or 0)..sameSchema(), "id", function(_, data)
 			if (IsValid(client)) then
 				for k, v in SortedPairs(data) do
 					nut.char.SendInfo(client, v.id)
@@ -515,7 +515,7 @@ if (SERVER) then
 			return
 		end
 		
-		local steamID = client:SteamID64()
+		local steamID = client:SteamID64() or 0
 		local character = client.character
 
 		if (!character or !character.index or (client.characters and !table.HasValue(client.character, character.index))) then
@@ -686,7 +686,7 @@ if (SERVER) then
 				end
 			end
 
-			nut.db.Query("DELETE FROM "..nut.config.dbTable.." WHERE steamid = "..client:SteamID64().." AND id = "..index..sameSchema(), function(data)
+			nut.db.Query("DELETE FROM "..nut.config.dbTable.." WHERE steamid = "..(client:SteamID64() or 0).." AND id = "..index..sameSchema(), function(data)
 				if (IsValid(client) and client.character and client.character.index == index) then
 					if (client.nut_CachedChars) then
 						client.nut_CachedChars[client.character.index] = nil

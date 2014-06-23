@@ -3,102 +3,92 @@ function GM:ShowHelp(client)
 end
 
 function GM:PlayerInitialSpawn(client)
-	client:SetRenderMode(4)
-	client:SetColor(Color(0, 0, 0, 0))
+	client:SetNoDraw(true)
 
-	local delay = 0
-	
-	if (IsValid(client)) then
-		client:KillSilent()
-		delay = client:Ping() / 50
+	if (client:IsBot()) then
+		hook.Run("OnLocalPlayerValid", client)
+	else
+		netstream.Start(client, "nut_LoadingData", "Waiting for local player.")
 	end
-	
-	netstream.Start(client, "nut_LoadingData", "Waiting for local player.")
+end
 
-	timer.Simple(3 + delay, function()
-		if (!IsValid(client)) then
-			return
+function GM:OnLocalPlayerValid(client, steamID, uniqueID)
+	netstream.Start(client, "nut_LoadingData", "Sending current time.")
+	netstream.Start(client, "nut_CurTime", nut.util.GetTime())
+
+	client:KillSilent()
+	client:StripWeapons()
+
+	netstream.Start(client, "nut_LoadingData", "Initializing player data.")
+	client:InitializeData()
+
+	player_manager.SetPlayerClass(client, "player_nut")
+	player_manager.RunClass(client, "Spawn")
+
+	netstream.Start(client, "nut_LoadingData", "Loading characters.")
+	nut.char.Load(client, function()
+		netstream.Start(client, "nut_LoadingData", "Loading other characters.")
+
+		local total = 0
+		local time = 0.1
+
+		for k, v in pairs(player.GetAll()) do
+			if (v.character and v != client) then
+				total = total + 1
+			end
 		end
 
-		netstream.Start(client, "nut_LoadingData", "Sending current time.")
-		netstream.Start(client, "nut_CurTime", nut.util.GetTime())
+		local i = 0
 
-		client:KillSilent()
-		client:StripWeapons()
+		for k, v in pairs(player.GetAll()) do
+			if (v.character and v != client) then
+				local fraction = math.max(client:Ping() / 100, 0.0001) + 0.00025
+				time = time + fraction
 
-		netstream.Start(client, "nut_LoadingData", "Initializing player data.")
-		client:InitializeData()
+				timer.Simple(k * fraction, function()
+					if (IsValid(client) and IsValid(v)) then
+						i = i + 1
 
-		player_manager.SetPlayerClass(client, "player_nut")
-		player_manager.RunClass(client, "Spawn")
-
-		netstream.Start(client, "nut_LoadingData", "Loading characters.")
-		nut.char.Load(client, function()
-			netstream.Start(client, "nut_LoadingData", "Loading other characters.")
-
-			local total = 0
-			local time = 0.1
-
-			for k, v in pairs(player.GetAll()) do
-				if (v.character and v != client) then
-					total = total + 1
-				end
-			end
-
-			local i = 0
-
-			for k, v in pairs(player.GetAll()) do
-				if (v.character and v != client) then
-					local fraction = math.max(client:Ping() / 100, 0.0001) + 0.0005
-					time = time + fraction
-
-					timer.Simple(k * fraction, function()
-						if (IsValid(client) and IsValid(v)) then
-							i = i + 1
-
-							netstream.Start(client, "nut_LoadingData", "Networking characters... "..math.Round((i / total) * 100).."%")
-							v.character:Send(nil, client, true)
-						end
-					end)
-				end
-			end
-		
-			timer.Simple(time + math.max(client:Ping() / 100, 0.0005) + 0.001, function()
-				netstream.Start(client, "nut_CharMenu")
-			end)
-
-			local uniqueID = "nut_SaveChar"..client:SteamID()
-
-			timer.Create(uniqueID, nut.config.saveInterval, 0, function()
-				if (!IsValid(client)) then
-					timer.Remove(uniqueID)
-
-					return
-				end
-
-				nut.char.Save(client)
-			end)
-
-			if (client:IsBot()) then
-				local character = nut.char.New(client)
-					character:SetVar("charname", client:Name())
-
-					for index, _ in RandomPairs(nut.faction.buffer) do
-						character.faction = index
-						client:SetTeam(index)
-
-						break
+						netstream.Start(client, "nut_LoadingData", "Networking characters... "..math.Round((i / total) * 100).."%")
+						v.character:Send(nil, client, true)
 					end
-
-					local factionTable = nut.faction.GetByID(character.faction)
-
-					character.model = table.Random(factionTable.maleModels)
-					character.index = 1
-					character.skin = 0
-				client.character = character
-				character:Send()
+				end)
 			end
+		end
+
+		netstream.Start(client, "nut_CharMenu")
+
+		local uniqueID = "nut_SaveChar"..client:SteamID()
+
+		timer.Create(uniqueID, nut.config.saveInterval, 0, function()
+			if (!IsValid(client)) then
+				timer.Remove(uniqueID)
+
+				return
+			end
+
+			nut.char.Save(client)
 		end)
+
+		if (client:IsBot()) then
+			local character = nut.char.New(client)
+				character:SetVar("charname", client:Name())
+
+				for index, _ in RandomPairs(nut.faction.buffer) do
+					character.faction = index
+					client:SetTeam(index)
+
+					break
+				end
+
+				local factionTable = nut.faction.GetByID(character.faction)
+
+				character.model = table.Random(factionTable.maleModels)
+				character.index = 1
+				character.skin = 0
+			client.character = character
+			character:Send()
+		end
 	end)
 end
 
@@ -564,3 +554,10 @@ function GM:PlayerShouldBreathe(client) return true end
 
 -- Purpose: Called by the storage plugin after an item has been moved.
 function GM:OnItemTransfered(client, storage, itemTable) end
+
+netstream.Hook("nut_LocalPlayerValid", function(client)
+	if (!client:GetNutVar("validated")) then
+		hook.Run("OnLocalPlayerValid", client)
+		client:SetNutVar("validated", true)
+	end
+end)

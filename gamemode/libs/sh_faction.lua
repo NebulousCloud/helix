@@ -16,7 +16,7 @@ do
 
 	if (SERVER) then
 		function playerMeta:InitializeData()
-			nut.db.Query("SELECT whitelists, plydata FROM "..nut.config.dbPlyTable.." WHERE steamid = "..self:SteamID64()..sameSchema(), function(data)
+			nut.db.Query("SELECT whitelists, plydata FROM "..nut.config.dbPlyTable.." WHERE steamid = "..(self:SteamID64() or 0)..sameSchema(), function(data)
 				if (!IsValid(self)) then
 					return
 				end
@@ -35,7 +35,7 @@ do
 					hook.Run("PlayerLoadedData", self)
 				else
 					nut.db.InsertTable({
-						steamid = self:SteamID64(),
+						steamid = self:SteamID64() or 0,
 						whitelists = "",
 						plydata = {},
 						rpschema = SCHEMA.uniqueID
@@ -49,7 +49,7 @@ do
 		end
 
 		function playerMeta:SaveData()
-			nut.db.UpdateTable("steamid = "..self:SteamID64()..sameSchema(), {
+			nut.db.UpdateTable("steamid = "..(self:SteamID64() or 0)..sameSchema(), {
 				plydata = self.nut_Vars or {},
 				whitelists = self.whitelists or ""
 			}, nut.config.dbPlyTable)

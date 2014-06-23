@@ -3,10 +3,6 @@
 	the framework without GM.BaseClass since it the baseclass is not defined in time.
 --]]
 
-if (game.SinglePlayer()) then
-	error("NutScript can not be ran in single-player, sorry.")
-end
-
 -- Set this since self.BaseClass for schemas aren't created in time.
 nut = nut or GM
 
@@ -107,3 +103,14 @@ surface.CreateFont("nut_ScaledFont", {
 timer.Destroy("HintSystem_OpeningMenu")
 timer.Destroy("HintSystem_Annoy1")
 timer.Destroy("HintSystem_Annoy2")
+
+if (!nut.localPlayerValid) then
+	hook.Add("Think", "nut_WaitForLocalPlayer", function()
+		if (IsValid(LocalPlayer())) then
+			netstream.Start("nut_LocalPlayerValid")
+			hook.Remove("Think", "nut_WaitForLocalPlayer")
+		end
+	end)
+
+	nut.localPlayerValid = true
+end

@@ -347,7 +347,7 @@ nut.command.Register({
 					end
 				end
 
-				nut.db.Query("DELETE FROM "..nut.config.dbTable.." WHERE steamid = "..target:SteamID64().." AND id = "..index..sameSchema(), function(data)
+				nut.db.Query("DELETE FROM "..nut.config.dbTable.." WHERE steamid = "..(target:SteamID64() or 0).." AND id = "..index..sameSchema(), function(data)
 					if (IsValid(target) and target.character and target.character.index == index) then
 						if (target.nut_CachedChars) then
 							target.nut_CachedChars[target.character.index] = nil
