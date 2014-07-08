@@ -304,6 +304,20 @@ function GM:InitPostEntity()
 	end
 end
 
+local limbs = {}
+limbs[HITGROUP_GEAR] = true
+limbs[HITGROUP_RIGHTARM] = true
+limbs[HITGROUP_LEFTLEG] = true
+limbs[HITGROUP_RIGHTLEG] = true
+
+function GM:ScalePlayerDamage(client, hitGroup, damageInfo)
+	if (hitGroup < 2 and damageInfo:IsBulletDamage()) then
+		damageInfo:ScaleDamage(10)
+	elseif (limbs[hitGroup]) then
+		damageInfo:ScaleDamage(0.75)
+	end
+end
+
 function GM:PlayerDeath(victim, weapon, attacker)
 	local time = CurTime() + nut.config.deathTime
 	time = hook.Run("PlayerGetDeathTime", client, time) or time
