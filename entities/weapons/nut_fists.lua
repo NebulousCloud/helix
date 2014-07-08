@@ -31,11 +31,11 @@ SWEP.Secondary.DefaultClip = 0
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = ""
 
-SWEP.ViewModel = Model("models/weapons/v_fists.mdl")
+SWEP.ViewModel = Model("models/weapons/c_arms_cstrike.mdl")
 SWEP.WorldModel = ""
 
 SWEP.UseHands = false
-SWEP.LowerAngles = Angle(0, 5, -20)
+SWEP.LowerAngles = Angle(0, 5, -14)
 
 SWEP.FireWhenLowered = true
 SWEP.HoldType = "normal"
@@ -61,7 +61,7 @@ function SWEP:Deploy()
 	local viewModel = self.Owner:GetViewModel()
 
 	if (IsValid(viewModel)) then
-		viewModel:SetPlaybackRate(0.5)
+		viewModel:SetPlaybackRate(1)
 		viewModel:ResetSequence(ACT_VM_FISTS_DRAW)
 	end
 
@@ -76,11 +76,19 @@ function SWEP:Holster()
 	local viewModel = self.Owner:GetViewModel()
 
 	if (IsValid(viewModel)) then
-		viewModel:SetPlaybackRate(0.5)
+		viewModel:SetPlaybackRate(1)
 		viewModel:ResetSequence(ACT_VM_FISTS_HOLSTER)
 	end
 
 	return true
+end
+
+function SWEP:Think()
+	local viewModel = self.Owner:GetViewModel()
+
+	if (IsValid(viewModel)) then
+		viewModel:SetPlaybackRate(1)
+	end
 end
 
 function SWEP:Precache()
