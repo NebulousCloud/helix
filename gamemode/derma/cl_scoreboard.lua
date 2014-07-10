@@ -154,10 +154,19 @@ local PANEL = {}
 	function PANEL:SetPlayer(client)
 		self.player = client
 
-		self.model:SetModel(client:GetModel(), client:GetSkin())
+		local recognized = hook.Run("IsPlayerRecognized", client)
+		local name = client:Name()
+		local model = client:GetModel()
+
+		if (!recognized) then
+			name = hook.Run("GetUnknownPlayerName", client) or "Unknown"
+			model = "models/player/skeleton.mdl"
+		end
+
+		self.model:SetModel(model, client:GetSkin())
 		self.model:SetToolTip("Click to open "..client:RealName().."'s Steam profile.")
 
-		self.name:SetText(client:Name())
+		self.name:SetText(name)
 		self.name:SizeToContents()
 
 		local description = client.character:GetVar("description")
