@@ -150,14 +150,14 @@ function nut.util.StringMatches(a, b)
 		return true
 	end
 
-	if (string.find(a, b) or string.find(b, a)) then
+	if (string.find(a, b, nil, true) or string.find(b, a, nil, true)) then
 		return true
 	end
 
 	a = string.lower(a)
 	b = string.lower(b)
 
-	if (string.find(a, b) or string.find(b, a)) then
+	if (string.find(a, b, nil, true) or string.find(b, a, nil, true)) then
 		return true
 	end
 
