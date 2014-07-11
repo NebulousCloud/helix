@@ -686,7 +686,7 @@ if (SERVER) then
 				end
 			end
 
-			nut.db.Query("DELETE FROM "..nut.config.dbTable.." WHERE steamid = "..(client:SteamID64() or 0).." AND id = "..index..sameSchema(), function(data)
+			nut.db.Query("DELETE FROM "..nut.config.dbTable.." WHERE steamid = "..(client:SteamID64() or 0).." AND id = "..nut.db.Escpae(index)..sameSchema(), function(data)
 				if (IsValid(client) and client.character and client.character.index == index) then
 					if (client.nut_CachedChars) then
 						client.nut_CachedChars[client.character.index] = nil

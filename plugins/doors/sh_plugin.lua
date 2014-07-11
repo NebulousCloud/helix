@@ -60,7 +60,7 @@ if (SERVER) then
 
 			if (IsValid(entity)) then
 				entity:SetNetVar("title", v.title)
-				entity:SetNetVar("unownable", true)
+				entity:SetNetVar("unownable", v.own)
 
 				if (v.hidden) then
 					entity:SetNetVar("hidden", true)
@@ -79,6 +79,7 @@ if (SERVER) then
 				data[#data + 1] = {
 					index = nut.util.GetCreationID(v),
 					title = v:GetNetVar("title"),
+					own = v:GetNetVar("unownable"),
 					hidden = v:GetNetVar("hidden", false)
 				}
 			end

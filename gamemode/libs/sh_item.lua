@@ -844,17 +844,17 @@ do
 			local itemTable = nut.item.Get(class)
 
 			if (!itemTable) then
-				return
+				return nut.util.Notify("This item is not valid!", client)
 			end
 
 			if (itemTable:ShouldShowOnBusiness(client) == false) then
-				return
+				return nut.util.Notify("You are not allowed to buy this item.", client)
 			end
 
 			local price = itemTable.price
 
 			if (!client:HasInvSpace(itemTable)) then
-				return
+				return nut.util.Notify(nut.lang.Get("no_invspace"), client)
 			end
 
 			if (itemTable.faction) then

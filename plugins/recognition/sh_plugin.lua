@@ -4,6 +4,10 @@ PLUGIN.desc = "Allows players to recognize others."
  
 if (CLIENT) then
 	function PLUGIN:IsPlayerRecognized(client)
+		if (client == LocalPlayer()) then
+			return true
+		end
+		
 		local localPlayer = LocalPlayer()
 
 		if (IsValid(localPlayer) and localPlayer.character) then
