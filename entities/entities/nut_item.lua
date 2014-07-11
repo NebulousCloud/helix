@@ -29,6 +29,7 @@ if (SERVER) then
 	end
 
 	function ENT:Use(activator)
+		netstream.Start(activator, "nut_ItemMenu", self)
 	end
 end
 
@@ -79,4 +80,10 @@ if (CLIENT) then
 			end
 		end
 	end
+
+	netstream.Hook("nut_ItemMenu", function(entity)
+		if (IsValid(entity) and entity:GetPos():Distance(LocalPlayer():GetPos()) <= 72) then
+			nut.item.OpenEntityMenu(entity)
+		end
+	end)
 end

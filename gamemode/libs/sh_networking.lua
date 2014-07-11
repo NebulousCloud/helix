@@ -18,7 +18,9 @@ if (SERVER) then
 	hook.Add("PlayerInitialSpawn", "nut_SyncVars", function(client)
 		timer.Simple(5, function()
 			for k, v in pairs(ents.GetAll()) do
-				v:SyncVars(client, true)
+				if (IsValid(v)) then
+					v:SyncVars(client, true)
+				end
 			end
 		end)
 	end)

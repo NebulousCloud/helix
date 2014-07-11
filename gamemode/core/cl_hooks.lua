@@ -550,19 +550,6 @@ function GM:PlayerBindPress(client, bind, pressed)
 		end
 	end
 
-	if (bind == "+use") then
-		local trace = client:GetEyeTraceNoCursor()
-		local entity = trace.Entity
-
-		if (IsValid(entity)) then
-			local distance = client:GetPos():Distance(entity:GetPos())
-
-			if (distance <= 64 and entity:GetClass() == "nut_item") then
-				nut.item.OpenEntityMenu(entity)
-			end
-		end
-	end
-
 	if (!client:GetNetVar("gettingUp") and client:IsRagdolled() and string.find(bind, "+jump") and pressed) then
 		RunConsoleCommand("nut", "chargetup")
 	end

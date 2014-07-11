@@ -73,15 +73,17 @@ if (SERVER) then
 		local data = {}
 
 		for k, v in pairs(ents.GetAll()) do
-			local title = v:GetNetVar("title", "")
+			if (IsValid(v)) then
+				local title = v:GetNetVar("title", "")
 
-			if (v:IsDoor() and (v:GetNetVar("unownable") or v:GetNetVar("hidden") or (title and title != "" and title != "Door for Sale"))) then
-				data[#data + 1] = {
-					index = nut.util.GetCreationID(v),
-					title = v:GetNetVar("title"),
-					own = v:GetNetVar("unownable"),
-					hidden = v:GetNetVar("hidden", false)
-				}
+				if (v:IsDoor() and (v:GetNetVar("unownable") or v:GetNetVar("hidden") or (title and title != "" and title != "Door for Sale"))) then
+					data[#data + 1] = {
+						index = nut.util.GetCreationID(v),
+						title = v:GetNetVar("title"),
+						own = v:GetNetVar("unownable"),
+						hidden = v:GetNetVar("hidden", false)
+					}
+				end
 			end
 		end
 
