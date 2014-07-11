@@ -22,7 +22,7 @@ function PLUGIN:PlayerLoadedChar(client)
 			local value = 3
 
 			if (length2D >= runSpeed) then
-				value = -10 + math_min(client:GetAttrib(ATTRIB_END) * 0.25, 7.5)
+				value = -10 + math_min((client:GetAttrib(ATTRIB_END) or 0) * 0.25, 7.5)
 
 				client:SetNutVar("runDist", client:GetNutVar("runDist", 0) + 1)
 
