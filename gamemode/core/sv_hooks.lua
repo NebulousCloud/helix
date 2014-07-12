@@ -367,7 +367,7 @@ function GM:PlayerCanHearPlayersVoice(speaker, listener)
 end
 
 function GM:PlayerGetFistDamage(client, damage)
-	return damage + client:GetAttrib(ATTRIB_STR, 0)
+	return damage + (client:GetAttrib(ATTRIB_STR, 0) * 0.2)
 end
 
 function GM:PlayerThrowPunch(client, attempted)
