@@ -372,6 +372,8 @@ if (SERVER) then
 		If the character does not exist, an error will be created.
 	--]]
 	function nut.char.LoadID(client, index, callback)
+		index = tonumber(index)
+
 		if (!table.HasValue(client.characters, index)) then
 			return ErrorNoHalt("Attempt to call non-existent character! ("..index..")")
 		end
@@ -449,7 +451,11 @@ if (SERVER) then
 		Purpose: Sends character information for a player that is to be used in the character
 		listing.
 	--]]
-	function nut.char.SendInfo(client, index)
+	function nut.char.SendInfo(client, index, callback)
+		index = tonumber(index)
+
+		if (!index) then return end
+
 		local steamID = client:SteamID64() or 0
 		local condition = "steamid = "..steamID.." AND id = "..index..sameSchema()
 		local tables = "charname, faction, id, description, model, chardata"
@@ -478,6 +484,10 @@ if (SERVER) then
 					end
 
 					netstream.Start(client, "nut_CharInfo", {data.charname, data.description, data.model, data.faction, data.id, data.skin, banned})
+
+					if (callback) then
+						callback()
+					end
 				else
 					nut.util.AddLog("Attempt to load an invalid character ("..client:Name().." #"..index..")", LOG_FILTER_MAJOR)
 				end
@@ -493,14 +503,24 @@ if (SERVER) then
 		if (client:IsBot()) then
 			return callback()
 		end
-		
+
 		nut.db.FetchTable("steamid = "..(client:SteamID64() or 0)..sameSchema(), "id", function(_, data)
 			if (IsValid(client)) then
-				for k, v in SortedPairs(data) do
-					nut.char.SendInfo(client, v.id)
-				end
+				local i = 1
+				local count = table.Count(data)
 
-				if (callback) then
+				if (count > 0) then
+					for k, v in SortedPairs(data) do
+						local passedCallback
+
+						if (i == count) then
+							passedCallback = callback
+						end
+
+						nut.char.SendInfo(client, v.id, passedCallback)
+						i = i + 1
+					end
+				elseif (callback) then
 					callback()
 				end
 			end
@@ -639,22 +659,22 @@ if (SERVER) then
 		charData.money = hook.Run("GetDefaultMoney", client, charData)
 
 		nut.char.Create(client, charData, function(id)
-			timer.Simple(math.max(client:Ping() / 100, 0.1), function()
-				nut.char.SendInfo(client, id)
-
-				timer.Simple(math.max(client:Ping() / 100, 0.1), function()
-					netstream.Start(client, "nut_CharCreateAuthed")
-				end)
-
-				hook.Run("PlayerCreatedChar", client, charData)
-				
-				nut.util.AddLog("Created new character '"..name.."' for "..client:RealName()..".", LOG_FILTER_MAJOR)
+			nut.char.SendInfo(client, id, function()
+				netstream.Start(client, "nut_CharCreateAuthed")
 			end)
+
+			hook.Run("PlayerCreatedChar", client, charData)
+			
+			nut.util.AddLog("Created new character '"..name.."' for "..client:RealName()..".", LOG_FILTER_MAJOR)
 		end)
 	end)
 
 	-- Spawns the player with their appropriate character and closes the main menu.
 	netstream.Hook("nut_CharChoose", function(client, index)
+		index = tonumber(index)
+
+		if (!index) then return end
+
 		if (client.character and client.character.index != index) then
 			nut.char.Save(client)
 			hook.Run("OnCharChanged", client)
@@ -673,6 +693,10 @@ if (SERVER) then
 
 	-- Deletes a character from the database if it exists.
 	netstream.Hook("nut_CharDelete", function(client, index)
+		index = tonumber(index)
+
+		if (!index) then return end
+
 		if (client.character and client:GetMoney() < nut.config.startingAmount) then
 			return false
 		end
@@ -686,7 +710,7 @@ if (SERVER) then
 				end
 			end
 
-			nut.db.Query("DELETE FROM "..nut.config.dbTable.." WHERE steamid = "..(client:SteamID64() or 0).." AND id = "..nut.db.Escape(index)..sameSchema(), function(data)
+			nut.db.Query("DELETE FROM "..nut.config.dbTable.." WHERE steamid = "..(client:SteamID64() or 0).." AND id = "..nut.db.Escape(tostring(index))..sameSchema(), function(data)
 				if (IsValid(client) and client.character and client.character.index == index) then
 					if (client.nut_CachedChars) then
 						client.nut_CachedChars[client.character.index] = nil
@@ -803,10 +827,10 @@ else
 		local name = data[1]
 		local description = data[2]
 		local model = data[3]
-		local faction = data[4]
-		local id = data[5]
-		local skin = data[6]
-		local banned = data[7]
+		local faction = tonumber(data[4])
+		local id = tonumber(data[5])
+		local skin = tonumber(data[6])
+		local banned = util.tobool(data[7])
 
 		LocalPlayer().characters = LocalPlayer().characters or {}
 

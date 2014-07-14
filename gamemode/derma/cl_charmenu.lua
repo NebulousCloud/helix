@@ -589,11 +589,13 @@ local PANEL = {}
 					local function SetupCharacter(index)
 						local info = LocalPlayer().characters[index]
 
-						self.name:SetText(info.name)
-						self.name:SetTextColor(team.GetColor(info.faction))
-						self.model:SetModel(info.model)
+						if (info) then
+							self.name:SetText(info.name)
+							self.name:SetTextColor(team.GetColor(info.faction))
+							self.model:SetModel(info.model)
 
-						charIndex = info.id
+							charIndex = info.id
+						end
 					end
 
 					width = width - 16
