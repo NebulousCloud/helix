@@ -576,6 +576,10 @@ do
 			entity.itemTable = itemTable
 			entity:SetItemID(itemTable.uniqueID)
 
+			if (IsValid(client)) then
+				entity:SetCreator(client)
+			end
+
 			if (data) then
 				entity:SetInternalData(von.serialize(data))
 				entity.realData = data

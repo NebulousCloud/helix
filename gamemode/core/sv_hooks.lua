@@ -275,6 +275,22 @@ function GM:PlayerSpawnVehicle(client, model, name, vehicle)
 	return client:HasFlag("c")
 end
 
+function GM:PlayerSpawnedProp(client, model, entity)
+	entity:SetCreator(client)
+end
+
+function GM:PlayerSpawnedRagdoll(client, model, entity)
+	entity:SetCreator(client)
+end
+
+function GM:PlayerSpawnedSENT(client, entity)
+	entity:SetCreator(client)
+end
+
+function GM:PlayerSpawnedVehicle(client, entity)
+	entity:SetCreator(client)
+end
+
 function GM:PlayerSwitchFlashlight(client, state)
 	if (!client:CanUseFlashlight()) then
 		return false

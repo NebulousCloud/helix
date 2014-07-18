@@ -229,7 +229,9 @@ function GM:PhysgunPickup(client, entity)
 		end
 	end
 
-	if (entity.PhysgunDisable) then
+	if (entity:GetPersistent()) then return false end
+
+	if (entity.PhysgunDisable or entity.PhysgunDisabled) then
 		if (entity.PhysgunAllowAdmin and client:IsAdmin()) then
 			return  true
 		end
@@ -237,7 +239,17 @@ function GM:PhysgunPickup(client, entity)
 		return false
 	end
 
-	return client:IsAdmin() or (!entity:IsPlayer() and !entity:IsNPC())
+	if (client:IsAdmin()) then
+		return true
+	end
+
+	local creator = entity.GetCreator and entity:GetCreator()
+
+	if (client != creator) then
+		return false
+	end
+
+	return !entity:IsNPC() and !entity:IsPlayer() and (SERVER and !entity:CreatedByMap())
 end
 
 function GM:PhysgunDrop(client, entity)
