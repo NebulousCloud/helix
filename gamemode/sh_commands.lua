@@ -685,3 +685,79 @@ nut.command.Register({
 		nut.util.Notify("You provided an invalid bodygroup.", client)
 	end
 }, "charsetbodygroup")
+
+nut.command.Register({
+	adminOnly = true,
+	syntax = "<string name>",
+	onRun = function(client, arguments)
+		local target = nut.command.FindPlayer(client, table.concat(arguments, " "))
+
+		if (target) then
+			target:KillSilent()
+			target.character:SetData("banned", true)
+			target:UpdateCharInfo()
+
+			nut.char.Save(target)
+
+			timer.Simple(0, function()
+				if (IsValid(target)) then
+					netstream.Start(target, "nut_CharMenu", true)
+				end
+			end)
+
+			nut.util.Notify(client:Name().." has character banned "..target:Name()..".")
+		end
+	end
+}, "charban")
+
+nut.command.Register({
+	adminOnly = true,
+	syntax = "<string name>",
+	onRun = function(client, arguments)
+		local name = arguments[1]
+
+		if (!name) then
+			return nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
+		else
+			name = nut.db.Escape("%"..name.."%")
+		end
+
+		local ourName = client:Name()
+
+		nut.db.Query("SELECT steamid, id, charname, chardata FROM "..nut.config.dbTable.." WHERE charname LIKE "..name, function(data)
+			if (data and data.chardata and data.charname) then
+				local decoded = von.deserialize(data.chardata)
+
+				if (decoded.banned) then
+					decoded.banned = nil
+
+					local found
+
+					for k, v in pairs(player.GetAll()) do
+						if (v:SteamID64() == tostring(data.steamid)) then
+							found = v
+							break
+						end
+					end
+
+					local function Callback()
+						nut.util.Notify(ourName.." has unbanned the character '"..data.charname.."'")
+					end
+
+					local charID = tonumber(data.id)
+
+					if (IsValid(found) and charID) then
+						client.nut_CachedChars[charID] = nil
+						netstream.Start(client, "nut_CharInfoVar", {charID, "banned", false})
+					end
+
+					nut.db.Query("UPDATE "..nut.config.dbTable.." SET chardata = "..nut.db.Escape(von.serialize(decoded)).." WHERE chardata = "..nut.db.Escape(data.chardata), Callback)
+				else
+					nut.util.Notify(data.chardata.." is not a banned character.", client)
+				end
+			elseif (IsValid(client)) then
+				return nut.util.Notify(nut.lang.Get("no_ply"), client)
+			end
+		end)
+	end
+}, "charunban")

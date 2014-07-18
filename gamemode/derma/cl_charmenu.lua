@@ -523,7 +523,7 @@ local PANEL = {}
 					local function ChooseClick(this)
 						if (nut.lastCharIndex == charIndex) then return end
 
-						if (!self.choosing) then
+						if (!self.choosing and !self.banned) then
 							nut.lastCharIndex = charIndex
 							netstream.Start("nut_CharChoose", charIndex)
 							self.choosing = true
@@ -592,7 +592,9 @@ local PANEL = {}
 						if (info) then
 							self.name:SetText(info.name)
 							self.name:SetTextColor(team.GetColor(info.faction))
+							self.name:SetAlpha(banned and 50 or 255)
 							self.model:SetModel(info.model)
+							self.model:SetAlpha(banned and 50 or 255)
 
 							charIndex = info.id
 						end
@@ -611,6 +613,7 @@ local PANEL = {}
 							end, true)
 
 							if (first) then
+								charIndex = v.id
 								SetupCharacter(charIndex)
 								first = false
 							end

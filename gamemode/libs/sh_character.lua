@@ -87,7 +87,7 @@ if (SERVER) then
 				self:Team(),
 				self.character.index,
 				self:GetSkin(),
-				self.character:GetData("banned", false)
+				self.character:GetData("banned")
 			})
 		end
 	end
@@ -681,6 +681,10 @@ if (SERVER) then
 		end
 
 		nut.char.LoadID(client, index, function(sameChar)
+			if (client.character:GetData("banned")) then
+				return client:Kick("You can not choose a banned character")
+			end
+
 			netstream.Start(client, "nut_CharMenu", false)
 
 			if (!sameChar) then
@@ -859,5 +863,19 @@ else
 			skin = skin,
 			banned = banned
 		})
+	end)
+
+	netstream.Hook("nut_CharInfoVar", function(data)
+		local id = tonumber(data[1])
+		local key = data[2]
+		local value = data[3]
+
+		for k, v in pairs(LocalPlayer().characters) do
+			if (v.id == id) then
+				LocalPlayer().characters[k][key] = value
+
+				return
+			end
+		end
 	end)
 end
