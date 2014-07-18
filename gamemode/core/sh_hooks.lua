@@ -249,7 +249,34 @@ function GM:PhysgunPickup(client, entity)
 		return false
 	end
 
-	return !entity:IsNPC() and !entity:IsPlayer() and (SERVER and !entity:CreatedByMap())
+	return !entity:IsNPC() and !entity:IsPlayer() and (SERVER and !entity:CreatedByMap() or true)
+end
+
+function GM:CanTool(client, trace, mode)
+	local entity = trace.Entity
+	local result = self.BaseClass:CanTool(client, trace, mode)
+
+	if (result == false) then
+		return false
+	end
+
+	if (client:IsAdmin()) then
+		if (IsValid(entity) and entity:IsPlayer() and !nut.config.adminRemovePly and SERVER) then
+			entity:Kick("You have been removed by "..client:Name())
+		end
+
+		return true
+	elseif (IsValid(entity) and entity:IsDoor()) then
+		return false
+	end
+
+	local creator = entity.GetCreator and entity:GetCreator()
+
+	if (SERVER and client != creator) then
+		return false
+	end
+
+	return !entity:IsNPC() and !entity:IsPlayer() and (SERVER and !entity:CreatedByMap() or true)
 end
 
 function GM:PhysgunDrop(client, entity)
