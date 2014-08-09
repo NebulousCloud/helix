@@ -33,14 +33,6 @@ if (SERVER) then
 			end
 		end
 	end
-
-	function PLUGIN:SetupPlayerVisibility(client)
-		if (client:GetNutVar("noclipping")) then
-			for k, v in pairs(player.GetAll()) do
-				AddOriginToPVS(v:GetPos())
-			end
-		end
-	end
 else
 	CreateClientConVar("nut_observetp", "0", true, true)
 	local showESP = CreateClientConVar("nut_observeesp", "1", true, true)
