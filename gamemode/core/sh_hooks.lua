@@ -261,7 +261,7 @@ function GM:CanTool(client, trace, mode)
 	end
 
 	if (client:IsAdmin()) then
-		if (IsValid(entity) and entity:IsPlayer() and !nut.config.adminRemovePly and SERVER) then
+		if (IsValid(entity) and entity:IsPlayer() and !nut.config.adminRemovePly and SERVER and (mode == "remover")) then
 			entity:Kick("You have been removed by "..client:Name())
 		end
 
@@ -269,7 +269,11 @@ function GM:CanTool(client, trace, mode)
 	elseif (IsValid(entity) and entity:IsDoor()) then
 		return false
 	end
-
+	
+	if entity:IsWorld() then
+		return true
+	end
+	
 	local creator = entity.GetCreator and entity:GetCreator()
 
 	if (SERVER and client != creator) then
