@@ -1,6 +1,6 @@
 "nutscript"
 {
 	"base"		"sandbox"
-	"title"		"NutScript"
+	"title"		"NutScript 1.1"
 	"author"	"Chessnut"
 }

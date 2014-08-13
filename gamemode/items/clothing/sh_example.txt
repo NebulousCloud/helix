@@ -1,3 +1,0 @@
-ITEM.name = "Kleiner"
-ITEM.desc = "Makes you look like a scientist!"
-ITEM.model = Model("models/kleiner.mdl")
