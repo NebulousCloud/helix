@@ -98,6 +98,7 @@ if (SERVER) then
 
 						character.vars.inv = nut.item.createInv(nut.config.get("invW", 6), nut.config.get("invH", 4))
 						character.vars.inv:setOwner(id)
+						character.vars.inv:setReceiver(client)
 						
 						nut.db.query("SELECT _itemID, _uniqueID, _data, _x, _y FROM nut_items WHERE _charID = "..id, function(data)
 							if (data) then
@@ -111,9 +112,15 @@ if (SERVER) then
 									if (x and y and itemID) then
 										local item2 = nut.item.new(item._uniqueID, itemID)
 										item2.data = data
-
-										slots[x] = slots[x] or {}
-										slots[x][y] = item2
+										item2.gridX = x
+										item2.gridY = y
+										
+										for x2 = 0, item2.width - 1 do
+											for y2 = 0, item2.height - 1 do
+												slots[x + x2] = slots[x + x2] or {}
+												slots[x + x2][y + y2] = item2
+											end
+										end
 									end
 								end
 
@@ -136,7 +143,7 @@ if (SERVER) then
 end
 
 function nut.char.new(data, id, client, steamID)
-	local character = setmetatable({vars = {}, __tostring = function(self) return "character["..self:getID().."]" end}, FindMetaTable("Character"))
+	local character = setmetatable({vars = {}}, FindMetaTable("Character"))
 		for k, v in pairs(data) do
 			if (v != nil) then
 				character.vars[k] = v

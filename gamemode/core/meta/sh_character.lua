@@ -1,9 +1,9 @@
 local _R = debug.getregistry()
 
-local CHAR = setmetatable({}, {__tostring = function(self) return "character["..self.id.."]" end})
+local CHAR = _R.Character or setmetatable({}, {__tostring = function(self) return "character["..self.id.."]" end})
 CHAR.__index = CHAR
-CHAR.id = 0
-CHAR.vars = {}
+CHAR.id = CHAR.id or 0
+CHAR.vars = CHAR.vars or {}
 
 function CHAR:getID()
 	return self.id
@@ -65,6 +65,12 @@ if (SERVER) then
 				self:sync()
 
 				if (!client.nutFirstLoaded) then
+					if (!self:getInv()) then
+						self.vars.inv = nut.item.createInv(nut.config.get("invW", 6), nut.config.get("invH", 4))
+						self.vars.inv:setOwner(self:getID())
+						self.vars.inv:setReceiver(client)
+					end
+
 					self:getInv():sync()
 				end
 			end

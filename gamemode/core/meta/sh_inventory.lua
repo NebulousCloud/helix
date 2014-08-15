@@ -1,12 +1,12 @@
 local _R = debug.getregistry()
 
-local META = setmetatable({}, {})
+local META = _R.Inventory or setmetatable({}, {})
 META.__index = META
-META.slots = {}
-META.w = 4
-META.h = 4
-META.owner = NULL
-META.receiver = META.owner
+META.slots = META.slots or {}
+META.w = META.w or 4
+META.h = META.h or 4
+META.owner = META.owner or NULL
+META.receiver = META.receiver or META.owner
 
 function META:setSize(w, h)
 	self.w = w
@@ -27,6 +27,33 @@ function META:setOwner(owner)
 	self.owner = owner
 end
 
+function META:canItemFit(x, y, w, h, item2)
+	local canFit = true
+
+	for x2 = 0, w - 1 do
+		for y2 = 0, h - 1 do
+			local item = (self.slots[x + x2] or {})[y + y2]
+
+			if ((x + x2) > self.w or item) then
+				if (item2) then
+					if (item.id == item2.id) then
+						continue
+					end
+				end
+
+				canFit = false
+				break
+			end
+		end
+
+		if (!canFit) then
+			break
+		end
+	end
+
+	return canFit
+end
+
 function META:findEmptySlot(w, h)
 	w = w or 1
 	h = h or 1
@@ -35,26 +62,11 @@ function META:findEmptySlot(w, h)
 		return
 	end
 
-	local canFit = true
+	local canFit = false
 
-	for y = 1, (self.h - h) + 1 do
-		for x = 1, (self.w - w) + 1 do
-			canFit = true
-
-			for x2 = 0, w do
-				for y2 = 0, h do
-					if (self.slots[x + x2] and !self.slots[x + x2][y + y2]) then
-						canFit = false
-						break
-					end
-				end
-
-				if (!canFit) then
-					break
-				end
-			end
-
-			if (canFit) then
+	for y = 1, self.h - (h - 1) do
+		for x = 1, self.w - (w - 1) do
+			if (self:canItemFit(x, y, w, h)) then
 				return x, y
 			end
 		end
@@ -68,6 +80,14 @@ function META:getItemAt(x, y)
 end
 
 if (SERVER) then
+	function META:sendSlot(x, y, item)
+		if (type(self.receiver) == "Player" and self.owner == self.receiver:getChar()) then
+			netstream.Start(self.receiver, "invSet", item and item.uniqueID or nil, item and item.id or nil, x, y)
+		else
+			netstream.Start(self.receiver, "invSet", item and item.uniqueID or nil, item and item.id or nil, x, y, self.owner)
+		end
+	end
+
 	function META:add(uniqueID, quantity, data, x, y, noReplication)
 		quantity = quantity or 1
 
@@ -87,20 +107,26 @@ if (SERVER) then
 			end
 
 			if (!x and !y) then
-				x, y = self:findEmptySlot(itemTable.width or 1, itemTable.height or 1)
+				x, y = self:findEmptySlot(itemTable.width, itemTable.height)
 			end
-
+			
 			if (x and y) then
+				self.slots[x] = self.slots[x] or {}
+				self.slots[x][y] = true
+
 				nut.item.instance(self.owner, uniqueID, data, x, y, function(item)
-					self.slots[x] = self.slots[x] or {}
-					self.slots[x][y] = item
+					item.gridX = x
+					item.gridY = y
+
+					for x2 = 0, item.width - 1 do
+						for y2 = 0, item.height - 1 do
+							self.slots[x + x2] = self.slots[x + x2] or {}
+							self.slots[x + x2][y + y2] = item
+						end
+					end
 
 					if (!noReplication) then
-						if (type(self.receiver) == "number") then
-							netstream.Start(self.receiver, "invSet", uniqueID, item.id, x, y)
-						else
-							netstream.Start(self.receiver, "invSet", uniqueID, item.id, x, y, self.owner)
-						end
+						self:sendSlot(x, y, item)
 					end
 				end)
 
@@ -120,7 +146,9 @@ if (SERVER) then
 
 		for x, items in pairs(self.slots) do
 			for y, item in pairs(items) do
-				slots[#slots + 1] = {x, y, item.uniqueID, item.id}
+				if (item.gridX == x and item.gridY == y) then
+					slots[#slots + 1] = {x, y, item.uniqueID, item.id}
+				end
 			end
 		end
 

@@ -1,10 +1,10 @@
 local PANEL = {}
 	function PANEL:Init()
-		if (IsValid(nutguiinv)) then
-			nutguiinv:Remove()
+		if (IsValid(nut.gui.inv)) then
+			nut.gui.inv:Remove()
 		end
 		
-		nutguiinv = self
+		nut.gui.inv = self
 		
 		self:SetSize(64, 64)
 		self:SetTitle("Inventory")
@@ -14,7 +14,8 @@ local PANEL = {}
 		
 		for x, items in pairs(LocalPlayer():getChar():getInv().slots) do
 			for y, item in pairs(items) do
-				local icon = self:addIcon(item.model or "models/props_junk/popcan01a.mdl", item.width or 1, item.height or 1, x, y)
+
+				local icon = self:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
 				icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, item.desc))
 			end
 		end
@@ -95,6 +96,17 @@ local PANEL = {}
 		return self.slots[x] and IsValid(self.slots[x][y]) and (!IsValid(self.slots[x][y].item) or self.slots[x][y].item == this)
 	end
 	
+	function PANEL:onTransfer(oldX, oldY, x, y)
+		netstream.Start("invMove", oldX, oldY, x, y)
+
+		local inventory = LocalPlayer():getChar():getInv()
+		local item = inventory:getItemAt(oldX, oldY)
+
+		inventory.slots[oldX][oldY] = nil
+		inventory.slots[x] = inventory.slots[x] or {}
+		inventory.slots[x][y] = item
+	end
+
 	function PANEL:addIcon(model, x, y, w, h)
 		w = w or 1
 		h = h or 1
@@ -141,6 +153,8 @@ local PANEL = {}
 					local data = self.dropPos
 					
 					if (data) then
+						local oldX, oldY = this.gridX, this.gridY
+
 						this.gridX = data.x2
 						this.gridY = data.y2
 						this:SetPos(data.x, data.y)
@@ -154,6 +168,7 @@ local PANEL = {}
 						end
 						
 						panel.slots = {}
+						self:onTransfer(oldX, oldY, this.gridX, this.gridY)
 						
 						for x = 1, this.gridW do
 							for y = 1, this.gridH do
@@ -184,8 +199,10 @@ local PANEL = {}
 				for i2 = 0, h - 1 do
 					local slot = self.slots[x + i][y + i2]
 					
-					slot.item = panel
-					panel.slots[#panel.slots + 1] = slot
+					if (slot) then
+						slot.item = panel
+						panel.slots[#panel.slots + 1] = slot
+					end
 				end
 			end
 			

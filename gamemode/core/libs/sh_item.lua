@@ -55,6 +55,9 @@ function nut.item.load(path, baseID, isBaseItem)
 						ErrorNoHalt("[NutScript] Item '"..ITEM.uniqueID.."' has a non-existent base! ("..ITEM.base..")")
 					end
 				end
+
+				ITEM.width = ITEM.width or 1
+				ITEM.height = ITEM.height or 1
 			(isBaseItem and nut.item.base or nut.item.list)[ITEM.uniqueID] = ITEM
 		ITEM = nil
 	else
@@ -141,7 +144,46 @@ do
 				local inventory = character:getInv()
 
 				if (inventory) then
-					inventory.slots[x][y] = nut.item.new(uniqueID, id)
+					local item = uniqueID and id and nut.item.new(uniqueID, id) or nil
+					inventory.slots[x] = inventory.slots[x] or {}
+					inventory.slots[x][y] = item
+
+					local panel = nut.gui.inv
+
+					if (IsValid(panel)) then
+						panel:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
+					end
+				end
+			end
+		end)
+	else
+		netstream.Hook("invMove", function(client, oldX, oldY, x, y)
+			oldX, oldY, x, y = tonumber(oldX), tonumber(oldY), tonumber(x), tonumber(y)
+			if (!oldX or !oldY or !x or !y) then return end
+
+			local character = client:getChar()
+
+			if (character) then
+				local inventory = character:getInv()
+				local item = inventory:getItemAt(oldX, oldY)
+
+				if (item) then
+					if (inventory:canItemFit(x, y, item.width, item.height, item)) then
+						item.gridX = x
+						item.gridY = y
+
+						for x2 = 0, item.width - 1 do
+							for y2 = 0, item.height - 1 do
+								inventory.slots[oldX + x2] = inventory.slots[oldX + x2] or {}
+								inventory.slots[oldX + x2][oldY + y2] = nil
+
+								inventory.slots[x + x2] = inventory.slots[x + x2] or {}
+								inventory.slots[x + x2][y + y2] = item
+							end
+						end
+
+						nut.db.query("UPDATE nut_items SET _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
+					end
 				end
 			end
 		end)
