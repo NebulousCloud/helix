@@ -33,13 +33,18 @@ function GM:InitializedConfig()
 	local fault = GetNetVar("dbError")
 
 	hook.Run("LoadFonts", font)
-
+	
 	local loader = vgui.Create("EditablePanel")
 	loader:ParentToHUD()
 	loader:Dock(FILL)
 	loader.Paint = function(this, w, h)
 		surface.SetDrawColor(0, 0, 0)
 		surface.DrawRect(0, 0, w, h)
+	end
+	loader.Think = function(this)
+		if (nut.config.loaded) then
+			this:Remove()
+		end
 	end
 
 	local label = loader:Add("DLabel")
@@ -63,7 +68,12 @@ function GM:InitializedConfig()
 	nut.gui.loading = loader
 end
 
+function GM:InitPostEntity()
+	nut.joinTime = CurTime()
+end
+
 function GM:HUDPaint()
+	self.BaseClass:PaintWorldTips()
 	nut.bar.drawAll()
 end
 

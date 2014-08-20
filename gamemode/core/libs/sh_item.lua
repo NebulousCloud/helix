@@ -39,6 +39,10 @@ function nut.item.load(path, baseID, isBaseItem)
 			ITEM.base = baseID
 			ITEM.isBase = isBaseItem
 
+			if (PLUGIN) then
+				ITEM.plugin = PLUGIN.uniqueID
+			end
+
 			nut.util.include(path)
 				if (ITEM.base) then
 					local baseTable = nut.item.list[ITEM.base]

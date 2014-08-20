@@ -32,6 +32,10 @@ function nut.faction.loadFromDir(directory)
 		local niceName = v:sub(4, -5)
 
 		FACTION = nut.faction.teams[niceName] or {index = table.Count(nut.faction.teams) + 1}
+			if (PLUGIN) then
+				FACTION.plugin = PLUGIN.uniqueID
+			end
+
 			nut.util.include(directory.."/"..v, "shared")
 			team.SetUp(FACTION.index, FACTION.name or "Unknown", FACTION.color or Color(125, 125, 125))
 

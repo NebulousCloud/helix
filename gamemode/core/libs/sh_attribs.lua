@@ -8,6 +8,10 @@ function nut.attribs.loadFromDir(directory)
 		local niceName = v:sub(4, -5)
 
 		ATTRIBUTE = nut.attribs.list[niceName] or {}
+			if (PLUGIN) then
+				ATTRIBUTE.plugin = PLUGIN.uniqueID
+			end
+
 			nut.util.include(directory.."/"..v)
 
 			ATTRIBUTE.name = ATTRIBUTE.name or "Unknown"
