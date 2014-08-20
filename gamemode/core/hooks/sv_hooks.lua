@@ -27,7 +27,30 @@ function GM:PlayerInitialSpawn(client)
 	end)
 end
 
+function GM:PlayerSpawn(client)
+	hook.Run("PlayerLoadout", client)
+end
+
+function GM:PlayerLoadout(client)
+	local character = client:getChar()
+
+	if (character) then
+		client:SetModel(character:getModel())
+	end
+end
+
+function GM:PlayerDeath(client, inflictor, attacker)
+	client:setNetVar("deathStartTime", CurTime())
+	client:setNetVar("deathTime", CurTime() + nut.config.get("spawnTime", 5))
+end
+
 function GM:PlayerDeathThink(client)
+	local deathTime = client:getNetVar("deathTime")
+
+	if (deathTime and deathTime <= CurTime()) then
+		client:Spawn()
+	end
+
 	return false
 end
 

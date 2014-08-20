@@ -12,11 +12,14 @@ local PANEL = {}
 		self:setGridSize(6, 4)
 		self:Center()
 		
+		self.panels = {}
+
 		for x, items in pairs(LocalPlayer():getChar():getInv().slots) do
 			for y, item in pairs(items) do
-
 				local icon = self:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
 				icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, item.desc))
+				
+				self.panels[item.id] = icon
 			end
 		end
 	end

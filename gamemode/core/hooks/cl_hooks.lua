@@ -70,11 +70,25 @@ end
 function GM:PlayerBindPress(client, bind, pressed)
 	bind = bind:lower()
 	
-	if (bind:find("gm_showhelp")) then
+	if (bind:find("gm_showhelp") and pressed) then
 		if (IsValid(nut.gui.menu)) then
 			nut.gui.menu:remove()
 		else
 			vgui.Create("nutMenu")
 		end
+
+		return true
 	end
+end
+
+local hidden = {}
+hidden["CHudHealth"] = true
+hidden["CHudBattery"] = true
+
+function GM:HUDShouldDraw(element)
+	if (hidden[element]) then
+		return false
+	end
+
+	return true
 end

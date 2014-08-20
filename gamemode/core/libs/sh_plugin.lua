@@ -28,6 +28,8 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 		nut.item.loadFromDir(path.."/items")
 		nut.plugin.loadFromDir(path.."/plugins")
 		nut.util.includeDir(path.."/derma")
+
+		hook.Run("DoPluginIncludes", path, PLUGIN)
 	end
 
 	if (uniqueID != "schema") then

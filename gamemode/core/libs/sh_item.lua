@@ -156,6 +156,36 @@ do
 				end
 			end
 		end)
+
+		netstream.Hook("invRmv", function(id, owner)
+			local character = LocalPlayer():getChar()
+
+			if (owner) then
+				character = nut.char.loaded[owner]
+			end
+
+			if (character) then
+				local inventory = character:getInv()
+
+				if (inventory) then
+					inventory:remove(id)
+
+					local panel = nut.gui.inv
+
+					if (IsValid(panel)) then
+						local icon = panel.panels[id]
+
+						if (IsValid(icon)) then
+							for k, v in ipairs(icon.slots or {}) do
+								v.item = nil
+							end
+
+							icon:Remove()
+						end
+					end
+				end
+			end			
+		end)
 	else
 		netstream.Hook("invMove", function(client, oldX, oldY, x, y)
 			oldX, oldY, x, y = tonumber(oldX), tonumber(oldY), tonumber(x), tonumber(y)

@@ -79,6 +79,37 @@ function META:getItemAt(x, y)
 	end
 end
 
+function META:remove(id, noReplication)
+	local x2, y2
+
+	for x = 1, self.w do
+		if (self.slots[x]) then
+			for y = 1, self.h do
+				local item = self.slots[x][y]
+
+				if (item and item.id == id) then
+					self.slots[x][y] = nil
+
+					x2 = x2 or x
+					y2 = y2 or y
+				end
+			end
+		end
+	end
+
+	if (SERVER and !noReplication) then
+		if (type(self.receiver) == "Player" and self.owner == self.receiver:getChar()) then
+			netstream.Start(self.receiver, "invRmv", id)
+		else
+			netstream.Start(self.receiver, "invRmv", id, self.owner)
+		end
+
+		nut.db.query("DELETE FROM nut_items WHERE _itemID = "..id)
+	end
+
+	return x2, y2
+end
+
 if (SERVER) then
 	function META:sendSlot(x, y, item)
 		if (type(self.receiver) == "Player" and self.owner == self.receiver:getChar()) then
