@@ -101,6 +101,8 @@ modules.mysqloo = {
 			function object:onError(fault)
 				ThrowQueryFault(query, fault)
 			end
+
+			object:start()
 		end
 	end,
 	escape = function(value)
@@ -137,6 +139,8 @@ modules.mysqloo = {
 		function object:onConnectionFailed(fault)
 			ThrowConnectionFault(fault)
 		end
+
+		object:connect()
 	end
 }
 
