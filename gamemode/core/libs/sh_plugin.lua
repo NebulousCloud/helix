@@ -157,20 +157,166 @@ end
 
 if (SERVER) then
 	nut.plugin.repos = nut.plugin.repos or {}
-
+	nut.plugin.files = nut.plugin.files or {}
+	
 	local function ThrowFault(fault)
 		MsgN(fault)
 	end
 
-	function nut.plugin.loadRepo(url)
+	function nut.plugin.loadRepo(url, name, callback, faultCallback)
+		name = name or url
+
+		local curPlugin = ""
+		local curPluginName = ""
+		local cache = {data = {url = url}, files = {}}
+
+		MsgN("Loading plugins from '"..url.."'")
+
 		http.Fetch(url, function(body)
-			print(body)
+			if (body:find("<h1>")) then
+				local fault = body:match("<h1>([_%w%s]+)</h1>") or "Unknown Error"
+
+				if (faultCallback) then
+					faultCallback(fault)
+				end
+
+				return MsgN("\t* ERROR: "..fault)
+			end
+
+			local exploded = string.Explode("\n", body)
+
+			print("   * Repository identifier set to '"..name.."'")
+
+			for k, line in ipairs(exploded) do
+				if (line:sub(1, 1) == "@") then
+					local key, value = line:match("@repo%-([_%w]+):[%s*](.+)")
+
+					if (key and value) then
+						if (key == "name") then
+							print("   * "..value)
+						end
+
+						cache.data[key] = value
+					end
+				else
+					local name = line:match("!%b[]")
+
+					if (name) then
+						curPlugin = name:sub(3, -2)
+						name = name:sub(8, -2)
+						curPluginName = name
+						cache.files[name] = {}
+
+						MsgN("\t* Found '"..name.."'")
+					elseif (curPlugin and line:sub(1, #curPlugin) == curPlugin and cache.files[curPluginName]) then
+						table.insert(cache.files[curPluginName], line:sub(#curPlugin + 2))
+					end
+				end
+			end
+
+			file.CreateDir("nutscript/plugins")
+			file.CreateDir("nutscript/plugins/"..cache.data.id)
+
+			if (callback) then
+				callback(cache)
+			end
+
+			nut.plugin.repos[name] = cache
+		end, function(fault)
+			if (faultCallback) then
+				faultCallback(fault)
+			end
+
+			MsgN("\t* ERROR: "..fault)
 		end)
 	end
 
-	function nut.plugin.download(repo, plugin)
+	function nut.plugin.download(repo, plugin, callback)
+		local plugins = nut.plugin.repos[repo]
+
+		if (plugins) then
+			if (plugins.files[plugin]) then
+				local files = plugins.files[plugin]
+				local baseDir = "nutscript/plugins/"..plugins.data.id.."/"..plugin.."/"
+
+				-- Re-create the old file.Write behavior.
+				local function WriteFile(name, contents)
+					name = string.StripExtension(name)..".txt"
+
+					if (name:find("/")) then
+						local exploded = string.Explode("/", name)
+						local tree = ""
+
+						for k, v in ipairs(exploded) do
+							if (k == #exploded) then
+								file.Write(baseDir..tree..v, contents)
+							else
+								tree = tree..v.."/"
+								file.CreateDir(baseDir..tree)
+							end
+						end
+					else
+						file.Write(baseDir..name, contents)
+					end
+				end
+
+				MsgN("* Downloading plugin '"..plugin.."' from '"..repo.."'")
+				nut.plugin.files[repo.."/"..plugin] = {}
+
+				local function DownloadFile(i)
+					MsgN("\t* Downloading... "..(math.Round(i / #files, 2) * 100).."%")
+
+					local url = plugins.data.url.."/repo/"..plugin.."/"..files[i]
+
+					http.Fetch(url, function(body)
+						WriteFile(files[i], body)
+						nut.plugin.files[repo.."/"..plugin][files[i]] = body
+
+						if (i < #files) then
+							DownloadFile(i + 1)
+						else
+							if (callback) then
+								callback(true)
+							end
+
+							MsgN("* '"..plugin.."' has completed downloading")
+						end
+					end, function(fault)
+						callback(false, fault)
+					end)
+				end
+
+				DownloadFile(1)
+			else
+				return false, "cloud_no_plugin"
+			end
+		else
+			return false, "cloud_no_repo"
+		end
+	end
+
+	function nut.plugin.loadFromLocal(repo, plugin)
 
 	end
+
+	concommand.Add("nut_cloudloadrepo", function(client, _, arguments)
+		local url = arguments[1]
+		local name = arguments[2] or "default"
+
+		if (!IsValid(client)) then
+			nut.plugin.loadRepo(url, name)
+		end
+	end)
+
+	concommand.Add("nut_cloudget", function(client, _, arguments)
+		if (!IsValid(client)) then
+			local status, result = nut.plugin.download(arguments[2] or "default", arguments[1])
+
+			if (status == false) then
+				MsgN("* ERROR: "..result)
+			end
+		end
+	end)
 end
 
 do

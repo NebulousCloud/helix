@@ -28,5 +28,7 @@ LANGUAGE = {
 	delConfirm = "Are you sure you want to PERMANENTLY delete %s?",
 	no = "No",
 	yes = "Yes",
-	itemInfo = "Name: %s\nDescription: %s"
+	itemInfo = "Name: %s\nDescription: %s",
+	cloud_no_repo = "The repository provided is not valid.",
+	cloud_no_plugin = "The plugin provided is not valid."
 }
