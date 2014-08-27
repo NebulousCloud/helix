@@ -6,3 +6,12 @@ nut.config.add("font", "Impact", "The font used to display titles.", function(ol
 	end
 end)
 nut.config.add("maxAttribs", 30, "The total maximum amount of attribute points allowed.")
+nut.config.add("chatRange", 280, "The maximum distance a person's IC chat message goes to.")
+nut.config.add("chatColor", Color(255, 239, 150), "The default color for IC chat.")
+nut.config.add("chatListenColor", Color(168, 240, 170), "The color for IC chat if you are looking at the speaker.")
+nut.config.add("oocDelay", 10, "The delay before a player can use OOC chat again.")
+nut.config.add("loocDelay", 0, "The delay before a player can use LOOC chat again.")
+nut.config.add("spawnTime", 5, "The time it takes to respawn.")
+nut.config.add("invW", 6, "How many slots in a row there is in a default inventory.")
+nut.config.add("invH", 4, "How many slots in a column there is in a default inventory.")
+nut.config.add("minDescLen", 16, "The minimum number of characters in a description.")

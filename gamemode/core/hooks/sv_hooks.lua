@@ -27,6 +27,12 @@ function GM:PlayerInitialSpawn(client)
 	end)
 end
 
+function GM:PlayerSay(client, message)
+	nut.chat.parse(client, message)
+
+	return ""
+end
+
 function GM:PlayerSpawn(client)
 	hook.Run("PlayerLoadout", client)
 end

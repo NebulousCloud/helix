@@ -63,6 +63,7 @@ function nut.config.load()
 	end
 
 	nut.util.include("nutscript/gamemode/config/sh_config.lua")
+	hook.Run("InitializedConfig")
 end
 
 if (SERVER) then
