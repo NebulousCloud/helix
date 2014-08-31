@@ -5,12 +5,9 @@ local PANEL = {}
 		end
 		
 		nut.gui.inv = self
-		
+
 		self:SetSize(64, 64)
-		self:SetTitle("Inventory")
-		self:MakePopup()
 		self:setGridSize(6, 4)
-		self:Center()
 		
 		self.panels = {}
 
@@ -117,9 +114,9 @@ local PANEL = {}
 		if (self.slots[x] and self.slots[x][y]) then
 			local panel = self:Add("SpawnIcon")
 			panel:SetSize(w * 64, h * 64)
+			panel:SetZPos(1)
 			panel:InvalidateLayout(true)
 			panel:SetModel(model)
-			panel:Droppable("nutItem")
 			panel:SetPos(self.slots[x][y]:GetPos())
 			panel.gridX = x
 			panel.gridY = y
@@ -140,7 +137,7 @@ local PANEL = {}
 			end
 			panel.PaintOver = function() end
 			panel.OnMousePressed = function(this, code)
-				if (code == MOUSE_LEFT	) then
+				if (code == MOUSE_LEFT) then
 					this:MouseCapture(true)
 					this:NoClipping(true)
 					this.clickPos = {x = gui.MouseX(), y = gui.MouseY()}
@@ -212,8 +209,10 @@ local PANEL = {}
 			return panel
 		end
 	end
-vgui.Register("nutInventory", PANEL, "DFrame")
+vgui.Register("nutInventory", PANEL, "EditablePanel")
 
-concommand.Add("nutinv", function()
-	vgui.Create("nutInventory")
+hook.Add("CreateMenuButtons", "nutInventory", function(tabs)
+	tabs["inv"] = function(panel)
+		panel:Add("nutInventory"):setGridSize(nut.config.get("invW"), nut.config.get("invH"))
+	end
 end)

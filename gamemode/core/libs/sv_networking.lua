@@ -4,8 +4,8 @@ local playerMeta = FindMetaTable("Player")
 nut.net = nut.net or {}
 nut.net.globals = nut.net.globals or {}
 
-function SetNetVar(key, value, receiver)
-	if (GetNetVar(key) == value) then return end
+function setNetVar(key, value, receiver)
+	if (getNetVar(key) == value) then return end
 
 	nut.net.globals[key] = value
 	netstream.Start(receiver, "gVar", key, value)
@@ -61,7 +61,7 @@ end
 
 playerMeta.getLocalVar = entityMeta.getNetVar
 
-function GetNetVar(key, default)
+function getNetVar(key, default)
 	local value = nut.net.globals[key]
 
 	return value != nil and value or default

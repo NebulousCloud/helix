@@ -42,6 +42,20 @@ function GM:PlayerLoadout(client)
 
 	if (character) then
 		client:SetModel(character:getModel())
+
+		local faction = nut.factions.indices[client:Team()]
+
+		if (faction) then
+			if (faction.onSpawn) then
+				faction:onSpawn(client)
+			end
+
+			if (faction.weapons) then
+				for k, v in ipairs(faction.weapons) do
+					client:Give(v)
+				end
+			end
+		end
 	end
 end
 

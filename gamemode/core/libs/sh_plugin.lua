@@ -40,6 +40,9 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 	hook.Run("PluginLoaded", uniqueID, PLUGIN)
 
 	if (uniqueID != "schema") then
+		PLUGIN.name = PLUGIN.name or "Unknown"
+		PLUGIN.desc = PLUGIN.desc or "No description available."
+
 		nut.plugin.list[uniqueID] = PLUGIN
 		_G[variable] = nil
 	end
@@ -343,4 +346,34 @@ do
 
 		return hook.NutCall(name, gm, ...)
 	end
+end
+
+if (CLIENT) then
+	hook.Add("CreateMenuButtons", "nutPluginList", function(tabs)
+		tabs["plugins"] = function(panel)
+			local w, h = panel:GetSize()
+			local body = [[<body style="background-color: #4A4A4A; color: #FAFAFA; font-family: Arial, Geneva, Helvetica, sans-serif;">]]
+			local html = panel:Add("DHTML")
+			html:SetPos(4, 4)
+			html:SetSize(w - 8, h - 8)
+
+			for k, v in SortedPairs(nut.plugin.list) do
+				body = (body..[[
+					<p>
+						<span style="font-size: 22;"><b>%s</b><br /></span>
+						<span style="font-size: smaller;">
+						<b>%s</b>: %s<br />
+						<b>%s</b>: %s
+				]]):format(v.name or "Unknown", L"desc", v.desc, L"author", v.author)
+
+				if (v.version) then
+					body = body.."<br /><b>"..L"version".."</b>: "..v.version
+				end
+
+				body = body.."</span></p>"
+			end
+
+			html:SetHTML(body)
+		end
+	end)
 end

@@ -77,7 +77,7 @@ if (SERVER) then
 		
 		local dataTable = {...};
 		local encodedData = pon.encode(dataTable);
-			
+
 		if (encodedData and #encodedData > 0 and bShouldSend) then
 			net.Start("NetStreamDS");
 				net.WriteString(name);
@@ -139,7 +139,7 @@ else
 		if (NS_DS_NAME and NS_DS_DATA and NS_DS_LENGTH) then
 			if (netstream.stored[NS_DS_NAME]) then
 				local bStatus, value = pcall(pon.decode, NS_DS_DATA);
-			
+
 				if (bStatus) then
 					netstream.stored[NS_DS_NAME](unpack(value));
 				else

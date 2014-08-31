@@ -98,7 +98,6 @@ if (SERVER) then
 
 						character.vars.inv = nut.item.createInv(nut.config.get("invW", 6), nut.config.get("invH", 4))
 						character.vars.inv:setOwner(id)
-						character.vars.inv:setReceiver(client)
 						
 						nut.db.query("SELECT _itemID, _uniqueID, _data, _x, _y FROM nut_items WHERE _charID = "..id, function(data)
 							if (data) then
@@ -483,7 +482,7 @@ do
 		end)
 	else
 		netstream.Hook("charInfo", function(data, id, client)
-			nut.char.loaded[id] = nut.char.new(data, id, client)
+			nut.char.loaded[id] = nut.char.new(data, id, client == nil and LocalPlayer() or client)
 		end)
 
 		netstream.Hook("charMenu", function(data)

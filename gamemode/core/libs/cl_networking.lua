@@ -22,7 +22,7 @@ netstream.Hook("gVar", function(key, value)
 	nut.net.globals[key] = value
 end)
 
-function GetNetVar(key, default)
+function getNetVar(key, default)
 	local value = nut.net.globals[key]
 
 	return value != nil and value or default

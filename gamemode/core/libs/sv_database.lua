@@ -10,7 +10,7 @@ local function ThrowConnectionFault(fault)
 	MsgC(Color(255, 0, 0), "NutScript has failed to connect to the database.\n")
 	MsgC(Color(255, 0, 0), fault.."\n")
 
-	SetNetVar("dbError", fault)
+	setNetVar("dbError", fault)
 end
 
 local modules = {}
@@ -62,7 +62,7 @@ modules.tmysql4 = {
 	end,
 	connect = function(callback)
 		if (!pcall(require, "tmysql4")) then
-			return SetNetVar("dbError", system.IsWindows() and "Server is missing VC++ redistributables!" or "Server is missing binaries for tmysql4!")
+			return setNetVar("dbError", system.IsWindows() and "Server is missing VC++ redistributables!" or "Server is missing binaries for tmysql4!")
 		end
 
 		local hostname = nut.db.hostname
@@ -116,7 +116,7 @@ modules.mysqloo = {
 	end,
 	connect = function(callback)
 		if (!pcall(require, "mysqloo")) then
-			return SetNetVar("dbError", system.IsWindows() and "Server is missing VC++ redistributables!" or "Server is missing binaries for mysqloo!")
+			return setNetVar("dbError", system.IsWindows() and "Server is missing VC++ redistributables!" or "Server is missing binaries for mysqloo!")
 		end
 
 		local hostname = nut.db.hostname

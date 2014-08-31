@@ -29,10 +29,7 @@ function GM:LoadFonts(font)
 end
 
 function GM:InitializedConfig()
-	local font = nut.config.get("font")
-	local fault = GetNetVar("dbError")
-
-	hook.Run("LoadFonts", font)
+	hook.Run("LoadFonts", nut.config.get("font"))
 	
 	if (!nut.config.loaded and !IsValid(nut.gui.loading)) then
 		local loader = vgui.Create("EditablePanel")
@@ -42,29 +39,32 @@ function GM:InitializedConfig()
 			surface.SetDrawColor(0, 0, 0)
 			surface.DrawRect(0, 0, w, h)
 		end
-		loader.Think = function(this)
-			if (IsValid(nut.gui.char)) then
-				this:Remove()
-			end
-		end
 
 		local label = loader:Add("DLabel")
 		label:Dock(FILL)
+		label:SetText(L"loading")
 		label:SetFont("nutTitleFont")
-		label:SetText(fault and L"dbError" or L"loading")
 		label:SetContentAlignment(5)
 		label:SetTextColor(color_white)
 
-		if (fault) then
-			local label = loader:Add("DLabel")
-			label:DockMargin(0, 64, 0, 0)
-			label:Dock(TOP)
-			label:SetFont("nutSubTitleFont")
-			label:SetText(fault)
-			label:SetContentAlignment(5)
-			label:SizeToContentsY()
-			label:SetTextColor(Color(255, 50, 50))
-		end
+		timer.Simple(5, function()
+			if (IsValid(nut.gui.loading)) then
+				local fault = getNetVar("dbError")
+
+				if (fault) then
+					label:SetText(fault and L"dbError" or L"loading")
+
+					local label = loader:Add("DLabel")
+					label:DockMargin(0, 64, 0, 0)
+					label:Dock(TOP)
+					label:SetFont("nutSubTitleFont")
+					label:SetText(fault)
+					label:SetContentAlignment(5)
+					label:SizeToContentsY()
+					label:SetTextColor(Color(255, 50, 50))
+				end
+			end
+		end)
 
 		nut.gui.loading = loader
 		nut.config.loaded = true

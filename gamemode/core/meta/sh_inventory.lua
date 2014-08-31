@@ -5,8 +5,6 @@ META.__index = META
 META.slots = META.slots or {}
 META.w = META.w or 4
 META.h = META.h or 4
-META.owner = META.owner or NULL
-META.receiver = META.receiver or META.owner
 
 function META:setSize(w, h)
 	self.w = w
@@ -98,10 +96,12 @@ function META:remove(id, noReplication)
 	end
 
 	if (SERVER and !noReplication) then
-		if (type(self.receiver) == "Player" and self.owner == self.receiver:getChar()) then
-			netstream.Start(self.receiver, "invRmv", id)
+		local receiver = self:getReceiver()
+
+		if (IsValid(receiver) and receiver:getChar() and self.owner == receiver:getChar():getID()) then
+			netstream.Start(receiver, "invRmv", id)
 		else
-			netstream.Start(self.receiver, "invRmv", id, self.owner)
+			netstream.Start(receiver, "invRmv", id, self.owner)
 		end
 
 		nut.db.query("DELETE FROM nut_items WHERE _itemID = "..id)
@@ -110,12 +110,22 @@ function META:remove(id, noReplication)
 	return x2, y2
 end
 
+function META:getReceiver()
+	for k, v in ipairs(player.GetAll()) do
+		if (v:getNetVar("charID") == self.owner) then
+			return v
+		end
+	end
+end
+
 if (SERVER) then
 	function META:sendSlot(x, y, item)
-		if (type(self.receiver) == "Player" and self.owner == self.receiver:getChar()) then
-			netstream.Start(self.receiver, "invSet", item and item.uniqueID or nil, item and item.id or nil, x, y)
+		local receiver = self:getReceiver()
+
+		if (IsValid(receiver) and receiver:getChar() and self.owner == receiver:getChar():getID()) then
+			netstream.Start(receiver, "invSet", item and item.uniqueID or nil, item and item.id or nil, x, y)
 		else
-			netstream.Start(self.receiver, "invSet", item and item.uniqueID or nil, item and item.id or nil, x, y, self.owner)
+			netstream.Start(receiver, "invSet", item and item.uniqueID or nil, item and item.id or nil, x, y, self.owner)
 		end
 	end
 
@@ -166,10 +176,6 @@ if (SERVER) then
 				return false, "no space"
 			end
 		end
-	end
-
-	function META:setReceiver(receiver)
-		self.receiver = receiver
 	end
 
 	function META:sync(receiver)

@@ -215,7 +215,7 @@ do
 			
 			k = k + 1;
 		end
-		
+
 		while( true )do
 			tk = sub( str, index, index );
 			if( not tk or tk == '}' )then
@@ -242,7 +242,7 @@ do
 		
 		local cur = {};
 		cache[ #cache + 1 ] = cur;
-		
+
 		local k, v, tk, tv = 1, nil, nil, nil;
 		while( true )do
 			tk = sub( str, index, index );

@@ -1,10 +1,10 @@
 nut.config = nut.config or {}
 nut.config.stored = nut.config.stored or {}
 
-function nut.config.add(key, value, desc, callback, noNetworking, schemaOnly)
+function nut.config.add(key, value, desc, callback, data, noNetworking, schemaOnly)
 	local oldConfig = nut.config.stored[key]
 
-	nut.config.stored[key] = {value = oldConfig and oldConfig.value or value, default = value, desc = desc, noNetworking = noNetworking, global = !schemaOnly, callback = callback}
+	nut.config.stored[key] = {data = data, value = oldConfig and oldConfig.value or value, default = value, desc = desc, noNetworking = noNetworking, global = !schemaOnly, callback = callback}
 end
 
 function nut.config.set(key, value)
@@ -99,6 +99,12 @@ if (SERVER) then
 		nut.data.set("config", globals, true, true)
 		nut.data.set("config", data, false, true)
 	end
+
+	netstream.Hook("cfgSet", function(client, key, value)
+		if (client:IsSuperAdmin() and type(nut.config.get(key)) == type(value)) then
+			nut.config.set(key, value)
+		end
+	end)
 else
 	netstream.Hook("cfgList", function(data)
 		for k, v in pairs(data) do
@@ -119,6 +125,95 @@ else
 			end
 
 			config.value = value
+
+			local properties = nut.gui.properties
+
+			if (IsValid(properties)) then
+				local row = properties:GetCategory(L(config.data and config.data.category or "misc")):GetRow(key)
+
+				if (IsValid(row)) then
+					if (type(value) == "table" and value.r and value.g and value.b) then
+						value = Vector(value.r / 255, value.g / 255, value.b / 255)
+					end
+
+					row:SetValue(value)
+				end
+			end
+		end
+	end)
+end
+
+if (CLIENT) then
+	hook.Add("CreateMenuButtons", "nutConfig", function(tabs)
+		tabs["config"] = function(panel)
+			local properties = panel:Add("DProperties")
+			properties:SetSize(panel:GetSize())
+
+			nut.gui.properties = properties
+
+			-- We're about to store the categories in this buffer.
+			local buffer = {}
+
+			for k, v in pairs(nut.config.stored) do
+				-- Get the category name.
+				local index = v.data and v.data.category or "misc"
+
+				-- Insert the config into the category list.
+				buffer[index] = buffer[index] or {}
+				buffer[index][k] = v
+			end
+
+			-- Loop through the categories in alphabetical order.
+			for category, configs in SortedPairs(buffer) do
+				category = L(category)
+
+				-- Ditto, except we're looping through configs.
+				for k, v in SortedPairs(configs) do
+					-- Determine which type of panel to create.
+					local form = v.data and v.data.form
+					local value = nut.config.get(k)
+
+					if (!form) then
+						local formType = type(form)
+
+						if (formType == "number") then
+							form = "Int"
+						elseif (formType == "boolean") then
+							form = "Boolean"
+						else
+							form = "Generic"
+						end
+					end
+
+					-- VectorColor currently only exists for DProperties.
+					if (form == "Generic" and type(value) == "table" and value.r and value.g and value.b) then
+						-- Convert the color to a vector.
+						value = Vector(value.r / 255, value.g / 255, value.b / 255)
+						form = "VectorColor"
+					end
+
+					-- Add a new row for the config to the properties.
+					local row = properties:CreateRow(category, k)
+					row:Setup(form, v.data and v.data.data or nil)
+					row:SetValue(value)
+					row:SetToolTip(v.desc)
+					row.DataChanged = function(this, value)
+						timer.Create("nutCfgSend"..k, 1, 1, function()
+							if (IsValid(row)) then
+								if (form == "VectorColor") then
+									local vector = Vector(value)
+
+									value = Color(math.floor(vector.x * 255), math.floor(vector.y * 255), math.floor(vector.z * 255))
+								end
+
+								if (type(nut.config.get(k)) == type(value)) then
+									netstream.Start("cfgSet", k, value)
+								end
+							end
+						end)
+					end
+				end
+			end
 		end
 	end)
 end

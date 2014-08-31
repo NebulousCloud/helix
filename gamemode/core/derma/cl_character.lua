@@ -9,7 +9,7 @@ local PANEL = {}
 			nut.gui.loading:Remove()
 		end
 
-		if (IsValid(nut.gui.char)) then
+		if (IsValid(nut.gui.char) or (LocalPlayer().getChar and LocalPlayer():getChar())) then
 			nut.gui.char:Remove()
 			fadeSpeed = 0
 		end
@@ -416,14 +416,22 @@ local PANEL = {}
 				end)
 			end
 
-			AddMenuLabel("leave", function()
-				if (self.darkness:GetAlpha() == 0) then
-					self.title:SetZPos(-99)
-					self.darkness:SetZPos(99)
-					self.darkness:AlphaTo(255, 1.25, 0, function()
-						timer.Simple(0.5, function()
-							RunConsoleCommand("disconnect")
+			local hasCharacter = LocalPlayer().getChar and LocalPlayer():getChar()
+
+			AddMenuLabel(hasCharacter and "return" or "leave", function()
+				if (!hasCharacter) then
+					if (self.darkness:GetAlpha() == 0) then
+						self.title:SetZPos(-99)
+						self.darkness:SetZPos(99)
+						self.darkness:AlphaTo(255, 1.25, 0, function()
+							timer.Simple(0.5, function()
+								RunConsoleCommand("disconnect")
+							end)
 						end)
+					end
+				else
+					self:AlphaTo(0, 0.5, 0, function()
+						self:Remove()
 					end)
 				end
 			end, true)
@@ -442,3 +450,10 @@ vgui.Register("nutCharMenu", PANEL, "EditablePanel")
 if (IsValid(nut.gui.char)) then
 	vgui.Create("nutCharMenu")
 end
+
+hook.Add("CreateMenuButtons", "nutCharButton", function(tabs)
+	tabs["characters"] = function(panel)
+		nut.gui.menu:Remove()
+		vgui.Create("nutCharMenu")
+	end
+end)

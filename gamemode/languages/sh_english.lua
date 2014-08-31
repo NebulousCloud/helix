@@ -30,5 +30,15 @@ LANGUAGE = {
 	yes = "Yes",
 	itemInfo = "Name: %s\nDescription: %s",
 	cloud_no_repo = "The repository provided is not valid.",
-	cloud_no_plugin = "The plugin provided is not valid."
+	cloud_no_plugin = "The plugin provided is not valid.",
+	inv = "Inventory",
+	plugins = "Plugins",
+	author = "Author",
+	version = "Version",
+	characters = "Characters",
+	settings = "Settings",
+	config = "Config",
+	chat = "Chat",
+	appearance = "Appearance",
+	misc = "Miscallaneous"
 }

@@ -39,7 +39,7 @@ if (SERVER) then
 				self:sync(v)
 			end
 		elseif (receiver == self.player) then
-			netstream.Start(self.player, "charInfo", self.vars, self:getID(), self.player)
+			netstream.Start(self.player, "charInfo", self.vars, self:getID())
 		else
 			local data = {}
 
@@ -68,7 +68,6 @@ if (SERVER) then
 					if (!self:getInv()) then
 						self.vars.inv = nut.item.createInv(nut.config.get("invW", 6), nut.config.get("invH", 4))
 						self.vars.inv:setOwner(self:getID())
-						self.vars.inv:setReceiver(client)
 					end
 
 					self:getInv():sync()
