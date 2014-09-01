@@ -96,7 +96,9 @@ if (SERVER) then
 					local character = nut.char.new(data, id, client)
 						hook.Run("CharacterRestored", character)
 
-						character.vars.inv = nut.item.createInv(nut.config.get("invW", 6), nut.config.get("invH", 4))
+						local w, h = nut.config.get("invW"), nut.config.get("invH")
+
+						character.vars.inv = nut.item.createInv(w, h)
 						character.vars.inv:setOwner(id)
 						
 						nut.db.query("SELECT _itemID, _uniqueID, _data, _x, _y FROM nut_items WHERE _charID = "..id, function(data)
@@ -109,16 +111,20 @@ if (SERVER) then
 									local data = util.JSONToTable(item._data)
 
 									if (x and y and itemID) then
-										local item2 = nut.item.new(item._uniqueID, itemID)
-										item2.data = data
-										item2.gridX = x
-										item2.gridY = y
-										
-										for x2 = 0, item2.width - 1 do
-											for y2 = 0, item2.height - 1 do
-												slots[x + x2] = slots[x + x2] or {}
-												slots[x + x2][y + y2] = item2
+										if (x <= w and x > 0 and y <= h and y > 0) then
+											local item2 = nut.item.new(item._uniqueID, itemID)
+											item2.data = data
+											item2.gridX = x
+											item2.gridY = y
+											
+											for x2 = 0, item2.width - 1 do
+												for y2 = 0, item2.height - 1 do
+													slots[x + x2] = slots[x + x2] or {}
+													slots[x + x2][y + y2] = item2
+												end
 											end
+										else
+											nut.db.query("DELETE FROM nut_items WHERE _id = "..itemID)
 										end
 									end
 								end

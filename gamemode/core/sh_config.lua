@@ -174,7 +174,7 @@ if (CLIENT) then
 					local value = nut.config.get(k)
 
 					if (!form) then
-						local formType = type(form)
+						local formType = type(value)
 
 						if (formType == "number") then
 							form = "Int"
@@ -204,6 +204,14 @@ if (CLIENT) then
 									local vector = Vector(value)
 
 									value = Color(math.floor(vector.x * 255), math.floor(vector.y * 255), math.floor(vector.z * 255))
+								elseif (form == "Int" or form == "Float") then
+									value = tonumber(value)
+									print(form)
+									if (form == "Int") then
+										value = math.Round(value)
+									end
+								elseif (form == "Boolean") then
+									value = util.tobool(value)
 								end
 
 								if (type(nut.config.get(k)) == type(value)) then

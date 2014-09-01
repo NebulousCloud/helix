@@ -7,16 +7,19 @@ local PANEL = {}
 		nut.gui.inv = self
 
 		self:SetSize(64, 64)
-		self:setGridSize(6, 4)
-		
+		self:setGridSize(nut.config.get("invW"), nut.config.get("invH"))
+
 		self.panels = {}
 
 		for x, items in pairs(LocalPlayer():getChar():getInv().slots) do
 			for y, item in pairs(items) do
 				local icon = self:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
-				icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, item.desc))
-				
-				self.panels[item.id] = icon
+
+				if (IsValid(icon)) then
+					icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, item.desc))
+
+					self.panels[item.id] = icon
+				end
 			end
 		end
 	end
@@ -197,11 +200,19 @@ local PANEL = {}
 			
 			for i = 0, w - 1 do
 				for i2 = 0, h - 1 do
-					local slot = self.slots[x + i][y + i2]
-					
-					if (slot) then
+					local slot = self.slots[x + 1] and self.slots[x + i][y + i2]
+
+					if (IsValid(slot)) then
 						slot.item = panel
 						panel.slots[#panel.slots + 1] = slot
+					else
+						for k, v in ipairs(panel.slots) do
+							v.item = nil
+						end
+
+						panel:Remove()
+
+						return
 					end
 				end
 			end
@@ -213,6 +224,6 @@ vgui.Register("nutInventory", PANEL, "EditablePanel")
 
 hook.Add("CreateMenuButtons", "nutInventory", function(tabs)
 	tabs["inv"] = function(panel)
-		panel:Add("nutInventory"):setGridSize(nut.config.get("invW"), nut.config.get("invH"))
+		panel:Add("nutInventory")
 	end
 end)
