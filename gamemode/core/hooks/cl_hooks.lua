@@ -9,12 +9,6 @@ function GM:LoadFonts(font)
 		weight = 1000
 	})
 
-	surface.CreateFont("nutMediumFont", {
-		font = font,
-		size = 22,
-		weight = 1000
-	})
-
 	surface.CreateFont("nutSubTitleFont", {
 		font = font,
 		size = 36,
@@ -31,6 +25,15 @@ function GM:LoadFonts(font)
 		font = font,
 		size = 36,
 		weight = 200
+	})
+
+	-- The more readable font.
+	font = "Calibri"
+
+	surface.CreateFont("nutMediumFont", {
+		font = font,
+		size = 26,
+		weight = 1000
 	})
 end
 
