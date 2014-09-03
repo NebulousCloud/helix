@@ -405,6 +405,12 @@ end
 do
 	if (SERVER) then
 		netstream.Hook("charChoose", function(client, id)
+			if (client:getChar() and client:getChar():getID() == id) then
+				netstream.Start(client, "charLoaded")
+				
+				return client:notify(L("usingChar", client))
+			end
+
 			local character = nut.char.loaded[id]
 
 			if (character and character:getPlayer() == client) then

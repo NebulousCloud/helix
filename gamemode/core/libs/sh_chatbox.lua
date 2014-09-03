@@ -115,6 +115,10 @@ if (SERVER) then
 				-- Remove the prefix from the chat type so it does not show in the message.
 				message = message:sub(#chosenPrefix + 1)
 
+				if (nut.chat.classes[k].noSpaceAfter and message:sub(1, 1):match("%s")) then
+					message = message:sub(2)
+				end	
+
 				break
 			end
 		end
@@ -211,9 +215,12 @@ do
 
 				-- Only need to check the time if they have spoken in OOC chat before.
 				if (delay > 0 and speaker.nutLastOOC) then
+					local lastOOC = CurTime() - speaker.nutLastOOC
+
 					-- Use this method of checking time in case the oocDelay config changes.
-					if ((CurTime() - speaker.nutLastOOC) <= delay) then
-						-- to-do: use notifications to notify they can't use OOC.
+					if (lastOOC <= delay) then
+						speaker:notify(L("oocDelay", speaker, delay - math.ceil(lastOOC)))
+
 						return false
 					end
 				end
@@ -235,9 +242,12 @@ do
 
 				-- Only need to check the time if they have spoken in OOC chat before.
 				if (delay > 0 and speaker.nutLastLOOC) then
+					local lastLOOC = CurTime() - speaker.nutLastLOOC
+
 					-- Use this method of checking time in case the oocDelay config changes.
-					if ((CurTime() - speaker.nutLastLOOC) <= delay) then
-						-- to-do: use notifications to notify they can't use OOC.
+					if (lastLOOC <= delay) then
+						speaker:notify(L("loocDelay", speaker, delay - math.ceil(lastLOOC)))
+
 						return false
 					end
 				end

@@ -304,6 +304,8 @@ local PANEL = {}
 										surface.DrawRect(0, 0, w, h)
 									end
 
+									local curChar = LocalPlayer():getChar() and LocalPlayer():getChar():getID()
+
 									netstream.Hook("charLoaded", function()
 										if (IsValid(darkness)) then
 											darkness:AlphaTo(0, 5, 0.5, function()
@@ -311,7 +313,9 @@ local PANEL = {}
 											end)
 										end
 
-										hook.Run("CharacterLoaded", nut.char.loaded[id])
+										if (curChar != id) then
+											hook.Run("CharacterLoaded", nut.char.loaded[id])
+										end
 									end)
 
 									netstream.Start("charChoose", id)

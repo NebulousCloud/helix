@@ -40,5 +40,8 @@ LANGUAGE = {
 	config = "Config",
 	chat = "Chat",
 	appearance = "Appearance",
-	misc = "Miscallaneous"
+	misc = "Miscallaneous",
+	oocDelay = "You must wait %s more second(s) before using OOC again.",
+	loocDelay = "You must wait %s more second(s) before using LOOC again.",
+	usingChar = "You are already using this character."
 }
