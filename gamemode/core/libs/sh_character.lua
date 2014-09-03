@@ -104,6 +104,7 @@ if (SERVER) then
 						nut.db.query("SELECT _itemID, _uniqueID, _data, _x, _y FROM nut_items WHERE _charID = "..id, function(data)
 							if (data) then
 								local slots = {}
+								local badItems = {}
 
 								for _, item in ipairs(data) do
 									local x, y = tonumber(item._x), tonumber(item._y)
@@ -124,9 +125,13 @@ if (SERVER) then
 												end
 											end
 										else
-											nut.db.query("DELETE FROM nut_items WHERE _id = "..itemID)
+											badItems[#badItems + 1] = itemID
 										end
 									end
+								end
+
+								if (#badItems > 0) then
+									nut.db.query("DELETE FROM nut_items WHERE _itemID IN ("..table.concat(badItems, ", ")..")")
 								end
 
 								character.vars.inv.slots = slots
@@ -473,6 +478,7 @@ do
 		netstream.Hook("charDel", function(client, id)
 			local character = nut.char.loaded[id]
 			local steamID = client:SteamID64()
+			local isCurrentChar = client:getChar() and client:getChar():getID() == id
 
 			if (character and character.steamID == steamID) then
 				for k, v in ipairs(client.nutCharList or {}) do
@@ -482,8 +488,13 @@ do
 				end
 
 				nut.char.loaded[id] = nil
-				netstream.Start(nil, "charDel", id)
+				netstream.Start(nil, "charDel", id, isCurrentChar)
 				nut.db.query("DELETE FROM nut_characters WHERE _id = "..id.." AND _steamID = "..client:SteamID64())
+
+				if (isCurrentChar) then
+					client:setNetVar("charID", nil)
+					client:Spawn()
+				end
 			end
 		end)
 	else
@@ -507,7 +518,7 @@ do
 			end
 		end)
 
-		netstream.Hook("charDel", function(id)
+		netstream.Hook("charDel", function(id, isCurrentChar)
 			nut.char.loaded[id] = nil
 
 			for k, v in ipairs(nut.characters) do
@@ -518,6 +529,10 @@ do
 						nut.gui.char:setupCharList()
 					end
 				end
+			end
+
+			if (isCurrentChar and !IsValid(nut.gui.char)) then
+				vgui.Create("nutCharMenu")
 			end
 		end)
 	end

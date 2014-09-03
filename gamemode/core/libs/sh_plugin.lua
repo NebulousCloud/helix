@@ -352,7 +352,7 @@ if (CLIENT) then
 	hook.Add("CreateMenuButtons", "nutPluginList", function(tabs)
 		tabs["plugins"] = function(panel)
 			local w, h = panel:GetSize()
-			local body = [[<body style="background-color: #4A4A4A; color: #FAFAFA; font-family: Arial, Geneva, Helvetica, sans-serif;">]]
+			local body = [[<body style="color: #FAFAFA; font-family: Arial, Geneva, Helvetica, sans-serif;">]]
 			local html = panel:Add("DHTML")
 			html:SetPos(4, 4)
 			html:SetSize(w - 8, h - 8)

@@ -43,7 +43,7 @@ function GM:PlayerLoadout(client)
 	if (character) then
 		client:SetModel(character:getModel())
 
-		local faction = nut.factions.indices[client:Team()]
+		local faction = nut.faction.indices[client:Team()]
 
 		if (faction) then
 			if (faction.onSpawn) then

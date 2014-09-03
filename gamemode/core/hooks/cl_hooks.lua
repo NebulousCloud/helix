@@ -9,6 +9,12 @@ function GM:LoadFonts(font)
 		weight = 1000
 	})
 
+	surface.CreateFont("nutMediumFont", {
+		font = font,
+		size = 22,
+		weight = 1000
+	})
+
 	surface.CreateFont("nutSubTitleFont", {
 		font = font,
 		size = 36,

@@ -1,6 +1,7 @@
 local PANEL = {}
 	local gradient = nut.util.getMaterial("vgui/gradient-u")
 	local gradient2 = nut.util.getMaterial("vgui/gradient-d")
+	local alpha = 80
 
 	function PANEL:Init()
 		if (IsValid(nut.gui.menu)) then
@@ -21,18 +22,10 @@ local PANEL = {}
 		self.panel:SetSize(ScrW() * 0.6, ScrH() * 0.65)
 		self.panel:Center()
 		self.panel:SetPos(self.panel.x, self.panel.y + 72)
-		self.panel.Paint = function(this, w, h)
-			surface.SetDrawColor(0, 0, 0, 135)
-			surface.DrawRect(0, 0, w, h)
-
-			surface.SetDrawColor(0, 0, 0, 180)
-			surface.SetMaterial(gradient2)
-			surface.DrawTexturedRect(0, 0, w, h)
-		end
 		self.panel:SetAlpha(0)
 
 		self.title = self:Add("DLabel")
-		self.title:SetPos(self.panel.x, self.panel.y - 72)
+		self.title:SetPos(self.panel.x, self.panel.y - 80)
 		self.title:SetTextColor(color_white)
 		self.title:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 		self.title:SetFont("nutTitleFont")
@@ -57,15 +50,17 @@ local PANEL = {}
 		end
 	end
 
-	local color_bright = Color(240, 240, 240, 250)
+	local color_bright = Color(240, 240, 240, 180)
 
 	function PANEL:Paint(w, h)
+		nut.util.drawBlur(self, 12)
+
 		surface.SetDrawColor(0, 0, 0)
 		surface.SetMaterial(gradient)
 		surface.DrawTexturedRect(0, 0, w, h)
 
-		surface.SetDrawColor(30, 30, 30)
-		surface.DrawRect(0, 0, w, 86)
+		surface.SetDrawColor(30, 30, 30, alpha)
+		surface.DrawRect(0, 0, w, 78)
 
 		surface.SetDrawColor(color_bright)
 		surface.DrawRect(0, 78, w, 8)
@@ -76,7 +71,7 @@ local PANEL = {}
 
 		local function PaintTab(tab, w, h)
 			if (self.activeTab == tab) then
-				surface.SetDrawColor(nut.config.get("color"))
+				surface.SetDrawColor(ColorAlpha(nut.config.get("color"), 200))
 				surface.DrawRect(0, h - 8, w, 8)
 			elseif (tab.Hovered) then
 				surface.SetDrawColor(0, 0, 0, 50)
