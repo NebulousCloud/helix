@@ -14,3 +14,5 @@ nut.db.connect(function()
 	
 	MsgC(Color(0, 255, 0), "NutScript has connected to the database.\n")
 end)
+
+resource.AddFile("materials/nutscript/gui/vignette.png")

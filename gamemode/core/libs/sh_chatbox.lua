@@ -131,7 +131,7 @@ if (SERVER) then
 
 		-- Return the chosen chat type and the message that was sent if needed for some reason.
 		-- This would be useful if you want to send the message on your own.
-		return chatType, message
+		return chatType, message, anonymous
 	end
 else
 	-- Call onChatAdd for the appropriate chatType.

@@ -45,5 +45,6 @@ LANGUAGE = {
 	loocDelay = "You must wait %s more second(s) before using LOOC again.",
 	usingChar = "You are already using this character.",
 	notAllowed = "Sorry, you are not allowed to do this.",
-	cmdNoExist = "Sorry, that command does not exist."
+	cmdNoExist = "Sorry, that command does not exist.",
+	plyNoExist = "Sorry, a player could not be found by that name."
 }

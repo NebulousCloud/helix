@@ -84,7 +84,34 @@ function GM:InitPostEntity()
 	nut.joinTime = CurTime()
 end
 
+local vignette = nut.util.getMaterial("nutscript/gui/vignette.png")
+local vignetteAlphaGoal = 0
+local vignetteAlphaDelta = 0
+
+timer.Create("nutVignetteChecker", 1, 0, function()
+	local client = LocalPlayer()
+
+	if (IsValid(client)) then
+		local data = {}
+			data.start = client:GetPos()
+			data.endpos = data.start + Vector(0, 0, 768)
+		local trace = util.TraceLine(data)
+
+		if (trace.Hit) then
+			vignetteAlphaGoal = 80
+		else
+			vignetteAlphaGoal = 0
+		end
+	end
+end)
+
 function GM:HUDPaint()
+	vignetteAlphaDelta = math.Approach(vignetteAlphaDelta, vignetteAlphaGoal, FrameTime() * 30)
+
+	surface.SetDrawColor(0, 0, 0, 175 + vignetteAlphaDelta)
+	surface.SetMaterial(vignette)
+	surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
+
 	self.BaseClass:PaintWorldTips()
 	nut.bar.drawAll()
 end

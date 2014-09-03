@@ -47,6 +47,30 @@ function nut.util.getMaterial(materialPath)
 	return nut.util.cachedMaterials[materialPath]
 end
 
+-- Finds a player by matching their names.
+function nut.util.findPlayer(name)
+	for k, v in ipairs(player.GetAll()) do
+		if (nut.util.stringMatches(v:Name(), name)) then
+			return v
+		end
+	end
+end
+
+-- Returns whether or a not a string matches.
+function nut.util.stringMatches(a, b)
+	local a2, b2 = a:lower(), b:lower()
+
+	-- Check if the actual letters match.
+	if (a == b) then return true end
+	if (a2 == b2) then return true end
+
+	-- Be less strict and search.
+	if (a:find(b)) then return true end
+	if (a2:find(b2)) then return true end
+
+	return false
+end
+
 if (CLIENT) then
 	local blur = nut.util.getMaterial("pp/blurscreen")
 

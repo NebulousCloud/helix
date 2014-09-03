@@ -33,17 +33,19 @@ else
 		-- Move all notices to their proper positions.
 		local function OrganizeNotices()
 			for k, v in ipairs(nut.notices) do
-				v:MoveTo(scrW - (v:GetWide() + 4), (k - 1) * (v:GetTall() + 4) + 4, 0.25, (k / #nut.notices) * 0.275 + 0.5, nil)
+				v:MoveTo(scrW - (v:GetWide() + 4), (k - 1) * (v:GetTall() + 4) + 4, 0.15, (k / #nut.notices) * 0.25, nil)
 			end
 		end
 
 		-- Add the notice we made to the list.
 		OrganizeNotices()
 
+		-- Show the notification in the console.
+		MsgC(Color(0, 255, 255), message.."\n")
+
 		-- Once the notice appears, make a sound and message.
-		timer.Simple(0.25, function()
+		timer.Simple(0.15, function()
 			surface.PlaySound("buttons/button14.wav")
-			MsgC(Color(0, 255, 255), message.."\n")
 		end)
 
 		-- After the notice has displayed for 7.5 seconds, remove it.
@@ -53,7 +55,7 @@ else
 				for k, v in ipairs(nut.notices) do
 					if (v == notice) then
 						-- Move the notice off the screen.
-						notice:MoveTo(ScrW(), notice.y, 0.25, 0.5, nil, function()
+						notice:MoveTo(ScrW(), notice.y, 0.15, 0.1, nil, function()
 							notice:Remove()
 						end)
 

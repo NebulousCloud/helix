@@ -97,46 +97,62 @@ function nut.command.extractArgs(text)
 end
 
 if (SERVER) then
+	-- Finds a player or gives an error notification.
+	function nut.command.findPlayer(client, name)
+		local target = nut.util.findPlayer(name)
+
+		if (IsValid(target)) then
+			return target
+		else
+			client:notify(L("plyNoExist", client))
+		end
+	end
+
 	-- Add a function to parse a regular chat string.
 	function nut.command.parse(client, text, realCommand, arguments)
-		-- See if the string contains a command.
-		local match = realCommand or text:match(COMMAND_PREFIX.."([_%w]+)")
-		local command = nut.command.list[match]
+		if (text:sub(1, 1) == COMMAND_PREFIX) then
+			-- See if the string contains a command.
+			local match = realCommand or text:match(COMMAND_PREFIX.."([_%w]+)")
+			local command = nut.command.list[match]
 
-		-- We have a valid, registered command.
-		if (command) then
-			-- Get the arguments like a console command.
-			if (!arguments) then
-				arguments = nut.command.extractArgs(text:sub(#command + 2))
-			end
+			-- We have a valid, registered command.
+			if (command) then
+				-- Get the arguments like a console command.
+				if (!arguments) then
+					arguments = nut.command.extractArgs(text:sub(#command + 2))
+				end
 
-			-- Run the command's callback and get the return.
-			local result = command.onRun(client, arguments)
+				-- Run the command's callback and get the return.
+				local result = command.onRun(client, arguments)
 
-			-- If a string is returned, it is a notification.
-			if (type(result) == "string") then
-				-- Normal player here.
+				-- If a string is returned, it is a notification.
+				if (type(result) == "string") then
+					-- Normal player here.
+					if (IsValid(client)) then
+						client:notify(result)
+					else
+						-- Show the message in server console since we're running from RCON.
+						print(result)
+					end
+				end
+			else
 				if (IsValid(client)) then
-					client:notify(result)
-				-- They are running from RCON.
+					client:notify(L("cmdNoExist", client))
 				else
-					-- to-do: add logging capability.
-					print(result)
+					print("Sorry, that command does not exist.")
 				end
 			end
-		else
-			if (IsValid(client)) then
-				client:Notify(L("cmdNoExist", client))
-			else
-				print("Sorry, that command does not exist.")
-			end
+
+			return true
 		end
+
+		return false
 	end
 
 	concommand.Add("nut", function(client, _, arguments)
 		local command = arguments[1]
 		table.remove(arguments, 1)
 
-		nut.command.parse(client, nil, command, arguments)
+		nut.command.parse(client, nil, command or "", arguments)
 	end)
 end
