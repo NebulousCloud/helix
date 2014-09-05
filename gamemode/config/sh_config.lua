@@ -43,3 +43,7 @@ nut.config.add("minDescLen", 16, "The minimum number of characters in a descript
 	data = {min = 0, max = 300},
 	category = "characters"
 })
+nut.config.add("saveInterval", 300, "How often characters save in seconds.", nil, {
+	data = {min = 60, max = 3600},
+	category = "characters"
+})

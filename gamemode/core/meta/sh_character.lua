@@ -28,7 +28,10 @@ if (SERVER) then
 				end
 
 				hook.Run("CharacterPostSave", self)
-				MsgN("Saved character '"..self:getID().."'")
+
+				if (!nut.shuttingDown) then
+					MsgN("Saved character '"..self:getID().."'")
+				end
 			end, nil, "_id = "..self:getID())
 		end
 	end
@@ -49,7 +52,7 @@ if (SERVER) then
 				end
 			end
 
-			netstream.Start(nil, "charInfo", data, self:getID(), self.player)
+			netstream.Start(receiver, "charInfo", data, self:getID(), self.player)
 		end
 	end
 
@@ -69,10 +72,12 @@ if (SERVER) then
 						self.vars.inv = nut.item.createInv(nut.config.get("invW", 6), nut.config.get("invH", 4))
 						self.vars.inv:setOwner(self:getID())
 					end
-
+					
 					self:getInv():sync()
 				end
 			end
+
+			hook.Run("CharacterLoaded", self:getID())
 
 			netstream.Start(client, "charLoaded")
 			client.nutFirstLoaded = true
@@ -132,7 +137,15 @@ function nut.char.registerVar(key, data)
 		CHAR["get"..upperName] = function(self, default)
 			local value = self.vars[key]
 
-			return value == nil and default or value
+			if (value != nil) then
+				return value
+			end
+
+			if (default == nil) then
+				return nut.char.vars[key] and nut.char.vars[key].default or nil
+			end
+
+			return default
 		end
 	end
 

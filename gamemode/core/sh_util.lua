@@ -94,4 +94,16 @@ if (CLIENT) then
 			surface.DrawTexturedRect(x * -1, y * -1, ScrW(), ScrH())
 		end
 	end
+
+	-- Draw a text with a shadow.
+	function nut.util.drawText(text, x, y, color, alignX, alignY, font, alpha)
+		draw.TextShadow({
+			text = text,
+			font = font or "nutGenericFont",
+			pos = {x, y},
+			color = color or color_white,
+			xalign = alignX or 0,
+			yalign = alignY or 0
+		}, 1, alpha or 200)
+	end
 end

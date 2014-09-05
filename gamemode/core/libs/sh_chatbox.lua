@@ -78,7 +78,7 @@ if (SERVER) then
 		local chatType = "ic"
 
 		-- Handle anonymous/unknown speaker chat.
-		if (message:sub(1, 1) == "?") then
+		if (message:sub(1, 1) == "?" and message:sub(2):find("%S")) then
 			anonymous = true
 			message = message:sub(2)
 		end
@@ -141,6 +141,8 @@ else
 
 			if (class) then
 				class.onChatAdd(client, text, anonymous)
+
+				surface.PlaySound("common/talk.wav")
 			end
 		end
 	end)
@@ -263,3 +265,6 @@ do
 		})
 	end)
 end
+
+-- Why does ULX even have a /me command?
+hook.Remove("PlayerSay", "ULXMeCheck")

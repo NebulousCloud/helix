@@ -35,6 +35,18 @@ function GM:LoadFonts(font)
 		size = 26,
 		weight = 1000
 	})
+
+	surface.CreateFont("nutGenericFont", {
+		font = font,
+		size = 20,
+		weight = 1000
+	})
+
+	surface.CreateFont("nutSmallFont", {
+		font = font,
+		size = 16,
+		weight = 200
+	})
 end
 
 function GM:InitializedConfig()
@@ -105,12 +117,32 @@ timer.Create("nutVignetteChecker", 1, 0, function()
 	end
 end)
 
+local OFFSET_NORMAL = Vector(0, 0, 80)
+local OFFSET_CROUCHING = Vector(0, 0, 48)
+
 function GM:HUDPaint()
 	vignetteAlphaDelta = math.Approach(vignetteAlphaDelta, vignetteAlphaGoal, FrameTime() * 30)
 
 	surface.SetDrawColor(0, 0, 0, 175 + vignetteAlphaDelta)
 	surface.SetMaterial(vignette)
 	surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
+
+	for k, v in ipairs(player.GetAll()) do
+		if (v == LocalPlayer() and !LocalPlayer():ShouldDrawLocalPlayer()) then continue end
+
+		local position = (v:GetPos() + (v:Crouching() and OFFSET_CROUCHING or OFFSET_NORMAL)):ToScreen()
+		local character = v:getChar()
+
+		if (character) then
+			local x, y = position.x, position.y
+			local alpha = (1 - (v:GetPos():Distance(LocalPlayer():GetPos()) - 72) / 256) * 255
+
+			if (alpha > 0) then
+				nut.util.drawText(character:getName(), x, y, ColorAlpha(team.GetColor(v:Team()), alpha), 1, 1, nil, alpha)
+				nut.util.drawText(character:getDesc(), x, y + 16, ColorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha)
+			end
+		end
+	end
 
 	self.BaseClass:PaintWorldTips()
 	nut.bar.drawAll()

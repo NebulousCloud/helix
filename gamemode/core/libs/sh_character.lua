@@ -388,14 +388,31 @@ do
 		default = {},
 		isLocal = true,
 		noDisplay = true,
-		onSet = function(character, key, value)
-			local data = character:getChar():getData()
+		onSet = function(character, key, value, noReplication, receiver)
+			local data = character:getData()
 			local client = character:getPlayer()
 
 			data[key] = value
 
-			if (IsValid(client)) then
-				netstream.Start(client, "charData", character:getID(), key, value)
+			if (!noReplication and IsValid(client)) then
+				netstream.Start(receiver or client, "charData", character:getID(), key, value)
+			end
+
+			character.vars.data = data
+		end,
+		onGet = function(character, key, default)
+			local data = character.vars.data
+
+			if (key) then
+				if (!data) then
+					return default
+				end
+
+				local value = data[key]
+
+				return value == nil and default or value
+			else
+				return default or data
 			end
 		end
 	})
@@ -520,6 +537,7 @@ do
 			local character = nut.char.loaded[id]
 
 			if (character) then
+				character.vars.data = character.vars.data or {}
 				character:getData()[key] = value
 			end
 		end)

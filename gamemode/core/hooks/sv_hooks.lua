@@ -14,6 +14,12 @@ function GM:PlayerInitialSpawn(client)
 				nut.char.loaded[v]:sync(client)
 			end
 
+			for k, v in ipairs(player.GetAll()) do
+				if (v:getChar()) then
+					v:getChar():sync(client)
+				end
+			end
+
 			client.nutCharList = charList
 				netstream.Start(client, "charMenu", charList)
 			client.nutLoaded = true
@@ -25,6 +31,26 @@ function GM:PlayerInitialSpawn(client)
 		
 		client:KillSilent()
 	end)
+end
+
+function GM:CharacterLoaded(id)
+	local character = nut.char.loaded[id]
+
+	if (character) then
+		local client = character:getPlayer()
+
+		if (IsValid(client)) then
+			local uniqueID = "nutSaveChar"..client:SteamID()
+
+			timer.Create(uniqueID, nut.config.get("saveInterval"), 0, function()
+				if (IsValid(client) and client:getChar()) then
+					client:getChar():save()
+				else
+					timer.Remove(uniqueID)
+				end
+			end)
+		end
+	end
 end
 
 function GM:PlayerSay(client, message)
@@ -84,10 +110,23 @@ end
 
 function GM:PlayerDisconnected(client)
 	client:saveNutData()
+
+	local character = client:getChar()
+
+	if (character) then
+		character:save()
+	end
 end
 
 function GM:ShutDown()
+	nut.shuttingDown = true
 	nut.config.save()
+
+	for k, v in ipairs(player.GetAll()) do
+		if (v:getChar()) then
+			v:getChar():save()
+		end
+	end
 end
 
 function GM:GetGameDescription()

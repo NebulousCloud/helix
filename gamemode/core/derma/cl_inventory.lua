@@ -11,14 +11,16 @@ local PANEL = {}
 
 		self.panels = {}
 
-		for x, items in pairs(LocalPlayer():getChar():getInv().slots) do
-			for y, item in pairs(items) do
-				local icon = self:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
+		if (LocalPlayer():getChar() and LocalPlayer():getChar():getInv().slots) then
+			for x, items in pairs(LocalPlayer():getChar():getInv().slots) do
+				for y, item in pairs(items) do
+					local icon = self:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
 
-				if (IsValid(icon)) then
-					icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, item.desc))
+					if (IsValid(icon)) then
+						icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, item.desc))
 
-					self.panels[item.id] = icon
+						self.panels[item.id] = icon
+					end
 				end
 			end
 		end
