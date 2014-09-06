@@ -33,6 +33,14 @@ function GM:PlayerInitialSpawn(client)
 	end)
 end
 
+function GM:PlayerShouldTakeDamage(client, attacker)
+	return client:getChar() != nil
+end
+
+function GM:GetFallDamage(client, speed)
+	return (speed - 580) * (100 / 444)
+end
+
 function GM:CharacterLoaded(id)
 	local character = nut.char.loaded[id]
 

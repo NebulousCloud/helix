@@ -390,6 +390,7 @@ do
 		default = {},
 		isLocal = true,
 		noDisplay = true,
+		field = "_data",
 		onSet = function(character, key, value, noReplication, receiver)
 			local data = character:getData()
 			local client = character:getPlayer()
@@ -403,7 +404,7 @@ do
 			character.vars.data = data
 		end,
 		onGet = function(character, key, default)
-			local data = character.vars.data
+			local data = character.vars.data or {}
 
 			if (key) then
 				if (!data) then
