@@ -20,7 +20,6 @@ do
 	end
 
 	function character:giveFlags(flags)
-		print(self:getFlags())
 		self:setFlags(self:getFlags()..flags)
 	end
 
