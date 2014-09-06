@@ -103,6 +103,21 @@ if (SERVER) then
 	netstream.Hook("cfgSet", function(client, key, value)
 		if (client:IsSuperAdmin() and type(nut.config.get(key)) == type(value)) then
 			nut.config.set(key, value)
+
+			if (type(value) == "table") then
+				local value2 = "["
+				local count = table.Count(value)
+				local i = 1
+
+				for k, v in SortedPairs(value) do
+					value2 = value2..v..(i == count and "]" or ", ")
+					i = i + 1
+				end
+
+				value = value2
+			end
+
+			nut.util.notify(client:Name().." has set "..key.." to "..tostring(value))
 		end
 	end)
 else
