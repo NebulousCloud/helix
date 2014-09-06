@@ -41,7 +41,7 @@ function GM:GetFallDamage(client, speed)
 	return (speed - 580) * (100 / 444)
 end
 
-function GM:PlayerLoadedChar(client, character, currentChar)
+function GM:PlayerLoadedChar(client, character, lastChar)
 	hook.Run("PlayerLoadout", client)
 end
 
@@ -110,6 +110,7 @@ function GM:PlayerLoadout(client)
 
 		-- Apply any flags as needed.
 		nut.flag.onSpawn(client)
+		hook.Run("PostPlayerLoadout", client)
 	end
 end
 
