@@ -45,7 +45,7 @@ function GM:LoadFonts(font)
 	surface.CreateFont("nutSmallFont", {
 		font = font,
 		size = 16,
-		weight = 200
+		weight = 500
 	})
 end
 
@@ -138,8 +138,8 @@ function GM:HUDPaint()
 			local alpha = (1 - (v:GetPos():Distance(LocalPlayer():GetPos()) - 72) / 256) * 255
 
 			if (alpha > 0) then
-				nut.util.drawText(character:getName(), x, y, ColorAlpha(team.GetColor(v:Team()), alpha), 1, 1, nil, alpha)
-				nut.util.drawText(character:getDesc(), x, y + 16, ColorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha)
+				nut.util.drawText(character:getName(), x, y, ColorAlpha(team.GetColor(v:Team()), alpha), 1, 1, nil, alpha * 0.65)
+				nut.util.drawText(character:getDesc(), x, y + 16, ColorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
 			end
 		end
 	end

@@ -41,6 +41,10 @@ function GM:GetFallDamage(client, speed)
 	return (speed - 580) * (100 / 444)
 end
 
+function GM:PlayerLoadedChar(client, character, currentChar)
+	hook.Run("PlayerLoadout", client)
+end
+
 function GM:CharacterLoaded(id)
 	local character = nut.char.loaded[id]
 
@@ -76,28 +80,36 @@ function GM:PlayerSay(client, message)
 end
 
 function GM:PlayerSpawn(client)
-	hook.Run("PlayerLoadout", client)
 end
 
+-- Called when weapons should be given to a player.
 function GM:PlayerLoadout(client)
 	local character = client:getChar()
 
+	-- Check if they have loaded a character.
 	if (character) then
+		client:SetupHands()
+		-- Set their player model to the character's model.
 		client:SetModel(character:getModel())
 
 		local faction = nut.faction.indices[client:Team()]
 
 		if (faction) then
+			-- If their faction wants to do something when the player spawns, let it.
 			if (faction.onSpawn) then
 				faction:onSpawn(client)
 			end
 
+			-- If the faction has default weapons, give them to the player.
 			if (faction.weapons) then
 				for k, v in ipairs(faction.weapons) do
 					client:Give(v)
 				end
 			end
 		end
+
+		-- Apply any flags as needed.
+		nut.flag.onSpawn(client)
 	end
 end
 

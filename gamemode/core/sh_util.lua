@@ -104,6 +104,6 @@ if (CLIENT) then
 			color = color or color_white,
 			xalign = alignX or 0,
 			yalign = alignY or 0
-		}, 1, alpha or 200)
+		}, 1, alpha or 150)
 	end
 end
