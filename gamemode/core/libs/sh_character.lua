@@ -360,18 +360,20 @@ do
 			return container
 		end,
 		onValidate = function(value, data)
-			if (type(value) == "table") then
-				local count = 0
+			if (value != nil) then
+				if (type(value) == "table") then
+					local count = 0
 
-				for k, v in pairs(value) do
-					count = count + v
-				end
+					for k, v in pairs(value) do
+						count = count + v
+					end
 
-				if (count > nut.config.get("maxAttribs")) then
+					if (count > nut.config.get("maxAttribs")) then
+						return false, "unknownError"
+					end
+				else
 					return false, "unknownError"
 				end
-			else
-				return false, "unknownError"
 			end
 		end,
 		shouldDisplay = function(panel) return table.Count(nut.attribs.list) > 0 end

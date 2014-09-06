@@ -34,7 +34,7 @@ local PANEL = {}
 		self.title:SetPos(0, 64)
 		self.title:SetSize(ScrW(), 64)
 		self.title:SetFont("nutTitleFont")
-		self.title:SetText(SCHEMA.name or L"unknown")
+		self.title:SetText(L2("schemaName") or SCHEMA.name or L"unknown")
 		self.title:SizeToContentsY()
 		self.title:SetTextColor(color_white)
 		self.title:SetZPos(100)
@@ -51,7 +51,7 @@ local PANEL = {}
 		self.subTitle:MoveBelow(self.title, 0)
 		self.subTitle:SetSize(ScrW(), 64)
 		self.subTitle:SetFont("nutSubTitleFont")
-		self.subTitle:SetText(SCHEMA.desc or L"noDesc")
+		self.subTitle:SetText(L2("schemaDesc") or SCHEMA.desc or L"noDesc")
 		self.subTitle:SizeToContentsY()
 		self.subTitle:SetTextColor(color_white)
 		self.subTitle:SetAlpha(0)
@@ -158,7 +158,7 @@ local PANEL = {}
 						local fadedIn = false
 
 						for k, v in SortedPairs(nut.faction.teams) do
-							AddMenuLabel(v.name, function()
+							AddMenuLabel(L(v.name), function()
 								if (!self.creation or self.creation.faction != v.index) then
 									self.creation = self:Add("nutCharCreate")
 									self.creation:SetAlpha(fadedIn and 255 or 0)
