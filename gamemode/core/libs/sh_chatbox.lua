@@ -167,6 +167,12 @@ do
 			onCanHear = nut.config.get("chatRange", 280)
 		})
 
+		-- Roll information in chat.
+		nut.chat.register("roll", {
+			format = "%s has rolled %s.",
+			color = Color(155, 111, 176)
+		})
+
 		-- Actions and such.
 		nut.chat.register("me", {
 			format = "**%s %s",

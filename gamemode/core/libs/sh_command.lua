@@ -119,7 +119,7 @@ if (SERVER) then
 			if (command) then
 				-- Get the arguments like a console command.
 				if (!arguments) then
-					arguments = nut.command.extractArgs(text:sub(#command + 2))
+					arguments = nut.command.extractArgs(text:sub(#match + 3))
 				end
 
 				-- Run the command's callback and get the return.
