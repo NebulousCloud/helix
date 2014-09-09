@@ -11,6 +11,10 @@ end
 
 if (SERVER) then
 	function CHAR:save(callback)
+		if (self.isBot) then
+			return
+		end
+		
 		local data = {}
 
 		for k, v in pairs(nut.char.vars) do

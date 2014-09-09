@@ -1,4 +1,22 @@
 function GM:PlayerInitialSpawn(client)
+	if (client:IsBot()) then
+		local index = math.random(1, table.Count(nut.faction.indices))
+		local faction = nut.faction.indices[index]
+
+		local character = nut.char.new({
+			name = client:Name(),
+			faction = faction and faction.uniqueID or "unknown",
+			model = faction and table.Random(faction.models) or "models/gman.mdl"
+		}, -1, client, client:SteamID64())
+		character.isBot = true
+		nut.char.loaded[-1] = character
+
+		client:Spawn()
+		character:setup()
+
+		return
+	end
+
 	nut.config.send(client)
 
 	client.nutJoinTime = RealTime()
@@ -8,7 +26,7 @@ function GM:PlayerInitialSpawn(client)
 		nut.char.restore(client, function(charList)
 			if (!IsValid(client)) then return end
 			
-			print("Loaded ("..table.concat(charList, ", ")..") for "..client:Name())
+			MsgN("Loaded ("..table.concat(charList, ", ")..") for "..client:Name())
 
 			for k, v in ipairs(charList) do
 				nut.char.loaded[v]:sync(client)

@@ -120,6 +120,8 @@ end)
 local OFFSET_NORMAL = Vector(0, 0, 80)
 local OFFSET_CROUCHING = Vector(0, 0, 48)
 
+local paintedEntitiesCache = {}
+
 function GM:HUDPaint()
 	vignetteAlphaDelta = math.Approach(vignetteAlphaDelta, vignetteAlphaGoal, FrameTime() * 30)
 
@@ -127,25 +129,69 @@ function GM:HUDPaint()
 	surface.SetMaterial(vignette)
 	surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
 
-	for k, v in ipairs(player.GetAll()) do
-		if (v == LocalPlayer() and !LocalPlayer():ShouldDrawLocalPlayer()) then continue end
+	local localPlayer = LocalPlayer()
 
-		local position = (v:GetPos() + (v:Crouching() and OFFSET_CROUCHING or OFFSET_NORMAL)):ToScreen()
-		local character = v:getChar()
+	if (localPlayer:getChar()) then
+		local data = {}
+			data.start = localPlayer:GetShootPos()
+			data.endpos = data.start + localPlayer:GetAimVector()*160
+		local trace = util.TraceLine(data)
+		local entity = trace.Entity
 
-		if (character) then
-			local x, y = position.x, position.y
-			local alpha = (1 - (v:GetPos():Distance(LocalPlayer():GetPos()) - 72) / 256) * 255
+		if (IsValid(entity) and hook.Run("ShouldDrawEntityInfo", entity) == true) then
+			paintedEntitiesCache[entity] = true
+		end
+	end
 
-			if (alpha > 0) then
-				nut.util.drawText(character:getName(), x, y, ColorAlpha(team.GetColor(v:Team()), alpha), 1, 1, nil, alpha * 0.65)
-				nut.util.drawText(character:getDesc(), x, y + 16, ColorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+	local frameTime = FrameTime() * 120
+
+	for entity, drawing in pairs(paintedEntitiesCache) do
+		if (IsValid(entity)) then
+			local goal = drawing and 255 or 0
+			
+			entity.nutAlpha = math.Approach(entity.nutAlpha or 0, goal, frameTime)
+			paintedEntitiesCache[entity] = false
+			hook.Run("DrawEntityInfo", entity, entity.nutAlpha)
+
+			if (entity.nutAlpha == 0 and goal == 0) then
+				paintedEntitiesCache[entity] = nil
 			end
+		else
+			paintedEntitiesCache[entity] = nil
 		end
 	end
 
 	self.BaseClass:PaintWorldTips()
 	nut.bar.drawAll()
+end
+
+function GM:ShouldDrawEntityInfo(entity)
+	if (entity:IsPlayer()) then
+		if (entity == LocalPlayer() and !LocalPlayer():ShouldDrawLocalPlayer()) then
+			return false
+		end
+
+		return true
+	end
+
+	return false
+end
+
+function GM:DrawEntityInfo(entity, alpha)
+	if (entity:IsPlayer()) then
+		local localPlayer = LocalPlayer()
+		local position = (entity:GetPos() + (entity:Crouching() and OFFSET_CROUCHING or OFFSET_NORMAL)):ToScreen()
+		local character = entity:getChar()
+
+		if (character) then
+			local x, y = position.x, position.y
+
+			if (alpha > 0) then
+				nut.util.drawText(character:getName(), x, y, ColorAlpha(team.GetColor(entity:Team()), alpha), 1, 1, nil, alpha * 0.65)
+				nut.util.drawText(character:getDesc(), x, y + 16, ColorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+			end
+		end
+	end
 end
 
 function GM:PlayerBindPress(client, bind, pressed)
