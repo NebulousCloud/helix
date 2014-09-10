@@ -138,7 +138,7 @@ function GM:HUDPaint()
 		local trace = util.TraceLine(data)
 		local entity = trace.Entity
 
-		if (IsValid(entity) and hook.Run("ShouldDrawEntityInfo", entity) == true) then
+		if (IsValid(entity) and (entity.onShouldDrawEntityInfo and entity:onShouldDrawEntityInfo() or hook.Run("ShouldDrawEntityInfo", entity) == true)) then
 			paintedEntitiesCache[entity] = true
 		end
 	end
@@ -148,12 +148,21 @@ function GM:HUDPaint()
 	for entity, drawing in pairs(paintedEntitiesCache) do
 		if (IsValid(entity)) then
 			local goal = drawing and 255 or 0
-			
-			entity.nutAlpha = math.Approach(entity.nutAlpha or 0, goal, frameTime)
-			paintedEntitiesCache[entity] = false
-			hook.Run("DrawEntityInfo", entity, entity.nutAlpha)
+			local alpha = math.Approach(entity.nutAlpha or 0, goal, frameTime)
 
-			if (entity.nutAlpha == 0 and goal == 0) then
+			paintedEntitiesCache[entity] = false
+
+			if (alpha > 0) then
+				if (entity.onDrawEntityInfo) then
+					entity:onDrawEntityInfo(alpha)
+				else
+					hook.Run("DrawEntityInfo", entity, alpha)
+				end
+			end
+
+			entity.nutAlpha = alpha
+
+			if (alpha == 0 and goal == 0) then
 				paintedEntitiesCache[entity] = nil
 			end
 		else
@@ -186,10 +195,8 @@ function GM:DrawEntityInfo(entity, alpha)
 		if (character) then
 			local x, y = position.x, position.y
 
-			if (alpha > 0) then
-				nut.util.drawText(character:getName(), x, y, ColorAlpha(team.GetColor(entity:Team()), alpha), 1, 1, nil, alpha * 0.65)
-				nut.util.drawText(character:getDesc(), x, y + 16, ColorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
-			end
+			nut.util.drawText(character:getName(), x, y, ColorAlpha(team.GetColor(entity:Team()), alpha), 1, 1, nil, alpha * 0.65)
+			nut.util.drawText(character:getDesc(), x, y + 16, ColorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
 		end
 	end
 end
