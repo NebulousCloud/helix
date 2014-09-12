@@ -117,7 +117,9 @@ if (SERVER) then
 				value = value2
 			end
 
-			nut.util.notify(client:Name().." has set "..key.." to "..tostring(value))
+			for k, v in ipairs(player.GetAll()) do
+				nut.util.notify(L("cfgSet", v, client:Name(), key, tostring(value)), v)
+			end
 		end
 	end)
 else

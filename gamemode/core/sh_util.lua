@@ -97,13 +97,15 @@ if (CLIENT) then
 
 	-- Draw a text with a shadow.
 	function nut.util.drawText(text, x, y, color, alignX, alignY, font, alpha)
+		color = color or color_white
+
 		draw.TextShadow({
 			text = text,
 			font = font or "nutGenericFont",
 			pos = {x, y},
-			color = color or color_white,
+			color = color,
 			xalign = alignX or 0,
 			yalign = alignY or 0
-		}, 1, alpha or 150)
+		}, 1, alpha or (color.a * 0.575))
 	end
 end

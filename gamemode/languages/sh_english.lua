@@ -46,5 +46,6 @@ LANGUAGE = {
 	usingChar = "You are already using this character.",
 	notAllowed = "Sorry, you are not allowed to do this.",
 	cmdNoExist = "Sorry, that command does not exist.",
-	plyNoExist = "Sorry, a player could not be found by that name."
+	plyNoExist = "Sorry, a player could not be found by that name.",
+	cfgSet = "%s has set \"%s\" to %s."
 }

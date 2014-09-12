@@ -29,15 +29,6 @@ if (SERVER) then
 else
 	NUT_CVAR_LANG = CreateClientConVar("nut_language", "english", true, true)
 
-	local nextNotice = 0
-
-	cvars.AddChangeCallback("nut_language", function()
-		if (nextNotice < CurTime()) then
-			nut.util.notify("You may need to rejoin the server to see changes apply.")
-			nextNotice = CurTime() + 0.25
-		end
-	end)
-
 	function L(key, ...)
 		local languages = nut.lang.stored
 		local langKey = NUT_CVAR_LANG:GetString()

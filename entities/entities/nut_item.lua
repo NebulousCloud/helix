@@ -23,6 +23,7 @@ if (SERVER) then
 		local itemTable = nut.item.instances[itemID]
 
 		if (itemTable) then
+			self:SetSkin(itemTable.skin or 0)
 			self:SetModel(itemTable.model)
 			self:PhysicsInit(SOLID_VPHYSICS)
 			self:SetSolid(SOLID_VPHYSICS)
@@ -30,6 +31,20 @@ if (SERVER) then
 
 			if (table.Count(itemTable.data) > 0) then
 				self:setNetVar("data", itemTable.data)
+			end
+
+			local physObj = self:GetPhysicsObject()
+
+			if (!IsValid(physObj)) then
+				local min, max = Vector(-8, -8, -8), Vector(8, 8, 8)
+
+				self:PhysicsInitBox(min, max)
+				self:SetCollisionBounds(min, max)
+			end
+
+			if (IsValid(physObj)) then
+				physObj:EnableMotion(true)
+				physObj:Wake()
 			end
 		end
 	end

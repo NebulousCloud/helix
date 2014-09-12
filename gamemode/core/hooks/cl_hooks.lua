@@ -171,6 +171,8 @@ function GM:HUDPaint()
 	end
 
 	self.BaseClass:PaintWorldTips()
+
+	nut.menu.drawAll()
 	nut.bar.drawAll()
 end
 
@@ -212,6 +214,16 @@ function GM:PlayerBindPress(client, bind, pressed)
 		end
 
 		return true
+	elseif (bind:find("use") and pressed) then
+		local data = {}
+			data.start = client:GetShootPos()
+			data.endpos = data.start + client:GetAimVector()*72
+		local trace = util.TraceLine(data)
+		local entity = trace.Entity
+
+		if (IsValid(entity) and entity:GetClass() == "nut_item") then
+			print(entity)
+		end
 	end
 end
 
