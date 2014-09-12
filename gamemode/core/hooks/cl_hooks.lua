@@ -214,15 +214,21 @@ function GM:PlayerBindPress(client, bind, pressed)
 		end
 
 		return true
-	elseif (bind:find("use") and pressed) then
-		local data = {}
-			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector()*72
-		local trace = util.TraceLine(data)
-		local entity = trace.Entity
+	elseif ((bind:find("use") or bind:find("attack")) and pressed) then
+		local menu, callback = nut.menu.getActiveMenu()
 
-		if (IsValid(entity) and entity:GetClass() == "nut_item") then
-			print(entity)
+		if (menu and nut.menu.onButtonPressed(menu, callback)) then
+			return true
+		elseif (bind:find("use") and pressed) then
+			local data = {}
+				data.start = client:GetShootPos()
+				data.endpos = data.start + client:GetAimVector()*72
+			local trace = util.TraceLine(data)
+			local entity = trace.Entity
+
+			if (IsValid(entity) and entity:GetClass() == "nut_item") then
+				print(entity)
+			end
 		end
 	end
 end

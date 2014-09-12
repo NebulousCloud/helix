@@ -5,6 +5,7 @@ nut.menu.list = nut.menu.list or {}
 function nut.menu.add(options, position)
 	-- Set up the width of the menu.
 	local width = 0
+	local entity
 
 	-- The font for the buttons.
 	surface.SetFont("nutMediumFont")
@@ -12,6 +13,14 @@ function nut.menu.add(options, position)
 	-- Set the width to the longest button width.
 	for k, v in pairs(options) do
 		width = math.max(width, surface.GetTextSize(tostring(k)))
+	end
+
+	-- If you supply an entity, then the menu will follow the entity.
+	if (type(position) == "Entity") then
+		-- Store the entity in the menu.
+		entity = position
+		-- The position will be the trace hit pos relative to the entity.
+		position = entity:WorldToLocal(LocalPlayer():GetEyeTrace().HitPos)
 	end
 
 	-- Add the new menu to the list.
@@ -23,7 +32,9 @@ function nut.menu.add(options, position)
 		-- Add 8 to the width to give it a border.
 		width = width + 8,
 		-- Find how tall the menu is.
-		height = table.Count(options) * 28
+		height = table.Count(options) * 28,
+		-- Store the attached entity if there is one.
+		entity = entity
 	}
 end
 
@@ -39,12 +50,31 @@ function nut.menu.drawAll()
 	-- Loop through the current menus.
 	for k, v in ipairs(nut.menu.list) do
 		-- Get their position on the screen.
-		local position = v.position:ToScreen()
+		local position
+		local entity = v.entity
+
+		if (entity) then
+			-- Follow the entity.
+			if (IsValid(entity)) then
+				local realPos = entity:LocalToWorld(v.position)
+
+				v.entPos = LerpVector(frameTime * 0.25, v.entPos or realPos, realPos)
+				position = v.entPos:ToScreen()
+			-- The attached entity is gone, remove the menu.
+			else
+				table.remove(nut.menu.list, k)
+
+				continue
+			end
+		else
+			position = v.position:ToScreen()
+		end
+
 		local width, height = v.width, v.height
 		local startX, startY = position.x - (width * 0.5), position.y
 		local alpha = v.alpha or 0
 		-- Local player is within 96 units of the menu.
-		local inRange = position2:Distance(v.position) <= 96
+		local inRange = position2:Distance(IsValid(v.entity) and v.entity:GetPos() or v.position) <= 96
 		-- Check that the center of the screen is within the bounds of the menu.
 		local inside = (mX >= startX and mX <= (startX + width) and mY >= startY and mY <= (startY + height)) and inRange
 
@@ -109,4 +139,75 @@ function nut.menu.drawAll()
 			i = i + 1
 		end
 	end
+end
+
+-- Determines which menu is being looked at
+function nut.menu.getActiveMenu()
+	local mX, mY = ScrW() * 0.5, ScrH() * 0.5
+	local position2 = LocalPlayer():GetPos()
+
+	-- Loop through the current menus.
+	for k, v in ipairs(nut.menu.list) do
+		-- Get their position on the screen.
+		local position
+		local entity = v.entity
+		local width, height = v.width, v.height
+
+		if (entity) then
+			-- Follow the entity.
+			if (IsValid(entity)) then
+				position = (v.entPos or entity:LocalToWorld(v.position)):ToScreen()
+			-- The attached entity is gone, remove the menu.
+			else
+				table.remove(nut.menu.list, k)
+
+				continue
+			end
+		else
+			position = v.position:ToScreen()
+		end
+
+		-- Get where the menu starts and ends.
+		local startX, startY = position.x - (width * 0.5), position.y
+		-- Local player is within 96 units of the menu.
+		local inRange = position2:Distance(IsValid(v.entity) and v.entity:GetPos() or v.position) <= 96
+		-- Check that the center of the screen is within the bounds of the menu.
+		local inside = (mX >= startX and mX <= (startX + width) and mY >= startY and mY <= (startY + height)) and inRange
+
+		if (inRange and inside) then
+			local choice
+			local i = 0
+
+			-- Loop through all of the buttons.
+			for k2, v2 in SortedPairs(v.options) do
+				-- Determine where the button starts.
+				local y = startY + (i * 28)
+
+				-- Check if the button is hovered.
+				if (inside and mY >= y and mY <= (y + 28)) then
+					choice = v2
+
+					break
+				end
+
+				-- Make sure we draw the next button in line.
+				i = i + 1
+			end
+
+			return k, choice
+		end
+	end
+end
+
+-- Handles whenever a button has been pressed.
+function nut.menu.onButtonPressed(menu, callback)
+	table.remove(nut.menu.list, menu)
+
+	if (callback) then
+		callback()
+		
+		return true
+	end
+
+	return false
 end
