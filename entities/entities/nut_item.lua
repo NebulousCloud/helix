@@ -28,6 +28,7 @@ if (SERVER) then
 			self:PhysicsInit(SOLID_VPHYSICS)
 			self:SetSolid(SOLID_VPHYSICS)
 			self:setNetVar("id", itemTable.uniqueID)
+			self.nutItemID = itemID
 
 			if (table.Count(itemTable.data) > 0) then
 				self:setNetVar("data", itemTable.data)

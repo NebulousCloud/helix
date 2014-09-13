@@ -223,7 +223,7 @@ if (CLIENT) then
 									value = Color(math.floor(vector.x * 255), math.floor(vector.y * 255), math.floor(vector.z * 255))
 								elseif (form == "Int" or form == "Float") then
 									value = tonumber(value)
-									print(form)
+
 									if (form == "Int") then
 										value = math.Round(value)
 									end

@@ -38,6 +38,34 @@ function nut.item.load(path, baseID, isBaseItem)
 			ITEM.uniqueID = uniqueID
 			ITEM.base = baseID
 			ITEM.isBase = isBaseItem
+			ITEM.functions = ITEM.functions or {}
+			ITEM.functions.drop = {
+				tip = "dropTip",
+				icon = "icon16/world.png",
+				onRun = function(item)
+					item:spawn(item.player)
+					item.player:getChar():getInv():remove(item.id, nil, true)
+				end,
+				onCanRun = function(item)
+					return !IsValid(item.entity)
+				end
+			}
+			ITEM.functions.take = {
+				tip = "takeTip",
+				icon = "icon16/box.png",
+				onRun = function(item)
+					local status, result = item.player:getChar():getInv():add(item.id)
+
+					if (!status) then
+						item.player:notify(result)
+
+						return false
+					end
+				end,
+				onCanRun = function(item)
+					return IsValid(item.entity)
+				end
+			}
 
 			if (PLUGIN) then
 				ITEM.plugin = PLUGIN.uniqueID
@@ -155,7 +183,13 @@ do
 					local panel = nut.gui.inv
 
 					if (IsValid(panel)) then
-						panel:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
+						local icon = panel:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
+
+						if (IsValid(icon)) then
+							icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, item.desc))
+
+							panel.panels[item.id] = icon
+						end
 					end
 				end
 			end
@@ -219,6 +253,70 @@ do
 						nut.db.query("UPDATE nut_items SET _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
 					end
 				end
+			end
+		end)
+
+		netstream.Hook("invAct", function(client, action, item)
+			local character = client:getChar()
+
+			if (!character) then
+				return
+			end
+
+			if (type(item) == "Entity") then
+				if (IsValid(item)) then
+					local entity = item
+					local itemID = item.nutItemID
+					item = nut.item.instances[itemID]
+
+					if (!item) then
+						return
+					end
+
+					item.entity = entity
+					item.player = client
+				else
+					return
+				end
+			elseif (type(item) == "number") then
+				item = nut.item.instances[item]
+
+				if (!item) then
+					return
+				end
+
+				item.player = client
+			end
+
+			if (item.entity) then
+				if (item.entity:GetPos():Distance(client:GetPos()) > 96) then
+					return
+				end
+			elseif (!character:getInv():getItemByID(item.id)) then
+				return
+			end
+
+			local callback = item.functions[action]
+
+			if (item.functions[action]) then
+				if (callback.onCanRun and callback.onCanRun(item) == false) then
+					item.entity = nil
+					item.player = nil
+
+					return
+				end
+
+				if (callback.onRun(item) != false) then
+					if (item.entity) then
+						item.entity:Remove()
+					else
+						character:getInv():remove(item.id, nil, true)
+						nut.db.query("UPDATE nut_items SET _charID = 0 WHERE _itemID = "..item.id)
+					end
+				end
+
+				item.entity = nil
+				item.player = nil
 			end
 		end)
 	end

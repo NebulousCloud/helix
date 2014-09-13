@@ -77,7 +77,7 @@ function META:getItemAt(x, y)
 	end
 end
 
-function META:remove(id, noReplication)
+function META:remove(id, noReplication, noDelete)
 	local x2, y2
 
 	for x = 1, self.w do
@@ -104,7 +104,10 @@ function META:remove(id, noReplication)
 			netstream.Start(receiver, "invRmv", id, self.owner)
 		end
 
-		nut.db.query("DELETE FROM nut_items WHERE _itemID = "..id)
+		if (!noDelete) then
+			nut.db.query("DELETE FROM nut_items WHERE _itemID = "..id)
+			nut.item.instances[id] = nil
+		end
 	end
 
 	return x2, y2
@@ -114,6 +117,16 @@ function META:getReceiver()
 	for k, v in ipairs(player.GetAll()) do
 		if (v:getNetVar("charID") == self.owner) then
 			return v
+		end
+	end
+end
+
+function META:getItemByID(id)
+	for k, v in pairs(self.slots) do
+		for k2, v2 in pairs(v) do
+			if (v2.id == id) then
+				return k, k2
+			end
 		end
 	end
 end
@@ -133,7 +146,7 @@ if (SERVER) then
 		quantity = quantity or 1
 
 		if (self.owner and quantity > 0) then
-			if (quantity > 1) then
+			if (type(uniqueID) != "number" and quantity > 1) then
 				for i = 1, quantity do
 					self:add(uniqueID, 1, data)
 				end
@@ -141,39 +154,76 @@ if (SERVER) then
 				return
 			end
 
-			local itemTable = nut.item.list[uniqueID]
+			if (type(uniqueID) == "number") then
+				local item = nut.item.instances[uniqueID]
 
-			if (!itemTable) then
-				return false, "invalid"
-			end
+				if (item) then
+					if (!x and !y) then
+						x, y = self:findEmptySlot(item.width, item.height)
+					end
+					
+					if (x and y) then
+						self.slots[x] = self.slots[x] or {}
+						self.slots[x][y] = true
 
-			if (!x and !y) then
-				x, y = self:findEmptySlot(itemTable.width, itemTable.height)
-			end
-			
-			if (x and y) then
-				self.slots[x] = self.slots[x] or {}
-				self.slots[x][y] = true
+						item.gridX = x
+						item.gridY = y
 
-				nut.item.instance(self.owner, uniqueID, data, x, y, function(item)
-					item.gridX = x
-					item.gridY = y
-
-					for x2 = 0, item.width - 1 do
-						for y2 = 0, item.height - 1 do
-							self.slots[x + x2] = self.slots[x + x2] or {}
-							self.slots[x + x2][y + y2] = item
+						for x2 = 0, item.width - 1 do
+							for y2 = 0, item.height - 1 do
+								self.slots[x + x2] = self.slots[x + x2] or {}
+								self.slots[x + x2][y + y2] = item
+							end
 						end
-					end
 
-					if (!noReplication) then
-						self:sendSlot(x, y, item)
-					end
-				end)
+						if (!noReplication) then
+							self:sendSlot(x, y, item)
+						end
 
-				return x, y
+						nut.db.query("UPDATE nut_items SET _charID = "..self.owner..", _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
+
+						return x, y
+					else
+						return false, "no space"
+					end
+				else
+					return false, "invalid index"
+				end
 			else
-				return false, "no space"
+				local itemTable = nut.item.list[uniqueID]
+
+				if (!itemTable) then
+					return false, "invalid item"
+				end
+
+				if (!x and !y) then
+					x, y = self:findEmptySlot(itemTable.width, itemTable.height)
+				end
+				
+				if (x and y) then
+					self.slots[x] = self.slots[x] or {}
+					self.slots[x][y] = true
+
+					nut.item.instance(self.owner, uniqueID, data, x, y, function(item)
+						item.gridX = x
+						item.gridY = y
+
+						for x2 = 0, item.width - 1 do
+							for y2 = 0, item.height - 1 do
+								self.slots[x + x2] = self.slots[x + x2] or {}
+								self.slots[x + x2][y + y2] = item
+							end
+						end
+
+						if (!noReplication) then
+							self:sendSlot(x, y, item)
+						end
+					end)
+
+					return x, y
+				else
+					return false, "no space"
+				end
 			end
 		end
 	end

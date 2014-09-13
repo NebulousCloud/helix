@@ -197,6 +197,29 @@ local PANEL = {}
 					self.heldItem = nil
 				end
 			end
+			panel.doRightClick = function(this)
+				local itemTable = LocalPlayer():getChar():getInv():getItemAt(x, y)
+
+				if (itemTable) then
+					itemTable.client = LocalPlayer()
+						local menu = DermaMenu()
+							for k, v in SortedPairs(itemTable.functions) do
+								if (v.onCanRun) then
+									if (v.onCanRun(itemTable) == false) then
+										itemTable.client = nil
+
+										continue
+									end
+								end
+
+								menu:AddOption(L(v.name or k), function()
+									netstream.Start("invAct", k, itemTable.id)
+								end):SetImage(itemTable.icon or "icon16/brick.png")
+							end
+						menu:Open()
+					itemTable.client = nil
+				end
+			end
 			
 			panel.slots = {}
 			

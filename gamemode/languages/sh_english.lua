@@ -47,5 +47,9 @@ LANGUAGE = {
 	notAllowed = "Sorry, you are not allowed to do this.",
 	cmdNoExist = "Sorry, that command does not exist.",
 	plyNoExist = "Sorry, a player could not be found by that name.",
-	cfgSet = "%s has set \"%s\" to %s."
+	cfgSet = "%s has set \"%s\" to %s.",
+	drop = "Drop",
+	dropTip = "Drops this item from your inventory.",
+	take = "Take",
+	takeTip = "Take this item and place it in your inventory."
 }

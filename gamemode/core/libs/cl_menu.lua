@@ -2,7 +2,7 @@ nut.menu = nut.menu or {}
 nut.menu.list = nut.menu.list or {}
 
 -- Adds a new menu to the list of drawn menus.
-function nut.menu.add(options, position)
+function nut.menu.add(options, position, onRemove)
 	-- Set up the width of the menu.
 	local width = 0
 	local entity
@@ -24,7 +24,7 @@ function nut.menu.add(options, position)
 	end
 
 	-- Add the new menu to the list.
-	nut.menu.list[#nut.menu.list + 1] = {
+	return table.insert(nut.menu.list, {
 		-- Use the specified position or whatever the player is looking at.
 		position = position or LocalPlayer():GetEyeTrace().HitPos,
 		-- Options are the list with button text as keys and their callbacks as values.
@@ -34,8 +34,10 @@ function nut.menu.add(options, position)
 		-- Find how tall the menu is.
 		height = table.Count(options) * 28,
 		-- Store the attached entity if there is one.
-		entity = entity
-	}
+		entity = entity,
+		-- Called after the menu has faded out.
+		onRemove = onRemove
+	})
 end
 
 -- Gradient for subtle effects.
@@ -63,6 +65,10 @@ function nut.menu.drawAll()
 			-- The attached entity is gone, remove the menu.
 			else
 				table.remove(nut.menu.list, k)
+
+				if (v.onRemove) then
+					v:onRemove()
+				end
 
 				continue
 			end
@@ -94,6 +100,10 @@ function nut.menu.drawAll()
 			if (v.alpha == 0) then
 				-- Remove the menu from being drawn.
 				table.remove(nut.menu.list, k)
+
+				if (v.onRemove) then
+					v:onRemove()
+				end
 
 				-- Skip to the next menu, the logic for this one is done.
 				continue

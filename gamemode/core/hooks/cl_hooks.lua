@@ -227,10 +227,50 @@ function GM:PlayerBindPress(client, bind, pressed)
 			local entity = trace.Entity
 
 			if (IsValid(entity) and entity:GetClass() == "nut_item") then
-				print(entity)
+				hook.Run("ItemShowEntityMenu", entity)
 			end
 		end
 	end
+end
+
+-- Called when use has been pressed on an item.
+function GM:ItemShowEntityMenu(entity)
+	for k, v in ipairs(nut.menu.list) do
+		if (v.entity == entity) then
+			table.remove(nut.menu.list, k)
+		end
+	end
+
+	local options = {}
+	local itemTable = entity:getItemTable()
+
+	local function Callback(index)
+		if (IsValid(entity)) then
+			netstream.Start("invAct", index, entity)
+		end
+	end
+
+	itemTable.client = LocalPlayer()
+	itemTable.entity = entity
+
+	for k, v in SortedPairs(itemTable.functions) do
+		if (v.onCanRun) then
+			if (v.onCanRun(itemTable) == false) then
+				continue
+			end
+		end
+
+		options[L(v.name or k)] = function()
+			Callback(k)
+		end
+	end
+
+	if (table.Count(options) > 0) then
+		entity.nutMenuIndex = nut.menu.add(options, entity)
+	end
+
+	itemTable.client = nil
+	itemTable.entity = nil
 end
 
 local hidden = {}
