@@ -36,7 +36,7 @@
 --]]
 
 -- Which method of storage: sqlite, tmysql4, mysqloo
-nut.db.module = "tmysql4"
+nut.db.module = "sqlite"
 -- The hostname for the MySQL server.
 nut.db.hostname = "localhost"
 -- The username to login to the database.
