@@ -79,8 +79,8 @@ function PLUGIN:LoadData()
 				elseif (k2 == "faction") then
 					for k3, v3 in pairs(nut.faction.teams) do
 						if (k3 == v2) then
-							door.nutFactionID = k3
-							door:setNetVar("faction", v3.index)
+							entity.nutFactionID = k3
+							entity:setNetVar("faction", v3.index)
 
 							break
 						end

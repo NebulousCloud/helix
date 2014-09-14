@@ -194,7 +194,7 @@ nut.command.add("doorsetfaction", {
 					entity:setNetVar("faction", faction.index)
 				end)
 
-				client:notify(L("dSetFaction", client, L2(faction.name) or faction.name))
+				client:notify(L("dSetFaction", client, L2(faction.name, client) or faction.name))
 			-- The faction was not found.
 			elseif (arguments[1]) then
 				client:notify(L("invalidFaction", client))

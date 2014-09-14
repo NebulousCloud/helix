@@ -26,6 +26,16 @@ if (SERVER) then
 		
 		return FormatString(info and info[key] or key, ...)
 	end
+
+	function L2(key, client, ...)
+		local languages = nut.lang.stored
+		local langKey = ClientGetInfo(client, "nut_language")
+		local info = languages[langKey] or languages.english
+		
+		if (info and info[key]) then
+			return FormatString(info[key], ...)
+		end
+	end
 else
 	NUT_CVAR_LANG = CreateClientConVar("nut_language", "english", true, true)
 
