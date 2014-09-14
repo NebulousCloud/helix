@@ -199,7 +199,7 @@ local PANEL = {}
 			end
 			panel.doRightClick = function(this)
 				local itemTable = LocalPlayer():getChar():getInv():getItemAt(x, y)
-
+				
 				if (itemTable) then
 					itemTable.client = LocalPlayer()
 						local menu = DermaMenu()

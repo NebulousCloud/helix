@@ -185,6 +185,8 @@ CREATE TABLE IF NOT EXISTS `nut_items` (
 	`_charID` int(11) unsigned NOT NULL,
 	`_uniqueID` varchar(60) NOT NULL,
 	`_data` varchar(255) DEFAULT NULL,
+	`_x` smallint(4) NOT NULL,
+	`_y` smallint(4) NOT NULL,
 	PRIMARY KEY (`_itemID`)
 );
 
@@ -218,6 +220,8 @@ CREATE TABLE IF NOT EXISTS `nut_characters` (
 CREATE TABLE IF NOT EXISTS `nut_items` (
 	`_itemID` INTEGER PRIMARY KEY,
 	`_charID` INTEGER,
+	`_x` INTEGER,
+	`_y` INTEGER,
 	`_uniqueID` TEXT,
 	`_data` TEXT
 );
