@@ -109,3 +109,12 @@ if (CLIENT) then
 		}, 1, alpha or (color.a * 0.575))
 	end
 end
+
+-- Utility entity extensions.
+do
+	local entityMeta = FindMetaTable("Entity")
+
+	function entityMeta:isDoor()
+		return self:GetClass():find("door")
+	end
+end

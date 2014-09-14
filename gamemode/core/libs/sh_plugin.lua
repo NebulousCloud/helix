@@ -24,6 +24,20 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 	_G[variable] = PLUGIN
 	nut.util.include(isSingleFile and path or path.."/sh_"..variable:lower()..".lua", "shared")
 
+	local uniqueID2 = uniqueID
+
+	if (uniqueID2 == "schema") then
+		uniqueID2 = PLUGIN.name
+	end
+
+	function PLUGIN:setData(value, global, ignoreMap)
+		nut.data.set(uniqueID2, value, global, ignoreMap)
+	end
+
+	function PLUGIN:getData(default, global, ignoreMap, refresh)
+		return nut.data.get(uniqueID2, default, global, ignoreMap, refresh)
+	end
+
 	if (!isSingleFile) then
 		nut.lang.loadFromDir(path.."/languages")
 		nut.util.includeDir(path.."/libs")

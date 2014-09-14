@@ -184,9 +184,17 @@ function GM:PlayerDisconnected(client)
 	end
 end
 
+function GM:InitPostEntity()
+	timer.Simple(0.1, function()
+		hook.Run("LoadData")
+	end)
+end
+
 function GM:ShutDown()
 	nut.shuttingDown = true
 	nut.config.save()
+
+	hook.Run("SaveData")
 
 	for k, v in ipairs(player.GetAll()) do
 		if (v:getChar()) then
