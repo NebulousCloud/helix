@@ -76,6 +76,15 @@ function PLUGIN:LoadData()
 							door.nutParent = entity
 						end
 					end
+				elseif (k2 == "faction") then
+					for k3, v3 in pairs(nut.faction.teams) do
+						if (k3 == v2) then
+							door.nutFactionID = k3
+							door:setNetVar("faction", v3.index)
+
+							break
+						end
+					end
 				else
 					entity:setNetVar(k2, v2)
 				end
@@ -116,6 +125,10 @@ function PLUGIN:SaveData()
 				doorData.children = v.nutChildren
 			end
 
+			if (v.nutFactionID) then
+				doorData.faction = v.nutFactionID
+			end
+
 			-- Add the door to the door information.
 			if (table.Count(doorData) > 0) then
 				data[k] = doorData
@@ -125,8 +138,14 @@ function PLUGIN:SaveData()
 	self:setData(data)	
 end
 
-function PLUGIN:PlayerUse(client, entity)
-	if (entity:isDoor() and entity:getNetVar("disabled")) then
+function PLUGIN:CanPlayerUseDoor(client, entity)
+	if (entity:getNetVar("disabled")) then
+		return false
+	end
+
+	local faction = entity:getNetVar("faction")
+
+	if (faction and client:Team() != faction) then
 		return false
 	end
 end

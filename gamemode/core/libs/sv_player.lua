@@ -4,7 +4,7 @@ local playerMeta = FindMetaTable("Player")
 do
 	function playerMeta:loadNutData(callback)
 		local name = self:Name()
-		local steamID64 = (self:SteamID64() or 0)
+		local steamID64 = self:SteamID64()
 		local timeStamp = math.floor(os.time())
 		local ip = self:IPAddress():match("%d+%.%d+%.%d+%.%d+")
 
@@ -40,7 +40,7 @@ do
 
 	function playerMeta:saveNutData()
 		local name = self:Name()
-		local steamID64 = (self:SteamID64() or 0)
+		local steamID64 = self:SteamID64()
 		
 		nut.db.updateTable({
 			_steamName = name,

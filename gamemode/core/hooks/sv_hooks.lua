@@ -51,6 +51,18 @@ function GM:PlayerInitialSpawn(client)
 	end)
 end
 
+function GM:PlayerUse(client, entity)
+	if (entity:isDoor()) then
+		local result = hook.Run("CanPlayerUseDoor", client, entity)
+
+		if (result == false) then
+			return false
+		end
+	end
+
+	return true
+end
+
 function GM:PlayerShouldTakeDamage(client, attacker)
 	return client:getChar() != nil
 end

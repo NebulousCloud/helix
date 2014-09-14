@@ -69,10 +69,13 @@ LANGUAGE = {
 	dNoParentDoor = "You do not have a parent door set.",
 	dOwnedBy = "This door is owned by %s.",
 	dConfigName = "Doors",
+	dSetFaction = "This door now belongs to the %s faction.",
+	dRemoveFaction = "This door no longer belongs to any faction.",
 	dNotValid = "You are not looking at a valid door.",
 	canNotAfford = "You can not afford to purchase this.",
 	dPurchased = "You have purchased this door for %s.",
 	dSold = "You have sold this door for %s.",
 	notOwner = "You are not the owner of this.",
-	invalidArg = "You have provided an invalid value for argument #%s."
+	invalidArg = "You have provided an invalid value for argument #%s.",
+	invalidFaction = "The faction you provided could not be found."
 }

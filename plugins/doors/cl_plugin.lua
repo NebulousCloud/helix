@@ -10,11 +10,25 @@ function PLUGIN:DrawEntityInfo(entity, alpha)
 		local x, y = position.x, position.y
 		local owner = entity:getNetVar("owner")
 		local name = entity:getNetVar("title", entity:getNetVar("name", IsValid(owner) and L"dTitleOwned" or L"dTitle"))
+		local faction = entity:getNetVar("faction")
+		local color
 
-		nut.util.drawText(name, x, y, ColorAlpha(nut.config.get("color"), alpha), 1, 1)
+		if (faction) then
+			color = team.GetColor(faction)
+		else
+			color = nut.config.get("color")
+		end
+
+		nut.util.drawText(name, x, y, ColorAlpha(color, alpha), 1, 1)
 
 		if (IsValid(owner)) then
 			nut.util.drawText(L("dOwnedBy", owner:Name()), x, y + 16, ColorAlpha(color_white, alpha), 1, 1)
+		elseif (faction) then
+			local info = nut.faction.indices[faction]
+
+			if (info) then
+				nut.util.drawText(L("dOwnedBy", L2(info.name) or info.name), x, y + 16, ColorAlpha(color_white, alpha), 1, 1)
+			end
 		else
 			nut.util.drawText(entity:getNetVar("noSell") and L"dIsNotOwnable" or L"dIsOwnable", x, y + 16, ColorAlpha(color_white, alpha), 1, 1)
 		end

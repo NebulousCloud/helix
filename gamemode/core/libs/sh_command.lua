@@ -108,6 +108,27 @@ if (SERVER) then
 		end
 	end
 
+	-- Forces a player to run a command.
+	function nut.command.run(client, command, arguments)
+		local command = nut.command.list[command]
+
+		if (command) then
+			-- Run the command's callback and get the return.
+			local result = command.onRun(client, arguments)
+
+			-- If a string is returned, it is a notification.
+			if (type(result) == "string") then
+				-- Normal player here.
+				if (IsValid(client)) then
+					client:notify(result)
+				else
+					-- Show the message in server console since we're running from RCON.
+					print(result)
+				end
+			end
+		end
+	end
+
 	-- Add a function to parse a regular chat string.
 	function nut.command.parse(client, text, realCommand, arguments)
 		if (text:sub(1, 1) == COMMAND_PREFIX) then
@@ -122,19 +143,8 @@ if (SERVER) then
 					arguments = nut.command.extractArgs(text:sub(#match + 3))
 				end
 
-				-- Run the command's callback and get the return.
-				local result = command.onRun(client, arguments)
-
-				-- If a string is returned, it is a notification.
-				if (type(result) == "string") then
-					-- Normal player here.
-					if (IsValid(client)) then
-						client:notify(result)
-					else
-						-- Show the message in server console since we're running from RCON.
-						print(result)
-					end
-				end
+				-- Runs the actual command.
+				nut.command.run(client, match, arguments)
 			else
 				if (IsValid(client)) then
 					client:notify(L("cmdNoExist", client))

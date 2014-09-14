@@ -12,7 +12,7 @@ nut.command.add("doorbuy", {
 
 		-- Check if the entity is a valid door.
 		if (IsValid(entity) and entity:isDoor() and !entity:getNetVar("disabled")) then
-			if (entity:getNetVar("noSell") or IsValid(entity:getNetVar("owner"))) then
+			if (entity:getNetVar("noSell") or IsValid(entity:getNetVar("owner")) or entity:getNetVar("faction")) then
 				return client:notify(L("dNotAllowedToOwn", client))
 			end
 
@@ -152,6 +152,62 @@ nut.command.add("doorsetownable", {
 		else
 			-- Tell the player the door isn't valid.
 			client:notify(L("dNotValid", client))
+		end
+	end
+})
+
+nut.command.add("doorsetfaction", {
+	adminOnly = true,
+	syntax = "[string faction]",
+	onRun = function(client, arguments)
+		-- Get the door the player is looking at.
+		local entity = client:GetEyeTrace().Entity
+
+		-- Validate it is a door.
+		if (IsValid(entity) and entity:isDoor() and !entity:getNetVar("disabled")) then
+			local faction
+
+			-- Check if the player supplied a faction name.
+			if (arguments[1]) then
+				-- Get all of the arguments as one string.
+				local name = table.concat(arguments, " ")
+
+				-- Loop through each faction, checking the uniqueID and name.
+				for k, v in pairs(nut.faction.teams) do
+					if (nut.util.stringMatches(k, name) or nut.util.stringMatches(k, v.name)) then
+						-- This faction matches the provided string.
+						faction = v
+
+						-- Escape the loop.
+						break
+					end
+				end
+			end
+
+			-- Check if a faction was found.
+			if (faction) then
+				entity.nutFactionID = faction.uniqueID
+				entity:setNetVar("faction", faction.index)
+
+				PLUGIN:callOnDoorChildren(entity, function()
+					entity.nutFactionID = faction.uniqueID
+					entity:setNetVar("faction", faction.index)
+				end)
+
+				client:notify(L("dSetFaction", client, L2(faction.name) or faction.name))
+			-- The faction was not found.
+			elseif (arguments[1]) then
+				client:notify(L("invalidFaction", client))
+			-- The player didn't provide a faction.
+			else
+				entity:setNetVar("faction", nil)
+
+				PLUGIN:callOnDoorChildren(entity, function()
+					entity:setNetVar("faction", nil)
+				end)
+
+				client:notify(L("dRemoveFaction", client))
+			end
 		end
 	end
 })

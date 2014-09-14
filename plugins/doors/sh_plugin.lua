@@ -12,7 +12,7 @@ nut.config.add("doorCost", 10, "The price to purchase a door.", nil, {
 	category = "dConfigName"
 })
 nut.config.add("doorSellRatio", 0.5, "How much of the door price is returned when selling a door.", nil, {
-	form = "float",
+	form = "Float",
 	data = {min = 0, max = 1.0},
 	category = "dConfigName"
 })
