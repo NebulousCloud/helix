@@ -4,6 +4,17 @@ if (SERVER) then
 		netstream.Start(recipient, "notify", message)
 	end
 
+	-- Sends a translated notification.
+	function nut.util.notifyLocalized(message, recipient, ...)
+		if (type(recipient) == "Player") then
+			recipient:notify(L(message, recipient, ...))
+		else
+			for k, v in pairs(recipient or player.GetAll()) do
+				v:notify(L(message, v, ...))
+			end
+		end
+	end
+
 	do
 		local playerMeta = FindMetaTable("Player")
 

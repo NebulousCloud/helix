@@ -77,5 +77,7 @@ LANGUAGE = {
 	dSold = "You have sold this door for %s.",
 	notOwner = "You are not the owner of this.",
 	invalidArg = "You have provided an invalid value for argument #%s.",
-	invalidFaction = "The faction you provided could not be found."
+	invalidFaction = "The faction you provided could not be found.",
+	flagGive = "%s has given %s '%s' flags.",
+	flagTake = "%s has taken '%s' flags from %s."
 }

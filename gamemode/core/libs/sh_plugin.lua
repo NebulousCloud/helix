@@ -107,11 +107,11 @@ function nut.plugin.loadEntities(path)
 		end
 
 		for k, v in ipairs(files) do
-			local niceName = v:sub(4, -5)
+			local niceName = string.StripExtension(v)
 
 			_G[variable] = default
 				_G[variable].ClassName = niceName
-				nut.util.include(path2..v, clientOnly and "client" or "shared")
+				nut.util.include(path.."/"..folder.."/"..v, clientOnly and "client" or "shared")
 
 				if (clientOnly) then
 					if (CLIENT) then

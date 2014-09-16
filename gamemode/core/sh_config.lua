@@ -117,9 +117,7 @@ if (SERVER) then
 				value = value2
 			end
 
-			for k, v in ipairs(player.GetAll()) do
-				nut.util.notify(L("cfgSet", v, client:Name(), key, tostring(value)), v)
-			end
+			nut.util.notifyLocalized("cfgSet", nil, client:Name(), key, tostring(value), v)
 		end
 	end)
 else

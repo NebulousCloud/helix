@@ -141,6 +141,8 @@ end
 
 -- Called when weapons should be given to a player.
 function GM:PlayerLoadout(client)
+	client:StripWeapons()
+
 	local character = client:getChar()
 
 	-- Check if they have loaded a character.
@@ -148,6 +150,8 @@ function GM:PlayerLoadout(client)
 		client:SetupHands()
 		-- Set their player model to the character's model.
 		client:SetModel(character:getModel())
+		client:Give("nut_hands")
+		client:SelectWeapon("nut_hands")
 
 		local faction = nut.faction.indices[client:Team()]
 

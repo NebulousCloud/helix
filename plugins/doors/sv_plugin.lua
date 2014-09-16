@@ -149,3 +149,7 @@ function PLUGIN:CanPlayerUseDoor(client, entity)
 		return false
 	end
 end
+
+function PLUGIN:PostPlayerLoadout(client)
+	client:Give("nut_keys")
+end

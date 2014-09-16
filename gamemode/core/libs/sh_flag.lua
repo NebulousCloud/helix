@@ -60,6 +60,9 @@ do
 
 		-- Remove the flags from the flag string.
 		function character:takeFlags(flags)
+			local oldFlags = self:getFlags()
+			local newFlags = oldFlags
+
 			-- Get the individual flags within the flag string.
 			for i = 1, #flags do
 				local flag = flags:sub(i, i)
@@ -70,9 +73,13 @@ do
 					-- Pass the player and false (false since the flag is being taken)
 					info.callback(self:getPlayer(), false)
 				end
+
+				newFlags = newFlags:gsub(flag, "")
 			end
 
-			self:setFlags(self:getFlags():gsub(flags, ""))
+			if (newFlags != oldFlags) then
+				self:setFlags(newFlags)
+			end
 		end
 	end
 
