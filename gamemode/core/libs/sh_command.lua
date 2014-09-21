@@ -131,7 +131,7 @@ if (SERVER) then
 
 	-- Add a function to parse a regular chat string.
 	function nut.command.parse(client, text, realCommand, arguments)
-		if (text:sub(1, 1) == COMMAND_PREFIX) then
+		if (realCommand or text:sub(1, 1) == COMMAND_PREFIX) then
 			-- See if the string contains a command.
 			local match = realCommand or text:match(COMMAND_PREFIX.."([_%w]+)")
 			local command = nut.command.list[match]

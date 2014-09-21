@@ -66,7 +66,7 @@ if (SERVER) then
 
 	-- Called after entities have been loaded on the map.
 	function PLUGIN:LoadData()
-		self.list = self:getData()
+		self.list = self:getData() or {}
 	end
 
 	-- Called when the plugin needs to save information.
