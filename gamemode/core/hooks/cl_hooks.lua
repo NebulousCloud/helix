@@ -3,6 +3,12 @@ function GM:ForceDermaSkin()
 end
 
 function GM:LoadFonts(font)
+	surface.CreateFont("nut3D2DFont", {
+		font = font,
+		size = 2048,
+		weight = 1000
+	})
+
 	surface.CreateFont("nutTitleFont", {
 		font = font,
 		size = 72,

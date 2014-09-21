@@ -10,6 +10,7 @@ if (SERVER) then
 			recipient:notify(L(message, recipient, ...))
 		else
 			for k, v in pairs(recipient or player.GetAll()) do
+				print(v, ...)
 				v:notify(L(message, v, ...))
 			end
 		end
@@ -21,6 +22,11 @@ if (SERVER) then
 		-- Utility function to notify a player.
 		function playerMeta:notify(message)
 			nut.util.notify(message, self)
+		end
+
+		-- Utility function to notify a localized message to a player.
+		function playerMeta:notifyLocalized(message, ...)
+			nut.util.notifyLocalized(message, self, ...)
 		end
 	end
 else

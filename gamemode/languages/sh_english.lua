@@ -79,5 +79,7 @@ LANGUAGE = {
 	invalidArg = "You have provided an invalid value for argument #%s.",
 	invalidFaction = "The faction you provided could not be found.",
 	flagGive = "%s has given %s '%s' flags.",
-	flagTake = "%s has taken '%s' flags from %s."
+	flagTake = "%s has taken '%s' flags from %s.",
+	textAdded = "You have added a text.",
+	textRemoved = "You have removed %s text(s)."
 }

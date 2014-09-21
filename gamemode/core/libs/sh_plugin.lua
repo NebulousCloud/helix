@@ -159,7 +159,7 @@ function nut.plugin.loadFromDir(directory)
 	end
 
 	for k, v in ipairs(files) do
-		nut.plugin.load(v, directory.."/"..v, true)
+		nut.plugin.load(string.StripExtension(v), directory.."/"..v, true)
 	end
 end
 
