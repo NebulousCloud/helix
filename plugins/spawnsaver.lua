@@ -10,7 +10,7 @@ function PLUGIN:CharacterPreSave(character)
 	-- Check to see if we can get the player's position.
 	if (IsValid(client)) then
 		-- Store the position in the character's data.
-		character:setData("pos", {client:GetPos(), client:EyeAngles()})
+		character:setData("pos", {client:GetPos(), client:EyeAngles(), game.GetMap()})
 	end
 end
 
@@ -21,9 +21,11 @@ function PLUGIN:PlayerLoadedChar(client, character, lastChar)
 
 	-- Check if the position was set.
 	if (position) then
-		-- Restore the player to that position.
-		client:SetPos(position[1].x and position[1] or client:GetPos())
-		client:SetEyeAngles(position[2].p and position[2] or Angle(0, 0, 0))
+		if (position[3] and position[3]:lower() == game.GetMap():lower()) then
+			-- Restore the player to that position.
+			client:SetPos(position[1].x and position[1] or client:GetPos())
+			client:SetEyeAngles(position[2].p and position[2] or Angle(0, 0, 0))
+		end
 
 		-- Remove the position data since it is no longer needed.
 		character:setData("pos", nil)

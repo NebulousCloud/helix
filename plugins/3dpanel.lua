@@ -84,7 +84,6 @@ else
 			local object = vgui.Create("DHTML")
 			object:OpenURL(url)
 			object:SetSize(w, h)
-			print(object:GetSize())
 			object:SetKeyboardInputEnabled(false)
 			object:SetMouseInputEnabled(false)
 			object:SetPaintedManually(true)
