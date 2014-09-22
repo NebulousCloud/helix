@@ -63,6 +63,22 @@ function GM:PlayerUse(client, entity)
 	return true
 end
 
+function GM:KeyPress(client, key)
+	if (key == IN_RELOAD) then
+		timer.Create("nutToggleRaise"..client:SteamID(), 1, 1, function()
+			if (IsValid(client)) then
+				client:toggleWepRaised()
+			end
+		end)
+	end
+end
+
+function GM:KeyRelease(client, key)
+	if (key == IN_RELOAD) then
+		timer.Remove("nutToggleRaise"..client:SteamID())
+	end
+end
+
 function GM:PlayerSwitchWeapon(client, oldWeapon, newWeapon)
 	client:setWepRaised(false)
 end

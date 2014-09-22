@@ -129,8 +129,12 @@ do
 	function playerMeta:isWepRaised()
 		local weapon = self:GetActiveWeapon()
 
-		if (IsValid(weapon) and ALWAYS_RAISED[weapon:GetClass()]) then
-			return true
+		if (IsValid(weapon)) then
+			if (weapon.IsAlwaysRaised or ALWAYS_RAISED[weapon:GetClass()]) then
+				return true
+			elseif (weapon.IsAlwaysLowered) then
+				return false
+			end
 		end
 
 		return self:getNetVar("raised", false)

@@ -114,7 +114,7 @@ if (SERVER) then
 
 		if (command) then
 			-- Run the command's callback and get the return.
-			local result = command.onRun(client, arguments)
+			local result = command.onRun(client, arguments or {})
 
 			-- If a string is returned, it is a notification.
 			if (type(result) == "string") then
