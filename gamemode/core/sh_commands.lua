@@ -24,3 +24,12 @@ nut.command.add("flaggive", {
 		end
 	end
 })
+
+nut.command.add("toggleraise", {
+	onRun = function(client, arguments)
+		if ((client.nutNextToggle or 0) < CurTime()) then
+			client:toggleWepRaised()
+			client.nutNextToggle = CurTime() + 0.5
+		end
+	end
+})

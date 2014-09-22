@@ -118,3 +118,38 @@ do
 		return self:GetClass():find("door")
 	end
 end
+
+-- Misc. player stuff.
+do
+	local playerMeta = FindMetaTable("Player")
+	local ALWAYS_RAISED = {}
+	ALWAYS_RAISED["weapon_physgun"] = true
+	ALWAYS_RAISED["gmod_tool"] = true
+
+	function playerMeta:isWepRaised()
+		local weapon = self:GetActiveWeapon()
+
+		if (IsValid(weapon) and ALWAYS_RAISED[weapon:GetClass()]) then
+			return true
+		end
+
+		return self:getNetVar("raised", false)
+	end
+
+	if (SERVER) then
+		function playerMeta:setWepRaised(state)
+			self:setNetVar("raised", state)
+
+			local weapon = self:GetActiveWeapon()
+
+			if (IsValid(weapon)) then
+				weapon:SetNextPrimaryFire(CurTime() + 1)
+				weapon:SetNextSecondaryFire(CurTime() + 1)
+			end
+		end
+
+		function playerMeta:toggleWepRaised()
+			self:setWepRaised(!self:isWepRaised())
+		end
+	end
+end

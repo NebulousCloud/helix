@@ -63,6 +63,10 @@ function GM:PlayerUse(client, entity)
 	return true
 end
 
+function GM:PlayerSwitchWeapon(client, oldWeapon, newWeapon)
+	client:setWepRaised(false)
+end
+
 function GM:PlayerShouldTakeDamage(client, attacker)
 	return client:getChar() != nil
 end
