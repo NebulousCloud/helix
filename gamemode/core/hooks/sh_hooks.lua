@@ -2,17 +2,34 @@ function GM:PlayerNoClip(client)
 	return client:IsAdmin()
 end
 
-local anims = {}
-anims[ACT_MP_STAND_IDLE] = ACT_IDLE
-anims[ACT_MP_WALK] = ACT_WALK
-anims[ACT_MP_RUN] = ACT_RUN
-anims[ACT_MP_CROUCH_IDLE] = ACT_COVER_LOW
-anims[ACT_MP_CROUCHWALK] = ACT_WALK_CROUCH
-anims[ACT_MP_JUMP] = ACT_GLIDE
+local HOLDTYPE_TRANSLATOR = {}
+HOLDTYPE_TRANSLATOR[""] = "normal"
+HOLDTYPE_TRANSLATOR["physgun"] = "smg"
+HOLDTYPE_TRANSLATOR["ar2"] = "smg"
+HOLDTYPE_TRANSLATOR["crossbow"] = "shotgun"
+HOLDTYPE_TRANSLATOR["rpg"] = "shotgun"
+HOLDTYPE_TRANSLATOR["slam"] = "normal"
 
 function GM:TranslateActivity(client, act)
-	if (anims[act]) then
-		return anims[act]
+	local class = nut.anim.getModelClass(client:GetModel())
+	local tree = nut.anim[class]
+
+	if (tree) then
+		local weapon = client:GetActiveWeapon()
+		local subClass = "normal"
+
+		if (client:OnGround()) then
+			if (IsValid(weapon)) then
+				subClass = weapon:GetHoldType()
+				subClass = HOLDTYPE_TRANSLATOR[subClass] or subClass
+			end
+
+			if (tree[subClass] and tree[subClass][act]) then
+				return tree[subClass][act][client:isWepRaised() and 2 or 1]
+			end
+		else
+			return tree.glide
+		end
 	end
 end
 

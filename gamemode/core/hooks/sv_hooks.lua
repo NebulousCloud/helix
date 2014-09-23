@@ -1,4 +1,6 @@
 function GM:PlayerInitialSpawn(client)
+	client.nutJoinTime = RealTime()
+	
 	if (client:IsBot()) then
 		local index = math.random(1, table.Count(nut.faction.indices))
 		local faction = nut.faction.indices[index]
@@ -19,7 +21,6 @@ function GM:PlayerInitialSpawn(client)
 
 	nut.config.send(client)
 
-	client.nutJoinTime = RealTime()
 	client:loadNutData(function(data)
 		if (!IsValid(client)) then return end
 
