@@ -46,7 +46,7 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 		nut.class.loadFromDir(path.."/classes")
 		nut.item.loadFromDir(path.."/items")
 		nut.plugin.loadFromDir(path.."/plugins")
-		nut.util.includeDir(path.."/derma")
+		nut.util.includeDir(path.."/derma", true)
 		nut.plugin.loadEntities(path.."/entities")
 
 		hook.Run("DoPluginIncludes", path, PLUGIN)

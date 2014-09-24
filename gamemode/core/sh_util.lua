@@ -22,7 +22,7 @@ function nut.util.include(fileName, state)
 end
 
 -- Include files based off the prefix within a directory.
-function nut.util.includeDir(directory)
+function nut.util.includeDir(directory, fromLua)
 	-- By default, we include relatively to NutScript.
 	local baseDir = "nutscript"
 
@@ -32,7 +32,7 @@ function nut.util.includeDir(directory)
 	end
 
 	-- Find all of the files within the directory.
-	for k, v in ipairs(file.Find(baseDir.."/gamemode/"..directory.."/*.lua", "LUA")) do
+	for k, v in ipairs(file.Find((fromLua and "" or baseDir.."/gamemode/")..directory.."/*.lua", "LUA")) do
 		-- Include the file from the prefix.
 		nut.util.include(directory.."/"..v)
 	end
