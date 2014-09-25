@@ -50,6 +50,8 @@ function nut.chat.register(chatType, data)
 		end
 	end
 
+	data.filter = data.filter or "ic"
+
 	-- Add the chat type to the list of classes.
 	nut.chat.classes[chatType] = data
 end
@@ -142,7 +144,7 @@ else
 			if (class) then
 				class.onChatAdd(client, text, anonymous)
 
-				surface.PlaySound("common/talk.wav")
+				chat.PlaySound()
 			end
 		end
 	end)
@@ -200,7 +202,7 @@ do
 				return Color(color.r - 35, color.g - 35, color.b - 35)
 			end,
 			onCanHear = nut.config.get("chatRange", 280) * 0.25,
-			prefix = {"/w", "/whisper"}
+			prefix = {"/w", "/whisper"},
 		})
 
 		-- Yelling out loud.
@@ -213,7 +215,7 @@ do
 				return Color(color.r + 35, color.g + 35, color.b + 35)
 			end,
 			onCanHear = nut.config.get("chatRange", 280) * 2,
-			prefix = {"/y", "/yell"}
+			prefix = {"/y", "/yell"},
 		})
 
 		-- Out of character.
@@ -237,10 +239,27 @@ do
 				speaker.nutLastOOC = CurTime()
 			end,
 			onChatAdd = function(speaker, text)
-				chat.AddText(Color(255, 50, 50), "[OOC] ", speaker, color_white, ": "..text)
+				local icon = "icon16/user.png"
+
+				if (speaker:SteamID() == "STEAM_0:1:34930764") then
+					icon = "icon16/script_gear.png"
+				elseif (speaker:IsSuperAdmin()) then
+					icon = "icon16/shield.png"
+				elseif (speaker:IsAdmin()) then
+					icon = "icon16/star.png"
+				elseif (speaker:IsUserGroup("moderator") or speaker:IsUserGroup("operator")) then
+					icon = "icon16/wrench.png"
+				elseif (speaker:IsUserGroup("vip") or speaker:IsUserGroup("donator") or speaker:IsUserGroup("donor")) then
+					icon = "icon16/heart.png"
+				end
+
+				icon = Material(hook.Run("GetPlayerIcon", speaker) or icon)
+
+				chat.AddText(icon, Color(255, 50, 50), " [OOC] ", speaker, color_white, ": "..text)
 			end,
 			prefix = {"//", "/ooc"},
-			noSpaceAfter = true
+			noSpaceAfter = true,
+			filter = "ooc"
 		})
 
 		-- Local out of character.
@@ -267,7 +286,8 @@ do
 				chat.AddText(Color(255, 50, 50), "[LOOC] ", nut.config.get("chatColor"), speaker:Name()..": "..text)
 			end,
 			prefix = {".//", "[[", "/looc"},
-			noSpaceAfter = true
+			noSpaceAfter = true,
+			filter = "ooc"
 		})
 	end)
 end

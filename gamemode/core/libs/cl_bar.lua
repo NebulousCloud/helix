@@ -47,7 +47,7 @@ local Approach = math.Approach
 
 function nut.bar.drawAll()
 	local w, h = surface.ScreenWidth() * 0.35, 10
-	local x, y = 4, surface.ScreenHeight() - (h + 4)
+	local x, y = 4, 4
 	local deltas = nut.bar.delta
 	local frameTime = FrameTime()
 	local curTime = CurTime()

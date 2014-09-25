@@ -8,6 +8,7 @@ local setmetatable = setmetatable
 local math = math
 local Material = Material
 local tonumber = tonumber
+local file = file
 
 module("nut.markup")
 
@@ -120,6 +121,13 @@ local function ExtractParams(p1,p2,p3)
 			local exploded = string.Explode(",", p2)
 			local material = exploded[1] or p2
 			local p3 = exploded[2]
+
+			local found = file.Find("materials/"..material..".*", "GAME")
+
+			if (found[1] and found[1]:find("%.png")) then
+				material = material..".png"
+			end
+
 			local texture = Material(material)
 			local sizeData = string.Explode("x", p3 or "16x16")
 			w = tonumber(sizeData[1]) or 16
