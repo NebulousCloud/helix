@@ -90,7 +90,7 @@ local PANEL = {}
 				self.entry:Remove()
 
 				if (text:find("%S")) then
-					if (!(nut.chat.lastLine or ""):match(text)) then
+					if (!(nut.chat.lastLine or ""):find(text, 1, true)) then
 						nut.chat.history[#nut.chat.history + 1] = text
 						nut.chat.lastLine = text
 					end
@@ -120,14 +120,8 @@ local PANEL = {}
 	end
 
 	local function OnDrawText(text, font, x, y, color, alignX, alignY, alpha)
-		draw.TextShadow({
-			pos = {x, y},
-			color = ColorAlpha(color, alpha),
-			text = text,
-			xalign = 0,
-			yalign = alignY,
-			font = font
-		}, 1, alpha)
+		alpha = alpha or 255
+		draw.SimpleTextOutlined(text, font, x, y, ColorAlpha(color, alpha), 0, alignY, 1, ColorAlpha(color_black, alpha * 0.6))
 	end
 
 	local function PaintFilterButton(this, w, h)
@@ -195,9 +189,9 @@ local PANEL = {}
 			elseif (type(v) == "Player") then
 				local color = team.GetColor(v:Team())
 
-				text = text.."<color="..color.r..","..color.g..","..color.b..">"..v:Name():gsub("&lt;", "<"):gsub("&gt;", ">")
+				text = text.."<color="..color.r..","..color.g..","..color.b..">"..v:Name():gsub("<", "&lt;"):gsub(">", "&gt;")
 			else
-				text = text..tostring(v):gsub("&lt;", "<"):gsub("&gt;", ">")
+				text = text..tostring(v):gsub("<", "&lt;"):gsub(">", "&gt;")
 			end
 		end
 
@@ -218,19 +212,19 @@ local PANEL = {}
 
 		self.list[#self.list + 1] = panel
 
-		local class = CHAT_CLASS.filter:lower()
+		local class = CHAT_CLASS and CHAT_CLASS.filter or CHAT_CLASS.filter:lower() or "ic"
 
 		if (NUT_CVAR_CHATFILTER:GetString():lower():find(class)) then
 			self.filtered[panel] = class
 			panel:SetVisible(false)
 		else
 			panel:SetPos(0, self.lastY)
+
+			self.lastY = self.lastY + panel:GetTall()
+			self.scroll:ScrollToChild(panel)
 		end
 
 		panel.filter = class
-
-		self.lastY = self.lastY + panel:GetTall() + 2
-		self.scroll:ScrollToChild(panel)
 
 		return panel:IsVisible()
 	end
