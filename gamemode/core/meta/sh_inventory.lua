@@ -15,6 +15,22 @@ function META:getSize()
 	return self.w, self.h
 end
 
+function META:print()
+	local itemTables = {}
+
+	for k, v in pairs(self.slots) do
+		for k2, v2 in pairs(v) do
+			if (!itemTables[v2.id]) then
+				itemTables[v2.id] = v2
+			end
+		end
+	end
+
+	for k, v in pairs(itemTables) do
+		print(k, v.name)
+	end
+end
+
 function META:setOwner(owner)
 	if (type(owner) == "Player" and owner:getNetVar("charID")) then
 		owner = owner:getNetVar("charID")
