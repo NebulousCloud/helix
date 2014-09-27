@@ -86,9 +86,9 @@ end
 -----------------------------------------------------------]]
 local function ExtractParams(p1,p2,p3)
 
-	if (string.sub(p1, 1, 1) == "/") then
+	if (string.utf8sub(p1, 1, 1) == "/") then
 		
-		local tag = string.sub(p1, 2)
+		local tag = string.utf8sub(p1, 2)
 		
 		if (tag == "color" or tag == "colour") then
 			table.remove(colour_stack)			
@@ -155,7 +155,7 @@ local function CheckTextOrTag(p)
 	if (p == "") then return end
 	if (p == nil) then return end
 	
-	if (string.sub(p, 1, 1) == "<") then
+	if (string.utf8sub(p, 1, 1) == "<") then
 		string.gsub(p, "<([/%a]*)=?([^>]*)", ExtractParams)
 	else
 		
@@ -319,8 +319,8 @@ function parse(ml, maxwidth)
 			block.text = string.gsub(block.text, "&lt;", "<")
 			block.text = string.gsub(block.text, "&amp;", "&")
 
-			for j=1,string.len(block.text) do
-				local ch = string.sub(block.text,j,j)
+			for j=1,string.utf8len(block.text) do
+				local ch = string.utf8sub(block.text,j,j)
 				
 				if (ch == "\n") then
 				
@@ -331,7 +331,7 @@ function parse(ml, maxwidth)
 						lineHeight = thisY
 					end
 				
-					if (string.len(curString) > 0) then
+					if (string.utf8len(curString) > 0) then
 						local x1,y1 = surface.GetTextSize(curString)
 
 						local new_block = {}
@@ -357,7 +357,7 @@ function parse(ml, maxwidth)
 					thisMaxY = 0
 				elseif (ch == "\t") then
 				
-					if (string.len(curString) > 0) then
+					if (string.utf8len(curString) > 0) then
 						local x1,y1 = surface.GetTextSize(curString)
 
 						local new_block = {}
@@ -397,29 +397,29 @@ function parse(ml, maxwidth)
 							--          and add a -. add the character to ch
 							--          and insert as a new block, incrementing the y etc
 							
-							local lastSpacePos = string.len(curString)
-							for k=1,string.len(curString) do
-								local chspace = string.sub(curString,k,k)
+							local lastSpacePos = string.utf8len(curString)
+							for k=1,string.utf8len(curString) do
+								local chspace = string.utf8sub(curString,k,k)
 								if (chspace == " ") then
 									lastSpacePos = k
 								end
 							end
 							
-							if (lastSpacePos == string.len(curString)) then
-								ch = string.sub(curString,lastSpacePos,lastSpacePos) .. ch
+							if (lastSpacePos == string.utf8len(curString)) then
+								ch = string.utf8sub(curString,lastSpacePos,lastSpacePos) .. ch
 								j = lastSpacePos
-								curString = string.sub(curString, 1, lastSpacePos-1)
+								curString = string.utf8sub(curString, 1, lastSpacePos-1)
 							else
-								ch = string.sub(curString,lastSpacePos+1) .. ch
+								ch = string.utf8sub(curString,lastSpacePos+1) .. ch
 								j = lastSpacePos+1
-								curString = string.sub(curString, 1, lastSpacePos)
+								curString = string.utf8sub(curString, 1, lastSpacePos)
 							end
 							
 							local m = 1
-							while string.sub(ch, m, m) == " " do
+							while string.utf8sub(ch, m, m) == " " do
 								m = m + 1
 							end
-							ch = string.sub(ch, m)
+							ch = string.utf8sub(ch, m)
 							
 							local x1,y1 = surface.GetTextSize(curString)
 													
@@ -459,7 +459,7 @@ function parse(ml, maxwidth)
 				end
 			end
 
-			if (string.len(curString) > 0) then
+			if (string.utf8len(curString) > 0) then
 				
 				local x1,y1 = surface.GetTextSize(curString)
 		
