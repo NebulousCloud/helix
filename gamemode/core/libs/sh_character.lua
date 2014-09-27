@@ -210,6 +210,8 @@ do
 			if (IsValid(client) and client:getChar() == character) then
 				client:SetModel(value)
 			end
+
+			character.vars.model = value
 		end,
 		onGet = function(character, default)
 			return character.vars.model or default

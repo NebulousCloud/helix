@@ -33,3 +33,18 @@ nut.command.add("toggleraise", {
 		end
 	end
 })
+
+nut.command.add("charsetmodel", {
+	syntax = "<string name> <string model>",
+	onRun = function(client, arguments)
+		if (!arguments[2]) then
+			return L("invalidArg", client, 2)
+		end
+
+		local target = nut.command.findPlayer(client, arguments[1])
+
+		if (IsValid(target) and target:getChar()) then
+			target:getChar():setModel(arguments[2])
+		end
+	end
+})
