@@ -140,6 +140,7 @@ else
 	netstream.Hook("cMsg", function(client, chatType, text, anonymous)
 		if (IsValid(client)) then
 			local class = nut.chat.classes[chatType]
+			hook.Run("OnChatReceived", client, chatType, text, anonymous)
 
 			if (class) then
 				CHAT_CLASS = class
