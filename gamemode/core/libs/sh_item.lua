@@ -38,6 +38,7 @@ function nut.item.load(path, baseID, isBaseItem)
 			ITEM.uniqueID = uniqueID
 			ITEM.base = baseID
 			ITEM.isBase = isBaseItem
+			ITEM.data = ITEM.data or {}
 			ITEM.functions = ITEM.functions or {}
 			ITEM.functions.drop = {
 				tip = "dropTip",
@@ -73,7 +74,7 @@ function nut.item.load(path, baseID, isBaseItem)
 
 			nut.util.include(path)
 				if (ITEM.base) then
-					local baseTable = nut.item.list[ITEM.base]
+					local baseTable = nut.item.base[ITEM.base]
 
 					if (baseTable) then
 						for k, v in pairs(baseTable) do
@@ -83,6 +84,9 @@ function nut.item.load(path, baseID, isBaseItem)
 
 							ITEM.baseTable = baseTable
 						end
+
+						local mergeTable = table.Copy(baseTable)
+						ITEM = table.Merge(mergeTable, ITEM)
 					else
 						ErrorNoHalt("[NutScript] Item '"..ITEM.uniqueID.."' has a non-existent base! ("..ITEM.base..")")
 					end
@@ -114,7 +118,7 @@ function nut.item.loadFromDir(directory)
 		end
 		
 		for k2, v2 in ipairs(file.Find(directory.."/"..v.."/*.lua", "LUA")) do
-			nut.item.load(directory.."/"..v, "base_"..v)
+			nut.item.load(directory.."/"..v .. "/".. v2, "base_"..v)
 		end
 	end
 
