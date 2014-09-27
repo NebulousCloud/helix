@@ -74,9 +74,14 @@ local PANEL = {}
 			end
 			self.entry:SetTall(28)
 
+			nut.chat.history = nut.chat.history or {}
+
 			self.text = self.entry:Add("DTextEntry")
 			self.text:Dock(FILL)
+			self.text.History = nut.chat.history
+			self.text:SetHistoryEnabled(true)
 			self.text:DockMargin(3, 3, 3, 3)
+			self.text:SetFont("nutChatFont")
 			self.text.OnEnter = function(this)
 				local text = this:GetText()
 
@@ -85,6 +90,11 @@ local PANEL = {}
 				self.entry:Remove()
 
 				if (text:find("%S")) then
+					if (!(nut.chat.lastLine or ""):match(text)) then
+						nut.chat.history[#nut.chat.history + 1] = text
+						nut.chat.lastLine = text
+					end
+
 					netstream.Start("msg", text)
 				end
 			end
@@ -122,11 +132,11 @@ local PANEL = {}
 
 	local function PaintFilterButton(this, w, h)
 		if (this.active) then
-			local alpha = 120 + math.cos(RealTime() * 5) * 30
+			surface.SetDrawColor(40, 40, 40)
+		else
+			local alpha = 120 + math.cos(RealTime() * 5) * 10
 
 			surface.SetDrawColor(ColorAlpha(nut.config.get("color"), alpha))
-		else
-			surface.SetDrawColor(70, 70, 70)
 		end
 
 		surface.DrawRect(0, 0, w, h)
@@ -185,9 +195,9 @@ local PANEL = {}
 			elseif (type(v) == "Player") then
 				local color = team.GetColor(v:Team())
 
-				text = text.."<color="..color.r..","..color.g..","..color.b..">"..v:Name()
+				text = text.."<color="..color.r..","..color.g..","..color.b..">"..v:Name():gsub("&lt;", "<"):gsub("&gt;", ">")
 			else
-				text = text..tostring(v)
+				text = text..tostring(v):gsub("&lt;", "<"):gsub("&gt;", ">")
 			end
 		end
 
