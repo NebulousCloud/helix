@@ -212,7 +212,7 @@ local PANEL = {}
 
 		self.list[#self.list + 1] = panel
 
-		local class = CHAT_CLASS and CHAT_CLASS.filter or CHAT_CLASS.filter:lower() or "ic"
+		local class = CHAT_CLASS and CHAT_CLASS.filter and CHAT_CLASS.filter:lower() or "ic"
 
 		if (NUT_CVAR_CHATFILTER:GetString():lower():find(class)) then
 			self.filtered[panel] = class
