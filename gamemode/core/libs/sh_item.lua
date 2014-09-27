@@ -225,7 +225,7 @@ do
 
 	if (CLIENT) then
 		netstream.Hook("inv", function(slots, w, h, owner)
-			local character = LocalPlayer():getChar()
+			local character
 
 			if (owner) then
 				character = nut.char.loaded[owner]
@@ -234,7 +234,8 @@ do
 			if (character) then
 				local inventory = nut.item.createInv(w, h)
 				inventory:setOwner(owner)
-				
+				inventory.slots = {}
+
 				local x, y
 				
 				for k, v in ipairs(slots) do

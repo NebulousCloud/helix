@@ -71,20 +71,20 @@ if (SERVER) then
 			if (!noNetworking) then
 				self:sync()
 
-				if (!client.nutFirstLoaded) then
+				if (!self.firstTimeLoaded) then
 					if (!self:getInv()) then
 						self.vars.inv = nut.item.createInv(nut.config.get("invW", 6), nut.config.get("invH", 4))
 						self.vars.inv:setOwner(self:getID())
 					end
-					
-					self:getInv():sync()
 				end
+
+				self:getInv():sync()
 			end
 
 			hook.Run("CharacterLoaded", self:getID())
 
 			netstream.Start(client, "charLoaded")
-			client.nutFirstLoaded = true
+			self.firstTimeLoaded = true
 		end
 	end
 end
