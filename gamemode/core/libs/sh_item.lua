@@ -101,6 +101,80 @@ function nut.item.load(path, baseID, isBaseItem)
 	end
 end
 
+function nut.item.register(uniqueID, baseID, isBaseItem)
+	local meta = FindMetaTable("Item")
+
+	if (uniqueID) then
+		uniqueID = (isBaseItem and "base_" or "")..uniqueID
+
+		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({}, {__index = meta})
+			ITEM.uniqueID = uniqueID
+			ITEM.base = baseID
+			ITEM.isBase = isBaseItem
+			ITEM.data = ITEM.data or {}
+			ITEM.functions = ITEM.functions or {}
+			ITEM.functions.drop = {
+				tip = "dropTip",
+				icon = "icon16/world.png",
+				onRun = function(item)
+					item:spawn(item.player)
+					item.player:getChar():getInv():remove(item.id, nil, true)
+				end,
+				onCanRun = function(item)
+					return !IsValid(item.entity)
+				end
+			}
+			ITEM.functions.take = {
+				tip = "takeTip",
+				icon = "icon16/box.png",
+				onRun = function(item)
+					local status, result = item.player:getChar():getInv():add(item.id)
+
+					if (!status) then
+						item.player:notify(result)
+
+						return false
+					end
+				end,
+				onCanRun = function(item)
+					return IsValid(item.entity)
+				end
+			}
+
+			if (PLUGIN) then
+				ITEM.plugin = PLUGIN.uniqueID
+			end
+
+			if (ITEM.base) then
+				local baseTable = nut.item.base[ITEM.base]
+
+				if (baseTable) then
+					for k, v in pairs(baseTable) do
+						if (ITEM[k] == nil) then
+							ITEM[k] = v
+						end
+
+						ITEM.baseTable = baseTable
+					end
+
+					local mergeTable = table.Copy(baseTable)
+					ITEM = table.Merge(mergeTable, ITEM)
+				else
+					ErrorNoHalt("[NutScript] Item '"..ITEM.uniqueID.."' has a non-existent base! ("..ITEM.base..")")
+				end
+			end
+
+			ITEM.width = ITEM.width or 1
+			ITEM.height = ITEM.height or 1
+
+			(isBaseItem and nut.item.base or nut.item.list)[ITEM.uniqueID] = ITEM
+		return ITEM
+	else
+		ErrorNoHalt("[NutScript] You tried to register an item without uniqueID!\n")
+	end
+end
+
+
 function nut.item.loadFromDir(directory)
 	local files, folders
 
