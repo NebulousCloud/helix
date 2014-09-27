@@ -114,14 +114,16 @@ if (SERVER) then
 									if (x and y and itemID) then
 										if (x <= w and x > 0 and y <= h and y > 0) then
 											local item2 = nut.item.new(item._uniqueID, itemID)
-											item2.data = table.Merge(item2.data, data or {})
-											item2.gridX = x
-											item2.gridY = y
-											
-											for x2 = 0, item2.width - 1 do
-												for y2 = 0, item2.height - 1 do
-													slots[x + x2] = slots[x + x2] or {}
-													slots[x + x2][y + y2] = item2
+											if (item2) then
+												item2.data = table.Merge(item2.data, data or {})
+												item2.gridX = x
+												item2.gridY = y
+												
+												for x2 = 0, item2.width - 1 do
+													for y2 = 0, item2.height - 1 do
+														slots[x + x2] = slots[x + x2] or {}
+														slots[x + x2][y + y2] = item2
+													end
 												end
 											end
 										else
