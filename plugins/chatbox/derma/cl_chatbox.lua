@@ -15,6 +15,7 @@ local PANEL = {}
 		self.tabs = self:Add("DPanel")
 		self.tabs:Dock(TOP)
 		self.tabs:SetTall(24)
+		self.tabs:DockPadding(3, 3, 3, 3)
 		self.tabs:DockMargin(4, 4, 4, 4)
 		self.tabs:SetVisible(false)
 
@@ -25,12 +26,24 @@ local PANEL = {}
 
 		self.lastY = 0
 
+		self.list = {}
+		self.filtered = {}
+
 		chat.GetChatBoxPos = function()
 			return self:LocalToScreen(0, 0)
 		end
 
 		chat.GetChatBoxSize = function()
 			return self:GetSize()
+		end
+
+		local buttons = {}
+
+		for k, v in SortedPairsByMemberValue(nut.chat.classes, "filter") do
+			if (!buttons[v.filter]) then
+				self:addFilterButton(v.filter)
+				buttons[v.filter] = true
+			end
 		end
 	end
 
@@ -54,7 +67,6 @@ local PANEL = {}
 		self.active = state
 
 		if (state) then
-
 			self.entry = self:Add("EditablePanel")
 			self.entry:SetPos(self.x + 4, self.y + self:GetTall() - 32)
 			self.entry:SetWide(self:GetWide() - 8)
@@ -108,6 +120,60 @@ local PANEL = {}
 		}, 1, alpha)
 	end
 
+	local function PaintFilterButton(this, w, h)
+		if (this.active) then
+			local alpha = 120 + math.cos(RealTime() * 5) * 30
+
+			surface.SetDrawColor(ColorAlpha(nut.config.get("color"), alpha))
+		else
+			surface.SetDrawColor(70, 70, 70)
+		end
+
+		surface.DrawRect(0, 0, w, h)
+
+		surface.SetDrawColor(0, 0, 0, 200)
+		surface.DrawOutlinedRect(0, 0, w, h)
+	end
+
+	function PANEL:addFilterButton(filter)
+		local tab = self.tabs:Add("DButton")
+		tab:SetText(filter:upper())
+		tab:SizeToContents()
+		tab:DockMargin(0, 0, 3, 0)
+		tab:SetWide(tab:GetWide() + 32)
+		tab:Dock(LEFT)
+		tab:SetTextColor(color_white)
+		tab:SetExpensiveShadow(1, Color(0, 0, 0, 200))
+		tab:SetFont("nutChatFont")
+		tab.Paint = PaintFilterButton
+		tab.DoClick = function(this)
+			this.active = !this.active
+
+			local filters = NUT_CVAR_CHATFILTER:GetString():lower()
+
+			if (filters == "none") then
+				filters = ""
+			end
+
+			if (this.active) then
+				filters = filters..filter..","
+			else
+				filters = filters:gsub(filter.."[,]", "")
+
+				if (!filters:find("%S")) then
+					filters = "none"
+				end
+			end
+
+			self:setFilter(filter, this.active)
+			RunConsoleCommand("nut_chatfilter", filters)
+		end
+
+		if (NUT_CVAR_CHATFILTER:GetString():lower():find(filter)) then
+			tab.active = true
+		end
+	end
+
 	function PANEL:addText(...)
 		local text = "<font=nutChatFont>"
 
@@ -128,7 +194,6 @@ local PANEL = {}
 		text = text.."</font>"
 
 		local panel = self.scroll:Add("nutMarkupPanel")
-		panel:SetPos(0, self.lastY)
 		panel:SetWide(self:GetWide() - 8)
 		panel:setMarkup(text, OnDrawText)
 		panel.start = CurTime() + 15
@@ -141,7 +206,67 @@ local PANEL = {}
 			end
 		end
 
+		self.list[#self.list + 1] = panel
+
+		local class = CHAT_CLASS.filter:lower()
+
+		if (NUT_CVAR_CHATFILTER:GetString():lower():find(class)) then
+			self.filtered[panel] = class
+			panel:SetVisible(false)
+		else
+			panel:SetPos(0, self.lastY)
+		end
+
+		panel.filter = class
+
 		self.lastY = self.lastY + panel:GetTall() + 2
 		self.scroll:ScrollToChild(panel)
+
+		return panel:IsVisible()
+	end
+
+	function PANEL:setFilter(filter, state)
+		if (state) then
+			for k, v in ipairs(self.list) do
+				if (v.filter == filter) then
+					v:SetVisible(false)
+					self.filtered[v] = filter
+				end
+			end
+		else
+			for k, v in pairs(self.filtered) do
+				if (v == filter) then
+					k:SetVisible(true)
+					self.filtered[k] = nil
+				end
+			end
+		end
+
+		self.lastY = 0
+
+		local lastChild
+
+		for k, v in ipairs(self.list) do
+			if (v:IsVisible()) then
+				v:SetPos(0, self.lastY)
+				self.lastY = self.lastY + v:GetTall() + 2
+				lastChild = v
+			end
+		end
+
+		if (IsValid(lastChild)) then
+			self.scroll:ScrollToChild(lastChild)
+		end
+	end
+
+	function PANEL:Think()
+		if (gui.IsGameUIVisible() and self.active) then
+			self.tabs:SetVisible(false)
+			self.active = false
+
+			if (IsValid(self.entry)) then
+				self.entry:Remove()
+			end
+		end
 	end
 vgui.Register("nutChatBox", PANEL, "DPanel")

@@ -144,6 +144,7 @@ do
 		return setmetatable({w = w, h = h}, {__index = FindMetaTable("Inventory")})
 	end
 
+
 	if (CLIENT) then
 		netstream.Hook("inv", function(slots, w, h, owner)
 			local character = LocalPlayer():getChar()
@@ -162,10 +163,51 @@ do
 					x, y = v[1], v[2]
 
 					inventory.slots[x] = inventory.slots[x] or {}
-					inventory.slots[x][y] = nut.item.new(v[3], v[4])
+
+					local item = nut.item.new(v[3], v[4])
+						item.data = table.Merge(item.data, v[5] or {})
+					inventory.slots[x][y] = item
 				end
 
 				character.vars.inv = inventory
+			end
+		end)
+
+		netstream.Hook("invSet", function(uniqueID, id, x, y, owner)
+			local character = LocalPlayer():getChar()
+
+			if (owner) then
+				character = nut.char.loaded[owner]
+			end
+
+			if (character) then
+				local inventory = character:getInv()
+
+				if (inventory) then
+					local item = uniqueID and id and nut.item.new(uniqueID, id) or nil
+					inventory.slots[x] = inventory.slots[x] or {}
+					inventory.slots[x][y] = item
+
+					local panel = nut.gui.inv
+
+					if (IsValid(panel)) then
+						local icon = panel:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
+
+						if (IsValid(icon)) then
+							icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, item.desc))
+
+							panel.panels[item.id] = icon
+						end
+					end
+				end
+			end
+		end)
+
+		netstream.Hook("invData", function(id, key, value)
+			local item = nut.item.instances[id]
+
+			if (item) then
+				item.data[key] = value
 			end
 		end)
 

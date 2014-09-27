@@ -3,6 +3,8 @@ PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Adds a chatbox that replaces the default one."
 
 if (CLIENT) then
+	NUT_CVAR_CHATFILTER = CreateClientConVar("nut_chatfilter", "", true, false)
+
 	function PLUGIN:createChat()
 		self.panel = vgui.Create("nutChatBox")
 	end
@@ -37,11 +39,16 @@ if (CLIENT) then
 	local PLUGIN = PLUGIN
 
 	function chat.AddText(...)
+		local show = true
+
 		if (IsValid(PLUGIN.panel)) then
-			PLUGIN.panel:addText(...)
+			show = PLUGIN.panel:addText(...)
 		end
 
-		chat.nutAddText(...)
+		if (show) then
+			chat.nutAddText(...)
+			chat.PlaySound()
+		end
 	end
 else
 	netstream.Hook("msg", function(client, text)

@@ -142,9 +142,9 @@ else
 			local class = nut.chat.classes[chatType]
 
 			if (class) then
-				class.onChatAdd(client, text, anonymous)
-
-				chat.PlaySound()
+				CHAT_CLASS = class
+					class.onChatAdd(client, text, anonymous)
+				CHAT_CLASS = nil
 			end
 		end
 	end)

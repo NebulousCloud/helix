@@ -8,12 +8,50 @@ ITEM.id = ITEM.id or 0
 ITEM.uniqueID = "undefined"
 ITEM.data = ITEM.data or {}
 
+function ITEM:getID()
+	return self.id
+end
+
 function ITEM:call(method, client, entity, ...)
 	self.player = self.player or client
 	self.entity = self.entity or entity
 
 	if (self.functions[method]) then
 		return self.functions[method](self, ...)
+	end
+end
+
+function ITEM:getOwner()
+	local id = self:getID()
+
+	for k, v in ipairs(player.GetAll()) do
+		local character = v:getChar()
+
+		if (character and character:getInv():getItemByID(id)) then
+			return v
+		end
+	end
+end
+
+function ITEM:setData(key, value, receivers, noSave)
+	self.data[key] = value
+
+	if (receivers != false) then
+		netstream.Start(receivers or self:getOwner(), "invData", self:getID(), key, value)
+	end
+
+	if (!noSave) then
+		nut.db.updateTable({_data = self.data}, nil, "items", "_itemID = "..self:getID())
+	end
+end
+
+function ITEM:getData(key, default)
+	local value = self.data[key]
+
+	if (value == nil) then
+		return default
+	else
+		return value
 	end
 end
 

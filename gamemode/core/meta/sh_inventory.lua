@@ -234,7 +234,7 @@ if (SERVER) then
 		for x, items in pairs(self.slots) do
 			for y, item in pairs(items) do
 				if (item.gridX == x and item.gridY == y) then
-					slots[#slots + 1] = {x, y, item.uniqueID, item.id}
+					slots[#slots + 1] = {x, y, item.uniqueID, item.id, item.data}
 				end
 			end
 		end
