@@ -109,6 +109,10 @@ function nut.item.loadFromDir(directory)
 	files, folders = file.Find(directory.."/*", "LUA")
 
 	for k, v in ipairs(folders) do
+		if (v == "base") then
+			continue
+		end
+		
 		for k2, v2 in ipairs(file.Find(directory.."/"..v.."/*.lua", "LUA")) do
 			nut.item.load(directory.."/"..v, "base_"..v)
 		end
