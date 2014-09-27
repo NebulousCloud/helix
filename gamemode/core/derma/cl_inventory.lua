@@ -198,7 +198,7 @@ local PANEL = {}
 				end
 			end
 			panel.doRightClick = function(this)
-				local itemTable = LocalPlayer():getChar():getInv():getItemAt(x, y)
+				local itemTable = LocalPlayer():getChar():getInv():getItemAt(panel.gridX, panel.gridY)
 				
 				if (itemTable) then
 					itemTable.client = LocalPlayer()
