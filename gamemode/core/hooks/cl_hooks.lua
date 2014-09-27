@@ -51,7 +51,14 @@ function GM:LoadFonts(font)
 	surface.CreateFont("nutChatFont", {
 		font = font,
 		size = 18,
-		weight = 500
+		weight = 200
+	})
+
+	surface.CreateFont("nutChatFontItalics", {
+		font = font,
+		size = 18,
+		weight = 200,
+		italic = true
 	})
 
 	surface.CreateFont("nutSmallFont", {

@@ -140,7 +140,7 @@ else
 	netstream.Hook("cMsg", function(client, chatType, text, anonymous)
 		if (IsValid(client)) then
 			local class = nut.chat.classes[chatType]
-			hook.Run("OnChatReceived", client, chatType, text, anonymous)
+			text = hook.Run("OnChatReceived", client, chatType, text, anonymous) or text
 
 			if (class) then
 				CHAT_CLASS = class
@@ -173,7 +173,9 @@ do
 		-- Roll information in chat.
 		nut.chat.register("roll", {
 			format = "%s has rolled %s.",
-			color = Color(155, 111, 176)
+			color = Color(155, 111, 176),
+			filter = "actions",
+			font = "nutChatFontItalics"
 		})
 
 		-- Actions and such.
@@ -181,7 +183,9 @@ do
 			format = "**%s %s",
 			onGetColor = nut.chat.classes.ic.onGetColor,
 			onCanHear = nut.config.get("chatRange", 280),
-			prefix = {"/me", "/action"}
+			prefix = {"/me", "/action"},
+			font = "nutChatFontItalics",
+			filter = "actions"
 		})
 
 		-- Actions and such.
@@ -190,12 +194,14 @@ do
 				chat.AddText(nut.config.get("chatColor"), "**"..text)
 			end,
 			onCanHear = nut.config.get("chatRange", 280),
-			prefix = {"/it"}
+			prefix = {"/it"},
+			font = "nutChatFontItalics",
+			filter = "actions"
 		})
 
 		-- Whisper chat.
 		nut.chat.register("w", {
-			format = "%s whipsers \"%s\"",
+			format = "%s whispers \"%s\"",
 			onGetColor = function(speaker, text)
 				local color = nut.chat.classes.ic.onGetColor(speaker, text)
 

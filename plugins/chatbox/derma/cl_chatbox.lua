@@ -140,8 +140,10 @@ local PANEL = {}
 	end
 
 	function PANEL:addFilterButton(filter)
+		local name = L(filter)
+
 		local tab = self.tabs:Add("DButton")
-		tab:SetText(filter:upper())
+		tab:SetText(name:upper())
 		tab:SizeToContents()
 		tab:DockMargin(0, 0, 3, 0)
 		tab:SetWide(tab:GetWide() + 32)
@@ -181,6 +183,10 @@ local PANEL = {}
 	function PANEL:addText(...)
 		local text = "<font=nutChatFont>"
 
+		if (CHAT_CLASS) then
+			text = "<font="..(CHAT_CLASS.font or "nutChatFont")..">"
+		end
+		
 		for k, v in ipairs({...}) do
 			if (type(v) == "IMaterial") then
 				text = text.."<img="..tostring(v)..","..v:Width().."x"..v:Height()..">"
@@ -192,6 +198,13 @@ local PANEL = {}
 				text = text.."<color="..color.r..","..color.g..","..color.b..">"..v:Name():gsub("<", "&lt;"):gsub(">", "&gt;")
 			else
 				text = text..tostring(v):gsub("<", "&lt;"):gsub(">", "&gt;")
+				text = text:gsub("%b**", function(value)
+					local inner = value:sub(2, -2)
+
+					if (inner:find("%S")) then
+						return "<font=nutChatFontItalics>"..value:sub(2, -2).."</font>"
+					end
+				end)
 			end
 		end
 
