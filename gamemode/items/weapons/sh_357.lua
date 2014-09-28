@@ -1,0 +1,5 @@
+ITEM.name = "357"
+ITEM.desc = "A Weapon."
+ITEM.model = "models/weapons/w_357.mdl"
+ITEM.class = "weapon_357"
+ITEM.weaponCategory = "sidearm"
