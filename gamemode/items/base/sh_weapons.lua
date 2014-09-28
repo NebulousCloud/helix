@@ -114,12 +114,14 @@ hook.Add("PlayerDeath", "weapon.reset", function(client)
 	client.carryWeapons = {}
 
 	timer.Simple(0, function()
-		local inv = client:getChar():getInv():getItems()
+		if (client and client:getChar()) then
+			local inv = client:getChar():getInv():getItems()
 
-		for k, v in pairs(inv) do
-			if (v.isWeapon) then
-				if (v:getData("equip")) then
-					v:setData("ammo", 0)
+			for k, v in pairs(inv) do
+				if (v.isWeapon) then
+					if (v:getData("equip")) then
+						v:setData("ammo", 0)
+					end
 				end
 			end
 		end
