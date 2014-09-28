@@ -209,6 +209,7 @@ function nut.item.new(uniqueID, id)
 	if (stockItem) then
 		local item = setmetatable({}, {__index = stockItem})
 		item.id = id
+		item.data = {}
 		nut.item.instances[id] = item
 
 		return item

@@ -4,8 +4,9 @@ ITEM.width = 1
 ITEM.height = 1
 ITEM.ammo = "pistol" // type of the ammo
 ITEM.ammoAmount = 30 // amount of the ammo
+ITEM.ammoDesc = "A Box that contains %s of Pistol Ammo"
 ITEM.desc = function(item)
-	return "A Box that contains " .. item.ammoAmount .. " of Pistol Ammo"
+	return Format(item.ammoDesc, item.ammoAmount)
 end
 
 if (CLIENT) then
