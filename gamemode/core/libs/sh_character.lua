@@ -125,6 +125,8 @@ if (SERVER) then
 														slots[x + x2][y + y2] = item2
 													end
 												end
+											else
+												badItems[#badItems + 1] = itemID
 											end
 										else
 											badItems[#badItems + 1] = itemID
