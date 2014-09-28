@@ -16,17 +16,7 @@ function META:getSize()
 end
 
 function META:print()
-	local itemTables = {}
-
-	for k, v in pairs(self.slots) do
-		for k2, v2 in pairs(v) do
-			if (!itemTables[v2.id]) then
-				itemTables[v2.id] = v2
-			end
-		end
-	end
-
-	for k, v in pairs(itemTables) do
+	for k, v in pairs(self:getItems()) do
 		print(k, v.name)
 	end
 end
@@ -145,6 +135,20 @@ function META:getItemByID(id)
 			end
 		end
 	end
+end
+
+function META:getItems()
+	local items = {}
+
+	for k, v in pairs(self.slots) do
+		for k2, v2 in pairs(v) do
+			if (!items[v2.id]) then
+				items[v2.id] = v2
+			end
+		end
+	end
+
+	return items
 end
 
 if (SERVER) then

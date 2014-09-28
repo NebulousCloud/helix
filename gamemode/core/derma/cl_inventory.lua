@@ -1,3 +1,5 @@
+-- currently server verificaiton is not exist.
+-- you can exploit the inventory with netstream.
 local PANEL = {}
 
 function PANEL:Init()
