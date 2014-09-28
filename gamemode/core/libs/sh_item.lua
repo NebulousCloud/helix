@@ -39,6 +39,7 @@ function nut.item.load(path, baseID, isBaseItem)
 			ITEM.base = baseID
 			ITEM.isBase = isBaseItem
 			ITEM.data = ITEM.data or {}
+			ITEM.hooks = ITEM.hooks or {}
 			ITEM.functions = ITEM.functions or {}
 			ITEM.functions.drop = {
 				tip = "dropTip",
@@ -112,6 +113,7 @@ function nut.item.register(uniqueID, baseID, isBaseItem)
 			ITEM.base = baseID
 			ITEM.isBase = isBaseItem
 			ITEM.data = ITEM.data or {}
+			ITEM.hooks = ITEM.hooks or {}
 			ITEM.functions = ITEM.functions or {}
 			ITEM.functions.drop = {
 				tip = "dropTip",

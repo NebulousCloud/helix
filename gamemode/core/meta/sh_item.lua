@@ -7,7 +7,6 @@ ITEM.desc = "An item that is undefined."
 ITEM.id = ITEM.id or 0
 ITEM.uniqueID = "undefined"
 ITEM.data = ITEM.data or {}
-ITEM.hooks = ITEM.hooks or {}
 
 function ITEM:getID()
 	return self.id
