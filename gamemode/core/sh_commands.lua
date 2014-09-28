@@ -45,6 +45,7 @@ nut.command.add("charsetmodel", {
 
 		if (IsValid(target) and target:getChar()) then
 			target:getChar():setModel(arguments[2])
+			target:SetupHands()
 		end
 	end
 })

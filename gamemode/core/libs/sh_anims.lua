@@ -243,6 +243,20 @@ nut.anim.vort = {
 	},
 	glide = ACT_GLIDE
 }
+nut.anim.player = {
+	normal = {
+		[ACT_MP_STAND_IDLE] = ACT_HL2MP_IDLE,
+		[ACT_MP_CROUCH_IDLE] = ACT_HL2MP_IDLE_CROUCH,
+		[ACT_MP_WALK] = ACT_HL2MP_WALK,
+		[ACT_MP_RUN] = ACT_HL2MP_RUN
+	},
+	passive = {
+		[ACT_MP_STAND_IDLE] = ACT_HL2MP_IDLE_PASSIVE,
+		[ACT_MP_WALK] = ACT_HL2MP_WALK_PASSIVE,
+		[ACT_MP_CROUCHWALK] = ACT_HL2MP_WALK_CROUCH_PASSIVE,
+		[ACT_MP_RUN] = ACT_HL2MP_RUN_PASSIVE
+	}
+}
 
 local translations = {}
 
@@ -251,5 +265,11 @@ function nut.anim.setModelClass(model, class)
 end
 
 function nut.anim.getModelClass(model)
+	model = model:lower()
+
+	if (model:find("/player")) then
+		return "player"
+	end
+
 	return translations[model:lower()] or "citizen_male"
 end

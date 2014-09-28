@@ -13,6 +13,38 @@ do
 		-- Return 0 if the SteamID64 could not be found.
 		return self:nutSteamID64() or 0
 	end
+
+	NutTranslateModel = NutTranslateModel or player_manager.TranslateToPlayerModelName
+
+	function player_manager.TranslateToPlayerModelName(model)
+		model = model:lower():gsub("\\", "/")
+		local result = NutTranslateModel(model)
+
+		if (result == "kleiner" and !model:find("kleiner")) then
+			local model2 = model:gsub("models/", "models/player/")
+			result = NutTranslateModel(model2)
+
+			if (result != "kleiner") then
+				return result
+			end
+
+			model2 = model:gsub("models/humans", "models/player")
+			result = NutTranslateModel(model2)
+
+			if (result != "kleiner") then
+				return result
+			end
+
+			model2 = model:gsub("models/zombie/", "models/player/zombie_")
+			result = NutTranslateModel(model2)
+
+			if (result != "kleiner") then
+				return result
+			end
+		end
+
+		return result
+	end
 end
 
 -- Include core framework files.

@@ -9,13 +9,50 @@ HOLDTYPE_TRANSLATOR["ar2"] = "smg"
 HOLDTYPE_TRANSLATOR["crossbow"] = "shotgun"
 HOLDTYPE_TRANSLATOR["rpg"] = "shotgun"
 HOLDTYPE_TRANSLATOR["slam"] = "normal"
+HOLDTYPE_TRANSLATOR["grenade"] = "normal"
+HOLDTYPE_TRANSLATOR["fist"] = "normal"
+HOLDTYPE_TRANSLATOR["melee2"] = "melee"
+HOLDTYPE_TRANSLATOR["passive"] = "normal"
+HOLDTYPE_TRANSLATOR["knife"] = "melee"
+HOLDTYPE_TRANSLATOR["duel"] = "pistol"
+HOLDTYPE_TRANSLATOR["camera"] = "smg"
+HOLDTYPE_TRANSLATOR["magic"] = "normal"
+HOLDTYPE_TRANSLATOR["revolver"] = "pistol"
+
+local PLAYER_HOLDTYPE_TRANSLATOR = {}
+PLAYER_HOLDTYPE_TRANSLATOR[""] = "normal"
+PLAYER_HOLDTYPE_TRANSLATOR["fist"] = "normal"
+PLAYER_HOLDTYPE_TRANSLATOR["pistol"] = "normal"
+PLAYER_HOLDTYPE_TRANSLATOR["grenade"] = "normal"
+PLAYER_HOLDTYPE_TRANSLATOR["melee"] = "normal"
+PLAYER_HOLDTYPE_TRANSLATOR["slam"] = "normal"
+PLAYER_HOLDTYPE_TRANSLATOR["melee2"] = "normal"
+PLAYER_HOLDTYPE_TRANSLATOR["passive"] = "normal"
+PLAYER_HOLDTYPE_TRANSLATOR["knife"] = "normal"
+PLAYER_HOLDTYPE_TRANSLATOR["duel"] = "normal"
+PLAYER_HOLDTYPE_TRANSLATOR["bugbait"] = "normal"
 
 function GM:TranslateActivity(client, act)
 	local class = nut.anim.getModelClass(client:GetModel())
+	local weapon = client:GetActiveWeapon()
+
+	if (class == "player") then
+		if (IsValid(weapon) and !client:isWepRaised() and client:OnGround()) then
+			local holdType = weapon:GetHoldType()
+			local value = PLAYER_HOLDTYPE_TRANSLATOR[holdType] or "passive"
+			local tree = nut.anim.player[value]
+
+			if (tree and tree[act]) then
+				return tree[act]
+			end
+		end
+
+		return self.BaseClass:TranslateActivity(client, act)
+	end
+
 	local tree = nut.anim[class]
 
 	if (tree) then
-		local weapon = client:GetActiveWeapon()
 		local subClass = "normal"
 
 		if (client:OnGround()) then
@@ -27,7 +64,7 @@ function GM:TranslateActivity(client, act)
 			if (tree[subClass] and tree[subClass][act]) then
 				return tree[subClass][act][client:isWepRaised() and 2 or 1]
 			end
-		else
+		elseif (tree.glide) then
 			return tree.glide
 		end
 	end
