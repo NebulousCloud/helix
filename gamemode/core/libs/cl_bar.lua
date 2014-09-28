@@ -64,7 +64,7 @@ function nut.bar.drawAll()
 
 		if (v.lifeTime >= curTime) then
 			nut.bar.draw(x, y, w, h, value, v.color)
-			y = y - (h + 2)
+			y = y + (h + 2)
 		end
 	end
 end
