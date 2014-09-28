@@ -33,11 +33,24 @@ PLAYER_HOLDTYPE_TRANSLATOR["duel"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["bugbait"] = "normal"
 
 function GM:TranslateActivity(client, act)
-	local class = nut.anim.getModelClass(client:GetModel())
+	local model = client:GetModel():lower()
+	local class = nut.anim.getModelClass(model)
 	local weapon = client:GetActiveWeapon()
 
 	if (class == "player") then
 		if (IsValid(weapon) and !client:isWepRaised() and client:OnGround()) then
+			if (model:find("zombie")) then
+				local tree = nut.anim.zombie
+
+				if (model:find("fast")) then
+					tree = nut.anim.fastZombie
+				end
+
+				if (tree[act]) then
+					return tree[act]
+				end
+			end
+
 			local holdType = weapon:GetHoldType()
 			local value = PLAYER_HOLDTYPE_TRANSLATOR[holdType] or "passive"
 			local tree = nut.anim.player[value]
