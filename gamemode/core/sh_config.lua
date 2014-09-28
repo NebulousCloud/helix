@@ -210,7 +210,7 @@ if (CLIENT) then
 
 						-- Add a new row for the config to the properties.
 						local row = properties:CreateRow(category, k)
-						row:Setup(form, v.data and v.data.data or nil)
+						row:Setup(form, v.data and v.data.data or {})
 						row:SetValue(value)
 						row:SetToolTip(v.desc)
 						row.DataChanged = function(this, value)
