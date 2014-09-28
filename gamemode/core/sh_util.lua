@@ -155,5 +155,24 @@ do
 		function playerMeta:toggleWepRaised()
 			self:setWepRaised(!self:isWepRaised())
 		end
+
+		-- Performs a delayed action on a player.
+		function playerMeta:setAction(text, time, callback)
+			-- Default the time to five seconds.
+			time = time or 5
+			-- Tell the player to draw a bar for the action.
+			netstream.Start(self, "actBar", CurTime(), CurTime() + time, text)
+
+			-- If we have provided a callback, run it delayed.
+			if (callback) then
+				-- Create a timer that runs once with a delay.
+				timer.Create("nutAct"..self:UniqueID(), time, 1, function()
+					-- Call the callback if the player is still valid.
+					if (IsValid(self)) then
+						callback(self)
+					end
+				end)
+			end
+		end
 	end
 end
