@@ -440,6 +440,10 @@ do
 					end
 				end
 
+				if (item.hooks[action]) then
+					item.hooks[action](item)
+				end
+
 				item.entity = nil
 				item.player = nil
 			end
