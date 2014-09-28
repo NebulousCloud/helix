@@ -48,3 +48,27 @@ nut.command.add("charsetmodel", {
 		end
 	end
 })
+
+nut.command.add("chargiveitem", {
+	syntax = "<string name> <string item>",
+	onRun = function(client, arguments)
+		if (!arguments[2]) then
+			return L("invalidArg", client, 2)
+		end
+
+		local target = nut.command.findPlayer(client, arguments[1])
+
+		if (IsValid(target) and target:getChar()) then
+			local inv = target:getChar():getInv()
+
+			local succ, err = target:getChar():getInv():add(arguments[2])
+
+			if (succ) then
+				target:notify("Item successfully created.")
+			else
+				target:notify(tostring(succ))
+				target:notify(tostring(err))
+			end
+		end
+	end
+})
