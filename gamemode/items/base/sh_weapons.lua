@@ -68,13 +68,14 @@ ITEM.functions.Equip = {
 	onRun = function(item)
 		local inv = item.player:getChar():getInv()
 		local ammo = item:getData("ammo")
+		item.player.carryWeapons = item.player.carryWeapons or {}
 
 		for k, v in pairs(inv.slots) do
 			for k2, v2 in pairs(v) do
 				if (v2.id != item.id) then
 					local itemTable = nut.item.instances[v2.id]
 
-					if (itemTable.isWeapon and itemTable.weaponCategory == item.weaponCategory and itemTable:getData("equip")) then
+					if (itemTable.isWeapon and item.player.carryWeapons[item.weaponCategory] and itemTable:getData("equip")) then
 						item.player:notify("You're already equipping this kind of weapon")
 
 						return false
@@ -89,7 +90,6 @@ ITEM.functions.Equip = {
 
 		local weapon = item.player:Give(item.class)
 		if (weapon and weapon:IsValid()) then
-			item.player.carryWeapons = item.player.carryWeapons or {}
 			item.player.carryWeapons[item.weaponCategory] = weapon
 			item.player:SetActiveWeapon(weapon)
 			item.player:EmitSound("items/ammo_pickup.wav", 80)
