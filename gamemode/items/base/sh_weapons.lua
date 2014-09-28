@@ -141,7 +141,7 @@ hook.Add("PlayerSpawn", "weapon.reset", function(client)
 							local ammo = v:getData("ammo")
 							local weapon = client:Give(v.class)
 							if (weapon and weapon:IsValid()) then
-								client.carryWeapons[v.class] = weapon
+								client.carryWeapons[v.weaponCategory] = weapon
 
 								if (ammo) then
 									weapon:SetClip1(ammo)
