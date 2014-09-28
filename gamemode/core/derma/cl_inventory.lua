@@ -1,4 +1,38 @@
 local PANEL = {}
+
+function PANEL:Init()
+end
+
+function PANEL:PaintOver()
+	local itemTable = LocalPlayer():getChar():getInv():getItemAt(self.gridX, self.gridY)
+
+	if (itemTable and itemTable.paintOver) then
+		local w, h = self:GetSize()
+
+		itemTable.paintOver(self, itemTable, w, h)
+	end
+end
+
+function PANEL:Paint()
+	local parent = self:GetParent()
+	local w, h = self:GetSize()
+
+	surface.SetDrawColor(0, 0, 0, 100)
+	surface.DrawRect(2, 2, w - 4, h - 4)
+
+	if (self.clickPos) then
+		local x, y = gui.MouseX() - self.clickPos.x, gui.MouseY() - self.clickPos.y
+		
+		self:SetPos(self.curPos.x + x, self.curPos.y + y)
+		
+		parent.offsetX = math.Round(x / 64)
+		parent.offsetY = math.Round(y / 64)
+	end	
+end
+
+vgui.Register("nutItemIcon", PANEL, "SpawnIcon")
+
+PANEL = {}
 	function PANEL:Init()
 		if (IsValid(nut.gui.inv)) then
 			nut.gui.inv:Remove()
@@ -125,7 +159,7 @@ local PANEL = {}
 		h = h or 1
 		
 		if (self.slots[x] and self.slots[x][y]) then
-			local panel = self:Add("SpawnIcon")
+			local panel = self:Add("nutItemIcon")
 			panel:SetSize(w * 64, h * 64)
 			panel:SetZPos(1)
 			panel:InvalidateLayout(true)
@@ -135,20 +169,6 @@ local PANEL = {}
 			panel.gridY = y
 			panel.gridW = w
 			panel.gridH = h
-			panel.Paint = function(this, w, h)
-				surface.SetDrawColor(0, 0, 0, 100)
-				surface.DrawRect(0, 0, w, h)
-				
-				if (this.clickPos) then
-					local x, y = gui.MouseX() - this.clickPos.x, gui.MouseY() - this.clickPos.y
-					
-					this:SetPos(this.curPos.x + x, this.curPos.y + y)
-					
-					self.offsetX = math.Round(x / 64)
-					self.offsetY = math.Round(y / 64)
-				end	
-			end
-			panel.PaintOver = function() end
 			panel.OnMousePressed = function(this, code)
 				if (code == MOUSE_LEFT) then
 					this:MouseCapture(true)
@@ -233,7 +253,7 @@ local PANEL = {}
 			
 			for i = 0, w - 1 do
 				for i2 = 0, h - 1 do
-					local slot = self.slots[x + 1] and self.slots[x + i][y + i2]
+					local slot = self.slots[x + i] and self.slots[x + i][y + i2]
 
 					if (IsValid(slot)) then
 						slot.item = panel
