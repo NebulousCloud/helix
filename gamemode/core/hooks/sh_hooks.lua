@@ -75,12 +75,66 @@ function GM:TranslateActivity(client, act)
 			end
 
 			if (tree[subClass] and tree[subClass][act]) then
-				return tree[subClass][act][client:isWepRaised() and 2 or 1]
+				local act2 = tree[subClass][act][client:isWepRaised() and 2 or 1]
+
+				if (type(act2) == "string") then
+					client.CalcSeqOverride = client:LookupSequence(act2)
+
+					return
+				end
+
+				return act2
 			end
 		elseif (tree.glide) then
 			return tree.glide
 		end
 	end
+end
+
+function GM:DoAnimationEvent(client, event, data)
+	local model = client:GetModel():lower()
+	local class = nut.anim.getModelClass(model)
+
+	if (class == "player") then
+		return self.BaseClass:DoAnimationEvent(client, event, data)
+	else
+		local weapon = client:GetActiveWeapon()
+
+		if (IsValid(weapon)) then
+			local holdType = weapon:GetHoldType()
+			holdType = HOLDTYPE_TRANSLATOR[holdType] or holdType
+
+			local animation = nut.anim[class][holdType]
+
+			if (event == PLAYERANIMEVENT_ATTACK_PRIMARY) then
+				client:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, animation.attack or ACT_GESTURE_RANGE_ATTACK_SMG1, true)
+
+				return ACT_VM_PRIMARYATTACK
+			elseif (event == PLAYERANIMEVENT_ATTACK_SECONDARY) then
+				client:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, animation.attack or ACT_GESTURE_RANGE_ATTACK_SMG1, true)
+
+				return ACT_VM_SECONDARYATTACK
+			elseif (event == PLAYERANIMEVENT_RELOAD) then
+				client:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, animation.reload or ACT_GESTURE_RELOAD_SMG1, true)
+
+				return ACT_INVALID
+			elseif (event == PLAYERANIMEVENT_JUMP) then
+				client.m_bJumping = true
+				client.m_bFistJumpFrame = true
+				client.m_flJumpStartTime = CurTime()
+
+				client:AnimRestartMainSequence()
+
+				return ACT_INVALID
+			elseif (event == PLAYERANIMEVENT_CANCEL_RELOAD) then
+				client:AnimResetGestureSlot(GESTURE_SLOT_ATTACK_AND_RELOAD)
+
+				return ACT_INVALID
+			end
+		end
+	end
+
+	return ACT_INVALID
 end
 
 function GM:CalcMainActivity(client, velocity)
@@ -94,7 +148,10 @@ function GM:CalcMainActivity(client, velocity)
 		client:SetIK(false)
 	end
 
-	return self.BaseClass:CalcMainActivity(client, velocity)
+	local oldSeqOverride = client.CalcSeqOverride
+	local seqIdeal, seqOverride = self.BaseClass:CalcMainActivity(client, velocity)
+
+	return seqIdeal, oldSeqOverride or seqOverride
 end
 
 local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2

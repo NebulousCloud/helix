@@ -117,8 +117,8 @@ nut.anim.metrocop = {
 		[ACT_MP_WALK] = {ACT_WALK_PISTOL, ACT_WALK_AIM_PISTOL},
 		[ACT_MP_CROUCHWALK] = {ACT_WALK_CROUCH, ACT_WALK_CROUCH},
 		[ACT_MP_RUN] = {ACT_RUN_PISTOL, ACT_RUN_AIM_PISTOL},
-		attack = ACT_RANGE_ATTACK_PISTOL,
-		reload = ACT_RELOAD_PISTOL
+		attack = ACT_GESTURE_RANGE_ATTACK_PISTOL,
+		reload = ACT_GESTURE_RELOAD_PISTOL
 	},
 	smg = {
 		[ACT_MP_STAND_IDLE] = {ACT_IDLE_SMG1, ACT_IDLE_ANGRY_SMG1},
@@ -132,7 +132,7 @@ nut.anim.metrocop = {
 		[ACT_MP_CROUCH_IDLE] = {ACT_COVER_SMG1_LOW, ACT_COVER_SMG1_LOW},
 		[ACT_MP_WALK] = {ACT_WALK_RIFLE, ACT_WALK_AIM_RIFLE},
 		[ACT_MP_CROUCHWALK] = {ACT_WALK_CROUCH, ACT_WALK_CROUCH},
-		[ACT_MP_RUN] = {ACT_RUN_RIFLE, ACT_RUN_AIM_RIFLE_STIMULATED}
+		[ACT_MP_RUN] = {ACT_RUN_RIFLE, ACT_RUN_AIM_RIFLE}
 	},
 	grenade = {
 		[ACT_MP_STAND_IDLE] = {ACT_IDLE, ACT_IDLE_ANGRY_MELEE},
@@ -288,3 +288,12 @@ function nut.anim.getModelClass(model)
 
 	return translations[model:lower()] or "citizen_male"
 end
+
+nut.anim.setModelClass("models/police.mdl", "metrocop")
+nut.anim.setModelClass("models/combine_super_soldier.mdl", "overwatch")
+nut.anim.setModelClass("models/combine_soldier_prisonGuard.mdl", "overwatch")
+nut.anim.setModelClass("models/combine_soldier.mdl", "overwatch")
+nut.anim.setModelClass("models/vortigaunt.mdl", "vort")
+nut.anim.setModelClass("models/vortigaunt_blue.mdl", "vort")
+nut.anim.setModelClass("models/vortigaunt_doctor.mdl", "vort")
+nut.anim.setModelClass("models/vortigaunt_slave.mdl", "vort")

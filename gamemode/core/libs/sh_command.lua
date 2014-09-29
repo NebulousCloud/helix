@@ -133,7 +133,7 @@ if (SERVER) then
 	function nut.command.parse(client, text, realCommand, arguments)
 		if (realCommand or text:sub(1, 1) == COMMAND_PREFIX) then
 			-- See if the string contains a command.
-			local match = realCommand or text:match(COMMAND_PREFIX.."([_%w]+)")
+			local match = realCommand or text:lower():match(COMMAND_PREFIX.."([_%w]+)")
 			local command = nut.command.list[match]
 
 			-- We have a valid, registered command.
