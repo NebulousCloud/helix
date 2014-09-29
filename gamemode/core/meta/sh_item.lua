@@ -6,6 +6,7 @@ ITEM.name = "Undefined"
 ITEM.desc = "An item that is undefined."
 ITEM.id = ITEM.id or 0
 ITEM.uniqueID = "undefined"
+ITEM.data = {}
 
 function ITEM:getID()
 	return self.id

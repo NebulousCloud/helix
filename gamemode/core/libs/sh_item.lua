@@ -209,8 +209,9 @@ function nut.item.new(uniqueID, id)
 	if (stockItem) then
 		local item = setmetatable({}, {__index = stockItem})
 		item.id = id
-		item.data = {}
+		item.data = table.Copy(stockItem.data)
 		nut.item.instances[id] = item
+		print('item is created.', id)
 
 		return item
 	else
