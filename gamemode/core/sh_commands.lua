@@ -73,3 +73,55 @@ nut.command.add("chargiveitem", {
 		end
 	end
 })
+
+
+nut.command.add("givemoney", {
+	syntax = "<number amount> [string target]",
+	onRun = function(client, arguments)
+		local amount = math.Round(tonumber(arguments[1]))
+		if (!amount or amount <= 0) then
+			return L("invalidArg", client, 2)
+		end
+
+		table.remove(arguments, 1)
+
+		local name = table.concat(arguments)
+		if (name or name != "") then
+			target = nut.command.findPlayer(client, name)
+		else
+			local data = {}
+				data.start = client:GetShootPos()
+				data.endpos = data.start + client:GetAimVector()*96
+				data.filter = client
+			local trace = util.TraceLine(data)
+
+			if (trace.Entity and trace.Entity:IsPlayer()) then
+				target = trace.Entity
+			end
+		end
+
+		if (IsValid(target) and target:getChar()) then
+			-- give money
+			print(target)
+		end
+	end
+})
+
+nut.command.add("dropmoney", {
+	syntax = "<string name> <string item>",
+	onRun = function(client, arguments)
+		local amount = math.Round(tonumber(arguments[1]))
+		if (!amount or amount <= 0) then
+			return L("invalidArg", client, 2)
+		end
+
+		local data = {}
+			data.start = client:GetShootPos()
+			data.endpos = data.start + client:GetAimVector()*96
+			data.filter = client
+		local trace = util.TraceLine(data)
+		local pos = trace.HitPos
+
+		nut.currency.spawn(pos, amount)
+	end
+})

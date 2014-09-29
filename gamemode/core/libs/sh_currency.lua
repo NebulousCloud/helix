@@ -17,6 +17,33 @@ function nut.currency.get(amount)
 	end
 end
 
+function nut.currency.spawn(pos, amount, angle)
+	if (!pos) then
+		print("[Nutscript] Can't create currency entity: Invalid Position")
+	elseif (!amount or amount < 0) then
+		print("[Nutscript] Can't create currency entity: Invalid Amount of money")
+	end
+
+	local money = ents.Create("nut_money")
+	money:SetPos(pos)
+	-- double check for negative.
+	money:setNetVar("amount", math.Round(math.abs(amount)))
+	money:SetAngles(angle or Angle(0, 0, 0))
+	money:Spawn()
+	money:Activate()
+
+	return money
+end
+
+function GM:OnPickupMoney(client, moneyEntity)
+	if (moneyEntity and moneyEntity:IsValid()) then
+		local amount = moneyEntity:getAmount()
+
+		client:getChar():giveMoney(amount)
+		client:notify(L("moneyTaken", client, nut.currency.get(amount)))
+	end
+end
+
 do
 	local character = FindMetaTable("Character")
 
@@ -25,10 +52,12 @@ do
 	end
 
 	function character:giveMoney(amount)
+		amount = math.abs(amount)
 		self:setMoney(self:getMoney() + amount)
 	end
 
 	function character:takeMoney(amount)
+		amount = math.abs(amount)
 		self:giveMoney(-amount)
 	end
 end

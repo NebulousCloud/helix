@@ -81,5 +81,6 @@ LANGUAGE = {
 	flagGive = "%s has given %s '%s' flags.",
 	flagTake = "%s has taken '%s' flags from %s.",
 	textAdded = "You have added a text.",
-	textRemoved = "You have removed %s text(s)."
+	textRemoved = "You have removed %s text(s).",
+	moneyTaken = "You found %s."
 }
