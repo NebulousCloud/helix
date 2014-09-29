@@ -151,6 +151,18 @@ function META:getItems()
 	return items
 end
 
+function META:hasItem(targetID)
+	local items = self:getItems()
+
+	for k, v in pairs(item) do
+		if (v.uniqueID == targetID) then
+			return v
+		end
+	end
+
+	return false
+end
+
 if (SERVER) then
 	function META:sendSlot(x, y, item)
 		local receiver = self:getReceiver()
