@@ -58,6 +58,12 @@ function nut.item.load(path, baseID, isBaseItem)
 				onRun = function(item)
 					local status, result = item.player:getChar():getInv():add(item.id)
 
+					if (item.data) then -- I don't like it but, meh...
+						for k, v in pairs(item.data) do
+							item:setData(k, v)
+						end
+					end
+
 					if (!status) then
 						item.player:notify(result)
 
@@ -131,6 +137,12 @@ function nut.item.register(uniqueID, baseID, isBaseItem)
 				icon = "icon16/box.png",
 				onRun = function(item)
 					local status, result = item.player:getChar():getInv():add(item.id)
+
+					if (item.data) then -- I don't like it but, meh...
+						for k, v in pairs(item.data) do
+							item:setData(k, v)
+						end
+					end
 
 					if (!status) then
 						item.player:notify(result)
@@ -211,7 +223,6 @@ function nut.item.new(uniqueID, id)
 		item.id = id
 		item.data = table.Copy(stockItem.data)
 		nut.item.instances[id] = item
-		print('item is created.', id)
 
 		return item
 	else

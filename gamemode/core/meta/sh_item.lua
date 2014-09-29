@@ -37,12 +37,16 @@ function ITEM:setData(key, value, receivers, noSave)
 	self.data[key] = value
 
 	if (receivers != false) then
-		netstream.Start(receivers or self:getOwner(), "invData", self:getID(), key, value)
+		if (self:getOwner()) then
+			netstream.Start(receivers or self:getOwner(), "invData", self:getID(), key, value)
+		end
 	end
 
 	if (!noSave) then
-		nut.db.updateTable({_data = self.data}, nil, "items", "_itemID = "..self:getID())
-	end
+		if (nut.db) then
+			nut.db.updateTable({_data = self.data}, nil, "items", "_itemID = "..self:getID())
+		end
+	end	
 end
 
 function ITEM:getData(key, default)
