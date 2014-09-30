@@ -43,14 +43,14 @@ PANEL = {}
 		
 		nut.gui.inv = self
 
-		self:SetSize(64, 64)
-		self:setGridSize(nut.config.get("invW"), nut.config.get("invH"))
 
 		self.panels = {}
-
 		local created = {}
 
 		if (LocalPlayer():getChar() and LocalPlayer():getChar():getInv().slots) then
+			self:SetSize(64, 64)
+			self:setGridSize(LocalPlayer():getChar():getInv():getSize())
+
 			for x, items in pairs(LocalPlayer():getChar():getInv().slots) do
 				for y, data in pairs(items) do
 					if (!data.id) then continue end

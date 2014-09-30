@@ -15,9 +15,50 @@ function META:getSize()
 	return self.w, self.h
 end
 
-function META:print()
+-- this is pretty good to debug/develop function to use.
+function META:print(printPos)
 	for k, v in pairs(self:getItems()) do
-		print(k, v.name)
+		local str = k .. ": " .. v.name
+
+		if (printPos) then
+			str = str .. " (" .. v.gridX .. ", " .. v.gridY .. ")"
+		end
+
+		print(str)
+	end
+end
+
+-- find out stacked shit
+function META:findError()
+	for k, v in pairs(self:getItems()) do
+		if (v.width == 1 and v.height == 1) then
+			continue
+		end
+
+		print("Finding error: " .. v.name )
+		print("Item Position: " .. v.gridX, v.gridY )
+		local x, y;
+		for x = v.gridX, v.gridX + v.width - 1 do
+			for y = v.gridY, v.gridY + v.height - 1 do
+				local item = self.slots[x][y]
+				if (item and item.id != v.id) then
+					print("Error Found: ".. item.name)
+				end
+			end
+		end
+	end
+end
+
+-- debug
+function META:printAll()
+	print("INVSIZE", self:getSize())
+	for x = 1, self.w do
+		for y = 1, self.h do
+			local item = self.slots[x][y]
+			if (item and item.id) then
+				print(item.name .. "(" .. item.id .. ")", x, y)
+			end
+		end
 	end
 end
 
