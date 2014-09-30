@@ -403,6 +403,10 @@ do
 				return
 			end
 
+			if (hook.Run("CanPlayerInteractItem", client, action, item) == false) then
+				return
+			end
+
 			if (type(item) == "Entity") then
 				if (IsValid(item)) then
 					local entity = item
