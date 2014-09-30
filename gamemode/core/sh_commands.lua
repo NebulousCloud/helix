@@ -10,7 +10,7 @@ nut.command.add("flaggive", {
 	onRun = function(client, arguments)
 		local target = nut.command.findPlayer(client, arguments[1])
 
-		if (IsValid(target)) then
+		if (IsValid(target) and target:getChar()) then
 			local flags = arguments[2]
 
 			if (!flags) then
