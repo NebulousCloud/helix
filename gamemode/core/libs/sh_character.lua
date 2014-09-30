@@ -359,7 +359,7 @@ do
 					panel.payload.attribs[k] = panel.payload.attribs[k] + difference
 				end
 
-				y2 = bar:GetTall() + 4
+				y2 = y2 + bar:GetTall() + 4
 			end
 
 			container:SetTall(y2)
