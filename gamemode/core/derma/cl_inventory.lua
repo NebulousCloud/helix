@@ -1,6 +1,7 @@
 -- currently server verificaiton is not exist.
 -- you can exploit the inventory with netstream.
 local PANEL = {}
+renderdIcons = renderdIcons or {}
 
 function PANEL:Init()
 end
@@ -171,6 +172,17 @@ PANEL = {}
 			panel.gridY = y
 			panel.gridW = w
 			panel.gridH = h
+			local itemTable = LocalPlayer():getChar():getInv():getItemAt(panel.gridX, panel.gridY)
+
+			if ((itemTable.iconCam and !renderdIcons[itemTable.uniqueID]) or itemTable.forceRender) then
+				local iconCam = table.Copy(itemTable.iconCam)
+				renderdIcons[itemTable.uniqueID] = true
+				
+				panel.Icon:RebuildSpawnIconEx(
+					iconCam
+				)
+			end
+
 			panel.OnMousePressed = function(this, code)
 				if (code == MOUSE_LEFT) then
 					this:MouseCapture(true)
@@ -228,7 +240,6 @@ PANEL = {}
 				end
 			end
 			panel.doRightClick = function(this)
-				local itemTable = LocalPlayer():getChar():getInv():getItemAt(panel.gridX, panel.gridY)
 				
 				if (itemTable) then
 					itemTable.client = LocalPlayer()
