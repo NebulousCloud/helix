@@ -522,6 +522,7 @@ do
 				nut.char.loaded[id] = nil
 				netstream.Start(nil, "charDel", id, isCurrentChar)
 				nut.db.query("DELETE FROM nut_characters WHERE _id = "..id.." AND _steamID = "..client:SteamID64())
+				nut.db.query("DELETE FROM nut_items WHERE _charID = "..id)
 
 				if (isCurrentChar) then
 					client:setNetVar("charID", nil)
