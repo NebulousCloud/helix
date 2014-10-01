@@ -244,11 +244,13 @@ do
 
 			if (owner) then
 				character = nut.char.loaded[owner]
+			else
+				character = LocalPlayer():getChar()
 			end
 
 			if (character) then
 				local inventory = nut.item.createInv(w, h)
-				inventory:setOwner(owner)
+				inventory:setOwner(character:getID())
 				inventory.slots = {}
 
 				local x, y

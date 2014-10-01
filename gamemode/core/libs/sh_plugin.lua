@@ -91,7 +91,7 @@ function nut.plugin.loadEntities(path)
 		for k, v in ipairs(folders) do
 			local path2 = path.."/"..folder.."/"..v.."/"
 
-			_G[variable] = default
+			_G[variable] = table.Copy(default)
 				_G[variable].ClassName = v
 
 				if (IncludeFiles(path2, clientOnly) and !client) then
@@ -109,7 +109,7 @@ function nut.plugin.loadEntities(path)
 		for k, v in ipairs(files) do
 			local niceName = string.StripExtension(v)
 
-			_G[variable] = default
+			_G[variable] = table.Copy(default)
 				_G[variable].ClassName = niceName
 				nut.util.include(path.."/"..folder.."/"..v, clientOnly and "client" or "shared")
 

@@ -78,7 +78,7 @@ if (SERVER) then
 					end
 				end
 
-				self:getInv():sync()
+				self:getInv():sync(client)
 			end
 
 			hook.Run("CharacterLoaded", self:getID())
