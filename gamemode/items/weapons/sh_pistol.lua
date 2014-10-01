@@ -3,8 +3,10 @@ ITEM.desc = "A Weapon."
 ITEM.model = "models/weapons/w_pistol.mdl"
 ITEM.class = "weapon_pistol"
 ITEM.weaponCategory = "sidearm"
+ITEM.width = 2
+ITEM.height = 1
 ITEM.iconCam = {
-	cam_ang	= Angle(27.294, 221.223, 0.000),
-	cam_fov	= 2.7175149094967,
-	cam_pos	= Vector(134.447998, 116.796982, 91.007149)
+	cam_ang	= Angle(0.33879372477531, 270.15808105469, 0),
+	cam_fov	= 5.0470897275697,
+	cam_pos	= Vector(0, 200, -1)
 }
