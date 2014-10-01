@@ -244,6 +244,8 @@ do
 
 			if (owner) then
 				character = nut.char.loaded[owner]
+			else
+				character = LocalPlayer():getChar()
 			end
 
 			if (character) then
