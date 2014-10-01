@@ -4,6 +4,8 @@ PLUGIN.desc = "Adds areas of the map that are visible during character selection
 PLUGIN.scenes = PLUGIN.scenes or {}
 
 if (CLIENT) then
+	PLUGIN.ordered = PLUGIN.ordered or {}
+
 	function PLUGIN:CalcView(client, origin, angles, fov)
 		local scenes = self.scenes
 
@@ -18,8 +20,17 @@ if (CLIENT) then
 
 			local view = {}
 
-			if (type(key) == "Vector") then
+			if (self.orderedIndex or type(key) == "Vector") then
 				local curTime = CurTime()
+
+				self.orderedIndex = self.orderedIndex or 1
+
+				local ordered = self.ordered[self.orderedIndex]
+
+				if (ordered) then
+					key = ordered[1]
+					value = ordered[2]
+				end
 
 				if (!self.startTime) then
 					self.startTime = curTime
@@ -37,15 +48,23 @@ if (CLIENT) then
 					self.startTime = curTime
 					self.finishTime = curTime + 30
 					
-					local keys = {}
+					if (ordered) then
+						self.orderedIndex = self.orderedIndex + 1
 
-					for k, v in pairs(scenes) do
-						if (type(k) == "Vector") then
-							keys[#keys + 1] = k
+						if (self.orderedIndex > #self.ordered) then
+							self.orderedIndex = 1
 						end
-					end
+					else
+						local keys = {}
 
-					self.index = table.Random(keys)
+						for k, v in pairs(scenes) do
+							if (type(k) == "Vector") then
+								keys[#keys + 1] = k
+							end
+						end
+
+						self.index = table.Random(keys)
+					end
 				end
 			elseif (value) then
 				view.origin = value[1]
@@ -61,6 +80,7 @@ if (CLIENT) then
 	netstream.Hook("mapScn", function(data, origin)
 		if (type(origin) == "Vector") then
 			PLUGIN.scenes[origin] = data
+			table.insert(PLUGIN.ordered, {origin, data})
 		else
 			PLUGIN.scenes[#PLUGIN.scenes + 1] = data
 		end
@@ -68,10 +88,24 @@ if (CLIENT) then
 
 	netstream.Hook("mapScnDel", function(key)
 		PLUGIN.scenes[key] = nil
+
+		for k, v in ipairs(PLUGIN.ordered) do
+			if (v[1] == key) then
+				table.remove(PLUGIN.ordered, k)
+
+				break
+			end
+		end
 	end)
 
 	netstream.Hook("mapScnInit", function(scenes)
 		PLUGIN.scenes = scenes
+
+		for k, v in pairs(scenes) do
+			if (type(k) == "Vector") then
+				table.insert(PLUGIN.ordered, {k, v})
+			end
+		end
 	end)
 else
 	function PLUGIN:SaveData()
