@@ -82,8 +82,8 @@ else
 		self.scenes = self:getData() or {}
 	end
 
-	function PLUGIN:PlayerInitialSpawn()
-		netstream.Start(self, "mapScnInit", self.scenes)
+	function PLUGIN:PlayerInitialSpawn(client)
+		netstream.Start(client, "mapScnInit", self.scenes)
 	end
 
 	function PLUGIN:addScene(position, angles, position2, angles2)
