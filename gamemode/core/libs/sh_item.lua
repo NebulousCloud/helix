@@ -250,7 +250,7 @@ do
 
 			if (character) then
 				local inventory = nut.item.createInv(w, h)
-				inventory:setOwner(owner)
+				inventory:setOwner(character:getID())
 				inventory.slots = {}
 
 				local x, y
