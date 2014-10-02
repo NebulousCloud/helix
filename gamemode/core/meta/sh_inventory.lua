@@ -162,7 +162,7 @@ end
 
 function META:getReceiver()
 	for k, v in ipairs(player.GetAll()) do
-		if (v:getNetVar("charID") == self.owner) then
+		if (v:getChar() and v:getChar().id == self.owner) then
 			return v
 		end
 	end
