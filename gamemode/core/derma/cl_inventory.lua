@@ -175,7 +175,12 @@ PANEL = {}
 			local itemTable = LocalPlayer():getChar():getInv():getItemAt(panel.gridX, panel.gridY)
 
 			if ((itemTable.iconCam and !renderdIcons[itemTable.uniqueID]) or itemTable.forceRender) then
-				local iconCam = table.Copy(itemTable.iconCam)
+				local iconCam = itemTable.iconCam
+				iconCam = {
+					cam_pos = iconCam.pos,
+					cam_fov = iconCam.fov,
+					cam_ang = iconCam.ang,
+				}
 				renderdIcons[itemTable.uniqueID] = true
 				
 				panel.Icon:RebuildSpawnIconEx(
