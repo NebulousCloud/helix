@@ -33,7 +33,6 @@ function ITEM:getOwner()
 	end
 end
 
-function ITEM:setData(key, value, receivers, noSave)
 	self.data[key] = value
 
 	if (receivers != false) then
@@ -66,6 +65,15 @@ function ITEM:hook(name, func)
 end
 
 if (SERVER) then
+	function ITEM:getEntity()
+		local id = self:getID()
+
+		for k, v in ipairs(ents.FindByClass("nut_item")) do
+			if (v.nutItemID == id) then
+				return v
+			end
+		end
+	end
 	-- Spawn an item entity based off the item table.
 	function ITEM:spawn(position, angles)
 		-- Check if the item has been created before.
