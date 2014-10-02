@@ -33,7 +33,21 @@ function ITEM:getOwner()
 	end
 end
 
+function ITEM:setData(key, value, receivers, noSave, checkEntity)
 	self.data[key] = value
+
+	if (SERVER) then
+		if (checkEntity) then
+			local ent = self:getEntity()
+
+			if (IsValid(ent)) then
+				local data = ent:getNetVar("data")
+				data[key] = value
+
+				ent:setNetVar("data", data)
+			end
+		end
+	end
 
 	if (receivers != false) then
 		if (self:getOwner()) then
