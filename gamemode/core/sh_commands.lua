@@ -115,6 +115,10 @@ nut.command.add("dropmoney", {
 			return L("invalidArg", client, 2)
 		end
 
+		if (!client:getChar():hasMoney(amount)) then
+			return
+		end
+
 		local data = {}
 			data.start = client:GetShootPos()
 			data.endpos = data.start + client:GetAimVector()*96

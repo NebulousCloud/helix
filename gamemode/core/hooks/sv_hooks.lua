@@ -80,6 +80,10 @@ function GM:KeyRelease(client, key)
 	end
 end
 
+function GM:CanPlayerInteractItem(client, action, item)
+	return client:Alive()
+end
+
 function GM:PlayerSwitchWeapon(client, oldWeapon, newWeapon)
 	client:setWepRaised(false)
 end
