@@ -4,6 +4,7 @@ ENT.Type = "anim"
 ENT.PrintName = "Item"
 ENT.Category = "NutScript"
 ENT.Spawnable = false
+ENT.RenderGroup 		= RENDERGROUP_BOTH
 
 if (SERVER) then
 	function ENT:Initialize()
@@ -65,6 +66,14 @@ else
 			nut.util.drawText(itemTable.name, x, y, ColorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
 			nut.util.drawText(type(itemTable.desc) == "function" and itemTable.desc(itemTable) or itemTable.desc, x, y + 16, ColorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
 		end		
+	end
+
+	function ENT:DrawTranslucent()
+		local itemTable = self:getItemTable()
+
+		if (itemTable.drawEntity) then
+			itemTable:drawEntity(self, itemTable)
+		end
 	end
 end
 
