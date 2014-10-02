@@ -194,8 +194,8 @@ end
 
 function META:hasItem(targetID)
 	local items = self:getItems()
-
-	for k, v in pairs(item) do
+	
+	for k, v in pairs(items) do
 		if (v.uniqueID == targetID) then
 			return v
 		end
