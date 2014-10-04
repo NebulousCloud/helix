@@ -1,5 +1,9 @@
 -- Includes a file from the prefix.
 function nut.util.include(fileName, state)
+	if (!fileName) then
+		error("[NutScript] No file name specified for including.")
+	end
+	
 	-- Only include server-side if we're on the server.
 	if ((state == "server" or fileName:find("sv_")) and SERVER) then
 		include(fileName)
