@@ -5,17 +5,28 @@ nut.bar.actionText = ""
 nut.bar.actionStart = 0
 nut.bar.actionEnd = 0
 
-function nut.bar.add(getValue, color, priority)
+function nut.bar.add(getValue, color, priority, identifier)
+	if (identifier) then
+		for k, v in ipairs(nut.bar.list) do
+			if (v.identifier == identifier) then
+				print(v.identifier)
+				table.remove(nut.bar.list, k)
+
+				break
+			end
+		end
+	end
+
 	priority = priority or table.Count(nut.bar.list) + 1
 
-	
 	local info = nut.bar.list[priority]
 
 	nut.bar.list[priority] = {
 		getValue = getValue,
 		color = color or info.color or Color(math.random(150, 255), math.random(150, 255), math.random(150, 255)),
 		priority = priority,
-		lifeTime = 0
+		lifeTime = 0,
+		identifier = identifier
 	}
 
 	return priority
