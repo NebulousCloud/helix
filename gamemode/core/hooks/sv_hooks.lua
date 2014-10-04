@@ -218,6 +218,8 @@ function GM:PlayerLoadout(client)
 
 		-- Apply any flags as needed.
 		nut.flag.onSpawn(client)
+		nut.attribs.setup(client)
+
 		hook.Run("PostPlayerLoadout", client)
 	end
 end
