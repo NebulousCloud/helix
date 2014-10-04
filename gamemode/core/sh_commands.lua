@@ -60,13 +60,13 @@ nut.command.add("charsetname", {
 
 		local target = nut.command.findPlayer(client, arguments[1])
 		table.remove(arguments, 1)
+
 		local targetName = table.concat(arguments, " ")
 
 		if (IsValid(target) and target:getChar()) then
 			nut.util.notify(L("cChangeName", client, client:Name(), target:Name(), targetName))
 
 			target:getChar():setName(targetName)
-			target:getChar():sync()
 		end
 	end
 })

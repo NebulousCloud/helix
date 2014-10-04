@@ -542,6 +542,18 @@ do
 			nut.char.loaded[id] = nut.char.new(data, id, client == nil and LocalPlayer() or client)
 		end)
 
+		netstream.Hook("charVar", function(key, value, id)
+			id = id or LocalPlayer():getChar().id
+			local character = nut.char.loaded[id]
+
+			if (character) then
+				local oldVar = character.vars[key]
+				character.vars[key] = value
+
+				hook.Run("OnCharVarChanged", character, key, oldVar, value)
+			end
+		end)
+
 		netstream.Hook("charMenu", function(data)
 			if (data) then
 				nut.characters = data

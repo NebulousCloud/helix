@@ -81,7 +81,19 @@ function GM:KeyRelease(client, key)
 end
 
 function GM:CanPlayerInteractItem(client, action, item)
+	if (action == "drop" and hook.Run("CanPlayerDropItem", client, item) == false) then
+		return false
+	end
+
+	if (action == "take" and hook.Run("CanPlayerTakeItem", client, item) == false) then
+		return false
+	end
+
 	return client:Alive()
+end
+
+function GM:CanPlayerTakeItem(client, item)
+	print(item)
 end
 
 function GM:PlayerSwitchWeapon(client, oldWeapon, newWeapon)
