@@ -88,5 +88,6 @@ LANGUAGE = {
 	businessPurchase = "You purchased %s for %s.",
 	cChangeModel = "%s changed %s's model to %s.",
 	cChangeName = "%s changed %s's name to %s.",
-	playerCharBelonging = "This object is your other character's belonging."
+	playerCharBelonging = "This object is your other character's belonging.",
+	business = "Business"
 }

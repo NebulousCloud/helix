@@ -54,3 +54,19 @@ nut.config.add("saveInterval", 300, "How often characters save in seconds.", nil
 	data = {min = 60, max = 3600},
 	category = "characters"
 })
+nut.config.add("walkSpeed", 130, "How fast a player normally walks.", function(oldValue, newValue)
+	for k, v in ipairs(player.GetAll())	do
+		v:SetWalkSpeed(newValue)
+	end
+end, {
+	data = {min = 75, max = 500},
+	category = "characters"
+})
+nut.config.add("runSpeed", 235, "How fast a player normally runs.", function(oldValue, newValue)
+	for k, v in ipairs(player.GetAll())	do
+		v:SetRunSpeed(newValue)
+	end
+end, {
+	data = {min = 75, max = 500},
+	category = "characters"
+})

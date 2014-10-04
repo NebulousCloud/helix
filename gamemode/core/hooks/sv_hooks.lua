@@ -197,7 +197,9 @@ function GM:PlayerLoadout(client)
 		client:SetModel(character:getModel())
 		client:Give("nut_hands")
 		client:SelectWeapon("nut_hands")
-
+		client:SetWalkSpeed(nut.config.get("walkSpeed"))
+		client:SetRunSpeed(nut.config.get("runSpeed"))
+		
 		local faction = nut.faction.indices[client:Team()]
 
 		if (faction) then
