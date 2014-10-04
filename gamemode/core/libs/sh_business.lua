@@ -17,10 +17,10 @@ if (SERVER) then
 
 		local x, y = inv:add(id, 1, data)
 		local item = inv:getItemAt(x, y)
-		if (item == false) then
+		if (!item or item == false) then
 			return
 		end
-		
+
 		char:takeMoney(price)
 		client:notify(L("businessPurchase", client, item.name, price > 0 and nut.currency.get(price) or "FREE"))
 

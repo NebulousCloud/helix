@@ -173,6 +173,13 @@ function nut.char.new(data, id, client, steamID)
 	return character
 end
 
+nut.char.varHooks = nut.char.varHooks or {}
+function nut.char.hookVar(varName, hookName, func)
+	nut.char.varHooks[varName] = nut.char.varHooks[varName] or {}
+
+	nut.char.varHooks[varName][hookName] = func
+end
+
 -- Registration of default variables go here.
 do
 	nut.char.registerVar("name", {

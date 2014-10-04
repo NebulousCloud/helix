@@ -85,5 +85,7 @@ LANGUAGE = {
 	textAdded = "You have added a text.",
 	textRemoved = "You have removed %s text(s).",
 	moneyTaken = "You found %s.",
-	businessPurchase = "You purchased %s for %s."
+	businessPurchase = "You purchased %s for %s.",
+	cChangeModel = "%s changed %s's model to %s.",
+	cChangeName = "%s changed %s's name to %s.",
 }

@@ -167,3 +167,11 @@ function GM:StartCommand(client, command)
 		command:RemoveKey(KEY_BLACKLIST)
 	end
 end
+
+function GM:OnCharVarChanged(char, varName, oldVar, newVar)
+	if (nut.char.varHooks[varName]) then
+		for k, v in pairs(nut.char.varHooks[varName]) do
+			v(char, oldVar, newVar)
+		end
+	end
+end
