@@ -93,7 +93,15 @@ function GM:CanPlayerInteractItem(client, action, item)
 end
 
 function GM:CanPlayerTakeItem(client, item)
-	print(item)
+	if (type(item) == "Entity") then
+		local char = client:getChar()
+		
+		if (item.prevOwner and item.prevPlayer and item.prevPlayer == client and item.prevOwner != char.id) then
+			client:notify(L("playerCharBelonging", client))
+
+			return false
+		end
+	end
 end
 
 function GM:PlayerSwitchWeapon(client, oldWeapon, newWeapon)

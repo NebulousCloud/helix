@@ -53,7 +53,9 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 				tip = "dropTip",
 				icon = "icon16/world.png",
 				onRun = function(item)
-					item:spawn(item.player)
+					local ent = item:spawn(item.player)
+					ent.prevPlayer = item.player
+					ent.prevOwner = item.player:getChar().id
 					item.player:getChar():getInv():remove(item.id, nil, true)
 				end,
 				onCanRun = function(item)
