@@ -29,11 +29,11 @@ end
 
 function nut.item.load(path, baseID, isBaseItem)
 	local uniqueID = path:match("sh_([_%w]+)%.lua")
-	local meta = FindMetaTable("Item")
 
 	if (uniqueID) then
 		uniqueID = (isBaseItem and "base_" or "")..uniqueID
-
+		nut.item.register(uniqueID, baseID, isBaseItem, path)
+		/*
 		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({}, {__index = meta})
 			ITEM.uniqueID = uniqueID
 			ITEM.base = baseID
@@ -103,17 +103,16 @@ function nut.item.load(path, baseID, isBaseItem)
 				ITEM.height = ITEM.height or 1
 			(isBaseItem and nut.item.base or nut.item.list)[ITEM.uniqueID] = ITEM
 		ITEM = nil
+		*/
 	else
 		ErrorNoHalt("[NutScript] Item at '"..path.."' follows invalid naming convention!\n")
 	end
 end
 
-function nut.item.register(uniqueID, baseID, isBaseItem)
+function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 	local meta = FindMetaTable("Item")
 
 	if (uniqueID) then
-		uniqueID = (isBaseItem and "base_" or "")..uniqueID
-
 		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({}, {__index = meta})
 			ITEM.uniqueID = uniqueID
 			ITEM.base = baseID
@@ -159,30 +158,39 @@ function nut.item.register(uniqueID, baseID, isBaseItem)
 				ITEM.plugin = PLUGIN.uniqueID
 			end
 
-			if (ITEM.base) then
-				local baseTable = nut.item.base[ITEM.base]
+			if (luaGenerated != true) then
+				nut.util.include(path)
+			end
+				if (ITEM.base) then
+					local baseTable = nut.item.base[ITEM.base]
 
-				if (baseTable) then
-					for k, v in pairs(baseTable) do
-						if (ITEM[k] == nil) then
-							ITEM[k] = v
+					if (baseTable) then
+						for k, v in pairs(baseTable) do
+							if (ITEM[k] == nil) then
+								ITEM[k] = v
+							end
+
+							ITEM.baseTable = baseTable
 						end
 
-						ITEM.baseTable = baseTable
+						local mergeTable = table.Copy(baseTable)
+						ITEM = table.Merge(mergeTable, ITEM)
+					else
+						ErrorNoHalt("[NutScript] Item '"..ITEM.uniqueID.."' has a non-existent base! ("..ITEM.base..")")
 					end
-
-					local mergeTable = table.Copy(baseTable)
-					ITEM = table.Merge(mergeTable, ITEM)
-				else
-					ErrorNoHalt("[NutScript] Item '"..ITEM.uniqueID.."' has a non-existent base! ("..ITEM.base..")")
 				end
-			end
 
-			ITEM.width = ITEM.width or 1
-			ITEM.height = ITEM.height or 1
-
+				ITEM.width = ITEM.width or 1
+				ITEM.height = ITEM.height or 1
 			(isBaseItem and nut.item.base or nut.item.list)[ITEM.uniqueID] = ITEM
-		return ITEM
+
+		if (luaGenerated) then
+			local itemTable = table.Copy(ITEM)
+			ITEM = nil
+			return itemTable
+		else
+			ITEM = nil
+		end
 	else
 		ErrorNoHalt("[NutScript] You tried to register an item without uniqueID!\n")
 	end
