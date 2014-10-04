@@ -28,7 +28,7 @@ function nut.attribs.setup(client)
 	if (character) then
 		for k, v in pairs(nut.attribs.list) do
 			if (v.onSetup) then
-				v:onSetup(client, character:getAttrib(k))
+				v:onSetup(client, character:getAttrib(k, 0))
 			end
 		end
 	end
