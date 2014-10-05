@@ -39,13 +39,12 @@ nut.ammo.register("helicoptergun")
 function PLUGIN:CharacterPreSave(character)
 	-- Get the player from the character.
 	local client = character:getPlayer()
-	-- Check to see if we can get the player's position.
+	-- Check to see if we can get the player's ammo.
 	if (IsValid(client)) then
 		local ammoTable = {}
 
 		for k, v in ipairs(self.ammoList) do
 			local ammo = client:GetAmmoCount(v)
-			print(k, v, ammo)
 
 			if (ammo > 0) then
 				ammoTable[v] = ammo
@@ -65,7 +64,6 @@ function PLUGIN:PostPlayerLoadout(client)
 	-- Check if the ammotable is exists.
 	if (ammoTable) then
 		for k, v in pairs(ammoTable) do
-			print(client:Name() .. "LOADED:", k, v)
 			client:GiveAmmo(v, k)
 		end
 	end
