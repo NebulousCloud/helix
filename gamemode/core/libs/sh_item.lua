@@ -117,10 +117,7 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 
 			(isBaseItem and nut.item.base or nut.item.list)[ITEM.uniqueID] = ITEM
 		if (luaGenerated) then
-			local itemTable = table.Copy(ITEM)
-			ITEM = nil
-
-			return itemTable
+			return ITEM
 		else
 			ITEM = nil
 		end
