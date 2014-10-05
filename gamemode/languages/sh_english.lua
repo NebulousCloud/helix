@@ -36,6 +36,7 @@ LANGUAGE = {
 	author = "Author",
 	version = "Version",
 	characters = "Characters",
+	business = "Business",
 	settings = "Settings",
 	config = "Config",
 	chat = "Chat",
