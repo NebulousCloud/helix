@@ -175,3 +175,11 @@ function GM:OnCharVarChanged(char, varName, oldVar, newVar)
 		end
 	end
 end
+
+function GM:CanPlayerThrowPunch(client)
+	if (!client:isWepRaised()) then
+		return false
+	end
+
+	return true
+end

@@ -128,7 +128,21 @@ function SWEP:PrimaryAttack()
 		return
 	end
 
-	self:EmitSound("npc/vort/claw_swing"..math.random(1, 2)..".wav")
+	local staminaUse = nut.config.get("punchStamina")
+
+	if (staminaUse > 0) then
+		local value = self.Owner:getLocalVar("stm", 0) - staminaUse
+
+		if (value < 0) then
+			return
+		elseif (SERVER) then
+			self.Owner:setLocalVar("stm", value)
+		end
+	end
+
+	if (SERVER) then
+		self.Owner:EmitSound("npc/vort/claw_swing"..math.random(1, 2)..".wav")
+	end
 
 	local damage = self.Primary.Damage
 
@@ -146,30 +160,32 @@ function SWEP:PrimaryAttack()
 				damage = result
 			end
 
-			local data = {}
-				data.start = self.Owner:GetShootPos()
-				data.endpos = data.start + self.Owner:GetAimVector()*96
-				data.filter = self.Owner
-			local trace = util.TraceLine(data)
+			self.Owner:LagCompensation(true)
+				local data = {}
+					data.start = self.Owner:GetShootPos()
+					data.endpos = data.start + self.Owner:GetAimVector()*96
+					data.filter = self.Owner
+				local trace = util.TraceLine(data)
 
-			if (SERVER and trace.Hit) then
-				local entity = trace.Entity
+				if (SERVER and trace.Hit) then
+					local entity = trace.Entity
 
-				if (IsValid(entity)) then
-					local damageInfo = DamageInfo()
-						damageInfo:SetAttacker(self.Owner)
-						damageInfo:SetInflictor(self)
-						damageInfo:SetDamage(damage)
-						damageInfo:SetDamageType(DMG_SLASH)
-						damageInfo:SetDamagePosition(trace.HitPos)
-						damageInfo:SetDamageForce(self.Owner:GetAimVector()*10000)
-					entity:DispatchTraceAttack(damageInfo, data.start, data.endpos)
+					if (IsValid(entity)) then
+						local damageInfo = DamageInfo()
+							damageInfo:SetAttacker(self.Owner)
+							damageInfo:SetInflictor(self)
+							damageInfo:SetDamage(damage)
+							damageInfo:SetDamageType(DMG_SLASH)
+							damageInfo:SetDamagePosition(trace.HitPos)
+							damageInfo:SetDamageForce(self.Owner:GetAimVector()*10000)
+						entity:DispatchTraceAttack(damageInfo, data.start, data.endpos)
 
-					self.Owner:EmitSound("physics/body/body_medium_impact_hard"..math.random(1, 6)..".wav", 80)
+						self.Owner:EmitSound("physics/body/body_medium_impact_hard"..math.random(1, 6)..".wav", 80)
+					end
 				end
-			end
 
-			hook.Run("PlayerThrowPunch", self.Owner, trace.Hit)
+				hook.Run("PlayerThrowPunch", self.Owner, trace.Hit)
+			self.Owner:LagCompensation(false)
 		end
 	end)
 end
