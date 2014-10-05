@@ -186,6 +186,7 @@ end
 
 -- Called when weapons should be given to a player.
 function GM:PlayerLoadout(client)
+	client:StripAmmo()
 	client:StripWeapons()
 
 	local character = client:getChar()
