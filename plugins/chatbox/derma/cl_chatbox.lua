@@ -7,6 +7,8 @@ local PANEL = {}
 		local scrW, scrH = ScrW(), ScrH()
 		local w, h = scrW * 0.4, scrH * 0.375
 
+		nut.gui.chat = self
+
 		self:SetSize(w, h)
 		self:SetPos(border, scrH - h - border)
 
@@ -84,6 +86,8 @@ local PANEL = {}
 			self.text:SetFont("nutChatFont")
 			self.text.OnEnter = function(this)
 				local text = this:GetText()
+
+				this:Remove()
 
 				self.tabs:SetVisible(false)
 				self.active = false
