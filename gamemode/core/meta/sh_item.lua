@@ -12,6 +12,24 @@ function ITEM:getID()
 	return self.id
 end
 
+-- Dev Buddy. You don't have to print the item data with PrintData();
+function ITEM:print(detail)
+	if (detail == true) then
+		print(Format("[%s]%s: >> [%s](%s,%s)", self.id, self.uniqueID, self.owner, self.gridX, self.gridY)
+	else
+		print(Format("[%s]%s)", self.id, self.uniqueID)
+	end
+end
+
+-- Dev Buddy, You don't have to make another function to print the item Data.
+function ITEM:printData()
+	self:print(true)
+	print("ITEM DATA:")
+	for k, v in pairs(self.data) do
+		print(Format("[%s] = %s", k, v))
+	end
+end
+
 function ITEM:call(method, client, entity, ...)
 	self.player = self.player or client
 	self.entity = self.entity or entity
