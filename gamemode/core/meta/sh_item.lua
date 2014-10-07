@@ -15,9 +15,9 @@ end
 -- Dev Buddy. You don't have to print the item data with PrintData();
 function ITEM:print(detail)
 	if (detail == true) then
-		print(Format("[%s]%s: >> [%s](%s,%s)", self.id, self.uniqueID, self.owner, self.gridX, self.gridY)
+		print(Format("[%s]%s: >> [%s](%s,%s)", self.id, self.uniqueID, self.owner, self.gridX, self.gridY))
 	else
-		print(Format("[%s]%s)", self.id, self.uniqueID)
+		print(Format("[%s]%s)", self.id, self.uniqueID))
 	end
 end
 
