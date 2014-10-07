@@ -6,15 +6,96 @@ ITEM.width = 2
 ITEM.height = 2
 ITEM.isWeapon = true
 ITEM.weaponCategory = "sidearm"
+ITEM.camo = {
+	-- worldMaterials is for world model texture.
+	-- viewMaterials is for view model texture.
+	-- example camo data
+	/*
+		[camoIndex] = {
+			worldMaterials = {
+				[materialIndex] = "materialPath",
+				[materialIndex] = "materialPath",
+			}
+			viewMaterials = {
+				[materialIndex] = "materialPath",
+				[materialIndex] = "materialPath",
+			}
+		},
 
-// Inventory drawing
+		[camoIndex] = {
+			worldMaterials = {
+				[materialIndex] = "materialPath",
+				[materialIndex] = "materialPath",
+			}
+			viewMaterials = {
+				[materialIndex] = "materialPath",
+				[materialIndex] = "materialPath",
+			}
+		},
+	*/
+}
+
+-- Make this true if you're running dev-branch of garrysmod.
+-- This comment is written in >> (10/06/2014)
+local isDevGarrysmod = false
+
+-- Draw world materials.
+local function drawCamoEntity(entity, camoData)
+	if (isDevGarrysmod == false) then return end -- I don't want to emit goddamn error for non dev-branch developers. eww
+
+	if (camoData) then
+		local worldMaterials = camoData.worldMaterials
+
+		if (worldMaterials) then
+			for matIndex, matData in ipairs(worldMaterials) do
+				-- Based on GetMaterials().
+				entity:SetSubMaterial(matIndex - 1, matData)
+			end
+		end
+	else
+		print("[Nutscript] Weapon camo data is not present.")
+	end
+end
+
+-- Inventory drawing
 if (CLIENT) then
+	-- Draw camo if it is available.
+	function ITEM:drawEntity(entity, item)
+		if (isDevGarrysmod == false) then entity:DrawModel() return end -- I don't want to emit goddamn error for non dev-branch developers. eww
+
+		if (!entity.noMaterial or !entity.materialSet) then
+			local camoIndex = item:getData("camo")
+			if (camoIndex) then
+				local camoData = item.camo[camoIndex]
+
+				if (camoData) then
+					local viewMaterials = camoData.viewMaterials
+
+					if (viewMaterials) then
+						for matIndex, matData in ipairs(viewMaterials) do
+							-- Based on GetMaterials().
+							entity:SetSubMaterial(matIndex - 1, matData)
+						end
+					end
+				end
+
+				entity.materialSet = true
+			else
+				entity.noMaterial = true
+			end
+		end
+
+		entity:DrawModel()
+	end
+
 	function ITEM:paintOver(item, w, h)
 		if (item:getData("equip")) then
 			surface.SetDrawColor(110, 255, 110, 100)
 			surface.DrawRect(w - 14, h - 14, 8, 8)
 		end
 	end
+
+	-- add a hook to set viewmodel's camo.
 end
 
 // On item is dropped, Remove a weapon from the player and keep the ammo in the item.
@@ -67,7 +148,6 @@ ITEM.functions.Equip = {
 	icon = "icon16/world.png",
 	onRun = function(item)
 		local inv = item.player:getChar():getInv()
-		local ammo = item:getData("ammo")
 		item.player.carryWeapons = item.player.carryWeapons or {}
 
 		for k, v in pairs(inv.slots) do
@@ -90,11 +170,21 @@ ITEM.functions.Equip = {
 
 		local weapon = item.player:Give(item.class)
 		if (weapon and weapon:IsValid()) then
+			-- get camo data.
+			local camoIndex = item:getData("camo")
+			local ammo = item:getData("ammo")
+
 			item.player.carryWeapons[item.weaponCategory] = weapon
 			item.player:SetActiveWeapon(weapon)
 			item.player:EmitSound("items/ammo_pickup.wav", 80)
 			item:setData("equip", true)
 
+			if (camoIndex) then
+				local camoData = item.camo[camoIndex]
+
+				drawCamoEntity(weapon, camoData)
+			end
+			
 			if (ammo) then
 				weapon:SetClip1(ammo)
 			end
