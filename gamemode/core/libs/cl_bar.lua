@@ -73,15 +73,13 @@ function nut.bar.drawAction()
 			local w, h = scrW * 0.35, 28
 			local x, y = (scrW * 0.5) - (w * 0.5), (scrH * 0.725) - (h * 0.5)
 
-			surface.SetDrawColor(35, 35, 35, 240)
+			nut.util.drawBlurAt(x, y, w, h)
+
+			surface.SetDrawColor(35, 35, 35, 100)
 			surface.DrawRect(x, y, w, h)
 
-			surface.SetDrawColor(0, 0, 0, 200)
+			surface.SetDrawColor(0, 0, 0, 120)
 			surface.DrawOutlinedRect(x, y, w, h)
-
-			surface.SetDrawColor(0, 0, 0, 100)
-			surface.SetMaterial(gradient)
-			surface.DrawTexturedRect(x, y, w, h)
 
 			surface.SetDrawColor(nut.config.get("color"))
 			surface.DrawRect(x + 4, y + 4, (w * fraction) - 8, h - 8)

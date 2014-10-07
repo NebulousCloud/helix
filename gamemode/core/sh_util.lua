@@ -79,7 +79,7 @@ if (CLIENT) then
 	local blur = nut.util.getMaterial("pp/blurscreen")
 
 	-- Draws a blurred material over the screen, to blur things.
-	function nut.util.drawBlur(panel, amount)
+	function nut.util.drawBlur(panel, amount, passes)
 		-- Intensity of the blur.
 		amount = amount or 5
 
@@ -88,7 +88,7 @@ if (CLIENT) then
 
 		local x, y = panel:LocalToScreen(0, 0)
 		
-		for i = 0.2, 1, 0.2 do
+		for i = -(passes or 0.2), 1, 0.2 do
 			-- Do things to the blur material to make it blurry.
 			blur:SetFloat("$blur", i * amount)
 			blur:Recompute()
@@ -96,6 +96,26 @@ if (CLIENT) then
 			-- Draw the blur material over the screen.
 			render.UpdateScreenEffectTexture()
 			surface.DrawTexturedRect(x * -1, y * -1, ScrW(), ScrH())
+		end
+	end
+
+	function nut.util.drawBlurAt(x, y, w, h, amount, passes)
+		-- Intensity of the blur.
+		amount = amount or 5
+
+		surface.SetMaterial(blur)
+		surface.SetDrawColor(255, 255, 255)
+
+		local scrW, scrH = ScrW(), ScrH()
+		local x2, y2 = x / scrW, y / scrH
+		local w2, h2 = (x + w) / scrW, (y + h) / scrH
+
+		for i = -(passes or 0.2), 1, 0.2 do
+			blur:SetFloat("$blur", i * amount)
+			blur:Recompute()
+
+			render.UpdateScreenEffectTexture()
+			surface.DrawTexturedRectUV(x, y, w, h, x2, y2, w2, h2)
 		end
 	end
 

@@ -51,12 +51,10 @@ local PANEL = {}
 
 	function PANEL:Paint(w, h)
 		if (self.active) then
-			surface.SetDrawColor(50, 50, 50, 200)
-			surface.DrawRect(0, 0, w, h)
+			nut.util.drawBlur(self, 10)
 
-			surface.SetDrawColor(0, 0, 0, 130)
-			surface.SetMaterial(gradient)
-			surface.DrawTexturedRect(0, 0, w, h)
+			surface.SetDrawColor(250, 250, 250, 2)
+			surface.DrawRect(0, 0, w, h)
 
 			surface.SetDrawColor(0, 0, 0, 240)
 			surface.DrawOutlinedRect(0, 0, w, h)
@@ -104,12 +102,8 @@ local PANEL = {}
 			end
 			self.text:SetAllowNonAsciiCharacters(true)
 			self.text.Paint = function(this, w, h)
-				surface.SetDrawColor(250, 250, 250, 10)
+				surface.SetDrawColor(0, 0, 0, 100)
 				surface.DrawRect(0, 0, w, h)
-
-				surface.SetDrawColor(0, 0, 0, 10)
-				surface.SetMaterial(gradient2)
-				surface.DrawTexturedRect(0, 0, w, h)
 
 				surface.SetDrawColor(0, 0, 0, 200)
 				surface.DrawOutlinedRect(0, 0, w, h)
