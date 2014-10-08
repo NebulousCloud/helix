@@ -2,6 +2,10 @@ local PANEL = {}
 	local gradient = Material("vgui/gradient-d")
 	local gradient2 = Material("vgui/gradient-u")
 
+	local COLOR_FADED = Color(200, 200, 200, 100)
+	local COLOR_ACTIVE = color_white
+	local COLOR_WRONG = Color(255, 100, 80)
+
 	function PANEL:Init()
 		local border = 32
 		local scrW, scrH = ScrW(), ScrH()
@@ -21,10 +25,57 @@ local PANEL = {}
 		self.tabs:DockMargin(4, 4, 4, 4)
 		self.tabs:SetVisible(false)
 
+		self.arguments = {}
+
 		self.scroll = self:Add("DScrollPanel")
 		self.scroll:SetPos(4, 30)
 		self.scroll:SetSize(w - 8, h - 70)
 		self.scroll:GetVBar():SetWide(0)
+		self.scroll.PaintOver = function(this, w, h)
+			local entry = self.text
+
+			if (self.active and IsValid(entry)) then
+				local text = entry:GetText()
+
+				if (text:sub(1, 1) == "/") then
+					local arguments = self.arguments or {}
+					local command = arguments[1] or ""
+
+					nut.util.drawBlur(this)
+
+					surface.SetDrawColor(0, 0, 0, 200)
+					surface.DrawRect(0, 0, w, h)
+
+					local i = 0
+					local color = nut.config.get("color")
+
+					for k, v in SortedPairs(nut.command.list) do
+						local k2 = "/"..k
+
+						if (k2:match(command:lower())) then
+							local x, y = nut.util.drawText(k2.."  ", 4, i * 20, color)
+
+							if (k == command and v.syntax) then
+								local i2 = 0
+
+								for argument in v.syntax:gmatch("([%[<][%w_]+[%s][%w_]+[%]>])") do
+									i2 = i2 + 1
+									local color = COLOR_FADED
+
+									if (i2 == (#arguments - 1)) then
+										color = COLOR_ACTIVE
+									end
+
+									x = x + nut.util.drawText(argument.."  ", x, i * 20, color)
+								end
+							end
+
+							i = i + 1
+						end
+					end
+				end
+			end
+		end
 
 		self.lastY = 0
 
@@ -109,6 +160,13 @@ local PANEL = {}
 				surface.DrawOutlinedRect(0, 0, w, h)
 
 				this:DrawTextEntryText(TEXT_COLOR, nut.config.get("color"), TEXT_COLOR)
+			end
+			self.text.OnTextChanged = function(this)
+				local text = this:GetText()
+
+				if (text:sub(1, 1) == "/") then
+					self.arguments = nut.command.extractArgs(text:sub(2))
+				end
 			end
 
 			self.entry:MakePopup()

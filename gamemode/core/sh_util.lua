@@ -123,7 +123,7 @@ if (CLIENT) then
 	function nut.util.drawText(text, x, y, color, alignX, alignY, font, alpha)
 		color = color or color_white
 
-		draw.TextShadow({
+		return draw.TextShadow({
 			text = text,
 			font = font or "nutGenericFont",
 			pos = {x, y},
