@@ -1,6 +1,12 @@
 local SKIN = {}
 	function SKIN:PaintFrame(panel)
-		self:DrawGenericBackground(0, 0, panel:GetWide(), panel:GetTall())
+		nut.util.drawBlur(panel, 10)
+
+		surface.SetDrawColor(45, 45, 45, 200)
+		surface.DrawRect(0, 0, panel:GetWide(), panel:GetTall())
+
+		surface.SetDrawColor(0, 0, 0, 200)
+		surface.DrawOutlinedRect(0, 0, panel:GetWide(), panel:GetTall())
 
 		surface.SetDrawColor(0, 0, 0, 55)
 		surface.DrawRect(0, 0, panel:GetWide(), 24)
