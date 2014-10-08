@@ -75,6 +75,17 @@ if (CLIENT) then
 		end
 	end
 
+	local HIDE_WEAPON = Vector(0, 0, -100000)
+	local HIDE_ANGLE = Angle(0, 0, 0)
+	
+	function PLUGIN:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos, eyeAngles)
+		local scenes = self.scenes
+
+		if (IsValid(nut.gui.char)) then
+			return HIDE_WEAPON, HIDE_ANGLE
+		end		
+	end
+
 	local PLUGIN = PLUGIN
 
 	netstream.Hook("mapScn", function(data, origin)
