@@ -90,5 +90,8 @@ LANGUAGE = {
 	cChangeModel = "%s changed %s's model to %s.",
 	cChangeName = "%s changed %s's name to %s.",
 	playerCharBelonging = "This object is your other character's belonging.",
-	business = "Business"
+	business = "Business",
+	invalidFaction = "You have provided an invalid faction.",
+	spawnAdd = "You have added a spawn for the %s.",
+	spawnDeleted = "You have removed %s spawn point(s)."
 }

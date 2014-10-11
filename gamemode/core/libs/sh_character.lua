@@ -304,6 +304,17 @@ do
 		end
 	})
 
+	nut.char.registerVar("class", {
+		isLocal = true,
+		noDisplay = true,
+		onSet = function(character, class)
+			character:setData("class", class)
+		end,
+		onGet = function(character, default)
+			return character:getData("class", default)
+		end
+	})
+
 	nut.char.registerVar("faction", {
 		field = "_faction",
 		default = "Citizen",
