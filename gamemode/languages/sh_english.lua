@@ -94,5 +94,9 @@ LANGUAGE = {
 	invalidFaction = "You have provided an invalid faction.",
 	spawnAdd = "You have added a spawn for the %s.",
 	spawnDeleted = "You have removed %s spawn point(s).",
-	someone = "Someone"
+	someone = "Someone",
+	rgnLookingAt = "Allow the person you are looking at to recognize you.",
+	rgnWhisper = "Allow those in a whispering range to recognize you.",
+	rgnTalk = "Allow those in a talking range to recognize you.",
+	rgnYell = "Allow those in a yelling range to recognize you."
 }
