@@ -18,6 +18,8 @@ do
 			end
 
 			self:setData("rgn", recognized..id..",")
+
+			return true
 		end
 	end
 
@@ -119,12 +121,17 @@ else
 
 		if (#targets > 0) then
 			local id = client:getChar():getID()
+			local i = 0
 
 			for k, v in ipairs(targets) do
-				v:getChar():recognize(id)
+				if (v:getChar():recognize(id)) then
+					i = i + 1
+				end
 			end
 
-			netstream.Start(client, "rgnDone")
+			if (i > 0) then
+				netstream.Start(client, "rgnDone")
+			end
 		end
 	end)
 end
