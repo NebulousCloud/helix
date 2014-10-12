@@ -94,7 +94,7 @@ function PLUGIN:LoadData()
 end
 
 -- Called before the gamemode shuts down.
-function PLUGIN:SaveData()
+function PLUGIN:SaveDoorData()
 	-- Create an empty table to save information in.
 	local data = {}
 		local doors = {}

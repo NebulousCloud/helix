@@ -31,7 +31,7 @@ if (SERVER) then
 		netstream.Start(nil, "txt", index, position, angles, text, scale)
 
 		-- Save the plugin data.
-		self:SaveData()
+		self:SaveText()
 	end
 
 	-- Removes a text that are within the radius of a position.
@@ -57,7 +57,7 @@ if (SERVER) then
 
 		-- Save the plugin data if we actually changed anything.
 		if (i > 0) then
-			self:SaveData()
+			self:SaveText()
 		end
 
 		-- Return the number of deleted texts.
@@ -70,7 +70,7 @@ if (SERVER) then
 	end
 
 	-- Called when the plugin needs to save information.
-	function PLUGIN:SaveData()
+	function PLUGIN:SaveText()
 		self:setData(self.list)
 	end
 else

@@ -110,7 +110,7 @@ nut.command.add("doorsetunownable", {
 			client:notify(L("dMadeUnownable", client))
 
 			-- Save the door information.
-			PLUGIN:SaveData()
+			PLUGIN:SaveDoorData()
 		else
 			-- Tell the player the door isn't valid.
 			client:notify(L("dNotValid", client))
@@ -148,7 +148,7 @@ nut.command.add("doorsetownable", {
 			client:notify(L("dMadeOwnable", client))
 
 			-- Save the door information.
-			PLUGIN:SaveData()
+			PLUGIN:SaveDoorData()
 		else
 			-- Tell the player the door isn't valid.
 			client:notify(L("dNotValid", client))
@@ -234,7 +234,7 @@ nut.command.add("doorsetdisabled", {
 			client:notify(L("dSet"..(disabled and "" or "Not").."Disabled", client))
 
 			-- Save the door information.
-			PLUGIN:SaveData()
+			PLUGIN:SaveDoorData()
 		else
 			-- Tell the player the door isn't valid.
 			client:notify(L("dNotValid", client))
@@ -328,7 +328,7 @@ nut.command.add("doorsetchild", {
 				client:notify(L("dAddChildDoor", client))
 
 				-- Save the door information.
-				PLUGIN:SaveData()
+				PLUGIN:SaveDoorData()
 				PLUGIN:copyParentDoor(entity)
 			else
 				-- Tell the player they do not have a door parent.
@@ -369,7 +369,7 @@ nut.command.add("doorremovechild", {
 				client:notify(L("dRemoveChildDoor", client))
 
 				-- Save the door information.
-				PLUGIN:SaveData()
+				PLUGIN:SaveDoorData()
 			end
 		else
 			-- Tell the player the door isn't valid.

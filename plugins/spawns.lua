@@ -37,7 +37,7 @@ function PLUGIN:LoadData()
 	self.spawns = self:getData()
 end
 
-function PLUGIN:SaveData()
+function PLUGIN:SaveSpawns()
 	self:setData(self.spawns)
 end
 
@@ -84,7 +84,7 @@ nut.command.add("spawnadd", {
 
 			table.insert(PLUGIN.spawns[faction][class], client:GetPos())
 
-			PLUGIN:SaveData()
+			PLUGIN:SaveSpawns()
 
 			return L("spawnAdded", client, info.name)
 		else
@@ -113,7 +113,7 @@ nut.command.add("spawnremove", {
 		end
 
 		if (i > 0) then
-			PLUGIN:SaveData()
+			PLUGIN:SaveSpawns()
 		end
 
 		return L("spawnDeleted", client, i)

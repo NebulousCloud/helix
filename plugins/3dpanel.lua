@@ -33,7 +33,7 @@ if (SERVER) then
 		netstream.Start(nil, "panel", index, position, angles, w, h, scale, url)
 
 		-- Save the plugin data.
-		self:SaveData()
+		self:SavePanels()
 	end
 
 	-- Removes a panel that are within the radius of a position.
@@ -59,7 +59,7 @@ if (SERVER) then
 
 		-- Save the plugin data if we actually changed anything.
 		if (i > 0) then
-			self:SaveData()
+			self:SavePanels()
 		end
 
 		-- Return the number of deleted panels.
@@ -72,7 +72,7 @@ if (SERVER) then
 	end
 
 	-- Called when the plugin needs to save information.
-	function PLUGIN:SaveData()
+	function PLUGIN:SavePanels()
 		self:setData(self.list)
 	end
 else

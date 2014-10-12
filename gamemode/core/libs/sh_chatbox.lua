@@ -34,16 +34,10 @@ function nut.chat.register(chatType, data)
 		
 		data.onChatAdd = function(speaker, text, anonymous)
 			local color = data.color
-			local name = anonymous and "Someone" or speaker:Name()
+			local name = anonymous and L"someone" or hook.Run("GetDisplayedName", speaker, chatType) or speaker:Name()
 
 			if (data.onGetColor) then
 				color = data.onGetColor(speaker, text)
-			end
-
-			local result = hook.Run("GetPlayerName", speaker, chatType, anonymous)
-
-			if (result != nil) then
-				name = tostring(result)
 			end
 
 			chat.AddText(color, string.format(data.format, name, text))

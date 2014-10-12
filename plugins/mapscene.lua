@@ -119,7 +119,7 @@ if (CLIENT) then
 		end
 	end)
 else
-	function PLUGIN:SaveData()
+	function PLUGIN:SaveScenes()
 		self:setData(self.scenes)
 	end
 
@@ -143,7 +143,7 @@ else
 		end
 
 		netstream.Start(nil, "mapScn", data, position2 and position or nil)
-		self:SaveData()
+		self:SaveScenes()
 	end
 end
 
@@ -201,7 +201,7 @@ nut.command.add("mapsceneremove", {
 		end
 
 		if (i > 0) then
-			PLUGIN:SaveData()
+			PLUGIN:SaveScenes()
 		end
 
 		return L("mapDel", client, i)

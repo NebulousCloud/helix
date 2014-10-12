@@ -93,5 +93,6 @@ LANGUAGE = {
 	business = "Business",
 	invalidFaction = "You have provided an invalid faction.",
 	spawnAdd = "You have added a spawn for the %s.",
-	spawnDeleted = "You have removed %s spawn point(s)."
+	spawnDeleted = "You have removed %s spawn point(s).",
+	someone = "Someone"
 }
