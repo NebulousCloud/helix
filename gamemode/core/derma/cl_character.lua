@@ -158,92 +158,94 @@ local PANEL = {}
 						local fadedIn = false
 
 						for k, v in SortedPairs(nut.faction.teams) do
-							AddMenuLabel(L(v.name), function()
-								if (!self.creation or self.creation.faction != v.index) then
-									self.creation = self:Add("nutCharCreate")
-									self.creation:SetAlpha(fadedIn and 255 or 0)
-									self.creation:setUp(v.index)
-									self.creation:AlphaTo(255, 0.5, 0)
-									self.fadePanels[#self.fadePanels + 1] = self.creation
-
-									self.finish = self:Add("nutMenuButton")
-									self.finish:SetPos(ScrW() * 0.3 - 32, ScrH() * 0.3 + 16)
-									self.finish:setText("finish")
-									self.finish:MoveBelow(self.creation, 4)
-									self.finish.DoClick = function(this)
-										if (!self.creation.creating) then
-											local payload = {}
-
-											for k, v in SortedPairsByMemberValue(nut.char.vars, "index") do
-												local value = self.creation.payload[k]
-
-												if (!v.noDisplay or v.onValidate) then
-													if (v.onValidate) then
-														local result = {v.onValidate(value, self.creation.payload, LocalPlayer())}
-
-														if (result[1] == false) then
-															self.creation.notice:setType(1)
-															self.creation.notice:setText(L(unpack(result, 2)).."!")
-
-															return
+							if (nut.faction.hasWhitelist(v.index)) then
+								AddMenuLabel(L(v.name), function()
+									if (!self.creation or self.creation.faction != v.index) then
+										self.creation = self:Add("nutCharCreate")
+										self.creation:SetAlpha(fadedIn and 255 or 0)
+										self.creation:setUp(v.index)
+										self.creation:AlphaTo(255, 0.5, 0)
+										self.fadePanels[#self.fadePanels + 1] = self.creation
+	
+										self.finish = self:Add("nutMenuButton")
+										self.finish:SetPos(ScrW() * 0.3 - 32, ScrH() * 0.3 + 16)
+										self.finish:setText("finish")
+										self.finish:MoveBelow(self.creation, 4)
+										self.finish.DoClick = function(this)
+											if (!self.creation.creating) then
+												local payload = {}
+	
+												for k, v in SortedPairsByMemberValue(nut.char.vars, "index") do
+													local value = self.creation.payload[k]
+	
+													if (!v.noDisplay or v.onValidate) then
+														if (v.onValidate) then
+															local result = {v.onValidate(value, self.creation.payload, LocalPlayer())}
+	
+															if (result[1] == false) then
+																self.creation.notice:setType(1)
+																self.creation.notice:setText(L(unpack(result, 2)).."!")
+	
+																return
+															end
+														end
+	
+														payload[k] = value
+													end
+												end
+	
+												self.creation.notice:setType(6)
+												self.creation.notice:setText(L"creating")
+												self.creation.creating = true
+												self.finish:AlphaTo(0, 0.5, 0)
+	
+												netstream.Hook("charAuthed", function(fault, ...)
+													timer.Remove("nutCharTimeout")
+	
+													if (type(fault) == "string") then
+														self.creation.notice:setType(1)
+														self.creation.notice:setText(L(fault, ...))
+														self.creation.creating = nil
+														self.finish:AlphaTo(255, 0.5, 0)
+	
+														return
+													end
+	
+													if (type(fault) == "table") then
+														nut.characters = fault
+													end
+	
+													for k, v in pairs(self.fadePanels) do
+														if (IsValid(v)) then
+															v:AlphaTo(0, 0.25, 0, function()
+																v:Remove()
+															end)
 														end
 													end
-
-													payload[k] = value
-												end
-											end
-
-											self.creation.notice:setType(6)
-											self.creation.notice:setText(L"creating")
-											self.creation.creating = true
-											self.finish:AlphaTo(0, 0.5, 0)
-
-											netstream.Hook("charAuthed", function(fault, ...)
-												timer.Remove("nutCharTimeout")
-
-												if (type(fault) == "string") then
-													self.creation.notice:setType(1)
-													self.creation.notice:setText(L(fault, ...))
-													self.creation.creating = nil
-													self.finish:AlphaTo(255, 0.5, 0)
-
-													return
-												end
-
-												if (type(fault) == "table") then
-													nut.characters = fault
-												end
-
-												for k, v in pairs(self.fadePanels) do
-													if (IsValid(v)) then
-														v:AlphaTo(0, 0.25, 0, function()
-															v:Remove()
-														end)
+	
+													self.fadePanels = {}
+													ClearAllButtons(CreateMainButtons)												
+												end)
+	
+												timer.Create("nutCharTimeout", 20, 1, function()
+													if (IsValid(self.creation) and self.creation.creating) then
+														self.creation.notice:setType(1)
+														self.creation.notice:setText(L"unknownError")
+														self.creation.creating = nil
+														self.finish:AlphaTo(255, 0.5, 0)
 													end
-												end
-
-												self.fadePanels = {}
-												ClearAllButtons(CreateMainButtons)												
-											end)
-
-											timer.Create("nutCharTimeout", 20, 1, function()
-												if (IsValid(self.creation) and self.creation.creating) then
-													self.creation.notice:setType(1)
-													self.creation.notice:setText(L"unknownError")
-													self.creation.creating = nil
-													self.finish:AlphaTo(255, 0.5, 0)
-												end
-											end)
-
-											netstream.Start("charCreate", payload)
+												end)
+	
+												netstream.Start("charCreate", payload)
+											end
 										end
+	
+										self.fadePanels[#self.fadePanels + 1] = self.finish
+										
+										fadedIn = true
 									end
-
-									self.fadePanels[#self.fadePanels + 1] = self.finish
-									
-									fadedIn = true
-								end
-							end)
+								end)
+							end
 						end
 					end)
 				end)

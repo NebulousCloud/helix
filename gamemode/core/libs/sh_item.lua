@@ -108,7 +108,7 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 					local mergeTable = table.Copy(baseTable)
 					ITEM = table.Merge(mergeTable, ITEM)
 				else
-					ErrorNoHalt("[NutScript] Item '"..ITEM.uniqueID.."' has a non-existent base! ("..ITEM.base..")")
+					ErrorNoHalt("[NutScript] Item '"..ITEM.uniqueID.."' has a non-existent base! ("..ITEM.base..")\n")
 				end
 			end
 
