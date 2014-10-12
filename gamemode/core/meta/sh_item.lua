@@ -35,8 +35,16 @@ function ITEM:call(method, client, entity, ...)
 	self.entity = self.entity or entity
 
 	if (self.functions[method]) then
-		return self.functions[method](self, ...)
+		local results = {self.functions[method](self, ...)}
+
+		self.player = nil
+		self.entity = nil
+
+		return unpack(results)
 	end
+
+	self.player = nil
+	self.entity = nil
 end
 
 function ITEM:getOwner()
