@@ -146,7 +146,7 @@ end
 -- Misc. player stuff.
 do
 	local playerMeta = FindMetaTable("Player")
-	local ALWAYS_RAISED = {}
+	ALWAYS_RAISED = {}
 	ALWAYS_RAISED["weapon_physgun"] = true
 	ALWAYS_RAISED["gmod_tool"] = true
 
