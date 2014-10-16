@@ -242,7 +242,7 @@ else
 			-- draw character.
 			local tx, ty = surface.GetTextSize(dispString[i])
 			drawMatrixString(dispString[i],
-				"titleShit",
+				"nutAreaDisplay",
 				math.Round(w/2 + dsx - (sx or 0)*scale/2),
 				math.Round(h/3*1 - (sy or 0)*scale/2),
 				Vector(flipTable[i][1], Format("%.2f", scale), 1),
