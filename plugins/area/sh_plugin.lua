@@ -270,10 +270,9 @@ end
 
 nut.command.add("areaadd", {
 	adminOnly = true,
-	syntax = "<string name> [bool showTime]",
+	syntax = "<string name>",
 	onRun = function(client, arguments)
-		local name = arguments[1] or "Area"
-		local showTime = util.tobool(arguments[2] or "true")
+		local name = table.concat(arguments, " ") or "Area"
 
 		if (!client:getNetVar("areaMin")) then
 			if (!name) then
@@ -311,16 +310,16 @@ nut.command.add("areaadd", {
 nut.command.add("arearemove", {
 	adminOnly = true,
 	onRun = function(client, arguments)
-		local count = 0
-
-		for k, v in pairs(PLUGIN.areas) do
-			if (table.HasValue(ents.FindInBox(v.min, v.max), client)) then
-				table.remove(PLUGIN.areas, k)
-
-				count = count + 1
-			end
+		local areaID = client:getArea()
+		if (!areaID) then
+			return
 		end
 
-		nut.util.Notify("You've removed "..count.." areas.", client)
+		local areaData = nut.area.getArea(areaID)
+		if (areaData) then
+			client:notify(Format("You've removed (%s)", areaData.name))
+
+			table.remove(PLUGIN.areaTable, areaID)
+		end
 	end
 })
