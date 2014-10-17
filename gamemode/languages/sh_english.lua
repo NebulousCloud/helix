@@ -98,5 +98,9 @@ LANGUAGE = {
 	rgnLookingAt = "Allow the person you are looking at to recognize you.",
 	rgnWhisper = "Allow those in a whispering range to recognize you.",
 	rgnTalk = "Allow those in a talking range to recognize you.",
-	rgnYell = "Allow those in a yelling range to recognize you."
+	rgnYell = "Allow those in a yelling range to recognize you.",
+	icFormat = "%s says \"%s\"",
+	rollFormat = "%s has rolled %s.",
+	wFormat = "%s whispers \"%s\"",
+	yFormat = "%s yells \"%s\""
 }

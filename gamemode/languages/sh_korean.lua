@@ -24,5 +24,9 @@ LANGUAGE = {
 	finishTip = "캐릭터 생성을 완료합니다.",
 	needModel = "올바른 모델을 선택해 주십시오.",
 	creating = "캐릭터 정보를 서버에서 처리중입니다...",
-	unknownError = "알 수 없는 오류입니다."
+	unknownError = "알 수 없는 오류입니다.",
+	icFormat = "%s: %s",
+	rollFormat = "%s 님이 주사위를 굴렸습니다: %s",
+	wFormat = "[귓속말] %s: %s",
+	yFormat = "[외침] %s: %s"
 }

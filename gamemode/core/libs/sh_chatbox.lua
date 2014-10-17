@@ -40,7 +40,9 @@ function nut.chat.register(chatType, data)
 				color = data.onGetColor(speaker, text)
 			end
 
-			chat.AddText(color, string.format(data.format, name, text))
+			local translated = L2(chatType.."Format", name, text)
+
+			chat.AddText(color, translated or string.format(data.format, name, text))
 		end
 	end
 
