@@ -219,7 +219,7 @@ hook.Add("PlayerDeath", "weapon.reset", function(client)
 end)
 
 // When player spawned, Give all equipped weapon items and load ammo from the item data.
-hook.Add("PlayerSpawn", "weapon.reset", function(client)
+hook.Add("PlayerLoadedChar", "weapon.reset", function(client)
 	timer.Simple(0, function()
 		if (client and client:getChar()) then
 			local inv = client:getChar():getInv():getItems()
