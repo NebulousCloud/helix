@@ -10,7 +10,9 @@ local PANEL = {}
 	end
 
 	function PANEL:Paint(w, h)
-		surface.SetDrawColor(0, 0, 0, 75)
+		nut.util.drawBlur(self, 10)
+
+		surface.SetDrawColor(230, 230, 230, 10)
 		surface.DrawRect(0, 0, w, h)
 
 		if (self.start) then
@@ -19,9 +21,5 @@ local PANEL = {}
 			surface.SetDrawColor(nut.config.get("color"))
 			surface.DrawRect(w2, 0, w - w2, h)
 		end
-
-		surface.SetDrawColor(0, 0, 0, 30)
-		surface.SetMaterial(gradient)
-		surface.DrawTexturedRect(0, 0, w, h)
 	end
 vgui.Register("nutNotice", PANEL, "DLabel")
