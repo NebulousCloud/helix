@@ -102,5 +102,6 @@ LANGUAGE = {
 	icFormat = "%s says \"%s\"",
 	rollFormat = "%s has rolled %s.",
 	wFormat = "%s whispers \"%s\"",
-	yFormat = "%s yells \"%s\""
+	yFormat = "%s yells \"%s\"",
+	sbOptions = "Click to see options for %s."
 }

@@ -2,6 +2,24 @@ function GM:ForceDermaSkin()
 	return "nutscript"
 end
 
+function GM:ScoreboardShow()
+	if (IsValid(nut.gui.score)) then
+		nut.gui.score:SetVisible(true)
+	else
+		vgui.Create("nutScoreboard")
+	end
+
+	gui.EnableScreenClicker(true)
+end
+
+function GM:ScoreboardHide()
+	if (IsValid(nut.gui.score)) then
+		nut.gui.score:SetVisible(false)
+	end
+
+	gui.EnableScreenClicker(false)
+end
+
 function GM:LoadFonts(font)
 	surface.CreateFont("nut3D2DFont", {
 		font = font,
@@ -35,6 +53,12 @@ function GM:LoadFonts(font)
 
 	-- The more readable font.
 	font = "Calibri"
+
+	surface.CreateFont("nutBigFont", {
+		font = font,
+		size = 36,
+		weight = 1000
+	})
 
 	surface.CreateFont("nutMediumFont", {
 		font = font,

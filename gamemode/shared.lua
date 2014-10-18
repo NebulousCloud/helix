@@ -81,6 +81,11 @@ function GM:OnReloaded()
 	-- Reload the default fonts.
 	if (CLIENT) then
 		hook.Run("LoadFonts", nut.config.get("font"))
+
+		-- Reload the scoreboard.
+		if (IsValid(nut.gui.score)) then
+			nut.gui.score:Remove()
+		end
 	end
 end
 
