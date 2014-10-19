@@ -19,26 +19,28 @@ function PLUGIN:LoadData()
 			positions[v[1]] = v[2]
 		end
 
-		local range = "("..table.concat(idRange, ", ")..")"
+		if (#idRange > 0) then
+			local range = "("..table.concat(idRange, ", ")..")"
 
-		nut.db.query("SELECT _itemID, _uniqueID, _data FROM nut_items WHERE _itemID IN "..range, function(data)
-			if (data) then
-				for k, v in ipairs(data) do
-					local itemID = tonumber(v._itemID)
-					local data = util.JSONToTable(v._data)
-					local uniqueID = v._uniqueID
-					local itemTable = nut.item.list[uniqueID]
-					local position = positions[itemID]
-
-					if (itemTable and itemID) then
+			nut.db.query("SELECT _itemID, _uniqueID, _data FROM nut_items WHERE _itemID IN "..range, function(data)
+				if (data) then
+					for k, v in ipairs(data) do
+						local itemID = tonumber(v._itemID)
+						local data = util.JSONToTable(v._data or "[]")
+						local uniqueID = v._uniqueID
+						local itemTable = nut.item.list[uniqueID]
 						local position = positions[itemID]
-						local item = nut.item.new(uniqueID, itemID)
-						item.data = table.Merge(itemTable.data, data or {})
-						item:spawn(position).nutItemID = itemID
+
+						if (itemTable and itemID) then
+							local position = positions[itemID]
+							local item = nut.item.new(uniqueID, itemID)
+							item.data = table.Merge(itemTable.data, data or {})
+							item:spawn(position).nutItemID = itemID
+						end
 					end
 				end
-			end
-		end)
+			end)
+		end
 	end
 end
 

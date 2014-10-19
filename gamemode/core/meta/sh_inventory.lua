@@ -6,6 +6,10 @@ META.slots = META.slots or {}
 META.w = META.w or 4
 META.h = META.h or 4
 
+function META:getID()
+	return self.id or 0
+end
+
 function META:setSize(w, h)
 	self.w = w
 	self.h = h
@@ -81,6 +85,7 @@ function META:canItemFit(x, y, w, h, item2)
 
 			if ((x + x2) > self.w or item) then
 				if (item2) then
+					print(item)
 					if (item and item.id == item2.id) then
 						continue
 					end
@@ -253,7 +258,7 @@ if (SERVER) then
 							self:sendSlot(x, y, item)
 						end
 
-						nut.db.query("UPDATE nut_items SET _charID = "..self.owner..", _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
+						nut.db.query("UPDATE nut_items SET _invID = "..self:getID()..", _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
 
 						return x, y
 					else
@@ -277,7 +282,7 @@ if (SERVER) then
 					self.slots[x] = self.slots[x] or {}
 					self.slots[x][y] = true
 
-					nut.item.instance(self.owner, uniqueID, data, x, y, function(item)
+					nut.item.instance(self:getID(), uniqueID, data, x, y, function(item)
 						item.gridX = x
 						item.gridY = y
 
@@ -301,7 +306,7 @@ if (SERVER) then
 		end
 	end
 
-	function META:sync(receiver)
+	function META:sync(receiver, fullUpdate)
 		local slots = {}
 
 		for x, items in pairs(self.slots) do
@@ -312,7 +317,15 @@ if (SERVER) then
 			end
 		end
 
-		netstream.Start(receiver, "inv", slots, self.w, self.h, receiver == nil and self.owner or nil)
+		local sendID = false
+
+		if (type(receiver) == "Player") then
+			if (receiver:getChar():getInv():getID() != self:getID()) then
+				sendID = true
+			end
+		end
+
+		netstream.Start(receiver, "inv", slots, self.w, self.h, (receiver == nil or fullUpdate or sendID) and self:getID() or nil, (receiver == nil or fullUpdate) and self.owner or nil)
 	end
 end
 

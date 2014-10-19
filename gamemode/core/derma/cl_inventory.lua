@@ -37,21 +37,20 @@ vgui.Register("nutItemIcon", PANEL, "SpawnIcon")
 
 PANEL = {}
 	function PANEL:Init()
-		if (IsValid(nut.gui.inv)) then
-			nut.gui.inv:Remove()
-		end
-		
-		nut.gui.inv = self
-
+		self:ShowCloseButton(false)
+		self:SetDraggable(true)
+		self:MakePopup()
+		self:SetTitle(L"inv")
 
 		self.panels = {}
-		local created = {}
-
-		if (LocalPlayer():getChar() and LocalPlayer():getChar():getInv().slots) then
+	end
+	
+	function PANEL:setInventory(inventory)
+		if (inventory.slots) then
 			self:SetSize(64, 64)
-			self:setGridSize(LocalPlayer():getChar():getInv():getSize())
+			self:setGridSize(inventory:getSize())
 
-			for x, items in pairs(LocalPlayer():getChar():getInv().slots) do
+			for x, items in pairs(inventory.slots) do
 				for y, data in pairs(items) do
 					if (!data.id) then continue end
 
@@ -69,8 +68,10 @@ PANEL = {}
 				end
 			end
 		end
+
+		self:Center()
 	end
-	
+
 	function PANEL:setGridSize(w, h)
 		self.gridW = w
 		self.gridH = h
@@ -259,7 +260,15 @@ PANEL = {}
 								end
 
 								menu:AddOption(L(v.name or k), function()
-									netstream.Start("invAct", k, itemTable.id)
+									local send = true
+
+									if (v.onClick) then
+										send = v.onClick(itemTable)
+									end
+
+									if (send != false) then
+										netstream.Start("invAct", k, itemTable.id)
+									end
 								end):SetImage(itemTable.icon or "icon16/brick.png")
 							end
 						menu:Open()
@@ -291,10 +300,16 @@ PANEL = {}
 			return panel
 		end
 	end
-vgui.Register("nutInventory", PANEL, "EditablePanel")
+vgui.Register("nutInventory", PANEL, "DFrame")
 
 hook.Add("CreateMenuButtons", "nutInventory", function(tabs)
-	tabs["inv"] = function(panel)
-		panel:Add("nutInventory")
+	tabs["inv"] = function(panel)		
+		nut.gui.inv1 = panel:Add("nutInventory")
+
+		local inventory = LocalPlayer():getChar():getInv()
+
+		if (inventory) then
+			nut.gui.inv1:setInventory(inventory)
+		end
 	end
 end)

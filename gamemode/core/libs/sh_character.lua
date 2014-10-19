@@ -21,6 +21,8 @@ if (SERVER) then
 			_money = data.money or nut.config.get("defMoney", 0),
 			_data = data.data
 		}, function(data2, charID)
+			nut.db.query("INSERT INTO nut_inventories (_charID) VALUES ("..charID..")")
+
 			local client
 
 			for k, v in ipairs(player.GetAll()) do
@@ -95,51 +97,79 @@ if (SERVER) then
 
 					local character = nut.char.new(data, id, client)
 						hook.Run("CharacterRestored", character)
-
-						local w, h = nut.config.get("invW"), nut.config.get("invH")
-
-						character.vars.inv = nut.item.createInv(w, h)
-						character.vars.inv:setOwner(id)
+						character.vars.inv = {}
 						
-						nut.db.query("SELECT _itemID, _uniqueID, _data, _x, _y FROM nut_items WHERE _charID = "..id, function(data)
-							if (data) then
-								local slots = {}
-								local badItems = {}
+						nut.db.query("SELECT _invID, _invType FROM nut_inventories WHERE _charID = "..id, function(data)
+							if (data and #data > 0) then
+								for k, v in ipairs(data) do
+									local w, h = nut.config.get("invW"), nut.config.get("invH")
 
-								for _, item in ipairs(data) do
-									local x, y = tonumber(item._x), tonumber(item._y)
-									local itemID = tonumber(item._itemID)
-									local data = util.JSONToTable(item._data)
+									if (v._invType) then
+										local invType = nut.item.inventoryTypes[v._invType]
 
-									if (x and y and itemID) then
-										if (x <= w and x > 0 and y <= h and y > 0) then
-											local item2 = nut.item.new(item._uniqueID, itemID)
-
-											if (item2) then
-												item2.data = table.Merge(item2.data, data or {})
-												item2.gridX = x
-												item2.gridY = y
-												
-												for x2 = 0, item2.width - 1 do
-													for y2 = 0, item2.height - 1 do
-														slots[x + x2] = slots[x + x2] or {}
-														slots[x + x2][y + y2] = item2
-													end
-												end
-											else
-												badItems[#badItems + 1] = itemID
-											end
-										else
-											badItems[#badItems + 1] = itemID
+										if (invType) then
+											w, h = invType.w, invType.h
 										end
 									end
-								end
 
-								if (#badItems > 0) then
-									nut.db.query("DELETE FROM nut_items WHERE _itemID IN ("..table.concat(badItems, ", ")..")")
-								end
+									local invID = tonumber(v._invID)
+									local inventory = nut.item.createInv(w, h, invID)
+									inventory:setOwner(id)
 
-								character.vars.inv.slots = slots
+									nut.db.query("SELECT _itemID, _uniqueID, _data, _x, _y FROM nut_items WHERE _invID = "..invID, function(data)
+										if (data) then
+											local slots = {}
+											local badItems = {}
+
+											for _, item in ipairs(data) do
+												local x, y = tonumber(item._x), tonumber(item._y)
+												local itemID = tonumber(item._itemID)
+												local data = util.JSONToTable(item._data or "[]")
+
+												if (x and y and itemID) then
+													if (x <= w and x > 0 and y <= h and y > 0) then
+														local item2 = nut.item.new(item._uniqueID, itemID)
+
+														if (item2) then
+															item2.data = table.Merge(item2.data, data or {})
+															item2.gridX = x
+															item2.gridY = y
+															
+															for x2 = 0, item2.width - 1 do
+																for y2 = 0, item2.height - 1 do
+																	slots[x + x2] = slots[x + x2] or {}
+																	slots[x + x2][y + y2] = item2
+																end
+															end
+														else
+															badItems[#badItems + 1] = itemID
+														end
+													else
+														badItems[#badItems + 1] = itemID
+													end
+												end
+											end
+
+											if (#badItems > 0) then
+												nut.db.query("DELETE FROM nut_items WHERE _itemID IN ("..table.concat(badItems, ", ")..")")
+											end
+
+											inventory.slots = slots
+										end
+									end)
+
+									character.vars.inv[k] = inventory
+								end
+							else
+								nut.db.insertTable({
+									_charID = id
+								}, function(_, invID)
+									local w, h = nut.config.get("invW"), nut.config.get("invH")
+									local inventory = nut.item.createInv(w, h, invID)
+									inventory:setOwner(id)
+
+									character.vars.inv[1] = inventory
+								end, "inventories")
 							end
 						end)
 					nut.char.loaded[id] = character
@@ -541,8 +571,16 @@ do
 				nut.char.loaded[id] = nil
 				netstream.Start(nil, "charDel", id, isCurrentChar)
 				nut.db.query("DELETE FROM nut_characters WHERE _id = "..id.." AND _steamID = "..client:SteamID64())
-				nut.db.query("DELETE FROM nut_items WHERE _charID = "..id)
+				nut.db.query("SELECT _invID FROM nut_items WHERE _charID = "..id, function(data)
+					if (data) then
+						for k, v in ipairs(data) do
+							nut.db.query("DELETE FROM nut_items WHERE _invID = "..v._invID)
+						end
+					end
 
+					nut.db.query("DELETE FROM nut_inventories WHERE _charID = "..id)
+				end)
+				
 				if (isCurrentChar) then
 					client:setNetVar("charID", nil)
 					client:Spawn()

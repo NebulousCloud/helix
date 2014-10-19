@@ -346,7 +346,15 @@ function GM:ItemShowEntityMenu(entity)
 		end
 
 		options[L(v.name or k)] = function()
-			Callback(k)
+			local send = true
+
+			if (v.onClick) then
+				send = v.onClick(itemTable)
+			end
+
+			if (send != false) then
+				Callback(k)
+			end
 		end
 	end
 

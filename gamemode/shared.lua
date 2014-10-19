@@ -67,7 +67,7 @@ function GM:Initialize()
 	nut.config.load()
 
 	if (SERVER and hook.Run("ShouldCleanDataItems") != false) then
-		nut.db.query("DELETE FROM nut_items WHERE _charID = 0")
+		nut.db.query("DELETE FROM nut_items WHERE _invID = 0")
 	end
 end
 

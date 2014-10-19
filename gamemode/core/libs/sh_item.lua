@@ -2,13 +2,15 @@ nut.item = nut.item or {}
 nut.item.list = nut.item.list or {}
 nut.item.base = nut.item.base or {}
 nut.item.instances = nut.item.instances or {}
+nut.item.inventories = nut.item.inventories or {}
+nut.item.inventoryTypes = nut.item.inventoryTypes or {}
 
 nut.util.include("nutscript/gamemode/core/meta/sh_item.lua")
 
-function nut.item.instance(owner, uniqueID, data, x, y, callback)
+function nut.item.instance(index, uniqueID, data, x, y, callback)
 	if (!uniqueID or nut.item.list[uniqueID]) then
 		nut.db.insertTable({
-			_charID = owner,
+			_invID = index,
 			_uniqueID = uniqueID,
 			_data = data,
 			_x = x,
@@ -20,11 +22,41 @@ function nut.item.instance(owner, uniqueID, data, x, y, callback)
 				if (callback) then
 					callback(item)
 				end
+
+				if (item.onInstanced) then
+					item:onInstanced(index, x, y)
+				end
 			end
 		end, "items")
 	else
 		ErrorNoHalt("[NutScript] Attempt to give an invalid item! ("..(uniqueID or "nil")..")\n")
 	end
+end
+
+function nut.item.registerInv(invType, w, h)
+	nut.item.inventoryTypes[invType] = {w = w, h = h}
+end
+
+function nut.item.newInv(owner, invType, callback)
+	nut.db.insertTable({
+		_invType = invType,
+		_charID = owner
+	}, function(data, invID)
+		local inventory = nut.item.createInv(w, h, invID)
+
+		for k, v in ipairs(player.GetAll()) do
+			if (v:getChar() and v:getChar():getID() == owner) then
+				inventory:setOwner(v)
+				inventory:sync(v)
+
+				break
+			end
+		end
+
+		if (callback) then
+			callback(inventory)
+		end
+	end, "inventories")
 end
 
 function nut.item.load(path, baseID, isBaseItem)
@@ -115,6 +147,10 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 			ITEM.width = ITEM.width or 1
 			ITEM.height = ITEM.height or 1
 
+			if (ITEM.onRegistered) then
+				ITEM:onRegistered()
+			end
+
 			(isBaseItem and nut.item.base or nut.item.list)[ITEM.uniqueID] = ITEM
 		if (luaGenerated) then
 			return ITEM
@@ -171,15 +207,18 @@ end
 do
 	nut.util.include("nutscript/gamemode/core/meta/sh_inventory.lua")
 
-	function nut.item.createInv(w, h)
-		return setmetatable({w = w, h = h}, {__index = FindMetaTable("Inventory")})
+	function nut.item.createInv(w, h, id)
+		local inventory = setmetatable({w = w, h = h, id = id}, {__index = FindMetaTable("Inventory")})
+			nut.item.inventories[id] = inventory
+		return inventory
 	end
 
 
 	if (CLIENT) then
-		netstream.Hook("inv", function(slots, w, h, owner)
+		netstream.Hook("inv", function(slots, w, h, id, owner)
 			local character
-
+			id = id or 1
+			print(id, w, h)
 			if (owner) then
 				character = nut.char.loaded[owner]
 			else
@@ -187,7 +226,7 @@ do
 			end
 
 			if (character) then
-				local inventory = nut.item.createInv(w, h)
+				local inventory = nut.item.createInv(w, h, id)
 				inventory:setOwner(character:getID())
 				inventory.slots = {}
 
@@ -203,7 +242,8 @@ do
 					inventory.slots[x][y] = item
 				end
 
-				character.vars.inv = inventory
+				character.vars.inv = character.vars.inv or {}
+				character.vars.inv[id] = inventory
 			end
 		end)
 
@@ -217,7 +257,7 @@ do
 			end
 		end)
 
-		netstream.Hook("invSet", function(uniqueID, id, x, y, owner)
+		netstream.Hook("invSet", function(uniqueID, id, x, y, owner, invID)
 			local character = LocalPlayer():getChar()
 
 			if (owner) then
@@ -225,7 +265,7 @@ do
 			end
 
 			if (character) then
-				local inventory = character:getInv()
+				local inventory = character:getInv(invID)
 
 				if (inventory) then
 					local item = uniqueID and id and nut.item.new(uniqueID, id) or nil
@@ -247,7 +287,7 @@ do
 			end
 		end)
 		
-		netstream.Hook("invRmv", function(id, owner)
+		netstream.Hook("invRmv", function(id, owner, invID)
 			local character = LocalPlayer():getChar()
 
 			if (owner) then
@@ -255,12 +295,12 @@ do
 			end
 
 			if (character) then
-				local inventory = character:getInv()
+				local inventory = character:getInv(invID)
 
 				if (inventory) then
 					inventory:remove(id)
 
-					local panel = nut.gui.inv
+					local panel = nut.gui["inv"..(invID or 1)]
 
 					if (IsValid(panel)) then
 						local icon = panel.panels[id]
@@ -288,6 +328,7 @@ do
 				local item = inventory:getItemAt(oldX, oldY)
 
 				if (item) then
+					print(item)
 					if (inventory:canItemFit(x, y, item.width, item.height, item)) then
 						item.gridX = x
 						item.gridY = y
@@ -367,7 +408,7 @@ do
 						item.entity:Remove()
 					else
 						character:getInv():remove(item.id, nil, true)
-						nut.db.query("UPDATE nut_items SET _charID = 0 WHERE _itemID = "..item.id)
+						nut.db.query("UPDATE nut_items SET _invID = 0 WHERE _itemID = "..item.id)
 					end
 				end
 
@@ -384,5 +425,12 @@ end
 
 nut.char.registerVar("inv", {
 	isLocal = true,
-	noDisplay = true
+	noDisplay = true,
+	onGet = function(character, index)
+		if (index and type(index) != "number") then
+			return character.vars.inv
+		end
+
+		return character.vars.inv and character.vars.inv[index or 1]
+	end
 })
