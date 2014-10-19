@@ -50,6 +50,20 @@ if (SERVER) then
 			end
 		end
 	end
+
+	function ENT:OnRemove()
+		if (!self.nutIsSafe and self.nutItemID) then
+			local item = nut.item.instances[self.nutItemID]
+
+			if (item) then
+				if (item.onRemoved) then
+					item:onRemoved()
+				end
+
+				nut.db.query("DELETE FROM nut_items WHERE _itemID = "..self.nutItemID)
+			end
+		end
+	end
 else
 	function ENT:onShouldDrawEntityInfo()
 		return true

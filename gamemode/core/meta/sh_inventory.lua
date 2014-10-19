@@ -157,6 +157,12 @@ function META:remove(id, noReplication, noDelete)
 		end
 
 		if (!noDelete) then
+			local item = nut.item.instances[id]
+
+			if (item and item.onRemoved) then
+				item:onRemoved()
+			end
+			
 			nut.db.query("DELETE FROM nut_items WHERE _itemID = "..id)
 			nut.item.instances[id] = nil
 		end

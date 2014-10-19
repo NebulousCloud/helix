@@ -405,6 +405,7 @@ do
 
 				if (callback.onRun(item) != false) then
 					if (item.entity) then
+						item.entity.nutIsSafe = true
 						item.entity:Remove()
 					else
 						character:getInv():remove(item.id, nil, true)

@@ -17,7 +17,7 @@ ITEM.functions.View = {
 				panel:setInventory(inventory)
 				panel:ShowCloseButton(true)
 				panel:SetTitle(item.name)
-				
+
 				nut.gui["inv"..index] = panel
 			end
 		end
@@ -36,6 +36,15 @@ function ITEM:onInstanced(invID, x, y)
 		nut.item.newInv(inventory.owner, self.uniqueID, function(inventory)
 			self:setData("id", inventory:getID())
 		end)
+	end
+end
+
+function ITEM:onRemoved()
+	local index = self:getData("id")
+
+	if (index) then
+		nut.db.query("DELETE FROM nut_items WHERE _invID = "..index)
+		nut.db.query("DELETE FROM nut_inventories WHERE _invID = "..index)
 	end
 end
 

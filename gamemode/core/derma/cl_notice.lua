@@ -21,5 +21,8 @@ local PANEL = {}
 			surface.SetDrawColor(nut.config.get("color"))
 			surface.DrawRect(w2, 0, w - w2, h)
 		end
+
+		surface.SetDrawColor(0, 0, 0, 45)
+		surface.DrawOutlinedRect(0, 0, w, h)
 	end
 vgui.Register("nutNotice", PANEL, "DLabel")
