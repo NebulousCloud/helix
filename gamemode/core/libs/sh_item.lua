@@ -231,6 +231,7 @@ do
 
 
 	if (CLIENT) then
+		-- TODO: Sync Inventory. Server is fine. It seems somehow Inventory is not synced for reason that I don't know.
 		netstream.Hook("inv", function(slots, w, h, id, owner)
 			local character
 			id = id or 1
@@ -263,8 +264,6 @@ do
 				character.vars.inv[id] = inventory
 			end
 		end)
-
-
 
 		netstream.Hook("invData", function(id, key, value)
 			local item = nut.item.instances[id]
