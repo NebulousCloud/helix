@@ -149,6 +149,7 @@ if (SERVER) then
 															item2.data = table.Merge(item2.data, data or {})
 															item2.gridX = x
 															item2.gridY = y
+															item2.invID = invID
 															
 															for x2 = 0, item2.width - 1 do
 																for y2 = 0, item2.height - 1 do

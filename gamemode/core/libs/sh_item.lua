@@ -100,10 +100,9 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 				tip = "dropTip",
 				icon = "icon16/world.png",
 				onRun = function(item)
-					local ent = item:spawn(item.player)
-					ent.prevPlayer = item.player
-					ent.prevOwner = item.player:getChar().id
-					item.player:getChar():getInv():remove(item.id, nil, true)
+					item:transfer()
+
+					return false
 				end,
 				onCanRun = function(item)
 					return !IsValid(item.entity)
@@ -233,7 +232,7 @@ do
 		netstream.Hook("inv", function(slots, w, h, id, owner)
 			local character
 			id = id or 1
-			print(id, w, h)
+
 			if (owner) then
 				character = nut.char.loaded[owner]
 			else
@@ -254,6 +253,7 @@ do
 
 					local item = nut.item.new(v[3], v[4])
 						item.data = table.Merge(item.data, v[5] or {})
+						item.invID = item.invID or id
 					inventory.slots[x][y] = item
 				end
 

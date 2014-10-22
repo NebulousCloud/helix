@@ -159,6 +159,47 @@ if (SERVER) then
 			return entity
 		end
 	end
+
+	-- Transfers an item to a specific inventory.
+	function ITEM:transfer(invID, client, noReplication)
+		local inventory = nut.item.inventories[invID]
+		local curInv = nut.item.inventories[self.invID or 0]
+
+		if (curInv and !IsValid(client)) then
+			client = curInv:getReceiver()
+		end
+
+		if (inventory) then
+			local x, y
+
+			if (invID and invID > 0) then
+				x, y = inventory:findEmptySlot(self.width, self.height)
+
+				if (!x or !y) then
+					return false, "no space"
+				end
+
+				if (curInv) then
+					curInv:remove(self.id, false, true)
+				end
+
+				return inventory:add(self.id, nil, x, y, noReplication)
+			elseif (IsValid(client)) then
+				curInv:remove(self.id, false, true)
+				nut.db.query("UPDATE nut_items SET _invID = 0 WHERE _itemID = "..self.id)
+
+				local entity = self:spawn(client)
+				entity.prevPlayer = client
+				entity.prevOwner = client:getChar().id
+
+				return entity		
+			else
+				return false, "invalid player"
+			end
+		else
+			return false, "invalid inv"
+		end
+	end
 end
 
 _R.Item = ITEM
