@@ -21,8 +21,16 @@ PLUGIN.areaTable = PLUGIN.areaTable or {}
 nut.area = nut.area or {}
 ALWAYS_RAISED["nut_areahelper"] = true
 
-local playerMeta = FindMetaTable("Player")
+nut.config.add("areaFontSize", 26, "The size of the font of Area Display.", nil, {
+	data = {min = 1, max = 128},
+	category = "areaPlugin"
+})
+nut.config.add("areaDispSpeed", 20, "The Appearance Speed of Area Display.", nil, {
+	data = {min = 1, max = 40},
+	category = "areaPlugin"
+})
 
+local playerMeta = FindMetaTable("Player")
 
 if (SERVER) then
 	function nut.area.getArea(areaID)
@@ -56,7 +64,7 @@ if (SERVER) then
 		return self.curArea
 	end
 
-	function PLUGIN:SaveDota()
+	function PLUGIN:SaveData()
 		self:setData(self.areaTable)
 	end
 
@@ -64,6 +72,19 @@ if (SERVER) then
 		self.areaTable = self:getData() or {}
 	end
 
+	function PLUGIN:PlayerLoadedChar(client, character, lastChar)
+		client.curArea = nil
+	end
+
+	function PLUGIN:PlayerDeath(client)
+		client.curArea = nil
+	end
+
+	function PLUGIN:PlayerSpawn(client)
+		client.curArea = nil
+	end
+
+	-- gets two vector and gives min and max vector for Vector:WithinAA(min, max)
 	local function sortVector(vector1, vector2)
 		local minVector = Vector(0, 0, 0)
 		local maxVector = Vector(0, 0, 0)
@@ -81,6 +102,7 @@ if (SERVER) then
 		return minVector, maxVector
 	end
 
+	-- add area.
 	function nut.area.addArea(name, vector1, vector2, desc)
 		if (!name or !vector1 or !vector2) then
 			return false, "Required arguments are not provided."
@@ -96,11 +118,13 @@ if (SERVER) then
 		})
 	end
 
+	-- Think. Chessnut hates this. 
+	-- What do I have to do?
 	function PLUGIN:Think()
 		for k, v in ipairs(player.GetAll()) do
 			local char = v:getChar()
 
-			if (char) then
+			if (char and v:Alive()) then
 				local area = v:getArea()
 				for id, areaData in pairs(nut.area.getAllArea()) do
 					local clientPos = v:GetPos() + v:OBBCenter()
@@ -117,10 +141,24 @@ if (SERVER) then
 		end
 	end
 
+	-- If area is changed, set display Area's Name to the client's screen.
 	function PLUGIN:OnPlayerAreaChanged(client, areaID)
 		local areaData = nut.area.getArea(areaID)
 		netstream.Start(client, "displayAreaText", tostring(areaData.name))
 	end
+
+	netstream.Hook("areaEdit", function(client, areaID, editData)
+		-- Only Admin can edit the area.
+		if (!client:IsAdmin()) then
+			return false
+		end
+
+		-- If area is valid, merge editData to areaData.
+		local areaData = table.Copy(nut.area.getArea(areaID))
+		if (areaData) then
+			PLUGIN.areaTable[areaID] = table.Merge(areaData, editData)
+		end
+	end)
 else
 	netstream.Hook("displayPosition", function(pos)
 		local emitter = ParticleEmitter( pos )
@@ -136,12 +174,31 @@ else
 	end)
 
 	-- area Manager.
+	local function addAreaPanel(frame)
+		local panel = frame:Add("DPanel")
+		panel:SetTall(30)
+		frame:AddItem(panel)
+	end
+	
 	function nut.area.openAreaManager()
+		local frame = vgui.Create("DFrame")
+		frame:SetSize(400, 300)
+		frame:Center()
+		frame:MakePopup()
+		frame:SetTitle("Area Manager")
 
+		frame.menu = frame:Add("PanelList")
+		frame.menu:Dock(FILL)
+		frame.menu:DockMargin(5, 5, 5, 5)
+		frame.menu:SetSpacing(2)
+		frame.menu:SetPadding(2)
+		frame.menu:EnableVerticalScrollbar()
+
+		addAreaPanel(frame.menu)
 	end
 
 	netstream.Hook("areaManager", function()
-		nut.area.openAreaManager()
+		--nut.area.openAreaManager()
 	end)
 
 	function PLUGIN:LoadFonts(font)
@@ -194,7 +251,7 @@ else
 	local dieAlpha = 0
 
 	function displayScrText(str, time)
-		speed = 20
+		speed = nut.config.get("areaDispSpeed")
 		targetScale = 1
 		dispString = str
 		dieTime = time or 5
@@ -217,11 +274,11 @@ else
 		if (dieTrigger and dieTimer < RealTime() and dieAlpha <= 1) then
 			return	
 		end
-
+		
 		local w, h = ScrW(), ScrH()
 		local dsx, dsy = 0
 		local strEnd = string.len(dispString)
-		local sx, sy = surface.GetTextSize(dispString)
+		local sx, sy = surface.GetTextSize(dispString)	
 		local rTime = RealTime()
 
 		-- Number of characters to display.
@@ -338,3 +395,14 @@ nut.command.add("arearemove", {
 		end
 	end
 })
+
+/*
+nut.command.add("areamanage", {
+	adminOnly = true,
+	onRun = function(client, arguments)
+		if (client:Alive()) then
+			netstream.Start(client, "areaManager")
+		end
+	end
+})
+*/
