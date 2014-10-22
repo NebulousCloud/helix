@@ -195,9 +195,16 @@ CREATE TABLE IF NOT EXISTS `nut_characters` (
 	PRIMARY KEY (`_id`)
 );
 
+CREATE TABLE IF NOT EXISTS `nut_inventories` (
+	`_invID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+	`_charID` int(11) unsigned NOT NULL,
+	`invType` varchar(24) DEFAULT NULL,
+	PRIMARY KEY (`_invID`)
+);
+
 CREATE TABLE IF NOT EXISTS `nut_items` (
 	`_itemID` int(11) unsigned NOT NULL AUTO_INCREMENT,
-	`_charID` int(11) unsigned NOT NULL,
+	`_invID` int(11) unsigned NOT NULL,
 	`_uniqueID` varchar(60) NOT NULL,
 	`_data` varchar(255) DEFAULT NULL,
 	`_x` smallint(4) NOT NULL,
@@ -232,9 +239,15 @@ CREATE TABLE IF NOT EXISTS `nut_characters` (
 	`_faction` TEXT
 );
 
+CREATE TABLE IF NOT EXISTS `nut_inventories` (
+	`_invID` INTEGER PRIMARY KEY,
+	`_charID` INTEGER,
+	`invType` TEXT
+);
+
 CREATE TABLE IF NOT EXISTS `nut_items` (
 	`_itemID` INTEGER PRIMARY KEY,
-	`_charID` INTEGER,
+	`_invID` INTEGER,
 	`_x` INTEGER,
 	`_y` INTEGER,
 	`_uniqueID` TEXT,
@@ -255,6 +268,7 @@ local DROP_QUERY = [[
 DROP TABLE IF EXISTS `nut_characters` ;
 DROP TABLE IF EXISTS `nut_items` ;
 DROP TABLE IF EXISTS `nut_players`;
+DROP TABLE IF EXISTS `nut_inventories`;
 ]]
 
 function nut.db.wipeTables()
