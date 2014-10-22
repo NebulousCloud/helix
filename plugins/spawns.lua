@@ -67,43 +67,47 @@ nut.command.add("spawnadd", {
 		local class = table.concat(arguments, " ", 2)
 		local info
 
-		for k, v in ipairs(nut.faction.indices) do
-			if (nut.util.stringMatches(v.uniqueID, name) or nut.util.stringMatches(v.name, name)) then
-				faction = v.uniqueID
-				info = v
+		if (name) then
+			for k, v in ipairs(nut.faction.indices) do
+				if (nut.util.stringMatches(v.uniqueID, name) or nut.util.stringMatches(v.name, name)) then
+					faction = v.uniqueID
+					info = v
 
-				if (class and class != "") then
-					local found = false
+					if (class and class != "") then
+						local found = false
 
-					for k2, v2 in ipairs(nut.class.list) do
-						if (v2.faction == v.index) then
-							class = v2.uniqueID
-							found = true
+						for k2, v2 in ipairs(nut.class.list) do
+							if (v2.faction == v.index) then
+								class = v2.uniqueID
+								found = true
 
-							break
+								break
+							end
+						end
+
+						if (!found) then
+							return L("invalidClass", client)
 						end
 					end
 
-					if (!found) then
-						return L("invalidClass", client)
-					end
+					break
 				end
-
-				break
 			end
-		end
 
-		if (faction) then
-			PLUGIN.spawns[faction] = PLUGIN.spawns[faction] or {}
-			PLUGIN.spawns[faction][class] = PLUGIN.spawns[faction][class] or {}
+			if (faction) then
+				PLUGIN.spawns[faction] = PLUGIN.spawns[faction] or {}
+				PLUGIN.spawns[faction][class] = PLUGIN.spawns[faction][class] or {}
 
-			table.insert(PLUGIN.spawns[faction][class], client:GetPos())
+				table.insert(PLUGIN.spawns[faction][class], client:GetPos())
 
-			PLUGIN:SaveSpawns()
+				PLUGIN:SaveSpawns()
 
-			return L("spawnAdded", client, info.name)
+				return L("spawnAdded", client, info.name)
+			else
+				return L("invalidFaction", client)
+			end
 		else
-			return L("invalidFaction", client)
+			return L("invalidArg", client, 1)
 		end
 	end
 })

@@ -118,5 +118,6 @@ LANGUAGE = {
 	rollFormat = "%s has rolled %s.",
 	wFormat = "%s whispers \"%s\"",
 	yFormat = "%s yells \"%s\"",
-	sbOptions = "Click to see options for %s."
+	sbOptions = "Click to see options for %s.",
+	spawnAdded = "You added spawn for %s.",
 }
