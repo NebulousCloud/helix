@@ -259,7 +259,7 @@ DROP TABLE IF EXISTS `nut_players`;
 
 function nut.db.wipeTables()
 	local function callback()
-		print("[Nutscript] ALL NUTSCRIPT DATA HAS BEEN WIPED")
+		MsgC(Color(255, 0, 0), "[Nutscript] ALL NUTSCRIPT DATA HAS BEEN WIPED\n")
 	end
 	
 	if (nut.db.object) then
@@ -274,6 +274,23 @@ function nut.db.wipeTables()
 
 	nut.db.loadTables()
 end
+
+local resetCalled = 0
+concommand.Add("nut_recreatedb", function(client, cmd, arguments)
+	-- this command can be run in RCON or SERVER CONSOLE
+	if (!IsValid(client)) then
+		if (resetCalled < RealTime()) then
+			resetCalled = RealTime() + 3
+
+			MsgC(Color(255, 0, 0), "[Nutscript] TO CONFIRM DATABASE RESET, RUN 'nut_recreatedb' AGAIN in 3 SECONDS.\n")
+		else
+			resetCalled = 0
+			
+			MsgC(Color(255, 0, 0), "[Nutscript] DATABASE WIPE IN PROGRESS.\n")
+			nut.db.wipeTables()
+		end
+	end
+end)
 
 function nut.db.loadTables()
 	if (nut.db.object) then
