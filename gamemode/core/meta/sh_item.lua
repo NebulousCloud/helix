@@ -189,6 +189,8 @@ if (SERVER) then
 					return false, result
 				end
 			elseif (IsValid(client)) then
+				self.invID = 0
+
 				curInv:remove(self.id, false, true)
 				nut.db.query("UPDATE nut_items SET _invID = 0 WHERE _itemID = "..self.id)
 

@@ -67,7 +67,7 @@ if (SERVER) then
 	end
 
 	function ENT:OnRemove()
-		if (!self.nutIsSafe and self.nutItemID) then
+		if (!nut.shuttingDown and !self.nutIsSafe and self.nutItemID) then
 			local item = nut.item.instances[self.nutItemID]
 
 			if (item) then

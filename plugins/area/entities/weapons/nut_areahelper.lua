@@ -137,7 +137,6 @@ if CLIENT then
 	end
 
 	hook.Add("PostDrawOpaqueRenderables", "helperDraw", function()
-		PrintTable(areaPoint)
 		if (areaPoint) then
 			local sPos, ePos 
 			if (areaPoint.startVector and areaPoint.endVector) then
