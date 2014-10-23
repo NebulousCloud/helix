@@ -39,8 +39,14 @@ local PANEL = {}
 function PANEL:Init()
 end
 
-function PANEL:PaintOver()
+function PANEL:PaintOver(w, h)
 	local itemTable = LocalPlayer():getChar():getInv():getItemAt(self.gridX, self.gridY)
+
+	if (self.waiting and self.waiting > CurTime()) then
+		local wait = (self.waiting - CurTime()) / self.waitingTime
+		surface.SetDrawColor(255, 255, 255, 100*wait)
+		surface.DrawRect(2, 2, w - 4, h - 4)
+	end
 
 	if (itemTable and itemTable.paintOver) then
 		local w, h = self:GetSize()
@@ -49,9 +55,8 @@ function PANEL:PaintOver()
 	end
 end
 
-function PANEL:Paint()
+function PANEL:Paint(w, h)
 	local parent = self:GetParent()
-	local w, h = self:GetSize()
 
 	surface.SetDrawColor(0, 0, 0, 85)
 	surface.DrawRect(2, 2, w - 4, h - 4)
@@ -64,6 +69,18 @@ function PANEL:Paint()
 		parent.offsetX = math.Round(x / 64)
 		parent.offsetY = math.Round(y / 64)
 	end	
+end
+
+function PANEL:wait(time)
+	time = math.abs(time) or .2
+	self.waiting = CurTime() + time
+	self.waitingTime = time
+end
+
+function PANEL:isWaiting()
+	if (self.waiting and self.waitingTime) then
+		return (self.waiting and self.waiting > CurTime())
+	end
 end
 
 vgui.Register("nutItemIcon", PANEL, "SpawnIcon")
