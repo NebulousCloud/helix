@@ -13,10 +13,28 @@
     along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
--- currently server verificaiton is not exist.
--- you can exploit the inventory with netstream.
-local PANEL = {}
+-- The queue for the rendered icons.
 renderdIcons = renderdIcons or {}
+
+-- To make making inventory variant, This must be followed up.
+function renderNewIcon(panel, itemTable)
+	-- re-render icons
+	if ((itemTable.iconCam and !renderdIcons[string.lower(itemTable.model)]) or itemTable.forceRender) then
+		local iconCam = itemTable.iconCam
+		iconCam = {
+			cam_pos = iconCam.pos,
+			cam_fov = iconCam.fov,
+			cam_ang = iconCam.ang,
+		}
+		renderdIcons[string.lower(itemTable.model)] = true
+		
+		panel.Icon:RebuildSpawnIconEx(
+			iconCam
+		)
+	end
+end
+
+local PANEL = {}
 
 function PANEL:Init()
 end
@@ -200,20 +218,7 @@ PANEL = {}
 			end
 
 			local itemTable = inventory:getItemAt(panel.gridX, panel.gridY)
-
-			if ((itemTable.iconCam and !renderdIcons[string.lower(itemTable.model)]) or itemTable.forceRender) then
-				local iconCam = itemTable.iconCam
-				iconCam = {
-					cam_pos = iconCam.pos,
-					cam_fov = iconCam.fov,
-					cam_ang = iconCam.ang,
-				}
-				renderdIcons[string.lower(itemTable.model)] = true
-				
-				panel.Icon:RebuildSpawnIconEx(
-					iconCam
-				)
-			end
+			renderNewIcon(panel, itemTable)
 
 			panel.OnMousePressed = function(this, code)
 				if (code == MOUSE_LEFT) then
