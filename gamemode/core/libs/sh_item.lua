@@ -34,6 +34,8 @@ function nut.item.instance(index, uniqueID, data, x, y, callback)
 			local item = nut.item.new(uniqueID, itemID)
 
 			if (item) then
+				item.invID = index
+
 				if (callback) then
 					callback(item)
 				end
@@ -61,7 +63,7 @@ function nut.item.newInv(owner, invType, callback)
 
 		for k, v in ipairs(player.GetAll()) do
 			if (v:getChar() and v:getChar():getID() == owner) then
-				inventory:setOwner(v)
+				inventory:setOwner(owner)
 				inventory:sync(v)
 
 				break
@@ -114,16 +116,16 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 				onRun = function(item)
 					local status, result = item.player:getChar():getInv():add(item.id)
 
-					if (item.data) then -- I don't like it but, meh...
-						for k, v in pairs(item.data) do
-							item:setData(k, v)
-						end
-					end
-
 					if (!status) then
 						item.player:notify(result)
 
 						return false
+					else
+						if (item.data) then -- I don't like it but, meh...
+							for k, v in pairs(item.data) do
+								item:setData(k, v)
+							end
+						end
 					end
 				end,
 				onCanRun = function(item)
@@ -272,7 +274,7 @@ do
 			end
 		end)
 
-		netstream.Hook("invSet", function(uniqueID, id, x, y, owner, invID)
+		netstream.Hook("invSet", function(invID, uniqueID, id, x, y, owner)
 			local character = LocalPlayer():getChar()
 
 			if (owner) then
@@ -287,7 +289,7 @@ do
 					inventory.slots[x] = inventory.slots[x] or {}
 					inventory.slots[x][y] = item
 
-					local panel = nut.gui.inv
+					local panel = nut.gui["inv"..(invID or 1)]
 
 					if (IsValid(panel)) then
 						local icon = panel:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
@@ -302,7 +304,7 @@ do
 			end
 		end)
 		
-		netstream.Hook("invRmv", function(id, owner, invID)
+		netstream.Hook("invRmv", function(id, invID, owner)
 			local character = LocalPlayer():getChar()
 
 			if (owner) then
@@ -332,42 +334,50 @@ do
 			end			
 		end)
 	else
-		netstream.Hook("invMove", function(client, oldX, oldY, x, y)
+		netstream.Hook("invMv", function(client, oldX, oldY, x, y, invID)
 			oldX, oldY, x, y = tonumber(oldX), tonumber(oldY), tonumber(x), tonumber(y)
 			if (!oldX or !oldY or !x or !y) then return end
 
 			local character = client:getChar()
 
 			if (character) then
-				local inventory = character:getInv()
-				local item = inventory:getItemAt(oldX, oldY)
+				local inventory = character:getInv(invID or 1)
 
-				if (item) then
-					print(item)
-					if (inventory:canItemFit(x, y, item.width, item.height, item)) then
-						item.gridX = x
-						item.gridY = y
+				if (inventory) then
+					local item = inventory:getItemAt(oldX, oldY)
 
-						for x2 = 0, item.width - 1 do
-							for y2 = 0, item.height - 1 do
-								inventory.slots[oldX + x2] = inventory.slots[oldX + x2] or {}
-								inventory.slots[oldX + x2][oldY + y2] = nil
+					if (item) then
+						if (inventory:canItemFit(x, y, item.width, item.height, item)) then
+							item.gridX = x
+							item.gridY = y
 
-								inventory.slots[x + x2] = inventory.slots[x + x2] or {}
-								inventory.slots[x + x2][y + y2] = item
+							for x2 = 0, item.width - 1 do
+								for y2 = 0, item.height - 1 do
+									inventory.slots[oldX + x2] = inventory.slots[oldX + x2] or {}
+									inventory.slots[oldX + x2][oldY + y2] = nil
+
+									inventory.slots[x + x2] = inventory.slots[x + x2] or {}
+									inventory.slots[x + x2][y + y2] = item
+								end
 							end
+							print(oldX, oldY, "=>", x, y)
+							nut.db.query("UPDATE nut_items SET _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
 						end
-
-						nut.db.query("UPDATE nut_items SET _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
 					end
 				end
 			end
 		end)
 
-		netstream.Hook("invAct", function(client, action, item)
+		netstream.Hook("invAct", function(client, action, item, invID)
 			local character = client:getChar()
 
 			if (!character) then
+				return
+			end
+
+			local inventory = character:getInv(invID or 1)
+
+			if (!inventory) then
 				return
 			end
 
@@ -404,7 +414,7 @@ do
 				if (item.entity:GetPos():Distance(client:GetPos()) > 96) then
 					return
 				end
-			elseif (!character:getInv():getItemByID(item.id)) then
+			elseif (!inventory:getItemByID(item.id)) then
 				return
 			end
 
@@ -423,7 +433,7 @@ do
 						item.entity.nutIsSafe = true
 						item.entity:Remove()
 					else
-						character:getInv():remove(item.id, nil, true)
+						inventory:remove(item.id, nil, true)
 						nut.db.query("UPDATE nut_items SET _invID = 0 WHERE _itemID = "..item.id)
 					end
 				end
@@ -444,7 +454,7 @@ nut.char.registerVar("inv", {
 	noDisplay = true,
 	onGet = function(character, index)
 		if (index and type(index) != "number") then
-			return character.vars.inv
+			return character.vars.inv or {}
 		end
 
 		return character.vars.inv and character.vars.inv[index or 1]

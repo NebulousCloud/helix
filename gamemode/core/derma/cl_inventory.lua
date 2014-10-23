@@ -62,6 +62,7 @@ PANEL = {}
 	
 	function PANEL:setInventory(inventory)
 		if (inventory.slots) then
+			self.invID = inventory:getID()
 			self:SetSize(64, 64)
 			self:setGridSize(inventory:getSize())
 
@@ -163,14 +164,17 @@ PANEL = {}
 	end
 	
 	function PANEL:onTransfer(oldX, oldY, x, y)
-		netstream.Start("invMove", oldX, oldY, x, y)
+		netstream.Start("invMv", oldX, oldY, x, y, self.invID)
 
-		local inventory = LocalPlayer():getChar():getInv()
-		local item = inventory:getItemAt(oldX, oldY)
+		local inventory = LocalPlayer():getChar():getInv(self.invID)
 
-		inventory.slots[oldX][oldY] = nil
-		inventory.slots[x] = inventory.slots[x] or {}
-		inventory.slots[x][y] = item
+		if (inventory) then
+			local item = inventory:getItemAt(oldX, oldY)
+
+			inventory.slots[oldX][oldY] = nil
+			inventory.slots[x] = inventory.slots[x] or {}
+			inventory.slots[x][y] = item
+		end
 	end
 
 	function PANEL:addIcon(model, x, y, w, h)
@@ -188,7 +192,14 @@ PANEL = {}
 			panel.gridY = y
 			panel.gridW = w
 			panel.gridH = h
-			local itemTable = LocalPlayer():getChar():getInv():getItemAt(panel.gridX, panel.gridY)
+
+			local inventory = LocalPlayer():getChar():getInv(self.invID)
+
+			if (!inventory) then
+				return
+			end
+
+			local itemTable = inventory:getItemAt(panel.gridX, panel.gridY)
 
 			if ((itemTable.iconCam and !renderdIcons[string.lower(itemTable.model)]) or itemTable.forceRender) then
 				local iconCam = itemTable.iconCam
@@ -282,7 +293,7 @@ PANEL = {}
 									end
 
 									if (send != false) then
-										netstream.Start("invAct", k, itemTable.id)
+										netstream.Start("invAct", k, itemTable.id, self.invID > 1 and self.invID or nil)
 									end
 								end):SetImage(itemTable.icon or "icon16/brick.png")
 							end

@@ -166,9 +166,9 @@ function META:remove(id, noReplication, noDelete)
 		local receiver = self:getReceiver()
 
 		if (IsValid(receiver) and receiver:getChar() and self.owner == receiver:getChar():getID()) then
-			netstream.Start(receiver, "invRmv", id)
+			netstream.Start(receiver, "invRmv", id, self.invID)
 		else
-			netstream.Start(receiver, "invRmv", id, self.owner)
+			netstream.Start(receiver, "invRmv", id, self.invID, self.owner)
 		end
 
 		if (!noDelete) then
@@ -235,9 +235,9 @@ if (SERVER) then
 		local receiver = self:getReceiver()
 
 		if (IsValid(receiver) and receiver:getChar() and self.owner == receiver:getChar():getID()) then
-			netstream.Start(receiver, "invSet", item and item.uniqueID or nil, item and item.id or nil, x, y)
+			netstream.Start(receiver, "invSet", self:getID(), item and item.uniqueID or nil, item and item.id or nil, x, y)
 		else
-			netstream.Start(receiver, "invSet", item and item.uniqueID or nil, item and item.id or nil, x, y, self.owner)
+			netstream.Start(receiver, "invSet", self:getID(), item and item.uniqueID or nil, item and item.id or nil, x, y, self.owner)
 		end
 	end
 
@@ -260,13 +260,14 @@ if (SERVER) then
 					if (!x and !y) then
 						x, y = self:findEmptySlot(item.width, item.height)
 					end
-					
+
 					if (x and y) then
 						self.slots[x] = self.slots[x] or {}
 						self.slots[x][y] = true
 
 						item.gridX = x
 						item.gridY = y
+						item.invID = self:getID()
 
 						for x2 = 0, item.width - 1 do
 							for y2 = 0, item.height - 1 do
@@ -324,6 +325,8 @@ if (SERVER) then
 					return false, "no space"
 				end
 			end
+		else
+			return false, "invalid owner"
 		end
 	end
 

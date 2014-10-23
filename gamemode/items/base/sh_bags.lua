@@ -25,10 +25,15 @@ ITEM.functions.View = {
 		local index = item:getData("id")
 
 		if (index) then
+			local panel = nut.gui["inv"..index]
 			local inventory = LocalPlayer():getChar():getInv(index)	
+			
+			if (IsValid(panel)) then
+				panel:Remove()
+			end
 
 			if (inventory and inventory.slots) then
-				local panel = nut.gui.menu.panel:Add("nutInventory")
+				panel = nut.gui.menu.panel:Add("nutInventory")
 				panel:setInventory(inventory)
 				panel:ShowCloseButton(true)
 				panel:SetTitle(item.name)

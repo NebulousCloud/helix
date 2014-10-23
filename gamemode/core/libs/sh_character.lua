@@ -36,23 +36,30 @@ if (SERVER) then
 			_money = data.money or nut.config.get("defMoney", 0),
 			_data = data.data
 		}, function(data2, charID)
-			nut.db.query("INSERT INTO nut_inventories (_charID) VALUES ("..charID..")")
+			nut.db.query("INSERT INTO nut_inventories (_charID) VALUES ("..charID..")", function(_, invID)
+				local client
 
-			local client
-
-			for k, v in ipairs(player.GetAll()) do
-				if (v:SteamID64() == data.steamID) then
-					client = v
-					break
+				for k, v in ipairs(player.GetAll()) do
+					if (v:SteamID64() == data.steamID) then
+						client = v
+						break
+					end
 				end
-			end
 
-			nut.char.loaded[charID] = nut.char.new(data, charID, client, data.steamID)
-			table.insert(nut.char.cache[data.steamID], charID)
+				local w, h = nut.config.get("invW"), nut.config.get("invH")
+				local character = nut.char.new(data, charID, client, data.steamID)
+				local inventory = nut.item.createInv(w, h, invID)
 
-			if (callback) then
-				callback(charID)
-			end
+				character.vars.inv = {inventory}
+				inventory:setOwner(charID)
+
+				nut.char.loaded[charID] = character
+				table.insert(nut.char.cache[data.steamID], charID)
+
+				if (callback) then
+					callback(charID)
+				end
+			end)
 		end)
 	end
 
@@ -587,7 +594,7 @@ do
 				nut.char.loaded[id] = nil
 				netstream.Start(nil, "charDel", id, isCurrentChar)
 				nut.db.query("DELETE FROM nut_characters WHERE _id = "..id.." AND _steamID = "..client:SteamID64())
-				nut.db.query("SELECT _invID FROM nut_items WHERE _charID = "..id, function(data)
+				nut.db.query("SELECT _invID FROM nut_inventories WHERE _charID = "..id, function(data)
 					if (data) then
 						for k, v in ipairs(data) do
 							nut.db.query("DELETE FROM nut_items WHERE _invID = "..v._invID)

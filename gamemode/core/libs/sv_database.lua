@@ -198,7 +198,7 @@ CREATE TABLE IF NOT EXISTS `nut_characters` (
 CREATE TABLE IF NOT EXISTS `nut_inventories` (
 	`_invID` int(11) unsigned NOT NULL AUTO_INCREMENT,
 	`_charID` int(11) unsigned NOT NULL,
-	`invType` varchar(24) DEFAULT NULL,
+	`_invType` varchar(24) DEFAULT NULL,
 	PRIMARY KEY (`_invID`)
 );
 
@@ -242,7 +242,7 @@ CREATE TABLE IF NOT EXISTS `nut_characters` (
 CREATE TABLE IF NOT EXISTS `nut_inventories` (
 	`_invID` INTEGER PRIMARY KEY,
 	`_charID` INTEGER,
-	`invType` TEXT
+	`_invType` TEXT
 );
 
 CREATE TABLE IF NOT EXISTS `nut_items` (

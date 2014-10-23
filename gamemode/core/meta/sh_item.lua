@@ -145,7 +145,9 @@ if (SERVER) then
 					-- Ignore the actual player.
 					data.filter = position
 				-- Get the end position of the trace.
-				position = util.TraceLine(data).HitPos
+				local trace = util.TraceLine(data)
+
+				position = trace.HitPos + trace.HitNormal*5
 			end
 
 			-- Spawn the actual item entity.
@@ -169,21 +171,23 @@ if (SERVER) then
 			client = curInv:getReceiver()
 		end
 
-		if (inventory) then
+		if (curInv) then
 			local x, y
 
-			if (invID and invID > 0) then
+			if (invID and invID > 0 and inventory) then
 				x, y = inventory:findEmptySlot(self.width, self.height)
 
 				if (!x or !y) then
 					return false, "no space"
 				end
 
-				if (curInv) then
-					curInv:remove(self.id, false, true)
-				end
+				local status, result = inventory:add(self.id, nil, nil, x, y, noReplication)
 
-				return inventory:add(self.id, nil, x, y, noReplication)
+				if (status) then
+					curInv:remove(self.id, false, true)
+				else
+					return false, result
+				end
 			elseif (IsValid(client)) then
 				curInv:remove(self.id, false, true)
 				nut.db.query("UPDATE nut_items SET _invID = 0 WHERE _itemID = "..self.id)

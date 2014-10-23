@@ -113,7 +113,7 @@ if (CLIENT) then
 	-- add a hook to set viewmodel's camo.
 end
 
-// On item is dropped, Remove a weapon from the player and keep the ammo in the item.
+-- On item is dropped, Remove a weapon from the player and keep the ammo in the item.
 ITEM:hook("drop", function(item)
 	if (item:getData("equip")) then
 		item.player.carryWeapons = item.player.carryWeapons or {}
@@ -128,7 +128,7 @@ ITEM:hook("drop", function(item)
 	end
 end)
 
-// On player uneqipped the item, Removes a weapon from the player and keep the ammo in the item.
+-- On player uneqipped the item, Removes a weapon from the player and keep the ammo in the item.
 ITEM.functions.EquipUn = { -- sorry, for name order.
 	name = "Unequip",
 	tip = "equipTip",
@@ -156,7 +156,7 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 	end
 }
 
-// On player eqipped the item, Gives a weapon to player and load the ammo data from the item.
+-- On player eqipped the item, Gives a weapon to player and load the ammo data from the item.
 ITEM.functions.Equip = {
 	name = "Equip",
 	tip = "equipTip",
@@ -214,7 +214,7 @@ ITEM.functions.Equip = {
 	end
 }
 
-// When player dead, remove all ammo in the gun items and clear out player weapon carrying table.
+-- When player dead, remove all ammo in the gun items and clear out player weapon carrying table.
 hook.Add("PlayerDeath", "weapon.reset", function(client)
 	client.carryWeapons = {}
 
@@ -233,14 +233,14 @@ hook.Add("PlayerDeath", "weapon.reset", function(client)
 	end)
 end)
 
-// When player spawned, Give all equipped weapon items and load ammo from the item data.
+-- When player spawned, Give all equipped weapon items and load ammo from the item data.
 hook.Add("PlayerLoadedChar", "weapon.reset", function(client)
 	timer.Simple(0, function()
 		if (client and client:getChar()) then
-			local inv = client:getChar():getInv():getItems()
+			local inv = client:getChar():getInv()
 
 			if (inv) then
-				for k, v in pairs(inv) do
+				for k, v in pairs(inv:getItems()) do
 					if (v.isWeapon) then
 						if (v:getData("equip")) then
 							client.carryWeapons = client.carryWeapons or {}
