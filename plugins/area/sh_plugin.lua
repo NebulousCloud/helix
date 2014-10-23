@@ -271,7 +271,7 @@ else
 
 	function PLUGIN:HUDPaint()
 		-- values
-		if ((hook.Run("CanDisplayArea") == true) or (dieTrigger and dieTimer < RealTime() and dieAlpha <= 1)) then
+		if ((hook.Run("CanDisplayArea") == false) or (dieTrigger and dieTimer < RealTime() and dieAlpha <= 1)) then
 			return	 
 		end
 		
