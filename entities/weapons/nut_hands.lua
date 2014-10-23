@@ -99,10 +99,14 @@ function SWEP:Holster()
 end
 
 function SWEP:Think()
-	local viewModel = self.Owner:GetViewModel()
+	if (CLIENT) then
+		if (self.Owner) then
+			local viewModel = self.Owner:GetViewModel()
 
-	if (IsValid(viewModel)) then
-		viewModel:SetPlaybackRate(1)
+			if (IsValid(viewModel)) then
+				viewModel:SetPlaybackRate(1)
+			end
+		end
 	end
 end
 
