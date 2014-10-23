@@ -603,6 +603,9 @@ do
 
 					nut.db.query("DELETE FROM nut_inventories WHERE _charID = "..id)
 				end)
+
+				-- other plugins might need to deal with deleted characters.
+				hook.Run("OnCharDelete", client, id, isCurrentChar)
 				
 				if (isCurrentChar) then
 					client:setNetVar("charID", nil)
