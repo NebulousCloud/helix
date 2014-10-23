@@ -68,17 +68,23 @@ function META:findError()
 	end
 end
 
--- debug
+-- For the debug/item creation purpose
 function META:printAll()
-	print("INVSIZE", self:getSize())
-	for x = 1, self.w do
-		for y = 1, self.h do
-			local item = self.slots[x][y]
-			if (item and item.id) then
-				print(item.name .. "(" .. item.id .. ")", x, y)
+	print("------------------------")
+		print("INVID", self:getID())
+		print("INVSIZE", self:getSize())
+
+		if (self.slots) then
+			for x = 1, self.w do
+				for y = 1, self.h do
+					local item = self.slots[x] and self.slots[x][y]
+					if (item and item.id) then
+						print(item.name .. "(" .. item.id .. ")", x, y)
+					end
+				end
 			end
 		end
-	end
+	print("------------------------")
 end
 
 function META:setOwner(owner)
