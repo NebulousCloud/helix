@@ -21,9 +21,6 @@ PLUGIN.areaTable = PLUGIN.areaTable or {}
 nut.area = nut.area or {}
 ALWAYS_RAISED["nut_areahelper"] = true
 
--- If area is being very annoying for your plugin/schema, you can surpress it by toggling this variable.
-SURPRESS_AREADISPLAY = false
-
 nut.config.add("areaFontSize", 26, "The size of the font of Area Display.", nil, {
 	data = {min = 1, max = 128},
 	category = "areaPlugin"
@@ -274,7 +271,7 @@ else
 
 	function PLUGIN:HUDPaint()
 		-- values
-		if ((SURPRESS_AREADISPLAY == true) or (dieTrigger and dieTimer < RealTime() and dieAlpha <= 1)) then
+		if ((hook.Run("CanDisplayArea") == true) or (dieTrigger and dieTimer < RealTime() and dieAlpha <= 1)) then
 			return	 
 		end
 		
