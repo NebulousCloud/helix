@@ -239,7 +239,7 @@ else
 	local dieTime = 5
 
 	-- non configureable values.
-	--local scale = 0
+	-- local scale = 0
 	local scale = 0
 	local flipTable = {}
 	local powTime = RealTime()*speed
@@ -278,8 +278,10 @@ else
 		local w, h = ScrW(), ScrH()
 		local dsx, dsy = 0
 		local strEnd = string.len(dispString)
-		local sx, sy = surface.GetTextSize(dispString)	
 		local rTime = RealTime()
+
+		surface.SetFont("nutAreaDisplay")
+		local sx, sy = surface.GetTextSize(dispString)	
 
 		-- Number of characters to display.
 		local maxDisplay = math.Round(rTime*speed - powTime)
