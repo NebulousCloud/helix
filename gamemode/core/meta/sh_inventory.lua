@@ -166,9 +166,9 @@ function META:remove(id, noReplication, noDelete)
 		local receiver = self:getReceiver()
 
 		if (IsValid(receiver) and receiver:getChar() and self.owner == receiver:getChar():getID()) then
-			netstream.Start(receiver, "invRmv", id, self.invID)
+			netstream.Start(receiver, "invRm", id, self:getID() > 1 and self:getID() or nil)
 		else
-			netstream.Start(receiver, "invRmv", id, self.invID, self.owner)
+			netstream.Start(receiver, "invRm", id, self:getID(), self.owner)
 		end
 
 		if (!noDelete) then
@@ -235,9 +235,9 @@ if (SERVER) then
 		local receiver = self:getReceiver()
 
 		if (IsValid(receiver) and receiver:getChar() and self.owner == receiver:getChar():getID()) then
-			netstream.Start(receiver, "invSet", self:getID(), item and item.uniqueID or nil, item and item.id or nil, x, y)
+			netstream.Start(receiver, "invSet", self:getID(), x, y, item and item.uniqueID or nil, item and item.id or nil)
 		else
-			netstream.Start(receiver, "invSet", self:getID(), item and item.uniqueID or nil, item and item.id or nil, x, y, self.owner)
+			netstream.Start(receiver, "invSet", self:getID(), x, y, item and item.uniqueID or nil, item and item.id or nil, self.owner)
 		end
 	end
 

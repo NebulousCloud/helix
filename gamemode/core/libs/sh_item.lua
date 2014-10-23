@@ -274,9 +274,9 @@ do
 			end
 		end)
 
-		netstream.Hook("invSet", function(invID, uniqueID, id, x, y, owner)
+		netstream.Hook("invSet", function(invID, x, y, uniqueID, id, owner)
 			local character = LocalPlayer():getChar()
-
+			print(invID, uniqueID, id, x, y, owner)
 			if (owner) then
 				character = nut.char.loaded[owner]
 			end
@@ -304,7 +304,7 @@ do
 			end
 		end)
 		
-		netstream.Hook("invRmv", function(id, invID, owner)
+		netstream.Hook("invRm", function(id, invID, owner)
 			local character = LocalPlayer():getChar()
 
 			if (owner) then
@@ -316,9 +316,9 @@ do
 
 				if (inventory) then
 					inventory:remove(id)
-
+					print(inventory)
 					local panel = nut.gui["inv"..(invID or 1)]
-
+					print(nut.gui["inv"..(invID or 1)])
 					if (IsValid(panel)) then
 						local icon = panel.panels[id]
 
