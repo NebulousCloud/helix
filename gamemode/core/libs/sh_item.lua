@@ -275,20 +275,20 @@ do
 
 		netstream.Hook("invSet", function(invID, x, y, uniqueID, id, owner)
 			local character = LocalPlayer():getChar()
-			print(invID, uniqueID, id, x, y, owner)
+
 			if (owner) then
 				character = nut.char.loaded[owner]
 			end
 
 			if (character) then
-				local inventory = character:getInv(invID)
+				local inventory = nut.item.inventories[invID]
 
 				if (inventory) then
 					local item = uniqueID and id and nut.item.new(uniqueID, id) or nil
 					inventory.slots[x] = inventory.slots[x] or {}
 					inventory.slots[x][y] = item
 
-					local panel = nut.gui["inv"..(invID or 1)]
+					local panel = nut.gui["inv"..invID]
 
 					if (IsValid(panel)) then
 						local icon = panel:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
@@ -311,13 +311,13 @@ do
 			end
 
 			if (character) then
-				local inventory = character:getInv(invID)
+				local inventory = nut.item.inventories[invID]
 
 				if (inventory) then
 					inventory:remove(id)
-					print(inventory)
-					local panel = nut.gui["inv"..(invID or 1)]
-					print(nut.gui["inv"..(invID or 1)])
+
+					local panel = nut.gui["inv"..invID]
+
 					if (IsValid(panel)) then
 						local icon = panel.panels[id]
 
@@ -334,15 +334,15 @@ do
 		end)
 	else
 		netstream.Hook("invMv", function(client, oldX, oldY, x, y, invID)
-			oldX, oldY, x, y = tonumber(oldX), tonumber(oldY), tonumber(x), tonumber(y)
-			if (!oldX or !oldY or !x or !y) then return end
+			oldX, oldY, x, y, invID = tonumber(oldX), tonumber(oldY), tonumber(x), tonumber(y), tonumber(invID)
+			if (!oldX or !oldY or !x or !y or !invID) then return end
 
 			local character = client:getChar()
 
 			if (character) then
-				local inventory = character:getInv(invID or 1)
+				local inventory = nut.item.inventories[invID]
 
-				if (inventory) then
+				if (inventory and inventory.owner and inventory.owner == character:getID()) then
 					local item = inventory:getItemAt(oldX, oldY)
 
 					if (item) then
@@ -352,14 +352,21 @@ do
 
 							for x2 = 0, item.width - 1 do
 								for y2 = 0, item.height - 1 do
-									inventory.slots[oldX + x2] = inventory.slots[oldX + x2] or {}
-									inventory.slots[oldX + x2][oldY + y2] = nil
+									local oldX = inventory.slots[oldX + x2]
 
+									if (oldX) then
+										oldX[oldY + y2] = nil
+									end
+								end
+							end
+
+							for x2 = 0, item.width - 1 do
+								for y2 = 0, item.height - 1 do
 									inventory.slots[x + x2] = inventory.slots[x + x2] or {}
 									inventory.slots[x + x2][y + y2] = item
 								end
 							end
-							print(oldX, oldY, "=>", x, y)
+
 							nut.db.query("UPDATE nut_items SET _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
 						end
 					end
