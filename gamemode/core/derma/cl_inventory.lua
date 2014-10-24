@@ -315,7 +315,7 @@ PANEL = {}
 									end
 
 									if (send != false) then
-										netstream.Start("invAct", k, itemTable.id, self.invID > 1 and self.invID or nil)
+										netstream.Start("invAct", k, itemTable.id, self.invID)
 									end
 								end):SetImage(itemTable.icon or "icon16/brick.png")
 							end

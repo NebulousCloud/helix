@@ -15,13 +15,17 @@
 
 local _R = debug.getregistry()
 
-local ITEM = _R.Item or setmetatable({}, {__tostring = function(self) return "item["..self.uniqueID.."]["..self.id.."]" end})
+local ITEM = _R.Item or setmetatable({}, {})
 ITEM.__index = ITEM
 ITEM.name = "Undefined"
 ITEM.desc = "An item that is undefined."
 ITEM.id = ITEM.id or 0
 ITEM.uniqueID = "undefined"
 ITEM.data = {}
+
+function ITEM:__tostring()
+	return "item["..self.uniqueID.."]["..self.id.."]"
+end
 
 function ITEM:getID()
 	return self.id

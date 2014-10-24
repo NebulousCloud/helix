@@ -15,10 +15,14 @@
 
 local _R = debug.getregistry()
 
-local CHAR = _R.Character or setmetatable({}, {__tostring = function(self) return "character["..self.id.."]" end})
+local CHAR = _R.Character or setmetatable({}, {})
 CHAR.__index = CHAR
 CHAR.id = CHAR.id or 0
 CHAR.vars = CHAR.vars or {}
+
+function CHAR:__tostring()
+	return "character["..(self.id or 0).."]"
+end
 
 function CHAR:getID()
 	return self.id
@@ -61,7 +65,15 @@ if (SERVER) then
 				self:sync(v)
 			end
 		elseif (receiver == self.player) then
-			netstream.Start(self.player, "charInfo", self.vars, self:getID())
+			local data = {}
+
+			for k, v in pairs(self.vars) do
+				if (nut.char.vars[k] and !nut.char.vars[k].noNetworking) then
+					data[k] = v
+				end
+			end
+
+			netstream.Start(self.player, "charInfo", data, self:getID())
 		else
 			local data = {}
 
