@@ -65,6 +65,16 @@ if (CLIENT) then
 			chat.PlaySound()
 		end
 	end
+
+	local world = Material("icon16/world.png")
+
+	function PLUGIN:ChatText(index, name, text, msgType)
+		if (msgType == "none" or msgType == "joinleave") then
+			chat.AddText(Color(220, 174, 242), text)
+		end
+
+		return true
+	end
 else
 	netstream.Hook("msg", function(client, text)
 		if ((client.nutNextChat or 0) < CurTime()) then
