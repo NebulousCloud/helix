@@ -201,7 +201,7 @@ PANEL = {}
 	function PANEL:onTransfer(oldX, oldY, x, y)
 		netstream.Start("invMv", oldX, oldY, x, y, self.invID)
 
-		local inventory = LocalPlayer():getChar():getInv(self.invID)
+		local inventory = nut.item.inventories[self.invID]
 
 		if (inventory) then
 			local item = inventory:getItemAt(oldX, oldY)

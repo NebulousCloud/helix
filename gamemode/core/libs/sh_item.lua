@@ -346,10 +346,9 @@ do
 			local character = client:getChar()
 
 			if (character) then
-				local inventory = character:getInv(invID or 1)
+				local inventory = nut.item.inventories[invID]
 
-				if (inventory) then
-					print(inventory)
+				if (inventory and inventory.owner and inventory.owner == character:getID()) then
 					local item = inventory:getItemAt(oldX, oldY)
 
 					if (item) then
