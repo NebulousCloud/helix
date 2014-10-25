@@ -225,8 +225,9 @@ do
 	nut.util.include("nutscript/gamemode/core/meta/sh_inventory.lua")
 
 	function nut.item.createInv(w, h, id)
-		local inventory = setmetatable({w = w, h = h, id = id}, FindMetaTable("Inventory"))
+		local inventory = setmetatable({w = w, h = h, id = id, slots = {}}, FindMetaTable("Inventory"))
 			nut.item.inventories[id] = inventory
+			
 		return inventory
 	end
 
