@@ -64,7 +64,10 @@ nut.anim.citizen_male = {
 		[ACT_MP_RUN] = {ACT_RUN, ACT_RUN},
 		attack = ACT_MELEE_ATTACK_SWING
 	},
-	glide = ACT_GLIDE
+	glide = ACT_GLIDE,
+	vehicle = {"sitchair1",
+				Vector(0, 0, -25),
+				Angle()},
 }
 nut.anim.citizen_female = {
 	normal = {
@@ -116,7 +119,10 @@ nut.anim.citizen_female = {
 		[ACT_MP_RUN] = {ACT_RUN, ACT_RUN},
 		attack = ACT_MELEE_ATTACK_SWING
 	},
-	glide = ACT_GLIDE
+	glide = ACT_GLIDE,
+	vehicle = {"sitchair1",
+				Vector(0, 0, -25),
+				Angle()},
 }
 nut.anim.metrocop = {
 	normal = {

@@ -83,7 +83,26 @@ function GM:TranslateActivity(client, act)
 	if (tree) then
 		local subClass = "normal"
 
+		if (client:InVehicle() and tree.vehicle) then
+			local act = tree.vehicle[1]
+			print(act)
+			local fixvec = tree.vehicle[2]
+			local fixang = tree.vehicle[3]
+
+			client:ManipulateBonePosition(0, fixvec)
+
+			if (type(act) == "string") then
+				client.CalcSeqOverride = client:LookupSequence(act)
+
+				return
+			else
+				return act
+			end
+		end
+		
 		if (client:OnGround()) then
+			client:ManipulateBonePosition(0, Vector())
+
 			if (IsValid(weapon)) then
 				subClass = weapon:GetHoldType()
 				subClass = HOLDTYPE_TRANSLATOR[subClass] or subClass
