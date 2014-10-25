@@ -85,7 +85,6 @@ function GM:TranslateActivity(client, act)
 
 		if (client:InVehicle() and tree.vehicle) then
 			local act = tree.vehicle[1]
-			print(act)
 			local fixvec = tree.vehicle[2]
 			local fixang = tree.vehicle[3]
 
