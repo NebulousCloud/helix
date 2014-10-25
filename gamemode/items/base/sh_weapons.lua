@@ -190,6 +190,7 @@ ITEM.functions.Equip = {
 			local ammo = item:getData("ammo")
 
 			item.player.carryWeapons[item.weaponCategory] = weapon
+			item.player:SelectWeapon(weapon:GetClass())
 			item.player:SetActiveWeapon(weapon)
 			item.player:EmitSound("items/ammo_pickup.wav", 80)
 			item:setData("equip", true)
