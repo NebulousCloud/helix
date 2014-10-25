@@ -155,6 +155,17 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 	return oldEyePos, eyeAngles
 end
 
+function GM:LoadIntro()
+	-- If skip intro is on
+	if (true) then 
+		if (IsValid(nut.gui.char)) then
+			vgui.Create("nutCharMenu")
+		end
+	else
+
+	end
+end
+
 function GM:InitializedConfig()
 	hook.Run("LoadFonts", nut.config.get("font"))
 	
@@ -195,6 +206,8 @@ function GM:InitializedConfig()
 
 		nut.gui.loading = loader
 		nut.config.loaded = true
+
+		hook.Run("LoadIntro")
 	end
 end
 
