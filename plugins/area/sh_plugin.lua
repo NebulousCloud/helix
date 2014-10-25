@@ -21,8 +21,13 @@ PLUGIN.areaTable = PLUGIN.areaTable or {}
 nut.area = nut.area or {}
 ALWAYS_RAISED["nut_areahelper"] = true
 
-nut.config.add("areaFontSize", 26, "The size of the font of Area Display.", nil, {
-	data = {min = 1, max = 128},
+nut.config.add("areaFontSize", 26, "The size of the font of Area Display.", 
+	function(oldValue, newValue)
+		if (CLIENT) then
+			hook.Run("LoadFonts", nut.config.get("font"))
+		end
+	end,
+	{data = {min = 1, max = 128},
 	category = "areaPlugin"
 })
 nut.config.add("areaDispSpeed", 20, "The Appearance Speed of Area Display.", nil, {
@@ -202,12 +207,14 @@ else
 	end)
 
 	function PLUGIN:LoadFonts(font)
-		surface.CreateFont("nutAreaDisplay", {
-			font = font,
-			size = ScreenScale(26),
-			weight = 500,
-			shadow = true,
-		})
+		timer.Simple(0, function()
+			surface.CreateFont("nutAreaDisplay", {
+				font = font,
+				size = ScreenScale(nut.config.get("areaFontSize")),
+				weight = 500,
+				shadow = true,
+			})
+		end)
 	end
 
 	-- draw matrix string.
@@ -362,7 +369,7 @@ nut.command.add("areaadd", {
 			client:setNetVar("areaMin", pos, client)
 			client:setNetVar("areaName", name, client)
 
-			client:notify("Run the command again at a different position to set a maximum point.")
+			client:notify(L("areaCommand", client))
 		else
 			local data = {}
 			local pos = client:GetEyeTraceNoCursor().HitPos
@@ -376,7 +383,7 @@ nut.command.add("areaadd", {
 			client:setNetVar("areaName", nil, client)
 
 			nut.area.addArea(name, min, max)
-			client:notify("You've added a new area.")
+			client:notify(L("areaAdded", client, name))
 		end
 	end
 })
@@ -391,12 +398,31 @@ nut.command.add("arearemove", {
 
 		local areaData = nut.area.getArea(areaID)
 		if (areaData) then
-			client:notify(Format("You've removed (%s)", areaData.name))
+			client:notify(L("areaRemoved", client, areaData.name))
 
 			table.remove(PLUGIN.areaTable, areaID)
 		end
 	end
 })
+
+nut.command.add("areachange", {
+	adminOnly = true,
+	syntax = "<string name>",
+	onRun = function(client, arguments)
+		local name = table.concat(arguments, " ") or "Area"
+		local areaID = client:getArea()
+		if (!areaID) then
+			return
+		end
+
+		local areaData = nut.area.getArea(areaID)
+		if (areaData) then
+			client:notify(L("areaChanged", client, name, areaData.name))
+			areaData.name = name
+		end
+	end
+})
+
 
 /*
 nut.command.add("areamanage", {
