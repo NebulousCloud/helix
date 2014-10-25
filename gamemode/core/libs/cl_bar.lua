@@ -62,7 +62,7 @@ function nut.bar.draw(x, y, w, h, value, color)
 	surface.SetDrawColor(0, 0, 0, 200)
 	surface.DrawOutlinedRect(x, y, w, h)
 
-	x, y, w, h = x + 2, y + 2, (w - 4) * value, h - 4
+	x, y, w, h = x + 2, y + 2, (w - 4) * math.min(value, 1), h - 4
 
 	surface.SetDrawColor(color.r, color.g, color.b, 250)
 	surface.DrawRect(x, y, w, h)
