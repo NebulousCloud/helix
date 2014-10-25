@@ -280,7 +280,8 @@ do
 			if (item) then
 				item.data[key] = value
 
-				local panel = nut.gui["inv"..item.invID]
+				local panel = item.invID and nut.gui["inv"..item.invID] or nut.gui.inv1
+
 				if (panel and panel.panels) then
 					local icon = panel.panels[id]
 					icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, (type(item.desc) == "function" and item.desc(item) or item.desc)))
@@ -348,7 +349,7 @@ do
 			end			
 		end)
 	else
-		netstream.Hook("invMv", function(client, oldX, oldY, x, y, invID)
+		netstream.Hook("invMv", function(client, oldX, oldY, x, y, invID, newInvID)
 			oldX, oldY, x, y, invID = tonumber(oldX), tonumber(oldY), tonumber(x), tonumber(y), tonumber(invID)
 			if (!oldX or !oldY or !x or !y or !invID) then return end
 
@@ -361,6 +362,16 @@ do
 					local item = inventory:getItemAt(oldX, oldY)
 
 					if (item) then
+						if (newInvID and invID != newInvID) then
+							local inventory2 = nut.item.inventories[newInvID]
+
+							if (inventory2) then
+								item:transfer(inventory2:getID(), x, y, client)
+							end
+
+							return
+						end
+
 						if (inventory:canItemFit(x, y, item.width, item.height, item)) then
 							item.gridX = x
 							item.gridY = y

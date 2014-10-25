@@ -37,21 +37,26 @@ end
 local PANEL = {}
 
 function PANEL:Init()
+	self:Droppable("inv")
 end
 
 function PANEL:PaintOver(w, h)
-	local itemTable = LocalPlayer():getChar():getInv():getItemAt(self.gridX, self.gridY)
+	local inventory = self.inv
 
-	if (self.waiting and self.waiting > CurTime()) then
-		local wait = (self.waiting - CurTime()) / self.waitingTime
-		surface.SetDrawColor(255, 255, 255, 100*wait)
-		surface.DrawRect(2, 2, w - 4, h - 4)
-	end
+	if (inventory) then
+		local itemTable = inventory:getItemAt(self.gridX, self.gridY)
 
-	if (itemTable and itemTable.paintOver) then
-		local w, h = self:GetSize()
+		if (self.waiting and self.waiting > CurTime()) then
+			local wait = (self.waiting - CurTime()) / self.waitingTime
+			surface.SetDrawColor(255, 255, 255, 100*wait)
+			surface.DrawRect(2, 2, w - 4, h - 4)
+		end
 
-		itemTable.paintOver(self, itemTable, w, h)
+		if (itemTable and itemTable.paintOver) then
+			local w, h = self:GetSize()
+
+			itemTable.paintOver(self, itemTable, w, h)
+		end
 	end
 end
 
@@ -61,14 +66,16 @@ function PANEL:Paint(w, h)
 	surface.SetDrawColor(0, 0, 0, 85)
 	surface.DrawRect(2, 2, w - 4, h - 4)
 
-	if (self.clickPos) then
-		local x, y = gui.MouseX() - self.clickPos.x, gui.MouseY() - self.clickPos.y
+	--[[
+	if (self:IsDragging()) then
+		local x, y = gui.MouseX() - dragndrop.m_MouseX, gui.MouseY() - dragndrop.m_MouseY
 		
-		self:SetPos(self.curPos.x + x, self.curPos.y + y)
+		--self:SetPos(self.curPos.x + x, self.curPos.y + y)
 		
-		parent.offsetX = math.Round(x / 64)
-		parent.offsetY = math.Round(y / 64)
+		self.offsetX = math.Round(x / 64)
+		self.offsetY = math.Round(y / 64)
 	end	
+	--]]
 end
 
 function PANEL:wait(time)
@@ -167,30 +174,59 @@ PANEL = {}
 	end
 	
 	function PANEL:PaintOver(w, h)
-		local item = self.heldItem
+		local item = nut.item.held
 		
 		if (IsValid(item)) then
-			local offsetX = self.offsetX
-			local offsetY = self.offsetY
-			
+			local mouseX, mouseY = self:LocalCursorPos()
+			local dropX, dropY = math.Round((mouseX + item:GetWide()*0.5) / 64) - math.floor(item.gridW * 0.5), math.Round((mouseY + item:GetTall()*0.5) / 64) - math.floor(item.gridH * 0.5)
+
 			for x = 0, item.gridW - 1 do
 				for y = 0, item.gridH - 1 do
-					local x2, y2 = item.gridX + offsetX + x, item.gridY + offsetY + y
+					local x2, y2 = dropX + x, dropY + y
+
+					if (self:isValidSlot(x2, y2, item)) then
+						surface.SetDrawColor(0, 255, 0, 10)
+						
+						if (x == 0 and y == 0) then
+							item.dropPos = item.dropPos or {}
+							item.dropPos[self] = {x = (x2 - 1)*64 + 4, y = (y2 - 1)*64 + 27, x2 = x2, y2 = y2}
+						end
+					else
+						surface.SetDrawColor(255, 0, 0, 10)
+						
+						if (item.dropPos) then
+							item.dropPos[self] = nil
+						end
+					end
+					
+					surface.DrawRect((x2 - 1)*64 + 4, (y2 - 1)*64 + 27, 64, 64)
+				end
+			end
+
+			--[[
+			local x, y = gui.MouseX() - dragndrop.m_MouseX, gui.MouseY() - dragndrop.m_MouseY
+			local offsetX = math.Round(x / 64)
+			local offsetY = math.Round(y / 64)
+
+			for x = 0, item.gridW - 1 do
+				for y = 0, item.gridH - 1 do
+					local x2, y2 = math.Round(self:ScreenToLocal(gui.MouseX()) / 64) + offsetX + x, item.gridY + offsetY + y
 					
 					if (self:isValidSlot(x2, y2, item)) then
-						surface.SetDrawColor(0, 255, 0, 30)
+						surface.SetDrawColor(0, 255, 0, 10)
 						
 						if (x == 0 and y == 0) then
 							self.dropPos = {x = (x2 - 1)*64 + 4, y = (y2 - 1)*64 + 27, x2 = x2, y2 = y2}
 						end
 					else
-						surface.SetDrawColor(255, 0, 0, 30)
+						surface.SetDrawColor(255, 0, 0, 10)
 						self.dropPos = nil
 					end
 					
 					surface.DrawRect((x2 - 1)*64 + 4, (y2 - 1)*64 + 27, 64, 64)
 				end
 			end
+			--]]
 		end
 	end
 	
@@ -198,17 +234,22 @@ PANEL = {}
 		return self.slots[x] and IsValid(self.slots[x][y]) and (!IsValid(self.slots[x][y].item) or self.slots[x][y].item == this)
 	end
 	
-	function PANEL:onTransfer(oldX, oldY, x, y)
-		netstream.Start("invMv", oldX, oldY, x, y, self.invID)
+	function PANEL:onTransfer(oldX, oldY, x, y, oldInventory)
+		if (self != oldInventory) then
+			netstream.Start("invMv", oldX, oldY, x, y, oldInventory.invID, self.invID)
+		else
+			netstream.Start("invMv", oldX, oldY, x, y, oldInventory.invID)
+		end
 
-		local inventory = nut.item.inventories[self.invID]
+		local inventory = nut.item.inventories[oldInventory.invID]
+		local inventory2 = nut.item.inventories[self.invID]
 
-		if (inventory) then
+		if (inventory and inventory2) then
 			local item = inventory:getItemAt(oldX, oldY)
-
+			
 			inventory.slots[oldX][oldY] = nil
-			inventory.slots[x] = inventory.slots[x] or {}
-			inventory.slots[x][y] = item
+			inventory2.slots[x] = inventory2.slots[x] or {}
+			inventory2.slots[x][y] = item
 		end
 	end
 
@@ -234,67 +275,68 @@ PANEL = {}
 				return
 			end
 
+			panel.inv = inventory
+
 			local itemTable = inventory:getItemAt(panel.gridX, panel.gridY)
 			renderNewIcon(panel, itemTable)
 
 			panel.OnMousePressed = function(this, code)
 				if (code == MOUSE_LEFT) then
+					this:DragMousePress(code)
 					this:MouseCapture(true)
-					this:NoClipping(true)
-					this.clickPos = {x = gui.MouseX(), y = gui.MouseY()}
-					this.curPos = {x = this.x, y = this.y}
-					
-					self.heldItem = this
+
+					nut.item.held = this
 				elseif (code == MOUSE_RIGHT and this.doRightClick) then
 					this:doRightClick()
 				end
 			end
 			panel.OnMouseReleased = function(this, code)
-				if (code == MOUSE_LEFT and this.clickPos) then
-					local data = self.dropPos
-					
-					if (data) then
-						local oldX, oldY = this.gridX, this.gridY
+				if (code == MOUSE_LEFT and this:IsDragging()) then
+					local data = this.dropPos
 
-						this.gridX = data.x2
-						this.gridY = data.y2
-						this:SetPos(data.x, data.y)
-						
-						if (panel.slots) then
-							for k, v in ipairs(panel.slots) do
-								if (IsValid(v)) then
-									v.item = nil
+					if (data) then
+						local inventory = table.GetFirstKey(data)
+
+						if (IsValid(inventory)) then
+							data = data[inventory]
+							local oldX, oldY = this.gridX, this.gridY
+
+							if (oldX != data.x2 or oldY != data.y2 or inventory != self) then
+								this.gridX = data.x2
+								this.gridY = data.y2
+								this:SetParent(inventory)
+								this:SetPos(data.x, data.y)
+								
+								if (panel.slots) then
+									for k, v in ipairs(panel.slots) do
+										if (IsValid(v)) then
+											v.item = nil
+										end
+									end
+								end
+								
+								panel.slots = {}
+								inventory:onTransfer(oldX, oldY, this.gridX, this.gridY, self)
+								
+								for x = 1, this.gridW do
+									for y = 1, this.gridH do
+										local slot = inventory.slots[this.gridX + x-1][this.gridY + y-1]
+										
+										slot.item = panel
+										panel.slots[#panel.slots + 1] = slot
+									end
 								end
 							end
 						end
-						
-						panel.slots = {}
-						self:onTransfer(oldX, oldY, this.gridX, this.gridY)
-						
-						for x = 1, this.gridW do
-							for y = 1, this.gridH do
-								local slot = self.slots[this.gridX + x-1][this.gridY + y-1]
-								
-								slot.item = panel
-								panel.slots[#panel.slots + 1] = slot
-							end
-						end
-					else
-						local x, y = this.curPos.x, this.curPos.y
-						
-						this:SetPos(x, y)
 					end
 					
+					this:DragMouseRelease(code)
 					this:MouseCapture(false)
-					this:NoClipping(false)
-					this.clickPos = nil
-					this.curPos = nil
-					
-					self.heldItem = nil
+
+					nut.item.held = nil
 				end
 			end
 			panel.doRightClick = function(this)
-				
 				if (itemTable) then
 					itemTable.client = LocalPlayer()
 						local menu = DermaMenu()

@@ -167,19 +167,31 @@ if (SERVER) then
 	end
 
 	-- Transfers an item to a specific inventory.
-	function ITEM:transfer(invID, client, noReplication)
+	function ITEM:transfer(invID, x, y, client, noReplication)
+		if (self.invID == invID) then
+			return false, "same inv"
+		end
+
 		local inventory = nut.item.inventories[invID]
 		local curInv = nut.item.inventories[self.invID or 0]
+
+		if (hook.Run("CanItemBeTransfered", self, curInv, inventory) == false) then
+			return false, "not allowed"
+		end
+
+		if (self.onCanBeTransfered and self:onCanBeTransfered(curInv, inventory) == false) then
+			return false, "not allowed"
+		end
 
 		if (curInv and !IsValid(client)) then
 			client = curInv:getReceiver()
 		end
 
 		if (curInv) then
-			local x, y
-
 			if (invID and invID > 0 and inventory) then
-				x, y = inventory:findEmptySlot(self.width, self.height)
+				if (!x and !y) then
+					x, y = inventory:findEmptySlot(self.width, self.height)
+				end
 
 				if (!x or !y) then
 					return false, "no space"

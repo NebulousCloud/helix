@@ -39,6 +39,8 @@ ITEM.functions.View = {
 				panel:SetTitle(item.name)
 
 				nut.gui["inv"..index] = panel
+			else
+				ErrorNoHalt("[NutScript] Attempt to view an uninitialized inventory '"..index.."'\n")
 			end
 		end
 
@@ -66,6 +68,14 @@ function ITEM:onRemoved()
 		nut.db.query("DELETE FROM nut_items WHERE _invID = "..index)
 		nut.db.query("DELETE FROM nut_inventories WHERE _invID = "..index)
 	end
+end
+
+function ITEM:onCanBeTransfered(oldInventory, newInventory)
+	if (!newInventory) then
+		return true
+	end
+
+	return false
 end
 
 function ITEM:onRegistered()
