@@ -91,10 +91,11 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 	local meta = FindMetaTable("Item")
 
 	if (uniqueID) then
-		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({data = {}}, meta)
+		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({}, meta)
 			ITEM.uniqueID = uniqueID
 			ITEM.base = baseID
 			ITEM.isBase = isBaseItem
+			ITEM.data = ITEM.data or {}
 			ITEM.hooks = ITEM.hooks or {}
 			ITEM.functions = ITEM.functions or {}
 			ITEM.functions.drop = {
@@ -226,7 +227,7 @@ do
 	function nut.item.createInv(w, h, id)
 		local inventory = setmetatable({w = w, h = h, id = id, slots = {}}, FindMetaTable("Inventory"))
 			nut.item.inventories[id] = inventory
-
+			
 		return inventory
 	end
 
