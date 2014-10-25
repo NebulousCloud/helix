@@ -201,7 +201,7 @@ PANEL = {}
 	function PANEL:onTransfer(oldX, oldY, x, y)
 		netstream.Start("invMv", oldX, oldY, x, y, self.invID)
 
-		local inventory = LocalPlayer():getChar():getInv(self.invID)
+		local inventory = nut.item.inventories[self.invID]
 
 		if (inventory) then
 			local item = inventory:getItemAt(oldX, oldY)
@@ -228,7 +228,7 @@ PANEL = {}
 			panel.gridW = w
 			panel.gridH = h
 
-			local inventory = LocalPlayer():getChar():getInv(self.invID)
+			local inventory = nut.item.inventories[self.invID]
 
 			if (!inventory) then
 				return
@@ -315,7 +315,7 @@ PANEL = {}
 									end
 
 									if (send != false) then
-										netstream.Start("invAct", k, itemTable.id, self.invID > 1 and self.invID or nil)
+										netstream.Start("invAct", k, itemTable.id, self.invID)
 									end
 								end):SetImage(itemTable.icon or "icon16/brick.png")
 							end

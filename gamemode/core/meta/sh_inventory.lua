@@ -15,7 +15,7 @@
 
 local _R = debug.getregistry()
 
-local META = _R.Inventory or setmetatable({}, {})
+local META = _R.Inventory or {}
 META.__index = META
 META.slots = META.slots or {}
 META.w = META.w or 4
@@ -28,6 +28,10 @@ end
 function META:setSize(w, h)
 	self.w = w
 	self.h = h
+end
+
+function META:__tostring()
+	return "inventory["..(self.id or 0).."]"
 end
 
 function META:getSize()
@@ -355,7 +359,7 @@ if (SERVER) then
 			end
 		end
 
-		netstream.Start(receiver, "inv", slots, self.w, self.h, (receiver == nil or fullUpdate or sendID) and self:getID() or nil, (receiver == nil or fullUpdate) and self.owner or nil)
+		netstream.Start(receiver, "inv", slots, self:getID(), self.w, self.h, (receiver == nil or fullUpdate) and self.owner or nil)
 	end
 end
 

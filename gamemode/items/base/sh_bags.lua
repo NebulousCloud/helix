@@ -26,7 +26,7 @@ ITEM.functions.View = {
 
 		if (index) then
 			local panel = nut.gui["inv"..index]
-			local inventory = LocalPlayer():getChar():getInv(index)	
+			local inventory = nut.item.inventories[index]
 			
 			if (IsValid(panel)) then
 				panel:Remove()

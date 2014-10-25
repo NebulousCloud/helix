@@ -91,7 +91,7 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 	local meta = FindMetaTable("Item")
 
 	if (uniqueID) then
-		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({}, {__index = meta})
+		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({}, meta)
 			ITEM.uniqueID = uniqueID
 			ITEM.base = baseID
 			ITEM.isBase = isBaseItem
@@ -212,6 +212,7 @@ function nut.item.new(uniqueID, id)
 		local item = setmetatable({}, {__index = stockItem})
 		item.id = id
 		item.data = table.Copy(stockItem.data)
+
 		nut.item.instances[id] = item
 
 		return item
@@ -224,17 +225,15 @@ do
 	nut.util.include("nutscript/gamemode/core/meta/sh_inventory.lua")
 
 	function nut.item.createInv(w, h, id)
-		local inventory = setmetatable({w = w, h = h, id = id}, {__index = FindMetaTable("Inventory")})
+		local inventory = setmetatable({w = w, h = h, id = id}, FindMetaTable("Inventory"))
 			nut.item.inventories[id] = inventory
 		return inventory
 	end
 
 
 	if (CLIENT) then
-		-- TODO: Sync Inventory. Server is fine. It seems somehow Inventory is not synced for reason that I don't know.
-		netstream.Hook("inv", function(slots, w, h, id, owner)
+		netstream.Hook("inv", function(slots, id, w, h, owner)
 			local character
-			id = id or 1
 
 			if (owner) then
 				character = nut.char.loaded[owner]
@@ -261,7 +260,16 @@ do
 				end
 
 				character.vars.inv = character.vars.inv or {}
-				character.vars.inv[id] = inventory
+
+				for k, v in ipairs(character:getInv(true)) do
+					if (v:getID() == id) then
+						character:getInv(true)[k] = inventory
+
+						return
+					end
+				end
+
+				table.insert(character.vars.inv, inventory)
 			end
 		end)
 
@@ -316,7 +324,7 @@ do
 				if (inventory) then
 					inventory:remove(id)
 
-					local panel = nut.gui["inv"..invID]
+					local panel = nut.gui["inv"..invID] or nut.gui.inv1
 
 					if (IsValid(panel)) then
 						local icon = panel.panels[id]
@@ -381,10 +389,12 @@ do
 				return
 			end
 
-			local inventory = character:getInv(invID or 1)
+			local inventory = nut.item.inventories[invID]
 
-			if (!inventory) then
-				return
+			if (type(item) != "Entity") then
+				if (!inventory or !inventory.owner or inventory.owner != character:getID()) then
+					return
+				end
 			end
 
 			if (hook.Run("CanPlayerInteractItem", client, action, item) == false) then
@@ -456,7 +466,7 @@ do
 end
 
 nut.char.registerVar("inv", {
-	isLocal = true,
+	noNetworking = true,
 	noDisplay = true,
 	onGet = function(character, index)
 		if (index and type(index) != "number") then
