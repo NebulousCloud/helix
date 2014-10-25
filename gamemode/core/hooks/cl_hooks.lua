@@ -66,6 +66,12 @@ function GM:LoadFonts(font)
 		weight = 200
 	})
 
+	surface.CreateFont("nutToolTipText", {
+		font = font,
+		size = 20,
+		weight = 500
+	})
+
 	-- The more readable font.
 	font = "Calibri"
 

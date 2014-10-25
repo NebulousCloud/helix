@@ -110,7 +110,6 @@ function META:canItemFit(x, y, w, h, item2)
 
 			if ((x + x2) > self.w or item) then
 				if (item2) then
-					print(item)
 					if (item and item.id == item2.id) then
 						continue
 					end

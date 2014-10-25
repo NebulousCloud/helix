@@ -281,6 +281,18 @@ do
 		})
 
 		-- Local out of character.
+		nut.chat.register("event", {
+			onCanSay =  function(speaker, text)
+				return speaker:IsAdmin()
+			end,
+			onCanHear = 1000000,
+			onChatAdd = function(speaker, text)
+				chat.AddText(Color(255, 150, 0), text)
+			end,
+			prefix = {"/event"},
+		})
+
+		-- Local out of character.
 		nut.chat.register("looc", {
 			onCanSay =  function(speaker, text)
 				local delay = nut.config.get("loocDelay", 0)
