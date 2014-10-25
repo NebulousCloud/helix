@@ -91,7 +91,7 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 	local meta = FindMetaTable("Item")
 
 	if (uniqueID) then
-		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({}, meta)
+		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({data = {}}, meta)
 			ITEM.uniqueID = uniqueID
 			ITEM.base = baseID
 			ITEM.isBase = isBaseItem
@@ -209,7 +209,7 @@ function nut.item.new(uniqueID, id)
 	local stockItem = nut.item.list[uniqueID]
 
 	if (stockItem) then
-		local item = setmetatable({}, {__index = stockItem})
+		local item = setmetatable({data = {}}, {__index = stockItem})
 		item.id = id
 		item.data = table.Copy(stockItem.data)
 
