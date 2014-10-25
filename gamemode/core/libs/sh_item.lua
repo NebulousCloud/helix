@@ -281,8 +281,10 @@ do
 				item.data[key] = value
 
 				local panel = nut.gui["inv"..item.invID]
-				local icon = panel.panels[id]
-				icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, (type(item.desc) == "function" and item.desc(item) or item.desc)))
+				if (panel and panel.panels) then
+					local icon = panel.panels[id]
+					icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, (type(item.desc) == "function" and item.desc(item) or item.desc)))
+				end
 			end
 		end)
 
