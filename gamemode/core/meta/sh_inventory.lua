@@ -227,11 +227,21 @@ function META:getItems()
 	return items
 end
 
-function META:hasItem(targetID)
+function META:hasItem(targetID, data)
 	local items = self:getItems()
 	
 	for k, v in pairs(items) do
 		if (v.uniqueID == targetID) then
+			if (data) then
+				local itemData = v.data
+
+				for dataKey, dataVal in pairs(data) do
+					if (itemData[dataKey] != dataVal) then
+						return false
+					end
+				end
+			end
+
 			return v
 		end
 	end

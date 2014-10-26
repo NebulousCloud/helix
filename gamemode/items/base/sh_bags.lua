@@ -71,7 +71,6 @@ function ITEM:onRemoved()
 end
 
 function ITEM:onCanBeTransfered(oldInventory, newInventory)
-	print(newInventory:getID(),self:getData("id"), newInventory:getID() == self:getData("id"))
 	if (newInventory:getID() == self:getData("id")) then
 		return false
 	end
