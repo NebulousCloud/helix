@@ -17,7 +17,9 @@ nut.item = nut.item or {}
 nut.item.list = nut.item.list or {}
 nut.item.base = nut.item.base or {}
 nut.item.instances = nut.item.instances or {}
-nut.item.inventories = nut.item.inventories or {}
+nut.item.inventories = nut.item.inventories or {
+	[0] = {}
+}
 nut.item.inventoryTypes = nut.item.inventoryTypes or {}
 
 nut.util.include("nutscript/gamemode/core/meta/sh_item.lua")
