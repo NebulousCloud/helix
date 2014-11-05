@@ -63,12 +63,14 @@ function nut.item.newInv(owner, invType, callback)
 	}, function(data, invID)
 		local inventory = nut.item.createInv(w, h, invID)
 
-		for k, v in ipairs(player.GetAll()) do
-			if (v:getChar() and v:getChar():getID() == owner) then
-				inventory:setOwner(owner)
-				inventory:sync(v)
+		if (owner > 0) then
+			for k, v in ipairs(player.GetAll()) do
+				if (v:getChar() and v:getChar():getID() == owner) then
+					inventory:setOwner(owner)
+					inventory:sync(v)
 
-				break
+					break
+				end
 			end
 		end
 
@@ -233,6 +235,56 @@ do
 		return inventory
 	end
 
+	function nut.item.restoreInv(invID, w, h, callback)
+		local inventory = nut.item.createInv(w, h, invID)
+
+		nut.db.query("SELECT _itemID, _uniqueID, _data, _x, _y FROM nut_items WHERE _invID = "..invID, function(data)
+			if (data) then
+				local slots = {}
+				local badItems = {}
+
+				for _, item in ipairs(data) do
+					local x, y = tonumber(item._x), tonumber(item._y)
+					local itemID = tonumber(item._itemID)
+					local data = util.JSONToTable(item._data or "[]")
+
+					if (x and y and itemID) then
+						if (x <= w and x > 0 and y <= h and y > 0) then
+							local item2 = nut.item.new(item._uniqueID, itemID)
+
+							if (item2) then
+								item2.data = table.Merge(item2.data, data or {})
+								item2.gridX = x
+								item2.gridY = y
+								item2.invID = invID
+								
+								for x2 = 0, item2.width - 1 do
+									for y2 = 0, item2.height - 1 do
+										slots[x + x2] = slots[x + x2] or {}
+										slots[x + x2][y + y2] = item2
+									end
+								end
+							else
+								badItems[#badItems + 1] = itemID
+							end
+						else
+							badItems[#badItems + 1] = itemID
+						end
+					end
+				end
+
+				if (#badItems > 0) then
+					nut.db.query("DELETE FROM nut_items WHERE _itemID IN ("..table.concat(badItems, ", ")..")")
+				end
+
+				inventory.slots = slots
+			end
+
+			if (callback) then
+				callback(inventory)
+			end
+		end)
+	end
 
 	if (CLIENT) then
 		netstream.Hook("inv", function(slots, id, w, h, owner)

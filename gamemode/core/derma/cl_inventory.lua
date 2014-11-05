@@ -94,7 +94,6 @@ vgui.Register("nutItemIcon", PANEL, "SpawnIcon")
 
 PANEL = {}
 	function PANEL:Init()
-		self:SetDrawOnTop(true)
 		self:ShowCloseButton(false)
 		self:SetDraggable(true)
 		self:MakePopup()

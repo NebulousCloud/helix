@@ -120,7 +120,7 @@ if (SERVER) then
 					local character = nut.char.new(data, id, client)
 						hook.Run("CharacterRestored", character)
 						character.vars.inv = {}
-						
+
 						nut.db.query("SELECT _invID, _invType FROM nut_inventories WHERE _charID = "..id, function(data)
 							if (data and #data > 0) then
 								for k, v in ipairs(data) do
@@ -134,54 +134,9 @@ if (SERVER) then
 										end
 									end
 
-									local invID = tonumber(v._invID)
-									local inventory = nut.item.createInv(w, h, invID)
-									inventory:setOwner(id)
-
-									nut.db.query("SELECT _itemID, _uniqueID, _data, _x, _y FROM nut_items WHERE _invID = "..invID, function(data)
-										if (data) then
-											local slots = {}
-											local badItems = {}
-
-											for _, item in ipairs(data) do
-												local x, y = tonumber(item._x), tonumber(item._y)
-												local itemID = tonumber(item._itemID)
-												local data = util.JSONToTable(item._data or "[]")
-
-												if (x and y and itemID) then
-													if (x <= w and x > 0 and y <= h and y > 0) then
-														local item2 = nut.item.new(item._uniqueID, itemID)
-
-														if (item2) then
-															item2.data = table.Merge(item2.data, data or {})
-															item2.gridX = x
-															item2.gridY = y
-															item2.invID = invID
-															
-															for x2 = 0, item2.width - 1 do
-																for y2 = 0, item2.height - 1 do
-																	slots[x + x2] = slots[x + x2] or {}
-																	slots[x + x2][y + y2] = item2
-																end
-															end
-														else
-															badItems[#badItems + 1] = itemID
-														end
-													else
-														badItems[#badItems + 1] = itemID
-													end
-												end
-											end
-
-											if (#badItems > 0) then
-												nut.db.query("DELETE FROM nut_items WHERE _itemID IN ("..table.concat(badItems, ", ")..")")
-											end
-
-											inventory.slots = slots
-										end
-									end)
-
-									character.vars.inv[k] = inventory
+									nut.item.restoreInv(tonumber(v._invID), w, h, function(inventory)
+										character.vars.inv[k] = inventory
+									end, true)
 								end
 							else
 								nut.db.insertTable({

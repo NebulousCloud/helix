@@ -360,14 +360,6 @@ if (SERVER) then
 			end
 		end
 
-		local sendID = false
-
-		if (type(receiver) == "Player") then
-			if (receiver:getChar():getInv():getID() != self:getID()) then
-				sendID = true
-			end
-		end
-
 		netstream.Start(receiver, "inv", slots, self:getID(), self.w, self.h, (receiver == nil or fullUpdate) and self.owner or nil)
 	end
 end
