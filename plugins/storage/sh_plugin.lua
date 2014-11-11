@@ -44,6 +44,10 @@ if (SERVER) then
 
 			nut.item.newInv(0, "st"..data.name, function(inventory)
 				storage:setInventory(inventory)
+
+				function inventory:onCanTransfer(client, oldX, oldY, x, y, newInvID)
+					return hook.Run("StorageCanTransfer", inventory, client, oldX, oldY, x, y, newInvID)
+				end
 			end)
 
 			self:saveStorage()
@@ -67,6 +71,12 @@ if (SERVER) then
 		self:saveStorage()
 	end
 
+	function PLUGIN:StorageCanTransfer(inventory, client, oldX, oldY, x, y, newInvID)
+		local inventory2 = nut.item.inventories[newInvID]
+
+		print(inventory2)
+	end
+
 	function PLUGIN:LoadData()
 		local data = self:getData()
 
@@ -84,12 +94,27 @@ if (SERVER) then
 					storage:PhysicsInit(SOLID_VPHYSICS)
 					
 					nut.item.restoreInv(v[3], data2.width, data2.height, function(inventory)
+						function inventory:onCanTransfer(client, oldX, oldY, x, y, newInvID)
+							print(self)
+							return hook.Run("StorageCanTransfer", inventory, client, oldX, oldY, x, y, newInvID)
+						end
+
 						storage:setNetVar("id", v[3])
 					end)
 				end
 			end
 		end
 	end
+
+	netstream.Hook("invExit", function(client)
+		local entity = client.nutBagEntity
+
+		if (IsValid(entity)) then
+			entity.receivers[client] = nil
+		end
+
+		client.nutBagEntity = nil
+	end)
 else
 	local PLUGIN = PLUGIN
 
@@ -100,15 +125,26 @@ else
 			local data = PLUGIN.definitions[entity:GetModel():lower()]
 
 			if (data) then
+				nut.gui.inv1 = vgui.Create("nutInventory")
+				nut.gui.inv1:ShowCloseButton(true)
+
+				local inventory2 = LocalPlayer():getChar():getInv()
+
+				if (inventory2) then
+					nut.gui.inv1:setInventory(inventory2)
+				end
+
 				local panel = vgui.Create("nutInventory")
-				panel:setInventory(inventory)
 				panel:ShowCloseButton(true)
 				panel:SetTitle(data.name)
-				panel:Center()
-				panel.Think = function()
-					if (!IsValid(entity)) then
-						panel:Remove()
+				panel:setInventory(inventory)
+				panel:MoveLeftOf(nut.gui.inv1, 4)
+				panel.OnClose = function(this)
+					if (IsValid(nut.gui.inv1) and !IsValid(nut.gui.menu)) then
+						nut.gui.inv1:Remove()
 					end
+
+					netstream.Start("invExit")
 				end
 
 				nut.gui["inv"..index] = panel

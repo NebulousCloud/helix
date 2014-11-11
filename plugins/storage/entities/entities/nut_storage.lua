@@ -24,6 +24,7 @@ if (SERVER) then
 		self:SetSolid(SOLID_VPHYSICS)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetUseType(SIMPLE_USE)
+		self.receivers = {}
 
 		local physObj = self:GetPhysicsObject()
 
@@ -63,6 +64,9 @@ if (SERVER) then
 			if (activator:getChar()) then
 				activator:setAction("Opening...", 1, function()
 					if (activator:GetPos():Distance(self:GetPos()) <= 100) then
+						self.receivers[activator] = true
+						activator.nutBagEntity = self
+						
 						inventory:sync(activator)
 						netstream.Start(activator, "invOpen", self, inventory:getID())
 					end

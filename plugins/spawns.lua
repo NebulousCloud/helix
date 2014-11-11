@@ -19,31 +19,33 @@ PLUGIN.author = "Chessnut"
 PLUGIN.spawns = PLUGIN.spawns or {}
 
 function PLUGIN:PlayerLoadedChar(client, character, lastChar)
-	local class = character:getClass()
-	local points
-	local className = ""
+	if (self.spawns and table.Count(self.spawns) > 0) then
+		local class = character:getClass()
+		local points
+		local className = ""
 
-	for k, v in ipairs(nut.faction.indices) do
-		if (k == client:Team()) then
-			points = self.spawns[v.uniqueID] or {}
-
-			break
-		end
-	end
-
-	if (points) then
-		for k, v in ipairs(nut.class.list) do
-			if (class == v.index) then
-				className = v.uniqueID
+		for k, v in ipairs(nut.faction.indices) do
+			if (k == client:Team()) then
+				points = self.spawns[v.uniqueID] or {}
 
 				break
 			end
 		end
 
-		points = points[className] or points[""]
+		if (points) then
+			for k, v in ipairs(nut.class.list) do
+				if (class == v.index) then
+					className = v.uniqueID
 
-		if (points and table.Count(points) > 0) then
-			client:SetPos(table.Random(points))
+					break
+				end
+			end
+
+			points = points[className] or points[""]
+
+			if (points and table.Count(points) > 0) then
+				client:SetPos(table.Random(points))
+			end
 		end
 	end
 end

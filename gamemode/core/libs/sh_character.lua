@@ -135,6 +135,7 @@ if (SERVER) then
 									end
 
 									nut.item.restoreInv(tonumber(v._invID), w, h, function(inventory)
+										inventory:setOwner(id)
 										character.vars.inv[k] = inventory
 									end, true)
 								end
