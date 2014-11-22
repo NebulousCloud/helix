@@ -120,4 +120,6 @@ LANGUAGE = {
 	yFormat = "%s yells \"%s\"",
 	sbOptions = "Click to see options for %s.",
 	spawnAdded = "You added spawn for %s.",
+	whitelist = "%s has whitelisted %s for the %s faction.",
+	unwhitelist = "%s has unwhitelisted %s from the %s faction."
 }

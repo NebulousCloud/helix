@@ -78,10 +78,16 @@ if (CLIENT) then
 	function nut.faction.hasWhitelist(faction)
 		local data = nut.faction.indices[faction]
 
-		if (data and data.isDefault) then
-			return true
+		if (data) then
+			if (data.isDefault) then
+				return true
+			end
+
+			local nutData = nut.localData and nut.localData.whitelists or {}
+
+			return nutData[SCHEMA.folder] and nutData[SCHEMA.folder][data.uniqueID] == true or false
 		end
 
-		return ((nut.localData and nut.localData.whitelists or {})["whitelists"] or {})[faction] == true
+		return false
 	end
 end

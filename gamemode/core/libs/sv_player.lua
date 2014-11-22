@@ -76,6 +76,10 @@ end
 -- Whitelisting information for the player.
 do
 	function playerMeta:setWhitelisted(faction, whitelisted)
+		if (!whitelisted) then
+			whitelisted = nil
+		end
+
 		local data = nut.faction.indices[faction]
 
 		if (data) then
@@ -84,7 +88,10 @@ do
 			whitelists[SCHEMA.folder][data.uniqueID] = whitelisted and true or nil
 
 			self:setNutData("whitelists", whitelists)
-			netstream.Start(self, "charWhitelist", faction, whitelists and true or nil)
+
+			return true
 		end
+
+		return false
 	end
 end

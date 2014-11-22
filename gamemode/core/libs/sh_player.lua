@@ -46,26 +46,20 @@ do
 end
 
 -- Whitelist networking information here.
-do
-	if (CLIENT) then
-		netstream.Hook("charWhitelist", function(faction, whitelisted)
-			local data = nut.faction.indices[faction]
-
-			if (data) then
-				nut.localData = nut.localData or {}
-				nut.localData.whitelists = nut.localData.whitelists or {}
-				nut.localData.whitelists[data.uniqueID] = whitelisted
-			end
-		end)
-	end
-	
+do	
 	function playerMeta:hasWhitelist(faction)
 		local data = nut.faction.indices[faction]
 
-		if (data and data.isDefault) then
-			return true
+		if (data) then
+			if (data.isDefault) then
+				return true
+			end
+
+			local nutData = self:getNutData("whitelists", {})
+
+			return nutData[SCHEMA.folder] and nutData[SCHEMA.folder][data.uniqueID] == true or false
 		end
 
-		return self:getNutData("whitelists", {})[faction] == true
+		return false
 	end
 end

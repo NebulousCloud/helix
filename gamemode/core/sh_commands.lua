@@ -164,3 +164,49 @@ nut.command.add("dropmoney", {
 		nut.currency.spawn(pos, amount)
 	end
 })
+
+nut.command.add("plywhitelist", {
+	adminOnly = true,
+	syntax = "<string name> <string faction>",
+	onRun = function(client, arguments)
+		local target = nut.command.findPlayer(client, arguments[1])
+		local name = table.concat(arguments, " ", 2)
+
+		if (IsValid(target)) then
+			for k, v in ipairs(nut.faction.indices) do
+				if (nut.util.stringMatches(L(v.name, client), name) or nut.util.stringMatches(v.uniqueID, name)) then
+					if (target:setWhitelisted(k, true)) then
+						for k2, v2 in ipairs(player.GetAll()) do
+							v2:notifyLocalized("whitelist", client:Name(), target:Name(), L(v.name, v2))
+						end
+					end
+
+					return
+				end
+			end
+		end
+	end
+})
+
+nut.command.add("plyunwhitelist", {
+	adminOnly = true,
+	syntax = "<string name> <string faction>",
+	onRun = function(client, arguments)
+		local target = nut.command.findPlayer(client, arguments[1])
+		local name = table.concat(arguments, " ", 2)
+
+		if (IsValid(target)) then
+			for k, v in ipairs(nut.faction.indices) do
+				if (nut.util.stringMatches(L(v.name, client), name) or nut.util.stringMatches(v.uniqueID, name)) then
+					if (target:setWhitelisted(k, false)) then
+						for k2, v2 in ipairs(player.GetAll()) do
+							v2:notifyLocalized("unwhitelist", client:Name(), target:Name(), L(v.name, v2))
+						end
+					end
+					
+					return
+				end
+			end
+		end
+	end
+})
