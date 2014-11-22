@@ -46,7 +46,7 @@ function nut.faction.loadFromDir(directory)
 	for k, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
 		local niceName = v:sub(4, -5)
 
-		FACTION = nut.faction.teams[niceName] or {index = table.Count(nut.faction.teams) + 1}
+		FACTION = nut.faction.teams[niceName] or {index = table.Count(nut.faction.teams) + 1, isDefault = true}
 			if (PLUGIN) then
 				FACTION.plugin = PLUGIN.uniqueID
 			end
