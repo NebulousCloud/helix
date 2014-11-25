@@ -38,6 +38,10 @@ do
 			end
 		end
 
+		netstream.Hook("nutDataSync", function(data)
+			nut.localData = data
+		end)
+
 		netstream.Hook("nutData", function(key, value)
 			nut.localData = nut.loadData or {}
 			nut.localData[key] = value

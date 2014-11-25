@@ -56,10 +56,11 @@ do
 	function playerMeta:saveNutData()
 		local name = self:Name()
 		local steamID64 = self:SteamID64()
-		
+
 		nut.db.updateTable({
 			_steamName = name,
-			_playTime = math.floor((self.nutPlayTime or 0) + (RealTime() - self.nutJoinTime or 0))
+			_playTime = math.floor((self.nutPlayTime or 0) + (RealTime() - self.nutJoinTime or 0)),
+			_data = self.nutData
 		}, nil, "players", "_steamID = "..steamID64)
 	end
 

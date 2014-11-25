@@ -78,11 +78,19 @@ local PANEL = {}
 
 					if (IsValid(panel)) then
 						self.lastY = self.lastY + panel:GetTall() + 8
+
+						if (v.onPostSetup) then
+							v.onPostSetup(panel, faction, self.payload)
+						end
 					end
 				elseif (type(v.default) == "string") then
 					local textBox = self:addTextBox()
 					textBox.OnTextChanged = function(this)
 						self.payload[k] = this:GetText()
+					end
+
+					if (v.onPostSetup) then
+						v.onPostSetup(textBox, faction, self.payload)
 					end
 				end
 			end

@@ -39,6 +39,8 @@ function GM:PlayerInitialSpawn(client)
 	client:loadNutData(function(data)
 		if (!IsValid(client)) then return end
 
+		netstream.Start(client, "nutDataSync", data)
+		
 		nut.char.restore(client, function(charList)
 			if (!IsValid(client)) then return end
 			

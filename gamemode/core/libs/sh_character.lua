@@ -196,12 +196,25 @@ do
 		field = "_name",
 		default = "John Doe",
 		index = 1,
-		onValidate = function(value, data)
+		onValidate = function(value, data, client)
 			if (!value or !value:find("%S")) then
 				return false, "invalid", "name"
 			end
 
-			return value:sub(1, 70)
+			return hook.Run("GetDefaultCharName", client, data.faction) or value:sub(1, 70)
+		end,
+		onPostSetup = function(panel, faction, payload)
+			local name, disabled = hook.Run("GetDefaultCharName", LocalPlayer(), faction)
+
+			if (name) then
+				panel:SetText(name)
+				payload.name = name
+			end
+
+			if (disabled) then
+				panel:SetDisabled(true)
+				panel:SetEditable(false)
+			end
 		end
 	})
 

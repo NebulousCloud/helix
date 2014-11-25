@@ -216,3 +216,11 @@ function GM:CanPlayerThrowPunch(client)
 
 	return true
 end
+
+function GM:GetDefaultCharName(client, faction)
+	local info = nut.faction.indices[faction]
+
+	if (info and info.onGetDefaultName) then
+		return info:onGetDefaultName(client)
+	end
+end
