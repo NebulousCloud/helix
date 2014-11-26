@@ -55,7 +55,7 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 
 	if (!isSingleFile) then
 		nut.lang.loadFromDir(path.."/languages")
-		nut.util.includeDir(path.."/libs")
+		nut.util.includeDir(path.."/libs", true)
 		nut.attribs.loadFromDir(path.."/attributes")
 		nut.faction.loadFromDir(path.."/factions")
 		nut.class.loadFromDir(path.."/classes")
