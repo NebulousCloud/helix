@@ -24,7 +24,6 @@ function nut.bar.add(getValue, color, priority, identifier)
 	if (identifier) then
 		for k, v in ipairs(nut.bar.list) do
 			if (v.identifier == identifier) then
-				print(v.identifier)
 				table.remove(nut.bar.list, k)
 
 				break

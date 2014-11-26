@@ -75,6 +75,8 @@ function GM:PlayerUse(client, entity)
 
 		if (result == false) then
 			return false
+		else
+			hook.Run("PlayerUseDoor", client, entity)
 		end
 	end
 
@@ -88,6 +90,16 @@ function GM:KeyPress(client, key)
 				client:toggleWepRaised()
 			end
 		end)
+	elseif (key == IN_USE) then
+		local data = {}
+			data.start = client:GetShootPos()
+			data.endpos = data.start + client:GetAimVector()*96
+			data.filter = client
+		local entity = util.TraceLine(data).Entity
+
+		if (IsValid(entity) and entity:isDoor()) then
+			hook.Run("PlayerUse", client, entity)
+		end
 	end
 end
 
