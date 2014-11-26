@@ -90,6 +90,42 @@ function nut.util.stringMatches(a, b)
 	return false
 end
 
+-- Emits sounds one after the other from an entity.
+function nut.util.emitQueuedSounds(entity, sounds, delay, volume, pitch)
+	-- Let there be a delay before any sound is played.
+	delay = delay or 0
+
+	-- Loop through all of the sounds.
+	for k, v in ipairs(sounds) do
+		local postSet, preSet = 0, 0
+
+		-- Determine if this sound has special time offsets.
+		if (type(v) == "table") then
+			postSet, preSet = v[2] or 0, v[3] or 0
+			v = v[1]
+		end
+
+		-- Get the length of the sound.
+		local length = SoundDuration(v)
+		-- If the sound has a pause before it is played, add it here.
+		delay = delay + preSet
+
+		-- Have the sound play in the future.
+		timer.Simple(delay, function()
+			-- Check if the entity still exists and play the sound.
+			if (IsValid(entity)) then
+				entity:EmitSound(v, volume, pitch)
+			end
+		end)
+
+		-- Add the delay for the next sound.
+		delay = delay + length + postSet
+	end
+
+	-- Return how long it took for the whole thing.
+	return delay
+end
+
 if (CLIENT) then
 	local blur = nut.util.getMaterial("pp/blurscreen")
 
@@ -153,6 +189,7 @@ end
 do
 	local entityMeta = FindMetaTable("Entity")
 
+	-- Checks if an entity is a door by comparing its class.
 	function entityMeta:isDoor()
 		return self:GetClass():find("door")
 	end
@@ -165,24 +202,37 @@ do
 	ALWAYS_RAISED["weapon_physgun"] = true
 	ALWAYS_RAISED["gmod_tool"] = true
 
+	-- Returns whether or not the player has their weapon raised.
 	function playerMeta:isWepRaised()
 		local weapon = self:GetActiveWeapon()
 
+		-- Some weapons may have their own properties.
 		if (IsValid(weapon)) then
+			-- If their weapon is always raised, return true.
 			if (weapon.IsAlwaysRaised or ALWAYS_RAISED[weapon:GetClass()]) then
 				return true
+			-- Return false if always lowered.
 			elseif (weapon.IsAlwaysLowered) then
 				return false
 			end
 		end
 
+		-- Returns what the gamemode decides.
 		return self:getNetVar("raised", false)
 	end
 
+	-- Checks if the player is running by seeing if the speed is faster than walking.
+	function playerMeta:isRunning()
+		return self:GetVelocity():Length2D() > (self:GetWalkSpeed() + 10)
+	end
+
 	if (SERVER) then
+		-- Sets whether or not the weapon is raised.
 		function playerMeta:setWepRaised(state)
+			-- Sets the networked variable for being raised.
 			self:setNetVar("raised", state)
 
+			-- Delays any weapon shooting.
 			local weapon = self:GetActiveWeapon()
 
 			if (IsValid(weapon)) then
@@ -191,6 +241,7 @@ do
 			end
 		end
 
+		-- Inverts whether or not the weapon is raised.
 		function playerMeta:toggleWepRaised()
 			self:setWepRaised(!self:isWepRaised())
 		end
