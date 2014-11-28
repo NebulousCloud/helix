@@ -307,7 +307,13 @@ function nut.anim.getModelClass(model)
 		return "player"
 	end
 
-	return translations[model:lower()] or "citizen_male"
+	local class = translations[model:lower()] or "citizen_male"
+
+	if (class == "citizen_male" and (model:find("female" or model:find("alyx") or model:find("mossman")))) then
+		class = "citizen_female"
+	end
+	
+	return class
 end
 
 nut.anim.setModelClass("models/police.mdl", "metrocop")

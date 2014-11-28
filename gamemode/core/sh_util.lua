@@ -91,9 +91,10 @@ function nut.util.stringMatches(a, b)
 end
 
 -- Emits sounds one after the other from an entity.
-function nut.util.emitQueuedSounds(entity, sounds, delay, volume, pitch)
+function nut.util.emitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
 	-- Let there be a delay before any sound is played.
 	delay = delay or 0
+	spacing = spacing or 0.1
 
 	-- Loop through all of the sounds.
 	for k, v in ipairs(sounds) do
@@ -119,7 +120,7 @@ function nut.util.emitQueuedSounds(entity, sounds, delay, volume, pitch)
 		end)
 
 		-- Add the delay for the next sound.
-		delay = delay + length + postSet
+		delay = delay + length + postSet + spacing
 	end
 
 	-- Return how long it took for the whole thing.
@@ -224,6 +225,13 @@ do
 	-- Checks if the player is running by seeing if the speed is faster than walking.
 	function playerMeta:isRunning()
 		return self:GetVelocity():Length2D() > (self:GetWalkSpeed() + 10)
+	end
+
+	-- Checks if the player has a female model.
+	function playerMeta:isFemale()
+		local model = self:GetModel():lower()
+
+		return model:find("female") or model:find("alyx") or model:find("mossman")
 	end
 
 	if (SERVER) then
