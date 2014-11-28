@@ -37,6 +37,21 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 	end
 
 	_G[variable] = PLUGIN
+
+	if (!isSingleFile) then
+		nut.lang.loadFromDir(path.."/languages")
+		nut.util.includeDir(path.."/libs", true)
+		nut.attribs.loadFromDir(path.."/attributes")
+		nut.faction.loadFromDir(path.."/factions")
+		nut.class.loadFromDir(path.."/classes")
+		nut.item.loadFromDir(path.."/items")
+		nut.plugin.loadFromDir(path.."/plugins")
+		nut.util.includeDir(path.."/derma", true)
+		nut.plugin.loadEntities(path.."/entities")
+
+		hook.Run("DoPluginIncludes", path, PLUGIN)
+	end
+	
 	nut.util.include(isSingleFile and path or path.."/sh_"..variable:lower()..".lua", "shared")
 
 	local uniqueID2 = uniqueID
@@ -53,21 +68,11 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 		return nut.data.get(uniqueID2, default, global, ignoreMap, refresh)
 	end
 
-	if (!isSingleFile) then
-		nut.lang.loadFromDir(path.."/languages")
-		nut.util.includeDir(path.."/libs", true)
-		nut.attribs.loadFromDir(path.."/attributes")
-		nut.faction.loadFromDir(path.."/factions")
-		nut.class.loadFromDir(path.."/classes")
-		nut.item.loadFromDir(path.."/items")
-		nut.plugin.loadFromDir(path.."/plugins")
-		nut.util.includeDir(path.."/derma", true)
-		nut.plugin.loadEntities(path.."/entities")
-
-		hook.Run("DoPluginIncludes", path, PLUGIN)
-	end
-
 	hook.Run("PluginLoaded", uniqueID, PLUGIN)
+
+	if (PLUGIN.OnLoaded) then
+		PLUGIN:OnLoaded()
+	end
 
 	if (uniqueID != "schema") then
 		PLUGIN.name = PLUGIN.name or "Unknown"

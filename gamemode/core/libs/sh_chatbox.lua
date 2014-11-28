@@ -139,7 +139,7 @@ if (SERVER) then
 		-- Only send if needed.
 		if (!noSend) then
 			-- Send the correct chat type out so other player see the message.
-			nut.chat.send(client, chatType, message, anonymous)
+			nut.chat.send(client, chatType, hook.Run("PlayerMessageSend", client, chatType, message, anonymous) or message, anonymous)
 		end
 
 		-- Return the chosen chat type and the message that was sent if needed for some reason.

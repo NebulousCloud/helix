@@ -178,7 +178,8 @@ function GM:PlayerSay(client, message)
 		end
 	end
 
-	nut.chat.send(client, chatType, message, anonymous)
+	nut.chat.send(client, chatType, hook.Run("PlayerMessageSend", client, chatType, message, anonymous) or message, anonymous)
+	hook.Run("PostPlayerSay", client, message, chatType, anonymous)
 
 	return ""
 end
@@ -254,9 +255,42 @@ function GM:PlayerLoadout(client)
 	end
 end
 
+local deathSounds = {
+	Sound("vo/npc/male01/pain07.wav"),
+	Sound("vo/npc/male01/pain08.wav"),
+	Sound("vo/npc/male01/pain09.wav")
+}
+
 function GM:PlayerDeath(client, inflictor, attacker)
 	client:setNetVar("deathStartTime", CurTime())
 	client:setNetVar("deathTime", CurTime() + nut.config.get("spawnTime", 5))
+
+	local deathSound = hook.Run("GetPlayerDeathSound", client) or table.Random(deathSounds)
+
+	if (client:isFemale() and !deathSound:find("female")) then
+		deathSound = deathSound:gsub("male", "female")
+	end
+
+	client:EmitSound(deathSound)
+end
+
+local painSounds = {
+	Sound("vo/npc/male01/pain01.wav"),
+	Sound("vo/npc/male01/pain02.wav"),
+	Sound("vo/npc/male01/pain03.wav"),
+	Sound("vo/npc/male01/pain04.wav"),
+	Sound("vo/npc/male01/pain05.wav"),
+	Sound("vo/npc/male01/pain06.wav")
+}
+
+function GM:PlayerHurt(client, attacker, health, damage)
+	local painSound = hook.Run("GetPlayerPainSound", client) or table.Random(painSounds)
+
+	if (client:isFemale() and !painSound:find("female")) then
+		painSound = painSound:gsub("male", "female")
+	end
+
+	client:EmitSound(painSound)	
 end
 
 function GM:PlayerDeathThink(client)
@@ -334,4 +368,8 @@ function GM:OnPlayerUseBusiness(char, item)
 	-- does not requires any kind of return.
 	-- ex) item:setData("businessItem", true)
 	-- then every purchased item will be marked as Business Item.
+end
+
+function GM:PlayerDeathSound()
+	return true
 end
