@@ -75,7 +75,7 @@ function ITEM:onCanBeTransfered(oldInventory, newInventory)
 		return false
 	end
 
-	if (!newInventory) then
+	if (!newInventory or newInventory:getID() != oldInventory:getID()) then
 		return true
 	end
 

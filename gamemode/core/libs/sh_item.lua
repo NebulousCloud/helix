@@ -412,7 +412,7 @@ do
 			if (character) then
 				local inventory = nut.item.inventories[invID]
 
-				if (inventory and inventory.owner and inventory.owner == character:getID()) then
+				if (inventory and !inventory.owner or (inventory.owner and inventory.owner == character:getID())) then
 					local item = inventory:getItemAt(oldX, oldY)
 
 					if (item) then
@@ -420,7 +420,7 @@ do
 							local inventory2 = nut.item.inventories[newInvID]
 
 							if (inventory2) then
-								item:transfer(inventory2:getID(), x, y, client)
+								item:transfer(newInvID, x, y, client)
 							end
 
 							return

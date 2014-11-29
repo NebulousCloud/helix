@@ -37,6 +37,22 @@ if (SERVER) then
 	function ENT:setInventory(inventory)
 		if (inventory) then
 			self:setNetVar("id", inventory:getID())
+			inventory.onAuthorizeTransfer = function(inventory, client, oldInventory, item)
+				if (IsValid(client) and IsValid(self) and self.receivers[client]) then
+					return true
+				end
+			end
+			inventory.getReceiver = function(inventory)
+				local receivers = {}
+
+				for k, v in pairs(self.receivers) do
+					if (IsValid(k)) then
+						receivers[#receivers + 1] = k
+					end
+				end
+
+				return #receivers > 0 and receivers or nil
+			end
 		end
 	end
 

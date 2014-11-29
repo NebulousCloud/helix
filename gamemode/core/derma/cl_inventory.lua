@@ -260,7 +260,7 @@ PANEL = {}
 		if (self.slots[x] and self.slots[x][y]) then
 			local panel = self:Add("nutItemIcon")
 			panel:SetSize(w * 64, h * 64)
-			panel:SetZPos(1)
+			panel:SetZPos(99)
 			panel:InvalidateLayout(true)
 			panel:SetModel(model)
 			panel:SetPos(self.slots[x][y]:GetPos())
@@ -294,6 +294,11 @@ PANEL = {}
 				if (code == MOUSE_LEFT and this:IsDragging()) then
 					local data = this.dropPos
 
+					this:DragMouseRelease(code)
+					this:MouseCapture(false)
+
+					nut.item.held = nil
+
 					if (data) then
 						local inventory = table.GetFirstKey(data)
 
@@ -306,7 +311,7 @@ PANEL = {}
 								this.gridY = data.y2
 								this:SetParent(inventory)
 								this:SetPos(data.x, data.y)
-								
+
 								if (panel.slots) then
 									for k, v in ipairs(panel.slots) do
 										if (IsValid(v)) then
@@ -329,11 +334,6 @@ PANEL = {}
 							end
 						end
 					end
-					
-					this:DragMouseRelease(code)
-					this:MouseCapture(false)
-
-					nut.item.held = nil
 				end
 			end
 			panel.doRightClick = function(this)

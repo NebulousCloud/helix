@@ -263,7 +263,7 @@ if (SERVER) then
 	function META:add(uniqueID, quantity, data, x, y, noReplication)
 		quantity = quantity or 1
 
-		if (self.owner and quantity > 0) then
+		if (quantity > 0) then
 			if (type(uniqueID) != "number" and quantity > 1) then
 				for i = 1, quantity do
 					self:add(uniqueID, 1, data)

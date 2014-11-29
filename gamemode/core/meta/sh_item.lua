@@ -179,12 +179,18 @@ if (SERVER) then
 			return false, "not allowed"
 		end
 
-		if (self.onCanBeTransfered and self:onCanBeTransfered(curInv, inventory) == false) then
-			return false, "not allowed"
-		end
+		local authorized = false
 
 		if (curInv and !IsValid(client)) then
 			client = (curInv.getReceiver and curInv:getReceiver() or nil)
+		end
+
+		if (inventory and inventory.onAuthorizeTransfer and inventory:onAuthorizeTransfer(client, curInv, self)) then
+			authorized = true
+		end
+
+		if (!authorized and self.onCanBeTransfered and self:onCanBeTransfered(curInv, inventory) == false) then
+			return false, "not allowed"
 		end
 
 		if (curInv) then
