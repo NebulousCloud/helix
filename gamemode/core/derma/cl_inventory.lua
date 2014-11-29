@@ -162,6 +162,7 @@ PANEL = {}
 			
 			for y = 1, self.gridH do
 				local slot = self:Add("DPanel")
+				slot:SetZPos(-999)
 				slot.gridX = x
 				slot.gridY = y
 				slot:SetPos((x - 1) * 64 + 4, (y - 1) * 64 + 27)
@@ -202,31 +203,6 @@ PANEL = {}
 					surface.DrawRect((x2 - 1)*64 + 4, (y2 - 1)*64 + 27, 64, 64)
 				end
 			end
-
-			--[[
-			local x, y = gui.MouseX() - dragndrop.m_MouseX, gui.MouseY() - dragndrop.m_MouseY
-			local offsetX = math.Round(x / 64)
-			local offsetY = math.Round(y / 64)
-
-			for x = 0, item.gridW - 1 do
-				for y = 0, item.gridH - 1 do
-					local x2, y2 = math.Round(self:ScreenToLocal(gui.MouseX()) / 64) + offsetX + x, item.gridY + offsetY + y
-					
-					if (self:isValidSlot(x2, y2, item)) then
-						surface.SetDrawColor(0, 255, 0, 10)
-						
-						if (x == 0 and y == 0) then
-							self.dropPos = {x = (x2 - 1)*64 + 4, y = (y2 - 1)*64 + 27, x2 = x2, y2 = y2}
-						end
-					else
-						surface.SetDrawColor(255, 0, 0, 10)
-						self.dropPos = nil
-					end
-					
-					surface.DrawRect((x2 - 1)*64 + 4, (y2 - 1)*64 + 27, 64, 64)
-				end
-			end
-			--]]
 		end
 	end
 	
@@ -234,11 +210,13 @@ PANEL = {}
 		return self.slots[x] and IsValid(self.slots[x][y]) and (!IsValid(self.slots[x][y].item) or self.slots[x][y].item == this)
 	end
 	
-	function PANEL:onTransfer(oldX, oldY, x, y, oldInventory)
-		if (self != oldInventory) then
-			netstream.Start("invMv", oldX, oldY, x, y, oldInventory.invID, self.invID)
-		else
-			netstream.Start("invMv", oldX, oldY, x, y, oldInventory.invID)
+	function PANEL:onTransfer(oldX, oldY, x, y, oldInventory, noSend)
+		if (!noSend) then
+			if (self != oldInventory) then
+				netstream.Start("invMv", oldX, oldY, x, y, oldInventory.invID, self.invID)
+			else
+				netstream.Start("invMv", oldX, oldY, x, y, oldInventory.invID)
+			end
 		end
 
 		local inventory = nut.item.inventories[oldInventory.invID]
@@ -260,7 +238,7 @@ PANEL = {}
 		if (self.slots[x] and self.slots[x][y]) then
 			local panel = self:Add("nutItemIcon")
 			panel:SetSize(w * 64, h * 64)
-			panel:SetZPos(99)
+			panel:SetZPos(999)
 			panel:InvalidateLayout(true)
 			panel:SetModel(model)
 			panel:SetPos(self.slots[x][y]:GetPos())
@@ -278,8 +256,45 @@ PANEL = {}
 			panel.inv = inventory
 
 			local itemTable = inventory:getItemAt(panel.gridX, panel.gridY)
+
+			if (self.panels[itemTable:getID()]) then
+				self.panels[itemTable:getID()]:Remove()
+			end
+
 			renderNewIcon(panel, itemTable)
 
+			panel.move = function(this, data, inventory, noSend)
+				local oldX, oldY = this.gridX, this.gridY
+				local oldParent = this:GetParent()
+
+				data.x = data.x or (data.x2 - 1)*64 + 4
+				data.y = data.y or (data.y2 - 1)*64 + 27
+
+				this.gridX = data.x2
+				this.gridY = data.y2
+				this:SetParent(inventory)
+				this:SetPos(data.x, data.y)
+
+				if (this.slots) then
+					for k, v in ipairs(this.slots) do
+						if (IsValid(v) and v.item == this) then
+							v.item = nil
+						end
+					end
+				end
+				
+				this.slots = {}
+				inventory:onTransfer(oldX, oldY, this.gridX, this.gridY, oldParent, noSend)
+
+				for x = 1, this.gridW do
+					for y = 1, this.gridH do
+						local slot = inventory.slots[this.gridX + x-1][this.gridY + y-1]
+
+						slot.item = this
+						this.slots[#this.slots + 1] = slot
+					end
+				end
+			end
 			panel.OnMousePressed = function(this, code)
 				if (code == MOUSE_LEFT) then
 					this:DragMousePress(code)
@@ -296,6 +311,7 @@ PANEL = {}
 
 					this:DragMouseRelease(code)
 					this:MouseCapture(false)
+					this:SetZPos(99)
 
 					nut.item.held = nil
 
@@ -307,30 +323,7 @@ PANEL = {}
 							local oldX, oldY = this.gridX, this.gridY
 
 							if (oldX != data.x2 or oldY != data.y2 or inventory != self) then
-								this.gridX = data.x2
-								this.gridY = data.y2
-								this:SetParent(inventory)
-								this:SetPos(data.x, data.y)
-
-								if (panel.slots) then
-									for k, v in ipairs(panel.slots) do
-										if (IsValid(v)) then
-											v.item = nil
-										end
-									end
-								end
-								
-								panel.slots = {}
-								inventory:onTransfer(oldX, oldY, this.gridX, this.gridY, self)
-								
-								for x = 1, this.gridW do
-									for y = 1, this.gridH do
-										local slot = inventory.slots[this.gridX + x-1][this.gridY + y-1]
-										
-										slot.item = panel
-										panel.slots[#panel.slots + 1] = slot
-									end
-								end
+								this:move(data, inventory)
 							end
 						end
 					end

@@ -50,6 +50,8 @@ function ITEM:printData()
 end
 
 function ITEM:call(method, client, entity, ...)
+	local oldPlayer, oldEntity = self.player, self.entity
+
 	self.player = self.player or client
 	self.entity = self.entity or entity
 
@@ -62,8 +64,8 @@ function ITEM:call(method, client, entity, ...)
 		return unpack(results)
 	end
 
-	self.player = nil
-	self.entity = nil
+	self.player = oldPlayer
+	self.entity = oldEntity
 end
 
 function ITEM:getOwner()

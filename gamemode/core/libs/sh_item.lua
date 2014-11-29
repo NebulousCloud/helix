@@ -373,6 +373,19 @@ do
 			end
 		end)
 		
+		netstream.Hook("invMv", function(invID, itemID, x, y)
+			local inventory = nut.item.inventories[invID]
+			local panel = nut.gui["inv"..invID]
+
+			if (inventory and IsValid(panel)) then
+				local icon = panel.panels[itemID]
+
+				if (IsValid(icon)) then
+					icon:move({x2 = x, y2 = y}, panel, true)
+				end
+			end
+		end)
+
 		netstream.Hook("invRm", function(id, invID, owner)
 			local character = LocalPlayer():getChar()
 
@@ -386,14 +399,16 @@ do
 				if (inventory) then
 					inventory:remove(id)
 
-					local panel = nut.gui["inv"..invID] or nut.gui.inv1
+					local panel = nut.gui["inv"..invID]
 
 					if (IsValid(panel)) then
 						local icon = panel.panels[id]
 
 						if (IsValid(icon)) then
 							for k, v in ipairs(icon.slots or {}) do
-								v.item = nil
+								if (v.item == icon) then
+									v.item = nil
+								end
 							end
 
 							icon:Remove()
@@ -444,6 +459,16 @@ do
 								for y2 = 0, item.height - 1 do
 									inventory.slots[x + x2] = inventory.slots[x + x2] or {}
 									inventory.slots[x + x2][y + y2] = item
+								end
+							end
+
+							local receiver = inventory:getReceiver()
+
+							if (receiver and type(receiver) == "table") then
+								for k, v in ipairs(receiver) do
+									if (v != client) then
+										netstream.Start(v, "invMv", invID, item:getID(), x, y)
+									end
 								end
 							end
 

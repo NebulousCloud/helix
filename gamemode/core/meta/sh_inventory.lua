@@ -253,10 +253,20 @@ if (SERVER) then
 	function META:sendSlot(x, y, item)
 		local receiver = self:getReceiver()
 
-		if (IsValid(receiver) and receiver:getChar() and self.owner == receiver:getChar():getID()) then
+		if (type(receiver) == "Player" and IsValid(receiver) and receiver:getChar() and self.owner == receiver:getChar():getID()) then
 			netstream.Start(receiver, "invSet", self:getID(), x, y, item and item.uniqueID or nil, item and item.id or nil)
 		else
 			netstream.Start(receiver, "invSet", self:getID(), x, y, item and item.uniqueID or nil, item and item.id or nil, self.owner)
+		end
+
+		if (item) then
+			if (type(receiver) == "table") then
+				for k, v in pairs(receiver) do
+					item:call("onSendData", v)
+				end
+			elseif (IsValid(receiver)) then
+				item:call("onSendData", receiver)
+			end
 		end
 	end
 
@@ -361,6 +371,10 @@ if (SERVER) then
 		end
 
 		netstream.Start(receiver, "inv", slots, self:getID(), self.w, self.h, (receiver == nil or fullUpdate) and self.owner or nil)
+
+		for k, v in pairs(self:getItems()) do
+			v:call("onSendData", receiver)
+		end
 	end
 end
 

@@ -51,6 +51,7 @@ ITEM.functions.View = {
 	end
 }
 
+-- Called when a new instance of this item has been made.
 function ITEM:onInstanced(invID, x, y)
 	local inventory = nut.item.inventories[invID]
 
@@ -61,6 +62,16 @@ function ITEM:onInstanced(invID, x, y)
 	end
 end
 
+-- Called when the item first appears for a client.
+function ITEM:onSendData(client)
+	local inventory = nut.item.inventories[self:getData("id")]
+
+	if (inventory) then
+		inventory:sync(client)
+	end
+end
+
+-- Called before the item is permanently deleted.
 function ITEM:onRemoved()
 	local index = self:getData("id")
 
@@ -70,8 +81,9 @@ function ITEM:onRemoved()
 	end
 end
 
+-- Called when the item should tell whether or not it can be transfered between inventories.
 function ITEM:onCanBeTransfered(oldInventory, newInventory)
-	if (newInventory:getID() == self:getData("id")) then
+	if (newInventory and newInventory:getID() == self:getData("id")) then
 		return false
 	end
 
@@ -82,6 +94,7 @@ function ITEM:onCanBeTransfered(oldInventory, newInventory)
 	return false
 end
 
+-- Called after the item is registered into the item tables.
 function ITEM:onRegistered()
 	nut.item.registerInv(self.uniqueID, self.invWidth, self.invHeight)
 end
