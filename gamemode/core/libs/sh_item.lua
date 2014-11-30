@@ -210,6 +210,10 @@ function nut.item.loadFromDir(directory)
 end
 
 function nut.item.new(uniqueID, id)
+	if (nut.item.instances[id]) then
+		return nut.item.instances[id]
+	end
+	
 	local stockItem = nut.item.list[uniqueID]
 
 	if (stockItem) then

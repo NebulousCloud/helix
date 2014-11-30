@@ -372,7 +372,7 @@ nut.command.add("areaadd", {
 			client:notify(L("areaCommand", client))
 		else
 			local data = {}
-			local pos = client:GetEyeTraceNoCursor().HitPos
+			local pos = client:GetPos()
 			local min = client:getNetVar("areaMin")
 			local max = pos
 			local name = client:getNetVar("areaName")
