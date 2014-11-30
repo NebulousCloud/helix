@@ -67,6 +67,68 @@ function nut.chat.register(chatType, data)
 	nut.chat.classes[chatType] = data
 end
 
+-- Identifies which chat mode should be used.
+function nut.chat.parse(client, message, noSend)
+	local anonymous = false
+	local chatType = "ic"
+
+	-- Handle anonymous/unknown speaker chat.
+	if (message:sub(1, 1) == "?" and message:sub(2):find("%S")) then
+		anonymous = true
+		message = message:sub(2)
+	end
+
+	-- Loop through all chat classes and see if the message contains their prefix.
+	for k, v in pairs(nut.chat.classes) do
+		local isChosen = false
+		local chosenPrefix = ""
+		local noSpaceAfter = v.noSpaceAfter
+
+		-- Check through all prefixes if the chat type has more than one.
+		if (type(v.prefix) == "table") then
+			for _, prefix in ipairs(v.prefix) do
+				-- Checking if the start of the message has the prefix.
+				if (message:sub(1, #prefix + (noSpaceAfter and 0 or 1)) == prefix..(noSpaceAfter and "" or " ")) then
+					isChosen = true
+					chosenPrefix = prefix..(v.noSpaceAfter and "" or " ")
+
+					break
+				end
+			end
+		-- Otherwise the prefix itself is checked.
+		elseif (type(v.prefix) == "string") then
+			isChosen = message:sub(1, #v.prefix + (noSpaceAfter and 1 or 0)) == v.prefix..(noSpaceAfter and "" or " ")
+			chosenPrefix = v.prefix..(v.noSpaceAfter and "" or " ")
+		end
+
+		-- If the checks say we have the proper chat type, then the chat type is the chosen one!
+		-- If this is not chosen, the loop continues. If the loop doesn't find the correct chat
+		-- type, then it falls back to IC chat as seen by the chatType variable above.
+		if (isChosen) then
+			-- Set the chat type to the chosen one.
+			chatType = k
+			-- Remove the prefix from the chat type so it does not show in the message.
+			message = message:sub(#chosenPrefix + 1)
+
+			if (nut.chat.classes[k].noSpaceAfter and message:sub(1, 1):match("%s")) then
+				message = message:sub(2)
+			end	
+
+			break
+		end
+	end
+
+	-- Only send if needed.
+	if (SERVER and !noSend) then
+		-- Send the correct chat type out so other player see the message.
+		nut.chat.send(client, chatType, hook.Run("PlayerMessageSend", client, chatType, message, anonymous) or message, anonymous)
+	end
+
+	-- Return the chosen chat type and the message that was sent if needed for some reason.
+	-- This would be useful if you want to send the message on your own.
+	return chatType, message, anonymous
+end
+
 if (SERVER) then
 	-- Send a chat message using the specified chat type.
 	function nut.chat.send(speaker, chatType, text, anonymous)
@@ -76,6 +138,10 @@ if (SERVER) then
 			local receivers = {}
 
 			for k, v in ipairs(player.GetAll()) do
+				if (class.canPredict and speaker == v) then
+					continue
+				end
+				
 				if (class.onCanHear(speaker, v) != false) then
 					receivers[#receivers + 1] = v
 				end
@@ -83,68 +149,6 @@ if (SERVER) then
 
 			netstream.Start(receivers, "cMsg", speaker, chatType, text, anonymous)
 		end
-	end
-
-	-- Identifies which chat mode should be used.
-	function nut.chat.parse(client, message, noSend)
-		local anonymous = false
-		local chatType = "ic"
-
-		-- Handle anonymous/unknown speaker chat.
-		if (message:sub(1, 1) == "?" and message:sub(2):find("%S")) then
-			anonymous = true
-			message = message:sub(2)
-		end
-
-		-- Loop through all chat classes and see if the message contains their prefix.
-		for k, v in pairs(nut.chat.classes) do
-			local isChosen = false
-			local chosenPrefix = ""
-			local noSpaceAfter = v.noSpaceAfter
-
-			-- Check through all prefixes if the chat type has more than one.
-			if (type(v.prefix) == "table") then
-				for _, prefix in ipairs(v.prefix) do
-					-- Checking if the start of the message has the prefix.
-					if (message:sub(1, #prefix + (noSpaceAfter and 0 or 1)) == prefix..(noSpaceAfter and "" or " ")) then
-						isChosen = true
-						chosenPrefix = prefix..(v.noSpaceAfter and "" or " ")
-
-						break
-					end
-				end
-			-- Otherwise the prefix itself is checked.
-			elseif (type(v.prefix) == "string") then
-				isChosen = message:sub(1, #v.prefix + (noSpaceAfter and 1 or 0)) == v.prefix..(noSpaceAfter and "" or " ")
-				chosenPrefix = v.prefix..(v.noSpaceAfter and "" or " ")
-			end
-
-			-- If the checks say we have the proper chat type, then the chat type is the chosen one!
-			-- If this is not chosen, the loop continues. If the loop doesn't find the correct chat
-			-- type, then it falls back to IC chat as seen by the chatType variable above.
-			if (isChosen) then
-				-- Set the chat type to the chosen one.
-				chatType = k
-				-- Remove the prefix from the chat type so it does not show in the message.
-				message = message:sub(#chosenPrefix + 1)
-
-				if (nut.chat.classes[k].noSpaceAfter and message:sub(1, 1):match("%s")) then
-					message = message:sub(2)
-				end	
-
-				break
-			end
-		end
-
-		-- Only send if needed.
-		if (!noSend) then
-			-- Send the correct chat type out so other player see the message.
-			nut.chat.send(client, chatType, hook.Run("PlayerMessageSend", client, chatType, message, anonymous) or message, anonymous)
-		end
-
-		-- Return the chosen chat type and the message that was sent if needed for some reason.
-		-- This would be useful if you want to send the message on your own.
-		return chatType, message, anonymous
 	end
 else
 	-- Call onChatAdd for the appropriate chatType.
@@ -178,7 +182,8 @@ do
 				-- Otherwise, use the normal chat color.
 				return nut.config.get("chatColor")
 			end,
-			onCanHear = nut.config.get("chatRange", 280)
+			onCanHear = nut.config.get("chatRange", 280),
+			canPredict = true
 		})
 
 		-- Roll information in chat.
@@ -196,7 +201,8 @@ do
 			onCanHear = nut.config.get("chatRange", 280),
 			prefix = {"/me", "/action"},
 			font = "nutChatFontItalics",
-			filter = "actions"
+			filter = "actions",
+			canPredict = true
 		})
 
 		-- Actions and such.
@@ -207,7 +213,8 @@ do
 			onCanHear = nut.config.get("chatRange", 280),
 			prefix = {"/it"},
 			font = "nutChatFontItalics",
-			filter = "actions"
+			filter = "actions",
+			canPredict = true
 		})
 
 		-- Whisper chat.
@@ -221,6 +228,7 @@ do
 			end,
 			onCanHear = nut.config.get("chatRange", 280) * 0.25,
 			prefix = {"/w", "/whisper"},
+			canPredict = true
 		})
 
 		-- Yelling out loud.
@@ -234,6 +242,7 @@ do
 			end,
 			onCanHear = nut.config.get("chatRange", 280) * 2,
 			prefix = {"/y", "/yell"},
+			canPredict = true
 		})
 
 		-- Out of character.
@@ -290,6 +299,7 @@ do
 				chat.AddText(Color(255, 150, 0), text)
 			end,
 			prefix = {"/event"},
+			canPredict = true
 		})
 
 		-- Local out of character.

@@ -33,7 +33,7 @@ ITEM.functions.View = {
 			end
 
 			if (inventory and inventory.slots) then
-				panel = nut.gui.menu.panel:Add("nutInventory")
+				panel = vgui.Create("nutInventory", nut.gui.menu.panel)
 				panel:setInventory(inventory)
 				panel:ShowCloseButton(true)
 				panel:SetTitle(item.name)

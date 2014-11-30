@@ -165,6 +165,8 @@ local PANEL = {}
 
 					netstream.Start("msg", text)
 				end
+
+				hook.Run("FinishChat")
 			end
 			self.text:SetAllowNonAsciiCharacters(true)
 			self.text.Paint = function(this, w, h)
@@ -179,6 +181,8 @@ local PANEL = {}
 			self.text.OnTextChanged = function(this)
 				local text = this:GetText()
 
+				hook.Run("ChatTextChanged", text)
+
 				if (text:sub(1, 1) == "/") then
 					self.arguments = nut.command.extractArgs(text:sub(2))
 				end
@@ -187,6 +191,8 @@ local PANEL = {}
 			self.entry:MakePopup()
 			self.text:RequestFocus()
 			self.tabs:SetVisible(true)
+
+			hook.Run("StartChat")
 		end
 	end
 
