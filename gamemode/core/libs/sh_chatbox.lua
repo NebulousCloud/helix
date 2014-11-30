@@ -49,7 +49,7 @@ function nut.chat.register(chatType, data)
 		
 		data.onChatAdd = function(speaker, text, anonymous)
 			local color = data.color
-			local name = anonymous and L"someone" or hook.Run("GetDisplayedName", speaker, chatType) or speaker:Name()
+			local name = anonymous and L"someone" or hook.Run("GetDisplayedName", speaker, chatType) or (IsValid(speaker) and speaker:Name() or "Console")
 
 			if (data.onGetColor) then
 				color = data.onGetColor(speaker, text)
@@ -138,10 +138,6 @@ if (SERVER) then
 			local receivers = {}
 
 			for k, v in ipairs(player.GetAll()) do
-				if (class.canPredict and speaker == v) then
-					continue
-				end
-				
 				if (class.onCanHear(speaker, v) != false) then
 					receivers[#receivers + 1] = v
 				end
@@ -182,8 +178,7 @@ do
 				-- Otherwise, use the normal chat color.
 				return nut.config.get("chatColor")
 			end,
-			onCanHear = nut.config.get("chatRange", 280),
-			canPredict = true
+			onCanHear = nut.config.get("chatRange", 280)
 		})
 
 		-- Roll information in chat.
@@ -201,8 +196,7 @@ do
 			onCanHear = nut.config.get("chatRange", 280),
 			prefix = {"/me", "/action"},
 			font = "nutChatFontItalics",
-			filter = "actions",
-			canPredict = true
+			filter = "actions"
 		})
 
 		-- Actions and such.
@@ -213,8 +207,7 @@ do
 			onCanHear = nut.config.get("chatRange", 280),
 			prefix = {"/it"},
 			font = "nutChatFontItalics",
-			filter = "actions",
-			canPredict = true
+			filter = "actions"
 		})
 
 		-- Whisper chat.
@@ -227,8 +220,7 @@ do
 				return Color(color.r - 35, color.g - 35, color.b - 35)
 			end,
 			onCanHear = nut.config.get("chatRange", 280) * 0.25,
-			prefix = {"/w", "/whisper"},
-			canPredict = true
+			prefix = {"/w", "/whisper"}
 		})
 
 		-- Yelling out loud.
@@ -241,8 +233,7 @@ do
 				return Color(color.r + 35, color.g + 35, color.b + 35)
 			end,
 			onCanHear = nut.config.get("chatRange", 280) * 2,
-			prefix = {"/y", "/yell"},
-			canPredict = true
+			prefix = {"/y", "/yell"}
 		})
 
 		-- Out of character.
@@ -298,8 +289,7 @@ do
 			onChatAdd = function(speaker, text)
 				chat.AddText(Color(255, 150, 0), text)
 			end,
-			prefix = {"/event"},
-			canPredict = true
+			prefix = {"/event"}
 		})
 
 		-- Local out of character.

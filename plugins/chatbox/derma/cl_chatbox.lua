@@ -164,9 +164,8 @@ local PANEL = {}
 					end
 
 					netstream.Start("msg", text)
+					hook.Run("FinishChat")
 				end
-
-				hook.Run("FinishChat")
 			end
 			self.text:SetAllowNonAsciiCharacters(true)
 			self.text.Paint = function(this, w, h)

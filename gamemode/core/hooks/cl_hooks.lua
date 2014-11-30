@@ -411,22 +411,3 @@ function GM:HUDShouldDraw(element)
 
 	return true
 end
-
-nut.chat.lastText = nut.chat.lastText or ""
-
-function GM:ChatTextChanged(text)
-	nut.chat.lastText = text
-end
-
-function GM:FinishChat()
-	local chatType, message, anonymous = nut.chat.parse(LocalPlayer(), nut.chat.lastText)
-	local class = nut.chat.classes[chatType]
-
-	if (class and class.canPredict and class.onChatAdd) then
-		CHAT_CLASS = class
-			class.onChatAdd(LocalPlayer(), message, anonymous)
-		CHAT_CLASS = nil
-
-		chat.PlaySound()
-	end
-end
