@@ -84,11 +84,12 @@ do
 		local data = nut.faction.indices[faction]
 
 		if (data) then
-			local whitelists = {}
+			local whitelists = self:getNutData("whitelists", {})
 			whitelists[SCHEMA.folder] = whitelists[SCHEMA.folder] or {}
 			whitelists[SCHEMA.folder][data.uniqueID] = whitelisted and true or nil
 
 			self:setNutData("whitelists", whitelists)
+			self:saveNutData()
 
 			return true
 		end

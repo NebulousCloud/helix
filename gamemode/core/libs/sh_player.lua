@@ -19,6 +19,10 @@ local playerMeta = FindMetaTable("Player")
 do
 	if (SERVER) then
 		function playerMeta:getNutData(key, default)
+			if (key == true) then
+				return self.nutData
+			end
+			
 			local data = self.nutData and self.nutData[key]
 
 			if (data == nil) then

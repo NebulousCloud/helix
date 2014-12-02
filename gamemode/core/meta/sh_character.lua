@@ -24,6 +24,10 @@ function CHAR:__tostring()
 	return "character["..(self.id or 0).."]"
 end
 
+function CHAR:__eq(other)
+	return self:getID() == other:getID()
+end
+
 function CHAR:getID()
 	return self.id
 end

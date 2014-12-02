@@ -21,7 +21,7 @@ ITEM.name = "Undefined"
 ITEM.desc = "An item that is undefined."
 ITEM.id = ITEM.id or 0
 ITEM.uniqueID = "undefined"
-ITEM.data = {}
+ITEM.data = ITEM.data or {}
 
 function ITEM:__tostring()
 	return "item["..self.uniqueID.."]["..self.id.."]"
