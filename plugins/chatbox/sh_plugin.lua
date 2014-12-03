@@ -65,6 +65,13 @@ if (CLIENT) then
 			chat.PlaySound()
 		end
 	end
+
+	function PLUGIN:ChatText(index, name, text, messageType)
+		if (messageType == "none" and IsValid(self.panel)) then
+			self.panel:addText(text)
+			chat.PlaySound()
+		end
+	end
 else
 	netstream.Hook("msg", function(client, text)
 		if ((client.nutNextChat or 0) < CurTime()) then
