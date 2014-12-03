@@ -249,16 +249,14 @@ function SWEP:SecondaryAttack()
 		return
 	end
 
-	local trace = self.Owner:GetEyeTraceNoCursor()
+	local data = {}
+		data.start = self.Owner:GetShootPos()
+		data.endpos = data.start + self.Owner:GetAimVector()*84
+		data.filter = {self, self.Owner}
+	local trace = util.TraceLine(data)
 	local entity = trace.Entity
-
+	
 	if (SERVER and IsValid(entity)) then
-		local distance = self.Owner:EyePos():Distance(trace.HitPos)
-
-		if (distance > 72) then
-			return
-		end
-
 		if (entity:isDoor()) then
 			if (hook.Run("PlayerCanKnock", self.Owner, entity) == false) then
 				return
