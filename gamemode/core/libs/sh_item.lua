@@ -385,7 +385,6 @@ do
 				local icon = panel.panels[itemID]
 
 				if (IsValid(icon)) then
-					print(icon, x, y)
 					icon:move({x2 = x, y2 = y}, panel, true)
 				end
 			end
@@ -468,7 +467,7 @@ do
 							end
 
 							local receiver = inventory:getReceiver()
-							print("RCC")
+
 							if (receiver and type(receiver) == "table") then
 								PrintTable(receiver)
 							end
