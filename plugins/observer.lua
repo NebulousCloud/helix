@@ -25,7 +25,7 @@ else
 		-- Observer mode is reserved for administrators.
 		if (client:IsAdmin()) then
 			-- Check if they are entering noclip.
-			if (client:GetMoveType() == MOVETYPE_WALK) then
+			if (state) then
 				-- Store their old position and looking at angle.
 				client.nutObsData = {client:GetPos(), client:EyeAngles()}
 				-- Hide them so they are not visible.

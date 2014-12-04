@@ -210,3 +210,18 @@ nut.command.add("plyunwhitelist", {
 		end
 	end
 })
+
+nut.command.add("fallover", {
+	syntax = "[number time]",
+	onRun = function(client, arguments)
+		local time = tonumber(arguments[1])
+
+		if (time) then
+			time = math.max(time, 1)
+		end
+
+		if (!IsValid(client.nutRagdoll)) then
+			client:setRagdolled(true, time)
+		end
+	end
+})

@@ -26,6 +26,7 @@ ITEM.functions.View = {
 
 		if (index) then
 			local panel = nut.gui["inv"..index]
+			local parent = item.invID and nut.gui["inv"..item.invID] or nil
 			local inventory = nut.item.inventories[index]
 			
 			if (IsValid(panel)) then
@@ -33,7 +34,7 @@ ITEM.functions.View = {
 			end
 
 			if (inventory and inventory.slots) then
-				panel = vgui.Create("nutInventory")
+				panel = vgui.Create("nutInventory", parent)
 				panel:setInventory(inventory)
 				panel:ShowCloseButton(true)
 				panel:SetTitle(item.name)

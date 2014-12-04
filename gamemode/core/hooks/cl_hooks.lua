@@ -219,6 +219,9 @@ local vignette = nut.util.getMaterial("nutscript/gui/vignette.png")
 local vignetteAlphaGoal = 0
 local vignetteAlphaDelta = 0
 
+local blurGoal = 0
+local blurDelta = 0
+
 timer.Create("nutVignetteChecker", 1, 0, function()
 	local client = LocalPlayer()
 
@@ -240,6 +243,24 @@ local OFFSET_NORMAL = Vector(0, 0, 80)
 local OFFSET_CROUCHING = Vector(0, 0, 48)
 
 local paintedEntitiesCache = {}
+
+function GM:CalcView(client, origin, angles, fov)
+	local view = self.BaseClass:CalcView(client, origin, angles, fov) or {}
+	local entity = Entity(client:getLocalVar("ragdoll", 0))
+
+	if (!client:ShouldDrawLocalPlayer() and IsValid(entity) and entity:IsRagdoll()) then
+		local index = entity:LookupAttachment("eyes")
+
+		if (index) then
+			local data = entity:GetAttachment(index)
+
+			view.origin = data.Pos
+			view.angles = data.Ang
+
+			return view
+		end
+	end
+end
 
 function GM:HUDPaint()
 	vignetteAlphaDelta = math.Approach(vignetteAlphaDelta, vignetteAlphaGoal, FrameTime() * 30)
@@ -287,6 +308,16 @@ function GM:HUDPaint()
 		else
 			paintedEntitiesCache[entity] = nil
 		end
+	end
+
+	blurGoal = LocalPlayer():getLocalVar("blur", 0) + (hook.Run("AdjustBlurAmount", blurGoal) or 0)
+
+	if (blurDelta != blurGoal) then
+		blurDelta = math.Approach(blurDelta, blurGoal, FrameTime() * 20)
+	end
+
+	if (blurDelta > 0 and !LocalPlayer():ShouldDrawLocalPlayer()) then
+		nut.util.drawBlurAt(0, 0, ScrW(), ScrH(), blurDelta)
 	end
 
 	self.BaseClass:PaintWorldTips()

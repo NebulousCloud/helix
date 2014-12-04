@@ -256,6 +256,13 @@ do
 
 		-- Performs a delayed action on a player.
 		function playerMeta:setAction(text, time, callback)
+			if (text == false) then
+				timer.Remove("nutAct"..self:UniqueID())
+				netstream.Start(self, "actBar")
+
+				return
+			end
+
 			-- Default the time to five seconds.
 			time = time or 5
 			-- Tell the player to draw a bar for the action.
@@ -270,6 +277,176 @@ do
 						callback(self)
 					end
 				end)
+			end
+		end
+	end
+
+	-- Player ragdoll utility stuff.
+	do
+		function nut.util.findEmptySpace(entity, filter, spacing, size, height, tolerance)
+			spacing = spacing or 32
+			size = size or 3
+			height = height or 36
+			tolerance = tolerance or 5
+
+			local position = entity:GetPos()
+			local angles = Angle(0, 0, 0)
+			local mins, maxs = Vector(-spacing * 0.5, -spacing * 0.5, 0), Vector(spacing * 0.5, spacing * 0.5, height)
+			local output = {}
+
+			for x = -size, size do
+				for y = -size, size do
+					local origin = position + Vector(x * spacing, y * spacing, 0)
+					local color = green
+					local i = 0
+
+					local data = {}
+						data.start = origin + mins + Vector(0, 0, tolerance)
+						data.endpos = origin + maxs
+						data.filter = filter or entity
+					local trace = util.TraceLine(data)
+
+					data.start = origin + Vector(-maxs.x, -maxs.y, tolerance)
+					data.endpos = origin + Vector(mins.x, mins.y, height)
+
+					local trace2 = util.TraceLine(data)
+
+					if (trace.StartSolid or trace.Hit or trace2.StartSolid or trace2.Hit or !util.IsInWorld(origin)) then
+						continue
+					end
+
+					output[#output + 1] = origin
+				end
+			end
+
+			table.sort(output, function(a, b)
+				return a:Distance(position) < b:Distance(position)
+			end)
+
+			return output
+		end
+
+		function playerMeta:isStuck()
+			return util.TraceEntity({
+				start = self:GetPos(),
+				endpos = self:GetPos(),
+				filter = self
+			}, self).StartSolid
+		end
+
+		function playerMeta:setRagdolled(state, time)
+			if (state) then
+				if (IsValid(self.nutRagdoll)) then
+					self.nutRagdoll:Remove()
+				end
+
+				local entity = ents.Create("prop_ragdoll")
+				entity:SetPos(self:GetPos())
+				entity:SetAngles(self:EyeAngles())
+				entity:SetModel(self:GetModel())
+				entity:SetSkin(self:GetSkin())
+				entity:Spawn()
+				entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+				entity:Activate()
+				entity:CallOnRemove("fixer", function()
+					if (IsValid(self)) then
+						self:setLocalVar("blur", nil)
+						self:setLocalVar("ragdoll", nil)
+						self:SetPos(entity:GetPos() + Vector(0, 0, 16))
+						self:SetNoDraw(false)
+						self:SetNotSolid(false)
+						self:SetMoveType(MOVETYPE_WALK)
+					end
+
+					if (IsValid(self) and !entity.nutIgnoreDelete) then
+						self:SetLocalVelocity(entity.nutLastVelocity or vector_origin)
+
+						if (entity.nutWeapons) then
+							for k, v in ipairs(entity.nutWeapons) do
+								self:Give(v)
+							end
+						end
+
+						if (self:isStuck()) then
+							entity:DropToFloor()
+							self:SetPos(entity:GetPos() + Vector(0, 0, 16))
+
+							local positions = nut.util.findEmptySpace(self, {entity, self})
+
+							for k, v in ipairs(positions) do
+								self:SetPos(v)
+
+								if (!self:isStuck()) then
+									return
+								end
+							end
+						end
+					end
+				end)
+
+				local velocity = self:GetVelocity()
+
+				for i = 0, entity:GetPhysicsObjectCount() - 1 do
+					local physObj = entity:GetPhysicsObjectNum(i)
+
+					if (IsValid(physObj)) then
+						physObj:SetVelocity(velocity)
+
+						local index = entity:TranslatePhysBoneToBone(i)
+
+						if (index) then
+							local position, angles = self:GetBonePosition(index)
+
+							physObj:SetPos(position)
+							physObj:SetAngles(angles)
+						end
+					end
+				end
+
+				self:setLocalVar("blur", 30)
+
+				if (time) then
+					self:setAction("@wakingUp", time)
+				end
+
+				self.nutRagdoll = entity
+
+				entity.nutWeapons = {}
+				entity.nutPlayer = self
+				entity.nutGrace = CurTime() + (time and math.max(math.ceil(time * 0.5), 5) or 5)
+
+				for k, v in ipairs(self:GetWeapons()) do
+					entity.nutWeapons[#entity.nutWeapons + 1] = v:GetClass()
+				end
+
+				self:GodDisable()
+				self:StripWeapons()
+				self:SetMoveType(MOVETYPE_CUSTOM)
+				self:SetNoDraw(true)
+				self:SetNotSolid(true)
+
+				if (time) then
+					local uniqueID = "nutUnRagdoll"..self:SteamID()
+
+					timer.Create(uniqueID, 0.5, 0, function()
+						if (IsValid(entity) and IsValid(self)) then
+							entity.nutLastVelocity = entity:GetVelocity()
+							self:SetPos(entity:GetPos())
+
+							time = time - 0.5
+
+							if (time <= 0) then
+								entity:Remove()
+							end
+						else
+							timer.Remove(uniqueID)
+						end
+					end)
+				end
+
+				self:setLocalVar("ragdoll", entity:EntIndex())
+			elseif (IsValid(self.nutRagdoll)) then
+				self.nutRagdoll:Remove()
 			end
 		end
 	end

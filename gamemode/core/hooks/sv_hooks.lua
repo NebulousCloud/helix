@@ -100,6 +100,20 @@ function GM:KeyPress(client, key)
 		if (IsValid(entity) and entity:isDoor()) then
 			hook.Run("PlayerUse", client, entity)
 		end
+	elseif (key == IN_JUMP) then
+		local entity = client.nutRagdoll
+
+		if (IsValid(entity) and entity.nutGrace < CurTime() and !entity.nutWakingUp) then
+			entity.nutWakingUp = true
+
+			client:setAction("@gettingUp", 5, function()
+				if (!IsValid(entity)) then
+					return
+				end
+
+				entity:Remove()
+			end)
+		end
 	end
 end
 
@@ -143,6 +157,24 @@ end
 
 function GM:GetFallDamage(client, speed)
 	return (speed - 580) * (100 / 444)
+end
+
+function GM:EntityTakeDamage(entity, dmgInfo)
+	if (IsValid(entity.nutPlayer)) then
+		if (dmgInfo:IsDamageType(DMG_CRUSH)) then
+			if ((entity.nutFallGrace or 0) < CurTime()) then
+				if (dmgInfo:GetDamage() <= 10) then
+					dmgInfo:SetDamage(0)
+				end
+
+				entity.nutFallGrace = CurTime() + 0.5
+			else
+				return
+			end
+		end
+
+		entity.nutPlayer:TakeDamageInfo(dmgInfo)
+	end
 end
 
 function GM:PlayerLoadedChar(client, character, lastChar)
@@ -216,8 +248,15 @@ end
 
 -- Called when weapons should be given to a player.
 function GM:PlayerLoadout(client)
+	if (client.nutSkipLoadout) then
+		client.nutSkipLoadout = nil
+
+		return
+	end
+	
 	client:StripAmmo()
 	client:StripWeapons()
+	client:setLocalVar("blur", nil)
 
 	local character = client:getChar()
 
@@ -262,6 +301,12 @@ local deathSounds = {
 }
 
 function GM:PlayerDeath(client, inflictor, attacker)
+	if (IsValid(client.nutRagdoll)) then
+		client.nutRagdoll.nutIgnoreDelete = true
+		client.nutRagdoll:Remove()
+		client:setLocalVar("blur", nil)
+	end
+
 	client:setNetVar("deathStartTime", CurTime())
 	client:setNetVar("deathTime", CurTime() + nut.config.get("spawnTime", 5))
 
@@ -284,7 +329,7 @@ local painSounds = {
 }
 
 function GM:PlayerHurt(client, attacker, health, damage)
-		if ((client.nutNextPain or 0) < CurTime()) then
+	if ((client.nutNextPain or 0) < CurTime()) then
 		local painSound = hook.Run("GetPlayerPainSound", client) or table.Random(painSounds)
 
 		if (client:isFemale() and !painSound:find("female")) then
