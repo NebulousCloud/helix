@@ -215,6 +215,10 @@ ITEM.functions.Equip = {
 	end
 }
 
+function ITEM:onCanBeTransfered(oldInventory, newInventory)
+	return !self:getData("equip")
+end
+
 -- When player dead, remove all ammo in the gun items and clear out player weapon carrying table.
 hook.Add("PlayerDeath", "weapon.reset", function(client)
 	client.carryWeapons = {}

@@ -37,6 +37,7 @@ function PANEL:setItem(itemTable)
 	self.icon:DockMargin(5, 5, 5, 5)
 	self.icon:InvalidateLayout(true)
 	self.icon:SetModel(itemTable.model)
+	self.icon:SetToolTip(itemTable:getDesc())
 	self.icon.DoClick = function(this)
 		netstream.Start("businessBuy", itemTable.uniqueID)
 	end

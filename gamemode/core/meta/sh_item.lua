@@ -31,6 +31,10 @@ function ITEM:getID()
 	return self.id
 end
 
+function ITEM:getDesc()
+	return CLIENT and L(self.desc or "noDesc") or self.desc
+end
+
 -- Dev Buddy. You don't have to print the item data with PrintData();
 function ITEM:print(detail)
 	if (detail == true) then

@@ -19,9 +19,10 @@ ITEM.width = 1
 ITEM.height = 1
 ITEM.ammo = "pistol" // type of the ammo
 ITEM.ammoAmount = 30 // amount of the ammo
-ITEM.ammoDesc = "A Box that contains %s of Pistol Ammo"
-ITEM.desc = function(item)
-	return Format(item.ammoDesc, item.ammoAmount)
+ITEM.desc = "A Box that contains %s of Pistol Ammo"
+
+function ITEM:getDesc()
+	return Format(self.desc, self.ammoAmount)
 end
 
 if (CLIENT) then

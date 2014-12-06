@@ -98,6 +98,7 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({data = {}}, meta)
 			ITEM.uniqueID = uniqueID
 			ITEM.base = baseID
+			ITEM.category = "misc"
 			ITEM.isBase = isBaseItem
 			ITEM.data = ITEM.data or {}
 			ITEM.hooks = ITEM.hooks or {}
@@ -342,7 +343,7 @@ do
 
 				if (panel and panel.panels) then
 					local icon = panel.panels[id]
-					icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, (type(item.desc) == "function" and item.desc(item) or item.desc)))
+					icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, item:getDesc()))
 				end
 			end
 		end)
@@ -370,7 +371,7 @@ do
 						local icon = panel:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
 
 						if (IsValid(icon)) then
-							icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, item.desc))
+							icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, item:getDesc()))
 
 							panel.panels[item.id] = icon
 						end
