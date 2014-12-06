@@ -211,6 +211,18 @@ PANEL = {}
 	end
 	
 	function PANEL:onTransfer(oldX, oldY, x, y, oldInventory, noSend)
+		local inventory = nut.item.inventories[oldInventory.invID]
+		local inventory2 = nut.item.inventories[self.invID]
+		local item
+
+		if (inventory) then
+			item = inventory:getItemAt(oldX, oldY)
+
+			if (item.onCanBeTransfered and item:onCanBeTransfered(inventory, inventory2) == false) then
+				return false
+			end
+		end
+
 		if (!noSend) then
 			if (self != oldInventory) then
 				netstream.Start("invMv", oldX, oldY, x, y, oldInventory.invID, self.invID)
@@ -219,13 +231,11 @@ PANEL = {}
 			end
 		end
 
-		local inventory = nut.item.inventories[oldInventory.invID]
-		local inventory2 = nut.item.inventories[self.invID]
-
-		if (inventory and inventory2) then
-			local item = inventory:getItemAt(oldX, oldY)
-			
+		if (inventory) then			
 			inventory.slots[oldX][oldY] = nil
+		end
+
+		if (item and inventory2) then
 			inventory2.slots[x] = inventory2.slots[x] or {}
 			inventory2.slots[x][y] = item
 		end
@@ -266,6 +276,10 @@ PANEL = {}
 			panel.move = function(this, data, inventory, noSend)
 				local oldX, oldY = this.gridX, this.gridY
 				local oldParent = this:GetParent()
+				print(data.x2, data.y2)
+				if (inventory:onTransfer(oldX, oldY, data.x2, data.y2, oldParent, noSend) == false) then
+					return
+				end
 
 				data.x = data.x or (data.x2 - 1)*64 + 4
 				data.y = data.y or (data.y2 - 1)*64 + 27
@@ -284,7 +298,6 @@ PANEL = {}
 				end
 				
 				this.slots = {}
-				inventory:onTransfer(oldX, oldY, this.gridX, this.gridY, oldParent, noSend)
 
 				for x = 1, this.gridW do
 					for y = 1, this.gridH do
