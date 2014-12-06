@@ -71,5 +71,13 @@ local SKIN = {}
 			surface.DrawOutlinedRect(1, 1, w - 2, h - 2)
 		end
 	end
+
+	-- I don't think we gonna need minimize button and maximize button.
+	function SKIN:PaintWindowMinimizeButton( panel, w, h )
+	end
+
+	function SKIN:PaintWindowMaximizeButton( panel, w, h )
+	end
+
 derma.DefineSkin("nutscript", "The base skin for the NutScript framework.", SKIN)
 derma.RefreshSkins()
