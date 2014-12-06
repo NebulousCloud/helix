@@ -310,7 +310,7 @@ function GM:HUDPaint()
 		end
 	end
 
-	blurGoal = LocalPlayer():getLocalVar("blur", 0) + (hook.Run("AdjustBlurAmount", blurGoal) or 0)
+	blurGoal = localPlayer:getLocalVar("blur", 0) + (hook.Run("AdjustBlurAmount", blurGoal) or 0)
 
 	if (blurDelta != blurGoal) then
 		blurDelta = math.Approach(blurDelta, blurGoal, FrameTime() * 20)
@@ -321,6 +321,39 @@ function GM:HUDPaint()
 	end
 
 	self.BaseClass:PaintWorldTips()
+
+	local weapon = LocalPlayer():GetActiveWeapon()
+
+	if (IsValid(weapon) and weapon.DrawAmmo != false) then
+		local clip = weapon:Clip1()
+		local count = localPlayer:GetAmmoCount(weapon:GetPrimaryAmmoType())
+		local secondary = localPlayer:GetAmmoCount(weapon:GetSecondaryAmmoType())
+		local x, y = ScrW() - 80, ScrH() - 80
+
+		if (secondary > 0) then
+			nut.util.drawBlurAt(x, y, 64, 64)
+
+			surface.SetDrawColor(255, 255, 255, 5)
+			surface.DrawRect(x, y, 64, 64)
+			surface.SetDrawColor(255, 255, 255, 3)
+			surface.DrawOutlinedRect(x, y, 64, 64)
+
+			nut.util.drawText(secondary, x + 32, y + 32, nil, 1, 1, "nutBigFont")
+		end
+
+		if (weapon:GetClass() != "weapon_slam" and clip > 0 or count > 0) then
+			x = x - (secondary > 0 and 144 or 64)
+
+			nut.util.drawBlurAt(x, y, 128, 64)
+
+			surface.SetDrawColor(255, 255, 255, 5)
+			surface.DrawRect(x, y, 128, 64)
+			surface.SetDrawColor(255, 255, 255, 3)
+			surface.DrawOutlinedRect(x, y, 128, 64)
+
+			nut.util.drawText(clip == -1 and count or clip.."/"..count, x + 64, y + 32, nil, 1, 1, "nutBigFont")
+		end
+	end
 
 	nut.menu.drawAll()
 	nut.bar.drawAll()
@@ -436,6 +469,8 @@ end
 local hidden = {}
 hidden["CHudHealth"] = true
 hidden["CHudBattery"] = true
+hidden["CHudAmmo"] = true
+hidden["CHudSecondaryAmmo"] = true
 
 function GM:HUDShouldDraw(element)
 	if (hidden[element]) then
