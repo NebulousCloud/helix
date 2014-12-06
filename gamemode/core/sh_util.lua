@@ -255,7 +255,12 @@ do
 		end
 
 		-- Performs a delayed action on a player.
-		function playerMeta:setAction(text, time, callback)
+		function playerMeta:setAction(text, time, callback, startTime, finishTime)
+			-- Default the time to five seconds.
+			time = time or 5
+			startTime = startTime or CurTime()
+			finishTime = finishTime or (startTime + time)
+
 			if (text == false) then
 				timer.Remove("nutAct"..self:UniqueID())
 				netstream.Start(self, "actBar")
@@ -263,10 +268,8 @@ do
 				return
 			end
 
-			-- Default the time to five seconds.
-			time = time or 5
 			-- Tell the player to draw a bar for the action.
-			netstream.Start(self, "actBar", CurTime(), CurTime() + time, text)
+			netstream.Start(self, "actBar", startTime, finishTime, text)
 
 			-- If we have provided a callback, run it delayed.
 			if (callback) then
@@ -334,7 +337,9 @@ do
 			}, self).StartSolid
 		end
 
-		function playerMeta:setRagdolled(state, time)
+		function playerMeta:setRagdolled(state, time, getUpGrace)
+			getUpGrace = getUpGrace or 5
+
 			if (state) then
 				if (IsValid(self.nutRagdoll)) then
 					self.nutRagdoll:Remove()
@@ -352,15 +357,14 @@ do
 					if (IsValid(self)) then
 						self:setLocalVar("blur", nil)
 						self:setLocalVar("ragdoll", nil)
-						self:SetPos(entity:GetPos() + Vector(0, 0, 16))
+						self:SetPos(entity:GetPos())
 						self:SetNoDraw(false)
 						self:SetNotSolid(false)
 						self:SetMoveType(MOVETYPE_WALK)
+						self:SetLocalVelocity(entity.nutLastVelocity or vector_origin)
 					end
 
 					if (IsValid(self) and !entity.nutIgnoreDelete) then
-						self:SetLocalVelocity(entity.nutLastVelocity or vector_origin)
-
 						if (entity.nutWeapons) then
 							for k, v in ipairs(entity.nutWeapons) do
 								self:Give(v)
@@ -403,17 +407,22 @@ do
 					end
 				end
 
-				self:setLocalVar("blur", 30)
-
-				if (time) then
-					self:setAction("@wakingUp", time)
-				end
-
+				self:setLocalVar("blur", 25)
 				self.nutRagdoll = entity
 
 				entity.nutWeapons = {}
 				entity.nutPlayer = self
-				entity.nutGrace = CurTime() + (time and math.max(math.ceil(time * 0.5), 5) or 5)
+
+				if (getUpGrace) then
+					entity.nutGrace = CurTime() + getUpGrace
+				end
+
+				if (time and time > 0) then
+					entity.nutStart = CurTime()
+					entity.nutFinish = entity.nutStart + time
+
+					self:setAction("@wakingUp", nil, nil, entity.nutStart, entity.nutFinish)
+				end
 
 				for k, v in ipairs(self:GetWeapons()) do
 					entity.nutWeapons[#entity.nutWeapons + 1] = v:GetClass()
@@ -426,14 +435,29 @@ do
 				self:SetNotSolid(true)
 
 				if (time) then
+					local time2 = time
 					local uniqueID = "nutUnRagdoll"..self:SteamID()
 
-					timer.Create(uniqueID, 0.5, 0, function()
+					timer.Create(uniqueID, 0.33, 0, function()
 						if (IsValid(entity) and IsValid(self)) then
-							entity.nutLastVelocity = entity:GetVelocity()
+							local velocity = entity:GetVelocity():Length2D()
+
+							entity.nutLastVelocity = velocity
 							self:SetPos(entity:GetPos())
 
-							time = time - 0.5
+							if (velocity >= 8) then
+								if (!entity.nutPausing) then
+									self:setAction()
+									entity.nutPausing = true
+								end
+
+								return
+							elseif (entity.nutPausing) then
+								self:setAction("@wakingUp", time)
+								entity.nutPausing = false
+							end
+
+							time = time - 0.33
 
 							if (time <= 0) then
 								entity:Remove()

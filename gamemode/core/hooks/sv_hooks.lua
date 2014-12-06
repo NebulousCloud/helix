@@ -103,7 +103,7 @@ function GM:KeyPress(client, key)
 	elseif (key == IN_JUMP) then
 		local entity = client.nutRagdoll
 
-		if (IsValid(entity) and entity.nutGrace < CurTime() and !entity.nutWakingUp) then
+		if (IsValid(entity) and entity.nutGrace and entity.nutGrace < CurTime() and entity:GetVelocity():Length2D() < 8 and !entity.nutWakingUp) then
 			entity.nutWakingUp = true
 
 			client:setAction("@gettingUp", 5, function()
@@ -217,6 +217,7 @@ function GM:PlayerSay(client, message)
 end
 
 function GM:PlayerSpawn(client)
+	client:setAction()
 	hook.Run("PlayerLoadout", client)
 end
 
@@ -420,4 +421,8 @@ end
 
 function GM:PlayerDeathSound()
 	return true
+end
+
+function GM:ShowTeam(client)
+	nut.command.run(client, "doorbuy")
 end
