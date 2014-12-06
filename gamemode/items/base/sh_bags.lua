@@ -88,11 +88,7 @@ function ITEM:onCanBeTransfered(oldInventory, newInventory)
 		return false
 	end
 
-	if (!newInventory or newInventory:getID() != oldInventory:getID()) then
-		return true
-	end
-
-	return false
+	return !newInventory or newInventory:getID() != oldInventory:getID()
 end
 
 -- Called after the item is registered into the item tables.

@@ -369,7 +369,7 @@ if (SERVER) then
 				end
 			end
 		end
-
+		print(self.w, self.h, self:getID())
 		netstream.Start(receiver, "inv", slots, self:getID(), self.w, self.h, (receiver == nil or fullUpdate) and self.owner or nil)
 
 		for k, v in pairs(self:getItems()) do

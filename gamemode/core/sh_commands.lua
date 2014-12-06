@@ -136,8 +136,8 @@ nut.command.add("givemoney", {
 		end
 
 		if (IsValid(target) and target:getChar()) then
-			-- give money
-			print(target)
+			target:getChar():giveMoney(amount)
+			client:getChar():takeMoney(amount)
 		end
 	end
 })

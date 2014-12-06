@@ -359,6 +359,8 @@ do
 
 				if (inventory) then
 					local item = uniqueID and id and nut.item.new(uniqueID, id) or nil
+					item.invID = invID
+
 					inventory.slots[x] = inventory.slots[x] or {}
 					inventory.slots[x][y] = item
 

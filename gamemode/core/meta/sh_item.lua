@@ -69,6 +69,12 @@ function ITEM:call(method, client, entity, ...)
 end
 
 function ITEM:getOwner()
+	local inventory = nut.item.inventories[self.invID]
+
+	if (inventory) then
+		return inventory:getReceiver()
+	end
+
 	local id = self:getID()
 
 	for k, v in ipairs(player.GetAll()) do
@@ -110,6 +116,10 @@ function ITEM:setData(key, value, receivers, noSave, checkEntity)
 end
 
 function ITEM:getData(key, default)
+	if (key == true) then
+		return self.data
+	end
+
 	local value = self.data[key]
 
 	if (value == nil) then
@@ -210,6 +220,7 @@ if (SERVER) then
 				if (status) then
 					if (self.invID > 0) then
 						curInv:remove(self.id, false, true)
+						self.invID = invID
 					else
 						inventory[self.id] = nil
 					end

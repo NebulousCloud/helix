@@ -218,7 +218,7 @@ PANEL = {}
 		if (inventory) then
 			item = inventory:getItemAt(oldX, oldY)
 
-			if (item.onCanBeTransfered and item:onCanBeTransfered(inventory, inventory2) == false) then
+			if (item.onCanBeTransfered and item:onCanBeTransfered(inventory, inventory != inventory2 and inventory2 or nil) == false) then
 				return false
 			end
 		end
@@ -276,7 +276,7 @@ PANEL = {}
 			panel.move = function(this, data, inventory, noSend)
 				local oldX, oldY = this.gridX, this.gridY
 				local oldParent = this:GetParent()
-				print(data.x2, data.y2)
+
 				if (inventory:onTransfer(oldX, oldY, data.x2, data.y2, oldParent, noSend) == false) then
 					return
 				end
@@ -286,6 +286,7 @@ PANEL = {}
 
 				this.gridX = data.x2
 				this.gridY = data.y2
+				this.invID = inventory.invID
 				this:SetParent(inventory)
 				this:SetPos(data.x, data.y)
 
