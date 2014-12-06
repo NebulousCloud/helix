@@ -188,6 +188,24 @@ nut.command.add("plywhitelist", {
 	end
 })
 
+nut.command.add("chargetup", {
+	onRun = function(client, arguments)
+		local entity = client.nutRagdoll
+
+		if (IsValid(entity) and entity.nutGrace and entity.nutGrace < CurTime() and entity:GetVelocity():Length2D() < 8 and !entity.nutWakingUp) then
+			entity.nutWakingUp = true
+
+			client:setAction("@gettingUp", 5, function()
+				if (!IsValid(entity)) then
+					return
+				end
+
+				entity:Remove()
+			end)
+		end
+	end
+})
+
 nut.command.add("plyunwhitelist", {
 	adminOnly = true,
 	syntax = "<string name> <string faction>",

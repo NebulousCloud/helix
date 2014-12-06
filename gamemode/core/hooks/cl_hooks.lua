@@ -380,6 +380,8 @@ function GM:PlayerBindPress(client, bind, pressed)
 				hook.Run("ItemShowEntityMenu", entity)
 			end
 		end
+	elseif (bind:find("jump")) then
+		RunConsoleCommand("nut", "chargetup")
 	end
 end
 

@@ -360,8 +360,9 @@ do
 						self:SetPos(entity:GetPos())
 						self:SetNoDraw(false)
 						self:SetNotSolid(false)
+						self:Freeze(false)
 						self:SetMoveType(MOVETYPE_WALK)
-						self:SetLocalVelocity(entity.nutLastVelocity or vector_origin)
+						self:SetLocalVelocity(IsValid(entity) and entity.nutLastVelocity or vector_origin)
 					end
 
 					if (IsValid(self) and !entity.nutIgnoreDelete) then
@@ -430,7 +431,7 @@ do
 
 				self:GodDisable()
 				self:StripWeapons()
-				self:SetMoveType(MOVETYPE_CUSTOM)
+				self:Freeze(true)
 				self:SetNoDraw(true)
 				self:SetNotSolid(true)
 
@@ -440,12 +441,12 @@ do
 
 					timer.Create(uniqueID, 0.33, 0, function()
 						if (IsValid(entity) and IsValid(self)) then
-							local velocity = entity:GetVelocity():Length2D()
-
+							local velocity = entity:GetVelocity()
 							entity.nutLastVelocity = velocity
+							
 							self:SetPos(entity:GetPos())
 
-							if (velocity >= 8) then
+							if (velocity:Length2D() >= 8) then
 								if (!entity.nutPausing) then
 									self:setAction()
 									entity.nutPausing = true
