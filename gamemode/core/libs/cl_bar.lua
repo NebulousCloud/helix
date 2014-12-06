@@ -51,14 +51,10 @@ local gradient = nut.util.getMaterial("vgui/gradient-u")
 local gradient2 = nut.util.getMaterial("vgui/gradient-d")
 
 function nut.bar.draw(x, y, w, h, value, color)
-	surface.SetDrawColor(25, 25, 25, 240)
+	nut.util.drawBlurAt(x, y, w, h)
+
+	surface.SetDrawColor(255, 255, 255, 15)
 	surface.DrawRect(x, y, w, h)
-
-	surface.SetDrawColor(255, 255, 255, 5)
-	surface.SetMaterial(gradient2)
-	surface.DrawTexturedRect(x, y, w, h)
-
-	surface.SetDrawColor(0, 0, 0, 200)
 	surface.DrawOutlinedRect(x, y, w, h)
 
 	x, y, w, h = x + 2, y + 2, (w - 4) * math.min(value, 1), h - 4
