@@ -63,6 +63,10 @@ do
 	local character = FindMetaTable("Character")
 
 	function character:hasMoney(amount)
+		if (amount < 0) then
+			print("Negative Money Check Received.")	
+		end
+
 		return self:getMoney() >= amount
 	end
 

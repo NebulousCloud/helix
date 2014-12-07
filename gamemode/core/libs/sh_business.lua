@@ -71,6 +71,35 @@ if (SERVER) then
 			entity:setNetVar("owner", client:getChar():getID())
 
 			netstream.Start(client, "bizResp")
+			hook.Run("OnCreateShipment", client, entity)
+		end
+	end)
+
+	netstream.Hook("takeShp", function(client, entity, name, amount)
+		if (entity and entity:IsValid()) then
+			local item = entity.items[name]
+			if (amount > 0 and
+				item >= amount and
+				(item - amount) >= 0) then
+
+				local inv = client:getChar():getInv()
+				if (inv and inv:add(name, amount)) then
+					netstream.Start(client, "takeShp", name, amount)
+					entity.items[name] = item - amount
+
+					if (entity.items[name] <= 0) then
+						entity.items[name] = nil
+					end
+
+					entity:EmitSound(Format("physics/cardboard/cardboard_box_impact_hard%s.wav", math.random(1, 5)))
+
+					if (table.Count(entity.items) <= 0) then
+						entity:Break()
+					end
+				else
+					client:notify("Unable to move item.")
+				end
+			end
 		end
 	end)
 
@@ -113,7 +142,22 @@ if (SERVER) then
 	end)
 else
 	netstream.Hook("openShp", function(entity, items)
-		local menu = vgui.Create("nutShipment")
-		menu:setItems(entity, items)
+		nut.gui.shipment = vgui.Create("nutShipment")
+		nut.gui.shipment:setItems(entity, items)
+	end)
+
+	netstream.Hook("takeShp", function(name, amount)
+		if (nut.gui.shipment and nut.gui.shipment:IsVisible()) then
+			local item = nut.gui.shipment.itemPanel[name]
+
+			if (item) then
+				item.amount = item.amount - 1
+				item:Update(item.amount)
+
+				if (item.amount <= 0) then
+					item:Remove()
+				end
+			end
+		end
 	end)
 end
