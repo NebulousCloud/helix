@@ -132,5 +132,6 @@ LANGUAGE = {
 	buyFailed = "Purchase failed.",
 	buyGood = "Purchase successful!",
 	shipment = "Shipment",
-	shipmentDesc = "This shipment belongs to %s."
+	shipmentDesc = "This shipment belongs to %s.",
+	noFit = "This item can not fit in your inventory."
 }

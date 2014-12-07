@@ -592,6 +592,17 @@ do
 			end
 		end)
 	end
+
+	-- Instances and spawns a given item type.
+	function nut.item.spawn(uniqueID, position, callback, angles, data)
+		nut.item.instance(0, uniqueID, data or {}, 1, 1, function(item)
+			local entity = item:spawn(position, angles)
+
+			if (callback) then
+				callback(item, entity)
+			end
+		end)
+	end
 end
 
 nut.char.registerVar("inv", {

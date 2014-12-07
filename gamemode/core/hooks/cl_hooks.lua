@@ -405,7 +405,7 @@ function GM:PlayerBindPress(client, bind, pressed)
 		elseif (bind:find("use") and pressed) then
 			local data = {}
 				data.start = client:GetShootPos()
-				data.endpos = data.start + client:GetAimVector()*72
+				data.endpos = data.start + client:GetAimVector()*96
 			local trace = util.TraceLine(data)
 			local entity = trace.Entity
 

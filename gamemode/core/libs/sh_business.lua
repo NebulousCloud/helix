@@ -73,6 +73,44 @@ if (SERVER) then
 			netstream.Start(client, "bizResp")
 		end
 	end)
+
+	netstream.Hook("shpUse", function(client, uniqueID, drop)
+		local entity = client.nutShipment
+		local itemTable = nut.item.list[uniqueID]
+
+		if (itemTable and IsValid(entity)) then
+			if (entity:GetPos():Distance(client:GetPos()) > 128) then
+				client.nutShipment = nil
+
+				return
+			end
+
+			local amount = entity.items[uniqueID]
+
+			if (amount and amount > 0) then
+				entity.items[uniqueID] = entity.items[uniqueID] - 1
+
+				if (entity.items[uniqueID] <= 0) then
+					entity.items[uniqueID] = nil
+				end
+
+				if (drop) then
+					nut.item.spawn(uniqueID, entity:GetPos() + Vector(0, 0, 16))
+				else
+					local status, fault = client:getChar():getInv():add(uniqueID)
+
+					if (!status) then
+						return client:notifyLocalized("noFit")
+					end
+				end
+
+				if (entity:getItemCount() < 1) then
+					entity:GibBreakServer(Vector(0, 0, 0.5))
+					entity:Remove()
+				end
+			end
+		end
+	end)
 else
 	netstream.Hook("openShp", function(entity, items)
 		local menu = vgui.Create("nutShipment")
