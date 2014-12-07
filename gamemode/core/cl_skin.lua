@@ -14,17 +14,30 @@
 --]]
 
 local SKIN = {}
+	SKIN.fontFrame = "BudgetLabel"
+	SKIN.fontTab = "nutSmallFont"
+	SKIN.fontButton = "nutSmallFont"
+	SKIN.Colours = table.Copy(derma.SkinList.Default.Colours)
+	SKIN.Colours.Window.TitleActive = Color(0, 0, 0)
+	SKIN.Colours.Window.TitleInactive = Color(255, 255, 255)
+
+	SKIN.Colours.Button.Normal = Color(230, 230, 230)
+	SKIN.Colours.Button.Hover = Color(255, 255, 255)
+	SKIN.Colours.Button.Down = Color(180, 180, 180)
+	SKIN.Colours.Button.Disabled = Color(0, 0, 0, 100)
+
 	function SKIN:PaintFrame(panel)
 		nut.util.drawBlur(panel, 10)
 
 		surface.SetDrawColor(45, 45, 45, 200)
 		surface.DrawRect(0, 0, panel:GetWide(), panel:GetTall())
 
-		surface.SetDrawColor(0, 0, 0, 200)
+		surface.SetDrawColor(nut.config.get("color"))
+		surface.DrawRect(0, 0, panel:GetWide(), 24)
+
+		surface.SetDrawColor(nut.config.get("color"))
 		surface.DrawOutlinedRect(0, 0, panel:GetWide(), panel:GetTall())
 
-		surface.SetDrawColor(0, 0, 0, 55)
-		surface.DrawRect(0, 0, panel:GetWide(), 24)
 	end
 
 	function SKIN:DrawGenericBackground(x, y, w, h)
