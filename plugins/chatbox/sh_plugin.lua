@@ -21,6 +21,10 @@ if (CLIENT) then
 	NUT_CVAR_CHATFILTER = CreateClientConVar("nut_chatfilter", "", true, false)
 
 	function PLUGIN:createChat()
+		if (IsValid(self.panel)) then
+			return
+		end
+
 		self.panel = vgui.Create("nutChatBox")
 	end
 
@@ -44,9 +48,11 @@ if (CLIENT) then
 		end
 	end
 
-	if (IsValid(PLUGIN.panel)) then
-		PLUGIN.panel:Remove()
-		PLUGIN:createChat()
+	if (NS_DEVELOPER) then
+		if (IsValid(PLUGIN.panel)) then
+			PLUGIN.panel:Remove()
+			PLUGIN:createChat()
+		end
 	end
 
 	chat.nutAddText = chat.nutAddText or chat.AddText
