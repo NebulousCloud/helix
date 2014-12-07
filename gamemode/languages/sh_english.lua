@@ -125,5 +125,12 @@ LANGUAGE = {
 	gettingUp = "You are now getting up...",
 	wakingUp = "You are regaining consciousness...",
 	Weapons = "Weapons",
-	checkout = "Go to Checkout (%s)"
+	checkout = "Go to Checkout (%s)",
+	purchase = "Purchase",
+	purchasing = "Purchasing...",
+	success = "Success",
+	buyFailed = "Purchase failed.",
+	buyGood = "Purchase successful!",
+	shipment = "Shipment",
+	shipmentDesc = "This shipment belongs to %s."
 }

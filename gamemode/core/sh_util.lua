@@ -234,6 +234,22 @@ do
 		return model:find("female") or model:find("alyx") or model:find("mossman")
 	end
 
+	-- Returns a good position in front of the player for an entity.
+	function playerMeta:getItemDropPos()
+		-- Start a trace.
+		local data = {}
+			-- The trace starts behind the player in case they are looking at a wall.
+			data.start = self:GetShootPos() - self:GetAimVector()*64
+			-- The trace finishes 86 units infront of the player.
+			data.endpos = self:GetShootPos() + self:GetAimVector()*86
+			-- Ignore the actual player.
+			data.filter = self
+		-- Get the end position of the trace.
+		local trace = util.TraceLine(data)
+
+		return trace.HitPos + trace.HitNormal*36
+	end
+
 	if (SERVER) then
 		-- Sets whether or not the weapon is raised.
 		function playerMeta:setWepRaised(state)

@@ -41,4 +41,41 @@ if (SERVER) then
 
 		hook.Run("OnPlayerUseBusiness", char, item)
 	end)
+
+	netstream.Hook("bizBuy", function(client, items)
+		if (!client:getChar()) then
+			return
+		end
+
+		local cost = 0
+
+		for k, v in pairs(items) do
+			local itemTable = nut.item.list[k]
+
+			if (itemTable) then
+				local amount = math.Clamp(tonumber(v) or 0, 1, 10)
+				
+				cost = cost + (amount * (itemTable.price or 0))
+			else
+				return
+			end
+		end
+
+		if (client:getChar():hasMoney(cost)) then
+			client:getChar():takeMoney(cost)
+
+			local entity = ents.Create("nut_shipment")
+			entity:SetPos(client:getItemDropPos())
+			entity:Spawn()
+			entity:setItems(items)
+			entity:setNetVar("owner", client:getChar():getID())
+
+			netstream.Start(client, "bizResp")
+		end
+	end)
+else
+	netstream.Hook("openShp", function(entity, items)
+		local menu = vgui.Create("nutShipment")
+		menu:setItems(entity, items)
+	end)
 end

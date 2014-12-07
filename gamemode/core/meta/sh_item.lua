@@ -156,18 +156,7 @@ if (SERVER) then
 			-- If the first argument is a player, then we will find a position to drop
 			-- the item based off their aim.
 			if (type(position) == "Player") then
-				-- Start a trace.
-				local data = {}
-					-- The trace starts behind the player in case they are looking at a wall.
-					data.start = position:GetShootPos() - position:GetAimVector()*64
-					-- The trace finishes 86 units infront of the player.
-					data.endpos = position:GetShootPos() + position:GetAimVector()*86
-					-- Ignore the actual player.
-					data.filter = position
-				-- Get the end position of the trace.
-				local trace = util.TraceLine(data)
-
-				position = trace.HitPos + trace.HitNormal*5
+				position = position:getItemDropPos()
 			end
 
 			-- Spawn the actual item entity.
