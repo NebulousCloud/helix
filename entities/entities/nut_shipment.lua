@@ -19,6 +19,7 @@ ENT.Type = "anim"
 ENT.PrintName = "Shipment"
 ENT.Category = "NutScript"
 ENT.Spawnable = false
+ENT.RenderGroup = RENDERGROUP_BOTH
 
 if (SERVER) then
 	function ENT:Initialize()
@@ -46,6 +47,14 @@ if (SERVER) then
 		self.items = items
 	end
 else
+	function ENT:Draw()
+		self:DrawModel()
+	end
+
+	function ENT:DrawTranslucent()
+		
+	end
+
 	function ENT:onShouldDrawEntityInfo()
 		return true
 	end

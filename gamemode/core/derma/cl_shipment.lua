@@ -22,6 +22,7 @@ local PANEL = {}
 
 		self.list = self:Add("DScrollPanel")
 		self.list:Dock(FILL)
+		self.itemPanel = {}
 	end
 
 	function PANEL:setItems(entity, items)
@@ -29,10 +30,34 @@ local PANEL = {}
 		self.items = items
 
 		for k, v in SortedPairs(items) do
-			local item = self.list:Add("DPanel")
+			local itemTable = nut.item.list[k]
+
+			self.itemPanel[k] = self.list:Add("DPanel")
+			local item = self.itemPanel[k]
 			item:SetTall(36)
 			item:Dock(TOP)
-			item:DockMargin(4, 4, 4, 0)
+			item:DockMargin(5, 5, 5, 0)
+
+			item.icon = item:Add("SpawnIcon")
+			item.icon:SetPos(2, 2)
+			item.icon:SetSize(32, 32)
+			item.icon:SetModel(itemTable.model)
+			item.icon:SetToolTip(itemTable:getDesc())
+
+			item.name = item:Add("DLabel")
+			item.name:SetPos(40, 2)
+			item.name:SetSize(250, 32)
+			item.name:SetFont("nutChatFont")
+			item.name:SetText(L(itemTable.name))
+			item.name:SetTextColor(color_white)
+
+			item.clicker = item:Add("DButton")
+			item.clicker:Dock(FILL)
+			item.clicker.Paint = function() end
+			item.clicker:SetText("")
+			item.clicker.DoClick = function()
+				netstream.Start("takeShp", entity, k, 1)
+			end
 		end
 	end
 

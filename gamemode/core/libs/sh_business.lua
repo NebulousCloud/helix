@@ -71,11 +71,46 @@ if (SERVER) then
 			entity:setNetVar("owner", client:getChar():getID())
 
 			netstream.Start(client, "bizResp")
+			hook.Run("OnCreateShipment", client, entity)
+		end
+	end)
+
+	netstream.Hook("takeShp", function(client, entity, name, amount)
+		if (entity and entity:IsValid()) then
+			local item = entity.items[name]
+			if (amount > 0 and
+				item >= amount and
+				(item - amount) >= 0) then
+
+				local inv = client:getChar():getInv()
+				if (inv and inv:add(name, amount)) then
+					netstream.Start(client, "takeShp", name, amount)
+					entity.items[name] = item - amount
+
+					if (entity.items[name] <= 0) then
+						entity.items[name] = nil
+					end
+
+					if (table.Count(entity.items) <= 0) then
+						entity:Remove()
+					end
+				end
+			end
 		end
 	end)
 else
 	netstream.Hook("openShp", function(entity, items)
-		local menu = vgui.Create("nutShipment")
-		menu:setItems(entity, items)
+		nut.gui.shipment = vgui.Create("nutShipment")
+		nut.gui.shipment:setItems(entity, items)
+	end)
+
+	netstream.Hook("takeShp", function(name, amount)
+		if (nut.gui.shipment and nut.gui.shipment:IsVisible()) then
+			print("confirmed")
+			local item = nut.gui.shipment.itemPanel[name]
+			if (item) then
+				item:Remove()
+			end
+		end
 	end)
 end
