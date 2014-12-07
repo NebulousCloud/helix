@@ -56,7 +56,7 @@ LANGUAGE = {
 	config = "Config",
 	chat = "Chat",
 	appearance = "Appearance",
-	misc = "Miscallaneous",
+	misc = "Miscellaneous",
 	oocDelay = "You must wait %s more second(s) before using OOC again.",
 	loocDelay = "You must wait %s more second(s) before using LOOC again.",
 	usingChar = "You are already using this character.",
@@ -123,5 +123,7 @@ LANGUAGE = {
 	whitelist = "%s has whitelisted %s for the %s faction.",
 	unwhitelist = "%s has unwhitelisted %s from the %s faction.",
 	gettingUp = "You are now getting up...",
-	wakingUp = "You are regaining consciousness..."
+	wakingUp = "You are regaining consciousness...",
+	Weapons = "Weapons",
+	checkout = "Go to Checkout (%s)"
 }

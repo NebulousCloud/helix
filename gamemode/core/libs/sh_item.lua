@@ -98,12 +98,11 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({data = {}}, meta)
 			ITEM.uniqueID = uniqueID
 			ITEM.base = baseID
-			ITEM.category = "misc"
 			ITEM.isBase = isBaseItem
 			ITEM.data = ITEM.data or {}
 			ITEM.hooks = ITEM.hooks or {}
 			ITEM.functions = ITEM.functions or {}
-			ITEM.functions.drop = {
+			ITEM.functions.drop = ITEM.functions.drop or {
 				tip = "dropTip",
 				icon = "icon16/world.png",
 				onRun = function(item)
@@ -115,7 +114,7 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 					return !IsValid(item.entity)
 				end
 			}
-			ITEM.functions.take = {
+			ITEM.functions.take = ITEM.functions.take or {
 				tip = "takeTip",
 				icon = "icon16/box.png",
 				onRun = function(item)
@@ -138,13 +137,7 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 				end
 			}
 
-			if (PLUGIN) then
-				ITEM.plugin = PLUGIN.uniqueID
-			end
-
-			if (!luaGenerated and path) then
-				nut.util.include(path)
-			end
+			local oldBase = ITEM.base
 
 			if (ITEM.base) then
 				local baseTable = nut.item.base[ITEM.base]
@@ -165,8 +158,36 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 				end
 			end
 
+			if (PLUGIN) then
+				ITEM.plugin = PLUGIN.uniqueID
+			end
+
+			if (!luaGenerated and path) then
+				nut.util.include(path)
+			end
+
+			if (ITEM.base and oldBase != ITEM.base) then
+				local baseTable = nut.item.base[ITEM.base]
+
+				if (baseTable) then
+					for k, v in pairs(baseTable) do
+						if (ITEM[k] == nil) then
+							ITEM[k] = v
+						end
+
+						ITEM.baseTable = baseTable
+					end
+
+					local mergeTable = table.Copy(baseTable)
+					ITEM = table.Merge(mergeTable, ITEM)
+				else
+					ErrorNoHalt("[NutScript] Item '"..ITEM.uniqueID.."' has a non-existent base! ("..ITEM.base..")\n")
+				end
+			end
+
 			ITEM.width = ITEM.width or 1
 			ITEM.height = ITEM.height or 1
+			ITEM.category = ITEM.category or "misc"
 
 			if (ITEM.onRegistered) then
 				ITEM:onRegistered()

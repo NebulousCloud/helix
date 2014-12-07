@@ -177,7 +177,10 @@ if (CLIENT) then
 	hook.Add("CreateMenuButtons", "nutConfig", function(tabs)
 		if (LocalPlayer():IsSuperAdmin()) then
 			tabs["config"] = function(panel)
-				local properties = panel:Add("DProperties")
+				local scroll = panel:Add("DScrollPanel")
+				scroll:Dock(FILL)
+				
+				local properties = scroll:Add("DProperties")
 				properties:SetSize(panel:GetSize())
 
 				nut.gui.properties = properties

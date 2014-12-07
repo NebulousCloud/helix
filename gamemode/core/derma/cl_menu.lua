@@ -33,7 +33,7 @@ local PANEL = {}
 		self.tabs:SetWide(0)
 		self.tabs:SetTall(86)
 
-		self.panel = self:Add("DScrollPanel")
+		self.panel = self:Add("EditablePanel")
 		self.panel:SetSize(ScrW() * 0.6, ScrH() * 0.65)
 		self.panel:Center()
 		self.panel:SetPos(self.panel.x, self.panel.y + 72)
@@ -109,8 +109,10 @@ local PANEL = {}
 			tab.Paint = PaintTab
 			tab.DoClick = function(this)
 				self.panel:Clear()
+
 				self.title:SetText(this:GetText())
 				self.title:AlphaTo(255, 0.5)
+
 				self.panel:AlphaTo(255, 0.5, 0.1)
 				self.activeTab = this
 

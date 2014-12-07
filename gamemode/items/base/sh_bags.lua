@@ -16,6 +16,7 @@
 ITEM.name = "Bag"
 ITEM.desc = "A bag to hold items."
 ITEM.model = "models/props_c17/suitcase001a.mdl"
+ITEM.category = "Storage"
 ITEM.width = 2
 ITEM.height = 2
 ITEM.invWidth = 4
