@@ -20,6 +20,19 @@ local PANEL = {}
 		self:Center()
 		self:MakePopup()
 
+		/*
+		self.public = self:Add("DCheckBoxLabel")
+		self.public:SetText("Is Public?")
+		self.public:SetValue(0)
+		self.public:Dock(BOTTOM)
+		self.public:DockMargin(5, 5, 5, 5)
+		function self.public:OnChange()
+			local ispublic = self:GetChecked()
+
+			netstream.Start("pubShp", self.entity, ispublic)
+		end
+		*/
+
 		self.list = self:Add("DScrollPanel")
 		self.list:Dock(FILL)
 		self.itemPanel = {}
@@ -37,6 +50,7 @@ local PANEL = {}
 			item:SetTall(36)
 			item:Dock(TOP)
 			item:DockMargin(5, 5, 5, 0)
+			item.amount = v
 
 			item.icon = item:Add("SpawnIcon")
 			item.icon:SetPos(2, 2)
@@ -48,8 +62,11 @@ local PANEL = {}
 			item.name:SetPos(40, 2)
 			item.name:SetSize(250, 32)
 			item.name:SetFont("nutChatFont")
-			item.name:SetText(L(itemTable.name))
 			item.name:SetTextColor(color_white)
+			function item:Update(amount)
+				item.name:SetText(L(itemTable.name) .. " (" .. amount .. ")")
+			end
+			item:Update(item.amount)
 
 			item.clicker = item:Add("DButton")
 			item.clicker:Dock(FILL)

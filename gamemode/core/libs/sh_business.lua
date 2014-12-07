@@ -91,9 +91,13 @@ if (SERVER) then
 						entity.items[name] = nil
 					end
 
+					entity:EmitSound(Format("physics/cardboard/cardboard_box_impact_hard%s.wav", math.random(1, 5)))
+
 					if (table.Count(entity.items) <= 0) then
-						entity:Remove()
+						entity:Break()
 					end
+				else
+					client:notify("Unable to move item.")
 				end
 			end
 		end
@@ -106,10 +110,15 @@ else
 
 	netstream.Hook("takeShp", function(name, amount)
 		if (nut.gui.shipment and nut.gui.shipment:IsVisible()) then
-			print("confirmed")
 			local item = nut.gui.shipment.itemPanel[name]
+
 			if (item) then
-				item:Remove()
+				item.amount = item.amount - 1
+				item:Update(item.amount)
+
+				if (item.amount <= 0) then
+					item:Remove()
+				end
 			end
 		end
 	end)
