@@ -22,6 +22,8 @@ function PANEL:Init()
 end
 
 function PANEL:setItem(itemTable)
+	self.itemName = L(itemTable.name):lower()
+
 	self.price = self:Add("DLabel")
 	self.price:Dock(BOTTOM)
 	self.price:SetText(itemTable.price and nut.currency.get(itemTable.price) or L"free":upper())
@@ -105,9 +107,21 @@ function PANEL:Init()
 	self.scroll = self:Add("DScrollPanel")
 	self.scroll:Dock(FILL)
 
+	self.search = self:Add("DTextEntry")
+	self.search:Dock(TOP)
+	self.search:SetTall(36)
+	self.search:SetFont("nutMediumFont")
+	self.search:DockMargin(10 + self:GetWide() * 0.45, 0, 5, 5)
+	self.search.OnTextChanged = function(this)
+		local text = self.search:GetText():lower()
+
+		self:loadItems(self.selected.category, text:find("%S") and text or nil)
+		self.scroll:InvalidateLayout()
+	end
+
 	self.itemList = self.scroll:Add("DIconLayout")
 	self.itemList:Dock(FILL)
-	self.itemList:DockMargin(10, 0, 5, 5)
+	self.itemList:DockMargin(10, 5, 5, 5)
 	self.itemList:SetSpaceX(10)
 	self.itemList:SetSpaceY(10)
 
@@ -185,7 +199,7 @@ function PANEL:buyItem(uniqueID)
 	self.checkout:SetText(L("checkout", self:getCartCount()))
 end
 
-function PANEL:loadItems(category)
+function PANEL:loadItems(category, search)
 	category = category	or "misc"
 	local items = nut.item.list
 
@@ -193,9 +207,13 @@ function PANEL:loadItems(category)
 
 	for uniqueID, itemTable in SortedPairsByMemberValue(items, "name") do
 		if (itemTable.category == category) then
+			if (search and search != "" and !L(itemTable.name):lower():find(search, 1, true)) then
+				continue
+			end
+
 			self.itemList:Add("nutBusinessItem"):setItem(itemTable)
 		end
-	end	
+	end
 end
 
 function PANEL:setPage()
