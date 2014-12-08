@@ -32,6 +32,11 @@ function ITEM:getID()
 end
 
 function ITEM:getDesc()
+	if (type(self.desc) == "function") then
+		print(self)
+		return "ERROR"
+	end
+
 	return CLIENT and L(self.desc or "noDesc") or self.desc
 end
 
@@ -76,7 +81,7 @@ function ITEM:getOwner()
 	local inventory = nut.item.inventories[self.invID]
 
 	if (inventory) then
-		return inventory:getReceiver()
+		return (inventory.getReceiver and inventory:getReceiver())
 	end
 
 	local id = self:getID()
