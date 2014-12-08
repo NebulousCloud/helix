@@ -51,6 +51,10 @@ else
 			local index = self.deltaIndex
 			
 			for k, v in ipairs(weapons) do
+				if (!weapons[self.index]) then
+					self.index = total
+				end
+
 				local theta = (k - index) * 0.1
 				local color = ColorAlpha(k == self.index and nut.config.get("color") or color_white, (255 - math.abs(theta * 3) * 255) * fraction)
 				local lastY = 0
@@ -67,7 +71,7 @@ else
 					end
 				end
 
-				nut.util.drawText(v:GetPrintName(), x + math.cos(theta * spacing + math.pi) * radius + radius, y + lastY + math.sin(theta * spacing + math.pi) * radius, color, 0, 1, "nutSubTitleFont")
+				nut.util.drawText(v:GetPrintName():upper(), x + math.cos(theta * spacing + math.pi) * radius + radius, y + lastY + math.sin(theta * spacing + math.pi) * radius, color, 0, 1, "nutSubTitleFont")
 			end
 
 			if (self.fadeTime < CurTime() and self.alpha > 0) then
@@ -115,7 +119,7 @@ else
 
 	function PLUGIN:PlayerBindPress(client, bind, pressed)
 		local weapon = client:GetActiveWeapon()
-		
+
 		if (!client:InVehicle() and (!IsValid(weapon) or weapon:GetClass() != "weapon_physgun" or !client:KeyDown(IN_ATTACK))) then
 			bind = bind:lower()
 
