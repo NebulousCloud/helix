@@ -67,11 +67,26 @@ else
 					if (k == self.index - 1) then
 						self.infoAlpha = Lerp(FrameTime() * 3, self.infoAlpha, 255)
 
-						self.markup:Draw(x + 5, y + 30, 0, 0, self.infoAlpha * fraction)
+						self.markup:Draw(x + 15, y + 30, 0, 0, self.infoAlpha * fraction)
 					end
 				end
 
-				nut.util.drawText(v:GetPrintName():upper(), x + math.cos(theta * spacing + math.pi) * radius + radius, y + lastY + math.sin(theta * spacing + math.pi) * radius, color, 0, 1, "nutSubTitleFont")
+				surface.SetFont("nutSubTitleFont")
+				local tx, ty = surface.GetTextSize(v:GetPrintName():upper())
+				local scale = (1 - math.abs(theta*2))
+
+				local matrix = Matrix()
+				matrix:Translate(Vector(
+					10 + x + math.cos(theta * spacing + math.pi) * radius + radius,
+					y + lastY + math.sin(theta * spacing + math.pi) * radius - ty/2 ,
+					1))
+				matrix:Rotate(angle or Angle(0, 0, 0))
+				matrix:Scale(Vector(1, 1, 0) * scale)
+
+				cam.PushModelMatrix(matrix)
+					nut.util.drawText(v:GetPrintName():upper(), 2, ty/2, color, 0, 1, "nutSubTitleFont")
+				cam.PopModelMatrix()
+				--nut.util.drawText(v:GetPrintName():upper(), x + math.cos(theta * spacing + math.pi) * radius + radius, y + lastY + math.sin(theta * spacing + math.pi) * radius, color, 0, 1, "nutSubTitleFont")
 			end
 
 			if (self.fadeTime < CurTime() and self.alpha > 0) then
