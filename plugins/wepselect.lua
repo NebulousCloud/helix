@@ -34,8 +34,10 @@ else
 	PLUGIN.alphaDelta = PLUGIN.alphaDelta or PLUGIN.alpha
 	PLUGIN.fadeTime = PLUGIN.fadeTime or 0
 
+	local function fTime() return math.Clamp(FrameTime(), 1/60, 1) end
+
 	function PLUGIN:HUDPaint()
-		self.alphaDelta = Lerp(FrameTime() * 8, self.alphaDelta, self.alpha)
+		self.alphaDelta = Lerp(fTime() * 8, self.alphaDelta, self.alpha)
 
 		local fraction = self.alphaDelta
 
@@ -46,7 +48,7 @@ else
 			local spacing = math.pi * 0.85
 			local radius = 240 * self.alphaDelta
 
-			self.deltaIndex = Lerp(FrameTime() * 20, self.deltaIndex, self.index) --math.Approach(self.deltaIndex, self.index, FrameTime() * 12)
+			self.deltaIndex = Lerp(fTime() * 5, self.deltaIndex, self.index) --math.Approach(self.deltaIndex, self.index, fTime() * 12)
 
 			local index = self.deltaIndex
 			
@@ -65,7 +67,7 @@ else
 					lastY = (h * fraction)
 
 					if (k == self.index - 1) then
-						self.infoAlpha = Lerp(FrameTime() * 3, self.infoAlpha, 255)
+						self.infoAlpha = Lerp(fTime() * 3, self.infoAlpha, 255)
 
 						self.markup:Draw(x + 15, y + 30, 0, 0, self.infoAlpha * fraction)
 					end
