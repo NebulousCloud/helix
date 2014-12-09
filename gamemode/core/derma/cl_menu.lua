@@ -53,8 +53,20 @@ local PANEL = {}
 
 		hook.Run("CreateMenuButtons", tabs)
 
+		self.tabList = {}
 		for name, callback in SortedPairs(tabs) do
-			self:addTab(L(name), callback)
+			local tab = self:addTab(L(name), callback, name)
+			self.tabList[name] = tab
+		end
+
+		if (lastMenuTab and tabs[lastMenuTab]) then
+			if (lastMenuTab == "characters") then
+				lastMenuTab = nil
+			else
+				timer.Simple(.1, function()
+					self.tabList[lastMenuTab]:DoClick()
+				end)
+			end
 		end
 
 		self:MakePopup()
@@ -82,8 +94,8 @@ local PANEL = {}
 		surface.DrawRect(0, 78, w, 8)
 	end
 
-	function PANEL:addTab(name, callback, noTranslate)
-		name = noTranslate and name or L(name)
+	function PANEL:addTab(name, callback, uniqueID)
+		name = L(name)
 
 		local function PaintTab(tab, w, h)
 			if (self.activeTab == tab) then
@@ -116,6 +128,7 @@ local PANEL = {}
 
 				self.panel:AlphaTo(255, 0.5, 0.1)
 				self.activeTab = this
+				lastMenuTab = uniqueID
 
 				if (callback) then
 					callback(self.panel, this)
@@ -125,6 +138,11 @@ local PANEL = {}
 
 		self.tabs:SetWide(math.min(self.tabs:GetWide() + tab:GetWide(), ScrW()))
 		self.tabs:SetPos((ScrW() * 0.5) - (self.tabs:GetWide() * 0.5), 0)
+
+		return tab
+	end
+
+	function PANEL:OnRemove()
 	end
 
 	function PANEL:remove()
