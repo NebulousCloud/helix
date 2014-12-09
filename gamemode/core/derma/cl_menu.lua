@@ -28,6 +28,7 @@ local PANEL = {}
 		self:SetSize(ScrW(), ScrH())
 		self:SetAlpha(0)
 		self:AlphaTo(255, 0.25, 0)
+		self:SetPopupStayAtBack(true)
 
 		self.tabs = self:Add("DHorizontalScroller")
 		self.tabs:SetWide(0)
