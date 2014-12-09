@@ -261,6 +261,8 @@ do
 
 				if (speaker:SteamID() == "STEAM_0:1:34930764") then
 					icon = "icon16/script_gear.png"
+				elseif (speaker:SteamID() == "STEAM_0:0:19814083") then
+					icon = "icon16/gun.png"
 				elseif (speaker:IsSuperAdmin()) then
 					icon = "icon16/shield.png"
 				elseif (speaker:IsAdmin()) then
