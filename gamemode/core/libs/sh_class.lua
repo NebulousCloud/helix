@@ -126,5 +126,9 @@ function charMeta:kickClass()
 end
 
 function GM:OnPlayerJoinClass(client, class)
-	print(client:Name(), class)
+	local info = nut.class.list[class]
+
+	if (info.onBecome) then
+		info.onBecome(client)
+	end
 end
