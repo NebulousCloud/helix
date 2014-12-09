@@ -243,3 +243,32 @@ nut.command.add("fallover", {
 		end
 	end
 })
+
+nut.command.add("beclass", {
+	adminOnly = true,
+	syntax = "<string class>",
+	onRun = function(client, arguments)
+		local class = table.concat(arguments, " ")
+		local char = client:getChar()
+
+		if (IsValid(client) and char) then
+			for k, v in ipairs(nut.class.list) do
+				if (nut.util.stringMatches(v.uniqueID, class) or nut.util.stringMatches(L(v.name, client), class)) then
+					if (char:joinClass(k)) then
+						client:notify(L("becomeClass", client, L(v.name, client)))
+
+						return
+					else
+						client:notify(L("becomeClassFail", client, L(v.name, client)))
+
+						return
+					end
+				end
+			end
+			
+			client:notify(L("invalid", client, L("class", client)))
+		else
+			client:notify(L("illegalAccess", client))
+		end
+	end
+})

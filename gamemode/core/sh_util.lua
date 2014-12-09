@@ -486,8 +486,11 @@ do
 				end
 
 				self:setLocalVar("ragdoll", entity:EntIndex())
+				hook.Run("OnCharFallover", self, entity, true)
 			elseif (IsValid(self.nutRagdoll)) then
 				self.nutRagdoll:Remove()
+
+				hook.Run("OnCharFallover", self, entity, false)
 			end
 		end
 	end

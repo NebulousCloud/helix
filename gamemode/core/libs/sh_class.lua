@@ -16,6 +16,8 @@
 nut.class = nut.class or {}
 nut.class.list = {}
 
+local charMeta = FindMetaTable("Character")
+
 -- Register classes from a directory.
 function nut.class.loadFromDir(directory)
 	-- Search the directory for .lua files.
@@ -68,14 +70,61 @@ function nut.class.canBe(client, class)
 
 	-- See if the class exists.
 	if (!info) then
-		return false
+		return false, "no info"
 	end
 
 	-- If the player's faction matches the class's faction.
 	if (client:Team() != info.faction) then
-		return false
+		return false, "not correct team"
+	end
+
+	if (client:getChar():getClass() == class) then
+		return false, "same class request"
 	end
 
 	-- See if the class allows the player to join it.
 	return info.onCanBe(client)
+end
+
+function nut.class.getPlayers(class)
+	local players = {}
+
+	for k, v in ipairs(player.GetAll()) do
+		local char = v:getChar()
+
+		if (char:getClass() == class) then
+			table.insert(players, v)
+		end
+	end
+
+	return players
+end
+
+function charMeta:joinClass(class)
+	if (!class) then
+		self:kickClass()
+
+		return
+	end
+
+	local client = self:getPlayer()
+	if (nut.class.canBe(client, class)) then
+		self:setData("class", class)
+
+		hook.Run("OnPlayerJoinClass", client, class)
+		return true
+	else
+		return false
+	end
+end
+
+function charMeta:kickClass()
+	self:setData("class")
+
+	local client = self:getPlayer()
+	hook.Run("OnPlayerJoinClass", client, class)
+end
+
+function GM:OnPlayerJoinClass(client, class)
+	print(client:Name(), class)
 end

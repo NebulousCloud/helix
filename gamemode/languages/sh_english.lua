@@ -133,5 +133,10 @@ LANGUAGE = {
 	buyGood = "Purchase successful!",
 	shipment = "Shipment",
 	shipmentDesc = "This shipment belongs to %s.",
+	class = "Class",
+	classes = "Classes",
+	illegalAccess = "Illegal Access.",
+	becomeClassFail = "Failed to become %s.",
+	becomeClass = "You have become %s.",
 	noFit = "This item can not fit in your inventory."
 }
