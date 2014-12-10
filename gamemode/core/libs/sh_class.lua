@@ -83,6 +83,12 @@ function nut.class.canBe(client, class)
 		return false, "same class request"
 	end
 
+	if (info.limit > 0) then
+		if (#nut.class.getPlayers(data.index) >= info.limit) then
+			return false, "class is full"
+		end
+	end
+
 	-- See if the class allows the player to join it.
 	return info.onCanBe(client)
 end
