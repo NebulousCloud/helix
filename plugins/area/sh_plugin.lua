@@ -161,7 +161,36 @@ if (SERVER) then
 		-- If area is valid, merge editData to areaData.
 		local areaData = table.Copy(nut.area.getArea(areaID))
 		if (areaData) then
+			client:notify(L("areaModified", client, areaID))
 			PLUGIN.areaTable[areaID] = table.Merge(areaData, editData)
+		end
+	end)
+
+	netstream.Hook("areaTeleport", function(client, areaID, editData)
+		-- Only Admin can do this.
+		if (!client:IsAdmin()) then
+			return false
+		end
+
+		-- If area is valid, merge editData to areaData.
+		local areaData = table.Copy(nut.area.getArea(areaID))
+		if (areaData) then
+			local min, max = areaData.maxVector, areaData.minVector
+			client:SetPos(min + (max - min)/2)
+		end
+	end)
+
+	netstream.Hook("areaRemove", function(client, areaID, editData)
+		-- Only Admin can edit the area.
+		if (!client:IsAdmin()) then
+			return false
+		end
+
+		-- If area is valid, merge editData to areaData.
+		local areaData = table.Copy(nut.area.getArea(areaID))
+		if (areaData) then
+			client:notify(L("areaRemoved", client, areaID))
+			PLUGIN.areaTable[areaID] = nil
 		end
 	end)
 else
@@ -355,15 +384,13 @@ nut.command.add("areaadd", {
 	onRun = function(client, arguments)
 		local name = table.concat(arguments, " ") or "Area"
 
+		local pos = client:GetEyeTraceNoCursor().HitPos
 		if (!client:getNetVar("areaMin")) then
 			if (!name) then
 				nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
 
 				return
 			end
-
-			local pos = client:GetEyeTraceNoCursor().HitPos
-
 			netstream.Start(client, "displayPosition", pos)
 
 			client:setNetVar("areaMin", pos, client)
@@ -372,7 +399,6 @@ nut.command.add("areaadd", {
 			client:notify(L("areaCommand", client))
 		else
 			local data = {}
-			local pos = client:GetPos()
 			local min = client:getNetVar("areaMin")
 			local max = pos
 			local name = client:getNetVar("areaName")
@@ -423,14 +449,11 @@ nut.command.add("areachange", {
 	end
 })
 
-
-/*
-nut.command.add("areamanage", {
+nut.command.add("areamanager", {
 	adminOnly = true,
 	onRun = function(client, arguments)
 		if (client:Alive()) then
-			netstream.Start(client, "areaManager")
+			netstream.Start(client, "nutAreaManager", nut.area.getAllArea())
 		end
 	end
 })
-*/
