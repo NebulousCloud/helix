@@ -477,6 +477,7 @@ hidden["CHudHealth"] = true
 hidden["CHudBattery"] = true
 hidden["CHudAmmo"] = true
 hidden["CHudSecondaryAmmo"] = true
+hidden["CHudCrosshair"] = true
 
 function GM:HUDShouldDraw(element)
 	if (hidden[element]) then
