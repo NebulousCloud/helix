@@ -313,7 +313,7 @@ else
 		
 		local w, h = ScrW(), ScrH()
 		local dsx, dsy = 0
-		local strEnd = string.len(dispString)
+		local strEnd = string.utf8len(dispString)
 		local rTime = RealTime()
 
 		surface.SetFont("nutAreaDisplay")
@@ -334,7 +334,7 @@ else
 		-- change event
 		if (maxDisplay != curChar and curChar < strEnd) then
 			curChar = maxDisplay
-			if (dispString[curChar] != " ") then
+			if (string.utf8sub(dispString, curChar, curChar) != " ") then
 				LocalPlayer():EmitSound(tickSound, 100, math.random(190, 200))
 			end
 		end
@@ -350,8 +350,9 @@ else
 			flipTable[i][2] = Lerp(fTime()*2, flipTable[i][2], 255)
 
 			-- draw character.
-			local tx, ty = surface.GetTextSize(dispString[i])
-			drawMatrixString(dispString[i],
+			local char = string.utf8sub(dispString, i, i)
+			local tx, ty = surface.GetTextSize(char)
+			drawMatrixString(char,
 				"nutAreaDisplay",
 				math.Round(w/2 + dsx - (sx or 0)*scale/2),
 				math.Round(h/3*1 - (sy or 0)*scale/2),
