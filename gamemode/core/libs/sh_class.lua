@@ -131,4 +131,6 @@ function GM:OnPlayerJoinClass(client, class)
 	if (info.onSet) then
 		info:onSet(client)
 	end
+
+	netstream.Start(player.GetAll(), "classUpdate")
 end
