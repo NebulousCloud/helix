@@ -69,12 +69,30 @@ local PANEL = {}
 			end
 		end
 
+		self.noAnchor = CurTime() + .4
+		self.anchorMode = true
 		self:MakePopup()
 	end
 
 	function PANEL:OnKeyCodePressed(key)
+		self.noAnchor = CurTime() + .5
+
 		if (key == KEY_F1) then
 			self:remove()
+		end
+	end
+
+	function PANEL:Think()
+		local key = input.IsKeyDown(KEY_F1)
+		if (key and self.noAnchor < CurTime() and self.anchorMode == true) then
+			self.anchorMode = false
+			surface.PlaySound("buttons/lightswitch2.wav")
+		end
+
+		if (!self.anchorMode) then
+			if (!key) then
+				self:remove()
+			end
 		end
 	end
 
