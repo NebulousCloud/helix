@@ -31,7 +31,7 @@ local PANEL = {}
 
 
         self.icon = self:Add("SpawnIcon")
-        self.icon:SetSize(64, 64)
+        self.icon:SetSize(128, 64)
         self.icon:InvalidateLayout(true)
         self.icon:Dock(LEFT)
         self.icon.PaintOver = function(this, w, h)
@@ -80,16 +80,25 @@ local PANEL = {}
     end
 
     function PANEL:setNumber(number)
-        local limit = 1
+        local limit = self.data.limit
 
-        self.limit:SetText(Format("%s/%s", number, limit))
+        if (limit > 0) then
+            self.limit:SetText(Format("%s/%s", number, limit))
+        else
+            self.limit:SetText("∞")
+        end
     end
 
     function PANEL:setClass(data)
         if (data.model) then
-            self.icon:SetModel(data.model)
+            local model = data.model
+            if (type(model):lower() == "table") then
+                model = table.Random(model)
+            end
+
+            self.icon:SetModel(model)
         else
-            self.icon:SetModel("models/Police.mdl")
+            self.icon:SetModel(LocalPlayer():GetModel())
         end
 
         self.label:SetText(data.name)   

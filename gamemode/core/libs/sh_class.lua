@@ -32,6 +32,7 @@ function nut.class.loadFromDir(directory)
 			-- Define some default variables.
 			CLASS.name = "Unknown"
 			CLASS.desc = "No description available."
+			CLASS.limit = 0
 
 			-- For future use with plugins.
 			if (PLUGIN) then
