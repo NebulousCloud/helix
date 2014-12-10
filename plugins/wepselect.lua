@@ -60,6 +60,7 @@ else
 				local theta = (k - index) * 0.1
 				local color = ColorAlpha(k == self.index and nut.config.get("color") or color_white, (255 - math.abs(theta * 3) * 255) * fraction)
 				local lastY = 0
+				local shiftX = ScrW()*.02
 
 				if (self.markup and k < self.index) then
 					local w, h = self.markup:Size()
@@ -69,7 +70,7 @@ else
 					if (k == self.index - 1) then
 						self.infoAlpha = Lerp(fTime() * 3, self.infoAlpha, 255)
 
-						self.markup:Draw(x + 15, y + 30, 0, 0, self.infoAlpha * fraction)
+						self.markup:Draw(x + 5 + shiftX, y + 30, 0, 0, self.infoAlpha * fraction)
 					end
 				end
 
@@ -79,7 +80,7 @@ else
 
 				local matrix = Matrix()
 				matrix:Translate(Vector(
-					10 + x + math.cos(theta * spacing + math.pi) * radius + radius,
+					shiftX + x + math.cos(theta * spacing + math.pi) * radius + radius,
 					y + lastY + math.sin(theta * spacing + math.pi) * radius - ty/2 ,
 					1))
 				matrix:Rotate(angle or Angle(0, 0, 0))
@@ -88,7 +89,6 @@ else
 				cam.PushModelMatrix(matrix)
 					nut.util.drawText(v:GetPrintName():upper(), 2, ty/2, color, 0, 1, "nutSubTitleFont")
 				cam.PopModelMatrix()
-				--nut.util.drawText(v:GetPrintName():upper(), x + math.cos(theta * spacing + math.pi) * radius + radius, y + lastY + math.sin(theta * spacing + math.pi) * radius, color, 0, 1, "nutSubTitleFont")
 			end
 
 			if (self.fadeTime < CurTime() and self.alpha > 0) then
