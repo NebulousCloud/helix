@@ -128,7 +128,7 @@ end
 function GM:OnPlayerJoinClass(client, class)
 	local info = nut.class.list[class]
 
-	if (info.onBecome) then
-		info.onBecome(client)
+	if (info.onSet) then
+		info:onSet(client)
 	end
 end

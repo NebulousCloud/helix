@@ -46,6 +46,14 @@ function PANEL:loadBusinesses()
 				surface.PlaySound("buttons/blip2.wav")
 
 				local menu = DermaMenu()
+					menu:AddOption(L"renameArea", function()
+						Derma_StringRequest(
+							L("enterAreaName"),
+							L("enterAreaName"),
+							data.name,
+							onConfirm
+						)
+					end):SetImage("icon16/comment.png")
 					menu:AddOption(L"moveToArea", function()
 						netstream.Start("areaTeleport", class)
 					end):SetImage("icon16/door_in.png")

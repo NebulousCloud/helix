@@ -11,5 +11,6 @@ LANGUAGE = {
 	areaManagerTip = "Click or Right Click to interact with area.",
 	enterAreaName = "Enter Area's New Name.",
 	moveToArea = "Move to Area",
+	renameArea = "Rename Area",
 	deleteArea = "Delete Area",
 }
