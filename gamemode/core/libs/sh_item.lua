@@ -57,11 +57,13 @@ function nut.item.registerInv(invType, w, h)
 end
 
 function nut.item.newInv(owner, invType, callback)
+	local invData = nut.item.inventoryTypes[invType] or {w = 1, h = 1}
+	
 	nut.db.insertTable({
 		_invType = invType,
 		_charID = owner
 	}, function(data, invID)
-		local inventory = nut.item.createInv(w, h, invID)
+		local inventory = nut.item.createInv(invData.w, invData.h, invID)
 
 		if (owner > 0) then
 			for k, v in ipairs(player.GetAll()) do
