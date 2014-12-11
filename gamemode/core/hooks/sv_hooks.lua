@@ -70,6 +70,10 @@ function GM:PlayerInitialSpawn(client)
 end
 
 function GM:PlayerUse(client, entity)
+	if (entity.ignoreUse) then
+		return false
+	end
+	
 	if (entity:isDoor()) then
 		local result = hook.Run("CanPlayerUseDoor", client, entity)
 
