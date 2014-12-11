@@ -129,6 +129,8 @@ if (SERVER) then
 					if (!status) then
 						return client:notifyLocalized("noFit")
 					end
+
+					--netstream.Hook("updtShp", uniqueID)
 				end
 
 				entity.items[uniqueID] = entity.items[uniqueID] - 1
@@ -144,6 +146,11 @@ else
 	netstream.Hook("openShp", function(entity, items)
 		nut.gui.shipment = vgui.Create("nutShipment")
 		nut.gui.shipment:setItems(entity, items)
+	end)
+
+	netstream.Hook("openShp", function(entity, items)
+		if (nut.gui.shipment and nut.gui.shipment:IsVisible()) then
+		end
 	end)
 
 	netstream.Hook("takeShp", function(name, amount)

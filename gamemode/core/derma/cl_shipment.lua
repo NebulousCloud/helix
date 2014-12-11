@@ -30,6 +30,7 @@ local PANEL = {}
 	function PANEL:setItems(entity, items)
 		self.entity = entity
 		self.items = true
+		self.itemPanels = {}
 
 		for k, v in SortedPairs(items) do
 			local itemTable = nut.item.list[k]
@@ -93,6 +94,8 @@ local PANEL = {}
 						item:Remove()
 					end
 				end
+
+				self.itemPanels[k] = item
 			end
 		end
 	end
