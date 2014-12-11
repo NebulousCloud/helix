@@ -220,6 +220,14 @@ function META:getItems()
 		for k2, v2 in pairs(v) do
 			if (!items[v2.id]) then
 				items[v2.id] = v2
+
+				local isBag = v2.data.id
+				if (isBag and isBag != self:getID()) then
+					local bagInv = nut.item.inventories[isBag]
+					local bagItems = bagInv:getItems()
+
+					table.Merge(items, bagItems)
+				end
 			end
 		end
 	end
