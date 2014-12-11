@@ -201,6 +201,12 @@ function GM:StartCommand(client, command)
 	end
 end
 
+function GM:EntityEmitSound(data)
+	if (data.Entity.nutIsMuted) then
+		return false
+	end
+end
+
 function GM:OnCharVarChanged(char, varName, oldVar, newVar)
 	if (nut.char.varHooks[varName]) then
 		for k, v in pairs(nut.char.varHooks[varName]) do
