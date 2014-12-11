@@ -46,6 +46,7 @@ if (CLIENT) then
 		local data = {}
 			data.start = client:GetShootPos()
 			data.endpos = data.start + (aimVector + punchAngle):Forward()*65535
+			data.filter = client
 		local trace = util.TraceLine(data)
 		local entity = trace.Entity
 		local distance = trace.StartPos:Distance(trace.HitPos)
