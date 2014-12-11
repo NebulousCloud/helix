@@ -13,7 +13,9 @@ if (CLIENT) then
 		surface.DrawOutlinedRect(pos[1] - size/2, pos[2] - size/2 , size, size)
 	end
 
-	local function fTime() return math.Clamp(FrameTime(), 1/60, 1) end
+	local FRAMETIME_LIMIT = 1 / 60
+
+	local function fTime() return math.Clamp(FrameTime(), FRAMETIME_LIMIT, 1) end
 
 	local math_round = math.Round
 	local curGap = 0
@@ -56,8 +58,8 @@ if (CLIENT) then
 		local crossSize = 4
 
 		curGap = Lerp(fTime(), curGap, crossGap)
-		curAlpha = Lerp(fTime(), curAlpha, (client:isWepRaised() and 255 or 50))
-		local color = {Color(0, 0, 0, 255), Color(255, curAlpha, curAlpha, curAlpha)}
+		curAlpha = Lerp(fTime(), curAlpha, (!client:isWepRaised() and 255 or 150))
+		local color = {color_black, Color(255, curAlpha, curAlpha, curAlpha)}
 
 		drawdot( {math_round(screen.x), math_round(screen.y)}, crossSize, color )
 		drawdot( {math_round(screen.x + curGap), math_round(screen.y)}, crossSize, color )
