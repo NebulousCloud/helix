@@ -72,6 +72,25 @@ do
 				end
 			end
 		end
+
+		function charMeta:setAttrib(key, value)
+			local attribute = nut.attribs.list[key]
+
+			if (attribute) then
+				local attrib = self:getAttribs()
+				local client = self:getPlayer()
+
+				attrib[key] = value
+
+				if (IsValid(client)) then
+					netstream.Start(client, "attrib", self:getID(), key, attrib[key])
+
+					if (attribute.setup) then
+						attribute.setup(attrib[key])
+					end
+				end
+			end
+		end
 	else
 		netstream.Hook("attrib", function(id, key, value)
 			local character = nut.char.loaded[id]

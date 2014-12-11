@@ -138,5 +138,7 @@ LANGUAGE = {
 	illegalAccess = "Illegal Access.",
 	becomeClassFail = "Failed to become %s.",
 	becomeClass = "You have become %s.",
+	attribSet = "You set %s's %s to %s.",
+	attribUpdate = "You added %s's %s by %s.",
 	noFit = "This item can not fit in your inventory."
 }
