@@ -205,22 +205,29 @@ if (SERVER) then
 
 		if (curInv) then
 			if (invID and invID > 0 and inventory) then
+				local targetInv = inventory
+				local bagInv
+
 				if (!x and !y) then
-					x, y = inventory:findEmptySlot(self.width, self.height)
+					x, y, bagInv = inventory:findEmptySlot(self.width, self.height)
+				end
+
+				if (bagInv) then
+					targetInv = bagInv
 				end
 
 				if (!x or !y) then
 					return false, "no space"
 				end
 
-				local status, result = inventory:add(self.id, nil, nil, x, y, noReplication)
+				local status, result = targetInv:add(self.id, nil, nil, x, y, noReplication)
 
 				if (status) then
 					if (self.invID > 0) then
 						curInv:remove(self.id, false, true)
 						self.invID = invID
 					else
-						inventory[self.id] = nil
+						targetInv[self.id] = nil
 					end
 				else
 					return false, result

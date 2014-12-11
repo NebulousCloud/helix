@@ -128,7 +128,7 @@ function META:canItemFit(x, y, w, h, item2)
 	return canFit
 end
 
-function META:findEmptySlot(w, h)
+function META:findEmptySlot(w, h, onlyMain)
 	w = w or 1
 	h = h or 1
 
@@ -142,6 +142,25 @@ function META:findEmptySlot(w, h)
 		for x = 1, self.w - (w - 1) do
 			if (self:canItemFit(x, y, w, h)) then
 				return x, y
+			end
+		end
+	end
+
+	if (onlyMain != true) then
+		local bags = self:getBags()
+		
+		if (#bags > 0) then
+			for _, invID in ipairs(bags) do
+				local bagInv = nut.item.inventories[invID]
+
+				if (bagInv) then
+					print(bagInv, "begin search.")
+					local x, y = bagInv:findEmptySlot(w, h)
+
+					if (x and y) then
+						return x, y, bagInv
+					end
+				end
 			end
 		end
 	end
@@ -213,7 +232,7 @@ function META:getItemByID(id)
 	end
 end
 
-function META:getItems()
+function META:getItems(onlyMain)
 	local items = {}
 
 	for k, v in pairs(self.slots) do
@@ -222,7 +241,7 @@ function META:getItems()
 				items[v2.id] = v2
 
 				local isBag = v2.data.id
-				if (isBag and isBag != self:getID()) then
+				if (isBag and isBag != self:getID() and onlyMain != true) then
 					local bagInv = nut.item.inventories[isBag]
 					local bagItems = bagInv:getItems()
 
@@ -233,6 +252,24 @@ function META:getItems()
 	end
 
 	return items
+end
+
+function META:getBags()
+	local invs = {}
+
+	for k, v in pairs(self.slots) do
+		for k2, v2 in pairs(v) do
+			local isBag = v2.data.id
+
+			if (!table.HasValue(invs, isBag)) then
+				if (isBag and isBag != self:getID()) then
+					table.insert(invs, isBag)
+				end
+			end
+		end
+	end
+
+	return invs
 end
 
 function META:hasItem(targetID, data)
@@ -290,34 +327,41 @@ if (SERVER) then
 				return
 			end
 
+			local targetInv = self
+			local bagInv
+
 			if (type(uniqueID) == "number") then
 				local item = nut.item.instances[uniqueID]
 
 				if (item) then
 					if (!x and !y) then
-						x, y = self:findEmptySlot(item.width, item.height)
+						x, y, bagInv = self:findEmptySlot(item.width, item.height)
+					end
+
+					if (bagInv) then
+						targetInv = bagInv
 					end
 
 					if (x and y) then
-						self.slots[x] = self.slots[x] or {}
-						self.slots[x][y] = true
+						targetInv.slots[x] = targetInv.slots[x] or {}
+						targetInv.slots[x][y] = true
 
 						item.gridX = x
 						item.gridY = y
-						item.invID = self:getID()
+						item.invID = targetInv:getID()
 
 						for x2 = 0, item.width - 1 do
 							for y2 = 0, item.height - 1 do
-								self.slots[x + x2] = self.slots[x + x2] or {}
-								self.slots[x + x2][y + y2] = item
+								targetInv.slots[x + x2] = targetInv.slots[x + x2] or {}
+								targetInv.slots[x + x2][y + y2] = item
 							end
 						end
 
 						if (!noReplication) then
-							self:sendSlot(x, y, item)
+							targetInv:sendSlot(x, y, item)
 						end
 
-						nut.db.query("UPDATE nut_items SET _invID = "..self:getID()..", _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
+						nut.db.query("UPDATE nut_items SET _invID = "..targetInv:getID()..", _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
 
 						return x, y
 					else
@@ -334,26 +378,30 @@ if (SERVER) then
 				end
 
 				if (!x and !y) then
-					x, y = self:findEmptySlot(itemTable.width, itemTable.height)
+					x, y, bagInv = self:findEmptySlot(itemTable.width, itemTable.height)
+				end
+
+				if (bagInv) then
+					targetInv = bagInv
 				end
 				
 				if (x and y) then
-					self.slots[x] = self.slots[x] or {}
-					self.slots[x][y] = true
+					targetInv.slots[x] = targetInv.slots[x] or {}
+					targetInv.slots[x][y] = true
 
-					nut.item.instance(self:getID(), uniqueID, data, x, y, function(item)
+					nut.item.instance(targetInv:getID(), uniqueID, data, x, y, function(item)
 						item.gridX = x
 						item.gridY = y
 
 						for x2 = 0, item.width - 1 do
 							for y2 = 0, item.height - 1 do
-								self.slots[x + x2] = self.slots[x + x2] or {}
-								self.slots[x + x2][y + y2] = item
+								targetInv.slots[x + x2] = targetInv.slots[x + x2] or {}
+								targetInv.slots[x + x2][y + y2] = item
 							end
 						end
 
 						if (!noReplication) then
-							self:sendSlot(x, y, item)
+							targetInv:sendSlot(x, y, item)
 						end
 					end)
 
