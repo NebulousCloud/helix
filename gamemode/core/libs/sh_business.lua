@@ -148,7 +148,7 @@ else
 		nut.gui.shipment:setItems(entity, items)
 	end)
 
-	netstream.Hook("openShp", function(entity, items)
+	netstream.Hook("updtShp", function(entity, items)
 		if (nut.gui.shipment and nut.gui.shipment:IsVisible()) then
 		end
 	end)
