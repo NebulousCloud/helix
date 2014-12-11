@@ -113,10 +113,10 @@ function charMeta:joinClass(class)
 
 		return
 	end
-
+	
 	local client = self:getPlayer()
 	if (nut.class.canBe(client, class)) then
-		self:setData("class", class)
+		self:setClass(class)
 
 		hook.Run("OnPlayerJoinClass", client, class)
 		return true
@@ -126,7 +126,7 @@ function charMeta:joinClass(class)
 end
 
 function charMeta:kickClass()
-	self:setData("class")
+	self:setClass()
 
 	local client = self:getPlayer()
 	hook.Run("OnPlayerJoinClass", client, class)

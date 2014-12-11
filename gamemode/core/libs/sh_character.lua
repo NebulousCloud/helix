@@ -330,10 +330,10 @@ do
 		isLocal = true,
 		noDisplay = true,
 		onSet = function(character, class)
-			character:setData("class", class)
+			character:setVar("class", class)
 		end,
 		onGet = function(character, default)
-			return character:getData("class", default)
+			return character:getVar("class", default)
 		end
 	})
 
@@ -452,6 +452,39 @@ do
 		end,
 		onGet = function(character, key, default)
 			local data = character.vars.data or {}
+
+			if (key) then
+				if (!data) then
+					return default
+				end
+
+				local value = data[key]
+
+				return value == nil and default or value
+			else
+				return default or data
+			end
+		end
+	})
+
+	nut.char.registerVar("var", {
+		default = {},
+		isLocal = true,
+		noDisplay = true,
+		onSet = function(character, key, value, noReplication, receiver)
+			local data = character:getVar()
+			local client = character:getPlayer()
+
+			data[key] = value
+
+			if (!noReplication and IsValid(client)) then
+				netstream.Start(receiver or client, "charVar", character:getID(), key, value)
+			end
+
+			character.vars.vars = data
+		end,
+		onGet = function(character, key, default)
+			local data = character.vars.vars or {}
 
 			if (key) then
 				if (!data) then
@@ -613,6 +646,15 @@ do
 			if (character) then
 				character.vars.data = character.vars.data or {}
 				character:getData()[key] = value
+			end
+		end)
+
+		netstream.Hook("charVar", function(id, key, value)
+			local character = nut.char.loaded[id]
+
+			if (character) then
+				character.vars.vars = character.vars.vars or {}
+				character:getVar()[key] = value
 			end
 		end)
 
