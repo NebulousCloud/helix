@@ -58,7 +58,7 @@ end
 
 function nut.item.newInv(owner, invType, callback)
 	local invData = nut.item.inventoryTypes[invType] or {w = 1, h = 1}
-	
+
 	nut.db.insertTable({
 		_invType = invType,
 		_charID = owner
@@ -500,7 +500,6 @@ do
 							if (receiver and type(receiver) == "table") then
 								for k, v in ipairs(receiver) do
 									if (v != client) then
-										print(v, x, y)
 										netstream.Start(v, "invMv", invID, item:getID(), x, y)
 									end
 								end
