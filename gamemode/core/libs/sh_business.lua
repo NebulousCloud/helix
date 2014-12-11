@@ -117,8 +117,6 @@ if (SERVER) then
 			local amount = entity.items[uniqueID]
 
 			if (amount and amount > 0) then
-				entity.items[uniqueID] = entity.items[uniqueID] - 1
-
 				if (entity.items[uniqueID] <= 0) then
 					entity.items[uniqueID] = nil
 				end
@@ -132,6 +130,8 @@ if (SERVER) then
 						return client:notifyLocalized("noFit")
 					end
 				end
+
+				entity.items[uniqueID] = entity.items[uniqueID] - 1
 
 				if (entity:getItemCount() < 1) then
 					entity:GibBreakServer(Vector(0, 0, 0.5))
