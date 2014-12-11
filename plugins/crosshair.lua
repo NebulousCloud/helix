@@ -47,7 +47,7 @@ if (CLIENT) then
 			data.start = client:GetShootPos()
 			data.endpos = data.start + (aimVector + punchAngle):Forward()*65535
 		local trace = util.TraceLine(data)
-
+		local entity = trace.Entity
 		local distance = trace.StartPos:Distance(trace.HitPos)
 		local scaleFraction = 1 - math.Clamp(distance / maxDistance, 0, .5)
 		local screen = trace.HitPos:ToScreen()
@@ -55,8 +55,14 @@ if (CLIENT) then
 		local crossGap = 25 * (scaleFraction - (client:isWepRaised() and 0 or .1))
 		local crossSize = 4
 
-		curGap = Lerp(fTime(), curGap, crossGap)
-		curAlpha = Lerp(fTime(), curAlpha, (client:isWepRaised() and 255 or 50))
+		if (entity:GetClass() == "nut_item" and 
+			entity:GetPos():Distance(data.start) <= 128) then
+			crossGap = 0
+			crossSize = 5
+		end
+
+		curGap = Lerp(fTime() * 2, curGap, crossGap)
+		curAlpha = Lerp(fTime() * 2, curAlpha, (client:isWepRaised() and 255 or 50))
 		local color = {Color(0, 0, 0, 255), Color(255, curAlpha, curAlpha, curAlpha)}
 
 		drawdot( {math_round(screen.x), math_round(screen.y)}, crossSize, color )
