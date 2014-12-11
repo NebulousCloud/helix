@@ -73,6 +73,15 @@ if (SERVER) then
 			end
 		end)
 	end
+
+	local playerMeta = FindMetaTable("Player")
+
+	function playerMeta:restoreStamina(amount)
+		local current = client:getLocalVar("stm", 0)
+		local value = math.Clamp(current + amount, 0, 100)
+
+		client:setLocalVar("stm", value)
+	end
 else
 	nut.bar.add(function()
 		return LocalPlayer():getLocalVar("stm", 0) / 100
