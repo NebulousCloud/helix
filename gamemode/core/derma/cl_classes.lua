@@ -125,7 +125,6 @@ PANEL = {}
     end
 
     function PANEL:loadClasses()
-
         for k, v in pairs(nut.class.list) do
             if (LocalPlayer():Team() != v.faction) then
                 continue
@@ -141,8 +140,20 @@ PANEL = {}
 vgui.Register("nutClasses", PANEL, "EditablePanel")
 
 hook.Add("CreateMenuButtons", "nutClasses", function(tabs)
-	tabs["classes"] = function(panel)
-		panel:Add("nutClasses")
+	local amount = 0
+
+	for k, v in pairs(nut.class.list) do
+		if (LocalPlayer():Team() != v.faction or (v.onCanBe and v:onCanBe(LocalPlayer()) == false)) then
+			continue
+		end
+
+		amount = amount + 1
+	end
+
+	if (amount > 0) then
+		tabs["classes"] = function(panel)
+			panel:Add("nutClasses")
+		end
 	end
 end)
 
