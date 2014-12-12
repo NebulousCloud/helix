@@ -164,6 +164,8 @@ local PANEL = {}
 	end
 
 	function PANEL:remove()
+		CloseDermaMenus()
+		
 		if (!self.closing) then
 			self:AlphaTo(0, 0.25, 0, function()
 				self:Remove()
