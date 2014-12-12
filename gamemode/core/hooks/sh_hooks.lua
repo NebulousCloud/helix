@@ -170,6 +170,12 @@ function GM:DoAnimationEvent(client, event, data)
 	return ACT_INVALID
 end
 
+function GM:EntityEmitSound(data)
+	if (data.Entity.nutIsMuted) then
+		return false
+	end
+end
+
 function GM:CalcMainActivity(client, velocity)
 	local eyeAngles = client:EyeAngles()
 	local yaw = velocity:Angle().yaw
@@ -184,7 +190,7 @@ function GM:CalcMainActivity(client, velocity)
 	local oldSeqOverride = client.CalcSeqOverride
 	local seqIdeal, seqOverride = self.BaseClass:CalcMainActivity(client, velocity)
 
-	return seqIdeal, oldSeqOverride or seqOverride
+	return seqIdeal, client:getNetVar("seq", oldSeqOverride or seqOverride)
 end
 
 local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2
