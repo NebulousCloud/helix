@@ -1,5 +1,6 @@
 if (CLIENT) then
 	local HELP_DEFAULT = [[
+		<meta charset="utf-8"/>
 		<center>
 			<h1>]]..L"helpDefault"..[[
 		</center>
@@ -11,9 +12,12 @@ if (CLIENT) then
 			local header = [[<html>
 			<head>
 				<style>
+					@import url(http://fonts.googleapis.com/earlyaccess/jejugothic.css);
+
 					body {
 						color: #FAFAFA;
-						font-family: Calibri, sans-serif;
+						font-family: 'Jeju Gothic', serif;
+						-webkit-font-smoothing: antialiased;
 					}
 
 					h2 {
@@ -28,6 +32,7 @@ if (CLIENT) then
 			tree:SetPadding(5)
 			tree:Dock(LEFT)
 			tree:SetWide(180)
+			tree:DockMargin(0, 0, 15, 0)
 			tree.OnNodeSelected = function(this, node)
 				html:SetHTML(header..node:onGetHTML().."</body></html>")
 			end
