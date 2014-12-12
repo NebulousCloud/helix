@@ -387,6 +387,25 @@ function GM:ShutDown()
 	end
 end
 
+LIMB_GROUPS = {}
+LIMB_GROUPS[HITGROUP_LEFTARM] = true
+LIMB_GROUPS[HITGROUP_RIGHTARM] = true
+LIMB_GROUPS[HITGROUP_LEFTLEG] = true
+LIMB_GROUPS[HITGROUP_RIGHTLEG] = true
+LIMB_GROUPS[HITGROUP_GEAR] = true
+
+function GM:ScalePlayerDamage(client, hitGroup, dmgInfo)
+	dmgInfo:ScaleDamage(1.5)
+
+	if (hitGroup == HITGROUP_HEAD) then
+		dmgInfo:ScaleDamage(7)
+	elseif (LIMB_GROUPS[hitGroup]) then
+		dmgInfo:ScaleDamage(0.5)
+	end
+
+	print(dmgInfo:GetDamage())
+end
+
 function GM:GetGameDescription()
 	return "NS - "..(SCHEMA and SCHEMA.name or "Unknown")
 end
