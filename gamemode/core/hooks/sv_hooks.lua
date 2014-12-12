@@ -349,6 +349,26 @@ function GM:PlayerDisconnected(client)
 end
 
 function GM:InitPostEntity()
+	local doors = ents.FindByClass("prop_door_rotating")
+
+	for k, v in ipairs(doors) do
+		local parent = v:GetOwner()
+
+		if (IsValid(parent)) then
+			v.nutPartner = parent
+			parent.nutPartner = v
+		else
+			for k2, v2 in ipairs(doors) do
+				if (v2:GetOwner() == v) then
+					v2.nutPartner = v
+					v.nutPartner = v2
+
+					break
+				end
+			end
+		end
+	end
+
 	timer.Simple(0.1, function()
 		hook.Run("LoadData")
 	end)

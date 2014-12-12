@@ -195,19 +195,26 @@ do
 		return self:GetClass():find("door")
 	end
 
-	-- Returns the door's slave entity.
-	function entityMeta:getDoorPartner()
-		local owner = self:GetOwner() or self.nutDoorOwner
-
-		if (IsValid(owner) and owner:isDoor()) then
-			return owner
+	if (SERVER) then
+		-- Returns the door's slave entity.
+		function entityMeta:getDoorPartner()
+			return self.nutPartner
 		end
+	else
+		-- Returns the door's slave entity.
+		function entityMeta:getDoorPartner()
+			local owner = self:GetOwner() or self.nutDoorOwner
 
-		for k, v in ipairs(ents.FindByClass("prop_door_rotating")) do
-			if (v:GetOwner() == self) then
-				self.nutDoorOwner = v
+			if (IsValid(owner) and owner:isDoor()) then
+				return owner
+			end
 
-				return v
+			for k, v in ipairs(ents.FindByClass("prop_door_rotating")) do
+				if (v:GetOwner() == self) then
+					self.nutDoorOwner = v
+
+					return v
+				end
 			end
 		end
 	end
