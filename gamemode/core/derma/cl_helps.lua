@@ -1,9 +1,11 @@
 if (CLIENT) then
 	local HELP_DEFAULT = [[
-		<meta charset="utf-8"/>
-		<center>
-			<h1>]]..L"helpDefault"..[[
-		</center>
+		<div id="parent"><div id="child">
+			<center>
+			    <img src="http://img2.wikia.nocookie.net/__cb20140827051941/nutscript/images/c/c9/Logo.png"></img>
+				<br><font size=15>]] .. L"helpDefault" .. [[</font>
+			</center>
+		</div></div>
 	]]
 
 	hook.Add("CreateMenuButtons", "nutHelpMenu", function(tabs)		
@@ -13,6 +15,14 @@ if (CLIENT) then
 			<head>
 				<style>
 					@import url(http://fonts.googleapis.com/earlyaccess/jejugothic.css);
+
+					#parent {
+					    padding: 5% 0;
+					}
+
+					#child {
+					    padding: 10% 0;
+					}
 
 					body {
 						color: #FAFAFA;
@@ -39,7 +49,7 @@ if (CLIENT) then
 
 			html = panel:Add("DHTML")
 			html:Dock(FILL)
-			html:SetHTML(header.."<h1>"..L"helpDefault".."</h1>")
+			html:SetHTML(header..HELP_DEFAULT)
 
 			local tabs = {}
 			hook.Run("BuildHelpMenu", tabs)
