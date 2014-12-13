@@ -71,7 +71,6 @@ do
 	end
 
 	function character:giveMoney(amount)
-		amount = math.abs(amount)
 		self:setMoney(self:getMoney() + amount)
 	end
 

@@ -125,7 +125,7 @@ function SWEP:PrimaryAttack()
 		data.filter = self.Owner
 	local entity = util.TraceLine(data).Entity
 
-	if (IsValid(entity) and self:checkAccess(entity)) then
+	if (IsValid(entity) and entity:checkDoorAccess(self.Owner)) then
 		if (entity:isDoor()) then
 			self.Owner:setAction("@locking", time, function()
 				self:toggleLock(entity, true)
@@ -182,19 +182,5 @@ function SWEP:SecondaryAttack()
 		else
 			self.Owner:notifyLocalized("dNotValid")
 		end
-	end
-end
-
-function SWEP:checkAccess(door)
-	if (hook.Run("CanPlayerAccessDoor", self.Owner, door) == true) then
-		return true
-	end
-
-	if (IsValid(door) and door.nutAccess and door.nutAccess[self.Owner] and door.nutAccess[self.Owner] > DOOR_NONE) then
-		return true
-	else
-		client:notifyLocalized("notAllowed")
-		
-		return false
 	end
 end

@@ -58,11 +58,13 @@ end
 
 netstream.Hook("doorMenu", function(entity, access)
 	if (IsValid(nut.gui.door)) then
-		nut.gui.door:Remove()
+		return nut.gui.door:Remove()
 	end
 
-	nut.gui.door = vgui.Create("nutDoorMenu")
-	nut.gui.door:setDoor(entity, access)
+	if (IsValid(entity)) then
+		nut.gui.door = vgui.Create("nutDoorMenu")
+		nut.gui.door:setDoor(entity, access)
+	end
 end)
 
 netstream.Hook("doorPerm", function(door, client, access)

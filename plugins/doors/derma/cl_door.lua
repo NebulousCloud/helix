@@ -58,10 +58,31 @@ local PANEL = {}
 				self.access:AddLine(v:Name(), L(ACCESS_LABELS[access[v] or 0])).player = v
 			end
 		end
+
+		if (self:checkAccess(DOOR_OWNER)) then
+			self.sell = self:Add("DButton")
+			self.sell:Dock(BOTTOM)
+			self.sell:SetText(L"sell")
+			self.sell:DockMargin(0, 5, 0, 0)
+			self.sell.DoClick = function(this)
+				self:Remove()
+				RunConsoleCommand("nut", "doorsell")
+			end
+		end
+	end
+
+	function PANEL:checkAccess(access)
+		access = access or DOOR_GUEST
+
+		if (self.accessData[LocalPlayer()] >= access) then
+			return true
+		end
+
+		return false
 	end
 
 	function PANEL:Think()
-		if (self.accessData and !IsValid(self.door)) then
+		if (self.accessData and !IsValid(self.door) and self:checkAccess()) then
 			self:Remove()
 		end
 	end

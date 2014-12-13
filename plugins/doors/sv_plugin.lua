@@ -178,10 +178,8 @@ function PLUGIN:ShowTeam(client)
 	local entity = trace.Entity
 
 	if (IsValid(entity) and entity:isDoor()) then
-		local access = entity.nutAccess
-
-		if (access and access[client] and access[client] > DOOR_GUEST) then
-			netstream.Start(client, "doorMenu", entity, access)
+		if (entity:checkDoorAccess(client, DOOR_TENANT)) then
+			netstream.Start(client, "doorMenu", entity, entity.nutAccess)
 		elseif (!IsValid(entity:getNetVar("owner"))) then
 			nut.command.run(client, "doorbuy")
 		else
@@ -195,8 +193,7 @@ end
 function PLUGIN:PlayerDisconnected(client)
 	for k, v in ipairs(ents.GetAll()) do
 		if (v:isDoor() and v:getNetVar("owner") == client) then
-			v.nutAccess = nil
-			v:setNetVar("owner")
+			v:removeDoorAccessData()
 		end
 	end
 end

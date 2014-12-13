@@ -1,30 +1,63 @@
 --[[
-    NutScript is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	NutScript is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    NutScript is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	NutScript is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
 PLUGIN.name = "Doors"
 PLUGIN.author = "Chessnut"
 PLUGIN.desc = "A simple door system."
 
-nut.util.include("sv_plugin.lua")
-nut.util.include("cl_plugin.lua")
-nut.util.include("sh_commands.lua")
-
 DOOR_OWNER = 3
 DOOR_TENANT = 2
 DOOR_GUEST = 1
 DOOR_NONE = 0
+
+nut.util.include("sv_plugin.lua")
+nut.util.include("cl_plugin.lua")
+nut.util.include("sh_commands.lua")
+
+do
+	local entityMeta = FindMetaTable("Entity")
+
+	function entityMeta:checkDoorAccess(client, access)
+		if (!self:isDoor() or !self.nutAccess) then
+			return false
+		end
+
+		access = access or DOOR_GUEST
+
+		if (hook.Run("CanPlayerAccessDoor", client, door, access) == true) then
+			return true
+		end
+
+		if ((self.nutAccess[client] or 0) >= access) then
+			return true
+		end
+
+		return false
+	end
+
+	if (SERVER) then
+		function entityMeta:removeDoorAccessData()
+			for k, v in pairs(self.nutAccess) do
+				netstream.Start(k, "doorMenu")
+			end
+			
+			self.nutAccess = {}
+			self:setNetVar("owner", nil)
+		end
+	end
+end
 
 -- Configurations for door prices.
 nut.config.add("doorCost", 10, "The price to purchase a door.", nil, {

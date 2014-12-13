@@ -77,12 +77,8 @@ nut.command.add("doorsell", {
 				-- Get the price that the door is sold for.
 				local price = math.Round(entity:getNetVar("price", nut.config.get("doorCost")) * nut.config.get("doorSellRatio"))
 
-				-- Set the door to be owned by this player.
-				entity:setNetVar("owner", nil)
-
-				PLUGIN:callOnDoorChildren(entity, function(child)
-					child:setNetVar("owner", nil)
-				end)
+				-- Remove old door information.
+				entity:removeDoorAccessData()
 
 				-- Take their money and notify them.
 				client:getChar():giveMoney(price)
@@ -290,7 +286,7 @@ nut.command.add("doorsettitle", {
 			--]]
 
 			-- Check if they are allowed to change the door's name.
-			if (entity:getNetVar("owner") == client) then
+			if (entity:checkDoorAccess(client, DOOR_TENANT)) then
 				entity:setNetVar("title", name)
 			elseif (client:IsAdmin()) then
 				entity:setNetVar("name", name)
