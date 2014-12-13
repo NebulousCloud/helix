@@ -343,6 +343,7 @@ do
 			end
 
 			self.nutSeqCallback = callback
+			self.nutSeq = sequence
 
 			if (time > 0) then
 				timer.Create("nutSeq"..self:EntIndex(), time, 1, function()
@@ -354,7 +355,7 @@ do
 
 			netstream.Start(nil, "seqSet", self, sequence)
 
-			return true
+			return time
 		end
 
 		return false
@@ -362,7 +363,9 @@ do
 
 	function playerMeta:leaveSequence()
 		netstream.Start(nil, "seqSet", self)
+
 		self:SetMoveType(MOVETYPE_WALK)
+		self.nutSeq = nil
 
 		if (self.nutSeqCallback) then
 			self:nutSeqCallback()

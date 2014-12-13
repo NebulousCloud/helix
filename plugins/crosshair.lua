@@ -56,7 +56,7 @@ if (CLIENT) then
 		local crossGap = 25 * (scaleFraction - (client:isWepRaised() and 0 or .1))
 		local crossSize = 4
 
-		if (entity:GetClass() == "nut_item" and 
+		if (IsValid(entity) and entity:GetClass() == "nut_item" and 
 			entity:GetPos():Distance(data.start) <= 128) then
 			crossGap = 0
 			crossSize = 5

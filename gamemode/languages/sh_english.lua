@@ -148,5 +148,9 @@ LANGUAGE = {
 	sell = "Sell",
 	access = "Access",
 	locking = "Locking this entity...",
-	unlocking = "Unlocking this entity..."
+	unlocking = "Unlocking this entity...",
+	modelNoSeq = "Your model does not support this act.",
+	notNow = "You are not allowed to do this right now.",
+	faceWall = "You must be facing the wall to do this.",
+	faceWallBack = "Your back must be facing the wall to do this."
 }
