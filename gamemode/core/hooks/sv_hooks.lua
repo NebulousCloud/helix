@@ -447,7 +447,3 @@ end
 function GM:PlayerDeathSound()
 	return true
 end
-
-function GM:ShowTeam(client)
-	nut.command.run(client, "doorbuy")
-end

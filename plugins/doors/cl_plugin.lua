@@ -13,6 +13,12 @@
     along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
+ACCESS_LABELS = {}
+ACCESS_LABELS[DOOR_OWNER] = "owner"
+ACCESS_LABELS[DOOR_TENANT] = "tenant"
+ACCESS_LABELS[DOOR_GUEST] = "guest"
+ACCESS_LABELS[DOOR_NONE] = "none"
+
 function PLUGIN:ShouldDrawEntityInfo(entity)
 	if (entity:isDoor() and !entity:getNetVar("disabled")) then
 		return true
@@ -49,3 +55,28 @@ function PLUGIN:DrawEntityInfo(entity, alpha)
 		end
 	end
 end
+
+netstream.Hook("doorMenu", function(entity, access)
+	if (IsValid(nut.gui.door)) then
+		nut.gui.door:Remove()
+	end
+
+	nut.gui.door = vgui.Create("nutDoorMenu")
+	nut.gui.door:setDoor(entity, access)
+end)
+
+netstream.Hook("doorPerm", function(door, client, access)
+	local panel = door.nutPanel
+
+	if (IsValid(panel) and IsValid(client)) then
+		panel.access[client] = access
+
+		for k, v in ipairs(panel.access:GetLines()) do
+			if (v.player == client) then
+				v:SetColumnText(2, L(ACCESS_LABELS[access or 0]))
+
+				return
+			end
+		end
+	end
+end)

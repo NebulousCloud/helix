@@ -168,3 +168,59 @@ end
 function PLUGIN:PostPlayerLoadout(client)
 	client:Give("nut_keys")
 end
+
+function PLUGIN:ShowTeam(client)
+	local data = {}
+		data.start = client:GetShootPos()
+		data.endpos = data.start + client:GetAimVector()*96
+		data.filter = client
+	local trace = util.TraceLine(data)
+	local entity = trace.Entity
+
+	if (IsValid(entity) and entity:isDoor()) then
+		local access = entity.nutAccess
+
+		if (access and access[client] and access[client] > DOOR_GUEST) then
+			netstream.Start(client, "doorMenu", entity, access)
+		elseif (!IsValid(entity:getNetVar("owner"))) then
+			nut.command.run(client, "doorbuy")
+		else
+			client:notifyLocalized("notAllowed")
+		end
+
+		return true
+	end
+end
+
+function PLUGIN:PlayerDisconnected(client)
+	for k, v in ipairs(ents.GetAll()) do
+		if (v:isDoor() and v:getNetVar("owner") == client) then
+			v.nutAccess = nil
+			v:setNetVar("owner")
+		end
+	end
+end
+
+netstream.Hook("doorPerm", function(client, door, target, access)
+	if (IsValid(target) and target:getChar() and door.nutAccess and door:getNetVar("owner") == client and target != client) then
+		access = math.Clamp(access or 0, DOOR_NONE, DOOR_TENANT)
+
+		if (access == door.nutAccess[target]) then
+			return
+		end
+
+		door.nutAccess[target] = access
+
+		local recipient = {}
+
+		for k, v in pairs(door.nutAccess) do
+			if (v > DOOR_GUEST) then
+				recipient[#recipient + 1] = k
+			end
+		end
+
+		if (#recipient > 0) then
+			netstream.Start(recipient, "doorPerm", door, target, access)
+		end
+	end
+end)

@@ -21,6 +21,11 @@ nut.util.include("sv_plugin.lua")
 nut.util.include("cl_plugin.lua")
 nut.util.include("sh_commands.lua")
 
+DOOR_OWNER = 3
+DOOR_TENANT = 2
+DOOR_GUEST = 1
+DOOR_NONE = 0
+
 -- Configurations for door prices.
 nut.config.add("doorCost", 10, "The price to purchase a door.", nil, {
 	data = {min = 0, max = 500},

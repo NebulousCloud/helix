@@ -21,13 +21,7 @@ if (SERVER) then
 
 	-- Sends a translated notification.
 	function nut.util.notifyLocalized(message, recipient, ...)
-		if (type(recipient) == "Player") then
-			recipient:notify(L(message, recipient, ...))
-		else
-			for k, v in pairs(recipient or player.GetAll()) do
-				v:notify(L(message, v, ...))
-			end
-		end
+		netstream.Start(recipient, "notifyL", message, ...)
 	end
 
 	do
@@ -104,5 +98,10 @@ else
 	-- Receives a notification from the server.
 	netstream.Hook("notify", function(message)
 		nut.util.notify(message)
+	end)
+
+	-- Receives a notification from the server.
+	netstream.Hook("notifyL", function(message, ...)
+		nut.util.notify(L(message, ...))
 	end)
 end

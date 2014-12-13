@@ -49,14 +49,14 @@ SWEP.Secondary.Ammo = ""
 SWEP.ViewModel = Model("models/weapons/c_arms_cstrike.mdl")
 SWEP.WorldModel = ""
 
-SWEP.UseHands = false
+SWEP.UseHands = true
 SWEP.LowerAngles = Angle(0, 5, -14)
 
 SWEP.FireWhenLowered = true
-SWEP.HoldType = "normal"
+SWEP.HoldType = "fist"
 
 function SWEP:PreDrawViewModel(viewModel, weapon, client)
-	local hands = player_manager.RunClass(client, "GetHandsModel")
+	local hands = player_manager.TranslatePlayerHands(player_manager.TranslateToPlayerModelName(client:GetModel()))
 
 	if (hands and hands.model) then
 		viewModel:SetModel(hands.model)
@@ -98,164 +98,103 @@ function SWEP:Holster()
 	return true
 end
 
-function SWEP:Think()
-	local viewModel = self.Owner:GetViewModel()
-
-	if (IsValid(viewModel)) then
-		viewModel:SetPlaybackRate(1)
-	end
-end
-
 function SWEP:Precache()
-	util.PrecacheSound("npc/vort/claw_swing1.wav")
-	util.PrecacheSound("npc/vort/claw_swing2.wav")
-	util.PrecacheSound("physics/plastic/plastic_box_impact_hard1.wav")	
-	util.PrecacheSound("physics/plastic/plastic_box_impact_hard2.wav")	
-	util.PrecacheSound("physics/plastic/plastic_box_impact_hard3.wav")	
-	util.PrecacheSound("physics/plastic/plastic_box_impact_hard4.wav")	
 end
 
 function SWEP:Initialize()
-	self:SetWeaponHoldType(self.HoldType)
-	self.LastHand = 0
-end
-
-function SWEP:DoPunchAnimation()
-	self.LastHand = math.abs(1 - self.LastHand)
-
-	local sequence = 4 + self.LastHand
-	local viewModel = self.Owner:GetViewModel()
-
-	if (IsValid(viewModel)) then
-		viewModel:SetPlaybackRate(0.5)
-		viewModel:SetSequence(sequence)
-	end
+	self:SetHoldType(self.HoldType)
 end
 
 function SWEP:PrimaryAttack()
+	local time = nut.config.get("lockTime", 1)
+
+	self:SetNextPrimaryFire(CurTime() + time)
+	self:SetNextSecondaryFire(CurTime() + time)
+
 	if (!IsFirstTimePredicted()) then
 		return
 	end
 
-	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
-
-	if (hook.Run("CanPlayerThrowPunch", self.Owner) == false) then
+	if (CLIENT) then
 		return
 	end
 
-	self:EmitSound("npc/vort/claw_swing"..math.random(1, 2)..".wav")
+	local data = {}
+		data.start = self.Owner:GetShootPos()
+		data.endpos = data.start + self.Owner:GetAimVector()*96
+		data.filter = self.Owner
+	local entity = util.TraceLine(data).Entity
 
-	local damage = self.Primary.Damage
+	if (IsValid(entity) and self:checkAccess(entity)) then
+		if (entity:isDoor()) then
+			self.Owner:setAction("@locking", time, function()
+				self:toggleLock(entity, true)
+			end)			
 
-	self:DoPunchAnimation()
-
-	self.Owner:SetAnimation(PLAYER_ATTACK1)
-	self.Owner:ViewPunch(Angle(self.LastHand + 2, self.LastHand + 5, 0.125))
-
-	timer.Simple(0.055, function()
-		if (IsValid(self) and IsValid(self.Owner)) then
-			local damage = self.Primary.Damage
-			local result = hook.Run("PlayerGetFistDamage", self.Owner, damage)
-
-			if (result != nil) then
-				damage = result
-			end
-
-			local data = {}
-				data.start = self.Owner:GetShootPos()
-				data.endpos = data.start + self.Owner:GetAimVector()*96
-				data.filter = self.Owner
-			local trace = util.TraceLine(data)
-
-			if (SERVER and trace.Hit) then
-				local entity = trace.Entity
-
-				if (IsValid(entity)) then
-					local damageInfo = DamageInfo()
-						damageInfo:SetAttacker(self.Owner)
-						damageInfo:SetInflictor(self)
-						damageInfo:SetDamage(damage)
-						damageInfo:SetDamageType(DMG_SLASH)
-						damageInfo:SetDamagePosition(trace.HitPos)
-						damageInfo:SetDamageForce(self.Owner:GetAimVector()*10000)
-					entity:DispatchTraceAttack(damageInfo, data.start, data.endpos)
-
-					self.Owner:EmitSound("physics/body/body_medium_impact_hard"..math.random(1, 6)..".wav", 80)
-				end
-			end
-
-			hook.Run("PlayerThrowPunch", self.Owner, trace.Hit)
-		end
-	end)
-end
-
-function SWEP:onCanCarry(entity)
-	local physicsObject = entity:GetPhysicsObject()
-
-	if (!IsValid(physicsObject)) then
-		return false
-	end
-
-	if (physicsObject:GetMass() > 100 or !physicsObject:IsMoveable()) then
-		return false
-	end
-
-	if (IsValid(entity.carrier)) then
-		return false
-	end
-
-	return true
-end
-
-function SWEP:doPickup(entity)
-	if (entity:IsPlayerHolding()) then
-		return
-	end
-
-	timer.Simple(FrameTime() * 10, function()
-		if (!IsValid(entity) or entity:IsPlayerHolding()) then
 			return
+		else
+			self.Owner:notifyLocalized("dNotValid")
 		end
+	end
+end
 
-		self.Owner:PickupObject(entity)
-		self.Owner:EmitSound("physics/body/body_medium_impact_soft"..math.random(1, 3)..".wav", 75)
-	end)
+function SWEP:toggleLock(door, state)
+	if (IsValid(self.Owner) and self.Owner:GetPos():Distance(door:GetPos()) > 96) then
+		return
+	end
 
-	self:SetNextSecondaryFire(CurTime() + 1)
+	if (state) then
+		door:Fire("lock")
+		self.Owner:EmitSound("doors/door_latch3.wav")
+	else
+		door:Fire("unlock")
+		self.Owner:EmitSound("doors/door_latch1.wav")
+	end
 end
 
 function SWEP:SecondaryAttack()
+	local time = nut.config.get("lockTime", 1)
+
+	self:SetNextPrimaryFire(CurTime() + time)
+	self:SetNextSecondaryFire(CurTime() + time)
+
 	if (!IsFirstTimePredicted()) then
 		return
 	end
 
-	local trace = self.Owner:GetEyeTraceNoCursor()
-	local entity = trace.Entity
+	if (CLIENT) then
+		return
+	end
 
-	if (SERVER and IsValid(entity)) then
-		local distance = self.Owner:EyePos():Distance(trace.HitPos)
+	local data = {}
+		data.start = self.Owner:GetShootPos()
+		data.endpos = data.start + self.Owner:GetAimVector()*96
+		data.filter = self.Owner
+	local entity = util.TraceLine(data).Entity
 
-		if (distance > 72) then
-			return
-		end
-
+	if (IsValid(entity) and self:checkAccess(entity)) then
 		if (entity:isDoor()) then
-			if (hook.Run("PlayerCanKnock", self.Owner, entity) == false) then
-				return
-			end
+			self.Owner:setAction("@unlocking", time, function()
+				self:toggleLock(entity, false)
+			end)
 
-			self.Owner:ViewPunch(Angle(-1.3, 1.8, 0))
-			self.Owner:EmitSound("physics/plastic/plastic_box_impact_hard"..math.random(1, 4)..".wav")	
-			self.Owner:SetAnimation(PLAYER_ATTACK1)
-
-			self:DoPunchAnimation()
-			self:SetNextSecondaryFire(CurTime() + 0.4)
-			self:SetNextPrimaryFire(CurTime() + 1)
-		elseif (!entity:IsPlayer() and !entity:IsNPC() and self:onCanCarry(entity)) then
-			local physObj = entity:GetPhysicsObject()
-			physObj:Wake()
-
-			self:doPickup(entity)
+			return
+		else
+			self.Owner:notifyLocalized("dNotValid")
 		end
+	end
+end
+
+function SWEP:checkAccess(door)
+	if (hook.Run("CanPlayerAccessDoor", self.Owner, door) == true) then
+		return true
+	end
+
+	if (IsValid(door) and door.nutAccess and door.nutAccess[self.Owner] and door.nutAccess[self.Owner] > DOOR_NONE) then
+		return true
+	else
+		client:notifyLocalized("notAllowed")
+		
+		return false
 	end
 end

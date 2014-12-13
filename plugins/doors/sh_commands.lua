@@ -38,7 +38,10 @@ nut.command.add("doorbuy", {
 			if (client:getChar():hasMoney(price)) then
 				-- Set the door to be owned by this player.
 				entity:setNetVar("owner", client)
-
+				entity.nutAccess = {
+					[client] = DOOR_OWNER
+				}
+				
 				PLUGIN:callOnDoorChildren(entity, function(child)
 					child:setNetVar("owner", client)
 				end)
