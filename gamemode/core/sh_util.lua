@@ -388,7 +388,7 @@ do
 
 		-- Performs a delayed action on a player.
 		function playerMeta:setAction(text, time, callback, startTime, finishTime)
-			if (time <= 0) then
+			if (time and time <= 0) then
 				if (callback) then
 					callback(self)
 				end

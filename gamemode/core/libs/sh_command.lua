@@ -135,7 +135,11 @@ if (SERVER) then
 			if (type(result) == "string") then
 				-- Normal player here.
 				if (IsValid(client)) then
-					client:notify(result)
+					if (result:sub(1, 1) == "@") then
+						client:notifyLocalized(result:sub(2))
+					else
+						client:notify(result)
+					end
 				else
 					-- Show the message in server console since we're running from RCON.
 					print(result)
