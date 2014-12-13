@@ -324,3 +324,64 @@ nut.anim.setModelClass("models/vortigaunt.mdl", "vort")
 nut.anim.setModelClass("models/vortigaunt_blue.mdl", "vort")
 nut.anim.setModelClass("models/vortigaunt_doctor.mdl", "vort")
 nut.anim.setModelClass("models/vortigaunt_slave.mdl", "vort")
+
+do
+	local playerMeta = FindMetaTable("Player")
+
+	function playerMeta:forceSequence(sequence, callback, time, noFreeze)
+		if (!sequence) then
+			return self:setNetVar("seq")
+		end
+
+		local sequence = self:LookupSequence(sequence)
+
+		if (sequence) then
+			time = time or self:SequenceDuration(sequence)
+
+			if (!noFreeze) then
+				self:SetMoveType(MOVETYPE_CUSTOM)
+			end
+
+			self.nutSeqCallback = callback
+
+			if (time > 0) then
+				timer.Create("nutSeq"..self:EntIndex(), time, 1, function()
+					if (IsValid(self)) then
+						self:leaveSequence()
+					end
+				end)
+			end
+
+			netstream.Start(nil, "seqSet", self, sequence)
+
+			return true
+		end
+
+		return false
+	end
+
+	function playerMeta:leaveSequence()
+		netstream.Start(nil, "seqSet", self)
+		self:SetMoveType(MOVETYPE_WALK)
+
+		if (self.nutSeqCallback) then
+			self:nutSeqCallback()
+		end
+	end
+
+	if (CLIENT) then
+		netstream.Hook("seqSet", function(entity, sequence)
+			if (IsValid(entity)) then
+				if (!sequence) then
+					entity.nutForceSeq = nil
+
+					return
+				end
+
+				entity:SetCycle(0)
+				entity:SetPlaybackRate(1)
+				entity.nutForceSeq = sequence
+			end
+		end)
+	end
+end

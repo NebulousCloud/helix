@@ -69,25 +69,32 @@ if (SERVER) then
 	function netstream.Start(player, name, ...)
 		local recipients = {};
 		local bShouldSend = false;
-	
+		local bSendPVS = false;
+
 		if (type(player) != "table") then
 			if (!player) then
 				player = _player.GetAll();
+			elseif (type(player) == "Vector") then
+				bSendPVS = true;
 			else
 				player = {player};
 			end;
 		end;
 		
-		for k, v in pairs(player) do
-			if (type(v) == "Player") then
-				recipients[#recipients + 1] = v;
+		if (type(player) != "Vector") then
+			for k, v in pairs(player) do
+				if (type(v) == "Player") then
+					recipients[#recipients + 1] = v;
+					
+					bShouldSend = true;
+				elseif (type(k) == "Player") then
+					recipients[#recipients + 1] = k;
 				
-				bShouldSend = true;
-			elseif (type(k) == "Player") then
-				recipients[#recipients + 1] = k;
-			
-				bShouldSend = true;
+					bShouldSend = true;
+				end;
 			end;
+		else
+			bShouldSend = true;
 		end;
 		
 		local dataTable = {...};
@@ -98,7 +105,12 @@ if (SERVER) then
 				net.WriteString(name);
 				net.WriteUInt(#encodedData, 32);
 				net.WriteData(encodedData, #encodedData);
-			net.Send(recipients);
+			if (bSendPVS) then
+				print(bSendPVS)
+				net.SendPVS(player);
+			else
+				net.Send(recipients);
+			end;
 		end;
 	end;
 	

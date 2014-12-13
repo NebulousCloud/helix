@@ -187,10 +187,9 @@ function GM:CalcMainActivity(client, velocity)
 		client:SetIK(false)
 	end
 
-	local oldSeqOverride = client.CalcSeqOverride
 	local seqIdeal, seqOverride = self.BaseClass:CalcMainActivity(client, velocity)
 
-	return seqIdeal, client:getNetVar("seq", oldSeqOverride or seqOverride)
+	return seqIdeal, client.nutForceSeq or oldSeqOverride or client.CalcSeqOverride
 end
 
 local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2
