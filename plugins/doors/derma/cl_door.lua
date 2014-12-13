@@ -69,6 +69,20 @@ local PANEL = {}
 				RunConsoleCommand("nut", "doorsell")
 			end
 		end
+
+		if (self:checkAccess(DOOR_TENANT)) then
+			self.name = self:Add("DTextEntry")
+			self.name:Dock(TOP)
+			self.name:DockMargin(0, 0, 0, 5)
+			self.name.Think = function(this)
+				if (!this:IsEditing()) then
+					self.name:SetText(door:getNetVar("title", L"dTitleOwned"))
+				end
+			end
+			self.name.OnEnter = function(this)
+				RunConsoleCommand("nut", "doorsettitle", this:GetText())
+			end
+		end
 	end
 
 	function PANEL:checkAccess(access)

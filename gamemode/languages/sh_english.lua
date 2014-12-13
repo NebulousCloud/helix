@@ -143,5 +143,8 @@ LANGUAGE = {
 	noFit = "This item can not fit in your inventory.",
 	help = "Help",
 	commands = "Commands",
-	helpDefault = "Select a category"
+	helpDefault = "Select a category",
+	doorSettings = "Door Settings",
+	sell = "Sell",
+	access = "Access"
 }
