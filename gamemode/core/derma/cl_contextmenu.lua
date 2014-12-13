@@ -157,16 +157,10 @@ function GM:OnContextMenuClose()
 		g_ContextMenu:Close()
 	end
 end
---[[   _                                
-    ( )                               
-   _| |   __   _ __   ___ ___     _ _ 
- /'_` | /'__`\( '__)/' _ ` _ `\ /'_` )
-( (_| |(  ___/| |   | ( ) ( ) |( (_| |
-`\__,_)`\____)(_)   (_) (_) (_)`\__,_) 
 
-	DPanel
 
---]]
+
+
 local PANEL = {}
 
 AccessorFunc( PANEL, "m_bBackground", 			"PaintBackground",	FORCE_BOOL )
@@ -182,18 +176,50 @@ Derma_Hook( PANEL, "Paint", "Paint", "MenuBar" )
 	
 -----------------------------------------------------------]]
 function PANEL:Init()
+
+	self:Dock( TOP )
+	self:SetTall( 24 )
+	self:SetDrawBackground(false)
+	self.Menus = {}
+
+end
+
+function PANEL:Paint()
 end
 
 function PANEL:GetOpenMenu()
+
+	for k, v in pairs( self.Menus ) do
+		if ( v:IsVisible() ) then return v end
+	end
+	
+	return nil
+
 end
 
 function PANEL:AddOrGetMenu( label )
+
+	if ( self.Menus[ label ] ) then return self.Menus[ label ] end
+	return self:AddMenu( label )
+
 end
 
 function PANEL:AddMenu( label )
+
+	local m = DermaMenu()
+		m:SetDeleteSelf( true )
+		m:SetDrawColumn( true )
+		m:Hide()
+	self.Menus[ label ] = m
+
+	return m
+
 end
 
 function PANEL:OnRemove()
+	for id, pnl in pairs( self.Menus ) do
+		pnl:Remove()
+	end
 end
 
 --[[---------------------------------------------------------
