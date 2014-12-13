@@ -146,5 +146,7 @@ LANGUAGE = {
 	helpDefault = "Select a category",
 	doorSettings = "Door Settings",
 	sell = "Sell",
-	access = "Access"
+	access = "Access",
+	locking = "Locking this entity...",
+	unlocking = "Unlocking this entity..."
 }

@@ -69,3 +69,8 @@ nut.config.add("doorSellRatio", 0.5, "How much of the door price is returned whe
 	data = {min = 0, max = 1.0},
 	category = "dConfigName"
 })
+nut.config.add("doorLockTime", 1, "How long it takes to (un)lock a door.", nil, {
+	form = "Float",
+	data = {min = 0, max = 10.0},
+	category = "dConfigName"
+})

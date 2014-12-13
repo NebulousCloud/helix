@@ -388,6 +388,14 @@ do
 
 		-- Performs a delayed action on a player.
 		function playerMeta:setAction(text, time, callback, startTime, finishTime)
+			if (time <= 0) then
+				if (callback) then
+					callback(self)
+				end
+				
+				return
+			end
+
 			-- Default the time to five seconds.
 			time = time or 5
 			startTime = startTime or CurTime()

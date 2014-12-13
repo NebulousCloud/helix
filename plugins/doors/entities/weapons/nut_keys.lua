@@ -106,10 +106,11 @@ function SWEP:Initialize()
 end
 
 function SWEP:PrimaryAttack()
-	local time = nut.config.get("lockTime", 1)
+	local time = nut.config.get("doorLockTime", 1)
+	local time2 = math.max(time, 1)
 
-	self:SetNextPrimaryFire(CurTime() + time)
-	self:SetNextSecondaryFire(CurTime() + time)
+	self:SetNextPrimaryFire(CurTime() + time2)
+	self:SetNextSecondaryFire(CurTime() + time2)
 
 	if (!IsFirstTimePredicted()) then
 		return
@@ -143,20 +144,31 @@ function SWEP:toggleLock(door, state)
 		return
 	end
 
+	local partner = door:getDoorPartner()
+
 	if (state) then
+		if (IsValid(partner)) then
+			partner:Fire("lock")
+		end
+
 		door:Fire("lock")
 		self.Owner:EmitSound("doors/door_latch3.wav")
 	else
+		if (IsValid(partner)) then
+			partner:Fire("unlock")
+		end
+
 		door:Fire("unlock")
 		self.Owner:EmitSound("doors/door_latch1.wav")
 	end
 end
 
 function SWEP:SecondaryAttack()
-	local time = nut.config.get("lockTime", 1)
+	local time = nut.config.get("doorLockTime", 1)
+	local time2 = math.max(time, 1)
 
-	self:SetNextPrimaryFire(CurTime() + time)
-	self:SetNextSecondaryFire(CurTime() + time)
+	self:SetNextPrimaryFire(CurTime() + time2)
+	self:SetNextSecondaryFire(CurTime() + time2)
 
 	if (!IsFirstTimePredicted()) then
 		return
@@ -172,7 +184,7 @@ function SWEP:SecondaryAttack()
 		data.filter = self.Owner
 	local entity = util.TraceLine(data).Entity
 
-	if (IsValid(entity) and self:checkAccess(entity)) then
+	if (IsValid(entity) and entity:checkDoorAccess(self.Owner)) then
 		if (entity:isDoor()) then
 			self.Owner:setAction("@unlocking", time, function()
 				self:toggleLock(entity, false)
