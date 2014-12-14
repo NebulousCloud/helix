@@ -129,14 +129,15 @@ if (SERVER) then
 
 		if (command) then
 			-- Run the command's callback and get the return.
-			local result = command.onRun(client, arguments or {})
+			local results = {command.onRun(client, arguments or {})}
+			local result = results[1]
 
 			-- If a string is returned, it is a notification.
 			if (type(result) == "string") then
 				-- Normal player here.
 				if (IsValid(client)) then
 					if (result:sub(1, 1) == "@") then
-						client:notifyLocalized(result:sub(2))
+						client:notifyLocalized(result:sub(2), unpack(result, 3))
 					else
 						client:notify(result)
 					end
