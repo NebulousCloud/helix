@@ -158,6 +158,7 @@ function nut.char.registerVar(key, data)
 			CHAR["set"..upperName] = function(self, value)
 				local oldVar = self.vars[key]
 				self.vars[key] = value
+				print("CharVar")
 				netstream.Start(nil, "charVar", key, value, self.id)
 				
 				hook.Run("OnCharVarChanged", self, key, oldVar, value)

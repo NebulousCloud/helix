@@ -96,7 +96,7 @@ if (SERVER) then
 		else
 			bShouldSend = true;
 		end;
-		
+
 		local dataTable = {...};
 		local encodedData = pon.encode(dataTable);
 

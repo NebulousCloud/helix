@@ -649,15 +649,6 @@ do
 			end
 		end)
 
-		netstream.Hook("charVar", function(id, key, value)
-			local character = nut.char.loaded[id]
-
-			if (character) then
-				character.vars.vars = character.vars.vars or {}
-				character:getVar()[key] = value
-			end
-		end)
-
 		netstream.Hook("charDel", function(id, isCurrentChar)
 			nut.char.loaded[id] = nil
 

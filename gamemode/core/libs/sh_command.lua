@@ -137,7 +137,7 @@ if (SERVER) then
 				-- Normal player here.
 				if (IsValid(client)) then
 					if (result:sub(1, 1) == "@") then
-						client:notifyLocalized(result:sub(2), unpack(result, 3))
+						client:notifyLocalized(result:sub(2), unpack(results, 2))
 					else
 						client:notify(result)
 					end

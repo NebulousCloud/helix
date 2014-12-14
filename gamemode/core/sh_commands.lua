@@ -338,3 +338,21 @@ nut.command.add("beclass", {
 		end
 	end
 })
+
+nut.command.add("chardesc", {
+	syntax = "<string desc>",
+	onRun = function(client, arguments)
+		arguments = table.concat(arguments, " ")
+
+		local info = nut.char.vars.desc
+		local result, fault, count = info.onValidate(arguments)
+
+		if (result == false) then
+			return "@"..fault, count
+		end
+
+		client:getChar():setDesc(arguments)
+
+		return "@descChanged"
+	end
+})
