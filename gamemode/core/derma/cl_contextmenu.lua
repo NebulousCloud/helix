@@ -11,7 +11,6 @@ function PANEL:Init()
 	self.m_bHangOpen = false
 end
 
-
 function PANEL:Open()
 
 	self:SetHangOpen( false )

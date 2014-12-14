@@ -36,7 +36,7 @@ if (CLIENT) then
 			return
 		end
 
-		if (SUPPRESS_CROSSHAIR) then
+		if (SUPPRESS_CROSSHAIR or g_ContextMenu:IsVisible()) then
 			return
 		end
 

@@ -498,22 +498,3 @@ function GM:HUDShouldDraw(element)
 
 	return true
 end
-
-function GM:ContextMenuCreated(panel)
-	vgui.Create("nutCharInfo")
-end
-
-function GM:ContextMenuOpen()
-	if (IsValid(nut.gui.info)) then
-		nut.gui.info:SetVisible(true)
-		nut.gui.info:setup()
-	end
-
-	return true
-end
-
-function GM:ContextMenuClose()
-	if (IsValid(nut.gui.info)) then
-		nut.gui.info:SetVisible(false)
-	end
-end

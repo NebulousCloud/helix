@@ -137,4 +137,9 @@ local PANEL = {}
 	function PANEL:setText(text)
 		self.label:SetText(text)
 	end
+
+	function PANEL:setReadOnly()
+		self.sub:Remove()
+		self.add:Remove()
+	end
 vgui.Register("nutAttribBar", PANEL, "DPanel")

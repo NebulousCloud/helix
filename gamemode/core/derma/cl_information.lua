@@ -6,20 +6,16 @@ local PANEL = {}
 
 		nut.gui.info = self
 
-		self:SetSize(780, 540)
+		self:SetSize(ScrW() * 0.6, ScrH() * 0.6)
 		self:Center()
-		self:MakePopup()
-		self:SetVisible(false)
-		self:ShowCloseButton(false)
-		self:SetTitle("")
 
 		self.model = self:Add("nutModelPanel")
-		self.model:SetWide(250)
+		self.model:SetWide(ScrW() * 0.2)
 		self.model:Dock(LEFT)
-		self.model:SetFOV(32)
+		self.model:SetFOV(40)
 
 		self.info = self:Add("DPanel")
-		self.info:SetWide(512)
+		self.info:SetWide(ScrW() * 0.4)
 		self.info:Dock(RIGHT)
 		self.info:SetDrawBackground(false)
 		self.info:DockMargin(0, 36, 0, 0)
@@ -35,6 +31,32 @@ local PANEL = {}
 		self.desc:Dock(TOP)
 		self.desc:SetFont("nutMediumLightFont")
 		self.desc:SetTall(28)
+
+		self.money = self.info:Add("DLabel")
+		self.money:Dock(TOP)
+		self.money:SetFont("nutMediumFont")
+		self.money:SetTextColor(color_white)
+		self.money:SetExpensiveShadow(1, Color(0, 0, 0, 150))
+		self.money:DockMargin(0, 10, 0, 0)
+
+		self.faction = self.info:Add("DLabel")
+		self.faction:Dock(TOP)
+		self.faction:SetFont("nutMediumFont")
+		self.faction:SetTextColor(color_white)
+		self.faction:SetExpensiveShadow(1, Color(0, 0, 0, 150))
+		self.faction:DockMargin(0, 10, 0, 0)
+
+		self.attribName = self.info:Add("DLabel")
+		self.attribName:Dock(TOP)
+		self.attribName:SetFont("nutMediumFont")
+		self.attribName:SetTextColor(color_white)
+		self.attribName:SetExpensiveShadow(1, Color(0, 0, 0, 150))
+		self.attribName:DockMargin(0, 50, 0, 0)
+		self.attribName:SetText(L"attribs")
+
+		self.attribs = self.info:Add("DScrollPanel")
+		self.attribs:Dock(FILL)
+		self.attribs:DockMargin(0, 10, 0, 0)
 	end
 
 	function PANEL:setup()
@@ -47,19 +69,22 @@ local PANEL = {}
 		self.name.Think = function(this)
 			this:SetText(LocalPlayer():Name())
 		end
+
 		self.model:SetModel(LocalPlayer():GetModel())
+		self.money:SetText(L("charMoney", nut.currency.get(LocalPlayer():getChar():getMoney())))
+		self.faction:SetText(L("charFaction", L(team.GetName(LocalPlayer():Team()))))
+
+		for k, v in SortedPairsByMemberValue(nut.attribs.list, "name") do
+			local bar = self.attribs:Add("nutAttribBar")
+			bar:Dock(TOP)
+			bar:DockMargin(0, 0, 0, 3)
+			bar:setValue(LocalPlayer():getChar():getAttrib(k, 0))
+			bar:setMax(nut.config.get("maxAttribs"))
+			bar:setReadOnly()
+			bar:setText(L(v.name))
+		end
 	end
 
 	function PANEL:Paint(w, h)
 	end
-
-	function PANEL:Think()
-		if (IsValid(g_ContextMenu) and !g_ContextMenu:IsVisible() and self:IsVisible() and !self.desc:IsEditing()) then
-			self:SetVisible(false)
-		end
-	end
-vgui.Register("nutCharInfo", PANEL, "DFrame")
-
-if (IsValid(nut.gui.info)) then
-	vgui.Create("nutCharInfo")
-end
+vgui.Register("nutCharInfo", PANEL, "EditablePanel")

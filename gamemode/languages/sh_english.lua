@@ -153,5 +153,8 @@ LANGUAGE = {
 	notNow = "You are not allowed to do this right now.",
 	faceWall = "You must be facing the wall to do this.",
 	faceWallBack = "Your back must be facing the wall to do this.",
-	descChanged = "You have changed your character's description."
+	descChanged = "You have changed your character's description.",
+	charMoney = "You currently have %s.",
+	charFaction = "You are a member of the %s faction.",
+	home = "Home"
 }

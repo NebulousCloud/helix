@@ -58,7 +58,7 @@ local PANEL = {}
 			local tab = self:addTab(L(name), callback, name)
 			self.tabList[name] = tab
 		end
-
+		--[[
 		if (lastMenuTab and tabs[lastMenuTab]) then
 			if (lastMenuTab == "characters") then
 				lastMenuTab = nil
@@ -68,10 +68,15 @@ local PANEL = {}
 				end)
 			end
 		end
-
+		--]]
 		self.noAnchor = CurTime() + .4
 		self.anchorMode = true
 		self:MakePopup()
+
+		self.info = vgui.Create("nutCharInfo", self)
+		self.info:setup()
+		self.info:SetAlpha(0)
+		self.info:AlphaTo(255, 0.5)
 	end
 
 	function PANEL:OnKeyCodePressed(key)
@@ -90,6 +95,10 @@ local PANEL = {}
 		end
 
 		if (!self.anchorMode) then
+			if (IsValid(self.info) and self.info.desc:IsEditing()) then
+				return
+			end
+
 			if (!key) then
 				self:remove()
 			end
@@ -139,6 +148,10 @@ local PANEL = {}
 			tab:SetWide(w + 32)
 			tab.Paint = PaintTab
 			tab.DoClick = function(this)
+				if (IsValid(nut.gui.info)) then
+					nut.gui.info:Remove()
+				end
+				
 				self.panel:Clear()
 
 				self.title:SetText(this:GetText())

@@ -55,14 +55,14 @@ if (CLIENT) then
 			hook.Run("BuildHelpMenu", tabs)
 
 			for k, v in SortedPairs(tabs) do
-				tree:AddNode(k).onGetHTML = v or function() return "" end
+				tree:AddNode(L(k)).onGetHTML = v or function() return "" end
 			end
 		end
 	end)
 end
 
 hook.Add("BuildHelpMenu", "nutBasicHelp", function(tabs)
-	tabs[L"commands"] = function(node)
+	tabs["commands"] = function(node)
 		local body = ""
 
 		for k, v in SortedPairs(nut.command.list) do
@@ -96,7 +96,7 @@ hook.Add("BuildHelpMenu", "nutBasicHelp", function(tabs)
 		return body
 	end
 
-	tabs[L"plugins"] = function(node)
+	tabs["plugins"] = function(node)
 		local body = ""
 
 		for k, v in SortedPairsByMemberValue(nut.plugin.list, "name") do
