@@ -75,6 +75,12 @@ function GM:LoadFonts(font)
 	-- The more readable font.
 	font = "Calibri"
 
+	surface.CreateFont("nutHugeFont", {
+		font = font,
+		size = 72,
+		weight = 1000
+	})
+
 	surface.CreateFont("nutBigFont", {
 		font = font,
 		size = 36,
@@ -85,6 +91,12 @@ function GM:LoadFonts(font)
 		font = font,
 		size = 26,
 		weight = 1000
+	})
+
+	surface.CreateFont("nutMediumLightFont", {
+		font = font,
+		size = 26,
+		weight = 200
 	})
 
 	surface.CreateFont("nutGenericFont", {
@@ -420,7 +432,7 @@ function GM:PlayerBindPress(client, bind, pressed)
 			end
 		end
 	elseif (bind:find("jump")) then
-		RunConsoleCommand("nut", "chargetup")
+		nut.command.send("chargetup")
 	end
 end
 
@@ -485,4 +497,23 @@ function GM:HUDShouldDraw(element)
 	end
 
 	return true
+end
+
+function GM:ContextMenuCreated(panel)
+	vgui.Create("nutCharInfo")
+end
+
+function GM:ContextMenuOpen()
+	if (IsValid(nut.gui.info)) then
+		nut.gui.info:SetVisible(true)
+		nut.gui.info:setup()
+	end
+
+	return true
+end
+
+function GM:ContextMenuClose()
+	if (IsValid(nut.gui.info)) then
+		nut.gui.info:SetVisible(false)
+	end
 end

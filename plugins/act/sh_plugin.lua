@@ -115,7 +115,7 @@ function PLUGIN:PlayerBindPress(client, bind, pressed)
 		bind = bind:lower()
 
 		if (bind:find("+jump") and pressed) then
-			RunConsoleCommand("nut", "actsit")
+			nut.command.send("actsit")
 
 			return true
 		end

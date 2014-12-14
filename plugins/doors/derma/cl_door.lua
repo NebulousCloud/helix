@@ -66,7 +66,7 @@ local PANEL = {}
 			self.sell:DockMargin(0, 5, 0, 0)
 			self.sell.DoClick = function(this)
 				self:Remove()
-				RunConsoleCommand("nut", "doorsell")
+				nut.command.send("doorsell")
 			end
 		end
 
@@ -80,7 +80,7 @@ local PANEL = {}
 				end
 			end
 			self.name.OnEnter = function(this)
-				RunConsoleCommand("nut", "doorsettitle", this:GetText())
+				nut.command.send("doorsettitle", this:GetText())
 			end
 		end
 	end

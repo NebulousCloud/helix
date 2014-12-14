@@ -184,4 +184,23 @@ if (SERVER) then
 
 		nut.command.parse(client, nil, command or "", arguments)
 	end)
+
+	netstream.Hook("cmd", function(client, command, arguments)
+		if ((client.nutNextCmd or 0) < CurTime()) then
+			local arguments2 = {}
+
+			for k, v in ipairs(arguments) do
+				if (type(v) == "string" or type(v) == "number") then
+					arguments2[#arguments2 + 1] = tostring(v)
+				end
+			end
+
+			nut.command.parse(client, nil, command, arguments2)
+			client.nutNextCmd = CurTime() + 0.2
+		end
+	end)
+else
+	function nut.command.send(command, ...)
+		netstream.Start("cmd", command, {...})
+	end
 end
