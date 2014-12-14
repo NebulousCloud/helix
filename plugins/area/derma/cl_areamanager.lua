@@ -71,7 +71,6 @@ end
 vgui.Register("nutAreaManager", PANEL, "DFrame")
 
 netstream.Hook("nutAreaManager", function(areaList)
-	print(1)
 	PLUGIN.areaTable = areaList
 	areaManager = vgui.Create("nutAreaManager")
 end)

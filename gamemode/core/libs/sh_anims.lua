@@ -330,12 +330,12 @@ do
 
 	function playerMeta:forceSequence(sequence, callback, time, noFreeze)
 		if (!sequence) then
-			return self:setNetVar("seq")
+			return netstream.Start(nil, "seqSet", self)
 		end
 
 		local sequence = self:LookupSequence(sequence)
 
-		if (sequence) then
+		if (sequence and sequence > 0) then
 			time = time or self:SequenceDuration(sequence)
 
 			if (!noFreeze) then

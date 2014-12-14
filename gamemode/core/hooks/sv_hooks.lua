@@ -402,8 +402,6 @@ function GM:ScalePlayerDamage(client, hitGroup, dmgInfo)
 	elseif (LIMB_GROUPS[hitGroup]) then
 		dmgInfo:ScaleDamage(0.5)
 	end
-
-	print(dmgInfo:GetDamage())
 end
 
 function GM:GetGameDescription()

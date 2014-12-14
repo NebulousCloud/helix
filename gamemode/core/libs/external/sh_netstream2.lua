@@ -106,7 +106,6 @@ if (SERVER) then
 				net.WriteUInt(#encodedData, 32);
 				net.WriteData(encodedData, #encodedData);
 			if (bSendPVS) then
-				print(bSendPVS)
 				net.SendPVS(player);
 			else
 				net.Send(recipients);

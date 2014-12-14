@@ -37,7 +37,8 @@ for k, v in pairs(PLUGIN.acts) do
 		end
 
 		data.onRun = function(client, arguments)
-			if (client.nutCurSeq and client.nutSeqUntimed) then
+			if (client.nutSeqUntimed) then
+				client:setNetVar("actAng")
 				client:leaveSequence()
 				client.nutSeqUntimed = nil
 
@@ -67,12 +68,56 @@ for k, v in pairs(PLUGIN.acts) do
 						sequence = info.sequence
 					end
 
+					local duration = client:forceSequence(sequence, nil, info.untimed and 0 or nil)
+
 					client.nutSeqUntimed = info.untimed
-					client.nutNextAct = CurTime() + (info.untimed and 4 or client:forceSequence(sequence, nil, info.untimed and 0 or nil)) + 1
+					client.nutNextAct = CurTime() + (info.untimed and 4 or duration) + 1
+					client:setNetVar("actAng", client:GetAngles())
 				else
 					return "@modelNoSeq"
 				end
 			end
 		end
 	nut.command.add("act"..k, data)
+end
+
+function PLUGIN:UpdateAnimation(client, moveData)
+	local angles = client:getNetVar("actAng")
+
+	if (angles) then
+		client:SetRenderAngles(angles)
+	end
+end
+
+function PLUGIN:ShouldDrawLocalPlayer(client)
+	if (client:getNetVar("actAng")) then
+		return true
+	end
+end
+
+local GROUND_PADDING = Vector(0, 0, 8)
+local PLAYER_OFFSET = Vector(0, 0, 72)
+
+function PLUGIN:CalcView(client, origin, angles, fov)
+	if (client:getNetVar("actAng")) then
+		local view = {}
+			local data = {}
+				data.start = client:GetPos() + PLAYER_OFFSET
+				data.endpos = data.start - client:EyeAngles():Forward()*72
+			view.origin = util.TraceLine(data).HitPos + GROUND_PADDING
+			view.angles = client:EyeAngles()
+		return view
+	end
+end
+
+function PLUGIN:PlayerBindPress(client, bind, pressed)
+	if (client:getNetVar("actAng")) then
+		bind = bind:lower()
+
+		if (bind:find("+jump") and pressed) then
+			RunConsoleCommand("nut", "actsit")
+
+			return true
+		end
+	end
 end
