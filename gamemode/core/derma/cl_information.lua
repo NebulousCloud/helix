@@ -69,10 +69,17 @@ local PANEL = {}
 		self.name.Think = function(this)
 			this:SetText(LocalPlayer():Name())
 		end
-
-		self.model:SetModel(LocalPlayer():GetModel())
 		self.money:SetText(L("charMoney", nut.currency.get(LocalPlayer():getChar():getMoney())))
 		self.faction:SetText(L("charFaction", L(team.GetName(LocalPlayer():Team()))))
+
+		self.model:SetModel(LocalPlayer():GetModel())
+		local ent = self.model.Entity
+		if (ent and IsValid(ent)) then
+			local mats = LocalPlayer():GetMaterials()
+			for k, v in pairs(mats) do
+				ent:SetSubMaterial(k - 1, LocalPlayer():GetSubMaterial(k - 1))
+			end
+		end
 
 		for k, v in SortedPairsByMemberValue(nut.attribs.list, "name") do
 			local bar = self.attribs:Add("nutAttribBar")
