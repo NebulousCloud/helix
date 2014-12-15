@@ -210,7 +210,8 @@ PANEL = {}
 				mode = mode,
 				price = price,
 				curStock = curStock,
-				maxStock = maxStock
+				maxStock = maxStock,
+				uniqueID = k
 			}
 		end
 
@@ -218,6 +219,8 @@ PANEL = {}
 			if (IsValid(self.menu)) then
 				self.menu:Remove()
 			end
+
+			local data = {}
 
 			local menu = self:Add("DFrame")
 			menu:SetTitle(line.item.name)
@@ -231,14 +234,23 @@ PANEL = {}
 			local price = settings:CreateRow(L"properties", L"price")
 			price:Setup("Int", {min = 0, max = 1000})
 			price:SetValue(line.item.price)
+			price.DataChanged = function(this, value)
+				data.price = value
+			end
 
 			local maxStock = settings:CreateRow(L"properties", L"maxStock")
 			maxStock:Setup("Int", {min = 0, max = 50})
 			maxStock:SetValue(line.item.maxStock)
+			maxStock.DataChanged = function(this, value)
+				data.maxStock = value
+			end
 
 			local stock = settings:CreateRow(L"properties", L"stock")
 			stock:Setup("Int", {min = 0, max = 50})
 			stock:SetValue(line.item.curStock)
+			stock.DataChanged = function(this, value)
+				data.curStock = value
+			end
 
 			local mode = settings:CreateRow(L"properties", L"mode")
 			mode:Setup("Combo", {L"mode"})
@@ -246,6 +258,18 @@ PANEL = {}
 			mode:AddChoice(MODE_TEXT[VENDOR_BUY], VENDOR_BUY)
 			mode:AddChoice(MODE_TEXT[VENDOR_SELL], VENDOR_SELL)
 			mode:AddChoice(MODE_TEXT[VENDOR_BOTH], VENDOR_BOTH)
+			mode.DataChanged = function(this, data)
+				data.mode = data.Data
+			end
+
+			local save = menu:Add("DButton")
+			save:Dock(BOTTOM)
+			save:DockMargin(0, 3, 0, 0)
+			save:SetText(L"save")
+			save.DoClick = function(this)
+				netstream.Start("vendorItemMod", entity, this.item.uniqueID, data)
+				menu:Remove()
+			end
 
 			self.menu = menu
 		end

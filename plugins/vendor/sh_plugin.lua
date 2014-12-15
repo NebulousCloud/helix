@@ -84,6 +84,16 @@ if (SERVER) then
 			end)
 		end
 	end)
+
+	netstream.Hook("vendorItemMod", function(client, entity, uniqueID, key, value)
+		if (client:IsAdmin() and IsValid(entity)) then
+			entity.items[uniqueID] = value
+
+			timer.Create("nutSaveVendorEdits", 60, 1, function()
+				PLUGIN:saveVendors()
+			end)
+		end
+	end)
 else
 	netstream.Hook("vendorUse", function(entity, items, rates, money, stock, adminData)
 		vgui.Create("nutVendor"):setVendor(entity, items, rates, money, stocks)
