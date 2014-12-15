@@ -186,7 +186,7 @@ if (SERVER) then
 		local curInv = nut.item.inventories[self.invID or 0]
 
 		if (hook.Run("CanItemBeTransfered", self, curInv, inventory) == false) then
-			return false, "not allowed"
+			return false, "notAllowed"
 		end
 
 		local authorized = false
@@ -200,7 +200,7 @@ if (SERVER) then
 		end
 
 		if (!authorized and self.onCanBeTransfered and self:onCanBeTransfered(curInv, inventory) == false) then
-			return false, "not allowed"
+			return false, "notAllowed"
 		end
 
 		if (curInv) then
@@ -217,7 +217,7 @@ if (SERVER) then
 				end
 
 				if (!x or !y) then
-					return false, "no space"
+					return false, "noSpace"
 				end
 
 				local status, result = targetInv:add(self.id, nil, nil, x, y, noReplication)
@@ -253,10 +253,10 @@ if (SERVER) then
 					inventory[self.id] = self
 				end
 
-				return false, "invalid player"
+				return false, "noOwner"
 			end
 		else
-			return false, "invalid inv"
+			return false, "invalidInventory"
 		end
 	end
 end

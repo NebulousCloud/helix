@@ -156,5 +156,11 @@ LANGUAGE = {
 	descChanged = "You have changed your character's description.",
 	charMoney = "You currently have %s.",
 	charFaction = "You are a member of the %s faction.",
+	noSpace = "Inventory is Full.",
+	noOwner = "The owner is invalid.",
+	notAllowed = "This action is not allowed.",
+	invalidIndex = "The Item Index is Invalid.",
+	invalidItem = "The Item Object is Invalid.",
+	invalidInventory = "The Inventory Object is Invalid.",
 	home = "Home"
 }
