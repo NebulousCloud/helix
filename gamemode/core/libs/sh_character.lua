@@ -484,6 +484,7 @@ do
 			character.vars.vars = data
 		end,
 		onGet = function(character, key, default)
+			character.vars.vars = character.vars.vars or {}
 			local data = character.vars.vars or {}
 
 			if (key) then
@@ -620,13 +621,13 @@ do
 			nut.char.loaded[id] = nut.char.new(data, id, client == nil and LocalPlayer() or client)
 		end)
 
-		netstream.Hook("charVar", function(key, value, id)
+		netstream.Hook("charVar", function(id, key, value)
 			id = id or LocalPlayer():getChar().id
 			local character = nut.char.loaded[id]
 
 			if (character) then
-				local oldVar = character.vars[key]
-				character.vars[key] = value
+				local oldVar = character:getVar()[key]
+				character:getVar()[key] = value
 
 				hook.Run("OnCharVarChanged", character, key, oldVar, value)
 			end

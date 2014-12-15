@@ -61,17 +61,31 @@ local PANEL = {}
 		self.faction:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 		self.faction:DockMargin(0, 10, 0, 0)
 
+		local class = nut.class.list[LocalPlayer():getChar():getClass()]
+		if (class) then
+			self.class = self.info:Add("DLabel")
+			self.class:Dock(TOP)
+			self.class:SetFont("nutMediumFont")
+			self.class:SetTextColor(color_white)
+			self.class:SetExpensiveShadow(1, Color(0, 0, 0, 150))
+			self.class:DockMargin(0, 10, 0, 0)
+		end
+
+		hook.Run("CreateCharInfoText", self)
+
 		self.attribName = self.info:Add("DLabel")
 		self.attribName:Dock(TOP)
 		self.attribName:SetFont("nutMediumFont")
 		self.attribName:SetTextColor(color_white)
 		self.attribName:SetExpensiveShadow(1, Color(0, 0, 0, 150))
-		self.attribName:DockMargin(0, 50, 0, 0)
+		self.attribName:DockMargin(0, 10, 0, 0)
 		self.attribName:SetText(L"attribs")
 
 		self.attribs = self.info:Add("DScrollPanel")
 		self.attribs:Dock(FILL)
 		self.attribs:DockMargin(0, 10, 0, 0)
+
+		hook.Run("CreateCharInfo", self)
 	end
 
 	function PANEL:setup()
@@ -86,7 +100,12 @@ local PANEL = {}
 		end
 		self.money:SetText(L("charMoney", nut.currency.get(LocalPlayer():getChar():getMoney())))
 		self.faction:SetText(L("charFaction", L(team.GetName(LocalPlayer():Team()))))
-
+		
+		local class = nut.class.list[LocalPlayer():getChar():getClass()]
+		if (class) then
+			self.class:SetText(L("charClass", L(class.name)))
+		end
+		
 		self.model:SetModel(LocalPlayer():GetModel())
 		local ent = self.model.Entity
 		if (ent and IsValid(ent)) then
@@ -105,6 +124,8 @@ local PANEL = {}
 			bar:setReadOnly()
 			bar:setText(L(v.name))
 		end
+
+		hook.Run("OnCharInfoSetup", self)
 	end
 
 	function PANEL:Paint(w, h)

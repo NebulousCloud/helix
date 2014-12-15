@@ -157,6 +157,7 @@ LANGUAGE = {
 	descChanged = "You have changed your character's description.",
 	charMoney = "You currently have %s.",
 	charFaction = "You are a member of the %s faction.",
+	charClass = "You are %s of the faction.",
 	noSpace = "Inventory is Full.",
 	noOwner = "The owner is invalid.",
 	notAllowed = "This action is not allowed.",
