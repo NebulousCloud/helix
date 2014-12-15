@@ -151,7 +151,16 @@ function ITEM:remove()
 	for x = self.gridX, self.gridX + (self.width - 1) do
 		if (inv.slots[x]) then
 			for y = self.gridY, self.gridY + (self.height - 1) do
-				inv.slots[x][y] = nil
+				local item = inv.slots[x][y]
+
+				if (item.id == self.id) then
+					inv.slots[x][y] = nil
+				else
+					print("ERROR OCCURED INDEX: " .. self.id)
+					print("RECURSIVE x: " .. x .. " y: " .. y)
+					print("REQUESTED ITEM POS x: " .. self.gridX .. " y: " .. self.gridY)
+					return false
+				end
 			end
 		end
 	end
@@ -176,6 +185,8 @@ function ITEM:remove()
 			nut.item.instances[self.id] = nil
 		end
 	end
+
+	return true
 end
 
 if (SERVER) then
