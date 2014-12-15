@@ -141,7 +141,7 @@ else
 			return false
 		end
 
-		if (self.stocks and self.stocks[uniqueID] and self.stocks[uniqueID] < 1) then
+		if (self.stocks and self.stocks[uniqueID] and self.stocks[uniqueID][1] and self.stocks[uniqueID][1] < 1) then
 			return false
 		end
 

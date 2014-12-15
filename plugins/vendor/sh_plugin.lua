@@ -13,13 +13,13 @@
     along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
-PLUGIN.name = "Vendors"
-PLUGIN.author = "Chessnut"
-PLUGIN.desc = "Adds NPC vendors that can sell things."
-
 VENDOR_BUY = 1
 VENDOR_SELL = 2
 VENDOR_BOTH = 3
+
+PLUGIN.name = "Vendors"
+PLUGIN.author = "Chessnut"
+PLUGIN.desc = "Adds NPC vendors that can sell things."
 
 if (SERVER) then
 	local PLUGIN = PLUGIN
@@ -85,9 +85,38 @@ if (SERVER) then
 		end
 	end)
 
-	netstream.Hook("vendorItemMod", function(client, entity, uniqueID, key, value)
+	netstream.Hook("vendorItemMod", function(client, entity, uniqueID, data)
 		if (client:IsAdmin() and IsValid(entity)) then
-			entity.items[uniqueID] = value
+			if (data.price) then
+				entity.items[uniqueID] = entity.items[uniqueID] or {}
+				entity.items[uniqueID][1] = math.max(math.floor(data.price), 0)
+			end
+
+			if (data.mode) then
+				data.mode = math.Clamp(math.floor(data.mode), 0, VENDOR_BOTH)
+
+				entity.items[uniqueID] = entity.items[uniqueID] or {}
+				entity.items[uniqueID][2] = data.mode
+			end
+
+			if (data.maxStock) then
+				data.maxStock = math.floor(data.maxStock)
+
+				if (data.maxStock < 1) then
+					entity.stocks = {}
+				else
+					entity.stocks[uniqueID] = entity.stocks[uniqueID] or {}
+					entity.stocks[uniqueID][1] = entity.stocks[uniqueID][1] or data.maxStock
+					entity.stocks[uniqueID][2] = data.maxStock
+				end
+			end
+
+			if (data.stock and entity.stocks[uniqueID][2] and entity.stocks[uniqueID][2] > 0) then
+				entity.stocks[uniqueID] = entity.stocks[uniqueID] or {}
+				entity.stocks[uniqueID][1] = math.Clamp(math.floor(data.stock), 0, entity.stocks[uniqueID][2])
+			end
+
+			client:EmitSound("buttons/button24.wav", 30)
 
 			timer.Create("nutSaveVendorEdits", 60, 1, function()
 				PLUGIN:saveVendors()

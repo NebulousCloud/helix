@@ -13,6 +13,10 @@
     along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
+VENDOR_BUY = 1
+VENDOR_SELL = 2
+VENDOR_BOTH = 3
+
 local PANEL = {}
 	function PANEL:Init()
 		if (IsValid(nut.gui.vendor)) then
@@ -205,7 +209,7 @@ PANEL = {}
 			local curStock = stock and stock[k] and stock[k][1]
 			local maxStock = curStock and stock[k][2]
 
-			self.items:AddLine(v.name, L(MODE_TEXT[mode]), price, stock and stock[k] or "∞").item = {
+			self.items:AddLine(v.name, L(MODE_TEXT[mode]), price, maxStock and (curStock.."/"..maxStock) or "∞").item = {
 				name = name,
 				mode = mode,
 				price = price,
@@ -220,7 +224,7 @@ PANEL = {}
 				self.menu:Remove()
 			end
 
-			local data = {}
+			local itemData = {}
 
 			local menu = self:Add("DFrame")
 			menu:SetTitle(line.item.name)
@@ -235,21 +239,21 @@ PANEL = {}
 			price:Setup("Int", {min = 0, max = 1000})
 			price:SetValue(line.item.price)
 			price.DataChanged = function(this, value)
-				data.price = value
+				itemData.price = value
 			end
 
 			local maxStock = settings:CreateRow(L"properties", L"maxStock")
 			maxStock:Setup("Int", {min = 0, max = 50})
 			maxStock:SetValue(line.item.maxStock)
 			maxStock.DataChanged = function(this, value)
-				data.maxStock = value
+				itemData.maxStock = value
 			end
 
 			local stock = settings:CreateRow(L"properties", L"stock")
 			stock:Setup("Int", {min = 0, max = 50})
 			stock:SetValue(line.item.curStock)
 			stock.DataChanged = function(this, value)
-				data.curStock = value
+				itemData.stock = value
 			end
 
 			local mode = settings:CreateRow(L"properties", L"mode")
@@ -258,8 +262,8 @@ PANEL = {}
 			mode:AddChoice(MODE_TEXT[VENDOR_BUY], VENDOR_BUY)
 			mode:AddChoice(MODE_TEXT[VENDOR_SELL], VENDOR_SELL)
 			mode:AddChoice(MODE_TEXT[VENDOR_BOTH], VENDOR_BOTH)
-			mode.DataChanged = function(this, data)
-				data.mode = data.Data
+			mode.DataChanged = function(this, value)
+				itemData.mode = value
 			end
 
 			local save = menu:Add("DButton")
@@ -267,7 +271,7 @@ PANEL = {}
 			save:DockMargin(0, 3, 0, 0)
 			save:SetText(L"save")
 			save.DoClick = function(this)
-				netstream.Start("vendorItemMod", entity, this.item.uniqueID, data)
+				netstream.Start("vendorItemMod", entity, line.item.uniqueID, itemData)
 				menu:Remove()
 			end
 
