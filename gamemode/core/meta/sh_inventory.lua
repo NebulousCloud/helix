@@ -363,18 +363,18 @@ if (SERVER) then
 
 						nut.db.query("UPDATE nut_items SET _invID = "..targetInv:getID()..", _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
 
-						return x, y
+						return x, y, targetInv:getID()
 					else
-						return false, "no space"
+						return false, "noSpace"
 					end
 				else
-					return false, "invalid index"
+					return false, "invalidIndex"
 				end
 			else
 				local itemTable = nut.item.list[uniqueID]
 
 				if (!itemTable) then
-					return false, "invalid item"
+					return false, "invalidItem"
 				end
 
 				if (!x and !y) then
@@ -405,13 +405,13 @@ if (SERVER) then
 						end
 					end)
 
-					return x, y
+					return x, y, targetInv:getID()
 				else
-					return false, "no space"
+					return false, "noSpace"
 				end
 			end
 		else
-			return false, "invalid owner"
+			return false, "noOwner"
 		end
 	end
 
