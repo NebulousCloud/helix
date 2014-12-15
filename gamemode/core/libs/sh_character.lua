@@ -478,7 +478,15 @@ do
 			data[key] = value
 
 			if (!noReplication and IsValid(client)) then
-				netstream.Start(receiver or client, "charVar", character:getID(), key, value)
+				local id
+
+				if (client:getChar() and client:getChar():getID() == character:getID()) then
+					id = client:getChar():getID()
+				else
+					id = character:getID()
+				end
+
+				netstream.Start(receiver or client, "charVar", key, value, id)
 			end
 
 			character.vars.vars = data
@@ -621,8 +629,19 @@ do
 			nut.char.loaded[id] = nut.char.new(data, id, client == nil and LocalPlayer() or client)
 		end)
 
-		netstream.Hook("charVar", function(id, key, value)
-			id = id or LocalPlayer():getChar().id
+		netstream.Hook("charSet", function(key, value, id)
+			id = id or (LocalPlayer():getChar() and LocalPlayer():getChar().id)
+			
+			local character = nut.char.loaded[id]
+
+			if (character) then
+				character.vars[key] = value
+			end
+		end)
+
+		netstream.Hook("charVar", function(key, value, id)
+			id = id or (LocalPlayer():getChar() and LocalPlayer():getChar().id)
+
 			local character = nut.char.loaded[id]
 
 			if (character) then

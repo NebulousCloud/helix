@@ -47,7 +47,7 @@ if (SERVER) then
 	end
 
 	function PLUGIN:LoadData()
-		for k, v in ipairs(self:getData()) do
+		for k, v in ipairs(self:getData() or {}) do
 			local entity = ents.Create("nut_vendor")
 			entity:SetPos(v.pos)
 			entity:SetAngles(v.angles)

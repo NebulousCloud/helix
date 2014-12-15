@@ -148,18 +148,24 @@ function nut.char.registerVar(key, data)
 			end
 		elseif (data.isLocalVar) then
 			CHAR["set"..upperName] = function(self, value)
+				local curChar = self:getPlayer() and self:getPlayer():getChar()
+				local sendID = true
+
+				if (curChar and curChar == self) then
+					sendID = false
+				end
+
 				local oldVar = self.vars[key]
-				self.vars[key] = value
-				netstream.Start(self.player, "charVar", key, value)
+					self.vars[key] = value
+				netstream.Start(self.player, "charSet", key, value, sendID and self:getID() or nil)
 
 				hook.Run("OnCharVarChanged", self, key, oldVar, value)
 			end
 		else
 			CHAR["set"..upperName] = function(self, value)
 				local oldVar = self.vars[key]
-				self.vars[key] = value
-				print("CharVar")
-				netstream.Start(nil, "charVar", key, value, self.id)
+					self.vars[key] = value
+				netstream.Start(nil, "charSet", key, value, self:getID())
 				
 				hook.Run("OnCharVarChanged", self, key, oldVar, value)
 			end
