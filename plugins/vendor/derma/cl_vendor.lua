@@ -43,25 +43,76 @@ local PANEL = {}
 		self.buying.title:SetText(LocalPlayer():Name())
 		self.buying.action:SetText(L"sell")
 
-		local tally = {}
+		self.tally = {}
 
 		for k, v in pairs(LocalPlayer():getChar():getInv():getItems()) do
 			if (v.base == "base_bags") then
 				continue
 			end
 
-			tally[v.uniqueID] = (tally[v.uniqueID] or 0) + 1
-		end
-
-		for k, v in SortedPairs(tally) do
-			self.buying:addItem(k, v)
+			self.tally[v.uniqueID] = (self.tally[v.uniqueID] or 0) + 1
 		end
 	end
 
 	function PANEL:setVendor(entity, items, rates, money, stocks)
+		entity = entity or self.entity
+		items = items or self.items or {}
+		rates = rates or self.rates or {1, 1}
+		money = money or self.rates or 0
+		stocks = stocks or self.stocks or {}
+
+		self.selling.items:Clear()
+		self.buying.items:Clear()
+
 		if (IsValid(entity)) then
 			self.selling.title:SetText(entity:getNetVar("name"))
 			self:SetTitle(entity:getNetVar("name"))
+
+			local count = 0
+
+			for k, v in SortedPairs(self.tally) do
+				local mode = items[k] and items[k][2]
+
+				if (!mode or mode == VENDOR_SELL) then
+					continue
+				end
+				
+				self.buying:addItem(k, v)
+				count = count + 1
+			end
+
+			if (count == 0) then
+				local fault = self.buying.items:Add("DLabel")
+				fault:SetText(L"vendorNoSellItems")
+				fault:SetContentAlignment(5)
+				fault:Dock(FILL)
+				fault:SetFont("nutChatFont")
+			end
+
+			count = 0
+
+			for k, v in SortedPairs(items) do
+				if (items[k] and items[k][2] and items[k][2] > 0) then
+					local amount = stocks and stocks[k] and stocks[k][1] or nil
+
+					self.selling:addItem(k, amount)
+					count = count + 1
+				end
+			end
+
+			if (count == 0) then
+				local fault = self.selling.items:Add("DLabel")
+				fault:SetText(L"vendorNoBuyItems")
+				fault:SetContentAlignment(5)
+				fault:Dock(FILL)
+				fault:SetFont("nutChatFont")
+			end
+
+			self.entity = entity
+			self.items = items
+			self.rates = rates
+			self.money = money
+			self.stocks = stocks
 		end
 	end
 vgui.Register("nutVendor", PANEL, "DFrame")
@@ -122,7 +173,7 @@ PANEL = {}
 		panel.name:Dock(FILL)
 		panel.name:SetFont("nutChatFont")
 		panel.name:SetTextColor(color_white)
-		panel.name:SetText(itemTable.name.." ("..count..")")
+		panel.name:SetText(itemTable.name..(count and " ("..count..")" or ""))
 		panel.name:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 
 		panel.overlay = panel:Add("DButton")
@@ -287,6 +338,8 @@ PANEL = {}
 	end
 
 	function PANEL:update(uniqueID, data)
+		local vendor = nut.gui.vendor
+
 		if (self.menu.uniqueID == uniqueID) then
 			self.menu:Remove()
 		end
@@ -295,7 +348,12 @@ PANEL = {}
 			if (v.item.uniqueID == uniqueID) then
 				if (data.mode) then
 					v:SetColumnText(2, L(MODE_TEXT[data.mode]))
-					v.item.mode = data.mode
+					v.item.mode = data.mode > 0 and data.mode or nil
+
+					if (IsValid(vendor)) then
+						vendor.items[uniqueID] = vendor.items[uniqueID] or {}
+						vendor.items[uniqueID][2] = v.item.mode
+					end
 				end
 
 				if (data.maxStock or data.stock) then
@@ -303,12 +361,24 @@ PANEL = {}
 						if (data.maxStock < 1) then
 							data.maxStock = nil
 						end
-						
+
 						v.item.maxStock = data.maxStock
 					end
 
 					if (data.stock) then
 						v.item.curStock = data.stock
+					end
+
+					if (IsValid(vendor)) then
+						vendor.stocks[uniqueID] = vendor.stocks[uniqueID] or {}
+
+						if (v.item.curStock) then
+							vendor.stocks[uniqueID][1] = v.item.curStock
+						end
+
+						if (v.item.maxStock) then
+							vendor.stocks[uniqueID][2] = v.item.maxStock
+						end
 					end
 
 					v:SetColumnText(4, v.item.maxStock and (v.item.curStock.."/"..v.item.maxStock) or "∞")

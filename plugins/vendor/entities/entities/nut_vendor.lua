@@ -163,6 +163,7 @@ else
 			for k, v in pairs(self.items) do
 				if (self:canBuyItem(activator, k)) then
 					items[k] = v
+					items[k][1] = items[k][1] or false
 				end
 			end
 

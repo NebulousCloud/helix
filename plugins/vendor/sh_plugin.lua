@@ -98,7 +98,7 @@ if (SERVER) then
 				data.mode = math.Clamp(math.floor(data.mode), 0, VENDOR_BOTH)
 
 				entity.items[uniqueID] = entity.items[uniqueID] or {}
-				entity.items[uniqueID][2] = data.mode
+				entity.items[uniqueID][2] = data.mode > 0 and data.mode or nil
 			end
 
 			if (data.maxStock) then
@@ -145,7 +145,7 @@ if (SERVER) then
 	end)
 else
 	netstream.Hook("vendorUse", function(entity, items, rates, money, stock, adminData)
-		vgui.Create("nutVendor"):setVendor(entity, items, rates, money, stocks)
+		vgui.Create("nutVendor"):setVendor(entity, items, rates, money, stock)
 
 		if (LocalPlayer():IsAdmin() and adminData) then
 			vgui.Create("nutVendorAdmin"):setData(entity, items, rates, money, stock, adminData)
@@ -155,6 +155,10 @@ else
 	netstream.Hook("vendorUpt", function(uniqueID, data)
 		if (IsValid(nut.gui.vendorAdmin)) then
 			nut.gui.vendorAdmin:update(uniqueID, data)
+		end
+
+		if (IsValid(nut.gui.vendor)) then
+			nut.gui.vendor:setVendor()
 		end
 	end)
 end
