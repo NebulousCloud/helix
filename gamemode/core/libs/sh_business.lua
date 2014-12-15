@@ -37,7 +37,7 @@ if (SERVER) then
 		end
 
 		char:takeMoney(price)
-		client:notify(L("businessPurchase", client, item.name, price > 0 and nut.currency.get(price) or "FREE"))
+		client:notify(L("businessPurchase", client, item.name, price > 0 and nut.currency.get(price) or L"free":upper()))
 
 		hook.Run("OnPlayerUseBusiness", char, item)
 	end)

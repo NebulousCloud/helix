@@ -67,6 +67,38 @@ if (SERVER) then
 		end
 	end
 
+	function PLUGIN:CanVendorSellItem(client, vendor, itemID)
+		local tradeData = vendor.items[itemID]
+		local char = client:getChar()
+
+		if (!tradeData or !char) then
+			print("Not Valid Item or Client Char.")
+			return false
+		end
+
+		if (!char:hasMoney(tradeData[1] or 0)) then
+			print("Insufficient Fund.")
+			return false
+		end
+
+		return true
+	end
+
+	function PLUGIN:CanVendorSellItem(client, vendor, itemID)
+
+	end
+
+	function PLUGIN:OnCharTradeVendor(client, vendor, x, y, invID, price)
+		if (invID) then
+			local inv = nut.item.inventories[invID]
+			local item = inv:getItemAt(x, y)
+
+			if (item) then
+				client:notify(L("businessPurchase", client, item.name, price or L("free", client):upper()))
+			end
+		end
+	end
+
 	netstream.Hook("vendorExit", function(client)
 		client.nutVendor = nil
 	end)
@@ -82,6 +114,51 @@ if (SERVER) then
 			timer.Create("nutSaveVendorEdits", 60, 1, function()
 				PLUGIN:saveVendors()
 			end)
+		end
+	end)
+
+	netstream.Hook("ventorItemTrade", function(client, entity, request, sellToVendor)
+		if (entity and IsValid(entity)) then
+			if (entity:canAccess(client)) then
+				if (sellToVendor) then
+
+				else
+					if (!entity:canBuyItem(client, request)) then
+						client:notify(L("unableTrade", client))
+						return
+					end
+
+					local char = client:getChar()
+					local items = entity.items[request]
+					local x, y, bagInv = char:getInv():add(request)
+
+					if (x != false) then
+						char:takeMoney(items[1] or 0)
+
+						if (entity.stocks and entity.stocks[request] and entity.stocks[request][1]) then
+							local stock = entity.stocks[request][1]
+							entity.stocks[request][1] = math.max(stock - 1, 0)
+
+
+							local recipient = {}
+
+							for k, v in ipairs(player.GetAll()) do
+								if (v.nutVendor == entity) then
+									recipient[#recipient + 1] = v
+								end
+							end
+
+							if (#recipient > 0) then
+								-- MUST UPDATE STOCK AFTER PURCHASE
+							end
+						end
+
+						hook.Run("OnCharTradeVendor", client, entity, x, y, bagInv, items[1])
+					else
+						client:notify(L(y, client))
+					end
+				end
+			end
 		end
 	end)
 
@@ -102,7 +179,7 @@ if (SERVER) then
 			end
 
 			if (data.maxStock) then
-				data.maxStock = math.floor(data.maxStock)
+				data.maxStock = math.Round(data.maxStock)
 
 				if (data.maxStock < 1) then
 					entity.stocks = {}
@@ -117,8 +194,8 @@ if (SERVER) then
 				end
 			end
 
-			if (data.stock and entity.stocks[uniqueID][2] and entity.stocks[uniqueID][2] > 0) then
-				data.stock = math.Clamp(math.floor(data.stock), 0, entity.stocks[uniqueID][2])
+			if (data.stock and entity.stocks[uniqueID] and entity.stocks[uniqueID][2] and entity.stocks[uniqueID][2] > 0) then
+				data.stock = math.Clamp(math.Round(data.stock), 0, entity.stocks[uniqueID][2])
 
 				entity.stocks[uniqueID] = entity.stocks[uniqueID] or {}
 				entity.stocks[uniqueID][1] = data.stock
@@ -145,10 +222,18 @@ if (SERVER) then
 	end)
 else
 	netstream.Hook("vendorUse", function(entity, items, rates, money, stock, adminData)
-		vgui.Create("nutVendor"):setVendor(entity, items, rates, money, stock)
+		local shop = vgui.Create("nutVendor")
+		shop:setVendor(entity, items, rates, money, stock)
 
 		if (LocalPlayer():IsAdmin() and adminData) then
-			vgui.Create("nutVendorAdmin"):setData(entity, items, rates, money, stock, adminData)
+			local admin = vgui.Create("nutVendorAdmin")
+			admin:setData(entity, items, rates, money, stock, adminData)
+			if (admin.btnClose) then
+				admin.btnClose.DoClick = function( button ) admin:Close() shop:Close() end
+			end
+			if (shop.btnClose) then
+				shop.btnClose.DoClick = function( button ) shop:Close() admin:Close() end
+			end
 		end
 	end)
 

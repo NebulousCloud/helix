@@ -52,6 +52,20 @@ local PANEL = {}
 
 			self.tally[v.uniqueID] = (self.tally[v.uniqueID] or 0) + 1
 		end
+
+		self.selling.action.DoClick = function()
+			if (self.entity) then
+				local selectedItem = nut.gui.vendor.activeItem
+				netstream.Start("ventorItemTrade", self.entity, selectedItem.uniqueID, false)
+			end
+		end
+
+		self.buying.action.DoClick = function()
+			if (self.entity) then
+				local selectedItem = nut.gui.vendor.activeItem
+				netstream.Start("ventorItemTrade", self.entity, selectedItem.uniqueID, true)
+			end
+		end
 	end
 
 	function PANEL:setVendor(entity, items, rates, money, stocks)
@@ -162,6 +176,7 @@ PANEL = {}
 			surface.SetDrawColor(nut.gui.vendor.activeItem == this and nut.config.get("color") or color_dark)
 			surface.DrawRect(0, 0, w, h)
 		end
+		panel.uniqueID = itemTable.uniqueID
 
 		panel.icon = panel:Add("SpawnIcon")
 		panel.icon:SetPos(2, 2)
@@ -285,7 +300,7 @@ PANEL = {}
 
 			local menu = self:Add("DFrame")
 			menu:SetTitle(line.item.name)
-			menu:SetSize(240, 138)
+			menu:SetSize(240, 180)
 			menu:MakePopup()
 			menu:SetPos(gui.MousePos())
 			menu.uniqueID = line.item.uniqueID
@@ -311,7 +326,7 @@ PANEL = {}
 			stock:Setup("Int", {min = 0, max = 50})
 			stock:SetValue(line.item.curStock)
 			stock.DataChanged = function(this, value)
-				itemData.stock = value
+				itemData.stock = math.Round(value)
 			end
 
 			local mode = settings:CreateRow(L"properties", L"mode")
@@ -340,7 +355,7 @@ PANEL = {}
 	function PANEL:update(uniqueID, data)
 		local vendor = nut.gui.vendor
 
-		if (self.menu.uniqueID == uniqueID) then
+		if (self.menu and self.menu.uniqueID == uniqueID) then
 			self.menu:Remove()
 		end
 

@@ -137,6 +137,10 @@ else
 	end
 
 	function ENT:canBuyItem(client, uniqueID)
+		if (!self.items[uniqueID]) then
+			return
+		end
+
 		if (hook.Run("CanVendorSellItem", client, self, uniqueID) == false) then
 			return false
 		end
@@ -144,6 +148,16 @@ else
 		if (self.stocks and self.stocks[uniqueID] and self.stocks[uniqueID][1] and self.stocks[uniqueID][1] < 1) then
 			return false
 		end
+
+		return self.items[uniqueID] != nil
+	end
+
+	function ENT:canSellItem(client, uniqueID)
+		if (hook.Run("CanVendorBuyItem", client, self, uniqueID) == false) then
+			return false
+		end
+
+		-- vendor money check here.
 
 		return self.items[uniqueID] != nil
 	end
