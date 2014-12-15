@@ -88,13 +88,19 @@ if (SERVER) then
 
 	end
 
-	function PLUGIN:OnCharTradeVendor(client, vendor, x, y, invID, price)
+	function PLUGIN:OnCharTradeVendor(client, vendor, x, y, invID, price, isSell)
 		if (invID) then
 			local inv = nut.item.inventories[invID]
 			local item = inv:getItemAt(x, y)
 
-			if (item) then
-				client:notify(L("businessPurchase", client, item.name, price or L("free", client):upper()))
+			if (isSell) then
+				if (item) then
+					client:notify(L("businessSell", client, item.name, price or L("free", client):upper()))
+				end
+			else
+				if (item) then
+					client:notify(L("businessPurchase", client, item.name, price or L("free", client):upper()))
+				end
 			end
 		end
 	end
@@ -121,7 +127,22 @@ if (SERVER) then
 		if (entity and IsValid(entity)) then
 			if (entity:canAccess(client)) then
 				if (sellToVendor) then
+					if (!entity:canSellItem(client, request)) then
+						client:notify(L("unableTrade", client))
+						return
+					end
 
+					local char = client:getChar()
+					local items = entity.items[request]
+					local charItem = char:getInv():hasItem(request)
+
+					if (charItem) then
+						local price = math.Round((items[1] or 0) * 0.5)
+
+						hook.Run("OnCharTradeVendor", client, entity, charItem.gridX, charItem.gridY, charItem.invID, price, true)
+						char:giveMoney(price)
+						charItem:remove()
+					end
 				else
 					if (!entity:canBuyItem(client, request)) then
 						client:notify(L("unableTrade", client))

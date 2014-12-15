@@ -102,6 +102,7 @@ LANGUAGE = {
 	textRemoved = "You have removed %s text(s).",
 	moneyTaken = "You found %s.",
 	businessPurchase = "You purchased %s for %s.",
+	businessSell = "You sold %s for %s.",
 	cChangeModel = "%s changed %s's model to %s.",
 	cChangeName = "%s changed %s's name to %s.",
 	playerCharBelonging = "This object is your other character's belonging.",
