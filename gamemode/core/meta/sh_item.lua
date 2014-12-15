@@ -144,6 +144,40 @@ function ITEM:hook(name, func)
 	end
 end
 
+function ITEM:remove()
+	local inv = nut.item.inventories[self.invID]
+	local x2, y2
+
+	for x = self.gridX, self.gridX + (self.width - 1) do
+		if (inv.slots[x]) then
+			for y = self.gridY, self.gridY + (self.height - 1) do
+				inv.slots[x][y] = nil
+			end
+		end
+	end
+
+	if (SERVER and !noReplication) then
+		local receiver = inv:getReceiver()
+
+		if (IsValid(receiver) and receiver:getChar() and inv.owner == receiver:getChar():getID()) then
+			netstream.Start(receiver, "invRm", self.id, inv:getID())
+		else
+			netstream.Start(receiver, "invRm", self.id, inv:getID(), inv.owner)
+		end
+
+		if (!noDelete) then
+			local item = nut.item.instances[self.id]
+
+			if (item and item.onRemoved) then
+				item:onRemoved()
+			end
+			
+			nut.db.query("DELETE FROM nut_items WHERE _itemID = "..self.id)
+			nut.item.instances[self.id] = nil
+		end
+	end
+end
+
 if (SERVER) then
 	function ITEM:getEntity()
 		local id = self:getID()
