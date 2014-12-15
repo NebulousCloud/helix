@@ -88,8 +88,10 @@ if (SERVER) then
 	netstream.Hook("vendorItemMod", function(client, entity, uniqueID, data)
 		if (client:IsAdmin() and IsValid(entity)) then
 			if (data.price) then
+				data.price = math.max(math.floor(data.price), 0)
+
 				entity.items[uniqueID] = entity.items[uniqueID] or {}
-				entity.items[uniqueID][1] = math.max(math.floor(data.price), 0)
+				entity.items[uniqueID][1] = data.price
 			end
 
 			if (data.mode) then
@@ -106,17 +108,35 @@ if (SERVER) then
 					entity.stocks = {}
 				else
 					entity.stocks[uniqueID] = entity.stocks[uniqueID] or {}
-					entity.stocks[uniqueID][1] = entity.stocks[uniqueID][1] or data.maxStock
+
+					if (!entity.stocks[uniqueID][1] or entity.stocks[uniqueID][1] > data.maxStock) then
+						data.stock = data.maxStock
+					end
+
 					entity.stocks[uniqueID][2] = data.maxStock
 				end
 			end
 
 			if (data.stock and entity.stocks[uniqueID][2] and entity.stocks[uniqueID][2] > 0) then
+				data.stock = math.Clamp(math.floor(data.stock), 0, entity.stocks[uniqueID][2])
+
 				entity.stocks[uniqueID] = entity.stocks[uniqueID] or {}
-				entity.stocks[uniqueID][1] = math.Clamp(math.floor(data.stock), 0, entity.stocks[uniqueID][2])
+				entity.stocks[uniqueID][1] = data.stock
 			end
 
 			client:EmitSound("buttons/button24.wav", 30)
+
+			local recipient = {}
+
+			for k, v in ipairs(player.GetAll()) do
+				if (v.nutVendor == entity) then
+					recipient[#recipient + 1] = v
+				end
+			end
+
+			if (#recipient > 0) then
+				netstream.Start(recipient, "vendorUpt", uniqueID, data)
+			end
 
 			timer.Create("nutSaveVendorEdits", 60, 1, function()
 				PLUGIN:saveVendors()
@@ -129,6 +149,12 @@ else
 
 		if (LocalPlayer():IsAdmin() and adminData) then
 			vgui.Create("nutVendorAdmin"):setData(entity, items, rates, money, stock, adminData)
+		end
+	end)
+
+	netstream.Hook("vendorUpt", function(uniqueID, data)
+		if (IsValid(nut.gui.vendorAdmin)) then
+			nut.gui.vendorAdmin:update(uniqueID, data)
 		end
 	end)
 end

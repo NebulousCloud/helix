@@ -142,6 +142,12 @@ vgui.Register("nutVendorItemList", PANEL, "DPanel")
 
 PANEL = {}
 	function PANEL:Init()
+		if (IsValid(nut.gui.vendorAdmin)) then
+			nut.gui.vendorAdmin:Remove()
+		end
+
+		nut.gui.vendorAdmin = self
+
 		self:SetSize(ScrW() * 0.25, ScrH() * 0.5)
 		self:MakePopup()
 		self:CenterVertical()
@@ -231,6 +237,7 @@ PANEL = {}
 			menu:SetSize(240, 138)
 			menu:MakePopup()
 			menu:SetPos(gui.MousePos())
+			menu.uniqueID = line.item.uniqueID
 
 			local settings = menu:Add("DProperties")
 			settings:Dock(FILL)
@@ -276,6 +283,44 @@ PANEL = {}
 			end
 
 			self.menu = menu
+		end
+	end
+
+	function PANEL:update(uniqueID, data)
+		if (self.menu.uniqueID == uniqueID) then
+			self.menu:Remove()
+		end
+
+		for k, v in ipairs(self.items:GetLines()) do
+			if (v.item.uniqueID == uniqueID) then
+				if (data.mode) then
+					v:SetColumnText(2, L(MODE_TEXT[data.mode]))
+					v.item.mode = data.mode
+				end
+
+				if (data.maxStock or data.stock) then
+					if (data.maxStock) then
+						if (data.maxStock < 1) then
+							data.maxStock = nil
+						end
+						
+						v.item.maxStock = data.maxStock
+					end
+
+					if (data.stock) then
+						v.item.curStock = data.stock
+					end
+
+					v:SetColumnText(4, v.item.maxStock and (v.item.curStock.."/"..v.item.maxStock) or "∞")
+				end
+
+				if (data.price) then
+					v.item.price = data.price
+					v:SetColumnText(3, data.price)
+				end
+
+				return
+			end
 		end
 	end
 vgui.Register("nutVendorAdmin", PANEL, "DFrame")
