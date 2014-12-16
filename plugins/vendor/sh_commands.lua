@@ -41,7 +41,6 @@ nut.command.add("vendorremove", {
 
 		if (IsValid(entity) and entity:GetClass() == "nut_vendor") then
 			entity:Remove()
-			PLUGIN:saveVendors()
 
 			return "@vendorDeleted"
 		else

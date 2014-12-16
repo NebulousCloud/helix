@@ -69,23 +69,30 @@ if (CLIENT) then
 
 	function ENT:Draw()
 		local bubble = self.bubble
-		local noBubble = self:getNetVar("noBubble")
-
+		
 		if (IsValid(bubble)) then
-			if (noBubble) then
-				bubble:Remove()
-			end
-
 			local realTime = RealTime()
 
 			bubble:SetRenderOrigin(self:GetPos() + Vector(0, 0, 84 + math.sin(realTime * 3) * 0.05))
 			bubble:SetRenderAngles(Angle(0, realTime * 100, 0))
-		elseif (!noBubble) then
-			self:createBubble()
 		end
 
-		self:SetEyeTarget(LocalPlayer():EyePos())
 		self:DrawModel()
+	end
+
+	function ENT:Think()
+		local noBubble = self:getNetVar("noBubble")
+
+		if (IsValid(self.bubble) and noBubble) then
+			self.bubble:Remove()
+		elseif (!IsValid(self.bubble) and !noBubble) then
+			self:createBubble()
+
+		end
+
+		self:SetNextClientThink(CurTime() + 0.25)
+
+		return true
 	end
 
 	function ENT:OnRemove()
@@ -105,7 +112,7 @@ if (CLIENT) then
 		local x, y = position.x, position.y
 		local desc = self:getNetVar("desc")
 
-		nut.util.drawText(self:getNetVar("name"), x, y, ColorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
+		nut.util.drawText(self:getNetVar("name", "John Doe"), x, y, ColorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
 
 		if (desc) then
 			nut.util.drawText(desc, x, y + 16, ColorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
@@ -193,5 +200,9 @@ else
 
 		activator.nutVendor = self
 		activator:ChatPrint(self:getNetVar("name")..": "..L(self.messages.welcome, activator))
+	end
+
+	function ENT:OnRemove()
+		nut.plugin.list.vendor:saveVendors()
 	end
 end

@@ -265,6 +265,15 @@ PANEL = {}
 		self.desc:Dock(TOP)
 		self.desc:DockMargin(0, 3, 0, 3)
 
+		self.model = self:Add("DTextEntry")
+		self.model:Dock(TOP)
+		self.model:DockMargin(0, 0, 0, 3)
+
+		self.noBubble = self:Add("DCheckBoxLabel")
+		self.noBubble:Dock(TOP)
+		self.noBubble:DockMargin(0, 0, 0, 3)
+		self.noBubble:SetText(L"vendorNoBubble")
+
 		self.items = self:Add("DListView")
 		self.items:Dock(FILL)
 		self.items:AddColumn(L"name").Header:SetTextColor(color_black)
@@ -287,6 +296,17 @@ PANEL = {}
 
 	function PANEL:setData(entity, items, rates, money, stock, adminData)
 		local lastName, lastDesc
+
+		self.model:SetText(entity:GetModel())
+		self.model.OnEnter = function(this)
+			netstream.Start("vendorMdl", this:GetValue())
+		end
+
+		self.noBubble:SetValue(entity:getNetVar("noBubble") and 1 or 0)
+		self.noBubble.OnChange = function(this, state)
+			print("BLEEP")
+			netstream.Start("vendorBbl", state)
+		end
 
 		self.name:SetText(entity:getNetVar("name"))
 		self.name.Think = function(this)

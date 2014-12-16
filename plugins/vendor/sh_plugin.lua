@@ -242,6 +242,31 @@ if (SERVER) then
 			end)
 		end
 	end)
+
+	netstream.Hook("vendorMdl", function(client, model)
+		if (client:IsAdmin() and IsValid(client.nutVendor)) then
+			client.nutVendor:SetModel(model)
+			client.nutVendor:setAnim()
+
+			if (!timer.Exists("nutSaveVendorEdits")) then
+				timer.Create("nutSaveVendorEdits", 60, 1, function()
+					PLUGIN:saveVendors()
+				end)
+			end
+		end
+	end)
+
+	netstream.Hook("vendorBbl", function(client, state)
+		if (client:IsAdmin() and IsValid(client.nutVendor)) then
+			client.nutVendor:setNetVar("noBubble", state)
+			print(state)
+			if (!timer.Exists("nutSaveVendorEdits")) then
+				timer.Create("nutSaveVendorEdits", 60, 1, function()
+					PLUGIN:saveVendors()
+				end)
+			end
+		end
+	end)
 else
 	netstream.Hook("vendorUse", function(entity, items, rates, money, stock, adminData)
 		local shop = vgui.Create("nutVendor")
