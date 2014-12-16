@@ -95,7 +95,7 @@ if (SERVER) then
 
 			if (isSell) then
 				if (item) then
-					client:notify(L("businessSell", client, item.name, price or L("free", client):upper()))
+					client:notifyLocalized(L("businessSell", client, item.name, price or L("free", client):upper()))
 				end
 			else
 				if (item) then
@@ -145,7 +145,8 @@ if (SERVER) then
 					end
 				else
 					if (!entity:canBuyItem(client, request)) then
-						client:notify(L("unableTrade", client))
+						client:notifyLocalized("unableTrade")
+
 						return
 					end
 
@@ -156,7 +157,7 @@ if (SERVER) then
 					if (x != false) then
 						char:takeMoney(items[1] or 0)
 
-						if (entity.stocks and entity.stocks[request] and entity.stocks[request][1]) then
+						if (entity.stocks and entity.stocks[request] and entity.stocks[request][1] and entity.stocks[request][2] and entity.stocks[request][2] > 0) then
 							local stock = entity.stocks[request][1]
 							entity.stocks[request][1] = math.max(stock - 1, 0)
 
@@ -170,13 +171,13 @@ if (SERVER) then
 							end
 
 							if (#recipient > 0) then
-								-- MUST UPDATE STOCK AFTER PURCHASE
+								netstream.Start(recipient, "vendorStock", request, entity.stocks[request][1])
 							end
 						end
 
 						hook.Run("OnCharTradeVendor", client, entity, x, y, bagInv, items[1])
 					else
-						client:notify(L(y, client))
+						client:notifyLocalized(y)
 					end
 				end
 			end
@@ -265,6 +266,17 @@ else
 
 		if (IsValid(nut.gui.vendor)) then
 			nut.gui.vendor:setVendor()
+			print("Hi")
+		end
+	end)
+
+	netstream.Hook("vendorStock", function(uniqueID, count)
+		if (IsValid(nut.gui.vendor)) then
+			nut.gui.vendor:updateStock(uniqueID, count)
+		end
+
+		if (IsValid(nut.gui.vendorAdmin)) then
+			nut.gui.vendorAdmin:update(uniqueID, {stock = count})
 		end
 	end)
 end

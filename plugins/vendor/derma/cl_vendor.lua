@@ -44,6 +44,7 @@ local PANEL = {}
 		self.buying.action:SetText(L"sell")
 
 		self.tally = {}
+		self.itemPanels = {}
 
 		for k, v in pairs(LocalPlayer():getChar():getInv():getItems()) do
 			if (v.base == "base_bags") then
@@ -56,14 +57,20 @@ local PANEL = {}
 		self.selling.action.DoClick = function()
 			if (self.entity) then
 				local selectedItem = nut.gui.vendor.activeItem
-				netstream.Start("ventorItemTrade", self.entity, selectedItem.uniqueID, false)
+
+				if (IsValid(selectedItem) and !selectedItem.isSelling) then
+					netstream.Start("ventorItemTrade", self.entity, selectedItem.uniqueID)
+				end
 			end
 		end
 
 		self.buying.action.DoClick = function()
 			if (self.entity) then
 				local selectedItem = nut.gui.vendor.activeItem
-				netstream.Start("ventorItemTrade", self.entity, selectedItem.uniqueID, true)
+
+				if (IsValid(selectedItem) and selectedItem.isSelling) then
+					netstream.Start("ventorItemTrade", self.entity, selectedItem.uniqueID, true)
+				end
 			end
 		end
 	end
@@ -75,6 +82,7 @@ local PANEL = {}
 		money = money or self.rates or 0
 		stocks = stocks or self.stocks or {}
 
+		self.itemPanels = {}
 		self.selling.items:Clear()
 		self.buying.items:Clear()
 
@@ -91,7 +99,10 @@ local PANEL = {}
 					continue
 				end
 				
-				self.buying:addItem(k, v)
+				local panel = self.buying:addItem(k, v)
+				panel.isSelling = true
+
+				table.insert(self.itemPanels, panel)
 				count = count + 1
 			end
 
@@ -109,7 +120,11 @@ local PANEL = {}
 				if (items[k] and items[k][2] and items[k][2] > 0) then
 					local amount = stocks and stocks[k] and stocks[k][1] or nil
 
-					self.selling:addItem(k, amount)
+					if (amount and amount < 1) then
+						continue
+					end
+
+					table.insert(self.itemPanels, self.selling:addItem(k, amount))
 					count = count + 1
 				end
 			end
@@ -127,6 +142,29 @@ local PANEL = {}
 			self.rates = rates
 			self.money = money
 			self.stocks = stocks
+		end
+	end
+
+	function PANEL:updateStock(uniqueID, count)
+		local itemTable = nut.item.list[uniqueID]
+
+		if (!itemTable) then
+			return
+		end
+
+		for k, v in ipairs(self.itemPanels) do
+			if (!v.isSelling and v.uniqueID == uniqueID) then
+				v.name:SetText(itemTable.name.. " ("..count..")")
+
+				self.stocks[uniqueID] = self.stocks[uniqueID] or {}
+				self.stocks[uniqueID][1] = count
+
+				if (count < 1) then
+					self:setVendor()
+				end
+
+				return
+			end
 		end
 	end
 vgui.Register("nutVendor", PANEL, "DFrame")
@@ -199,6 +237,8 @@ PANEL = {}
 		panel.overlay.DoClick = function(this)
 			nut.gui.vendor.activeItem = panel
 		end
+
+		return panel
 	end
 
 	function PANEL:OnRemove()
