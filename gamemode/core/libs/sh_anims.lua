@@ -329,6 +329,8 @@ do
 	local playerMeta = FindMetaTable("Player")
 
 	function playerMeta:forceSequence(sequence, callback, time, noFreeze)
+		hook.Run("OnPlayerEnterSequence", self, sequence, callback, time, noFreeze)
+
 		if (!sequence) then
 			return netstream.Start(nil, "seqSet", self)
 		end
@@ -362,6 +364,8 @@ do
 	end
 
 	function playerMeta:leaveSequence()
+		hook.Run("OnPlayerLeaveSequence", self)
+
 		netstream.Start(nil, "seqSet", self)
 
 		self:SetMoveType(MOVETYPE_WALK)

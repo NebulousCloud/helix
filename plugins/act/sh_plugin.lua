@@ -89,6 +89,10 @@ function PLUGIN:UpdateAnimation(client, moveData)
 	end
 end
 
+function PLUGIN:OnPlayerLeaveSequence(client)
+	client:setNetVar("actAng")
+end
+
 function PLUGIN:ShouldDrawLocalPlayer(client)
 	if (client:getNetVar("actAng")) then
 		return true
