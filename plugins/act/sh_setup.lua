@@ -35,8 +35,11 @@ local function facingWallBack(client)
 	end
 end
 
+ACT_ENDSEQ = 0
+ACT_STARTSEQ = 1
+
 PLUGIN.acts["sit"] = {
-	["citizen_male"] = {sequence = "sit_ground", untimed = true},
+	["citizen_male"] = {sequence = "sit_ground", untimed = true, transition = { [ACT_STARTSEQ] = "Idle_to_Sit_Ground", [ACT_ENDSEQ] = "Sit_Ground_to_Idle" }},
 	["citizen_female"] = {sequence = "sit_ground", untimed = true}
 }
 PLUGIN.acts["injured"] = {
