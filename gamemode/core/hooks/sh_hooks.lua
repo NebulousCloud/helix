@@ -233,7 +233,8 @@ end
 function GM:CanPlayerUseChar(client, char)
 	if (char:getData("bannedchar") == true) then
 		if (SERVER) then
-			client:notfiy(L("charBanned", client))
+			print("bannedchar")
+			--client:notfiy(L("charBanned", client))
 		end
 		
 		return false

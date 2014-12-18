@@ -523,6 +523,7 @@ do
 			local character = nut.char.loaded[id]
 
 			if (character and character:getPlayer() == client) then
+				print(client, character)
 				local status, result = hook.Run("CanPlayerUseChar", client, character)
 
 				if (status == false) then
@@ -654,11 +655,12 @@ do
 			end
 		end)
 
-		netstream.Hook("charMenu", function(data)
+		netstream.Hook("charMenu", function(data, openNext)
 			if (data) then
 				nut.characters = data
 			end
 
+			OPENNEXT = openNext
 			vgui.Create("nutCharMenu")
 		end)
 

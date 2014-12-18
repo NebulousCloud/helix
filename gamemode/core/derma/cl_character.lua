@@ -453,6 +453,9 @@ local PANEL = {}
 				else
 					self:AlphaTo(0, 0.5, 0, function()
 						self:Remove()
+						if (OPENNEXT) then
+							vgui.Create("nutCharMenu")
+						end
 					end)
 				end
 			end, true)

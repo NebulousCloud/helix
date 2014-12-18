@@ -245,6 +245,28 @@ nut.command.add("givemoney", {
 	end
 })
 
+nut.command.add("charsetmoney", {
+	adminOnly = true,
+	syntax = "<string target> <number amount>",
+	onRun = function(client, arguments)
+		local amount = math.Round(tonumber(arguments[2]))
+		if (!amount or amount <= 0) then
+			return L("invalidArg", client, 2)
+		end
+
+		local target = nut.command.findPlayer(client, arguments[1])
+
+		if (IsValid(target)) then
+			local char = target:getChar()
+			
+			if (char) then
+				char:setMoney(amount)
+				client:notify(L("setMoney", client, target:Name(), nut.currency.get(amount)))
+			end
+		end
+	end
+})
+
 nut.command.add("dropmoney", {
 	syntax = "<string name> <string item>",
 	onRun = function(client, arguments)
