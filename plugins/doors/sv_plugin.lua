@@ -192,6 +192,10 @@ end
 
 function PLUGIN:PlayerDisconnected(client)
 	for k, v in ipairs(ents.GetAll()) do
+		if (v == client) then
+			return
+		end
+		
 		if (v:isDoor() and v:getNetVar("owner") == client) then
 			v:removeDoorAccessData()
 		end
