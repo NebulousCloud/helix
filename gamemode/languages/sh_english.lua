@@ -164,5 +164,8 @@ LANGUAGE = {
 	invalidIndex = "The Item Index is Invalid.",
 	invalidItem = "The Item Object is Invalid.",
 	invalidInventory = "The Inventory Object is Invalid.",
-	home = "Home"
+	home = "Home",
+	charKick = "%s kicked char %s.",
+	charBan = "%s banned char %s.",
+	charBanned = "This character is banned."
 }

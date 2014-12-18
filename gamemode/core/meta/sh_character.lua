@@ -113,6 +113,25 @@ if (SERVER) then
 			self.firstTimeLoaded = true
 		end
 	end
+
+	function CHAR:kick()
+		local client = self:getPlayer()
+		client:KillSilent()
+
+		local steamID = client:SteamID64()
+		local id = self:getID()
+		local isCurrentChar = self and self:getID() == id
+		
+		if (self and self.steamID == steamID) then			
+			netstream.Start(nil, "charKick", id, isCurrentChar)
+
+			if (isCurrentChar) then
+				client:setNetVar("charID", nil)
+				client:setNetVar("char", nil)
+				client:Spawn()
+			end
+		end
+	end
 end
 
 function CHAR:getPlayer()

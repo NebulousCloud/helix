@@ -176,6 +176,43 @@ nut.command.add("chargiveitem", {
 	end
 })
 
+nut.command.add("charkick", {
+	syntax = "<string name>",
+	onRun = function(client, arguments)
+		local target = nut.command.findPlayer(client, arguments[1])
+
+		if (IsValid(target)) then
+			local char = target:getChar()
+			if (char) then
+				for k, v in ipairs(player.GetAll()) do
+					v:notify(L("charKick", v, v:Name(), target:Name()))
+				end
+
+				char:kick()
+			end
+		end
+	end
+})
+
+nut.command.add("charban", {
+	syntax = "<string name>",
+	onRun = function(client, arguments)
+		local target = nut.command.findPlayer(client, arguments[1])
+
+		if (IsValid(target)) then
+			local char = target:getChar()
+			if (char) then
+				for k, v in ipairs(player.GetAll()) do
+					v:notify(L("charBan", v, v:Name(), target:Name()))
+				end
+				
+				char:setData("bannedchar", true)
+				char:kick()
+			end
+		end
+	end
+})
+
 nut.command.add("givemoney", {
 	syntax = "<number amount> [string target]",
 	onRun = function(client, arguments)

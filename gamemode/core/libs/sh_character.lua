@@ -523,10 +523,12 @@ do
 			local character = nut.char.loaded[id]
 
 			if (character and character:getPlayer() == client) then
-				local status, result = hook.Run("CanPlayerUseChar", character)
+				local status, result = hook.Run("CanPlayerUseChar", client, character)
 
 				if (status == false) then
-					return client:ChatPrint(result)
+					netstream.Start(client, "charMenu")
+
+					return
 				end
 
 				local currentChar = client:getChar()
@@ -680,6 +682,16 @@ do
 						nut.gui.char:setupCharList()
 					end
 				end
+			end
+
+			if (isCurrentChar and !IsValid(nut.gui.char)) then
+				vgui.Create("nutCharMenu")
+			end
+		end)
+
+		netstream.Hook("charKick", function(id, isCurrentChar)
+			if (nut.gui.menu and nut.gui.menu:IsVisible()) then
+				nut.gui.menu:Remove()
 			end
 
 			if (isCurrentChar and !IsValid(nut.gui.char)) then
