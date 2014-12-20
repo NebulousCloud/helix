@@ -168,5 +168,5 @@ LANGUAGE = {
 	charKick = "%s kicked char %s.",
 	charBan = "%s banned char %s.",
 	charBanned = "This character is banned.",
-	setMoney = "You have set %s's money to %s."
+	setMoney = "You have set %s's money to %s.",
 }

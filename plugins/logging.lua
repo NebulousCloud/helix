@@ -18,16 +18,17 @@ PLUGIN.author = "Chessnut"
 PLUGIN.desc = "You can modfiy the logging text/lists on this plugin."
  
 if (SERVER) then
-    function PLUGIN:CharacterLoaded()
-        nut.log.add("%s loaded char %s.")
+    local L = Format
+    function PLUGIN:CharacterLoaded(client, id)
+        nut.log.add(L("%s loaded char %s.", client, id))
     end
 
     function PLUGIN:OnCharDelete(client, id)
-        nut.log.add("%s deleted char %s.", FLAG_WARNING)
+        nut.log.add(L("%s deleted char %s.", client, id), FLAG_WARNING)
     end
 
     function PLUGIN:OnPlayerObserve(client, isObserving)
-        nut.log.add("%s " .. (isObserving and "started observing" or "quit observing"))
+        nut.log.add(L("%s " .. (isObserving and "is now observing" or "quit observing"), client:Name()))
     end
 
     local logInteractions = {
@@ -53,7 +54,7 @@ if (SERVER) then
             if (!item) then
                 return
             end
-            nut.log.add(Format("%s did %s on %s.", client:Name(), action, item.name))
+            nut.log.add(L("%s, %s -> %s.", client:Name(), action, item.name))
         end
     end
 end
