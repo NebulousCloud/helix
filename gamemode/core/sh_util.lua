@@ -57,6 +57,25 @@ function nut.util.includeDir(directory, fromLua)
 	end
 end
 
+-- Returns a table of admin players
+function nut.util.getAdmins(isSuper)
+	local admins = {}
+
+	for k, v in ipairs(player.GetAll()) do
+		if (isSuper) then
+			if (v:IsSuperAdmin()) then
+				table.insert(admins, v)
+			end
+		else
+			if (v:IsAdmin()) then
+				table.insert(admins, v)
+			end
+		end
+	end
+
+	return admins
+end
+
 -- Returns a single cached copy of a material or creates it if it doesn't exist.
 function nut.util.getMaterial(materialPath)
 	-- Cache the material.

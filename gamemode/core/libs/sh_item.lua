@@ -531,6 +531,8 @@ do
 				return
 			end
 
+			hook.Run("OnPlayerInteractItem", client, action, item)
+
 			if (type(item) == "Entity") then
 				if (IsValid(item)) then
 					local entity = item

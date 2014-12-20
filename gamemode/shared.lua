@@ -15,7 +15,7 @@
 
 -- Define gamemode information.
 GM.Name = "NutScript 1.1"
-GM.Author = "Chessnut"
+GM.Author = "Chessnut and Black Tea"
 GM.Website = "http://chessnut.info"
 
 -- Fix for client:SteamID64() returning nil when in single-player.

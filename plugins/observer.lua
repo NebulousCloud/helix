@@ -35,6 +35,7 @@ else
 				client:DrawShadow(false)
 				-- Don't allow the player to get hurt.
 				client:GodEnable()
+				hook.Run("OnPlayerObserve", client, state)
 			else
 				if (client.nutObsData) then
 					-- Move they player back if they want.
@@ -61,6 +62,7 @@ else
 				client:DrawShadow(true)
 				-- Let the player take damage again.
 				client:GodDisable()
+				hook.Run("OnPlayerObserve", client, state)
 			end
 		end
 	end
