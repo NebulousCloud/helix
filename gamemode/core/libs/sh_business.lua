@@ -22,7 +22,7 @@ if (SERVER) then
 			return false
 		end
 
-		local price = hook.Run("CanPlayerUseBusiness", char, id)
+		local price = hook.Run("CanPlayerUseBusiness", client, id)
 
 		if (price == false) then
 			return false
@@ -39,7 +39,7 @@ if (SERVER) then
 		char:takeMoney(price)
 		client:notify(L("businessPurchase", client, item.name, price > 0 and nut.currency.get(price) or L"free":upper()))
 
-		hook.Run("OnPlayerUseBusiness", char, item)
+		hook.Run("OnPlayerUseBusiness", client, item)
 	end)
 
 	netstream.Hook("bizBuy", function(client, items)

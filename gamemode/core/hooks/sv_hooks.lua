@@ -408,9 +408,10 @@ function GM:GetGameDescription()
 	return "NS - "..(SCHEMA and SCHEMA.name or "Unknown")
 end
 
-function GM:CanPlayerUseBusiness(char, id)
+function GM:CanPlayerUseBusiness(client, id)
 	local item = nut.item.list[id]
 	local price = item.price or 0
+	local char = client:getChar()
 
 	if (!item) then
 		client:notify(L("itemNoExit", client))
@@ -435,7 +436,7 @@ function GM:CanPlayerUseBusiness(char, id)
 	return price
 end
 
-function GM:OnPlayerUseBusiness(char, item)
+function GM:OnPlayerUseBusiness(client, item)
 	-- You can manipulate purchased items with this hook.
 	-- does not requires any kind of return.
 	-- ex) item:setData("businessItem", true)
