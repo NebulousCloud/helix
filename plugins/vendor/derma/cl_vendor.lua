@@ -41,6 +41,17 @@ local PANEL = {}
 		self.buying:SetWide(self:GetWide() * 0.5 - 7)
 		self.buying:SetDrawBackground(true)
 		self.buying.title:SetText(LocalPlayer():Name())
+		self.buying.title.Think = function(this)
+			if ((this.nutNextTick or 0) < CurTime()) then
+				local newText = LocalPlayer():Name().. " ("..nut.currency.symbol..LocalPlayer():getChar():getMoney()..")"
+
+				if (this:GetText() != newText) then
+					this:SetText(newText)
+				end
+
+				this.nutNextTick = CurTime() + 0.2
+			end
+		end
 		self.buying.action:SetText(L"sell")
 
 		self.tally = {}
@@ -88,6 +99,19 @@ local PANEL = {}
 
 		if (IsValid(entity)) then
 			self.selling.title:SetText(entity:getNetVar("name"))
+			self.selling.title.Think = function(this)
+				if ((this.nutNextTick or 0) < CurTime()) then
+					local money = entity:getNetVar("money")
+					local newText = entity:getNetVar("name")..(money and " ("..nut.currency.symbol..money..")" or "")
+
+					if (this:GetText() != newText) then
+						this:SetText(newText)
+					end
+
+					this.nutNextTick = CurTime() + 0.2
+				end
+			end
+
 			self:SetTitle(entity:getNetVar("name"))
 
 			local count = 0
@@ -99,10 +123,7 @@ local PANEL = {}
 					continue
 				end
 				
-				local panel = self.buying:addItem(k, v)
-				panel.isSelling = true
-
-				table.insert(self.itemPanels, panel)
+				self.buying:addItem(k, v).isSelling = true
 				count = count + 1
 			end
 
@@ -124,7 +145,7 @@ local PANEL = {}
 						continue
 					end
 
-					table.insert(self.itemPanels, self.selling:addItem(k, amount))
+					self.selling:addItem(k, amount)
 					count = count + 1
 				end
 			end
@@ -195,13 +216,28 @@ PANEL = {}
 		self.action:SetTall(32)
 		self.action:SetFont("nutMediumFont")
 		self.action:SetExpensiveShadow(1, Color(0, 0, 0, 150))
+
+		self.itemPanels = {}
 	end
 
-	function PANEL:addItem(uniqueID, count)
+	function PANEL:addItem(uniqueID, count, isBuying)
 		local itemTable = nut.item.list[uniqueID]
 
 		if (!itemTable) then
 			return
+		end
+
+		local oldPanel = self.itemPanels[uniqueID]
+
+		if (IsValid(oldPanel)) then
+			count = count or (oldPanel.count + 1)
+
+			oldPanel.count = count
+			oldPanel.name:SetText(itemTable.name..(count and " ("..count..")" or ""))
+
+			return oldPanel
+		elseif (isBuying) then
+			count = count or 1
 		end
 
 		local color_dark = Color(0, 0, 0, 80)
@@ -215,6 +251,7 @@ PANEL = {}
 			surface.DrawRect(0, 0, w, h)
 		end
 		panel.uniqueID = itemTable.uniqueID
+		panel.count = count
 
 		panel.icon = panel:Add("SpawnIcon")
 		panel.icon:SetPos(2, 2)
@@ -238,6 +275,9 @@ PANEL = {}
 			nut.gui.vendor.activeItem = panel
 		end
 
+		self.itemPanels[uniqueID] = panel
+		table.insert(nut.gui.vendor.itemPanels, panel)
+
 		return panel
 	end
 
@@ -254,6 +294,7 @@ PANEL = {}
 
 		nut.gui.vendorAdmin = self
 
+		self:SetTitle(L"vendorSettings")
 		self:SetSize(ScrW() * 0.25, ScrH() * 0.5)
 		self:MakePopup()
 		self:CenterVertical()

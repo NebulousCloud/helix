@@ -124,6 +124,12 @@ if (SERVER) then
 	end)
 
 	netstream.Hook("ventorItemTrade", function(client, entity, request, sellToVendor)
+		local itemTable = nut.item.list[request]
+
+		if (!itemTable) then
+			return
+		end
+
 		if (entity and IsValid(entity)) then
 			if (entity:canAccess(client)) then
 				if (sellToVendor) then
@@ -142,6 +148,8 @@ if (SERVER) then
 						hook.Run("OnCharTradeVendor", client, entity, charItem.gridX, charItem.gridY, charItem.invID, price, true)
 						char:giveMoney(price)
 						charItem:remove()
+
+						netstream.Start(client, "vendorTraded", request)
 					end
 				else
 					if (!entity:canBuyItem(client, request)) then
@@ -155,7 +163,7 @@ if (SERVER) then
 					local x, y, bagInv = char:getInv():add(request)
 
 					if (x != false) then
-						char:takeMoney(items[1] or 0)
+						char:takeMoney(items[1] or itemTable.price or 0)
 
 						if (entity.stocks and entity.stocks[request] and entity.stocks[request][1] and entity.stocks[request][2] and entity.stocks[request][2] > 0) then
 							local stock = entity.stocks[request][1]
@@ -176,6 +184,7 @@ if (SERVER) then
 						end
 
 						hook.Run("OnCharTradeVendor", client, entity, x, y, bagInv, items[1])
+						netstream.Start(client, "vendorTraded", request, true)
 					else
 						client:notifyLocalized(y)
 					end
@@ -259,7 +268,7 @@ if (SERVER) then
 	netstream.Hook("vendorBbl", function(client, state)
 		if (client:IsAdmin() and IsValid(client.nutVendor)) then
 			client.nutVendor:setNetVar("noBubble", state)
-			print(state)
+
 			if (!timer.Exists("nutSaveVendorEdits")) then
 				timer.Create("nutSaveVendorEdits", 60, 1, function()
 					PLUGIN:saveVendors()
@@ -301,6 +310,29 @@ else
 
 		if (IsValid(nut.gui.vendorAdmin)) then
 			nut.gui.vendorAdmin:update(uniqueID, {stock = count})
+		end
+	end)
+
+	netstream.Hook("vendorTraded", function(uniqueID, isBuying)
+		if (IsValid(nut.gui.vendor)) then
+
+			if (isBuying) then
+				nut.gui.vendor.buying:addItem(uniqueID, nil, true).isSelling = true
+			else
+				local panel = nut.gui.vendor.buying.itemPanels[uniqueID]
+
+				if (IsValid(panel)) then
+					local count = panel.count - 1
+						panel.name:SetText(nut.item.list[uniqueID].name..(count and " ("..count..")" or ""))
+					panel.count = count
+
+					if (count < 1) then
+						local parent = panel:GetParent()
+							panel:Remove()
+						parent:InvalidateLayout()
+					end
+				end
+			end
 		end
 	end)
 end
