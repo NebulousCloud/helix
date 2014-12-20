@@ -117,7 +117,7 @@ local PANEL = {}
 			count = 0
 
 			for k, v in SortedPairs(items) do
-				if (items[k] and items[k][2] and items[k][2] > 0) then
+				if (items[k] and items[k][2] and items[k][2] == VENDOR_SELL or items[k][2] == VENDOR_BOTH) then
 					local amount = stocks and stocks[k] and stocks[k][1] or nil
 
 					if (amount and amount < 1) then
@@ -304,7 +304,6 @@ PANEL = {}
 
 		self.noBubble:SetValue(entity:getNetVar("noBubble") and 1 or 0)
 		self.noBubble.OnChange = function(this, state)
-			print("BLEEP")
 			netstream.Start("vendorBbl", state)
 		end
 

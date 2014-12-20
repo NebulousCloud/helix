@@ -291,7 +291,6 @@ else
 
 		if (IsValid(nut.gui.vendor)) then
 			nut.gui.vendor:setVendor()
-			print("Hi")
 		end
 	end)
 

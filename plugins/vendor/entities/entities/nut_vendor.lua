@@ -184,7 +184,10 @@ else
 			for k, v in pairs(self.items) do
 				if (self:canBuyItem(activator, k)) then
 					items[k] = v
-					items[k][1] = items[k][1] or false
+
+					if (items[k][1] == nil) then
+						items[k][1] = false
+					end
 				end
 			end
 
@@ -203,6 +206,8 @@ else
 	end
 
 	function ENT:OnRemove()
-		nut.plugin.list.vendor:saveVendors()
+		if (!nut.shuttingDown) then
+			nut.plugin.list.vendor:saveVendors()
+		end
 	end
 end
