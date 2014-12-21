@@ -55,7 +55,6 @@ local PANEL = {}
 		self.buying.action:SetText(L"sell")
 
 		self.tally = {}
-		self.itemPanels = {}
 
 		for k, v in pairs(LocalPlayer():getChar():getInv():getItems()) do
 			if (v.base == "base_bags") then
@@ -92,15 +91,21 @@ local PANEL = {}
 		money = money or self.money or 0
 		stocks = stocks or self.stocks or {}
 
-		self.itemPanels = {}
 		self.selling.items:Clear()
 		self.buying.items:Clear()
 
 		if (IsValid(entity)) then
+			entity.money = money
+
+			self.entity = entity
+			self.items = items
+			self.money = money
+			self.stocks = stocks
+
 			self.selling.title:SetText(entity:getNetVar("name"))
 			self.selling.title.Think = function(this)
 				if ((this.nutNextTick or 0) < CurTime()) then
-					local money = entity:getNetVar("money")
+					local money = entity.money
 					local newText = entity:getNetVar("name")..(money and " ("..nut.currency.symbol..money..")" or "")
 
 					if (this:GetText() != newText) then
@@ -156,11 +161,6 @@ local PANEL = {}
 				fault:Dock(FILL)
 				fault:SetFont("nutChatFont")
 			end
-
-			self.entity = entity
-			self.items = items
-			self.money = money
-			self.stocks = stocks
 		end
 	end
 
@@ -171,18 +171,17 @@ local PANEL = {}
 			return
 		end
 
-		for k, v in ipairs(self.itemPanels) do
-			if (!v.isSelling and v.uniqueID == uniqueID) then
-				v.name:SetText(itemTable.name.. " ("..count..")")
+		local panel = self.selling.itemPanels[uniqueID]
 
-				self.stocks[uniqueID] = self.stocks[uniqueID] or {}
-				self.stocks[uniqueID][1] = count
+		self.stocks[uniqueID] = self.stocks[uniqueID] or {}
+		self.stocks[uniqueID][1] = count
 
-				if (count < 1) then
-					self:setVendor()
-				end
+		if (IsValid(panel)) then
+			panel.name:SetText(itemTable.name.. " ("..count..")")
+			panel:Remove()
 
-				return
+			if (count < 1) then
+				self:setVendor()
 			end
 		end
 	end
@@ -273,8 +272,12 @@ PANEL = {}
 			nut.gui.vendor.activeItem = panel
 		end
 
+		local items = nut.gui.vendor.items
+		local price = items[uniqueID] and items[uniqueID][1] or itemTable.price or 0
+		local price2 = math.Round(price * 0.5)
+
+		panel.overlay:SetToolTip(L("itemPriceInfo", nut.currency.get(price), nut.currency.get(price2)))
 		self.itemPanels[uniqueID] = panel
-		table.insert(nut.gui.vendor.itemPanels, panel)
 
 		return panel
 	end
@@ -308,6 +311,21 @@ PANEL = {}
 		self.model:Dock(TOP)
 		self.model:DockMargin(0, 0, 0, 3)
 
+		self.moneyBox = self:Add("DPanel")
+		self.moneyBox:Dock(TOP)
+		self.moneyBox:DockMargin(0, 0, 0, 3)
+
+		self.money = self.moneyBox:Add("DNumberWang")
+		self.money:Dock(RIGHT)
+		self.money:SetWide(self:GetWide() * 0.6 - 4)
+		self.money:DockMargin(3, 3, 3, 3)
+
+		self.useMoney = self.moneyBox:Add("DCheckBoxLabel")
+		self.useMoney:Dock(LEFT)
+		self.useMoney:SetText(L"vendorUseMoney")
+		self.useMoney:SetWide(self:GetWide() * 0.4 - 4)
+		self.useMoney:DockMargin(4, 4, 4, 4)
+
 		self.noBubble = self:Add("DCheckBoxLabel")
 		self.noBubble:Dock(TOP)
 		self.noBubble:DockMargin(3, 0, 3, 3)
@@ -335,6 +353,35 @@ PANEL = {}
 
 	function PANEL:setData(entity, items, money, stock, adminData)
 		local lastName, lastDesc
+
+		if (money) then
+			self.money:SetMinMax(0, 1000000000)
+			self.money:SetValue(money)
+			self.useMoney:SetChecked(1)
+		end
+
+		self.money.OnValueChanged = function(this, value)
+			if (this.noSend) then
+				this.noSend = nil
+
+				return
+			end
+
+			value = math.max(value, 0)
+
+			if (money != value) then
+				netstream.Start("vendorEdit", entity, "money", value)
+				money = value
+			end
+		end
+
+		self.useMoney.OnChange = function(this, state)
+			if (state) then
+				netstream.Start("vendorEdit", entity, "money", math.max(tonumber(self.money:GetValue()) or 0, 0))
+			else
+				netstream.Start("vendorEdit", entity, "money")
+			end
+		end
 
 		self.model:SetText(entity:GetModel())
 		self.model.OnEnter = function(this)
@@ -395,6 +442,7 @@ PANEL = {}
 			end
 
 			local itemData = {}
+			local loaded = false
 
 			local menu = self:Add("DFrame")
 			menu:SetTitle(line.item.name)
@@ -410,6 +458,10 @@ PANEL = {}
 			price:Setup("Int", {min = 0, max = 1000})
 			price:SetValue(line.item.price)
 			price.DataChanged = function(this, value)
+				if (!loaded) then
+					return
+				end
+
 				itemData.price = value
 			end
 
@@ -417,6 +469,10 @@ PANEL = {}
 			maxStock:Setup("Int", {min = 0, max = 50})
 			maxStock:SetValue(line.item.maxStock)
 			maxStock.DataChanged = function(this, value)
+				if (!loaded) then
+					return
+				end
+				
 				itemData.maxStock = value
 			end
 
@@ -424,6 +480,10 @@ PANEL = {}
 			stock:Setup("Int", {min = 0, max = 50})
 			stock:SetValue(line.item.curStock)
 			stock.DataChanged = function(this, value)
+				if (!loaded) then
+					return
+				end
+				
 				itemData.stock = math.Round(value)
 			end
 
@@ -434,6 +494,10 @@ PANEL = {}
 			mode:AddChoice(MODE_TEXT[VENDOR_SELL], VENDOR_SELL)
 			mode:AddChoice(MODE_TEXT[VENDOR_BOTH], VENDOR_BOTH)
 			mode.DataChanged = function(this, value)
+				if (!loaded) then
+					return
+				end
+				
 				itemData.mode = value
 			end
 
@@ -442,9 +506,17 @@ PANEL = {}
 			save:DockMargin(0, 3, 0, 0)
 			save:SetText(L"save")
 			save.DoClick = function(this)
+				if (!loaded) then
+					return
+				end
+				
 				netstream.Start("vendorItemMod", entity, line.item.uniqueID, itemData)
 				menu:Remove()
 			end
+
+			timer.Simple(0, function()
+				loaded = true
+			end)
 
 			self.menu = menu
 		end

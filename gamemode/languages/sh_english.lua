@@ -169,4 +169,5 @@ LANGUAGE = {
 	charBan = "%s banned char %s.",
 	charBanned = "This character is banned.",
 	setMoney = "You have set %s's money to %s.",
+	itemPriceInfo = "You can purchase this item for %s.\nYou can sell this item for %s"
 }

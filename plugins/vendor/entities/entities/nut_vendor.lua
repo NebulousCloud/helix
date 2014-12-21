@@ -102,11 +102,11 @@ if (CLIENT) then
 
 	local TEXT_OFFSET = Vector(0, 0, 20)
 
-	function ENT:onShouldDrawEntityInfo()
+	function ENT:onShouldDrawselfInfo()
 		return true
 	end
 
-	function ENT:onDrawEntityInfo(alpha)
+	function ENT:onDrawselfInfo(alpha)
 		local position = (self:LocalToWorld(self:OBBCenter()) + TEXT_OFFSET):ToScreen()
 		local x, y = position.x, position.y
 		local desc = self:getNetVar("desc")
@@ -118,6 +118,40 @@ if (CLIENT) then
 		end
 	end
 else
+	function ENT:setMoney(value)
+		if (value) then
+			value = math.max(tonumber(value) or 0, 0)
+		end
+
+		local recipient = {}
+
+		for k, v in ipairs(player.GetAll()) do
+			if (v.nutVendor == self) then
+				recipient[#recipient + 1] = v
+			end
+		end
+
+		if (#recipient > 0) then
+			netstream.Start(recipient, "vendorMoney", value)
+		end
+
+		self.money = value
+	end
+
+	function ENT:giveMoney(value)
+		if (value == 0) then
+			return
+		end
+
+		if (self.money) then
+			self:setMoney(self.money + value)
+		end
+	end
+
+	function ENT:takeMoney(value)
+		self:giveMoney(-value)
+	end
+
 	function ENT:canAccess(client)
 		if (client:IsAdmin()) then
 			return true
@@ -142,7 +176,7 @@ else
 		return true
 	end
 
-	function ENT:canBuyItem(client, uniqueID)
+	function ENT:canBuyItem(client, uniqueID, ignoreStock)
 		if (!self.items[uniqueID]) then
 			return
 		end
@@ -151,19 +185,23 @@ else
 			return false
 		end
 
-		if (self.stocks and self.stocks[uniqueID] and self.stocks[uniqueID][1] and self.stocks[uniqueID][1] < 1) then
+		if (!ignoreStock and self.stocks and self.stocks[uniqueID] and self.stocks[uniqueID][1] and self.stocks[uniqueID][1] < 1) then
 			return false
 		end
 
-		return self.items[uniqueID] != nil
+		return true
 	end
 
 	function ENT:canSellItem(client, uniqueID)
-		if (hook.Run("CanVendorBuyItem", client, self, uniqueID) == false) then
+		local itemTable = nut.item.list[uniqueID]
+
+		if (!itemTable) then
 			return false
 		end
 
-		-- vendor money check here.
+		if (hook.Run("CanVendorBuyItem", client, self, uniqueID) == false) then
+			return false
+		end
 
 		return self.items[uniqueID] != nil
 	end
@@ -179,9 +217,11 @@ else
 			return
 		end
 
+		local money = self.money
+
 		local items = {}
 			for k, v in pairs(self.items) do
-				if (self:canBuyItem(activator, k)) then
+				if (self:canBuyItem(activator, k, true)) then
 					items[k] = v
 
 					if (items[k][1] == nil) then
@@ -198,7 +238,11 @@ else
 					self.classes
 				}
 			end
-		netstream.Start(activator, "vendorUse", self, items, self.money, self.stocks, adminData)
+
+			if (money == nil) then
+				money = false
+			end
+		netstream.Start(activator, "vendorUse", self, items, money, self.stocks, adminData)
 
 		activator.nutVendor = self
 		activator:ChatPrint(self:getNetVar("name")..": "..L(self.messages.welcome, activator))
@@ -209,4 +253,8 @@ else
 			nut.plugin.list.vendor:saveVendors()
 		end
 	end
+end
+
+function ENT:hasMoney(value)
+	return self.money >= value
 end

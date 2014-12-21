@@ -82,22 +82,24 @@ if (SERVER) then
 		return true
 	end
 
-	function PLUGIN:CanVendorSellItem(client, vendor, itemID)
-
-	end
-
 	function PLUGIN:OnCharTradeVendor(client, vendor, x, y, invID, price, isSell)
 		if (invID) then
 			local inv = nut.item.inventories[invID]
 			local item = inv:getItemAt(x, y)
 
+			if (price) then
+				price = nut.currency.get(price)
+			else
+				price = L("free", client):upper()
+			end
+
 			if (isSell) then
 				if (item) then
-					client:notifyLocalized(L("businessSell", client, item.name, price or L("free", client):upper()))
+					client:notifyLocalized(L("businessSell", client, item.name, price))
 				end
 			else
 				if (item) then
-					client:notify(L("businessPurchase", client, item.name, price or L("free", client):upper()))
+					client:notify(L("businessPurchase", client, item.name, price))
 				end
 			end
 		end
@@ -111,8 +113,8 @@ if (SERVER) then
 		if (client:IsAdmin() and IsValid(entity)) then
 			if (key == "name" or key == "desc") then
 				entity:setNetVar(key, value)
-			elseif (entity[key]) then
-				entity[key] = value
+			elseif (key == "money") then
+				entity:setMoney(value)
 			end
 
 			timer.Create("nutSaveVendorEdits", 60, 1, function()
@@ -132,7 +134,8 @@ if (SERVER) then
 			if (entity:canAccess(client)) then
 				if (sellToVendor) then
 					if (!entity:canSellItem(client, request)) then
-						client:notify(L("unableTrade", client))
+						client:notifyLocalized("unableTrade")
+
 						return
 					end
 
@@ -141,11 +144,37 @@ if (SERVER) then
 					local charItem = char:getInv():hasItem(request)
 
 					if (charItem) then
-						local price = math.Round((items[1] or 0) * 0.5)
+						local price = math.Round((items[1] or itemTable.price or 0) * 0.5)
 
-						hook.Run("OnCharTradeVendor", client, entity, charItem.gridX, charItem.gridY, charItem.invID, price, true)
+						if (!entity:hasMoney(price)) then
+							client:notifyLocalized("unableTrade")
+
+							return
+						end
+
+						if (entity.stocks and entity.stocks[request] and entity.stocks[request][1] and entity.stocks[request][2] and entity.stocks[request][2] > 0) then
+							local stock = entity.stocks[request][1]
+							entity.stocks[request][1] = math.max(stock + 1, 0)
+
+
+							local recipient = {}
+
+							for k, v in ipairs(player.GetAll()) do
+								if (v.nutVendor == entity) then
+									recipient[#recipient + 1] = v
+								end
+							end
+
+							if (#recipient > 0) then
+								netstream.Start(recipient, "vendorStock", request, entity.stocks[request][1])
+							end
+						end
+
+						hook.Run("OnCharTradeVendor", client, entity, charItem.gridX, charItem.gridY, charItem.invID, price or 0, true)
+
 						char:giveMoney(price)
 						charItem:remove()
+						entity:takeMoney(price)
 
 						netstream.Start(client, "vendorTraded", request)
 					end
@@ -161,7 +190,12 @@ if (SERVER) then
 					local x, y, bagInv = char:getInv():add(request)
 
 					if (x != false) then
-						char:takeMoney(items[1] or itemTable.price or 0)
+						local price = items[1] or itemTable.price or 0
+
+						if (price > 0) then
+							char:takeMoney(price)
+							entity:giveMoney(price)
+						end
 
 						if (entity.stocks and entity.stocks[request] and entity.stocks[request][1] and entity.stocks[request][2] and entity.stocks[request][2] > 0) then
 							local stock = entity.stocks[request][1]
@@ -181,7 +215,7 @@ if (SERVER) then
 							end
 						end
 
-						hook.Run("OnCharTradeVendor", client, entity, x, y, bagInv, items[1])
+						hook.Run("OnCharTradeVendor", client, entity, x, y, bagInv, price or 0)
 						netstream.Start(client, "vendorTraded", request, true)
 					else
 						client:notifyLocalized(y)
@@ -275,9 +309,14 @@ if (SERVER) then
 		end
 	end)
 else
-	netstream.Hook("vendorEdit", function(entity, key, value)
-		if (IsValid(entity)) then
-			entity[key] = value
+	netstream.Hook("vendorMoney", function(value)
+		if (IsValid(nut.gui.vendor) and IsValid(nut.gui.vendor.entity)) then
+			nut.gui.vendor.entity.money = value
+		end
+
+		if (IsValid(nut.gui.vendorAdmin)) then
+			nut.gui.vendorAdmin.money.noSend = true
+			nut.gui.vendorAdmin.money:SetValue(value)
 		end
 	end)
 
