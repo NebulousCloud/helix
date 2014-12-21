@@ -75,6 +75,12 @@ function GM:LoadFonts(font)
 	-- The more readable font.
 	font = "Calibri"
 
+	surface.CreateFont("nutCleanTitleFont", {
+		font = font,
+		size = 200,
+		weight = 1000
+	})
+
 	surface.CreateFont("nutHugeFont", {
 		font = font,
 		size = 72,
