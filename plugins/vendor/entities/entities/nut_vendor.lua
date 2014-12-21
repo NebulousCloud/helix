@@ -30,7 +30,6 @@ function ENT:Initialize()
 		self.items = {}
 		self.factions = {}
 		self.classes = {}
-		self.rates = {1, 0.5}
 		self.money = 0
 		self.messages = {
 			welcome = "vendorWelcome",
@@ -199,7 +198,7 @@ else
 					self.classes
 				}
 			end
-		netstream.Start(activator, "vendorUse", self, items, self.rates, self.money, self.stocks, adminData)
+		netstream.Start(activator, "vendorUse", self, items, self.money, self.stocks, adminData)
 
 		activator.nutVendor = self
 		activator:ChatPrint(self:getNetVar("name")..": "..L(self.messages.welcome, activator))

@@ -86,11 +86,10 @@ local PANEL = {}
 		end
 	end
 
-	function PANEL:setVendor(entity, items, rates, money, stocks)
+	function PANEL:setVendor(entity, items, money, stocks)
 		entity = entity or self.entity
 		items = items or self.items or {}
-		rates = rates or self.rates or {1, 1}
-		money = money or self.rates or 0
+		money = money or self.money or 0
 		stocks = stocks or self.stocks or {}
 
 		self.itemPanels = {}
@@ -160,7 +159,6 @@ local PANEL = {}
 
 			self.entity = entity
 			self.items = items
-			self.rates = rates
 			self.money = money
 			self.stocks = stocks
 		end
@@ -312,7 +310,7 @@ PANEL = {}
 
 		self.noBubble = self:Add("DCheckBoxLabel")
 		self.noBubble:Dock(TOP)
-		self.noBubble:DockMargin(0, 0, 0, 3)
+		self.noBubble:DockMargin(3, 0, 3, 3)
 		self.noBubble:SetText(L"vendorNoBubble")
 
 		self.items = self:Add("DListView")
@@ -335,7 +333,7 @@ PANEL = {}
 	MODE_TEXT[VENDOR_SELL] = "vendorSell"
 	MODE_TEXT[VENDOR_BOTH] = "vendorBoth"
 
-	function PANEL:setData(entity, items, rates, money, stock, adminData)
+	function PANEL:setData(entity, items, money, stock, adminData)
 		local lastName, lastDesc
 
 		self.model:SetText(entity:GetModel())

@@ -37,7 +37,6 @@ if (SERVER) then
 					items = v.items,
 					factions = v.factions,
 					classes = v.classes,
-					rates = v.rates,
 					money = v.money,
 					msg = v.messages,
 					stocks = v.stocks
@@ -60,7 +59,6 @@ if (SERVER) then
 			entity.items = v.items or {}
 			entity.factions = v.factions or {}
 			entity.classes = v.classes or {}
-			entity.rates = v.rates
 			entity.money = v.money
 			entity.msg = v.messages
 			entity.stocks = v.stocks
@@ -277,13 +275,19 @@ if (SERVER) then
 		end
 	end)
 else
-	netstream.Hook("vendorUse", function(entity, items, rates, money, stock, adminData)
+	netstream.Hook("vendorEdit", function(entity, key, value)
+		if (IsValid(entity)) then
+			entity[key] = value
+		end
+	end)
+
+	netstream.Hook("vendorUse", function(entity, items, money, stock, adminData)
 		local shop = vgui.Create("nutVendor")
-		shop:setVendor(entity, items, rates, money, stock)
+		shop:setVendor(entity, items, money, stock)
 
 		if (LocalPlayer():IsAdmin() and adminData) then
 			local admin = vgui.Create("nutVendorAdmin")
-			admin:setData(entity, items, rates, money, stock, adminData)
+			admin:setData(entity, items, money, stock, adminData)
 			if (admin.btnClose) then
 				admin.btnClose.DoClick = function( button ) admin:Close() shop:Close() end
 			end
