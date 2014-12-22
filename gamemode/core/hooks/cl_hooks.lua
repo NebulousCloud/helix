@@ -135,6 +135,33 @@ function GM:LoadFonts(font)
 		size = 20,
 		weight = 800
 	})
+
+	-- Introduction fancy font.
+	font = "Cambria"
+
+	surface.CreateFont("nutIntroTitleFont", {
+		font = font,
+		size = 200,
+		weight = 1000
+	})
+
+	surface.CreateFont("nutIntroBigFont", {
+		font = font,
+		size = 48,
+		weight = 1000
+	})
+
+	surface.CreateFont("nutIntroMediumFont", {
+		font = font,
+		size = 28,
+		weight = 1000
+	})
+
+	surface.CreateFont("nutIntroSmallFont", {
+		font = font,
+		size = 22,
+		weight = 1000
+	})
 end
 
 local LOWERED_ANGLES = Angle(30, -30, -25)
