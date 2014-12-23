@@ -133,19 +133,19 @@ if (SERVER) then
 		if (entity and IsValid(entity)) then
 			if (entity:canAccess(client)) then
 				if (sellToVendor) then
-					if (!entity:canSellItem(client, request)) then
+					local items = entity.items[request]
+					local price = math.Round((items[1] or itemTable.price or 0) * 0.5)
+					
+					if (!entity:hasMoney(price) or !entity:canSellItem(client, request)) then
 						client:notifyLocalized("unableTrade")
 
 						return
 					end
 
 					local char = client:getChar()
-					local items = entity.items[request]
 					local charItem = char:getInv():hasItem(request)
 
 					if (charItem) then
-						local price = math.Round((items[1] or itemTable.price or 0) * 0.5)
-
 						if (!entity:hasMoney(price)) then
 							client:notifyLocalized("unableTrade")
 

@@ -29,7 +29,7 @@ local PANEL = {}
 		self:SetSize(ScrW(), ScrH())
 		self:SetZPos(9999)
 
-		timer.Simple(0.05, function()
+		timer.Simple(0.1, function()
 			if (!IsValid(self)) then
 				return
 			end

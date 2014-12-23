@@ -343,6 +343,11 @@ PANEL = {}
 			nut.gui.vendor:SetPos(nut.gui.vendor.x + self:GetWide()*0.5, nut.gui.vendor.y)
 			self:MoveLeftOf(nut.gui.vendor, 5)
 		end
+
+		self.factions = self:Add("DButton")
+		self.factions:Dock(BOTTOM)
+		self.factions:DockMargin(0, 5, 0, 0)
+		self.factions:SetText(L"vendorFaction")
 	end
 
 	local MODE_TEXT = {}
@@ -519,6 +524,14 @@ PANEL = {}
 			end)
 
 			self.menu = menu
+		end
+
+		self.factions.DoClick = function(this)
+			local menu = vgui.Create("DFrame")
+			menu:SetTitle(L"vendorFaction")
+			menu:SetSize(380, 480)
+			menu:MakePopup()
+			menu:Center()
 		end
 	end
 
