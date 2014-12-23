@@ -59,6 +59,8 @@ function GM:PlayerInitialSpawn(client)
 			client.nutCharList = charList
 				netstream.Start(client, "charMenu", charList)
 			client.nutLoaded = true
+
+			client:setNutData("intro", true)
 		end)
 	end)
 

@@ -155,7 +155,3 @@ local PANEL = {}
 		end
 	end
 vgui.Register("nutIntro", PANEL, "EditablePanel")
-
-concommand.Add("testintro", function()
-	vgui.Create("nutIntro")
-end)
