@@ -366,7 +366,7 @@ PANEL = {}
 									if (send != false) then
 										netstream.Start("invAct", k, itemTable.id, self.invID)
 									end
-								end):SetImage(itemTable.icon or "icon16/brick.png")
+								end):SetImage(v.icon or "icon16/brick.png")
 							end
 						menu:Open()
 					itemTable.client = nil
