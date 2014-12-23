@@ -163,19 +163,17 @@ ITEM.functions.Equip = {
 	tip = "equipTip",
 	icon = "icon16/world.png",
 	onRun = function(item)
-		local inv = item.player:getChar():getInv()
+		local items = item.player:getChar():getInv():getItems()
 		item.player.carryWeapons = item.player.carryWeapons or {}
 
-		for k, v in pairs(inv.slots) do
-			for k2, v2 in pairs(v) do
-				if (v2.id != item.id) then
-					local itemTable = nut.item.instances[v2.id]
+		for k, v in pairs(items) do
+			if (v.id != item.id) then
+				local itemTable = nut.item.instances[v.id]
 
-					if (itemTable.isWeapon and item.player.carryWeapons[item.weaponCategory] and itemTable:getData("equip")) then
-						item.player:notify("You're already equipping this kind of weapon")
+				if (itemTable.isWeapon and item.player.carryWeapons[item.weaponCategory] and itemTable:getData("equip")) then
+					item.player:notify("You're already equipping this kind of weapon")
 
-						return false
-					end
+					return false
 				end
 			end
 		end
