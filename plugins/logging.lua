@@ -14,7 +14,7 @@
 --]]
 
 PLUGIN.name = "Logging"
-PLUGIN.author = "Chessnut"
+PLUGIN.author = "Black Tea"
 PLUGIN.desc = "You can modfiy the logging text/lists on this plugin."
  
 if (SERVER) then
@@ -55,7 +55,7 @@ if (SERVER) then
     function PLUGIN:OnCharTradeVendor(client, vendor, x, y, invID, price, isSell)
         local inventory = nut.item.inventories[invID]
         local itemTable = inventory:getItemAt(x, y)
-        nut.log.add(L("%s %s %s with the vendor.", client:Name(), isSell and "sold" or "purchased", itemTable.name))
+        nut.log.add(L("%s %s %s.", client:Name(), isSell and "sold" or "purchased", itemTable.name))
     end
 
     local logInteractions = {
