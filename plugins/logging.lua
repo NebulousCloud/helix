@@ -43,6 +43,21 @@ if (SERVER) then
         end
     end
 
+    function PLUGIN:OnTakeShipmentItem(client, itemClass, amount)
+        local itemTable = nut.item.list[itemClass]
+        nut.log.add(L("%s took %s from the shipment.", client:Name(), itemTable.name))
+    end
+
+    function PLUGIN:OnCreateShipment(client, shipmentEntity)
+        nut.log.add(L("%s ordered shipment.", client:Name()))
+    end
+
+    function PLUGIN:OnCharTradeVendor(client, vendor, x, y, invID, price, isSell)
+        local inventory = nut.item.inventories[invID]
+        local itemTable = inventory:getItemAt(x, y)
+        nut.log.add(L("%s %s %s with the vendor.", client:Name(), isSell and "sold" or "purchased", itemTable.name))
+    end
+
     local logInteractions = {
         ["drop"] = true,
         ["take"] = true,

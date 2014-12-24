@@ -14,34 +14,6 @@
 --]]
 
 if (SERVER) then
-	netstream.Hook("businessBuy", function(client, id)
-		local char = client:getChar()
-		local inv = char:getInv()
-
-		if (!char or !inv) then
-			return false
-		end
-
-		local price = hook.Run("CanPlayerUseBusiness", client, id)
-
-		if (price == false) then
-			return false
-		end
-
-		price = (price or 0)
-
-		local x, y = inv:add(id, 1, data)
-		local item = inv:getItemAt(x, y)
-		if (!item or item == false) then
-			return
-		end
-
-		char:takeMoney(price)
-		client:notify(L("businessPurchase", client, item.name, price > 0 and nut.currency.get(price) or L"free":upper()))
-
-		hook.Run("OnPlayerUseBusiness", client, item)
-	end)
-
 	netstream.Hook("bizBuy", function(client, items)
 		if (!client:getChar()) then
 			return
@@ -75,34 +47,6 @@ if (SERVER) then
 		end
 	end)
 
-	netstream.Hook("takeShp", function(client, entity, name, amount)
-		if (entity and entity:IsValid()) then
-			local item = entity.items[name]
-			if (amount > 0 and
-				item >= amount and
-				(item - amount) >= 0) then
-
-				local inv = client:getChar():getInv()
-				if (inv and inv:add(name, amount)) then
-					netstream.Start(client, "takeShp", name, amount)
-					entity.items[name] = item - amount
-
-					if (entity.items[name] <= 0) then
-						entity.items[name] = nil
-					end
-
-					entity:EmitSound(Format("physics/cardboard/cardboard_box_impact_hard%s.wav", math.random(1, 5)))
-
-					if (table.Count(entity.items) <= 0) then
-						entity:Break()
-					end
-				else
-					client:notify("Unable to move item.")
-				end
-			end
-		end
-	end)
-
 	netstream.Hook("shpUse", function(client, uniqueID, drop)
 		local entity = client.nutShipment
 		local itemTable = nut.item.list[uniqueID]
@@ -132,6 +76,8 @@ if (SERVER) then
 
 					--netstream.Hook("updtShp", uniqueID)
 				end
+					
+				hook.Run("OnTakeShipmentItem", client, uniqueID, amount)
 
 				entity.items[uniqueID] = entity.items[uniqueID] - 1
 
