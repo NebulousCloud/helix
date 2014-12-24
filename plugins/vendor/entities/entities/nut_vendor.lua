@@ -223,24 +223,28 @@ else
 			for k, v in pairs(self.items) do
 				if (self:canBuyItem(activator, k, true)) then
 					items[k] = v
-
-					if (items[k][1] == nil) then
-						items[k][1] = false
-					end
 				end
 			end
 
 			local adminData
 
 			if (activator:IsAdmin()) then
-				adminData = {
-					self.factions,
-					self.classes
-				}
-			end
+				local factions, classes = self.factions, self.classes
 
-			if (money == nil) then
-				money = false
+				if (table.Count(factions) == 0) then
+					factions = nil
+				end
+
+				if (table.Count(classes) == 0) then
+					classes = nil
+				end
+
+				if (factions or classes) then
+					adminData = {
+						faction = factions,
+						class = classes
+					}
+				end
 			end
 		netstream.Start(activator, "vendorUse", self, items, money, self.stocks, adminData)
 

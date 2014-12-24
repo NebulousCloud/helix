@@ -89,7 +89,10 @@ do
 			if nSize > 0 then
 				for i = 1, nSize do
 					local v = tbl[ i ];
-					if v == nil then continue end
+					if v == nil then
+						output[ #output + 1 ] = '!';
+						continue
+					end
 					local tv = type( v );
 					-- HANDLE POINTERS
 					if( tv == 'string' )then
@@ -300,6 +303,10 @@ do
 		return index, res;
 	end
 	
+	decode['!'] = function( self, index, str, cache )
+		return index, nil;
+	end
+
 	-- NUMBER
 	decode['n'] = function( self, index, str, cache )
 		index = index - 1;

@@ -529,9 +529,50 @@ PANEL = {}
 		self.factions.DoClick = function(this)
 			local menu = vgui.Create("DFrame")
 			menu:SetTitle(L"vendorFaction")
-			menu:SetSize(380, 480)
+			menu:SetSize(360, 180)
 			menu:MakePopup()
 			menu:Center()
+
+			local list = menu:Add("DScrollPanel")
+			list:Dock(FILL)
+
+			self.factionBoxes = {}
+			self.classBoxes = {}
+
+			for k, v in ipairs(nut.faction.indices) do
+				local faction = list:Add("DCheckBoxLabel")
+				faction:SetText(L(v.name))
+				faction:SetBright(true)
+				faction:Dock(TOP)
+				faction:DockMargin(0, 0, 0, 4)
+				faction.OnChange = function(this, state)
+					netstream.Start("vendorFEdit", entity, k, state)
+				end
+
+				for k2, v2 in ipairs(nut.class.list) do
+					if (v2.faction == k) then
+						local class = list:Add("DCheckBoxLabel")
+						class:SetText(L(v2.name))
+						class:Dock(TOP)
+						class:DockMargin(24, 0, 0, 2)
+						class.OnChange = function(this, state)
+							netstream.Start("vendorCEdit", entity, k, state)
+						end
+
+						if (adminData and adminData.class and adminData.class[k]) then
+							class:SetChecked(true)
+						end
+
+						self.classBoxes[k2] = class
+					end
+				end
+				PrintTable(adminData)
+				if (adminData.faction and adminData.faction[k]) then
+					faction:SetChecked(true)
+				end
+
+				self.factionBoxes[k] = faction
+			end
 		end
 	end
 

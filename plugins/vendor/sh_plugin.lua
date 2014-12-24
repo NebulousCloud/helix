@@ -135,7 +135,7 @@ if (SERVER) then
 				if (sellToVendor) then
 					local items = entity.items[request]
 					local price = math.Round((items[1] or itemTable.price or 0) * 0.5)
-					
+
 					if (!entity:hasMoney(price) or !entity:canSellItem(client, request)) then
 						client:notifyLocalized("unableTrade")
 
@@ -308,6 +308,66 @@ if (SERVER) then
 			end
 		end
 	end)
+
+	netstream.Hook("vendorFEdit", function(client, entity, index, state)
+		if (client:IsAdmin() and IsValid(entity)) then
+			state = util.tobool(state)
+
+			local faction = nut.faction.indices[index]
+
+			if (!faction) then
+				return
+			end
+
+			if (!state) then
+				state = nil
+			end
+
+			entity.factions[index] = state
+
+			local recipient = {}
+
+			for k, v in ipairs(player.GetAll()) do
+				if (v.nutVendor == entity and v:IsAdmin()) then
+					recipient[#recipient + 1] = v
+				end
+			end
+
+			if (#recipient > 0) then
+				netstream.Start(recipient, "vendorFEdit", index, state)
+			end
+		end
+	end)
+
+	netstream.Hook("vendorCEdit", function(client, entity, index, state)
+		if (client:IsAdmin() and IsValid(entity)) then
+			state = util.tobool(state)
+
+			local class = nut.class.list[index]
+
+			if (!class) then
+				return
+			end
+
+			if (!state) then
+				state = nil
+			end
+
+			entity.classes[index] = state
+
+			local recipient = {}
+
+			for k, v in ipairs(player.GetAll()) do
+				if (v.nutVendor == entity and v:IsAdmin()) then
+					recipient[#recipient + 1] = v
+				end
+			end
+
+			if (#recipient > 0) then
+				netstream.Start(recipient, "vendorCEdit", index, state)
+			end
+		end
+	end)
 else
 	netstream.Hook("vendorMoney", function(value)
 		if (IsValid(nut.gui.vendor) and IsValid(nut.gui.vendor.entity)) then
@@ -324,9 +384,9 @@ else
 		local shop = vgui.Create("nutVendor")
 		shop:setVendor(entity, items, money, stock)
 
-		if (LocalPlayer():IsAdmin() and adminData) then
+		if (LocalPlayer():IsAdmin()) then
 			local admin = vgui.Create("nutVendorAdmin")
-			admin:setData(entity, items, money, stock, adminData)
+			admin:setData(entity, items, money, stock, adminData or {})
 			if (admin.btnClose) then
 				admin.btnClose.DoClick = function( button ) admin:Close() shop:Close() end
 			end
@@ -375,6 +435,26 @@ else
 						parent:InvalidateLayout()
 					end
 				end
+			end
+		end
+	end)
+
+	netstream.Hook("vendorFEdit", function(index, state)
+		if (IsValid(nut.gui.vendorAdmin)) then
+			local factions = nut.gui.vendorAdmin.factionBoxes
+
+			if (IsValid(factions[index])) then
+				factions[index]:SetChecked(state)
+			end
+		end
+	end)
+
+	netstream.Hook("vendorCEdit", function(index, state)
+		if (IsValid(nut.gui.vendorAdmin)) then
+			local classes = nut.gui.vendorAdmin.classBoxes
+
+			if (IsValid(classes[index])) then
+				classes[index]:SetChecked(state)
 			end
 		end
 	end)
