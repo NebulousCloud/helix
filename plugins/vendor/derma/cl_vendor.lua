@@ -185,6 +185,11 @@ local PANEL = {}
 			end
 		end
 	end
+
+	function PANEL:OnRemove()
+		LocalPlayer():ChatPrint(self.entity:getNetVar("name", "John Doe")..": "..L"vendorBye")
+		netstream.Start("vendorExit")
+	end
 vgui.Register("nutVendor", PANEL, "DFrame")
 
 PANEL = {}
@@ -280,10 +285,6 @@ PANEL = {}
 		self.itemPanels[uniqueID] = panel
 
 		return panel
-	end
-
-	function PANEL:OnRemove()
-		netstream.Start("vendorExit")
 	end
 vgui.Register("nutVendorItemList", PANEL, "DPanel")
 
@@ -494,10 +495,10 @@ PANEL = {}
 
 			local mode = settings:CreateRow(L"properties", L"mode")
 			mode:Setup("Combo", {L"mode"})
-			mode:AddChoice(MODE_TEXT[0], 0)
-			mode:AddChoice(MODE_TEXT[VENDOR_BUY], VENDOR_BUY)
-			mode:AddChoice(MODE_TEXT[VENDOR_SELL], VENDOR_SELL)
-			mode:AddChoice(MODE_TEXT[VENDOR_BOTH], VENDOR_BOTH)
+			mode:AddChoice(L(MODE_TEXT[0]), 0)
+			mode:AddChoice(L(MODE_TEXT[VENDOR_BUY]), VENDOR_BUY)
+			mode:AddChoice(L(MODE_TEXT[VENDOR_SELL]), VENDOR_SELL)
+			mode:AddChoice(L(MODE_TEXT[VENDOR_BOTH]), VENDOR_BOTH)
 			mode.DataChanged = function(this, value)
 				if (!loaded) then
 					return

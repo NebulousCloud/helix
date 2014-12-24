@@ -157,6 +157,30 @@ else
 			return true
 		end
 
+		local teamID = client:TeamID()
+
+		if (table.Count(self.factions) > 0 and !self.factions[teamID]) then
+			return false
+		end
+
+		local allowed = false
+		local count = 0
+		local classID = client:getChar():getClass()
+
+		for k, v in ipairs(nut.class.list) do
+			if (v.faction == teamID) then
+				count = count + 1
+
+				if (classID == k) then
+					allowed = true
+				end
+			end
+		end
+
+		if (count > 0 and !allowed) then
+			return false
+		end
+		
 		if (hook.Run("CanPlayerUseVendor", client, self) == false) then
 			return false
 		end
