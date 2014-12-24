@@ -101,7 +101,7 @@ function PANEL:Init()
 		surface.DrawRect(0, 0, w, h)
 	end
 	self.categories:DockPadding(5, 5, 5, 5)
-
+	self.categories:DockMargin(0, 46, 0, 0)
 	self.categoryPanels = {}
 
 	self.scroll = self:Add("DScrollPanel")
@@ -111,7 +111,7 @@ function PANEL:Init()
 	self.search:Dock(TOP)
 	self.search:SetTall(36)
 	self.search:SetFont("nutMediumFont")
-	self.search:DockMargin(10 + self:GetWide() * 0.45, 0, 5, 5)
+	self.search:DockMargin(10 + self:GetWide() * 0.35, 0, 5, 5)
 	self.search.OnTextChanged = function(this)
 		local text = self.search:GetText():lower()
 
