@@ -595,6 +595,7 @@ do
 
 					netstream.Start(client, "charAuthed", client.nutCharList)
 					MsgN("Created character '"..id.."' for "..client:steamName()..".")
+					hook.Run("OnCharCreated", client, id)
 				end
 			end)
 			
