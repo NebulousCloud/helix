@@ -95,13 +95,14 @@ else
 		end)
 	end
 
-	-- Receives a notification from the server.
-	netstream.Hook("notify", function(message)
-		nut.util.notify(message)
-	end)
+	-- Creates a translated notification.
+	function nut.util.notifyLocalized(message, ...)
+		nut.util.notify(L(message, ...))
+	end
 
 	-- Receives a notification from the server.
-	netstream.Hook("notifyL", function(message, ...)
-		nut.util.notify(L(message, ...))
-	end)
+	netstream.Hook("notify", nut.util.notify)
+
+	-- Receives a notification from the server.
+	netstream.Hook("notifyL", nut.util.notifyLocalized)
 end

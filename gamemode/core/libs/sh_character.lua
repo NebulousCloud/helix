@@ -523,10 +523,17 @@ do
 			local character = nut.char.loaded[id]
 
 			if (character and character:getPlayer() == client) then
-				print(client, character)
 				local status, result = hook.Run("CanPlayerUseChar", client, character)
 
 				if (status == false) then
+					if (result) then
+						if (result:sub(1, 1) == "@") then
+							client:notifyLocalized(result:sub(2))
+						else
+							client:notify(result)
+						end
+					end
+
 					netstream.Start(client, "charMenu")
 
 					return

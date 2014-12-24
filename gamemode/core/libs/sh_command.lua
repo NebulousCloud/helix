@@ -131,7 +131,7 @@ if (SERVER) then
 			-- Run the command's callback and get the return.
 			local results = {command.onRun(client, arguments or {})}
 			local result = results[1]
-
+			
 			-- If a string is returned, it is a notification.
 			if (type(result) == "string") then
 				-- Normal player here.

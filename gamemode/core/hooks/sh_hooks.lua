@@ -231,12 +231,7 @@ function GM:GetDefaultCharName(client, faction)
 end
 
 function GM:CanPlayerUseChar(client, char)
-	if (char:getData("bannedchar") == true) then
-		if (SERVER) then
-			print("bannedchar")
-			--client:notfiy(L("charBanned", client))
-		end
-		
-		return false
+	if (char:getData("banned")) then
+		return false, "@charBanned"
 	end
 end

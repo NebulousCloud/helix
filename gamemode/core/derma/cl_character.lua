@@ -313,6 +313,24 @@ local PANEL = {}
 						self.choose:setText("choose")
 						self.choose:Dock(LEFT)
 						self.choose.DoClick = function()
+							if ((self.nextUse or 0) < CurTime()) then
+								self.nextUse = CurTime() + 1
+							else
+								return
+							end
+
+							local status, result = hook.Run("CanPlayerUseChar", client, nut.char.loaded[id])
+
+							if (status == false) then
+								if (result:sub(1, 1) == "@") then
+									nut.util.notifyLocalized(result:sub(2))
+								else
+									nut.util.notify(result)
+								end
+
+								return
+							end
+
 							if (!self.choosing and id) then
 								self.choosing = true
 								self.darkness:SetZPos(999)
