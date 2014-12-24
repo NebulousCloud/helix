@@ -171,6 +171,17 @@ else
 					netstream.Start("invExit")
 				end
 
+				local oldClose = nut.gui.inv1.OnClose
+				nut.gui.inv1.OnClose = function()
+					if (IsValid(panel) and !IsValid(nut.gui.menu)) then
+						panel:Remove()
+					end
+
+					netstream.Start("invExit")
+					-- IDK Why. Just make it sure to not glitch out with other stuffs.
+					nut.gui.inv1.OnClose = oldClose
+				end
+
 				nut.gui["inv"..index] = panel
 			end
 		end

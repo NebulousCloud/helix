@@ -122,7 +122,7 @@ else
 
 		y = y - 20
 		local tx, ty = nut.util.drawText(locked and "P" or "Q", x, y, ColorAlpha(locked and COLOR_LOCKED or COLOR_UNLOCKED, alpha), 1, 1, "nutIconsMedium", alpha * 0.65)
-		y = y + ty
+		y = y + ty*.9
 
 		local def = PLUGIN.definitions[self:GetModel():lower()]
 		local tx, ty = nut.util.drawText("Storage", x, y, ColorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
