@@ -68,6 +68,10 @@ if (SERVER) then
 		self:setData(data)
 	end
 
+	function PLUGIN:SaveData()
+		self:saveStorage()
+	end
+
 	function PLUGIN:StorageItemRemoved(entity, inventory)
 		self:saveStorage()
 	end

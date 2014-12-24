@@ -147,7 +147,7 @@ if (SERVER) then
 
 					if (charItem) then
 						if (!entity:hasMoney(price)) then
-							client:notifyLocalized("unableTrade")
+							client:notifyLocalized("vendorNoMoney")
 
 							return
 						end
