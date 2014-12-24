@@ -19,8 +19,9 @@ PLUGIN.desc = "You can modfiy the logging text/lists on this plugin."
  
 if (SERVER) then
     local L = Format
-    function PLUGIN:CharacterLoaded(client, id)
-        nut.log.add(L("%s loaded char %s.", client, id))
+    function PLUGIN:CharacterLoaded(id)
+        local character = nut.char.loaded[id]
+        nut.log.add(L("%s loaded char %s.", character:getPlayer():steamName(), id))
     end
 
     function PLUGIN:OnCharDelete(client, id)
@@ -29,6 +30,17 @@ if (SERVER) then
 
     function PLUGIN:OnPlayerObserve(client, isObserving)
         nut.log.add(L("%s " .. (isObserving and "is now observing" or "quit observing"), client:Name()))
+    end
+
+    function PLUGIN:PlayerDeath(victim, inflictor, attacker)
+        if (victim:IsPlayer() and attacker) then
+            if (attacker:IsWorld() or victim == attacker) then
+                nut.log.add(L("%s is dead.", victim:Name()))
+            else
+                nut.log.add(L("%s killed %s with %s.", victim:Name(), inflictor:GetClass(), (attacker:IsPlayer() and attacker:Name() or attacker:GetClass())))
+            end
+           
+        end
     end
 
     local logInteractions = {

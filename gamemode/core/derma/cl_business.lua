@@ -118,6 +118,11 @@ function PANEL:Init()
 		self:loadItems(self.selected.category, text:find("%S") and text or nil)
 		self.scroll:InvalidateLayout()
 	end
+	self.search.PaintOver = function(this, cw, ch)
+		if (self.search:GetValue() == "" and !self.search:HasFocus()) then
+			nut.util.drawText("V", 10, ch/2 - 1, color_black, 3, 1, "nutIconsSmall")
+		end
+	end
 
 	self.itemList = self.scroll:Add("DIconLayout")
 	self.itemList:Dock(FILL)

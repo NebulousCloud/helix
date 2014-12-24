@@ -38,3 +38,4 @@ end)
 
 -- Resources that are required for players to download are here.
 resource.AddFile("materials/nutscript/gui/vignette.png")
+resource.AddFile("resource/fonts/fontello.ttf")

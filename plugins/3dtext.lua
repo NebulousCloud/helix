@@ -193,7 +193,7 @@ nut.command.add("textremove", {
 	onRun = function(client, arguments)
 		-- Get the origin to remove text.
 		local trace = client:GetEyeTrace()
-		local position = trace.HitPos
+		local position = trace.HitPos + trace.HitNormal*2
 		-- Remove the text(s) and get the amount removed.
 		local amount = PLUGIN:removeText(position, tonumber(arguments[1]))
 
