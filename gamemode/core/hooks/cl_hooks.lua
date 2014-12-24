@@ -168,6 +168,18 @@ function GM:LoadFonts(font)
 		size = 22,
 		weight = 500
 	})
+
+	surface.CreateFont("nutIconsMedium", {
+		font = "fontello",
+		size = 28,
+		weight = 500
+	})
+
+	surface.CreateFont("nutIconsBig", {
+		font = "fontello",
+		size = 48,
+		weight = 500
+	})
 end
 
 local LOWERED_ANGLES = Angle(30, -30, -25)

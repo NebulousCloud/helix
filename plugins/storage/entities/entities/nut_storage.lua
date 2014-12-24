@@ -12,7 +12,7 @@
     You should have received a copy of the GNU General Public License
     along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
-
+local PLUGIN = PLUGIN
 ENT.Type = "anim"
 ENT.PrintName = "Storage"
 ENT.Category = "NutScript"
@@ -73,23 +73,62 @@ if (SERVER) then
 		end
 	end
 
+	local OPEN_TIME = .7
+	function ENT:OpenInv(activator)
+		local inventory = self:getInv()
+		local def = PLUGIN.definitions[self:GetModel():lower()]
+
+		activator:setAction("Opening...", OPEN_TIME, function()
+			if (activator:GetPos():Distance(self:GetPos()) <= 100) then
+				self.receivers[activator] = true
+				activator.nutBagEntity = self
+				
+				inventory:sync(activator)
+				netstream.Start(activator, "invOpen", self, inventory:getID())
+				self:EmitSound(def.opensound or "items/ammocrate_open.wav")
+			end
+		end)
+	end
+
 	function ENT:Use(activator)
 		local inventory = self:getInv()
 
 		if (inventory and (activator.nutNextOpen or 0) < CurTime()) then
 			if (activator:getChar()) then
-				activator:setAction("Opening...", 1, function()
-					if (activator:GetPos():Distance(self:GetPos()) <= 100) then
-						self.receivers[activator] = true
-						activator.nutBagEntity = self
-						
-						inventory:sync(activator)
-						netstream.Start(activator, "invOpen", self, inventory:getID())
-					end
-				end)
+				local def = PLUGIN.definitions[self:GetModel():lower()]
+
+				if (self:getNetVar("locked")) then
+					self:EmitSound(def.locksound or "doors/default_locked.wav")
+					netstream.Start(activator, "invLock", self)
+				else
+					self:OpenInv(activator)
+				end
 			end
 
-			activator.nutNextOpen = CurTime() + 1.5
+			activator.nutNextOpen = CurTime() + OPEN_TIME * 1.5
+		end
+	end
+else
+	function ENT:onShouldDrawEntityInfo()
+		return true
+	end
+
+	local COLOR_LOCKED = Color(242, 38, 19)
+	local COLOR_UNLOCKED = Color(135, 211, 124)
+	function ENT:onDrawEntityInfo(alpha)
+		local locked = self:getNetVar("locked", false)
+		local position = self:LocalToWorld(self:OBBCenter()):ToScreen()
+		local x, y = position.x, position.y
+
+		y = y - 20
+		local tx, ty = nut.util.drawText(locked and "P" or "Q", x, y, ColorAlpha(locked and COLOR_LOCKED or COLOR_UNLOCKED, alpha), 1, 1, "nutIconsMedium", alpha * 0.65)
+		y = y + ty
+
+		local def = PLUGIN.definitions[self:GetModel():lower()]
+		local tx, ty = nut.util.drawText("Storage", x, y, ColorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
+		if (def) then
+			y = y + ty + 1
+			nut.util.drawText(def.desc, x, y, ColorAlpha(color_white, alpha), 1, 1, nil, alpha * 0.65)
 		end
 	end
 end

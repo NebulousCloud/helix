@@ -190,5 +190,9 @@ LANGUAGE = {
 	vendorBye = "Come again soon!",
 	charSearching = "You are already searching for another character, please wait.",
 	charUnBan = "%s has unbanned the character %s.",
-	charNotBanned = "This character is not banned."
+	charNotBanned = "This character is not banned.",
+	storPass = "You've set this storage's password to %s.",
+	storPassRmv = "You've removed this storage's password.",
+	storPassWrite = "Enter the password.",
+	wrongPassword = "You've entered wrong password.",
 }

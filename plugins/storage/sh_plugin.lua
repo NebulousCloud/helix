@@ -18,6 +18,7 @@ PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Provides the ability to store items."
 
 PLUGIN.definitions = PLUGIN.definitions or {}
+
 nut.util.include("sh_definitions.lua")
 
 for k, v in pairs(PLUGIN.definitions) do
@@ -115,8 +116,31 @@ if (SERVER) then
 
 		client.nutBagEntity = nil
 	end)
+
+	netstream.Hook("invLock", function(client, entity, password)
+		local dist = entity:GetPos():Distance(client:GetPos())
+
+		if (dist < 128 and password) then
+			if (entity.password and entity.password == password) then
+				entity:OpenInv(client)
+			else
+				client:notify(L("wrongPassword", client))
+			end
+		end
+	end)
 else
 	local PLUGIN = PLUGIN
+
+	netstream.Hook("invLock", function(entity)
+		Derma_StringRequest(
+			L("storPassWrite"),
+			L("storPassWrite"),
+			"",
+			function(val)
+				netstream.Start("invLock", entity, val)
+			end
+		)
+	end)
 
 	netstream.Hook("invOpen", function(entity, index)
 		local inventory = nut.item.inventories[index]
@@ -152,3 +176,28 @@ else
 		end
 	end)
 end
+
+nut.command.add("storagelock", {
+	adminOnly = true,
+	syntax = "[string password]",
+	onRun = function(client, arguments)
+		local trace = client:GetEyeTraceNoCursor()
+		local ent = trace.Entity
+
+		if (ent and ent:IsValid()) then
+			local password = table.concat(arguments, " ")
+
+			if (password != "") then
+				ent:setNetVar("locked", true)
+				ent.password = password
+				client:notify(L("storPass", client, password))
+			else
+				ent:setNetVar("locked", nil)
+				ent.password = nil
+				client:notify(L("storPassRmv", client))
+			end
+		else
+			client:notify(L("invalid", client, "Entity"))
+		end
+	end
+})

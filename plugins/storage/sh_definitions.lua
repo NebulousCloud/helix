@@ -17,5 +17,7 @@ PLUGIN.definitions["models/props_junk/wood_crate001a.mdl"] = {
 	name = "Crate",
 	desc = "A simple wooden create.",
 	width = 4,
-	height = 4
+	height = 4,
+	-- locksound = ""
+	-- opensound = ""
 }
