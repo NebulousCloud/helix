@@ -197,5 +197,7 @@ LANGUAGE = {
 	storPassWrite = "Enter the password.",
 	wrongPassword = "You've entered wrong password.",
 	cheapBlur = "Disable blurring? (Raises FPS)",
-	quickSettings = "Quick Settings"
+	quickSettings = "Quick Settings",
+	vmSet = "You have set your voicemail.",
+	vmRem = "You have removed your voicemail."
 }

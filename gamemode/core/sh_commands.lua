@@ -20,6 +20,58 @@ nut.command.add("roll", {
 	end
 })
 
+nut.command.add("pm", {
+	syntax = "<string target> <string message>",
+	onRun = function(client, arguments)
+		local message = table.concat(arguments, " ", 2)
+		local target = nut.command.findPlayer(client, arguments[1])
+
+		if (IsValid(target)) then
+			local voiceMail = target:getNutData("vm")
+
+			if (voiceMail and voiceMail:find("%S")) then
+				return target:Name()..": "..voiceMail
+			end
+
+			if ((client.nutNextPM or 0) < CurTime()) then
+				nut.chat.send(client, "pm", message, false, {client, target})
+
+				client.nutNextPM = CurTime() + 0.5
+				target.nutLastPM = client
+			end
+		end
+	end
+})
+
+nut.command.add("reply", {
+	syntax = "<string message>",
+	onRun = function(client, arguments)
+		local target = client.nutLastPM
+
+		if (IsValid(target) and (client.nutNextPM or 0) < CurTime()) then
+			nut.chat.send(client, "pm", table.concat(arguments, " "), false, {client, target})
+			client.nutNextPM = CurTime() + 0.5
+		end
+	end
+})
+
+nut.command.add("setvoicemail", {
+	syntax = "[string message]",
+	onRun = function(client, arguments)
+		local message = table.concat(arguments, " ")
+
+		if (message:find("%S")) then
+			client:setNutData("vm", message:sub(1, 240))
+
+			return "@vmSet"
+		else
+			client:setNutData("vm")
+
+			return "@vmRem"
+		end
+	end
+})
+
 nut.command.add("flaggive", {
 	syntax = "<string name> [string flags]",
 	onRun = function(client, arguments)

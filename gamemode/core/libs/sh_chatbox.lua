@@ -131,15 +131,21 @@ end
 
 if (SERVER) then
 	-- Send a chat message using the specified chat type.
-	function nut.chat.send(speaker, chatType, text, anonymous)
+	function nut.chat.send(speaker, chatType, text, anonymous, receivers)
 		local class = nut.chat.classes[chatType]
 
 		if (class and class.onCanSay(speaker, text) != false) then
-			local receivers = {}
+			if (class.onCanHear) then
+				receivers = {}
 
-			for k, v in ipairs(player.GetAll()) do
-				if (class.onCanHear(speaker, v) != false) then
-					receivers[#receivers + 1] = v
+				for k, v in ipairs(player.GetAll()) do
+					if (class.onCanHear(speaker, v) != false) then
+						receivers[#receivers + 1] = v
+					end
+				end
+
+				if (#receivers == 0) then
+					receivers = nil
 				end
 			end
 
@@ -179,14 +185,6 @@ do
 				return nut.config.get("chatColor")
 			end,
 			onCanHear = nut.config.get("chatRange", 280)
-		})
-
-		-- Roll information in chat.
-		nut.chat.register("roll", {
-			format = "%s has rolled %s.",
-			color = Color(155, 111, 176),
-			filter = "actions",
-			font = "nutChatFontItalics"
 		})
 
 		-- Actions and such.
@@ -283,18 +281,6 @@ do
 		})
 
 		-- Local out of character.
-		nut.chat.register("event", {
-			onCanSay =  function(speaker, text)
-				return speaker:IsAdmin()
-			end,
-			onCanHear = 1000000,
-			onChatAdd = function(speaker, text)
-				chat.AddText(Color(255, 150, 0), text)
-			end,
-			prefix = {"/event"}
-		})
-
-		-- Local out of character.
 		nut.chat.register("looc", {
 			onCanSay =  function(speaker, text)
 				local delay = nut.config.get("loocDelay", 0)
@@ -323,6 +309,33 @@ do
 		})
 	end)
 end
+
+-- Roll information in chat.
+nut.chat.register("roll", {
+	format = "%s has rolled %s.",
+	color = Color(155, 111, 176),
+	filter = "actions",
+	font = "nutChatFontItalics"
+})
+
+-- Private messages between players.
+nut.chat.register("pm", {
+	format = "%s: %s.",
+	color = Color(249, 211, 89),
+	filter = "pm"
+})
+
+-- Global events.
+nut.chat.register("event", {
+	onCanSay =  function(speaker, text)
+		return speaker:IsAdmin()
+	end,
+	onCanHear = 1000000,
+	onChatAdd = function(speaker, text)
+		chat.AddText(Color(255, 150, 0), text)
+	end,
+	prefix = {"/event"}
+})
 
 -- Why does ULX even have a /me command?
 hook.Remove("PlayerSay", "ULXMeCheck")
