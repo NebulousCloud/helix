@@ -461,7 +461,7 @@ function GM:PlayerBindPress(client, bind, pressed)
 	if (bind:find("gm_showhelp") and pressed) then
 		if (IsValid(nut.gui.menu)) then
 			nut.gui.menu:remove()
-		else
+		elseif (LocalPlayer():getChar()) then
 			vgui.Create("nutMenu")
 		end
 
@@ -549,4 +549,50 @@ function GM:HUDShouldDraw(element)
 	end
 
 	return true
+end
+
+function GM:SetupQuickMenu(menu)
+	menu:addCheck(L"cheapBlur", function(panel, state)
+		if (state) then
+			RunConsoleCommand("nut_cheapblur", "1")
+		else
+			RunConsoleCommand("nut_cheapblur", "0")
+		end
+	end, NUT_CVAR_CHEAP:GetBool())
+
+	menu:addSpacer()
+
+	local current
+
+	for k, v in SortedPairs(nut.lang.stored) do
+		local name = nut.lang.names[k]
+		local name2 = k:sub(1, 1):upper()..k:sub(2)
+		local enabled = NUT_CVAR_LANG:GetString():match(k)
+
+		if (name) then
+			name = name2.." ("..name..")"
+		else
+			name = name2
+		end
+
+		local button = menu:addCheck(name, function(panel)
+			panel.checked = true
+			
+			if (IsValid(current)) then
+				if (current == panel) then
+					return
+				end
+
+				current.checked = false
+			end
+
+			current = panel
+			RunConsoleCommand("nut_language", k)
+		end, enabled)
+
+		if (enabled and !IsValid(current)) then
+			current = button
+		end
+	end
+	print(current)
 end

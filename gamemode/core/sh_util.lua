@@ -162,7 +162,7 @@ if (CLIENT) then
 		amount = amount or 5
 		
 		if (useCheapBlur) then
-			surface.SetDrawColor(80, 80, 80, amount * 20)
+			surface.SetDrawColor(50, 50, 50, amount * 20)
 			surface.DrawRect(0, 0, panel:GetWide(), panel:GetTall())
 		else
 			surface.SetMaterial(blur)
@@ -187,7 +187,7 @@ if (CLIENT) then
 		amount = amount or 5
 
 		if (useCheapBlur) then
-			surface.SetDrawColor(80, 80, 80, amount * 20)
+			surface.SetDrawColor(30, 30, 30, amount * 20)
 			surface.DrawRect(x, y, w, h)
 		else
 			surface.SetMaterial(blur)

@@ -15,6 +15,7 @@
 
 nut.lang = nut.lang or {}
 nut.lang.stored = nut.lang.stored or {}
+nut.lang.names = nut.lang.names or {}
 
 function nut.lang.loadFromDir(directory)
 	for k, v in ipairs(file.Find(directory.."/sh_*.lua", "LUA")) do
@@ -23,6 +24,11 @@ function nut.lang.loadFromDir(directory)
 		nut.util.include(directory.."/"..v, "shared")
 
 		if (LANGUAGE) then
+			if (NAME) then
+				nut.lang.names[niceName] = NAME
+				NAME = nil
+			end
+			
 			nut.lang.stored[niceName] = table.Merge(nut.lang.stored[niceName] or {}, LANGUAGE)
 			LANGUAGE = nil
 		end

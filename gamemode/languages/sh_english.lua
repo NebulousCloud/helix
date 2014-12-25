@@ -12,6 +12,7 @@
     You should have received a copy of the GNU General Public License
     along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
+NAME = "English"
 
 LANGUAGE = {
 	loading = "Loading",
@@ -195,4 +196,6 @@ LANGUAGE = {
 	storPassRmv = "You've removed this storage's password.",
 	storPassWrite = "Enter the password.",
 	wrongPassword = "You've entered wrong password.",
+	cheapBlur = "Disable blurring? (Raises FPS)",
+	quickSettings = "Quick Settings"
 }

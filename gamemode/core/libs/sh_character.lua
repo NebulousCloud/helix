@@ -379,6 +379,7 @@ do
 
 			local y2 = 0
 			local total = 0
+			local maximum = hook.Run("GetMaxAttribPoints", LocalPlayer(), panel.payload) or nut.config.get("maxAttribs")
 
 			panel.payload.attribs = {}
 
@@ -386,14 +387,14 @@ do
 				panel.payload.attribs[k] = 0
 
 				local bar = container:Add("nutAttribBar")
-				bar:setMax(nut.config.get("maxAttribs"))
+				bar:setMax(maximum)
 				bar:Dock(TOP)
 				bar:DockMargin(2, 2, 2, 2)
 				bar:setText(v.name)
 				bar.onChanged = function(this, difference)
 					total = total + difference
 
-					if (total > nut.config.get("maxAttribs")) then
+					if (total > maximum) then
 						return false
 					end
 
@@ -406,7 +407,7 @@ do
 			container:SetTall(y2)
 			return container
 		end,
-		onValidate = function(value, data)
+		onValidate = function(value, data, client)
 			if (value != nil) then
 				if (type(value) == "table") then
 					local count = 0
@@ -415,7 +416,7 @@ do
 						count = count + v
 					end
 
-					if (count > nut.config.get("maxAttribs")) then
+					if (count > (hook.Run("GetMaxAttribPoints", client, info) or nut.config.get("maxAttribs"))) then
 						return false, "unknownError"
 					end
 				else

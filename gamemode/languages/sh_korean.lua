@@ -12,6 +12,7 @@
     You should have received a copy of the GNU General Public License
     along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
+NAME = "한국어"
 
 LANGUAGE = {
 	loading = "불러오는 중",
