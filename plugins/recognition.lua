@@ -98,8 +98,12 @@ if (CLIENT) then
 	end)
 
 	netstream.Hook("rgnDone", function()
-		surface.PlaySound("buttons/button17.wav")
+		hook.Run("OnCharRecognized", client, id)
 	end)
+
+	function PLUGIN:OnCharRecognized(client, recogCharID)
+		surface.PlaySound("buttons/button17.wav")
+	end
 else
 	function PLUGIN:ShowSpare1(client)
 		if (client:getChar()) then
@@ -146,6 +150,7 @@ else
 
 			if (i > 0) then
 				netstream.Start(client, "rgnDone")
+				hook.Run("OnCharRecognized", client, id)
 			end
 		end
 	end)
