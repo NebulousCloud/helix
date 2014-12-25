@@ -39,7 +39,6 @@ if (SERVER) then
             else
                 nut.log.add(L("%s killed %s with %s.", victim:Name(), inflictor:GetClass(), (attacker:IsPlayer() and attacker:Name() or attacker:GetClass())))
             end
-           
         end
     end
 

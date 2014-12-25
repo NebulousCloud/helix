@@ -150,11 +150,15 @@ local PANEL = {}
 				color = color_dark
 			end
 
-			draw.SimpleText("F", "nutIconsSmall", x, y, color, 2, 1)
+			draw.SimpleText(self.icon or "F", "nutIconsSmall", x, y, color, 2, 1)
 		end
 		button.checked = checked
 
 		return button
+	end
+
+	function PANEL:setIcon(char)
+		self.icon = char
 	end
 
 	function PANEL:Paint(w, h)

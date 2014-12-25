@@ -256,7 +256,7 @@ nut.command.add("charban", {
 			local char = target:getChar()
 
 			if (char) then
-				nut.util.notifyLocalized("charBan", v:Name(), target:Name())
+				nut.util.notifyLocalized("charBan", client:Name(), target:Name())
 				
 				char:setData("banned", true)
 				char:kick()

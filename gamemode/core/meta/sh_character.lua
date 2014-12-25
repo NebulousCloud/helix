@@ -123,7 +123,7 @@ if (SERVER) then
 		local isCurrentChar = self and self:getID() == id
 		
 		if (self and self.steamID == steamID) then			
-			netstream.Start(nil, "charKick", id, isCurrentChar)
+			netstream.Start(client, "charKick", id, isCurrentChar)
 
 			if (isCurrentChar) then
 				client:setNetVar("charID", nil)

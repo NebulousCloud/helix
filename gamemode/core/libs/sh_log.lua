@@ -3,6 +3,7 @@ FLAG_SUCCESS = 1
 FLAG_WARNING = 2
 FLAG_DANGER = 3
 FLAG_SERVER = 4
+FLAG_DEV = 5
 
 nut.log = nut.log or {}
 nut.log.color = {
@@ -11,10 +12,12 @@ nut.log.color = {
 	[FLAG_WARNING] = Color(255, 255, 0),
 	[FLAG_DANGER] = Color(255, 50, 50),
 	[FLAG_SERVER] = Color(200, 200, 220),
+	[FLAG_DEV] = Color(200, 200, 220),
 }
 local consoleColor = Color(50, 200, 50)
 
 -- TODO: Creating MYSQL/SQLLite Query for the logging.
+-- SUGG: Do I have to get Seperated Database? For ChatLog, For EventLog.
 
 if (SERVER) then
 	function nut.log.add(logString, flag, logLevel, noSave)

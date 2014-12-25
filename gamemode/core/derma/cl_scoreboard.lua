@@ -125,6 +125,8 @@ local PANEL = {}
 	end
 
 	function PANEL:addPlayer(client, parent)
+		if (!client:getChar()) then return end
+
 		local slot = parent:Add("DPanel")
 		slot:Dock(TOP)
 		slot:SetTall(64)
