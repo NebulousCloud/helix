@@ -200,5 +200,6 @@ LANGUAGE = {
 	quickSettings = "Quick Settings",
 	vmSet = "You have set your voicemail.",
 	vmRem = "You have removed your voicemail.",
-	altLower = "Hide hands when lowered?"
+	altLower = "Hide hands when lowered?",
+	noPerm = "You are not allowed to do this."
 }

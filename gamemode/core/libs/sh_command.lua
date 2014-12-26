@@ -36,6 +36,8 @@ function nut.command.add(command, data)
 		data.onRun = function(client, arguments)
 			if (client:IsAdmin()) then
 				return onRun(client, arguments)
+			else
+				return "@noPerm"
 			end
 		end
 	-- Or if it is only for super administrators.
@@ -43,6 +45,8 @@ function nut.command.add(command, data)
 		data.onRun = function(client, arguments)
 			if (client:IsSuperAdmin()) then
 				return onRun(client, arguments)
+			else
+				return "@noPerm"
 			end
 		end
 	-- Or if we specify a usergroup allowed to use this.
@@ -56,12 +60,16 @@ function nut.command.add(command, data)
 						return onRun(client, arguments)
 					end
 				end
+
+				return "@noPerm"
 			end
 		-- Otherwise it is most likely a string.
 		else
 			data.onRun = function(client, arguments)
 				if (client:IsUserGroup(data.group)) then
 					return onRun(client, arguments)
+				else
+					return "@noPerm"
 				end
 			end		
 		end

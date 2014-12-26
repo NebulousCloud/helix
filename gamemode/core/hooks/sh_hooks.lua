@@ -235,3 +235,56 @@ function GM:CanPlayerUseChar(client, char)
 		return false, "@charBanned"
 	end
 end
+
+function GM:CanProperty(client, property, entity)
+	if (client:IsAdmin()) then
+		return true
+	end
+
+	if (CLIENT and (property == "remover" or property == "collision")) then
+		return true
+	end
+
+	return false
+end
+
+function GM:PhysgunPickup(client, entity)
+	if (client:IsAdmin()) then
+		return true
+	end
+
+	if (self.BaseClass:PhysgunPickup(client, entity) == false) then
+		return false
+	end
+
+	return false
+end
+
+local TOOL_SAFE = {}
+TOOL_SAFE["lamp"] = true
+TOOL_SAFE["camera"] = true
+
+local TOOL_DANGEROUS = {}
+TOOL_DANGEROUS["dynamite"] = true
+
+function GM:CanTool(client, trace, tool)
+	if (client:IsAdmin()) then
+		return true
+	end
+
+	if (TOOL_DANGEROUS[tool]) then
+		return false
+	end
+	
+	local entity = trace.Entity
+
+	if (IsValid(entity)) then
+		if (TOOL_SAFE[tool]) then
+			return true
+		end
+	else
+		return true
+	end
+
+	return false
+end
