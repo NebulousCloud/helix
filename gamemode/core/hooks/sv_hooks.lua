@@ -24,9 +24,9 @@ function GM:PlayerInitialSpawn(client)
 			name = client:Name(),
 			faction = faction and faction.uniqueID or "unknown",
 			model = faction and table.Random(faction.models) or "models/gman.mdl"
-		}, -1, client, client:SteamID64())
+		}, os.time(), client, client:SteamID64())
 		character.isBot = true
-		nut.char.loaded[-1] = character
+		nut.char.loaded[os.time()] = character
 
 		client:Spawn()
 		character:setup()
