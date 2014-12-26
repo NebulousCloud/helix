@@ -1,0 +1,123 @@
+local PLUGIN = PLUGIN
+PLUGIN.name = "New Fancy Third Person"
+PLUGIN.author = "Black Tea"
+PLUGIN.desc = "Third Person plugin."
+
+nut.config.add("thirdperson", 0, "Allow Thirdperson in the server.", nil, {
+	data = {min = 0, max = 1},
+	category = "server"
+})
+
+if (CLIENT) then
+	local NUT_CVAR_THIRDPERSON = CreateClientConVar("nut_tp_enabled", "0", true)
+	local NUT_CVAR_TP_VERT = CreateClientConVar("nut_tp_vertical", 10, true)
+	local NUT_CVAR_TP_HORI = CreateClientConVar("nut_tp_horizontal", 0, true)
+	local NUT_CVAR_TP_DIST = CreateClientConVar("nut_tp_distance", 50, true)
+
+	local PANEL = {}
+
+	function PANEL:Init()
+		self:SetTitle(L("thirdpersonConfig"))
+		self:SetSize(300, 140)
+		self:Center()
+		self:MakePopup()
+
+		self.list = self:Add("DPanel")
+		self.list:Dock(FILL)
+		self.list:DockMargin(0, 0, 0, 0)
+
+		local cfg = self.list:Add("DNumSlider")
+		cfg:Dock(TOP)
+		cfg:SetText("Height") // Set the text above the slider
+		cfg:SetMin(0)				 // Set the minimum number you can slide to
+		cfg:SetMax(30)				// Set the maximum number you can slide to
+		cfg:SetDecimals(0)			 // Decimal places - zero for whole number
+		cfg:SetConVar("nut_tp_vertical") // Changes the ConVar when you slide
+		cfg:DockMargin(10, 0, 0, 5)
+
+		local cfg = self.list:Add("DNumSlider")
+		cfg:Dock(TOP)
+		cfg:SetText("Horizontal") // Set the text above the slider
+		cfg:SetMin(0)				 // Set the minimum number you can slide to
+		cfg:SetMax(30)				// Set the maximum number you can slide to
+		cfg:SetDecimals(0)			 // Decimal places - zero for whole number
+		cfg:SetConVar("nut_tp_horizontal") // Changes the ConVar when you slide
+		cfg:DockMargin(10, 0, 0, 5)
+
+		local cfg = self.list:Add("DNumSlider")
+		cfg:Dock(TOP)
+		cfg:SetText("Distance") // Set the text above the slider
+		cfg:SetMin(0)				 // Set the minimum number you can slide to
+		cfg:SetMax(100)				// Set the maximum number you can slide to
+		cfg:SetDecimals(0)			 // Decimal places - zero for whole number
+		cfg:SetConVar("nut_tp_distance") // Changes the ConVar when you slide
+		cfg:DockMargin(10, 0, 0, 5)
+
+	end
+
+	vgui.Register("nutTPConfig", PANEL, "DFrame")
+
+	local function isAllowed()
+		return nut.config.get("thirdperson") != 0 and true or false
+	end
+
+	function PLUGIN:SetupQuickMenu(menu)
+		local button = menu:addCheck(L"toggleThirdperson", function(panel, state)
+			if (state) then
+				RunConsoleCommand("nut_tp_enabled", "1")
+			else
+				RunConsoleCommand("nut_tp_enabled", "0")
+			end
+		end, NUT_CVAR_THIRDPERSON:GetBool())
+
+		function button:DoRightClick()
+			if (nut.gui.tpconfig and nut.gui.tpconfig:IsVisible()) then
+				nut.gui.tpconfig:Close()
+				nut.gui.tpconfig = nil
+			end
+
+			nut.gui.tpconfig = vgui.Create("nutTPConfig")
+		end
+
+		menu:addSpacer()
+	end
+
+	local playerMeta = FindMetaTable("Player")
+
+	function playerMeta:CanOverrideView()
+		local entity = Entity(self:getLocalVar("ragdoll", 0))
+		local ragdoll = self:GetRagdollEntity()
+
+		return (isAllowed() and 
+				IsValid(self) and
+				self:getChar() and
+			 	!IsValid(entity) and
+			 	LocalPlayer():Alive()
+			 	)
+	end
+
+	local view, traceData, aimOrigin, crouchFactor, ft
+	local clmp = math.Clamp
+	crouchFactor = 0
+	function PLUGIN:CalcView(client, origin, angles, fov)
+		if (client:CanOverrideView()) then
+
+			view = {}
+			traceData = {}
+				traceData.start = origin + angles:Up() * NUT_CVAR_TP_VERT:GetInt()  + angles:Right() * NUT_CVAR_TP_HORI:GetInt()
+				traceData.endpos = traceData.start - client:EyeAngles():Forward() * NUT_CVAR_TP_DIST:GetInt()
+				traceData.filter = client
+			view.origin = util.TraceLine(traceData).HitPos
+			aimOrigin = view.origin
+			view.angles = client:EyeAngles() + client:GetViewPunchAngles()
+
+			return view
+		end
+	end
+
+	-- add aim modifier.
+
+	function PLUGIN:ShouldDrawLocalPlayer()
+		return LocalPlayer():CanOverrideView()
+	end
+end
