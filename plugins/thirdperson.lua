@@ -88,13 +88,16 @@ if (CLIENT) then
 		local entity = Entity(self:getLocalVar("ragdoll", 0))
 		local ragdoll = self:GetRagdollEntity()
 
-		return (NUT_CVAR_THIRDPERSON:GetBool() and
-				isAllowed() and 
-				IsValid(self) and
-				self:getChar() and
-			 	!IsValid(entity) and
-			 	LocalPlayer():Alive()
-			 	)
+		if ((nut.gui.char and !nut.gui.char:IsVisible()) and
+			NUT_CVAR_THIRDPERSON:GetBool() and
+			isAllowed() and 
+			IsValid(self) and
+			self:getChar() and
+			!IsValid(entity) and
+			LocalPlayer():Alive()
+			) then
+			return true
+		end
 	end
 
 	local view, traceData, aimOrigin, crouchFactor, ft, trace
