@@ -119,7 +119,7 @@ local PANEL = {}
 		panel:Dock(TOP)
 		panel:DockMargin(0, 1, 0, 0)
 		panel.Paint = function(this, w, h)
-			surface.SetDrawColor(255, 255, 255, 5)
+			surface.SetDrawColor(255, 255, 255, 10)
 			surface.DrawRect(0, 0, w, h)
 		end
 

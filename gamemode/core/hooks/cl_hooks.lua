@@ -13,6 +13,8 @@
     along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
+local NUT_CVAR_LOWER2 = CreateClientConVar("nut_usealtlower", "0", true)
+
 function GM:ForceDermaSkin()
 	return "nutscript"
 end
@@ -216,6 +218,10 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 
 	local fraction = (client.nutRaisedFrac or 0) / 100
 	local rotation = weapon.LowerAngles or LOWERED_ANGLES
+	
+	if (NUT_CVAR_LOWER2:GetBool() and weapon.LowerAngles2) then
+		rotation = weapon.LowerAngles2
+	end
 	
 	eyeAngles:RotateAroundAxis(eyeAngles:Up(), rotation.p * fraction)
 	eyeAngles:RotateAroundAxis(eyeAngles:Forward(), rotation.y * fraction)
@@ -574,6 +580,7 @@ function GM:HUDShouldDraw(element)
 end
 
 function GM:SetupQuickMenu(menu)
+	-- Performance
 	menu:addCheck(L"cheapBlur", function(panel, state)
 		if (state) then
 			RunConsoleCommand("nut_cheapblur", "1")
@@ -582,6 +589,7 @@ function GM:SetupQuickMenu(menu)
 		end
 	end, NUT_CVAR_CHEAP:GetBool())
 
+	-- Language settings
 	menu:addSpacer()
 
 	local current
@@ -616,5 +624,15 @@ function GM:SetupQuickMenu(menu)
 			current = button
 		end
 	end
-	print(current)
+
+	-- Appearance
+	menu:addSpacer()
+
+	menu:addCheck(L"altLower", function(panel, state)
+		if (state) then
+			RunConsoleCommand("nut_usealtlower", "1")
+		else
+			RunConsoleCommand("nut_usealtlower", "0")
+		end
+	end, NUT_CVAR_LOWER2:GetBool())
 end
