@@ -157,7 +157,7 @@ else
 			return true
 		end
 
-		local teamID = client:TeamID()
+		local teamID = client:Team()
 
 		if (table.Count(self.factions) > 0 and !self.factions[teamID]) then
 			return false
