@@ -51,6 +51,8 @@ local PANEL = {}
 		self.scroll:DockMargin(1, 0, 1, 0)
 
 		self.nextUpdate = 0
+		self.players = {}
+		self.slots = {}
 
 		self:populate()
 	end
@@ -69,6 +71,13 @@ local PANEL = {}
 			local list = self.scroll:Add("DListLayout")
 			list:Dock(TOP)
 			list:SetTall(0)
+			list.Think = function(this)
+				if (#this:GetChildren() <= 1) then
+					this:SetVisible(false)
+				else
+					this:SetVisible(true)
+				end
+			end
 
 			local panel = list:Add("DLabel")
 			panel:Dock(TOP)
@@ -77,21 +86,11 @@ local PANEL = {}
 				surface.DrawRect(0, 0, w, h)
 			end
 			panel:SetText(L(v.name))
-			panel:SetTall(0)
 			panel:SetTextInset(3, 0)
 			panel:SetFont("nutMediumFont")
 			panel:SetTextColor(color_white)
 			panel:SetExpensiveShadow(1, color_black)
-			panel.Think = function()
-				local players = team.NumPlayers(k)
-				local tall = panel:GetTall()
-
-				if (players > 0 and tall == 0) then
-					panel:SetTall(28)
-				elseif (players < 1 and tall == 28) then
-					panel:SetTall(0)
-				end
-			end
+			panel:SetTall(28)
 
 			self.teams[k] = list
 			self.tallies[k] = team.NumPlayers(k)
@@ -106,17 +105,19 @@ local PANEL = {}
 
 	function PANEL:Think()
 		if (self.nextUpdate < CurTime()) then
-			for k, v in ipairs(nut.faction.indices) do
-				local players = team.GetPlayers(k)
+			for k, v in ipairs(player.GetAll()) do
+				if (v:getChar()) then
+					if (!IsValid(v:getChar().nutScoreSlot)) then
+						local teamID = v:Team()
 
-				if ((self.tallies[k] or 0) != #players) then
-					for k2, v2 in ipairs(players) do
-						if (!IsValid(v2.nutScoreSlot)) then
-							self:addPlayer(v2, self.teams[k])
-						end
+						self:addPlayer(v, self.teams[teamID])
 					end
+				end
+			end
 
-					self.tallies[k] = #players
+			for k, v in pairs(self.slots) do
+				if (IsValid(v)) then
+					v:update()
 				end
 			end
 
@@ -125,18 +126,21 @@ local PANEL = {}
 	end
 
 	function PANEL:addPlayer(client, parent)
-		if (!client:getChar()) then return end
+		if (!client:getChar() and !IsValid(parent)) then return end
+
+		parent:SetTall(28)
 
 		local slot = parent:Add("DPanel")
 		slot:Dock(TOP)
 		slot:SetTall(64)
 		slot:DockMargin(0, 0, 0, 1)
 		slot.Paint = paintFunctions[self.i]
+		slot.character = client:getChar()
 
-		client.nutScoreSlot = slot
+		client:getChar().nutScoreSlot = slot
 
 		slot.model = slot:Add("SpawnIcon")
-		slot.model:SetModel(client:GetModel())
+		slot.model:SetModel(client:GetModel(), client:GetSkin())
 		slot.model:SetSize(64, 64)
 		slot.model.PaintOver = function() end
 		slot.model:SetToolTip(L("sbOptions", client:Name()))
@@ -162,8 +166,6 @@ local PANEL = {}
 		slot.ping.Think = function(this)
 			if (IsValid(client)) then
 				this:SetText(client:Ping())
-			else
-				slot:Remove()
 			end
 		end
 		slot.ping:SetFont("nutGenericFont")
@@ -182,7 +184,36 @@ local PANEL = {}
 		slot.desc:SetExpensiveShadow(1, Color(0, 0, 0, 100))
 		slot.desc:SetFont("nutSmallFont")
 
+		function slot:update()
+			if (!IsValid(client) or !client:getChar() or !self.character or self.character != client:getChar()) then
+				return self:Remove()
+			end
+
+			local name = client:Name()
+			local model = client:GetModel()
+			local desc = client:getChar():getDesc()
+
+			if (self.lastName != name) then
+				self.name:SetText(name)
+				self.lastName = name
+			end
+
+			if (self.lastModel != model) then
+				self.model:SetModel(client:GetModel(), client:GetSkin())
+				self.lastModel = model
+			end
+
+			if (self.lastDesc != desc) then
+				self.desc:SetText(desc)
+				self.lastDesc = desc
+			end
+		end
+
 		self.i = math.abs(self.i - 1)
+		self.slots[#self.slots + 1] = slot
+
+		parent:SetVisible(true)
+		parent:SizeToChildren(false, true)
 
 		return slot
 	end
@@ -197,3 +228,9 @@ local PANEL = {}
 		surface.DrawOutlinedRect(0, 0, w, h)
 	end
 vgui.Register("nutScoreboard", PANEL, "EditablePanel")
+
+concommand.Add("dev_reloadsb", function()
+	if (IsValid(nut.gui.score)) then
+		nut.gui.score:Remove()
+	end
+end)
