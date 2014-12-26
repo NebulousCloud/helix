@@ -17,6 +17,11 @@ if (CLIENT) then
 
 	local PANEL = {}
 
+	local maxValues = {
+		height = 30,
+		horizontal = 30,
+		distance = 100
+	}
 	function PANEL:Init()
 		self:SetTitle(L("thirdpersonConfig"))
 		self:SetSize(300, 140)
@@ -127,9 +132,9 @@ if (CLIENT) then
 			view = {}
 			traceData = {}
 				traceData.start = 	client:GetPos() + client:GetViewOffset() + 
-									curAng:Up() * (NUT_CVAR_TP_VERT:GetInt() - client:GetViewOffsetDucked()[3] * crouchFactor) + 
-									curAng:Right() * NUT_CVAR_TP_HORI:GetInt() 
-				traceData.endpos = traceData.start - curAng:Forward() * NUT_CVAR_TP_DIST:GetInt()
+									curAng:Up() * (clmp(NUT_CVAR_TP_VERT:GetInt(), 0, maxValues.height) - client:GetViewOffsetDucked()[3] * crouchFactor) + 
+									curAng:Right() * clmp(NUT_CVAR_TP_HORI:GetInt(), -maxValues.horizontal, maxValues.horizontal) 
+				traceData.endpos = traceData.start - curAng:Forward() * clmp(NUT_CVAR_TP_DIST:GetInt(), 0, maxValues.distance)
 				traceData.filter = client
 			view.origin = util.TraceLine(traceData).HitPos
 			aimOrigin = view.origin
