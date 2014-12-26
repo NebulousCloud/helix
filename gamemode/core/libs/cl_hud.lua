@@ -32,8 +32,8 @@ function nut.hud.drawDeath()
 	end
 
 	surface.SetDrawColor(0, 0, 0, ceil((aprg^.5) * 255))
-	surface.DrawRect(0, 0, w, h)
-	nut.util.drawText(L"youreDead", w/2, h/2, ColorAlpha(color_white, aprg2 * 255), 1, 1, "nutDynFontMedium", aprg2 * 255)
+	surface.DrawRect(-1, -1, w+2, h+2)
+	local tx, ty = nut.util.drawText(L"youreDead", w/2, h/2, ColorAlpha(color_white, aprg2 * 255), 1, 1, "nutDynFontMedium", aprg2 * 255)
 end
 
 hook.Add("GetCrosshairAlpha", "nutCrosshair", function(alpha)

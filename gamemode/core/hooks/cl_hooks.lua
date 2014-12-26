@@ -74,6 +74,24 @@ function GM:LoadFonts(font)
 		weight = 500
 	})
 
+	surface.CreateFont("nutDynFontSmall", {
+		font = font,
+		size = ScreenScale(22),
+		weight = 1000
+	})
+
+	surface.CreateFont("nutDynFontMedium", {
+		font = font,
+		size = ScreenScale(28),
+		weight = 1000
+	})
+
+	surface.CreateFont("nutDynFontBig", {
+		font = font,
+		size = ScreenScale(48),
+		weight = 1000
+	})
+
 	-- The more readable font.
 	font = "Calibri"
 
@@ -162,24 +180,6 @@ function GM:LoadFonts(font)
 	surface.CreateFont("nutIntroSmallFont", {
 		font = font,
 		size = 22,
-		weight = 1000
-	})
-
-	surface.CreateFont("nutDynFontSmall", {
-		font = font,
-		size = ScreenScale(22),
-		weight = 1000
-	})
-
-	surface.CreateFont("nutDynFontMedium", {
-		font = font,
-		size = ScreenScale(28),
-		weight = 1000
-	})
-
-	surface.CreateFont("nutDynFontBig", {
-		font = font,
-		size = ScreenScale(48),
 		weight = 1000
 	})
 

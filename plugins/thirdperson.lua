@@ -38,7 +38,7 @@ if (CLIENT) then
 		local cfg = self.list:Add("DNumSlider")
 		cfg:Dock(TOP)
 		cfg:SetText("Horizontal") // Set the text above the slider
-		cfg:SetMin(0)				 // Set the minimum number you can slide to
+		cfg:SetMin(-30)				 // Set the minimum number you can slide to
 		cfg:SetMax(30)				// Set the maximum number you can slide to
 		cfg:SetDecimals(0)			 // Decimal places - zero for whole number
 		cfg:SetConVar("nut_tp_horizontal") // Changes the ConVar when you slide
@@ -100,7 +100,7 @@ if (CLIENT) then
 		end
 	end
 
-	local view, traceData, aimOrigin, crouchFactor, ft, trace
+	local view, traceData, traceData2, aimOrigin, crouchFactor, ft, trace, curAng
 	local clmp = math.Clamp
 	crouchFactor = 0
 	function PLUGIN:CalcView(client, origin, angles, fov)
@@ -112,20 +112,54 @@ if (CLIENT) then
 			else
 				crouchFactor = Lerp(ft*5, crouchFactor, 0)
 			end
-
+			
+			curAng = owner.camAng
 			view = {}
 			traceData = {}
 				traceData.start = 	client:GetPos() + client:GetViewOffset() + 
-									angles:Up() * (NUT_CVAR_TP_VERT:GetInt() - client:GetViewOffsetDucked()[3] * crouchFactor) + 
-									angles:Right() * NUT_CVAR_TP_HORI:GetInt() 
-				traceData.endpos = traceData.start - client:EyeAngles():Forward() * NUT_CVAR_TP_DIST:GetInt()
+									curAng:Up() * (NUT_CVAR_TP_VERT:GetInt() - client:GetViewOffsetDucked()[3] * crouchFactor) + 
+									curAng:Right() * NUT_CVAR_TP_HORI:GetInt() 
+				traceData.endpos = traceData.start - curAng:Forward() * NUT_CVAR_TP_DIST:GetInt()
 				traceData.filter = client
 			view.origin = util.TraceLine(traceData).HitPos
 			aimOrigin = view.origin
-			view.angles = client:EyeAngles() + client:GetViewPunchAngles()
+			view.angles = curAng + client:GetViewPunchAngles()
+
+			traceData2 = {}
+				traceData2.start = 	aimOrigin
+				traceData2.endpos = aimOrigin + curAng:Forward() * 65535
+				traceData2.filter = client
+
+			client:SetEyeAngles((util.TraceLine(traceData2).HitPos - client:GetShootPos()):Angle());
 
 			return view
 		end
+	end
+
+	local v1, v2, diff, fm, sm
+	function PLUGIN:CreateMove(cmd)
+		owner = LocalPlayer()
+		fm = cmd:GetForwardMove()
+		sm = cmd:GetSideMove()
+		diff = (owner:EyeAngles() - owner.camAng)[2]
+		diff = diff/90
+
+		cmd:SetForwardMove(fm + sm*diff)
+		cmd:SetSideMove(sm + fm*diff)
+		return false
+	end
+
+	function PLUGIN:InputMouseApply(cmd, x, y, ang)
+		owner = LocalPlayer( )
+	        
+	    if !owner.camAng then
+	        owner.camAng = Angle( 0, 0, 0 )
+	    end
+	        
+	    owner.camAng.p = clmp(math.NormalizeAngle( owner.camAng.p + y / 50 ), -85, 85)
+	    owner.camAng.y = math.NormalizeAngle( owner.camAng.y - x / 50 )
+	   
+		return true
 	end
 
 	function PLUGIN:ShouldDrawLocalPlayer()
