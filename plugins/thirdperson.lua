@@ -88,7 +88,8 @@ if (CLIENT) then
 		local entity = Entity(self:getLocalVar("ragdoll", 0))
 		local ragdoll = self:GetRagdollEntity()
 
-		return (isAllowed() and 
+		return (NUT_CVAR_THIRDPERSON:GetBool() and
+				isAllowed() and 
 				IsValid(self) and
 				self:getChar() and
 			 	!IsValid(entity) and
@@ -96,15 +97,24 @@ if (CLIENT) then
 			 	)
 	end
 
-	local view, traceData, aimOrigin, crouchFactor, ft
+	local view, traceData, aimOrigin, crouchFactor, ft, trace
 	local clmp = math.Clamp
 	crouchFactor = 0
 	function PLUGIN:CalcView(client, origin, angles, fov)
 		if (client:CanOverrideView()) then
+			ft = FrameTime()
+
+			if ((client:OnGround() and client:KeyDown(IN_DUCK)) or client:Crouching()) then
+				crouchFactor = Lerp(ft*5, crouchFactor, 1) 
+			else
+				crouchFactor = Lerp(ft*5, crouchFactor, 0)
+			end
 
 			view = {}
 			traceData = {}
-				traceData.start = origin + angles:Up() * NUT_CVAR_TP_VERT:GetInt()  + angles:Right() * NUT_CVAR_TP_HORI:GetInt()
+				traceData.start = 	client:GetPos() + client:GetViewOffset() + 
+									angles:Up() * (NUT_CVAR_TP_VERT:GetInt() - client:GetViewOffsetDucked()[3] * crouchFactor) + 
+									angles:Right() * NUT_CVAR_TP_HORI:GetInt() 
 				traceData.endpos = traceData.start - client:EyeAngles():Forward() * NUT_CVAR_TP_DIST:GetInt()
 				traceData.filter = client
 			view.origin = util.TraceLine(traceData).HitPos
@@ -114,8 +124,6 @@ if (CLIENT) then
 			return view
 		end
 	end
-
-	-- add aim modifier.
 
 	function PLUGIN:ShouldDrawLocalPlayer()
 		return LocalPlayer():CanOverrideView()
