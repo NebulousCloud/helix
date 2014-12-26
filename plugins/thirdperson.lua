@@ -123,7 +123,7 @@ if (CLIENT) then
 				crouchFactor = Lerp(ft*5, crouchFactor, 0)
 			end
 			
-			curAng = owner.camAng
+			curAng = owner.camAng or Angle(0, 0, 0)
 			view = {}
 			traceData = {}
 				traceData.start = 	client:GetPos() + client:GetViewOffset() + 
@@ -156,7 +156,7 @@ if (CLIENT) then
 	    if (owner:CanOverrideView() and owner:GetMoveType() != MOVETYPE_NOCLIP) then
 			fm = cmd:GetForwardMove()
 			sm = cmd:GetSideMove()
-			diff = (owner:EyeAngles() - owner.camAng)[2]
+			diff = (owner:EyeAngles() - owner.camAng or Angle(0, 0, 0))[2]
 			diff = diff/90
 
 			cmd:SetForwardMove(fm + sm*diff)
