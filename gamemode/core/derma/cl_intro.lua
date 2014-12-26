@@ -18,7 +18,6 @@ local glow = surface.GetTextureID("particle/Particle_Glow_04_Additive")
 
 local PANEL = {}
 	function PANEL:Init()
-		LocalPlayer():ConCommand("stopsound")
 
 		if (IsValid(nut.gui.intro)) then
 			nut.gui.intro:Remove()

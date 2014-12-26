@@ -199,5 +199,6 @@ LANGUAGE = {
 	cheapBlur = "Disable blurring? (Raises FPS)",
 	quickSettings = "Quick Settings",
 	vmSet = "You have set your voicemail.",
-	vmRem = "You have removed your voicemail."
+	vmRem = "You have removed your voicemail.",
+	youreDead = "You're Dead"
 }

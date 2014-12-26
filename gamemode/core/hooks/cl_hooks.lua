@@ -163,6 +163,24 @@ function GM:LoadFonts(font)
 		weight = 1000
 	})
 
+	surface.CreateFont("nutDynFontSmall", {
+		font = font,
+		size = ScreenScale(22),
+		weight = 1000
+	})
+
+	surface.CreateFont("nutDynFontMedium", {
+		font = font,
+		size = ScreenScale(28),
+		weight = 1000
+	})
+
+	surface.CreateFont("nutDynFontBig", {
+		font = font,
+		size = ScreenScale(48),
+		weight = 1000
+	})
+
 	surface.CreateFont("nutIconsSmall", {
 		font = "fontello",
 		size = 22,
@@ -316,12 +334,15 @@ local paintedEntitiesCache = {}
 function GM:CalcView(client, origin, angles, fov)
 	local view = self.BaseClass:CalcView(client, origin, angles, fov) or {}
 	local entity = Entity(client:getLocalVar("ragdoll", 0))
+	local ragdoll = client:GetRagdollEntity()
 
-	if (!client:ShouldDrawLocalPlayer() and IsValid(entity) and entity:IsRagdoll()) then
-		local index = entity:LookupAttachment("eyes")
+	if ((!client:ShouldDrawLocalPlayer() and IsValid(entity) and entity:IsRagdoll()) or 
+		(!LocalPlayer():Alive() and IsValid(ragdoll))) then
+	 	local ent = LocalPlayer():Alive() and entity or ragdoll
+		local index = ent:LookupAttachment("eyes")
 
 		if (index) then
-			local data = entity:GetAttachment(index)
+			local data = ent:GetAttachment(index)
 
 			view.origin = data.Pos
 			view.angles = data.Ang
@@ -426,6 +447,7 @@ function GM:HUDPaint()
 
 	nut.menu.drawAll()
 	nut.bar.drawAll()
+	nut.hud.drawAll()
 end
 
 function GM:ShouldDrawEntityInfo(entity)

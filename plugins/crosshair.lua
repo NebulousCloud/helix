@@ -64,6 +64,7 @@ if (CLIENT) then
 
 		curGap = Lerp(fTime() * 2, curGap, crossGap)
 		curAlpha = Lerp(fTime() * 2, curAlpha, (!client:isWepRaised() and 255 or 150))
+		curAlpha = hook.Run("GetCrosshairAlpha", curAlpha) or curAlpha
 		local color = {color_black, Color(255, curAlpha, curAlpha, curAlpha)}
 
 		drawdot( {math_round(screen.x), math_round(screen.y)}, crossSize, color )
