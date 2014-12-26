@@ -67,7 +67,7 @@ if (CLIENT) then
 					local description = character:getDesc()
 
 					if (#description > 40) then
-						description = description:sub(1, 37).."..."
+						description = description:utf8sub(1, 37).."..."
 					end
 
 					return "["..description.."]"
