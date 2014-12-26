@@ -17,6 +17,7 @@ AddCSLuaFile()
 
 if (CLIENT) then
 	SWEP.PrintName = "Hands"
+	SWEP.PrintName = "Hands"
 	SWEP.Slot = 0
 	SWEP.SlotPos = 1
 	SWEP.DrawAmmo = false
@@ -51,6 +52,7 @@ SWEP.WorldModel = ""
 
 SWEP.UseHands = false
 SWEP.LowerAngles = Angle(0, 5, -14)
+SWEP.LowerAngles2 = Angle(0, 5, -22)
 
 SWEP.FireWhenLowered = true
 SWEP.HoldType = "fist"
