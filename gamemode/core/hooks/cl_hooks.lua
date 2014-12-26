@@ -453,7 +453,11 @@ function GM:HUDPaint()
 
 	nut.menu.drawAll()
 	nut.bar.drawAll()
-	nut.hud.drawAll()
+	nut.hud.drawAll(false)
+end
+
+function GM:PostDrawHUD()
+	nut.hud.drawAll(true)
 end
 
 function GM:ShouldDrawEntityInfo(entity)

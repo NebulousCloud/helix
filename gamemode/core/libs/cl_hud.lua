@@ -40,6 +40,8 @@ hook.Add("GetCrosshairAlpha", "nutCrosshair", function(alpha)
 	return alpha * (1 - aprg)
 end)
 
-function nut.hud.drawAll()
-	nut.hud.drawDeath()
+function nut.hud.drawAll(postHook)
+	if (postHook) then
+		nut.hud.drawDeath()
+	end
 end
