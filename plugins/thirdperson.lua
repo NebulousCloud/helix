@@ -10,6 +10,7 @@ nut.config.add("thirdperson", 0, "Allow Thirdperson in the server.", nil, {
 
 if (CLIENT) then
 	local NUT_CVAR_THIRDPERSON = CreateClientConVar("nut_tp_enabled", "0", true)
+	local NUT_CVAR_TP_CLASSIC = CreateClientConVar("nut_tp_classic", "0", true)
 	local NUT_CVAR_TP_VERT = CreateClientConVar("nut_tp_vertical", 10, true)
 	local NUT_CVAR_TP_HORI = CreateClientConVar("nut_tp_horizontal", 0, true)
 	local NUT_CVAR_TP_DIST = CreateClientConVar("nut_tp_distance", 50, true)
@@ -62,7 +63,7 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:SetupQuickMenu(menu)
-		local button = menu:addCheck(L"toggleThirdperson", function(panel, state)
+		local button = menu:addCheck(L"thirdpersonToggle", function(panel, state)
 			if (state) then
 				RunConsoleCommand("nut_tp_enabled", "1")
 			else
@@ -79,6 +80,14 @@ if (CLIENT) then
 			nut.gui.tpconfig = vgui.Create("nutTPConfig")
 		end
 
+		local button = menu:addCheck(L"thirdpersonClassic", function(panel, state)
+			if (state) then
+				RunConsoleCommand("nut_tp_classic", "1")
+			else
+				RunConsoleCommand("nut_tp_classic", "0")
+			end
+		end, NUT_CVAR_TP_CLASSIC:GetBool())
+
 		menu:addSpacer()
 	end
 
@@ -93,6 +102,7 @@ if (CLIENT) then
 			isAllowed() and 
 			IsValid(self) and
 			self:getChar() and
+			!self:getNetVar("actAng") and
 			!IsValid(entity) and
 			LocalPlayer():Alive()
 			) then
@@ -130,36 +140,43 @@ if (CLIENT) then
 				traceData2.endpos = aimOrigin + curAng:Forward() * 65535
 				traceData2.filter = client
 
-			client:SetEyeAngles((util.TraceLine(traceData2).HitPos - client:GetShootPos()):Angle());
-
+			if ((NUT_CVAR_TP_CLASSIC:GetBool() or owner:isWepRaised() or owner:GetVelocity():Length() >= 10)) then
+				client:SetEyeAngles((util.TraceLine(traceData2).HitPos - client:GetShootPos()):Angle())
+			end
+			
 			return view
 		end
 	end
 
 	local v1, v2, diff, fm, sm
 	function PLUGIN:CreateMove(cmd)
-		owner = LocalPlayer()
-		fm = cmd:GetForwardMove()
-		sm = cmd:GetSideMove()
-		diff = (owner:EyeAngles() - owner.camAng)[2]
-		diff = diff/90
+	    if (owner:CanOverrideView()) then
+			owner = LocalPlayer()
+			fm = cmd:GetForwardMove()
+			sm = cmd:GetSideMove()
+			diff = (owner:EyeAngles() - owner.camAng)[2]
+			diff = diff/90
 
-		cmd:SetForwardMove(fm + sm*diff)
-		cmd:SetSideMove(sm + fm*diff)
-		return false
+			cmd:SetForwardMove(fm + sm*diff)
+			cmd:SetSideMove(sm + fm*diff)
+			return false
+		end
 	end
 
 	function PLUGIN:InputMouseApply(cmd, x, y, ang)
 		owner = LocalPlayer( )
-	        
-	    if !owner.camAng then
-	        owner.camAng = Angle( 0, 0, 0 )
-	    end
-	        
-	    owner.camAng.p = clmp(math.NormalizeAngle( owner.camAng.p + y / 50 ), -85, 85)
-	    owner.camAng.y = math.NormalizeAngle( owner.camAng.y - x / 50 )
-	   
-		return true
+	       
+		if (!owner.camAng) then
+		    owner.camAng = Angle( 0, 0, 0 )
+		end
+
+	    if (owner:CanOverrideView()) then
+		        
+		    owner.camAng.p = clmp(math.NormalizeAngle( owner.camAng.p + y / 50 ), -85, 85)
+		    owner.camAng.y = math.NormalizeAngle( owner.camAng.y - x / 50 )
+		   
+			return true
+		end
 	end
 
 	function PLUGIN:ShouldDrawLocalPlayer()
