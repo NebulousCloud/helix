@@ -636,3 +636,9 @@ function GM:SetupQuickMenu(menu)
 		end
 	end, NUT_CVAR_LOWER2:GetBool())
 end
+
+function GM:ShouldDrawLocalPlayer(client)
+	if (nut.gui.char:IsVisible()) then
+		return true
+	end
+end
