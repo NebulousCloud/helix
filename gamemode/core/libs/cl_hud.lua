@@ -9,18 +9,20 @@ function nut.hud.drawDeath()
 	ft = FrameTime()
 	w, h = ScrW(), ScrH()
 
-	if (owner:Alive() and owner:getChar()) then
-		if (aprg != 0) then
-			aprg2 = clmp(aprg2 - ft*1.3, 0, 1)
-			if (aprg2 == 0) then
-				aprg = clmp(aprg - ft*.7, 0, 1)
+	if (owner:getChar()) then
+		if (owner:Alive()) then
+			if (aprg != 0) then
+				aprg2 = clmp(aprg2 - ft*1.3, 0, 1)
+				if (aprg2 == 0) then
+					aprg = clmp(aprg - ft*.7, 0, 1)
+				end
 			end
-		end
-	else
-		if (aprg2 != 1) then
-			aprg = clmp(aprg + ft*.5, 0, 1)
-			if (aprg == 1) then
-				aprg2 = clmp(aprg2 + ft*.4, 0, 1)
+		else
+			if (aprg2 != 1) then
+				aprg = clmp(aprg + ft*.5, 0, 1)
+				if (aprg == 1) then
+					aprg2 = clmp(aprg2 + ft*.4, 0, 1)
+				end
 			end
 		end
 	end
