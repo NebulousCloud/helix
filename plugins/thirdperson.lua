@@ -140,7 +140,8 @@ if (CLIENT) then
 				traceData2.endpos = aimOrigin + curAng:Forward() * 65535
 				traceData2.filter = client
 
-			if ((NUT_CVAR_TP_CLASSIC:GetBool() or owner:isWepRaised() or owner:GetVelocity():Length() >= 10)) then
+			if ((NUT_CVAR_TP_CLASSIC:GetBool() or owner:isWepRaised() or 
+				(owner:KeyDown(bit.bor(IN_FORWARD, IN_BACK, IN_MOVELEFT, IN_MOVERIGHT)) and owner:GetVelocity():Length() >= 10)) ) then
 				client:SetEyeAngles((util.TraceLine(traceData2).HitPos - client:GetShootPos()):Angle())
 			end
 			
@@ -150,8 +151,9 @@ if (CLIENT) then
 
 	local v1, v2, diff, fm, sm
 	function PLUGIN:CreateMove(cmd)
-	    if (owner:CanOverrideView()) then
-			owner = LocalPlayer()
+		owner = LocalPlayer()
+
+	    if (owner:CanOverrideView() and owner:GetMoveType() != MOVETYPE_NOCLIP) then
 			fm = cmd:GetForwardMove()
 			sm = cmd:GetSideMove()
 			diff = (owner:EyeAngles() - owner.camAng)[2]
