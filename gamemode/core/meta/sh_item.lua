@@ -222,7 +222,7 @@ if (SERVER) then
 	end
 
 	-- Transfers an item to a specific inventory.
-	function ITEM:transfer(invID, x, y, client, noReplication, isLogical)
+	function ITEM:transfer(invID, x, y, client, noReplication)
 		if (self.invID == invID) then
 			return false, "same inv"
 		end
@@ -249,7 +249,7 @@ if (SERVER) then
 		end
 
 		if (curInv) then
-			if (invID and invID > 0 and inventory) then
+			if (invID and inventory) then
 				local targetInv = inventory
 				local bagInv
 
@@ -268,16 +268,13 @@ if (SERVER) then
 				local status, result = targetInv:add(self.id, nil, nil, x, y, noReplication)
 
 				if (status) then
-					if (self.invID > 0) then
-						curInv:remove(self.id, false, true)
-						self.invID = invID
-					else
-						targetInv[self.id] = nil
-					end
+					curInv:remove(self.id, false, true)
+					self.invID = invID
 				else
 					return false, result
 				end
-			elseif (isLogical != true and IsValid(client)) then
+			elseif (IsValid(client)) then
+				print("owner available")
 				self.invID = 0
 
 				curInv:remove(self.id, false, true)
@@ -289,15 +286,6 @@ if (SERVER) then
 
 				return entity		
 			else
-				if (isLogical) then
-					self.invID = 0
-
-					curInv:remove(self.id, false, true)
-					nut.db.query("UPDATE nut_items SET _invID = 0 WHERE _itemID = "..self.id)
-
-					inventory[self.id] = self
-				end
-
 				return false, "noOwner"
 			end
 		else

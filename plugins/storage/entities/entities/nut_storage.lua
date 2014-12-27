@@ -57,6 +57,10 @@ if (SERVER) then
 	end
 
 	function ENT:OnRemove()
+		if (self.generated) then
+			return
+		end
+		
 		local index = self:getNetVar("id")
 
 		if (!nut.shuttingDown and !self.nutIsSafe and index) then
@@ -79,13 +83,15 @@ if (SERVER) then
 		local def = PLUGIN.definitions[self:GetModel():lower()]
 
 		activator:setAction("Opening...", OPEN_TIME, function()
-			if (activator:GetPos():Distance(self:GetPos()) <= 100) then
+			if (self and IsValid(self) and activator:GetPos():Distance(self:GetPos()) <= 100) then
 				self.receivers[activator] = true
 				activator.nutBagEntity = self
 				
 				inventory:sync(activator)
-				netstream.Start(activator, "invOpen", self, inventory:getID())
-				self:EmitSound(def.opensound or "items/ammocrate_open.wav")
+				netstream.Start(activator, "invOpen", self, inventory:getID(), self.generated)
+				if (def) then
+					self:EmitSound(def.opensound or "items/ammocrate_open.wav")
+				end
 			end
 		end)
 	end
