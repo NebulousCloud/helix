@@ -150,13 +150,13 @@ else
 		)
 	end)
 
-	netstream.Hook("invOpen", function(entity, index, generated)
+	netstream.Hook("invOpen", function(entity, index)
 		local inventory = nut.item.inventories[index]
 
 		if (IsValid(entity) and inventory and inventory.slots) then
 			local data = PLUGIN.definitions[entity:GetModel():lower()]
 
-			if (generated or data) then
+			if (data) then
 				nut.gui.inv1 = vgui.Create("nutInventory")
 				nut.gui.inv1:ShowCloseButton(true)
 
@@ -168,7 +168,7 @@ else
 
 				local panel = vgui.Create("nutInventory")
 				panel:ShowCloseButton(true)
-				panel:SetTitle(generated and "Storage" or data.name)
+				panel:SetTitle(data.name)
 				panel:setInventory(inventory)
 				panel:MoveLeftOf(nut.gui.inv1, 4)
 				panel.OnClose = function(this)

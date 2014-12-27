@@ -351,7 +351,7 @@ do
 						return
 					end
 				end
-				
+
 				table.insert(character.vars.inv, inventory)
 			end
 		end)

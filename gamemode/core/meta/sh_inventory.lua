@@ -361,10 +361,8 @@ if (SERVER) then
 							targetInv:sendSlot(x, y, item)
 						end
 
-						if (!self.generated) then
-							nut.db.query("UPDATE nut_items SET _invID = "..targetInv:getID()..", _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
-						end
-					
+						nut.db.query("UPDATE nut_items SET _invID = "..targetInv:getID()..", _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
+
 						return x, y, targetInv:getID()
 					else
 						return false, "noSpace"
@@ -427,7 +425,7 @@ if (SERVER) then
 				end
 			end
 		end
-
+		
 		netstream.Start(receiver, "inv", slots, self:getID(), self.w, self.h, (receiver == nil or fullUpdate) and self.owner or nil)
 
 		for k, v in pairs(self:getItems()) do
