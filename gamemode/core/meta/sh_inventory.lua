@@ -361,7 +361,9 @@ if (SERVER) then
 							targetInv:sendSlot(x, y, item)
 						end
 
-						nut.db.query("UPDATE nut_items SET _invID = "..targetInv:getID()..", _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
+						if (!self.noSave) then
+							nut.db.query("UPDATE nut_items SET _invID = "..targetInv:getID()..", _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
+						end
 
 						return x, y, targetInv:getID()
 					else

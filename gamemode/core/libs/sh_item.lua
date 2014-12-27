@@ -495,9 +495,6 @@ do
 							local receiver = inventory:getReceiver()
 
 							if (receiver and type(receiver) == "table") then
-								PrintTable(receiver)
-							end
-							if (receiver and type(receiver) == "table") then
 								for k, v in ipairs(receiver) do
 									if (v != client) then
 										netstream.Start(v, "invMv", invID, item:getID(), x, y)
@@ -505,7 +502,9 @@ do
 								end
 							end
 
-							nut.db.query("UPDATE nut_items SET _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
+							if (!inventory.noSave) then
+								nut.db.query("UPDATE nut_items SET _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
+							end
 						end
 					end
 				end
