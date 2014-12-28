@@ -183,7 +183,8 @@ ITEM.functions.Equip = {
 		end
 
 		local weapon = item.player:Give(item.class)
-		if (weapon and weapon:IsValid()) then
+
+		if (IsValid(weapon)) then
 			-- get camo data.
 			local camoIndex = item:getData("camo")
 			local ammo = item:getData("ammo")
@@ -193,6 +194,9 @@ ITEM.functions.Equip = {
 			item.player:SetActiveWeapon(weapon)
 			item.player:EmitSound("items/ammo_pickup.wav", 80)
 			item:setData("equip", true)
+
+			local count = weapon:Clip1()
+			item.player:RemoveAmmo(count, weapon:GetPrimaryAmmoType())
 
 			if (camoIndex) then
 				local camoData = item.camo[camoIndex]
@@ -251,8 +255,12 @@ hook.Add("PlayerLoadedChar", "weapon.reset", function(client)
 
 							local ammo = v:getData("ammo")
 							local weapon = client:Give(v.class)
-							if (weapon and weapon:IsValid()) then
+
+							if (IsValid(weapon)) then
 								client.carryWeapons[v.weaponCategory] = weapon
+
+								local count = weapon:Clip1()
+								client:RemoveAmmo(count, weapon:GetPrimaryAmmoType())
 
 								if (ammo) then
 									weapon:SetClip1(ammo)
