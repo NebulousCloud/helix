@@ -1,14 +1,16 @@
 if (CLIENT) then
-	local HELP_DEFAULT = [[
-		<div id="parent"><div id="child">
-			<center>
-			    <img src="http://img2.wikia.nocookie.net/__cb20140827051941/nutscript/images/c/c9/Logo.png"></img>
-				<br><font size=15>]] .. L"helpDefault" .. [[</font>
-			</center>
-		</div></div>
-	]]
+	local HELP_DEFAULT
 
 	hook.Add("CreateMenuButtons", "nutHelpMenu", function(tabs)		
+		HELP_DEFAULT = [[
+			<div id="parent"><div id="child">
+				<center>
+				    <img src="http://img2.wikia.nocookie.net/__cb20140827051941/nutscript/images/c/c9/Logo.png"></img>
+					<br><font size=15>]] .. L"helpDefault" .. [[</font>
+				</center>
+			</div></div>
+		]]
+
 		tabs["help"] = function(panel)
 			local html
 			local header = [[<html>
