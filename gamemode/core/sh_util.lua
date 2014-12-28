@@ -420,6 +420,16 @@ do
 		-- Inverts whether or not the weapon is raised.
 		function playerMeta:toggleWepRaised()
 			self:setWepRaised(!self:isWepRaised())
+
+			local weapon = self:GetActiveWeapon()
+
+			if (IsValid(weapon)) then
+				if (self:isWepRaised() and weapon.OnRaised) then
+					weapon:OnRaised()
+				elseif (!self:isWepRaised() and weapon.OnLowered) then
+					weapon:OnLowered()
+				end
+			end
 		end
 
 		-- Performs a delayed action on a player.
