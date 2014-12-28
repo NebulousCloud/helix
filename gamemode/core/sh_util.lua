@@ -365,7 +365,7 @@ do
 			if (weapon.IsAlwaysRaised or ALWAYS_RAISED[weapon:GetClass()]) then
 				return true
 			-- Return false if always lowered.
-			elseif (weapon.IsAlwaysLowered) then
+			elseif (weapon.IsAlwaysLowered or weapon.NeverRaised) then
 				return false
 			end
 		end
