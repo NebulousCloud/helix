@@ -196,7 +196,11 @@ ITEM.functions.Equip = {
 			item:setData("equip", true)
 
 			local count = weapon:Clip1()
-			item.player:RemoveAmmo(count, weapon:GetPrimaryAmmoType())
+			local ammoType = weapon:GetPrimaryAmmoType()
+
+			if (item.player:GetAmmoCount(ammoType) >= count) then
+				item.player:RemoveAmmo(count, ammoType)
+			end
 
 			if (camoIndex) then
 				local camoData = item.camo[camoIndex]
@@ -260,7 +264,11 @@ hook.Add("PlayerLoadedChar", "weapon.reset", function(client)
 								client.carryWeapons[v.weaponCategory] = weapon
 
 								local count = weapon:Clip1()
-								client:RemoveAmmo(count, weapon:GetPrimaryAmmoType())
+								local ammoType = weapon:GetPrimaryAmmoType()
+
+								if (client:GetAmmoCount(ammoType) >= count) then
+									client:RemoveAmmo(count, ammoType)
+								end
 
 								if (ammo) then
 									weapon:SetClip1(ammo)
