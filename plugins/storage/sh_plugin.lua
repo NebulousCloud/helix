@@ -110,6 +110,11 @@ if (SERVER) then
 
 						storage:setNetVar("id", v[3])
 					end)
+
+					local physObject = storage:GetPhysicsObject()
+					if (physObject) then
+						physObject:EnableMotion()
+					end
 				end
 			end
 		end
