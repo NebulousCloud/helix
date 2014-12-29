@@ -301,6 +301,8 @@ concommand.Add("nut_recreatedb", function(client, cmd, arguments)
 			resetCalled = 0
 			
 			MsgC(Color(255, 0, 0), "[Nutscript] DATABASE WIPE IN PROGRESS.\n")
+			
+			hook.Run("OnWipeTables")
 			nut.db.wipeTables()
 		end
 	end
@@ -317,6 +319,8 @@ function nut.db.loadTables()
 	else
 		nut.db.query(SQLITE_CREATE_TABLES)
 	end
+
+	hook.Run("OnLoadTables")
 end
 
 function nut.db.convertDataType(value)
