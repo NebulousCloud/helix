@@ -78,6 +78,10 @@ if (SERVER) then
 		local inventory = self:getInv()
 		local def = PLUGIN.definitions[self:GetModel():lower()]
 
+		if (def.onOpen) then
+			def.onOpen(self, activator)
+		end
+
 		activator:setAction("Opening...", OPEN_TIME, function()
 			if (activator:GetPos():Distance(self:GetPos()) <= 100) then
 				self.receivers[activator] = true

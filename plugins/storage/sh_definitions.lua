@@ -26,7 +26,7 @@
 
 PLUGIN.definitions["models/props_junk/wood_crate001a.mdl"] = {
 	name = "Crate",
-	desc = "A simple wooden create.",
+	desc = "A simple wooden crate.",
 	width = 4,
 	height = 4,
 }
@@ -50,4 +50,22 @@ PLUGIN.definitions["models/props_wasteland/controlroom_filecabinet002a.mdl"] = {
 	desc = "A Metal File Cabinet",
 	width = 2,
 	height = 4,
+}
+
+PLUGIN.definitions["models/items/ammocrate_smg1.mdl"] = {
+	name = "Ammo Crate",
+	desc = "A Heavy Crate that stores ammo",
+	width = 5,
+	height = 3,
+	onOpen = function(entity, activator)
+		local seq = entity:LookupSequence("Close")
+		entity:ResetSequence(seq)
+
+		timer.Simple(2, function()
+			if (entity and IsValid(entity)) then
+				local seq = entity:LookupSequence("Open")
+				entity:ResetSequence(seq)
+			end
+		end)
+	end,
 }
