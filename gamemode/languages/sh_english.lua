@@ -205,4 +205,5 @@ LANGUAGE = {
 	youreDead = "You're Dead",
 	injMajor = "Seems critically injured.",
 	injLittle = "Seems injured",
+	toggleESP = "Toggle Admin ESP",
 }

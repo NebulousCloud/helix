@@ -196,7 +196,7 @@ function PLUGIN:PlayerDisconnected(client)
 			return
 		end
 		
-		if (v:isDoor() and v:getNetVar("owner") == client) then
+		if (v.isDoor and v:isDoor() and v:getNetVar("owner") == client) then
 			v:removeDoorAccessData()
 		end
 	end

@@ -48,6 +48,20 @@ if (CLIENT) then
 		    end
 		end
 	end
+
+	function PLUGIN:SetupQuickMenu(menu)
+		if (LocalPlayer():IsAdmin()) then
+			local button = menu:addCheck(L"toggleESP", function(panel, state)
+				if (state) then
+					RunConsoleCommand("nut_obsesp", "1")
+				else
+					RunConsoleCommand("nut_obsesp", "0")
+				end
+			end, NUT_CVAR_ADMINESP:GetBool())
+
+			menu:addSpacer()
+		end
+	end
 else
 	function PLUGIN:PlayerNoClip(client, state)
 		-- Observer mode is reserved for administrators.
