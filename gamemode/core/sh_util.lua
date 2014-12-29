@@ -160,6 +160,18 @@ function nut.util.gridVector(vec, gridSize)
 	return vec
 end
 
+function nut.util.getAllChar()
+	local charTable = {}
+
+	for k, v in ipairs(player.GetAll()) do
+		if (v:getChar()) then
+			table.insert(charTable, v:getChar():getID())
+		end
+	end
+
+	return charTable
+end
+
 if (CLIENT) then
 	NUT_CVAR_CHEAP = CreateClientConVar("nut_cheapblur", 0, true)
 	
