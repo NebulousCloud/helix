@@ -472,6 +472,21 @@ function GM:ShouldDrawEntityInfo(entity)
 	return false
 end
 
+local injTextTable = {
+	[.3] = {"injMajor", Color(192, 57, 43)},
+	[.6] = {"injLittle", Color(231, 76, 60)},
+}
+
+function GM:GetInjuredText(client)
+	local health = client:Health()
+
+	for k, v in pairs(injTextTable) do
+		if ((health / LocalPlayer():GetMaxHealth()) < k) then
+			return v[1], v[2]
+		end
+	end
+end
+
 function GM:DrawEntityInfo(entity, alpha)
 	if (entity:IsPlayer()) then
 		local localPlayer = LocalPlayer()
@@ -488,6 +503,12 @@ function GM:DrawEntityInfo(entity, alpha)
 			y = y + ty
 
 			x, y = hook.Run("DrawCharInfo", character, x, y, alpha)
+			
+			local injText, injColor = hook.Run("GetInjuredText", entity)
+			if (injText) then
+				tx, ty = nut.util.drawText(L(injText), x, y, ColorAlpha(injColor, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+				y = y + ty
+			end
 		end
 	end
 end

@@ -202,5 +202,7 @@ LANGUAGE = {
 	vmRem = "You have removed your voicemail.",
 	altLower = "Hide hands when lowered?",
     noPerm = "You are not allowed to do this.",
-	youreDead = "You're Dead"
+	youreDead = "You're Dead",
+	injMajor = "Seems critically injured.",
+	injLittle = "Seems injured",
 }
