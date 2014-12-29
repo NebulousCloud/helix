@@ -101,7 +101,7 @@ else
 	function ENT:DrawTranslucent()
 		local itemTable = self:getItemTable()
 
-		if (itemTable.drawEntity) then
+		if (itemTable and itemTable.drawEntity) then
 			itemTable:drawEntity(self, itemTable)
 		end
 	end
