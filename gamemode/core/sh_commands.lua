@@ -129,7 +129,7 @@ nut.command.add("charsetattrib", {
 
 		local attribNumber = arguments[3]
 		attribNumber = tonumber(attribNumber)
-		if (!attribNumber) then
+		if (!attribNumber or !isnumber(attribNumber)) then
 			return L("invalidArg", client, 3)
 		end
 
@@ -162,7 +162,7 @@ nut.command.add("charaddattrib", {
 
 		local attribNumber = arguments[3]
 		attribNumber = tonumber(attribNumber)
-		if (!attribNumber) then
+		if (!attribNumber or !isnumber(attribNumber)) then
 			return L("invalidArg", client, 3)
 		end
 
@@ -313,8 +313,8 @@ nut.command.add("charunban", {
 nut.command.add("givemoney", {
 	syntax = "<number amount> [string target]",
 	onRun = function(client, arguments)
-		local amount = math.Round(tonumber(arguments[1]))
-		if (!amount or amount <= 0) then
+		local amount = tonumber(arguments[1])
+		if (!amount or !isnumber(amount) or amount <= 0) then
 			return L("invalidArg", client, 2)
 		end
 
@@ -336,6 +336,7 @@ nut.command.add("givemoney", {
 		end
 
 		if (IsValid(target) and target:getChar()) then
+			amount = math.Round(amount)
 			target:getChar():giveMoney(amount)
 			client:getChar():takeMoney(amount)
 		end
@@ -346,8 +347,8 @@ nut.command.add("charsetmoney", {
 	adminOnly = true,
 	syntax = "<string target> <number amount>",
 	onRun = function(client, arguments)
-		local amount = math.Round(tonumber(arguments[2]))
-		if (!amount or amount <= 0) then
+		local amount = tonumber(arguments[2])
+		if (!amount or !isnumber(amount) or amount <= 0) then
 			return L("invalidArg", client, 2)
 		end
 
@@ -357,6 +358,7 @@ nut.command.add("charsetmoney", {
 			local char = target:getChar()
 			
 			if (char and amount) then
+				amount = math.Round(amount)
 				char:setMoney(amount)
 				client:notify(L("setMoney", client, target:Name(), nut.currency.get(amount)))
 			end
@@ -367,8 +369,8 @@ nut.command.add("charsetmoney", {
 nut.command.add("dropmoney", {
 	syntax = "<string name> <string item>",
 	onRun = function(client, arguments)
-		local amount = math.Round(tonumber(arguments[1]))
-		if (!amount or amount <= 0) then
+		local amount = tonumber(arguments[1])
+		if (!amount or !isnumber(amount) or amount <= 0) then
 			return L("invalidArg", client, 2)
 		end
 
@@ -383,7 +385,7 @@ nut.command.add("dropmoney", {
 		local trace = util.TraceLine(data)
 		local pos = trace.HitPos
 
-		nut.currency.spawn(pos, amount)
+		nut.currency.spawn(pos, math.Round(amount))
 	end
 })
 
@@ -455,6 +457,10 @@ nut.command.add("fallover", {
 	syntax = "[number time]",
 	onRun = function(client, arguments)
 		local time = tonumber(arguments[1])
+
+		if (!isnumber(time)) then
+			time = 1	
+		end
 
 		if (time) then
 			time = math.max(time, 1)
