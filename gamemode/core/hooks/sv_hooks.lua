@@ -318,6 +318,18 @@ local painSounds = {
 	Sound("vo/npc/male01/pain06.wav")
 }
 
+local drownSounds = {
+	Sound("player/pl_drown1.wav"),
+	Sound("player/pl_drown2.wav"),
+	Sound("player/pl_drown3.wav"),
+}
+
+function GM:GetPlayerPainSound(client)
+	if (client:WaterLevel() >= 3) then
+		return table.Random(drownSounds)
+	end
+end
+
 function GM:PlayerHurt(client, attacker, health, damage)
 	if ((client.nutNextPain or 0) < CurTime()) then
 		local painSound = hook.Run("GetPlayerPainSound", client) or table.Random(painSounds)
@@ -448,4 +460,39 @@ end
 
 function GM:PlayerDeathSound()
 	return true
+end
+
+function GM:Think()
+	for k, v in ipairs(player.GetAll()) do
+		if (v:getChar() and v:Alive()) then
+			if (v:WaterLevel() >= 3) then
+				if (!v.drowningTime) then
+					v.drowningTime = CurTime() + 30
+					v.nextDrowning = CurTime()
+					v.drownDamage = v.drownDamage or 0
+				end
+
+				if (v.drowningTime < CurTime()) then
+					if (v.nextDrowning < CurTime()) then
+						v:ScreenFade(1, Color(0, 0, 255, 100), 1, 0)
+						v:TakeDamage(10)
+						v.drownDamage = v.drownDamage + 10
+						v.nextDrowning = CurTime() + 1
+					end
+				end
+			else
+				if (v.drowningTime) then
+					v.drowningTime = nil
+					v.nextDrowning = nil
+					v.nextRecover = CurTime() + 2
+				end
+
+				if (v.nextRecover and v.nextRecover < CurTime() and v.drownDamage > 0) then
+					v.drownDamage = v.drownDamage - 10
+					v:SetHealth(math.Clamp(v:Health() + 10, 0, v:GetMaxHealth()))
+					v.nextRecover = CurTime() + 1
+				end
+			end
+		end
+	end
 end
