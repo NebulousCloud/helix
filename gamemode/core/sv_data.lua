@@ -36,6 +36,7 @@ function nut.data.set(key, value, global, ignoreMap)
 	
 	-- Cache the data value here.
 	nut.data.stored[key] = value
+	return path
 end
 
 -- Gets a piece of information for NutScript.
@@ -67,5 +68,22 @@ function nut.data.get(key, default, global, ignoreMap, refresh)
 	else
 		-- If we provided a default, return that since we couldn't retrieve the data.
 		return default
+	end
+end
+
+-- Deletes existing data in nutscript framework.
+function nut.data.delete(key, global, ignoreMap)
+	-- Get the path to read from.
+	local path = "nutscript/"..(global and "" or SCHEMA.folder.."/")..(ignoreMap and "" or game.GetMap().."/")
+	-- Read the data from a local file.
+	local contents = file.Read(path..key..".txt", "DATA")
+
+	if (contents and contents != "") then
+		file.Delete(path..key..".txt")
+		nut.data.stored[key] = nil
+		return true
+	else
+		-- If we provided a default, return that since we couldn't retrieve the data.
+		return false
 	end
 end
