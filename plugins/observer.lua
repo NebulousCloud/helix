@@ -20,6 +20,34 @@ PLUGIN.desc = "Adds on to the no-clip mode to prevent instrusion."
 if (CLIENT) then
 	-- Create a setting to see if the player will teleport back after noclipping.
 	NUT_CVAR_OBSTPBACK = CreateClientConVar("nut_obstpback", 0, true, true)
+	NUT_CVAR_ADMINESP = CreateClientConVar("nut_obsesp", 1, true, true)
+
+	local client, sx, sy, scrPos, marginx, marginy, x, y, teamColor, distance, factor, size, alpha
+	local dimDistance = 1024
+	function PLUGIN:HUDPaint()
+		client = LocalPlayer()
+
+		if (client:GetMoveType() == MOVETYPE_NOCLIP and NUT_CVAR_ADMINESP:GetBool()) then
+		    for k, v in ipairs(player.GetAll()) do
+		        if (v == client) then continue end
+		        sx, sy = ScrW(), ScrH()
+		        scrPos = v:GetPos():ToScreen()
+		        marginx, marginy = sy*.1, sy*.1
+		        x, y = math.Clamp(scrPos.x, marginx, sx - marginx), math.Clamp(scrPos.y, marginy, sy - marginy)
+		        teamColor = team.GetColor(v:Team())
+		        distance = client:GetPos():Distance(v:GetPos())
+		        factor = 1 - math.Clamp(distance/dimDistance, 0, 1)
+		        size = math.max(10, 32*factor)
+		        alpha = math.Clamp(255*factor, 80, 255)
+
+		        surface.SetDrawColor(teamColor.r, teamColor.g, teamColor.b, alpha)
+		        surface.DrawLine(sx/2, sy, x, y)
+		        surface.DrawTexturedRect(x - size/2, y - size/2, size, size)
+
+		        nut.util.drawText(v:Name(), x, y - size, ColorAlpha(teamColor, alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, nil, alpha)
+		    end
+		end
+	end
 else
 	function PLUGIN:PlayerNoClip(client, state)
 		-- Observer mode is reserved for administrators.

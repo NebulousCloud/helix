@@ -43,11 +43,11 @@ do
 			id = id:getID()
 		end
 
-		return hook.Run("IsCharRecognised", id)
+		return hook.Run("IsCharRecognised", self, id)
 	end
 
-	function PLUGIN:IsCharRecognised(id)
-		return self:getData("rgn", ""):find(id..",")
+	function PLUGIN:IsCharRecognised(char, id)
+		return char:getData("rgn", ""):find(id..",")
 	end
 end
 
