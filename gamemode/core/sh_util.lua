@@ -146,6 +146,20 @@ function nut.util.emitQueuedSounds(entity, sounds, delay, spacing, volume, pitch
 	return delay
 end
 
+function nut.util.gridVector(vec, gridSize)
+	if (gridSize <= 0) then
+		gridSize = 1
+	end
+
+	for i = 1, 3 do
+		vec[i] = vec[i] / gridSize
+		vec[i] = math.Round(vec[i])
+		vec[i] = vec[i] * gridSize
+	end
+
+	return vec
+end
+
 if (CLIENT) then
 	NUT_CVAR_CHEAP = CreateClientConVar("nut_cheapblur", 0, true)
 	

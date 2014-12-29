@@ -356,7 +356,7 @@ nut.command.add("charsetmoney", {
 		if (IsValid(target)) then
 			local char = target:getChar()
 			
-			if (char) then
+			if (char and amount) then
 				char:setMoney(amount)
 				client:notify(L("setMoney", client, target:Name(), nut.currency.get(amount)))
 			end
