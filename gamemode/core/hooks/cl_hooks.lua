@@ -480,9 +480,14 @@ function GM:DrawEntityInfo(entity, alpha)
 
 		if (character) then
 			local x, y = position.x, position.y
+			local tx, ty = 0, 0
+			tx, ty = nut.util.drawText(hook.Run("GetDisplayedName", entity) or character:getName(), x, y, ColorAlpha(team.GetColor(entity:Team()), alpha), 1, 1, nil, alpha * 0.65)
+			y = y + ty
+			
+			tx, ty = nut.util.drawText(character:getDesc(), x, y, ColorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+			y = y + ty
 
-			nut.util.drawText(hook.Run("GetDisplayedName", entity) or character:getName(), x, y, ColorAlpha(team.GetColor(entity:Team()), alpha), 1, 1, nil, alpha * 0.65)
-			nut.util.drawText(character:getDesc(), x, y + 16, ColorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+			x, y = hook.Run("DrawCharInfo", character, x, y, alpha)
 		end
 	end
 end
