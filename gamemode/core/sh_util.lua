@@ -46,12 +46,14 @@ function nut.util.includeDir(directory, fromLua)
 	local baseDir = "nutscript"
 
 	-- If we're in a schema, include relative to the schema.
-	if (SCHEMA and SCHEMA.folder and GM and GM.FolderName != "nutscript") then
-		baseDir = SCHEMA.folder
+	if (SCHEMA and SCHEMA.folder and SCHEMA.loading) then
+		baseDir = SCHEMA.folder.."/schema/"
+	else
+		baseDir = baseDir.."/gamemode/"
 	end
 
 	-- Find all of the files within the directory.
-	for k, v in ipairs(file.Find((fromLua and "" or baseDir.."/gamemode/")..directory.."/*.lua", "LUA")) do
+	for k, v in ipairs(file.Find((fromLua and "" or baseDir)..directory.."/*.lua", "LUA")) do
 		-- Include the file from the prefix.
 		nut.util.include(directory.."/"..v)
 	end

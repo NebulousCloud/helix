@@ -37,6 +37,7 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 	end
 
 	_G[variable] = PLUGIN
+	PLUGIN.loading = true
 
 	if (!isSingleFile) then
 		nut.lang.loadFromDir(path.."/languages")
@@ -53,6 +54,7 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 	end
 	
 	nut.util.include(isSingleFile and path or path.."/sh_"..variable:lower()..".lua", "shared")
+	PLUGIN.loading = false
 
 	local uniqueID2 = uniqueID
 
