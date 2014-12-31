@@ -166,15 +166,17 @@ function GM:EntityTakeDamage(entity, dmgInfo)
 end
 
 function GM:PlayerLoadedChar(client, character, lastChar)
-	local charEnts = lastChar:getVar("charEnts") or {}
+	if (lastChar) then
+		local charEnts = lastChar:getVar("charEnts") or {}
 
-	for k, v in ipairs(charEnts) do
-		if (v and IsValid(v)) then
-			v:Remove()
+		for k, v in ipairs(charEnts) do
+			if (v and IsValid(v)) then
+				v:Remove()
+			end
 		end
-	end
 
-	lastChar:setVar("charEnts", nil) 
+		lastChar:setVar("charEnts", nil) 
+	end
 	hook.Run("PlayerLoadout", client)
 end
 
@@ -366,15 +368,16 @@ function GM:PlayerDisconnected(client)
 	client:saveNutData()
 
 	local character = client:getChar()
-	local charEnts = lastChar:getVar("charEnts") or {}
-
-	for k, v in ipairs(charEnts) do
-		if (v and IsValid(v)) then
-			v:Remove()
-		end
-	end
 
 	if (character) then
+		local charEnts = character:getVar("charEnts") or {}
+
+		for k, v in ipairs(charEnts) do
+			if (v and IsValid(v)) then
+				v:Remove()
+			end
+		end
+
 		character:save()
 	end
 end
