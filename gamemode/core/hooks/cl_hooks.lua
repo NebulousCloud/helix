@@ -322,6 +322,7 @@ timer.Create("nutVignetteChecker", 1, 0, function()
 		local data = {}
 			data.start = client:GetPos()
 			data.endpos = data.start + Vector(0, 0, 768)
+			data.filter = client
 		local trace = util.TraceLine(data)
 
 		if (trace.Hit) then
@@ -371,6 +372,7 @@ function GM:HUDPaint()
 		local data = {}
 			data.start = localPlayer:GetShootPos()
 			data.endpos = data.start + localPlayer:GetAimVector()*160
+			data.filter = localPlayer
 		local trace = util.TraceLine(data)
 		local entity = trace.Entity
 
@@ -533,6 +535,7 @@ function GM:PlayerBindPress(client, bind, pressed)
 			local data = {}
 				data.start = client:GetShootPos()
 				data.endpos = data.start + client:GetAimVector()*96
+				data.filter = client
 			local trace = util.TraceLine(data)
 			local entity = trace.Entity
 
