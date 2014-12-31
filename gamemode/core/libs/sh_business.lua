@@ -15,7 +15,8 @@
 
 if (SERVER) then
 	netstream.Hook("bizBuy", function(client, items)
-		if (!client:getChar()) then
+		local char = client:getChar()
+		if (!char) then
 			return
 		end
 
@@ -33,14 +34,17 @@ if (SERVER) then
 			end
 		end
 
-		if (client:getChar():hasMoney(cost)) then
-			client:getChar():takeMoney(cost)
+		if (char:hasMoney(cost)) then
+			char:takeMoney(cost)
 
 			local entity = ents.Create("nut_shipment")
 			entity:SetPos(client:getItemDropPos())
 			entity:Spawn()
 			entity:setItems(items)
-			entity:setNetVar("owner", client:getChar():getID())
+			entity:setNetVar("owner", char:getID())
+			local shipments = char:getVar("ownedShipments") or {}
+			table.insert(shipments, entity)
+			char:setVar("ownedShipments", shipments)
 
 			netstream.Start(client, "bizResp")
 			hook.Run("OnCreateShipment", client, entity)
