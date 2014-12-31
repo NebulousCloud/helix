@@ -464,7 +464,7 @@ end
 
 function GM:Think()
 	for k, v in ipairs(player.GetAll()) do
-		if (v:getChar() and v:Alive()) then
+		if (v:getChar() and v:Alive() and hook.Run("ShouldPlayerDrowned", v) != false) then
 			if (v:WaterLevel() >= 3) then
 				if (!v.drowningTime) then
 					v.drowningTime = CurTime() + 30
