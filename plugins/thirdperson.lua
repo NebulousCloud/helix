@@ -101,9 +101,9 @@ if (CLIENT) then
 	function playerMeta:CanOverrideView()
 		local entity = Entity(self:getLocalVar("ragdoll", 0))
 		local ragdoll = self:GetRagdollEntity()
-
 		if ((nut.gui.char and !nut.gui.char:IsVisible()) and
 			NUT_CVAR_THIRDPERSON:GetBool() and
+			!IsValid(self:GetVehicle()) and
 			isAllowed() and 
 			IsValid(self) and
 			self:getChar() and
@@ -119,9 +119,9 @@ if (CLIENT) then
 	local clmp = math.Clamp
 	crouchFactor = 0
 	function PLUGIN:CalcView(client, origin, angles, fov)
-		if (client:CanOverrideView()) then
-			ft = FrameTime()
+		ft = FrameTime()
 
+		if (client:CanOverrideView() and LocalPlayer():GetViewEntity() == LocalPlayer()) then
 			if ((client:OnGround() and client:KeyDown(IN_DUCK)) or client:Crouching()) then
 				crouchFactor = Lerp(ft*5, crouchFactor, 1) 
 			else
@@ -158,7 +158,7 @@ if (CLIENT) then
 	function PLUGIN:CreateMove(cmd)
 		owner = LocalPlayer()
 
-	    if (owner:CanOverrideView() and owner:GetMoveType() != MOVETYPE_NOCLIP) then
+	    if (owner:CanOverrideView() and owner:GetMoveType() != MOVETYPE_NOCLIP and LocalPlayer():GetViewEntity() == LocalPlayer()) then
 			fm = cmd:GetForwardMove()
 			sm = cmd:GetSideMove()
 			diff = (owner:EyeAngles() - owner.camAng or Angle(0, 0, 0))[2]
@@ -177,7 +177,7 @@ if (CLIENT) then
 		    owner.camAng = Angle( 0, 0, 0 )
 		end
 
-	    if (owner:CanOverrideView()) then
+	    if (owner:CanOverrideView() and LocalPlayer():GetViewEntity() == LocalPlayer()) then
 		        
 		    owner.camAng.p = clmp(math.NormalizeAngle( owner.camAng.p + y / 50 ), -85, 85)
 		    owner.camAng.y = math.NormalizeAngle( owner.camAng.y - x / 50 )
@@ -187,6 +187,8 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:ShouldDrawLocalPlayer()
-		return LocalPlayer():CanOverrideView()
+		if (LocalPlayer():GetViewEntity() == LocalPlayer() and !IsValid(LocalPlayer():GetVehicle())) then
+			return LocalPlayer():CanOverrideView()
+		end
 	end
 end
