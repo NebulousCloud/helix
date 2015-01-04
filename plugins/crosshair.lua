@@ -50,6 +50,7 @@ if (CLIENT) then
 		filter = {client}
 		local vehicle = client:GetVehicle()
 		if (vehicle and IsValid(vehicle)) then
+			aimVector = aimVector + vehicle:GetAngles()
 			table.insert(filter, vehicle)
 		end
 
