@@ -14,7 +14,6 @@ function nut.pac.registerPart(id, outfit)
 	nut.pac.list[id] = outfit
 end
 
-
 function charMeta:getParts()
 	if (!pac) then return end
 	
@@ -79,6 +78,7 @@ else
 		end
 
 		if (nut.pac.list[outfitID]) then
+			print(outfitID)
 			wearer:AttachPACPart(nut.pac.list[outfitID])
 		end
 	end)
@@ -126,6 +126,7 @@ else
 				local topy = 0
 				local bottomy = self:GetTall()
 				local previous = curparent
+
 				while(curparent:GetParent() != nil) do
 					curparent = curparent:GetParent()
 					local x,y = previous:GetPos()
@@ -135,6 +136,7 @@ else
 					rightx = math.Min(x+previous:GetWide(), rightx + x)
 					previous = curparent
 				end
+
 				render.SetScissorRect(leftx,topy,rightx, bottomy, true)
 					ent.forceDraw = true
 					pac.RenderOverride(ent, "opaque")
@@ -142,6 +144,17 @@ else
 					self.Entity:DrawModel()
 				render.SetScissorRect(0,0,0,0, false)
 			end
+		end
+	end
+end
+
+function PLUGIN:InitializedPlugins()
+	local items = nut.item.list
+
+	for k, v in pairs(items) do
+		if (v.pacData) then
+			nut.pac.list[v.uniqueID] = v.pacData
+			print("Registered .. " .. v.uniqueID)
 		end
 	end
 end
