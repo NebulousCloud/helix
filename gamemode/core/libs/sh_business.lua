@@ -42,9 +42,10 @@ if (SERVER) then
 			entity:Spawn()
 			entity:setItems(items)
 			entity:setNetVar("owner", char:getID())
-			local shipments = char:getVar("ownedShipments") or {}
+
+			local shipments = char:getVar("charEnts") or {}
 			table.insert(shipments, entity)
-			char:setVar("ownedShipments", shipments)
+			char:setVar("charEnts", shipments, true)
 
 			netstream.Start(client, "bizResp")
 			hook.Run("OnCreateShipment", client, entity)
