@@ -127,16 +127,17 @@ function SWEP:PrimaryAttack()
 		data.filter = self.Owner
 	local entity = util.TraceLine(data).Entity
 
-	if (IsValid(entity) and entity:checkDoorAccess(self.Owner)) then
-		if (entity:isDoor()) then
-			self.Owner:setAction("@locking", time, function()
-				self:toggleLock(entity, true)
-			end)			
+	if (IsValid(entity) and
+		(
+			(entity:isDoor() and entity:checkDoorAccess(self.Owner)) or
+			(entity:IsVehicle() and entity:getNetVar("owner") == self.Owner:getChar():getID())
+		)
+	) then
+		self.Owner:setAction("@locking", time, function()
+			self:toggleLock(entity, true)
+		end)			
 
-			return
-		else
-			self.Owner:notifyLocalized("dNotValid")
-		end
+		return
 	end
 end
 
@@ -145,22 +146,32 @@ function SWEP:toggleLock(door, state)
 		return
 	end
 
-	local partner = door:getDoorPartner()
+	if (door:isDoor()) then
+		local partner = door:getDoorPartner()
 
-	if (state) then
-		if (IsValid(partner)) then
-			partner:Fire("lock")
+		if (state) then
+			if (IsValid(partner)) then
+				partner:Fire("lock")
+			end
+
+			door:Fire("lock")
+			self.Owner:EmitSound("doors/door_latch3.wav")
+		else
+			if (IsValid(partner)) then
+				partner:Fire("unlock")
+			end
+
+			door:Fire("unlock")
+			self.Owner:EmitSound("doors/door_latch1.wav")
 		end
-
-		door:Fire("lock")
-		self.Owner:EmitSound("doors/door_latch3.wav")
-	else
-		if (IsValid(partner)) then
-			partner:Fire("unlock")
+	elseif (door:IsVehicle()) then
+		if (state) then
+			door:Fire("lock")
+			self.Owner:EmitSound("doors/door_latch3.wav")
+		else
+			door:Fire("unlock")
+			self.Owner:EmitSound("doors/door_latch1.wav")
 		end
-
-		door:Fire("unlock")
-		self.Owner:EmitSound("doors/door_latch1.wav")
 	end
 end
 
@@ -185,15 +196,17 @@ function SWEP:SecondaryAttack()
 		data.filter = self.Owner
 	local entity = util.TraceLine(data).Entity
 
-	if (IsValid(entity) and entity:checkDoorAccess(self.Owner)) then
-		if (entity:isDoor()) then
-			self.Owner:setAction("@unlocking", time, function()
-				self:toggleLock(entity, false)
-			end)
 
-			return
-		else
-			self.Owner:notifyLocalized("dNotValid")
-		end
+	if (IsValid(entity) and
+		(
+			(entity:isDoor() and entity:checkDoorAccess(self.Owner)) or
+			(entity:IsVehicle() and entity:getNetVar("owner") == self.Owner:getChar():getID())
+		)
+	) then
+		self.Owner:setAction("@unlocking", time, function()
+			self:toggleLock(entity, false)
+		end)
+
+		return	
 	end
 end
