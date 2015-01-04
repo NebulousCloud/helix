@@ -296,15 +296,15 @@ function GM:Move(client, moveData)
 			local mf, ms = 0, 0
 
 			if (moveData:KeyDown(IN_FORWARD)) then
-				mf = .3
+				mf = .4
 			elseif (moveData:KeyDown(IN_BACK)) then
-				mf = -.3
+				mf = -.4
 			end
 
 			if (moveData:KeyDown(IN_MOVELEFT)) then
-				ms = -.3
+				ms = -.4
 			elseif (moveData:KeyDown(IN_MOVERIGHT)) then
-				ms = .3
+				ms = .4
 			end
 
 			moveData:SetForwardSpeed(mf * client:GetWalkSpeed()) 
