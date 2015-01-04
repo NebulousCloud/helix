@@ -13,12 +13,15 @@ if (CLIENT) then
 		surface.DrawOutlinedRect(pos[1] - size/2, pos[2] - size/2 , size, size)
 	end
 
-	local FRAMETIME_LIMIT = 1 / 60
-	local function fTime() return math.Clamp(FrameTime(), FRAMETIME_LIMIT, 1) end
+	local w, h, aimVector, punchAngle, ft, screen, scaleFraction, distance, entity
 	local math_round = math.Round
 	local curGap = 0
 	local curAlpha = 0
 	local maxDistance = 1000
+	local crossSize = 4
+	local crossGap = 0
+	local colors = {color_black}
+	local filter = {}
 
 	function PLUGIN:PostDrawHUD()
 		local client = LocalPlayer()
@@ -40,21 +43,26 @@ if (CLIENT) then
 			return
 		end
 
-		local aimVector = client:EyeAngles()
-		local punchAngle = client:GetPunchAngle()
+		aimVector = client:EyeAngles()
+		punchAngle = client:GetPunchAngle()
+		w, h = ScrW(), ScrH()
+		ft = FrameTime()
+		filter = {client}
+		local vehicle = client:GetVehicle()
+		if (vehicle and IsValid(vehicle)) then
+			table.insert(filter, vehicle)
+		end
 
 		local data = {}
 			data.start = client:GetShootPos()
 			data.endpos = data.start + (aimVector + punchAngle):Forward()*65535
-			data.filter = client
+			data.filter = filter
 		local trace = util.TraceLine(data)
-		local entity = trace.Entity
-		local distance = trace.StartPos:Distance(trace.HitPos)
-		local scaleFraction = 1 - math.Clamp(distance / maxDistance, 0, .5)
-		local screen = trace.HitPos:ToScreen()
-		local w, h = ScrW(), ScrH()
-		local crossGap = 25 * (scaleFraction - (client:isWepRaised() and 0 or .1))
-		local crossSize = 4
+		entity = trace.Entity
+		distance = trace.StartPos:Distance(trace.HitPos)
+		scaleFraction = 1 - math.Clamp(distance / maxDistance, 0, .5)
+		screen = trace.HitPos:ToScreen()
+		crossGap = 25 * (scaleFraction - (client:isWepRaised() and 0 or .1))
 
 		if (IsValid(entity) and entity:GetClass() == "nut_item" and 
 			entity:GetPos():Distance(data.start) <= 128) then
@@ -62,15 +70,15 @@ if (CLIENT) then
 			crossSize = 5
 		end
 
-		curGap = Lerp(fTime() * 2, curGap, crossGap)
-		curAlpha = Lerp(fTime() * 2, curAlpha, (!client:isWepRaised() and 255 or 150))
+		curGap = Lerp(ft * 2, curGap, crossGap)
+		curAlpha = Lerp(ft * 2, curAlpha, (!client:isWepRaised() and 255 or 150))
 		curAlpha = hook.Run("GetCrosshairAlpha", curAlpha) or curAlpha
-		local color = {color_black, Color(255, curAlpha, curAlpha, curAlpha)}
+		colors[2] = Color(255, curAlpha, curAlpha, curAlpha)
 
-		drawdot( {math_round(screen.x), math_round(screen.y)}, crossSize, color )
-		drawdot( {math_round(screen.x + curGap), math_round(screen.y)}, crossSize, color )
-		drawdot( {math_round(screen.x - curGap), math_round(screen.y)}, crossSize, color ) 
-		drawdot( {math_round(screen.x), math_round(screen.y + curGap * .8)}, crossSize, color ) 
-		drawdot( {math_round(screen.x), math_round(screen.y - curGap * .8)}, crossSize, color ) 
+		drawdot( {math_round(screen.x), math_round(screen.y)}, crossSize, colors)
+		drawdot( {math_round(screen.x + curGap), math_round(screen.y)}, crossSize, colors)
+		drawdot( {math_round(screen.x - curGap), math_round(screen.y)}, crossSize, colors) 
+		drawdot( {math_round(screen.x), math_round(screen.y + curGap * .8)}, crossSize, colors) 
+		drawdot( {math_round(screen.x), math_round(screen.y - curGap * .8)}, crossSize, colors) 
 	end
 end

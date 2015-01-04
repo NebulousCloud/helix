@@ -27,7 +27,9 @@ if (CLIENT) then
 	function PLUGIN:HUDPaint()
 		client = LocalPlayer()
 
-		if (client:GetMoveType() == MOVETYPE_NOCLIP and NUT_CVAR_ADMINESP:GetBool()) then
+		if (client:IsAdmin() and client:GetMoveType() == MOVETYPE_NOCLIP and 
+			!client:GetVehicle() and
+			NUT_CVAR_ADMINESP:GetBool()) then
 		    for k, v in ipairs(player.GetAll()) do
 		        if (v == client) then continue end
 		        sx, sy = ScrW(), ScrH()
