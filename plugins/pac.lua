@@ -59,7 +59,7 @@ if (SERVER) then
 			prevChar:resetParts()
 		end
 
-		-- and restore all shits, mate.
+		-- After resetting all PAC3 outfits, wear all equipped PAC3 outfits.
 		if (curChar) then
 			local inv = curChar:getInv()
 			for k, v in pairs(inv:getItems()) do
@@ -78,7 +78,6 @@ else
 		end
 
 		if (nut.pac.list[outfitID]) then
-			print(outfitID)
 			wearer:AttachPACPart(nut.pac.list[outfitID])
 		end
 	end)
@@ -103,46 +102,54 @@ else
 
 	function PLUGIN:OnCharInfoSetup(infoPanel)
 		if (infoPanel.model) then
+			-- Get the F1 ModelPanel.
 			local mdl = infoPanel.model
 			local ent = mdl.Entity
 
+			-- If the ModelPanel's Entity is valid, setup PAC3 Function Table.
 			if (ent and IsValid(ent)) then
+				-- Setup function table.
 				pac.SetupENT(ent)
 
 				local char = LocalPlayer():getChar()
 				local parts = char:getParts()
 
+				-- Wear current player's PAC3 Outfits on the ModelPanel's Clientside Model Entity.
 				for k, v in pairs(parts) do
 					if (nut.pac.list[k]) then
 						ent:AttachPACPart(nut.pac.list[k])
 					end
 				end
-			end
-			
-			function mdl:DrawModel()
-				local curparent = self
-				local rightx = self:GetWide()
-				local leftx = 0
-				local topy = 0
-				local bottomy = self:GetTall()
-				local previous = curparent
+				
+				-- Overrride Model Drawing function of ModelPanel. (Function revision: 2015/01/05)
+				-- by setting ent.forcedraw true, The PAC3 outfit will drawn on the model even if it's NoDraw Status is true.
+				ent.forceDraw = true
 
-				while(curparent:GetParent() != nil) do
-					curparent = curparent:GetParent()
-					local x,y = previous:GetPos()
-					topy = math.Max(y, topy+y)
-					leftx = math.Max(x, leftx+x)
-					bottomy = math.Min(y+previous:GetTall(), bottomy + y)
-					rightx = math.Min(x+previous:GetWide(), rightx + x)
-					previous = curparent
+				function mdl:DrawModel()
+					local curparent = self
+					local rightx = self:GetWide()
+					local leftx = 0
+					local topy = 0
+					local bottomy = self:GetTall()
+					local previous = curparent
+
+					while(curparent:GetParent() != nil) do
+						curparent = curparent:GetParent()
+						local x,y = previous:GetPos()
+						topy = math.Max(y, topy+y)
+						leftx = math.Max(x, leftx+x)
+						bottomy = math.Min(y+previous:GetTall(), bottomy + y)
+						rightx = math.Min(x+previous:GetWide(), rightx + x)
+						previous = curparent
+					end
+
+					render.SetScissorRect(leftx,topy,rightx, bottomy, true)
+						-- Render PAC3 Outfits on the drawn model.
+						pac.RenderOverride(ent, "opaque")
+						pac.RenderOverride(ent, "translucent", true)
+						self.Entity:DrawModel()
+					render.SetScissorRect(0,0,0,0, false)
 				end
-
-				render.SetScissorRect(leftx,topy,rightx, bottomy, true)
-					ent.forceDraw = true
-					pac.RenderOverride(ent, "opaque")
-					pac.RenderOverride(ent, "translucent", true)
-					self.Entity:DrawModel()
-				render.SetScissorRect(0,0,0,0, false)
 			end
 		end
 	end
@@ -151,10 +158,10 @@ end
 function PLUGIN:InitializedPlugins()
 	local items = nut.item.list
 
+	-- Get all items and If pacData is exists, register new outfit.
 	for k, v in pairs(items) do
 		if (v.pacData) then
 			nut.pac.list[v.uniqueID] = v.pacData
-			print("Registered .. " .. v.uniqueID)
 		end
 	end
 end
