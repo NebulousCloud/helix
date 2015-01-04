@@ -62,6 +62,7 @@ if (CLIENT) then
 		distance = trace.StartPos:Distance(trace.HitPos)
 		scaleFraction = 1 - math.Clamp(distance / maxDistance, 0, .5)
 		screen = trace.HitPos:ToScreen()
+		crossSize = 4
 		crossGap = 25 * (scaleFraction - (client:isWepRaised() and 0 or .1))
 
 		if (IsValid(entity) and entity:GetClass() == "nut_item" and 

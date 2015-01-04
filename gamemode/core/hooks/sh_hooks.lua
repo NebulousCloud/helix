@@ -288,3 +288,27 @@ function GM:CanTool(client, trace, tool)
 
 	return false
 end
+
+function GM:Move(client, moveData)
+	local char = client:getChar()
+	if (char) then
+		if (moveData:KeyDown(IN_WALK)) then
+			local mf, ms = 0, 0
+
+			if (moveData:KeyDown(IN_FORWARD)) then
+				mf = .3
+			elseif (moveData:KeyDown(IN_BACK)) then
+				mf = -.3
+			end
+
+			if (moveData:KeyDown(IN_MOVELEFT)) then
+				ms = -.3
+			elseif (moveData:KeyDown(IN_MOVERIGHT)) then
+				ms = .3
+			end
+
+			moveData:SetForwardSpeed(mf * client:GetWalkSpeed()) 
+			moveData:SetSideSpeed(ms * client:GetWalkSpeed()) 
+		end
+	end
+end
