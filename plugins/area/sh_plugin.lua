@@ -264,9 +264,6 @@ else
 		cam.PopModelMatrix()
 	end
 
-	-- fTime(): Powerful Fix for High Framerate Slowness.
-	local function fTime() return math.Clamp(FrameTime(), 1/60, 1) end
-
 	-- configureable values.
 	local speed = 0
 	local targetScale = 0
@@ -285,6 +282,7 @@ else
 	local dieTrigger = false
 	local dieTimer = RealTime()
 	local dieAlpha = 0
+	local ft, w, h, dsx, dsy
 
 	function displayScrText(str, time)
 		speed = nut.config.get("areaDispSpeed")
@@ -311,8 +309,9 @@ else
 			return	 
 		end
 		
-		local w, h = ScrW(), ScrH()
-		local dsx, dsy = 0
+		ft = FrameTime()
+		w, h = ScrW(), ScrH()
+		dsx, dsy = 0
 		local strEnd = string.utf8len(dispString)
 		local rTime = RealTime()
 
@@ -328,7 +327,7 @@ else
 		end
 
 		-- scale lerp
-		scale = Lerp(fTime()*1, scale, targetScale)
+		scale = Lerp(ft*1, scale, targetScale)
 		--scale = targetScale
 
 		-- change event
@@ -346,8 +345,8 @@ else
 			flipTable[i][1] = flipTable[i][1] or 2
 			--flipTable[i][1] = flipTable[i][1] or targetScale*3
 			flipTable[i][2] = flipTable[i][2] or 0
-			flipTable[i][1] = Lerp(fTime()*4, flipTable[i][1], scale)
-			flipTable[i][2] = Lerp(fTime()*2, flipTable[i][2], 255)
+			flipTable[i][1] = Lerp(ft*4, flipTable[i][1], scale)
+			flipTable[i][2] = Lerp(ft*2, flipTable[i][2], 255)
 
 			-- draw character.
 			local char = string.utf8sub(dispString, i, i)
@@ -372,7 +371,7 @@ else
 				dieTimer = RealTime() + 2
 			else
 				if (dieTimer < RealTime()) then
-					dieAlpha = Lerp(fTime()*2, dieAlpha, 0)
+					dieAlpha = Lerp(ft*2, dieAlpha, 0)
 				end
 			end
 		end

@@ -48,6 +48,7 @@ if (CLIENT) then
 		w, h = ScrW(), ScrH()
 		ft = FrameTime()
 		filter = {client}
+
 		local vehicle = client:GetVehicle()
 		if (vehicle and IsValid(vehicle)) then
 			aimVector = aimVector + vehicle:GetAngles()
@@ -59,6 +60,7 @@ if (CLIENT) then
 			data.endpos = data.start + (aimVector + punchAngle):Forward()*65535
 			data.filter = filter
 		local trace = util.TraceLine(data)
+
 		entity = trace.Entity
 		distance = trace.StartPos:Distance(trace.HitPos)
 		scaleFraction = 1 - math.Clamp(distance / maxDistance, 0, .5)
