@@ -232,6 +232,7 @@ function META:getItemByID(id)
 	end
 end
 
+-- This function may pretty heavy.
 function META:getItems(onlyMain)
 	local items = {}
 

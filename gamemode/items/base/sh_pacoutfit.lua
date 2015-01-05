@@ -59,8 +59,16 @@ end
 -- On item is dropped, Remove a weapon from the player and keep the ammo in the item.
 ITEM:hook("drop", function(item)
 	if (item:getData("equip")) then
+		local char = item.player:getChar()
+		
 		item:setData("equip", false)
-		item.player:getChar():removePart(item.uniqueID)
+		char:removePart(item.uniqueID)
+
+		if (item.attribBoosts) then
+			for k, _ in pairs(item.attribBoosts) do
+				char:removeBoost(item.uniqueID, k)
+			end
+		end
 	end
 end)
 
@@ -70,8 +78,16 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 	tip = "equipTip",
 	icon = "icon16/world.png",
 	onRun = function(item)
+		local char = item.player:getChar()
+
 		item:setData("equip", false)
-		item.player:getChar():removePart(item.uniqueID)
+		char:removePart(item.uniqueID)
+
+		if (item.attribBoosts) then
+			for k, _ in pairs(item.attribBoosts) do
+				char:removeBoost(item.uniqueID, k)
+			end
+		end
 		
 		return false
 	end,
@@ -86,7 +102,8 @@ ITEM.functions.Equip = {
 	tip = "equipTip",
 	icon = "icon16/world.png",
 	onRun = function(item)
-		local items = item.player:getChar():getInv():getItems()
+		local char = item.player:getChar()
+		local items = char:getInv():getItems()
 
 		for k, v in pairs(items) do
 			if (v.id != item.id) then
@@ -101,7 +118,13 @@ ITEM.functions.Equip = {
 		end
 
 		item:setData("equip", true)
-		item.player:getChar():addPart(item.uniqueID)
+		char:addPart(item.uniqueID)
+
+		if (item.attribBoosts) then
+			for k, v in pairs(item.attribBoosts) do
+				char:addBoost(item.uniqueID, k, v)
+			end
+		end
 		
 		return false
 	end,

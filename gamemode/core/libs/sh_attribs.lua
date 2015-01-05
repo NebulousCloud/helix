@@ -91,6 +91,24 @@ do
 				end
 			end
 		end
+
+		function charMeta:addBoost(boostID, attribID, boostAmount)
+			local boosts = self:getVar("boosts", {})
+
+			boosts[attribID] = boosts[attribID] or {}
+			boosts[attribID][boostID] = boostAmount
+
+			return self:setVar("boosts", boosts, nil, self:getPlayer())
+		end
+		
+		function charMeta:removeBoost(boostID, attribID)
+			local boosts = self:getVar("boosts", {})
+
+			boosts[attribID] = boosts[attribID] or {}
+			boosts[attribID][boostID] = nil
+
+			return self:setVar("boosts", boosts, nil, self:getPlayer())
+		end
 	else
 		netstream.Hook("attrib", function(id, key, value)
 			local character = nut.char.loaded[id]
@@ -101,7 +119,20 @@ do
 		end)
 	end
 
+	function charMeta:getBoosts()
+		return self:getVar("boosts", {})
+	end
+
 	function charMeta:getAttrib(key, default)
-		return self:getAttribs()[key] or default
+		local att = self:getAttribs()[key] or default
+		local boosts = self:getBoosts()[key]
+
+		if (boosts) then
+			for k, v in pairs(boosts) do
+				att = att + v
+			end
+		end 
+	
+		return att
 	end
 end

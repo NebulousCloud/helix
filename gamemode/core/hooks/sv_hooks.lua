@@ -177,6 +177,7 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 
 		lastChar:setVar("charEnts", nil) 
 	end
+
 	hook.Run("PlayerLoadout", client)
 end
 
@@ -292,6 +293,19 @@ function GM:PlayerLoadout(client)
 		nut.attribs.setup(client)
 
 		hook.Run("PostPlayerLoadout", client)
+	end
+end
+
+function GM:PostPlayerLoadout(client)
+	-- Reload All Attrib Boosts
+	local char = client:getChar()
+
+	for k, v in ipairs(char:getInv():getItems()) do
+		if (v.attribBoosts and v:getData("equip")) then
+			for k, v in pairs(v.attribBoosts) do
+				char:addBoost(v.uniqueID, k, v)
+			end
+		end
 	end
 end
 
