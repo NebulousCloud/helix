@@ -351,9 +351,11 @@ function GM:CalcView(client, origin, angles, fov)
 		if (index) then
 			local data = ent:GetAttachment(index)
 
-			view.origin = data.Pos
-			view.angles = data.Ang
-
+			if (data) then
+				view.origin = data.Pos
+				view.angles = data.Ang
+			end
+			
 			return view
 		end
 	end
