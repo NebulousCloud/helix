@@ -22,7 +22,9 @@ end
 
 if (SERVER) then
 	function charMeta:addPart(uid)
-		if (!pac) then return end
+		if (!pac) then
+			nut.log.add("Got PAC3 Request. But, Server does not have PAC!", FLAG_DANGER, 100, true)
+		return end
 		
 		local curParts = self:getParts()
 
