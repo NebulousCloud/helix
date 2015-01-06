@@ -90,7 +90,7 @@ function nut.class.canBe(client, class)
 	end
 
 	-- See if the class allows the player to join it.
-	return info.onCanBe(client)
+	return info:onCanBe(client)
 end
 
 function nut.class.getPlayers(class)

@@ -144,7 +144,7 @@ hook.Add("CreateMenuButtons", "nutClasses", function(tabs)
 	local amount = 0
 
 	for k, v in pairs(nut.class.list) do
-		if (LocalPlayer():Team() != v.faction or (v.onCanBe and v:onCanBe(LocalPlayer()) == false)) then
+		if (!nut.class.canBe(LocalPlayer(), k)) then
 			continue
 		end
 
