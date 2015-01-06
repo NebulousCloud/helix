@@ -22,96 +22,15 @@ ITEM.width = 2
 ITEM.height = 2
 ITEM.isWeapon = true
 ITEM.weaponCategory = "sidearm"
-ITEM.camo = {
-	-- worldMaterials is for world model texture.
-	-- viewMaterials is for view model texture.
-	-- example camo data
-	/*
-		[camoIndex] = {
-			worldMaterials = {
-				[materialIndex] = "materialPath",
-				[materialIndex] = "materialPath",
-			}
-			viewMaterials = {
-				[materialIndex] = "materialPath",
-				[materialIndex] = "materialPath",
-			}
-		},
-
-		[camoIndex] = {
-			worldMaterials = {
-				[materialIndex] = "materialPath",
-				[materialIndex] = "materialPath",
-			}
-			viewMaterials = {
-				[materialIndex] = "materialPath",
-				[materialIndex] = "materialPath",
-			}
-		},
-	*/
-}
-
--- Make this true if you're running dev-branch of garrysmod.
--- This comment is written in >> (10/06/2014)
-local isDevGarrysmod = false
-
--- Draw world materials.
-local function drawCamoEntity(entity, camoData)
-	if (isDevGarrysmod == false) then return end -- I don't want to emit goddamn error for non dev-branch developers. eww
-
-	if (camoData) then
-		local worldMaterials = camoData.worldMaterials
-
-		if (worldMaterials) then
-			for matIndex, matData in ipairs(worldMaterials) do
-				-- Based on GetMaterials().
-				entity:SetSubMaterial(matIndex - 1, matData)
-			end
-		end
-	else
-		print("[Nutscript] Weapon camo data is not present.")
-	end
-end
 
 -- Inventory drawing
 if (CLIENT) then
-	-- Draw camo if it is available.
-	function ITEM:drawEntity(entity, item)
-		if (isDevGarrysmod == false) then entity:DrawModel() return end -- I don't want to emit goddamn error for non dev-branch developers. eww
-
-		if (!entity.noMaterial or !entity.materialSet) then
-			local camoIndex = item:getData("camo")
-			if (camoIndex) then
-				local camoData = item.camo[camoIndex]
-
-				if (camoData) then
-					local viewMaterials = camoData.viewMaterials
-
-					if (viewMaterials) then
-						for matIndex, matData in ipairs(viewMaterials) do
-							-- Based on GetMaterials().
-							entity:SetSubMaterial(matIndex - 1, matData)
-						end
-					end
-				end
-
-				entity.materialSet = true
-			else
-				entity.noMaterial = true
-			end
-		end
-
-		entity:DrawModel()
-	end
-
 	function ITEM:paintOver(item, w, h)
 		if (item:getData("equip")) then
 			surface.SetDrawColor(110, 255, 110, 100)
 			surface.DrawRect(w - 14, h - 14, 8, 8)
 		end
 	end
-
-	-- add a hook to set viewmodel's camo.
 end
 
 -- On item is dropped, Remove a weapon from the player and keep the ammo in the item.
@@ -163,51 +82,44 @@ ITEM.functions.Equip = {
 	tip = "equipTip",
 	icon = "icon16/world.png",
 	onRun = function(item)
-		local items = item.player:getChar():getInv():getItems()
-		item.player.carryWeapons = item.player.carryWeapons or {}
+		local client = item.player
+		local items = client:getChar():getInv():getItems()
+		client.carryWeapons = client.carryWeapons or {}
 
 		for k, v in pairs(items) do
 			if (v.id != item.id) then
 				local itemTable = nut.item.instances[v.id]
 
-				if (itemTable.isWeapon and item.player.carryWeapons[item.weaponCategory] and itemTable:getData("equip")) then
-					item.player:notify("You're already equipping this kind of weapon")
+				if (itemTable.isWeapon and client.carryWeapons[item.weaponCategory] and itemTable:getData("equip")) then
+					client:notify("You're already equipping this kind of weapon")
 
 					return false
 				end
 			end
 		end
 		
-		if (item.player:HasWeapon(item.class)) then
-			item.player:StripWeapon(item.class)
+		if (client:HasWeapon(item.class)) then
+			client:StripWeapon(item.class)
 		end
 
-		local weapon = item.player:Give(item.class)
+		local weapon = client:Give(item.class)
 
 		if (IsValid(weapon)) then
-			-- get camo data.
-			local camoIndex = item:getData("camo")
 			local ammo = item:getData("ammo")
 
-			item.player.carryWeapons[item.weaponCategory] = weapon
-			item.player:SelectWeapon(weapon:GetClass())
-			item.player:SetActiveWeapon(weapon)
-			item.player:EmitSound("items/ammo_pickup.wav", 80)
+			client.carryWeapons[item.weaponCategory] = weapon
+			client:SelectWeapon(weapon:GetClass())
+			client:SetActiveWeapon(weapon)
+			client:EmitSound("items/ammo_pickup.wav", 80)
 			item:setData("equip", true)
 
 			local count = weapon:Clip1()
 			local ammoType = weapon:GetPrimaryAmmoType()
 
-			if (item.player:GetAmmoCount(ammoType) >= count) then
-				item.player:RemoveAmmo(count, ammoType)
+			if (client:GetAmmoCount(ammoType) >= count) then
+				client:RemoveAmmo(count, ammoType)
 			end
 
-			if (camoIndex) then
-				local camoData = item.camo[camoIndex]
-
-				drawCamoEntity(weapon, camoData)
-			end
-			
 			if (ammo) then
 				weapon:SetClip1(ammo)
 			end
@@ -225,59 +137,3 @@ ITEM.functions.Equip = {
 function ITEM:onCanBeTransfered(oldInventory, newInventory)
 	return !self:getData("equip")
 end
-
--- When player dead, remove all ammo in the gun items and clear out player weapon carrying table.
-hook.Add("PlayerDeath", "weapon.reset", function(client)
-	client.carryWeapons = {}
-
-	timer.Simple(0, function()
-		if (client and client:getChar() and client:getChar():getInv()) then
-			local inv = client:getChar():getInv():getItems()
-
-			for k, v in pairs(inv) do
-				if (v.isWeapon) then
-					if (v:getData("equip")) then
-						v:setData("ammo", 0)
-					end
-				end
-			end
-		end
-	end)
-end)
-
--- When player spawned, Give all equipped weapon items and load ammo from the item data.
-hook.Add("PlayerLoadedChar", "weapon.reset", function(client)
-	timer.Simple(0, function()
-		if (client and client:getChar()) then
-			local inv = client:getChar():getInv()
-
-			if (inv) then
-				for k, v in pairs(inv:getItems()) do
-					if (v.isWeapon) then
-						if (v:getData("equip")) then
-							client.carryWeapons = client.carryWeapons or {}
-
-							local ammo = v:getData("ammo")
-							local weapon = client:Give(v.class)
-
-							if (IsValid(weapon)) then
-								client.carryWeapons[v.weaponCategory] = weapon
-
-								local count = weapon:Clip1()
-								local ammoType = weapon:GetPrimaryAmmoType()
-
-								if (client:GetAmmoCount(ammoType) >= count) then
-									client:RemoveAmmo(count, ammoType)
-								end
-
-								if (ammo) then
-									weapon:SetClip1(ammo)
-								end
-							end
-						end
-					end
-				end
-			end
-		end
-	end)
-end)
