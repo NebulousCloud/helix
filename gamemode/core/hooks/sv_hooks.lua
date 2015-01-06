@@ -495,19 +495,11 @@ end
 
 function GM:CanPlayerUseBusiness(client, id)
 	local item = nut.item.list[id]
-	local price = item.price or 0
 	local char = client:getChar()
 
 	if (!item) then
-		client:notify(L("itemNoExit", client))
+		client:notify(L("itemNoExist", client))
 
-		return false
-	end
-
-	-- Does player has enough money?
-	if (!char:hasMoney(price)) then
-		char.player:notify(L("canNotAfford", client))
-		
 		return false
 	end
 

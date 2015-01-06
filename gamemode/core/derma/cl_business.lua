@@ -211,6 +211,10 @@ function PANEL:loadItems(category, search)
 	self.itemList:Clear()
 
 	for uniqueID, itemTable in SortedPairsByMemberValue(items, "name") do
+		if (hook.Run("CanPlayerUseBusiness", LocalPlayer(), uniqueID) == false) then
+			continue
+		end
+
 		if (itemTable.category == category) then
 			if (search and search != "" and !L(itemTable.name):lower():find(search, 1, true)) then
 				continue
