@@ -104,7 +104,7 @@ local PANEL = {}
 
         self.label:SetText(data.name)   
         self.data = data 
-        self.class = data.uniqueID
+        self.class = data.index
         self:setNumber(#nut.class.getPlayers(data.index))
     end
 vgui.Register("nutClassPanel", PANEL, "DPanel")

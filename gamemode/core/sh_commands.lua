@@ -479,16 +479,32 @@ nut.command.add("beclass", {
 		local char = client:getChar()
 
 		if (IsValid(client) and char) then
-			for k, v in ipairs(nut.class.list) do
-				if (nut.util.stringMatches(v.uniqueID, class) or nut.util.stringMatches(L(v.name, client), class)) then
-					if (char:joinClass(k)) then
-						client:notify(L("becomeClass", client, L(v.name, client)))
+			local num = isnumber(tonumber(class)) and tonumber(class) or -1
+			
+			if (nut.class.list[num]) then
+				local v = nut.class.list[num]
 
-						return
-					else
-						client:notify(L("becomeClassFail", client, L(v.name, client)))
+				if (char:joinClass(num)) then
+					client:notify(L("becomeClass", client, L(v.name, client)))
 
-						return
+					return
+				else
+					client:notify(L("becomeClassFail", client, L(v.name, client)))
+
+					return
+				end
+			else
+				for k, v in ipairs(nut.class.list) do
+					if (nut.util.stringMatches(v.uniqueID, class) or nut.util.stringMatches(L(v.name, client), class)) then
+						if (char:joinClass(k)) then
+							client:notify(L("becomeClass", client, L(v.name, client)))
+
+							return
+						else
+							client:notify(L("becomeClassFail", client, L(v.name, client)))
+
+							return
+						end
 					end
 				end
 			end
