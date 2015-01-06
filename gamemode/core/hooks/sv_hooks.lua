@@ -493,26 +493,6 @@ function GM:GetGameDescription()
 	return "NS - "..(SCHEMA and SCHEMA.name or "Unknown")
 end
 
-function GM:CanPlayerUseBusiness(client, id)
-	local item = nut.item.list[id]
-	local char = client:getChar()
-
-	if (!item) then
-		client:notify(L("itemNoExist", client))
-
-		return false
-	end
-
-	-- Does player has proper flag to buy this item?
-	if (item.flag and !char:hasFlag(item.flag)) then
-		char.player:notify(L("flagNoMatch", client, item.flag))
-		
-		return false
-	end
-
-	return price
-end
-
 function GM:OnPlayerUseBusiness(client, item)
 	-- You can manipulate purchased items with this hook.
 	-- does not requires any kind of return.

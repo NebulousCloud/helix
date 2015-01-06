@@ -150,6 +150,10 @@ function PANEL:Init()
 	local first = true
 
 	for k, v in pairs(nut.item.list) do
+		if (hook.Run("CanPlayerUseBusiness", LocalPlayer(), k) == false) then
+			continue
+		end
+
 		if (!self.categoryPanels[L(v.category)]) then
 			self.categoryPanels[L(v.category)] = v.category
 		end
@@ -186,7 +190,9 @@ function PANEL:Init()
 		self.categoryPanels[realName] = button
 	end
 
-	self:loadItems(self.selected.category)
+	if (self.selected) then
+		self:loadItems(self.selected.category)
+	end
 end
 
 function PANEL:getCartCount()
