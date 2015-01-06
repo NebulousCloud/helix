@@ -154,12 +154,16 @@ hook.Add("CreateMenuButtons", "nutClasses", function(tabs)
 	end
 end)
 
-netstream.Hook("classUpdate", function()
+netstream.Hook("classUpdate", function(joinedClient)
     if (nut.gui.classes and nut.gui.classes:IsVisible()) then
-        for k, v in ipairs(nut.gui.classes.classPanels) do
-            local data = v.data
+        if (joinedClient == LocalPlayer()) then
+            nut.gui.classes:loadClasses()
+        else
+            for k, v in ipairs(nut.gui.classes.classPanels) do
+                local data = v.data
 
-            v:setNumber(#nut.class.getPlayers(data.index))
+                v:setNumber(#nut.class.getPlayers(data.index))
+            end
         end
     end
 end)
