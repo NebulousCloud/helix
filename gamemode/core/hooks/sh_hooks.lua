@@ -17,7 +17,7 @@ function GM:PlayerNoClip(client)
 	return client:IsAdmin()
 end
 
-local HOLDTYPE_TRANSLATOR = {}
+HOLDTYPE_TRANSLATOR = {}
 HOLDTYPE_TRANSLATOR[""] = "normal"
 HOLDTYPE_TRANSLATOR["physgun"] = "smg"
 HOLDTYPE_TRANSLATOR["ar2"] = "smg"
@@ -34,7 +34,7 @@ HOLDTYPE_TRANSLATOR["camera"] = "smg"
 HOLDTYPE_TRANSLATOR["magic"] = "normal"
 HOLDTYPE_TRANSLATOR["revolver"] = "pistol"
 
-local PLAYER_HOLDTYPE_TRANSLATOR = {}
+PLAYER_HOLDTYPE_TRANSLATOR = {}
 PLAYER_HOLDTYPE_TRANSLATOR[""] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["fist"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["pistol"] = "normal"

@@ -126,33 +126,14 @@ else
 				-- Overrride Model Drawing function of ModelPanel. (Function revision: 2015/01/05)
 				-- by setting ent.forcedraw true, The PAC3 outfit will drawn on the model even if it's NoDraw Status is true.
 				ent.forceDraw = true
-
-				function mdl:DrawModel()
-					local curparent = self
-					local rightx = self:GetWide()
-					local leftx = 0
-					local topy = 0
-					local bottomy = self:GetTall()
-					local previous = curparent
-
-					while(curparent:GetParent() != nil) do
-						curparent = curparent:GetParent()
-						local x,y = previous:GetPos()
-						topy = math.Max(y, topy+y)
-						leftx = math.Max(x, leftx+x)
-						bottomy = math.Min(y+previous:GetTall(), bottomy + y)
-						rightx = math.Min(x+previous:GetWide(), rightx + x)
-						previous = curparent
-					end
-
-					render.SetScissorRect(leftx,topy,rightx, bottomy, true)
-						-- Render PAC3 Outfits on the drawn model.
-						pac.RenderOverride(ent, "opaque")
-						pac.RenderOverride(ent, "translucent", true)
-						self.Entity:DrawModel()
-					render.SetScissorRect(0,0,0,0, false)
-				end
 			end
+		end
+	end
+
+	function PLUGIN:DrawNutModelView(panel, ent)
+		if (LocalPlayer():getChar()) then
+			pac.RenderOverride(ent, "opaque")
+			pac.RenderOverride(ent, "translucent", true)
 		end
 	end
 end

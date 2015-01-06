@@ -677,3 +677,56 @@ function GM:ShouldDrawLocalPlayer(client)
 		return true
 	end
 end
+
+function GM:OnCharInfoSetup(infoPanel)
+	if (infoPanel.model) then
+		-- Get the F1 ModelPanel.
+		local mdl = infoPanel.model
+		local ent = mdl.Entity
+		local client = LocalPlayer()
+
+		if (client and client:Alive() and IsValid(client:GetActiveWeapon())) then
+			local weapon = client:GetActiveWeapon()
+			local weapModel = ClientsideModel(weapon:GetModel(), RENDERGROUP_BOTH)
+
+			if (weapModel) then
+				weapModel:SetParent(ent)
+				weapModel:AddEffects(EF_BONEMERGE)
+				weapModel:SetSkin(weapon:GetSkin())
+				weapModel:SetColor(weapon:GetColor())
+				ent.weapon = weapModel
+
+				local act = ACT_MP_STAND_IDLE
+				local model = ent:GetModel():lower()
+				local class = nut.anim.getModelClass(model)
+				local tree = nut.anim[class]
+
+				if (tree) then
+					local subClass = "normal"
+					subClass = weapon:GetHoldType()
+					subClass = HOLDTYPE_TRANSLATOR[subClass] or subClass
+
+					if (tree[subClass] and tree[subClass][act]) then
+						local act2 = tree[subClass][act][1]
+
+						if (type(act2) == "string") then
+							act2 = ent:LookupSequence(act2)
+
+							return
+						else
+							act2 = ent:SelectWeightedSequence(act2)
+						end
+
+						ent:ResetSequence(act2)
+					end
+				end
+			end
+		end
+	end
+end
+
+function GM:DrawNutModelView(panel, ent)
+	if (ent.weapon and IsValid(ent.weapon)) then
+		ent.weapon:DrawModel()
+	end
+end

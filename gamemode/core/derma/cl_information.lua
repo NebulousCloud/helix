@@ -28,6 +28,7 @@ local PANEL = {}
 		self.model:SetWide(ScrW() * 0.2)
 		self.model:Dock(LEFT)
 		self.model:SetFOV(40)
+		self.model.enableHook = true
 
 		self.info = self:Add("DPanel")
 		self.info:SetWide(ScrW() * 0.4)
