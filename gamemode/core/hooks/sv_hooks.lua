@@ -309,7 +309,8 @@ function GM:PostPlayerLoadout(client)
 			end
 
 			if (v.isWeapon) then
-				print(v)
+				client.carryWeapons = {}
+
 				local weapon = client:Give(v.class)
 
 				if (IsValid(weapon)) then
