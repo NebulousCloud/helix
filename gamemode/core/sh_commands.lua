@@ -473,7 +473,6 @@ nut.command.add("fallover", {
 })
 
 nut.command.add("beclass", {
-	adminOnly = true,
 	syntax = "<string class>",
 	onRun = function(client, arguments)
 		local class = table.concat(arguments, " ")
