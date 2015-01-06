@@ -178,6 +178,16 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 		lastChar:setVar("charEnts", nil) 
 	end
 
+	if (character) then
+		for k, v in pairs(nut.class.list) do
+			if (v.faction == client:Team()) then
+				if (v.isDefault) then
+					character:setClass(v.index)
+				end
+			end
+		end
+	end
+
 	hook.Run("PlayerLoadout", client)
 end
 
