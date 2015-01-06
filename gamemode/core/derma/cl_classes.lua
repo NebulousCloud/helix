@@ -77,7 +77,7 @@ local PANEL = {}
     end
 
     function PANEL:onClick()
-        LocalPlayer():ConCommand("say /beclass ".. self.class)
+        nut.command.send("beclass", self.class)
     end
 
     function PANEL:setNumber(number)
@@ -126,35 +126,31 @@ PANEL = {}
     end
 
     function PANEL:loadClasses()
-        for k, v in pairs(nut.class.list) do
-            if (LocalPlayer():Team() != v.faction) then
-                continue
+        self.list:Clear()
+        
+        for k, v in ipairs(nut.class.list) do
+            if (nut.class.canBe(LocalPlayer(), k)) then
+                local panel = vgui.Create("nutClassPanel", self.list)
+                panel:setClass(v)
+                table.insert(self.classPanels, panel)
+
+                self.list:AddItem(panel)
             end
-
-            local panel = vgui.Create("nutClassPanel", self.list)
-            panel:setClass(v)
-            table.insert(self.classPanels, panel)
-
-            self.list:AddItem(panel)
         end
     end
 vgui.Register("nutClasses", PANEL, "EditablePanel")
 
 hook.Add("CreateMenuButtons", "nutClasses", function(tabs)
-	local amount = 0
-
-	for k, v in pairs(nut.class.list) do
+	for k, v in ipairs(nut.class.list) do
 		if (!nut.class.canBe(LocalPlayer(), k)) then
 			continue
-		end
+		else
+            tabs["classes"] = function(panel)
+                panel:Add("nutClasses")
+            end
 
-		amount = amount + 1
-	end
-
-	if (amount > 0) then
-		tabs["classes"] = function(panel)
-			panel:Add("nutClasses")
-		end
+            return
+        end
 	end
 end)
 

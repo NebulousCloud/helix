@@ -27,6 +27,12 @@ function nut.class.loadFromDir(directory)
 		-- Determine a numeric identifier for this class.
 		local index = #nut.class.list + 1
 
+		for k, v in ipairs(nut.class.list) do
+			if (v.uniqueID == niceName) then
+				continue
+			end
+		end
+
 		-- Set up a global table so the file has access to the class table.
 		CLASS = {index = index, uniqueID = niceName}
 			-- Define some default variables.
