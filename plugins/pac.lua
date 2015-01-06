@@ -103,7 +103,7 @@ else
 	end)
 
 	function PLUGIN:OnCharInfoSetup(infoPanel)
-		if (infoPanel.model) then
+		if (pac and infoPanel.model) then
 			-- Get the F1 ModelPanel.
 			local mdl = infoPanel.model
 			local ent = mdl.Entity

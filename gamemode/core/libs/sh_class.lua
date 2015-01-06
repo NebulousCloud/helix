@@ -95,7 +95,6 @@ end
 
 function nut.class.getPlayers(class)
 	local players = {}
-
 	for k, v in ipairs(player.GetAll()) do
 		local char = v:getChar()
 
