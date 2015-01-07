@@ -21,6 +21,7 @@ ITEM.width = 2
 ITEM.height = 2
 ITEM.invWidth = 4
 ITEM.invHeight = 2
+ITEM.isBag = true
 ITEM.functions.View = {
 	onClick = function(item)
 		local index = item:getData("id")
@@ -85,10 +86,12 @@ end
 
 -- Called when the item should tell whether or not it can be transfered between inventories.
 function ITEM:onCanBeTransfered(oldInventory, newInventory)
-	if (newInventory and newInventory:getID() == self:getData("id")) then
+	local index = self:getData("id")
+
+	if (newInventory and newInventory:getID() == index) then
 		return false
 	end
-
+	
 	return !newInventory or newInventory:getID() != oldInventory:getID()
 end
 
