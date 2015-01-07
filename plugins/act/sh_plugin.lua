@@ -45,6 +45,11 @@ for k, v in pairs(PLUGIN.acts) do
 				return
 			end
 
+			if (!client:Alive() or
+				client:setLocalVar("ragdoll")) then
+				return
+			end
+
 			if ((client.nutNextAct or 0) < CurTime()) then
 				local class = nut.anim.getModelClass(client:GetModel())
 				local info = v[class]
@@ -90,6 +95,14 @@ function PLUGIN:UpdateAnimation(client, moveData)
 end
 
 function PLUGIN:OnPlayerLeaveSequence(client)
+	client:setNetVar("actAng")
+end
+
+function PLUGIN:PlayerDeath(client)
+	client:setNetVar("actAng")
+end
+
+function PLUGIN:OnCharFallover(client)
 	client:setNetVar("actAng")
 end
 
