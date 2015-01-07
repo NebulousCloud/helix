@@ -89,7 +89,9 @@ function nut.item.load(path, baseID, isBaseItem)
 		uniqueID = (isBaseItem and "base_" or "")..uniqueID
 		nut.item.register(uniqueID, baseID, isBaseItem, path)
 	else
-		ErrorNoHalt("[NutScript] Item at '"..path.."' follows invalid naming convention!\n")
+		if (!path:find(".txt")) then
+			ErrorNoHalt("[NutScript] Item at '"..path.."' follows invalid naming convention!\n")
+		end
 	end
 end
 
