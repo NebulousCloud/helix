@@ -71,7 +71,51 @@ if (SERVER) then
 			end
 		end
 	end
+
+	function PLUGIN:PlayerInitialSpawn(client)
+		netstream.Start(client, "updatePAC")
+	end
+
+	function PLUGIN:OnCharFallover(client, ragdoll, isFallen)
+		if (client and ragdoll and client:IsValid() and ragdoll:IsValid() and client:getChar() and isFallen) then
+			netstream.Start(player.GetAll(), "ragdollPAC", client, ragdoll, isFallen)
+		end
+	end
 else
+	netstream.Hook("updatePAC", function()
+		if (!pac) then return end
+
+		for k, v in ipairs(player.GetAll()) do
+			local char = v:getChar()
+
+			if (char) then
+				local parts = char:getParts()
+
+				for pacKey, pacValue in pairs(parts) do
+					if (nut.pac.list[pacKey]) then
+						v:AttachPACPart(nut.pac.list[pacKey])
+					end
+				end
+			end
+		end
+	end)
+
+	netstream.Hook("ragdollPAC", function(client, ragdoll, isFallen)
+		if (!pac) then return end
+		
+		if (client and ragdoll) then
+			local parts = client:getChar():getParts()
+
+			pac.SetupENT(ragdoll)
+
+			for pacKey, pacValue in pairs(parts) do
+				if (nut.pac.list[pacKey]) then
+					ragdoll:AttachPACPart(nut.pac.list[pacKey])
+				end
+			end
+		end
+	end)
+
 	netstream.Hook("partWear", function(wearer, outfitID)
 		if (!pac) then return end
 		
