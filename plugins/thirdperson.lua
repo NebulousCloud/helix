@@ -161,7 +161,7 @@ if (CLIENT) then
 	    if (owner:CanOverrideView() and owner:GetMoveType() != MOVETYPE_NOCLIP and LocalPlayer():GetViewEntity() == LocalPlayer()) then
 			fm = cmd:GetForwardMove()
 			sm = cmd:GetSideMove()
-			diff = (owner:EyeAngles() - owner.camAng or Angle(0, 0, 0))[2]
+			diff = (owner:EyeAngles() - (owner.camAng or Angle(0, 0, 0)))[2] or 0
 			diff = diff/90
 
 			cmd:SetForwardMove(fm + sm*diff)
