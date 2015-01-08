@@ -176,8 +176,10 @@ else
 
 	function PLUGIN:DrawNutModelView(panel, ent)
 		if (LocalPlayer():getChar()) then
-			pac.RenderOverride(ent, "opaque")
-			pac.RenderOverride(ent, "translucent", true)
+			if (pac) then
+				pac.RenderOverride(ent, "opaque")
+				pac.RenderOverride(ent, "translucent", true)
+			end
 		end
 	end
 end
