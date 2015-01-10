@@ -732,6 +732,14 @@ function GM:DrawNutModelView(panel, ent)
 end
 
 netstream.Hook("strReq", function(time, title, subTitle, default)
+	if (title:sub(1, 1) == "@") then
+		title = L(title:sub(2))
+	end
+
+	if (subTitle:sub(1, 1) == "@") then
+		subTitle = L(subTitle:sub(2))
+	end
+
 	Derma_StringRequest(title, subTitle, default or "", function(text)
 		netstream.Start("strReq", time, text)
 	end)

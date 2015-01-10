@@ -187,11 +187,14 @@ nut.command.add("charaddattrib", {
 nut.command.add("charsetname", {
 	syntax = "<string name> <string model>",
 	onRun = function(client, arguments)
-		if (!arguments[2]) then
-			return L("invalidArg", client, 2)
+		local target = nut.command.findPlayer(client, arguments[1])
+
+		if (IsValid(target) and !arguments[2]) then
+			return client:requestString("@chgName", "@chgNameDesc", function(text)
+				nut.command.run(client, "charsetname", {target:Name(), text})
+			end, target:Name())
 		end
 
-		local target = nut.command.findPlayer(client, arguments[1])
 		table.remove(arguments, 1)
 
 		local targetName = table.concat(arguments, " ")

@@ -206,4 +206,6 @@ LANGUAGE = {
 	injMajor = "Seems critically injured.",
 	injLittle = "Seems injured",
 	toggleESP = "Toggle Admin ESP",
+	chgName = "Change Name",
+	chgNameDesc = "Enter the character's new name below."
 }
