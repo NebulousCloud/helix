@@ -496,6 +496,16 @@ do
 				end)
 			end
 		end
+
+		-- Sends a Derma string request to the client.
+		function playerMeta:requestString(title, subTitle, callback, default)
+			local time = math.floor(os.time())
+
+			self.nutStrReqs = self.nutStrReqs or {}
+			self.nutStrReqs[time] = callback
+
+			netstream.Start(self, "strReq", time, title, subTitle, default)
+		end
 	end
 
 	-- Player ragdoll utility stuff.

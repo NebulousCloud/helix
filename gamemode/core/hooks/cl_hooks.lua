@@ -730,3 +730,9 @@ function GM:DrawNutModelView(panel, ent)
 		ent.weapon:DrawModel()
 	end
 end
+
+netstream.Hook("strReq", function(time, title, subTitle, default)
+	Derma_StringRequest(title, subTitle, default or "", function(text)
+		netstream.Start("strReq", time, text)
+	end)
+end)

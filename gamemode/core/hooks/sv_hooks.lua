@@ -560,3 +560,10 @@ function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 		end
 	end
 end
+
+netstream.Hook("strReq", function(client, time, text)
+	if (client.nutStrReqs and client.nutStrReqs[time]) then
+		client.nutStrReqs[time](text)
+		client.nutStrReqs[time] = nil
+	end
+end)
