@@ -23,6 +23,7 @@ ITEM.invWidth = 4
 ITEM.invHeight = 2
 ITEM.isBag = true
 ITEM.functions.View = {
+	icon = "icon16/briefcase.png",
 	onClick = function(item)
 		local index = item:getData("id")
 
