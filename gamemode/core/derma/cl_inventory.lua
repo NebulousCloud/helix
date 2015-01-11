@@ -363,6 +363,10 @@ PANEL = {}
 										send = v.onClick(itemTable)
 									end
 
+									if (v.sound) then
+										surface.PlaySound(v.sound)
+									end
+
 									if (send != false) then
 										netstream.Start("invAct", k, itemTable.id, self.invID)
 									end
