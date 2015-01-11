@@ -277,27 +277,20 @@ if (SERVER) then
 				else
 					return false, result
 				end
-			elseif (isLogical != true and IsValid(client)) then
+			elseif (IsValid(client)) then
 				self.invID = 0
 
 				curInv:remove(self.id, false, true)
 				nut.db.query("UPDATE nut_items SET _invID = 0 WHERE _itemID = "..self.id)
 
-				local entity = self:spawn(client)
-				entity.prevPlayer = client
-				entity.prevOwner = client:getChar().id
+				if (!isLogical) then
+					local entity = self:spawn(client)
+					entity.prevPlayer = client
+					entity.prevOwner = client:getChar().id
+				end
 
 				return entity		
 			else
-				if (isLogical) then
-					self.invID = 0
-
-					curInv:remove(self.id, false, true)
-					nut.db.query("UPDATE nut_items SET _invID = 0 WHERE _itemID = "..self.id)
-
-					inventory[self.id] = self
-				end
-
 				return false, "noOwner"
 			end
 		else
