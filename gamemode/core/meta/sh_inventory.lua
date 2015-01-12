@@ -238,7 +238,7 @@ function META:getItems(onlyMain)
 
 	for k, v in pairs(self.slots) do
 		for k2, v2 in pairs(v) do
-			if (!items[v2.id]) then
+			if (v2 and !items[v2.id]) then
 				items[v2.id] = v2
 
 				local isBag = v2.data.id
@@ -301,11 +301,12 @@ end
 if (SERVER) then
 	function META:sendSlot(x, y, item)
 		local receiver = self:getReceiver()
+		local sendData = item and item.data and table.Count(item.data) > 0 and item.data or nil
 
-		if (type(receiver) == "Player" and IsValid(receiver) and receiver:getChar() and self.owner == receiver:getChar():getID()) then
-			netstream.Start(receiver, "invSet", self:getID(), x, y, item and item.uniqueID or nil, item and item.id or nil, nil, table.Count(item.data) > 0 and item.data or nil)
+		if (type(receiver) == "Player" and IsValid(receiver)) then
+			netstream.Start(receiver, "invSet", self:getID(), x, y, item and item.uniqueID or nil, item and item.id or nil, nil, sendData, sendData and 1 or nil)
 		else
-			netstream.Start(receiver, "invSet", self:getID(), x, y, item and item.uniqueID or nil, item and item.id or nil, self.owner, table.Count(item.data) > 0 and item.data or nil)
+			netstream.Start(receiver, "invSet", self:getID(), x, y, item and item.uniqueID or nil, item and item.id or nil, self.owner, sendData, sendData and 1 or nil)
 		end
 
 		if (item) then
@@ -396,6 +397,10 @@ if (SERVER) then
 					targetInv.slots[x][y] = true
 
 					nut.item.instance(targetInv:getID(), uniqueID, data, x, y, function(item)
+						if (data) then
+							item.data = table.Merge(item.data, data)
+						end
+
 						item.gridX = x
 						item.gridY = y
 

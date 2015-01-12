@@ -374,11 +374,16 @@ do
 			end
 		end)
 
-		netstream.Hook("invSet", function(invID, x, y, uniqueID, id, owner, data)
+		netstream.Hook("invSet", function(invID, x, y, uniqueID, id, owner, data, a)
+			print(data)
 			local character = LocalPlayer():getChar()
 
 			if (owner) then
 				character = nut.char.loaded[owner]
+			end
+
+			if (data) then
+				PrintTable(data)
 			end
 
 			if (character) then
