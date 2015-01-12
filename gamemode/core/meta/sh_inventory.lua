@@ -193,7 +193,7 @@ function META:remove(id, noReplication, noDelete)
 	if (SERVER and !noReplication) then
 		local receiver = self:getReceiver()
 
-		if (IsValid(receiver) and receiver:getChar() and self.owner == receiver:getChar():getID()) then
+		if (type(receiver) == "Player" and IsValid(receiver)) then
 			netstream.Start(receiver, "invRm", id, self:getID())
 		else
 			netstream.Start(receiver, "invRm", id, self:getID(), self.owner)
@@ -244,9 +244,12 @@ function META:getItems(onlyMain)
 				local isBag = v2.data.id
 				if (isBag and isBag != self:getID() and onlyMain != true) then
 					local bagInv = nut.item.inventories[isBag]
-					local bagItems = bagInv:getItems()
 
-					table.Merge(items, bagItems)
+					if (bagInv) then
+						local bagItems = bagInv:getItems()
+
+						table.Merge(items, bagItems)
+					end
 				end
 			end
 		end
@@ -300,9 +303,9 @@ if (SERVER) then
 		local receiver = self:getReceiver()
 
 		if (type(receiver) == "Player" and IsValid(receiver) and receiver:getChar() and self.owner == receiver:getChar():getID()) then
-			netstream.Start(receiver, "invSet", self:getID(), x, y, item and item.uniqueID or nil, item and item.id or nil)
+			netstream.Start(receiver, "invSet", self:getID(), x, y, item and item.uniqueID or nil, item and item.id or nil, nil, table.Count(item.data) > 0 and item.data or nil)
 		else
-			netstream.Start(receiver, "invSet", self:getID(), x, y, item and item.uniqueID or nil, item and item.id or nil, self.owner)
+			netstream.Start(receiver, "invSet", self:getID(), x, y, item and item.uniqueID or nil, item and item.id or nil, self.owner, table.Count(item.data) > 0 and item.data or nil)
 		end
 
 		if (item) then

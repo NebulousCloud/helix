@@ -36,6 +36,7 @@ function nut.item.instance(index, uniqueID, data, x, y, callback)
 			local item = nut.item.new(uniqueID, itemID)
 
 			if (item) then
+				item.data = data
 				item.invID = index
 
 				if (callback) then
@@ -373,7 +374,7 @@ do
 			end
 		end)
 
-		netstream.Hook("invSet", function(invID, x, y, uniqueID, id, owner)
+		netstream.Hook("invSet", function(invID, x, y, uniqueID, id, owner, data)
 			local character = LocalPlayer():getChar()
 
 			if (owner) then
@@ -386,6 +387,7 @@ do
 				if (inventory) then
 					local item = uniqueID and id and nut.item.new(uniqueID, id) or nil
 					item.invID = invID
+					item.data = data
 
 					inventory.slots[x] = inventory.slots[x] or {}
 					inventory.slots[x][y] = item
@@ -431,7 +433,7 @@ do
 				if (inventory) then
 					inventory:remove(id)
 
-					local panel = nut.gui["inv"..invID]
+					local panel = nut.gui["inv"..invID] or nut.gui.inv1
 
 					if (IsValid(panel)) then
 						local icon = panel.panels[id]
