@@ -157,30 +157,40 @@ function ITEM:remove()
 	local inv = nut.item.inventories[self.invID]
 	local x2, y2
 
-	for x = self.gridX, self.gridX + (self.width - 1) do
-		if (inv.slots[x]) then
-			for y = self.gridY, self.gridY + (self.height - 1) do
-				local item = inv.slots[x][y]
+	if (self.invID > 0 and inv) then
+		for x = self.gridX, self.gridX + (self.width - 1) do
+			if (inv.slots[x]) then
+				for y = self.gridY, self.gridY + (self.height - 1) do
+					local item = inv.slots[x][y]
 
-				if (item.id == self.id) then
-					inv.slots[x][y] = nil
-				else
-					print("ERROR OCCURED INDEX: " .. self.id)
-					print("RECURSIVE x: " .. x .. " y: " .. y)
-					print("REQUESTED ITEM POS x: " .. self.gridX .. " y: " .. self.gridY)
-					return false
+					if (item.id == self.id) then
+						inv.slots[x][y] = nil
+					else
+						print("ERROR OCCURED INDEX: " .. self.id)
+						print("RECURSIVE x: " .. x .. " y: " .. y)
+						print("REQUESTED ITEM POS x: " .. self.gridX .. " y: " .. self.gridY)
+						return false
+					end
 				end
 			end
+		end
+	else
+		local inv = nut.item.inventories[self.invID]
+
+		if (inv) then
+			nut.item.inventories[self.invID][self.id] = nil
 		end
 	end
 
 	if (SERVER and !noReplication) then
-		local receiver = inv:getReceiver()
+		local receiver = inv.getReceiver and inv:getReceiver()
 
-		if (IsValid(receiver) and receiver:getChar() and inv.owner == receiver:getChar():getID()) then
-			netstream.Start(receiver, "invRm", self.id, inv:getID())
-		else
-			netstream.Start(receiver, "invRm", self.id, inv:getID(), inv.owner)
+		if (self.invID != 0) then
+			if (IsValid(receiver) and receiver:getChar() and inv.owner == receiver:getChar():getID()) then
+				netstream.Start(receiver, "invRm", self.id, inv:getID())
+			else
+				netstream.Start(receiver, "invRm", self.id, inv:getID(), inv.owner)
+			end
 		end
 
 		if (!noDelete) then

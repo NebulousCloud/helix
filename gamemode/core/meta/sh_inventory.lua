@@ -276,6 +276,24 @@ function META:getBags()
 	return invs
 end
 
+function META:matchData(id, matchData)
+	local x, y = self:getItemByID(id)
+
+	if (x and y) then
+		local item = self:getItemAt(x, y)
+
+		if (item) then
+			for dataKey, dataVal in pairs(data) do
+				if (itemData[dataKey] != dataVal) then
+					return false
+				end
+			end
+
+			return true
+		end
+	end
+end
+
 function META:hasItem(targetID, data)
 	local items = self:getItems()
 	
