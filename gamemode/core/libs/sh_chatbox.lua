@@ -16,6 +16,12 @@
 nut.chat = nut.chat or {}
 nut.chat.classes = nut.char.classes or {}
 
+local DUMMY_COMMAND = {syntax = "<string text>", onRun = function() end}
+
+if (!nut.command) then
+	include("sh_command.lua")
+end
+
 -- Registers a new chat type with the information provided.
 function nut.chat.register(chatType, data)
 	if (!data.onCanHear) then
@@ -58,6 +64,18 @@ function nut.chat.register(chatType, data)
 			local translated = L2(chatType.."Format", name, text)
 
 			chat.AddText(color, translated or string.format(data.format, name, text))
+		end
+	end
+
+	if (CLIENT) then
+		if (type(data.prefix) == "table") then
+			for k, v in ipairs(data.prefix) do
+				if (v:sub(1, 1) == "/") then
+					nut.command.add(v:sub(2), DUMMY_COMMAND)
+				end
+			end
+		else
+			nut.command.add(chatType, DUMMY_COMMAND)
 		end
 	end
 
