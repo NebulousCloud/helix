@@ -410,6 +410,20 @@ function GM:HUDPaint()
 		end
 	end
 
+	if (nut.screenColor) then
+		local realTime = RealTime()
+		local endTime = nut.screenColorEnd
+
+		if (realTime > endTime) then
+			nut.screenColor = nil
+		else
+			local alpha = math.Clamp(1 - math.TimeFraction(nut.screenColorStart, endTime, realTime), 0, 1)
+
+			surface.SetDrawColor(nut.screenColor.r, nut.screenColor.g, nut.screenColor.g, nut.screenColor.a * alpha)
+			surface.DrawRect(0, 0, ScrW(), ScrH())
+		end
+	end
+
 	blurGoal = localPlayer:getLocalVar("blur", 0) + (hook.Run("AdjustBlurAmount", blurGoal) or 0)
 
 	if (blurDelta != blurGoal) then
@@ -743,4 +757,10 @@ netstream.Hook("strReq", function(time, title, subTitle, default)
 	Derma_StringRequest(title, subTitle, default or "", function(text)
 		netstream.Start("strReq", time, text)
 	end)
+end)
+
+netstream.Hook("scrClr", function(color, length, delay)
+	nut.screenColor = color or color_white
+	nut.screenColorStart = RealTime() + (delay or 0)
+	nut.screenColorEnd = nut.screenColorStart + (length or 5)
 end)
