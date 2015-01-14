@@ -431,11 +431,6 @@ do
 	end
 
 	if (SERVER) then
-		-- Makes the player's screen fade into a color.
-		function playerMeta:screenFade(color, length, delay)
-			netstream.Start(self, "scrClr", color, length, delay)
-		end
-
 		-- Sets whether or not the weapon is raised.
 		function playerMeta:setWepRaised(state)
 			-- Sets the networked variable for being raised.
