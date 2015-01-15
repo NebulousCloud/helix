@@ -165,6 +165,11 @@ function GM:OnContextMenuOpen()
 	end
 
 	vgui.Create("nutQuick", g_ContextMenu)
+
+	print("AAOA")
+	for k, v in ipairs(nut.bar.list) do
+		v.visible = true
+	end
 end
 
 function GM:OnContextMenuClose()
@@ -174,6 +179,10 @@ function GM:OnContextMenuClose()
 
 	if (IsValid(nut.gui.quick)) then
 		nut.gui.quick:Remove()
+	end
+
+	for k, v in ipairs(nut.bar.list) do
+		v.visible = nil
 	end
 end
 

@@ -132,7 +132,7 @@ function nut.bar.drawAll()
 			v.lifeTime = curTime + 5
 		end
 
-		if (v.lifeTime >= curTime) then
+		if (v.lifeTime >= curTime or v.visible) then
 			nut.bar.draw(x, y, w, h, value, v.color, v)
 			y = y + (h + 2)
 		end
