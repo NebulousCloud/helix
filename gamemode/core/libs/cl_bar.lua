@@ -114,8 +114,9 @@ end
 
 local Approach = math.Approach
 
+BAR_HEIGHT = 10
 function nut.bar.drawAll()
-	local w, h = surface.ScreenWidth() * 0.35, 10
+	local w, h = surface.ScreenWidth() * 0.35, BAR_HEIGHT
 	local x, y = 4, 4
 	local deltas = nut.bar.delta
 	local frameTime = FrameTime()
