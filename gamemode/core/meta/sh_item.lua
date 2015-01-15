@@ -133,7 +133,7 @@ function ITEM:getData(key, default)
 
 	if (value == nil) then
 		if (IsValid(self.entity)) then
-			local data = self.entity:getNetVar("data")
+			local data = self.entity:getNetVar("data", {})
 			local value = data[key]
 
 			if (value != nil) then

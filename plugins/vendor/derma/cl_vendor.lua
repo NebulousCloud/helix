@@ -567,7 +567,7 @@ PANEL = {}
 						self.classBoxes[k2] = class
 					end
 				end
-				PrintTable(adminData)
+				
 				if (adminData.faction and adminData.faction[k]) then
 					faction:SetChecked(true)
 				end

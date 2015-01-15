@@ -136,7 +136,6 @@ if (SERVER) then
 		local command = nut.command.list[command]
 
 		if (command) then
-			PrintTable(arguments)
 			-- Run the command's callback and get the return.
 			local results = {command.onRun(client, arguments or {})}
 			local result = results[1]
