@@ -59,7 +59,7 @@ do
 
 		nut.db.updateTable({
 			_steamName = name,
-			_playTime = math.floor((self.nutPlayTime or 0) + (RealTime() - self.nutJoinTime or RealTime())),
+			_playTime = math.floor((self.nutPlayTime or 0) + (RealTime() - (self.nutJoinTime or RealTime() - 1))),
 			_data = self.nutData
 		}, nil, "players", "_steamID = "..steamID64)
 	end
