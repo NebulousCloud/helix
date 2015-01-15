@@ -22,6 +22,14 @@ function nut.config.add(key, value, desc, callback, data, noNetworking, schemaOn
 	nut.config.stored[key] = {data = data, value = oldConfig and oldConfig.value or value, default = value, desc = desc, noNetworking = noNetworking, global = !schemaOnly, callback = callback}
 end
 
+function nut.config.setDefault(key, value)
+	local config = nut.config.stored[key]
+
+	if (config) then
+		config.default = value
+	end
+end
+
 function nut.config.set(key, value)
 	local config = nut.config.stored[key]
 

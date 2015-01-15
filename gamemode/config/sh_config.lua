@@ -19,7 +19,6 @@
 	To set the configuration, there is a "Config" tab in the F1 menu for super admins and above.
 	Use the menu to change the variables, not this file.
 --]]
-
 nut.config.add("maxChars", 5, "The maximum number of characters a player can have.", nil, {
 	data = {min = 1, max = 50},
 	category = "characters"
