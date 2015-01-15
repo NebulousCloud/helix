@@ -166,7 +166,6 @@ function GM:OnContextMenuOpen()
 
 	vgui.Create("nutQuick", g_ContextMenu)
 
-	print("AAOA")
 	for k, v in ipairs(nut.bar.list) do
 		v.visible = true
 	end
