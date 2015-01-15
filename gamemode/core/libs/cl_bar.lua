@@ -133,7 +133,7 @@ function nut.bar.drawAll()
 		end
 
 		if (v.lifeTime >= curTime) then
-			nut.bar.draw(x, y, w, h, value, v.color)
+			nut.bar.draw(x, y, w, h, value, v.color, v)
 			y = y + (h + 2)
 		end
 	end
@@ -144,11 +144,11 @@ end
 do
 	nut.bar.add(function()
 		return LocalPlayer():Health() / LocalPlayer():GetMaxHealth()
-	end, Color(200, 50, 40))
+	end, Color(200, 50, 40), nil, "health")
 
 	nut.bar.add(function()
 		return math.min(LocalPlayer():Armor() / 100, 1)
-	end, Color(30, 70, 180))
+	end, Color(30, 70, 180), nil, "armor")
 end
 
 netstream.Hook("actBar", function(start, finish, text)
