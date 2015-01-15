@@ -60,7 +60,6 @@ if (CLIENT) then
 		cfg:DockMargin(10, 0, 0, 5)
 
 	end
-
 	vgui.Register("nutTPConfig", PANEL, "DFrame")
 
 	local function isAllowed()
@@ -68,32 +67,34 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:SetupQuickMenu(menu)
-		local button = menu:addCheck(L"thirdpersonToggle", function(panel, state)
-			if (state) then
-				RunConsoleCommand("nut_tp_enabled", "1")
-			else
-				RunConsoleCommand("nut_tp_enabled", "0")
-			end
-		end, NUT_CVAR_THIRDPERSON:GetBool())
+		if (isAllowed()) then
+			local button = menu:addCheck(L"thirdpersonToggle", function(panel, state)
+				if (state) then
+					RunConsoleCommand("nut_tp_enabled", "1")
+				else
+					RunConsoleCommand("nut_tp_enabled", "0")
+				end
+			end, NUT_CVAR_THIRDPERSON:GetBool())
 
-		function button:DoRightClick()
-			if (nut.gui.tpconfig and nut.gui.tpconfig:IsVisible()) then
-				nut.gui.tpconfig:Close()
-				nut.gui.tpconfig = nil
+			function button:DoRightClick()
+				if (nut.gui.tpconfig and nut.gui.tpconfig:IsVisible()) then
+					nut.gui.tpconfig:Close()
+					nut.gui.tpconfig = nil
+				end
+
+				nut.gui.tpconfig = vgui.Create("nutTPConfig")
 			end
 
-			nut.gui.tpconfig = vgui.Create("nutTPConfig")
+			local button = menu:addCheck(L"thirdpersonClassic", function(panel, state)
+				if (state) then
+					RunConsoleCommand("nut_tp_classic", "1")
+				else
+					RunConsoleCommand("nut_tp_classic", "0")
+				end
+			end, NUT_CVAR_TP_CLASSIC:GetBool())
+
+			menu:addSpacer()
 		end
-
-		local button = menu:addCheck(L"thirdpersonClassic", function(panel, state)
-			if (state) then
-				RunConsoleCommand("nut_tp_classic", "1")
-			else
-				RunConsoleCommand("nut_tp_classic", "0")
-			end
-		end, NUT_CVAR_TP_CLASSIC:GetBool())
-
-		menu:addSpacer()
 	end
 
 	local playerMeta = FindMetaTable("Player")
