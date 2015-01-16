@@ -205,4 +205,6 @@ LANGUAGE = {
 	injMajor = "중상을 가지고 있음.",
 	injLittle = "부상을 가지고 있음.",
 	toggleESP = "어드민 월핵 사용",
+	thirdpersonToggle = "3인칭 사용",
+	thirdpersonClassic = "클래식 3인칭 사용",
 }

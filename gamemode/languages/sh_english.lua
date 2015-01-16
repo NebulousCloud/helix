@@ -207,5 +207,7 @@ LANGUAGE = {
 	injLittle = "Seems injured",
 	toggleESP = "Toggle Admin ESP",
 	chgName = "Change Name",
-	chgNameDesc = "Enter the character's new name below."
+	chgNameDesc = "Enter the character's new name below.",
+	thirdpersonToggle = "Toggle Thirdperson",
+	thirdpersonClassic = "Use Classic Thirdperson",
 }
