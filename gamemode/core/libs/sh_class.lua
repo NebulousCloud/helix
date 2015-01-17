@@ -123,12 +123,14 @@ function charMeta:joinClass(class)
 
 		return
 	end
-	
+
+	local oldClass = self:getClass()
 	local client = self:getPlayer()
+
 	if (nut.class.canBe(client, class)) then
 		self:setClass(class)
+		hook.Run("OnPlayerJoinClass", client, class, oldClass)
 
-		hook.Run("OnPlayerJoinClass", client, class)
 		return true
 	else
 		return false
@@ -142,12 +144,17 @@ function charMeta:kickClass()
 	hook.Run("OnPlayerJoinClass", client, class)
 end
 
-function GM:OnPlayerJoinClass(client, class)
+function GM:OnPlayerJoinClass(client, class, oldClass)
 	local info = nut.class.list[class]
+	local info2 = nut.class.list[oldClass]
 
 	if (info.onSet) then
 		info:onSet(client)
 	end
 
-	netstream.Start(player.GetAll(), "classUpdate", client)
+	if (info2 and info2.onLeave) then
+		info2:onLeave(client)
+	end
+
+	netstream.Start(nil, "classUpdate", client)
 end
