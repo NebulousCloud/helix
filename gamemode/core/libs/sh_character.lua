@@ -390,7 +390,7 @@ do
 				bar:setMax(maximum)
 				bar:Dock(TOP)
 				bar:DockMargin(2, 2, 2, 2)
-				bar:setText(v.name)
+				bar:setText(L(v.name))
 				bar.onChanged = function(this, difference)
 					total = total + difference
 
