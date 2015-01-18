@@ -47,7 +47,7 @@ do
 		end)
 
 		netstream.Hook("nutData", function(key, value)
-			nut.localData = nut.loadData or {}
+			nut.localData = nut.localData or {}
 			nut.localData[key] = value
 		end)
 	end
