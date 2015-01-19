@@ -752,7 +752,7 @@ end)
 function GM:PostPlayerDraw(client)
 	if (client and client:getChar() and client:GetNoDraw() != true) then
 		local wep = client:GetActiveWeapon()
-		local curClass = (wep and wep:GetClass():lower() or "")
+		local curClass = ((wep and wep:IsValid()) and wep:GetClass():lower() or "")
 
 		for k, v in ipairs(client:GetWeapons()) do
 			if (v and IsValid(v)) then

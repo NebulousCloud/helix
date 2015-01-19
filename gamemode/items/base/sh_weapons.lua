@@ -56,6 +56,9 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 	onRun = function(item)
 		item.player.carryWeapons = item.player.carryWeapons or {}
 		local weapon = item.player.carryWeapons[item.weaponCategory]
+		if (!weapon or !IsValid(weapon)) then
+			weapon = item.player:GetWeapon(item.class)	
+		end
 
 		if (weapon and weapon:IsValid()) then
 			item:setData("ammo", weapon:Clip1())
