@@ -137,3 +137,11 @@ ITEM.functions.Equip = {
 function ITEM:onCanBeTransfered(oldInventory, newInventory)
 	return !self:getData("equip")
 end
+
+HOLSTER_DRAWINFO = {}
+-- Called after the item is registered into the item tables.
+function ITEM:onRegistered()
+	if (self.holsterDrawInfo) then
+		HOLSTER_DRAWINFO[self.class] = self.holsterDrawInfo
+	end
+end

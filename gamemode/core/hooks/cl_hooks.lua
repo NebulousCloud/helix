@@ -748,3 +748,61 @@ netstream.Hook("strReq", function(time, title, subTitle, default)
 		netstream.Start("strReq", time, text)
 	end)
 end)
+
+function GM:PostPlayerDraw(client)
+	if (client and client:getChar() and client:GetNoDraw() != true) then
+		local wep = client:GetActiveWeapon()
+		local curClass = (wep and wep:GetClass():lower() or "")
+
+		for k, v in ipairs(client:GetWeapons()) do
+			if (v and IsValid(v)) then
+				local class = v:GetClass():lower()
+				local drawInfo = HOLSTER_DRAWINFO[class]
+
+				if (drawInfo) then
+					client.holsteredWeapons = client.holsteredWeapons or {}
+
+					if (!client.holsteredWeapons[class] or !IsValid(client.holsteredWeapons[class])) then
+						client.holsteredWeapons[class] = ClientsideModel(drawInfo.model, RENDERGROUP_TRANSLUCENT)
+						client.holsteredWeapons[class]:SetNoDraw(true)
+					end
+
+					local drawModel = client.holsteredWeapons[class]
+					local boneIndex = client:LookupBone(drawInfo.bone)
+
+					if (boneIndex and boneIndex > 0) then
+						local bonePos, boneAng = client:GetBonePosition(boneIndex)
+
+						if (curClass != class and drawModel and IsValid(drawModel)) then
+							local Right 	= boneAng:Right()
+							local Up 		= boneAng:Up()
+							local Forward 	= boneAng:Forward()	
+
+							boneAng:RotateAroundAxis(Right, drawInfo.ang[1])
+							boneAng:RotateAroundAxis(Up, drawInfo.ang[2])
+							boneAng:RotateAroundAxis(Forward, drawInfo.ang[3])
+
+							bonePos = bonePos + drawInfo.pos[1] * Right
+							bonePos = bonePos + drawInfo.pos[2] * Forward
+							bonePos = bonePos + drawInfo.pos[3] * Up
+
+							drawModel:SetRenderOrigin(bonePos)
+							drawModel:SetRenderAngles(boneAng)
+							drawModel:DrawModel()
+						end
+					end
+				end
+			end
+		end
+
+		if (client.holsteredWeapons) then
+			for k, v in pairs(client.holsteredWeapons) do
+				local weapon = client:GetWeapon(k)
+
+				if (!weapon or !IsValid(weapon)) then
+					v:Remove()
+				end
+			end
+		end
+	end
+end
