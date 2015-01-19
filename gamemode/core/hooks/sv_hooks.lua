@@ -64,6 +64,8 @@ function GM:PlayerInitialSpawn(client)
 		end)
 	end)
 
+	client:SetNoDraw(true)
+
 	timer.Simple(1, function()
 		if (!IsValid(client)) then return end
 		
@@ -227,6 +229,7 @@ function GM:PlayerSay(client, message)
 end
 
 function GM:PlayerSpawn(client)
+	client:SetNoDraw(false)
 	client:setAction()
 	hook.Run("PlayerLoadout", client)
 end

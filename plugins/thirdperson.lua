@@ -133,8 +133,9 @@ if (CLIENT) then
 			view = {}
 			traceData = {}
 				traceData.start = 	client:GetPos() + client:GetViewOffset() + 
-									curAng:Up() * (clmp(NUT_CVAR_TP_VERT:GetInt(), 0, maxValues.height) - client:GetViewOffsetDucked()[3] * crouchFactor) + 
-									curAng:Right() * clmp(NUT_CVAR_TP_HORI:GetInt(), -maxValues.horizontal, maxValues.horizontal) 
+									curAng:Up() * clmp(NUT_CVAR_TP_VERT:GetInt(), 0, maxValues.height) + 
+									curAng:Right() * clmp(NUT_CVAR_TP_HORI:GetInt(), -maxValues.horizontal, maxValues.horizontal) -
+									client:GetViewOffsetDucked()*.5 * crouchFactor
 				traceData.endpos = traceData.start - curAng:Forward() * clmp(NUT_CVAR_TP_DIST:GetInt(), 0, maxValues.distance)
 				traceData.filter = client
 			view.origin = util.TraceLine(traceData).HitPos
