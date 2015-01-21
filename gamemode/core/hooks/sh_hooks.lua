@@ -292,7 +292,12 @@ end
 function GM:Move(client, moveData)
 	local char = client:getChar()
 	if (char) then
-		if (moveData:KeyDown(IN_WALK)) then
+		if (client:getNetVar("actAng")) then
+			moveData:SetForwardSpeed(0)
+			moveData:SetSideSpeed(0)
+		end
+
+		if (client:GetMoveType() == MOVETYPE_WALK and moveData:KeyDown(IN_WALK)) then
 			local mf, ms = 0, 0
 
 			if (moveData:KeyDown(IN_FORWARD)) then

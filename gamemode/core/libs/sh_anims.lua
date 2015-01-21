@@ -340,10 +340,6 @@ do
 		if (sequence and sequence > 0) then
 			time = time or self:SequenceDuration(sequence)
 
-			if (!noFreeze) then
-				self:SetMoveType(MOVETYPE_CUSTOM)
-			end
-
 			self.nutSeqCallback = callback
 			self.nutSeq = sequence
 

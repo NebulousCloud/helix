@@ -99,11 +99,19 @@ function PLUGIN:OnPlayerLeaveSequence(client)
 end
 
 function PLUGIN:PlayerDeath(client)
-	client:setNetVar("actAng")
+	if (client.nutSeqUntimed) then
+		client:setNetVar("actAng")
+		client:leaveSequence()
+		client.nutSeqUntimed = nil
+	end
 end
 
 function PLUGIN:OnCharFallover(client)
-	client:setNetVar("actAng")
+	if (client.nutSeqUntimed) then
+		client:setNetVar("actAng")
+		client:leaveSequence()
+		client.nutSeqUntimed = nil
+	end
 end
 
 function PLUGIN:ShouldDrawLocalPlayer(client)
