@@ -351,11 +351,11 @@ else
 		for i = 1, math.min(maxDisplay, strEnd) do
 			-- character scale/color lerp
 			flipTable[i] = flipTable[i] or {}
-			flipTable[i][1] = flipTable[i][1] or 2
+			flipTable[i][1] = flipTable[i][1] or .1
 			--flipTable[i][1] = flipTable[i][1] or targetScale*3
 			flipTable[i][2] = flipTable[i][2] or 0
 			flipTable[i][1] = Lerp(ft*4, flipTable[i][1], scale)
-			flipTable[i][2] = Lerp(ft*2, flipTable[i][2], 255)
+			flipTable[i][2] = Lerp(ft*4, flipTable[i][2], 255)
 
 			-- draw character.
 			local char = string.utf8sub(dispString, i, i)
@@ -364,7 +364,7 @@ else
 				"nutAreaDisplay",
 				math.Round(w/2 + dsx - (sx or 0)*scale/2),
 				math.Round(h/3*1 - (sy or 0)*scale/2),
-				Vector(flipTable[i][1], Format("%.2f", scale), 1),
+				Vector(Format("%.2f", flipTable[i][1]), Format("%.2f", scale), 1),
 				nil,
 				Color(255, 255, 255,
 				(dieTrigger and dieTimer < RealTime()) and dieAlpha or flipTable[i][2])
@@ -380,7 +380,7 @@ else
 				dieTimer = RealTime() + 2
 			else
 				if (dieTimer < RealTime()) then
-					dieAlpha = Lerp(ft*2, dieAlpha, 0)
+					dieAlpha = Lerp(ft*4, dieAlpha, 0)
 				end
 			end
 		end
