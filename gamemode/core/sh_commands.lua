@@ -370,11 +370,11 @@ nut.command.add("charsetmoney", {
 })
 
 nut.command.add("dropmoney", {
-	syntax = "<string name> <string item>",
+	syntax = "<number amount>",
 	onRun = function(client, arguments)
 		local amount = tonumber(arguments[1])
 		if (!amount or !isnumber(amount) or amount <= 0) then
-			return L("invalidArg", client, 2)
+			return L("invalidArg", client, 1)
 		end
 
 		if (!client:getChar():hasMoney(amount)) then

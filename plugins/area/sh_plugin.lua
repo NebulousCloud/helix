@@ -180,6 +180,15 @@ if (SERVER) then
 		end
 	end)
 
+	netstream.Hook("areaAdd", function(client, name, vector1, vector2)
+		-- Only Admin can edit the area.
+		if (!client:IsAdmin() or !vector1 or !vector2 or !name) then
+			return false
+		end
+
+		nut.area.addArea(name, vector1, vector2)
+	end)
+
 	netstream.Hook("areaRemove", function(client, areaID, editData)
 		-- Only Admin can edit the area.
 		if (!client:IsAdmin()) then

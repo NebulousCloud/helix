@@ -84,8 +84,10 @@ if CLIENT then
 
 			if (areaPoint.startVector) then
 				areaPoint.endVector = pos
+				surface.PlaySound("buttons/button15.wav")
 			else
 				areaPoint.startVector = pos
+				surface.PlaySound("buttons/button3.wav")
 			end
 		end
 	end
@@ -94,12 +96,31 @@ if CLIENT then
 	end
 
 	function SWEP:Reload()
+		if (!self.ohWow and areaPoint.startVector and areaPoint.endVector) then
+			self.ohWow = true
+			Derma_StringRequest("Area Name?", "Area Name?", "", function(text)
+				self.ohWow = false
+				netstream.Start("areaAdd", text, areaPoint.startVector, areaPoint.endVector)
+			end, function()
+				self.ohWow = false 
+			end)
+		end
 	end
 	
 	function SWEP:SecondaryAttack()
-		if IsFirstTimePredicted() then
+		if (IsFirstTimePredicted()) then
 			areaPoint = {}
+			
+			if (!self.rSnd) then
+				surface.PlaySound("buttons/button2.wav")
+				self.rSnd = true
+
+				timer.Simple(.5, function()
+					self.rSnd = false
+				end)
+			end
 		end
+
 		return false
 	end
 

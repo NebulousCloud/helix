@@ -116,7 +116,7 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 					return false
 				end,
 				onCanRun = function(item)
-					return !IsValid(item.entity)
+					return (!IsValid(item.entity) and !item.noDrop)
 				end
 			}
 			ITEM.functions.take = ITEM.functions.take or {
