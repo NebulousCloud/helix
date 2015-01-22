@@ -452,6 +452,34 @@ do
 			end			
 		end)
 	else
+		function nut.item.loadItemByID(itemIndex, targetInv, recipientFilter)
+			local range
+			if (type(itemIndex) == "table") then
+				range = "("..table.concat(itemIndex, ", ")..")"
+			elseif (type(itemIndex) == "number") then
+				range = "(".. itemIndex ..")"
+			else
+				return
+			end
+
+			nut.db.query("SELECT _itemID, _uniqueID, _data FROM nut_items WHERE _itemID IN "..range, function(data)
+				if (data) then
+					for k, v in ipairs(data) do
+						local itemID = tonumber(v._itemID)
+						local data = util.JSONToTable(v._data or "[]")
+						local uniqueID = v._uniqueID
+						local itemTable = nut.item.list[uniqueID]
+
+						if (itemTable and itemID) then
+							local item = nut.item.new(uniqueID, itemID)
+							item.data = table.Merge(itemTable.data, data or {})
+							item.invID = (targetInv or 0)
+						end
+					end
+				end
+			end)
+		end
+
 		netstream.Hook("invMv", function(client, oldX, oldY, x, y, invID, newInvID)
 			oldX, oldY, x, y, invID = tonumber(oldX), tonumber(oldY), tonumber(x), tonumber(y), tonumber(invID)
 			if (!oldX or !oldY or !x or !y or !invID) then return end
