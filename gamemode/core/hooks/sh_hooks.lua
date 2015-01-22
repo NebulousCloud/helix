@@ -187,7 +187,9 @@ function GM:CalcMainActivity(client, velocity)
 		client:SetIK(false)
 	end
 
+	local oldSeqOverride = client.CalcSeqOverride
 	local seqIdeal, seqOverride = self.BaseClass:CalcMainActivity(client, velocity)
+	--client.CalcSeqOverride is being -1 after this line.
 
 	return seqIdeal, client.nutForceSeq or oldSeqOverride or client.CalcSeqOverride
 end
