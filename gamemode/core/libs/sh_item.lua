@@ -240,7 +240,7 @@ function nut.item.new(uniqueID, id)
 	if (nut.item.instances[id]) then
 		return nut.item.instances[id]
 	end
-	
+
 	local stockItem = nut.item.list[uniqueID]
 
 	if (stockItem) then
@@ -318,6 +318,13 @@ do
 	end
 
 	if (CLIENT) then
+		netstream.Hook("item", function(uniqueID, id, data, invID)
+			local stockItem = nut.item.list[uniqueID]
+			local item = nut.item.new(uniqueID, id)
+			item.data = table.Merge(item.data, data or {})
+			item.invID = 0
+		end)
+
 		netstream.Hook("inv", function(slots, id, w, h, owner)
 			local character
 
@@ -452,7 +459,7 @@ do
 			end			
 		end)
 	else
-		function nut.item.loadItemByID(itemIndex, targetInv, recipientFilter)
+		function nut.item.loadItemByID(itemIndex, recipientFilter)
 			local range
 			if (type(itemIndex) == "table") then
 				range = "("..table.concat(itemIndex, ", ")..")"
@@ -473,11 +480,11 @@ do
 						if (itemTable and itemID) then
 							local item = nut.item.new(uniqueID, itemID)
 							item.data = table.Merge(itemTable.data, data or {})
-							item.invID = (targetInv or 0)
+							item.invID = 0
 						end
 					end
 				end
-			end)
+			end) 
 		end
 
 		netstream.Hook("invMv", function(client, oldX, oldY, x, y, invID, newInvID)
