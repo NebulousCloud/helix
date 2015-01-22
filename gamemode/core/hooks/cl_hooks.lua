@@ -93,7 +93,7 @@ function GM:LoadFonts(font)
 	})
 
 	-- The more readable font.
-	font = "Calibri"
+	font = "Segoe UI"
 
 	surface.CreateFont("nutCleanTitleFont", {
 		font = font,
