@@ -384,6 +384,7 @@ do
 	ALWAYS_RAISED = {}
 	ALWAYS_RAISED["weapon_physgun"] = true
 	ALWAYS_RAISED["gmod_tool"] = true
+	ALWAYS_RAISED["nut_poshelper"] = true
 
 	-- Returns whether or not the player has their weapon raised.
 	function playerMeta:isWepRaised()
