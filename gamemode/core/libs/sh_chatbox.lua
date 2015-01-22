@@ -43,7 +43,7 @@ function nut.chat.register(chatType, data)
 	-- Allow players to use this chat type by default.
 	if (!data.onCanSay) then
 		data.onCanSay = function(speaker, text)
-			return true
+			return (!data.deadChat and speaker:Alive() or true)
 		end
 	end
 
@@ -321,6 +321,7 @@ do
 			onChatAdd = function(speaker, text)
 				chat.AddText(Color(255, 50, 50), "[LOOC] ", nut.config.get("chatColor"), speaker:Name()..": "..text)
 			end,
+			onCanHear = nut.config.get("chatRange", 280),
 			prefix = {".//", "[[", "/looc"},
 			noSpaceAfter = true,
 			filter = "ooc"
