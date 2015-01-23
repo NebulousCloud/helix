@@ -16,6 +16,8 @@
 nut.plugin = nut.plugin or {}
 nut.plugin.list = nut.plugin.list or {}
 
+local HOOKS_CACHE = {}
+
 function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 	if (hook.Run("PluginShouldLoad", uniqueID) == false) then return end
 
@@ -79,6 +81,13 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 	if (uniqueID != "schema") then
 		PLUGIN.name = PLUGIN.name or "Unknown"
 		PLUGIN.desc = PLUGIN.desc or "No description available."
+
+		for k, v in pairs(PLUGIN) do
+			if (type(v) == "function") then
+				HOOKS_CACHE[k] = HOOKS_CACHE[k] or {}
+				HOOKS_CACHE[k][PLUGIN] = v
+			end
+		end
 
 		nut.plugin.list[uniqueID] = PLUGIN
 		_G[variable] = nil
@@ -363,9 +372,11 @@ do
 	hook.NutCall = hook.NutCall or hook.Call
 
 	function hook.Call(name, gm, ...)
-		for k, v in pairs(nut.plugin.list) do
-			if (v[name]) then
-				local result = {v[name](v, ...)}
+		local cache = HOOKS_CACHE[name]
+
+		if (cache) then
+			for k, v in pairs(cache) do
+				local result = {v(k, ...)}
 
 				if (#result > 0) then
 					return unpack(result)
