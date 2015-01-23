@@ -65,9 +65,10 @@ nut.anim.citizen_male = {
 		attack = ACT_MELEE_ATTACK_SWING
 	},
 	glide = ACT_GLIDE,
-	vehicle = {"sitchair1",
-				Vector(0, 0, -25),
-				Angle()},
+	vehicle = {
+		["prop_vehicle_prisoner_pod"] = {"sitchair1", Vector(0, 0, -25), Angle()},
+		["prop_vehicle_jeep"] = {"sitchair1", Vector(12, 0, -18), Angle()}
+	},
 }
 nut.anim.citizen_female = {
 	normal = {
@@ -120,9 +121,10 @@ nut.anim.citizen_female = {
 		attack = ACT_MELEE_ATTACK_SWING
 	},
 	glide = ACT_GLIDE,
-	vehicle = {"sitchair1",
-				Vector(0, 0, -25),
-				Angle()},
+	vehicle = {
+		["prop_vehicle_prisoner_pod"] = {"sitchair1", Vector(0, 0, -25), Angle()},
+		["prop_vehicle_jeep"] = {"sitchair1", Vector(12, 0, -18), Angle()}
+	},
 }
 nut.anim.metrocop = {
 	normal = {

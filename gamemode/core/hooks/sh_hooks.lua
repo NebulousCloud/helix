@@ -84,18 +84,22 @@ function GM:TranslateActivity(client, act)
 		local subClass = "normal"
 
 		if (client:InVehicle() and tree.vehicle) then
-			local act = tree.vehicle[1]
-			local fixvec = tree.vehicle[2]
-			local fixang = tree.vehicle[3]
+			local vehicle = client:GetVehicle()
+			if (vehicle and IsValid(vehicle)) then
+				local class = vehicle:GetClass()
+				local act = tree.vehicle[class][1]
+				local fixvec = tree.vehicle[class][2]
+				local fixang = tree.vehicle[class][3]
 
-			client:ManipulateBonePosition(0, fixvec)
+				client:ManipulateBonePosition(0, fixvec)
 
-			if (type(act) == "string") then
-				client.CalcSeqOverride = client:LookupSequence(act)
+				if (type(act) == "string") then
+					client.CalcSeqOverride = client:LookupSequence(act)
 
-				return
-			else
-				return act
+					return
+				else
+					return act
+				end
 			end
 		end
 		
