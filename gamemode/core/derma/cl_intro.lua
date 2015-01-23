@@ -136,6 +136,10 @@ local PANEL = {}
 		if (self.sound) then
 			self.sound:Stop()
 			self.sound = nil
+
+			if (IsValid(nut.gui.char)) then
+				nut.gui.char:playMusic()
+			end
 		end
 	end
 

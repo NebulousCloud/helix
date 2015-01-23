@@ -28,6 +28,8 @@ local PANEL = {}
 			timer.Simple(0.1, function()
 				vgui.Create("nutIntro", self)
 			end)
+		else
+			self:playMusic()
 		end
 
 		if (IsValid(nut.gui.char) or (LocalPlayer().getChar and LocalPlayer():getChar())) then
@@ -486,6 +488,58 @@ local PANEL = {}
 		end
 
 		CreateMainButtons()
+	end
+
+	function PANEL:playMusic()
+		if (nut.menuMusic) then
+			nut.menuMusic:Stop()
+			nut.menuMusic = nil
+		end
+
+		timer.Remove("nutMusicFader")
+
+		local source = nut.config.get("music", ""):lower()
+
+		if (source:find("%S")) then
+			local function callback(music, errorID, fault)
+				if (music) then
+					nut.menuMusic = music
+					nut.menuMusic:Play()
+				else
+					MsgC(Color(255, 50, 50), errorID.." ")
+					MsgC(color_white, fault.."\n")
+				end
+			end
+
+			if (source:find("http")) then
+				sound.PlayURL(source, "noplay", callback)
+			else
+				sound.PlayFile("sound/"..source, "noplay", callback)
+			end
+		end
+	end
+
+	function PANEL:OnRemove()
+		if (nut.menuMusic) then
+			local fraction = 1
+			local start, finish = RealTime(), RealTime() + 10
+
+			timer.Create("nutMusicFader", 0.1, 0, function()
+				if (nut.menuMusic) then
+					fraction = 1 - math.TimeFraction(start, finish, RealTime())
+					nut.menuMusic:SetVolume(fraction)
+
+					if (fraction <= 0) then
+						nut.menuMusic:Stop()
+						nut.menuMusic = nil
+
+						timer.Remove("nutMusicFader")
+					end
+				else
+					timer.Remove("nutMusicFader")
+				end
+			end)
+		end
 	end
 
 	function PANEL:Paint(w, h)

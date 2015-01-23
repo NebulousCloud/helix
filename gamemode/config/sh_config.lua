@@ -88,3 +88,6 @@ nut.config.add("punchStamina", 10, "How much stamina punches use up.", nil, {
 	data = {min = 0, max = 100},
 	category = "characters"
 })
+nut.config.add("music", "music/hl2_song2.mp3", "The default music played in the character menu.", nil, {
+	category = "appearance"
+})
