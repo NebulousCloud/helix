@@ -115,13 +115,13 @@ function GM:LoadFonts(font)
 
 	surface.CreateFont("nutMediumFont", {
 		font = font,
-		size = 26,
+		size = 25,
 		weight = 1000
 	})
 
 	surface.CreateFont("nutMediumLightFont", {
 		font = font,
-		size = 26,
+		size = 25,
 		weight = 200
 	})
 
@@ -146,7 +146,7 @@ function GM:LoadFonts(font)
 
 	surface.CreateFont("nutSmallFont", {
 		font = font,
-		size = 16,
+		size = 17,
 		weight = 500
 	})
 
