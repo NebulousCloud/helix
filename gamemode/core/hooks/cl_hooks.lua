@@ -378,7 +378,7 @@ function GM:HUDPaint()
 
 	surface.SetDrawColor(0, 0, 0, 175 + vignetteAlphaDelta)
 	surface.SetMaterial(vignette)
-	surface.DrawTexturedRect(0, 0, scrW, scrH
+	surface.DrawTexturedRect(0, 0, scrW, scrH)
 
 	if (localPlayer.getChar(localPlayer) and nextUpdate < realTime) then
 		nextUpdate = realTime + 0.5
