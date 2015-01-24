@@ -24,6 +24,13 @@ nut.item.inventoryTypes = nut.item.inventoryTypes or {}
 
 nut.util.include("nutscript/gamemode/core/meta/sh_item.lua")
 
+-- Declare some supports for logic inventory
+-- !! Temporal Fix.
+local zeroInv = nut.item.inventories[0]
+function zeroInv:getID()
+	return 0
+end
+
 function nut.item.instance(index, uniqueID, data, x, y, callback)
 	if (!uniqueID or nut.item.list[uniqueID]) then
 		nut.db.insertTable({

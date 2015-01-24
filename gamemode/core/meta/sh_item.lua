@@ -242,7 +242,8 @@ if (SERVER) then
 
 	-- Transfers an item to a specific inventory.
 	function ITEM:transfer(invID, x, y, client, noReplication, isLogical)
-		print(self.invID)
+		invID = invID or 0
+		
 		if (self.invID == invID) then
 			return false, "same inv"
 		end
