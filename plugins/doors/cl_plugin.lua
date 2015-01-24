@@ -20,38 +20,44 @@ ACCESS_LABELS[DOOR_GUEST] = "guest"
 ACCESS_LABELS[DOOR_NONE] = "none"
 
 function PLUGIN:ShouldDrawEntityInfo(entity)
-	if (entity:isDoor() and !entity:getNetVar("disabled")) then
+	if (entity.isDoor(entity) and !entity.getNetVar(entity, "disabled")) then
 		return true
 	end
 end
 
+local toScreen = FindMetaTable("Vector").ToScreen
+local colorAlpha = ColorAlpha
+local drawText = nut.util.drawText
+local configGet = nut.config.get
+local teamGetColor = team.GetColor
+
 function PLUGIN:DrawEntityInfo(entity, alpha)
-	if (entity:isDoor()) then
-		local position = entity:LocalToWorld(entity:OBBCenter()):ToScreen()
+	if (entity.isDoor(entity)) then
+		local position = toScreen(entity.LocalToWorld(entity, entity.OBBCenter(entity)))
 		local x, y = position.x, position.y
-		local owner = entity:getNetVar("owner")
-		local name = entity:getNetVar("title", entity:getNetVar("name", IsValid(owner) and L"dTitleOwned" or L"dTitle"))
-		local faction = entity:getNetVar("faction")
+		local owner = entity.getNetVar(entity, "owner")
+		local name = entity.getNetVar(entity, "title", entity.getNetVar(entity, "name", IsValid(owner) and L"dTitleOwned" or L"dTitle"))
+		local faction = entity.getNetVar(entity, "faction")
 		local color
 
 		if (faction) then
-			color = team.GetColor(faction)
+			color = teamGetColor(faction)
 		else
-			color = nut.config.get("color")
+			color = configGet("color")
 		end
 
-		nut.util.drawText(name, x, y, ColorAlpha(color, alpha), 1, 1)
+		drawText(name, x, y, colorAlpha(color, alpha), 1, 1)
 
 		if (IsValid(owner)) then
-			nut.util.drawText(L("dOwnedBy", owner:Name()), x, y + 16, ColorAlpha(color_white, alpha), 1, 1)
+			drawText(L("dOwnedBy", owner.Name(owner)), x, y + 16, colorAlpha(color_white, alpha), 1, 1)
 		elseif (faction) then
 			local info = nut.faction.indices[faction]
 
 			if (info) then
-				nut.util.drawText(L("dOwnedBy", L2(info.name) or info.name), x, y + 16, ColorAlpha(color_white, alpha), 1, 1)
+				drawText(L("dOwnedBy", L2(info.name) or info.name), x, y + 16, colorAlpha(color_white, alpha), 1, 1)
 			end
 		else
-			nut.util.drawText(entity:getNetVar("noSell") and L"dIsNotOwnable" or L"dIsOwnable", x, y + 16, ColorAlpha(color_white, alpha), 1, 1)
+			drawText(entity.getNetVar(entity, "noSell") and L"dIsNotOwnable" or L"dIsOwnable", x, y + 16, colorAlpha(color_white, alpha), 1, 1)
 		end
 	end
 end

@@ -73,16 +73,17 @@ else
 
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
+	local drawText = nut.util.drawText
 
 	function ENT:onDrawEntityInfo(alpha)
-		local position = toScreen(self, self.LocalToWorld(self, self.OBBCenter(self)))
+		local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
 		local x, y = position.x, position.y
 		local owner = nut.char.loaded[self.getNetVar(self, "owner", 0)]
 
-		nut.util.drawText(L"shipment", x, y, colorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
+		drawText(L"shipment", x, y, colorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
 
 		if (owner) then
-			nut.util.drawText(L("shipmentDesc", owner.getName(owner)), x, y + 16, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+			drawText(L("shipmentDesc", owner.getName(owner)), x, y + 16, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
 		end
 	end
 end

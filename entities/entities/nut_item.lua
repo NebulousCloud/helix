@@ -89,7 +89,7 @@ else
 		local itemTable = self.getItemTable(self)
 
 		if (itemTable) then
-			local position = toScreen(self, self.LocalToWorld(self, self.OBBCenter(self)))
+			local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
 			local x, y = position.x, position.y
 			
 			itemTable.entity = self

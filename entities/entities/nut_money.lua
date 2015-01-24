@@ -49,12 +49,14 @@ else
 
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
+	local drawText = nut.util.drawText
+	local configGet = nut.config.get
 
 	function ENT:onDrawEntityInfo(alpha)
-		local position = toScreen(self, self.LocalToWorld(self, self.OBBCenter(self)))
+		local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
 		local x, y = position.x, position.y
 
-		nut.util.drawText(nut.currency.get(self.getAmount(self)), x, y, colorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
+		drawText(nut.currency.get(self.getAmount(self)), x, y, colorAlpha(configGet("color"), alpha), 1, 1, nil, alpha * 0.65)
 	end
 end
 

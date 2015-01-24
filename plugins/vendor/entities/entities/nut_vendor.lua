@@ -103,18 +103,20 @@ if (CLIENT) then
 	local TEXT_OFFSET = Vector(0, 0, 20)
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
+	local drawText = nut.util.drawText
+	local configGet = nut.config.get
 
 	ENT.DrawEntityInfo = true
 
-	function ENT:onDrawselfInfo(alpha)
-		local position = toScreen(self, self.LocalToWorld(self, self.OBBCenter(self)) + TEXT_OFFSET)
+	function ENT:onDrawEntityInfo(alpha)
+		local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)) + TEXT_OFFSET)
 		local x, y = position.x, position.y
 		local desc = self.getNetVar(self, "desc")
 
-		nut.util.drawText(self.getNetVar(self, "name", "John Doe"), x, y, colorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
+		drawText(self.getNetVar(self, "name", "John Doe"), x, y, colorAlpha(configGet("color"), alpha), 1, 1, nil, alpha * 0.65)
 
 		if (desc) then
-			nut.util.drawText(desc, x, y + 16, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+			drawText(desc, x, y + 16, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
 		end
 	end
 else

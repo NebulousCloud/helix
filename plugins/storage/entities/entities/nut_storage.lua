@@ -119,21 +119,23 @@ else
 	local COLOR_UNLOCKED = Color(135, 211, 124)
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
+	local drawText = nut.util.drawText
+	local configGet = nut.config.get
 
 	function ENT:onDrawEntityInfo(alpha)
 		local locked = self.getNetVar(self, "locked", false)
-		local position = toScreen(self, self.LocalToWorld(self, self.OBBCenter(self)))
+		local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
 		local x, y = position.x, position.y
 
 		y = y - 20
-		local tx, ty = nut.util.drawText(locked and "P" or "Q", x, y, ColorAlpha(locked and COLOR_LOCKED or COLOR_UNLOCKED, alpha), 1, 1, "nutIconsMedium", alpha * 0.65)
+		local tx, ty = nut.util.drawText(locked and "P" or "Q", x, y, colorAlpha(locked and COLOR_LOCKED or COLOR_UNLOCKED, alpha), 1, 1, "nutIconsMedium", alpha * 0.65)
 		y = y + ty*.9
 
-		local def = PLUGIN.definitions[self:GetModel():lower()]
-		local tx, ty = nut.util.drawText("Storage", x, y, ColorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
+		local def = PLUGIN.definitions[self.GetModel(self):lower()]
+		local tx, ty = drawText("Storage", x, y, colorAlpha(configGet("color"), alpha), 1, 1, nil, alpha * 0.65)
 		if (def) then
 			y = y + ty + 1
-			nut.util.drawText(def.desc, x, y, ColorAlpha(color_white, alpha), 1, 1, nil, alpha * 0.65)
+			drawText(def.desc, x, y, colorAlpha(color_white, alpha), 1, 1, nil, alpha * 0.65)
 		end
 	end
 end
