@@ -361,40 +361,48 @@ function GM:CalcView(client, origin, angles, fov)
 	end
 end
 
+local nextUpdate = 0
+local lastTrace = {}
+local lastEntity
+local mathApproach = math.Approach
+
 function GM:HUDPaint()
-	vignetteAlphaDelta = math.Approach(vignetteAlphaDelta, vignetteAlphaGoal, FrameTime() * 30)
+	local localPlayer = LocalPlayer()
+	local realTime = RealTime()
+	local frameTime = FrameTime()
+
+	vignetteAlphaDelta = mathApproach(vignetteAlphaDelta, vignetteAlphaGoal, frameTime * 30)
 
 	surface.SetDrawColor(0, 0, 0, 175 + vignetteAlphaDelta)
 	surface.SetMaterial(vignette)
 	surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
 
-	local localPlayer = LocalPlayer()
+	if (localPlayer:getChar() and nextUpdate < realTime) then
+		nextUpdate = realTime + 0.5
 
-	if (localPlayer:getChar()) then
-		local data = {}
-			data.start = localPlayer:GetShootPos()
-			data.endpos = data.start + localPlayer:GetAimVector()*160
-			data.filter = localPlayer
-		local trace = util.TraceLine(data)
-		local entity = trace.Entity
+		lastTrace.start = localPlayer:GetShootPos()
+		lastTrace.endpos = lastTrace.start + localPlayer:GetAimVector()*160
+		lastTrace.filter = localPlayer
 
-		if (IsValid(entity) and (entity.onShouldDrawEntityInfo and entity:onShouldDrawEntityInfo() or hook.Run("ShouldDrawEntityInfo", entity) == true)) then
-			paintedEntitiesCache[entity] = true
+		lastEntity = util.TraceLine(lastTrace).Entity
+
+		if (IsValid(lastEntity) and (lastEntity.onShouldDrawEntityInfo and lastEntity:onShouldDrawEntityInfo() or hook.Run("ShouldDrawEntityInfo", lastEntity))) then
+			paintedEntitiesCache[lastEntity] = true
 		end
 	end
-
-	local frameTime = FrameTime() * 120
 
 	for entity, drawing in pairs(paintedEntitiesCache) do
 		if (IsValid(entity)) then
 			local goal = drawing and 255 or 0
-			local alpha = math.Approach(entity.nutAlpha or 0, goal, frameTime)
+			local alpha = mathApproach(entity.nutAlpha or 0, goal, frameTime * 120)
 
-			paintedEntitiesCache[entity] = false
+			if (lastEntity != entity) then
+				paintedEntitiesCache[entity] = false
+			end
 
 			if (alpha > 0) then
 				if (entity.onDrawEntityInfo) then
-					entity:onDrawEntityInfo(alpha)
+					entity.onDrawEntityInfo(entity, alpha)
 				else
 					hook.Run("DrawEntityInfo", entity, alpha)
 				end
@@ -413,7 +421,7 @@ function GM:HUDPaint()
 	blurGoal = localPlayer:getLocalVar("blur", 0) + (hook.Run("AdjustBlurAmount", blurGoal) or 0)
 
 	if (blurDelta != blurGoal) then
-		blurDelta = math.Approach(blurDelta, blurGoal, FrameTime() * 20)
+		blurDelta = math.Approach(blurDelta, blurGoal, frameTime * 20)
 	end
 
 	if (blurDelta > 0 and !LocalPlayer():ShouldDrawLocalPlayer()) then
@@ -491,10 +499,12 @@ function GM:GetInjuredText(client)
 	end
 end
 
+local toScreen = FindMetaTable("Vector").ToScreen
+
 function GM:DrawEntityInfo(entity, alpha)
 	if (entity:IsPlayer()) then
 		local localPlayer = LocalPlayer()
-		local position = (entity:GetPos() + (entity:Crouching() and OFFSET_CROUCHING or OFFSET_NORMAL)):ToScreen()
+		local position = toScreen(entity:GetPos() + (entity:Crouching() and OFFSET_CROUCHING or OFFSET_NORMAL))
 		local character = entity:getChar()
 
 		if (character) then
