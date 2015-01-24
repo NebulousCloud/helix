@@ -113,15 +113,16 @@ if (SERVER) then
 		end
 	end
 else
-	function ENT:onShouldDrawEntityInfo()
-		return true
-	end
+	ENT.DrawEntityInfo = true
 
 	local COLOR_LOCKED = Color(242, 38, 19)
 	local COLOR_UNLOCKED = Color(135, 211, 124)
+	local toScreen = FindMetaTable("Vector").ToScreen
+	local colorAlpha = ColorAlpha
+
 	function ENT:onDrawEntityInfo(alpha)
-		local locked = self:getNetVar("locked", false)
-		local position = self:LocalToWorld(self:OBBCenter()):ToScreen()
+		local locked = self.getNetVar(self, "locked", false)
+		local position = toScreen(self, self.LocalToWorld(self, self.OBBCenter(self)))
 		local x, y = position.x, position.y
 
 		y = y - 20

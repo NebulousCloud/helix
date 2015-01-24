@@ -69,19 +69,20 @@ if (SERVER) then
 		util.Effect("GlassImpact", effect)
 	end
 else
-	function ENT:onShouldDrawEntityInfo()
-		return true
-	end
+	ENT.DrawEntityInfo = true
+
+	local toScreen = FindMetaTable("Vector").ToScreen
+	local colorAlpha = ColorAlpha
 
 	function ENT:onDrawEntityInfo(alpha)
-		local position = self:LocalToWorld(self:OBBCenter()):ToScreen()
+		local position = toScreen(self, self.LocalToWorld(self, self.OBBCenter(self)))
 		local x, y = position.x, position.y
-		local owner = nut.char.loaded[self:getNetVar("owner", 0)]
+		local owner = nut.char.loaded[self.getNetVar(self, "owner", 0)]
 
-		nut.util.drawText(L"shipment", x, y, ColorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
+		nut.util.drawText(L"shipment", x, y, colorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
 
 		if (owner) then
-			nut.util.drawText(L("shipmentDesc", owner:getName()), x, y + 16, ColorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+			nut.util.drawText(L("shipmentDesc", owner.getName(owner)), x, y + 16, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
 		end
 	end
 end

@@ -80,20 +80,21 @@ if (SERVER) then
 		end
 	end
 else
-	function ENT:onShouldDrawEntityInfo()
-		return true
-	end
+	ENT.DrawEntityInfo = true
+
+	local toScreen = FindMetaTable("Vector").ToScreen
+	local colorAlpha = ColorAlpha
 
 	function ENT:onDrawEntityInfo(alpha)
-		local itemTable = self:getItemTable()
+		local itemTable = self.getItemTable(self)
 
 		if (itemTable) then
-			local position = self:LocalToWorld(self:OBBCenter()):ToScreen()
+			local position = toScreen(self, self.LocalToWorld(self, self.OBBCenter(self)))
 			local x, y = position.x, position.y
 			
 			itemTable.entity = self
-				nut.util.drawText(itemTable.name, x, y, ColorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
-				nut.util.drawText(itemTable:getDesc(), x, y + 16, ColorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+				nut.util.drawText(itemTable.name, x, y, colorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
+				nut.util.drawText(itemTable.getDesc(itemTable), x, y + 16, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
 			itemTable.entity = nil
 		end		
 	end
