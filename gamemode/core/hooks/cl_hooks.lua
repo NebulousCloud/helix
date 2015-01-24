@@ -365,28 +365,31 @@ local nextUpdate = 0
 local lastTrace = {}
 local lastEntity
 local mathApproach = math.Approach
+local surface = surface
+local hookRun = hook.Run
 
 function GM:HUDPaint()
 	local localPlayer = LocalPlayer()
 	local realTime = RealTime()
 	local frameTime = FrameTime()
+	local scrW, scrH = surface.ScreenWidth(), surface.ScreenHeight()
 
 	vignetteAlphaDelta = mathApproach(vignetteAlphaDelta, vignetteAlphaGoal, frameTime * 30)
 
 	surface.SetDrawColor(0, 0, 0, 175 + vignetteAlphaDelta)
 	surface.SetMaterial(vignette)
-	surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
+	surface.DrawTexturedRect(0, 0, scrW, scrH
 
-	if (localPlayer:getChar() and nextUpdate < realTime) then
+	if (localPlayer.getChar(localPlayer) and nextUpdate < realTime) then
 		nextUpdate = realTime + 0.5
 
-		lastTrace.start = localPlayer:GetShootPos()
-		lastTrace.endpos = lastTrace.start + localPlayer:GetAimVector()*160
+		lastTrace.start = localPlayer.GetShootPos(localPlayer)
+		lastTrace.endpos = lastTrace.start + localPlayer.GetAimVector(localPlayer)*160
 		lastTrace.filter = localPlayer
 
 		lastEntity = util.TraceLine(lastTrace).Entity
 
-		if (IsValid(lastEntity) and (lastEntity.DrawEntityInfo or (lastEntity.onShouldDrawEntityInfo and lastEntity:onShouldDrawEntityInfo()) or hook.Run("ShouldDrawEntityInfo", lastEntity))) then
+		if (IsValid(lastEntity) and (lastEntity.DrawEntityInfo or (lastEntity.onShouldDrawEntityInfo and lastEntity:onShouldDrawEntityInfo()) or hookRun("ShouldDrawEntityInfo", lastEntity))) then
 			paintedEntitiesCache[lastEntity] = true
 		end
 	end
@@ -404,7 +407,7 @@ function GM:HUDPaint()
 				if (entity.onDrawEntityInfo) then
 					entity.onDrawEntityInfo(entity, alpha)
 				else
-					hook.Run("DrawEntityInfo", entity, alpha)
+					hookRun("DrawEntityInfo", entity, alpha)
 				end
 			end
 
@@ -418,25 +421,25 @@ function GM:HUDPaint()
 		end
 	end
 
-	blurGoal = localPlayer:getLocalVar("blur", 0) + (hook.Run("AdjustBlurAmount", blurGoal) or 0)
+	blurGoal = localPlayer.getLocalVar(localPlayer, "blur", 0) + (hookRun("AdjustBlurAmount", blurGoal) or 0)
 
 	if (blurDelta != blurGoal) then
-		blurDelta = math.Approach(blurDelta, blurGoal, frameTime * 20)
+		blurDelta = mathApproach(blurDelta, blurGoal, frameTime * 20)
 	end
 
-	if (blurDelta > 0 and !LocalPlayer():ShouldDrawLocalPlayer()) then
-		nut.util.drawBlurAt(0, 0, ScrW(), ScrH(), blurDelta)
+	if (blurDelta > 0 and !localPlayer.ShouldDrawLocalPlayer(localPlayer)) then
+		nut.util.drawBlurAt(0, 0, scrW, scrH, blurDelta)
 	end
 
-	self.BaseClass:PaintWorldTips()
+	self.BaseClass.PaintWorldTips(self.BaseClass)
 
-	local weapon = LocalPlayer():GetActiveWeapon()
+	local weapon = localPlayer.GetActiveWeapon(localPlayer)
 
 	if (IsValid(weapon) and weapon.DrawAmmo != false) then
-		local clip = weapon:Clip1()
-		local count = localPlayer:GetAmmoCount(weapon:GetPrimaryAmmoType())
-		local secondary = localPlayer:GetAmmoCount(weapon:GetSecondaryAmmoType())
-		local x, y = ScrW() - 80, ScrH() - 80
+		local clip = weapon.Clip1(weapon)
+		local count = localPlayer.GetAmmoCount(localPlayer, weapon.GetPrimaryAmmoType(weapon))
+		local secondary = localPlayer.GetAmmoCount(localPlayer, weapon.GetSecondaryAmmoType(weapon))
+		local x, y = scrW - 80, scrH - 80
 
 		if (secondary > 0) then
 			nut.util.drawBlurAt(x, y, 64, 64)
@@ -449,7 +452,7 @@ function GM:HUDPaint()
 			nut.util.drawText(secondary, x + 32, y + 32, nil, 1, 1, "nutBigFont")
 		end
 
-		if (weapon:GetClass() != "weapon_slam" and clip > 0 or count > 0) then
+		if (weapon.GetClass(weapon) != "weapon_slam" and clip > 0 or count > 0) then
 			x = x - (secondary > 0 and 144 or 64)
 
 			nut.util.drawBlurAt(x, y, 128, 64)
@@ -500,27 +503,31 @@ function GM:GetInjuredText(client)
 end
 
 local toScreen = FindMetaTable("Vector").ToScreen
+local colorAlpha = ColorAlpha
+local teamGetColor = team.GetColor
+local drawText = nut.util.drawText
 
 function GM:DrawEntityInfo(entity, alpha)
-	if (entity:IsPlayer()) then
+	if (entity.IsPlayer(entity)) then
 		local localPlayer = LocalPlayer()
-		local position = toScreen(entity:GetPos() + (entity:Crouching() and OFFSET_CROUCHING or OFFSET_NORMAL))
-		local character = entity:getChar()
+		local position = toScreen(entity.GetPos(entity) + (entity.Crouching(entity) and OFFSET_CROUCHING or OFFSET_NORMAL))
+		local character = entity.getChar(entity)
 
 		if (character) then
 			local x, y = position.x, position.y
 			local tx, ty = 0, 0
-			tx, ty = nut.util.drawText(hook.Run("GetDisplayedName", entity) or character:getName(), x, y, ColorAlpha(team.GetColor(entity:Team()), alpha), 1, 1, nil, alpha * 0.65)
+			tx, ty = drawText(hookRun("GetDisplayedName", entity) or character.getName(character), x, y, colorAlpha(teamGetColor(entity.Team(entity)), alpha), 1, 1, nil, alpha * 0.65)
 			y = y + ty
 			
-			tx, ty = nut.util.drawText(character:getDesc(), x, y, ColorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+			tx, ty = drawText(character.getDesc(character), x, y, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
 			y = y + ty
 
-			x, y = hook.Run("DrawCharInfo", character, x, y, alpha)
+			x, y = hookRun("DrawCharInfo", character, x, y, alpha)
 			
-			local injText, injColor = hook.Run("GetInjuredText", entity)
+			local injText, injColor = hookRun("GetInjuredText", entity)
+
 			if (injText) then
-				tx, ty = nut.util.drawText(L(injText), x, y, ColorAlpha(injColor, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+				tx, ty = drawText(L(injText), x, y, colorAlpha(injColor, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
 				y = y + ty
 			end
 		end
