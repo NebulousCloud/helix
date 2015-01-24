@@ -386,7 +386,7 @@ function GM:HUDPaint()
 
 		lastEntity = util.TraceLine(lastTrace).Entity
 
-		if (IsValid(lastEntity) and (lastEntity.ShouldDrawInfo or (lastEntity.onShouldDrawEntityInfo and lastEntity:onShouldDrawEntityInfo()) or hook.Run("ShouldDrawEntityInfo", lastEntity))) then
+		if (IsValid(lastEntity) and (lastEntity.DrawEntityInfo or (lastEntity.onShouldDrawEntityInfo and lastEntity:onShouldDrawEntityInfo()) or hook.Run("ShouldDrawEntityInfo", lastEntity))) then
 			paintedEntitiesCache[lastEntity] = true
 		end
 	end
