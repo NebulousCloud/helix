@@ -614,6 +614,7 @@ do
 					end
 				end
 
+				hook.Run("PreCharDelete", client, character)
 				nut.char.loaded[id] = nil
 				netstream.Start(nil, "charDel", id, isCurrentChar)
 				nut.db.query("DELETE FROM nut_characters WHERE _id = "..id.." AND _steamID = "..client:SteamID64())

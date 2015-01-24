@@ -210,4 +210,5 @@ LANGUAGE = {
 	chgNameDesc = "Enter the character's new name below.",
 	thirdpersonToggle = "Toggle Thirdperson",
 	thirdpersonClassic = "Use Classic Thirdperson",
+	equippedBag = "The bag that you moved has equipped item.",
 }

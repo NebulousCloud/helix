@@ -549,12 +549,11 @@ function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 		local inventory = nut.item.inventories[itemObject:getData("id")]
 
 		if (inventory) then
-			print("EVEN TRYING")
 			for k, v in pairs(inventory:getItems()) do
 				if (v:getData("equip") == true) then
 					local owner = itemObject:getOwner()
 					if (owner and IsValid(owner)) then
-						owner:notify("The bag that you moved has equipped item.")
+						owner:notify(L("equippedBag", owner))
 					end
 
 					return false
