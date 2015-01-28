@@ -154,7 +154,6 @@ function META:findEmptySlot(w, h, onlyMain)
 				local bagInv = nut.item.inventories[invID]
 
 				if (bagInv) then
-					print(bagInv, "begin search.")
 					local x, y = bagInv:findEmptySlot(w, h)
 
 					if (x and y) then
