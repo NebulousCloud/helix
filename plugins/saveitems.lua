@@ -49,7 +49,7 @@ function PLUGIN:LoadData()
 						if (itemTable and itemID) then
 							local position = positions[itemID]
 							local item = nut.item.new(uniqueID, itemID)
-							item.data = table.Merge(itemTable.data, data or {})
+							item.data = data or {}
 							item:spawn(position).nutItemID = itemID
 							item.invID = 0
 						end

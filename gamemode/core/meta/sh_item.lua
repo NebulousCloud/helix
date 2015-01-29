@@ -21,7 +21,6 @@ ITEM.name = "Undefined"
 ITEM.desc = ITEM.desc or "An item that is undefined."
 ITEM.id = ITEM.id or 0
 ITEM.uniqueID = "undefined"
-ITEM.data = ITEM.data or {}
 
 function ITEM:__tostring()
 	return "item["..self.uniqueID.."]["..self.id.."]"
@@ -96,6 +95,7 @@ function ITEM:getOwner()
 end
 
 function ITEM:setData(key, value, receivers, noSave, checkEntity)
+	self.data = self.data or {}
 	self.data[key] = value
 
 	if (SERVER) then
@@ -125,25 +125,30 @@ function ITEM:setData(key, value, receivers, noSave, checkEntity)
 end
 
 function ITEM:getData(key, default)
-	if (key == true) then
-		return self.data
-	end
-
-	local value = self.data[key]
-
-	if (value == nil) then
-		if (IsValid(self.entity)) then
-			local data = self.entity:getNetVar("data", {})
-			local value = data[key]
-
-			if (value != nil) then
-				return value
-			end
+	if (self.data) then
+		if (key == true) then
+			return self.data
 		end
 
-		return default
+		local value = self.data[key]
+
+		if (value == nil) then
+			if (IsValid(self.entity)) then
+				local data = self.entity:getNetVar("data", {})
+				local value = data[key]
+
+				if (value != nil) then
+					return value
+				end
+			end
+
+			return default
+		else
+			return value
+		end
 	else
-		return value
+		self.data = {}
+		return default
 	end
 end
 

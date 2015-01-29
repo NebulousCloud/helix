@@ -31,6 +31,10 @@ function zeroInv:getID()
 	return 0
 end
 
+function zeroInv:add(uniqueID, quantity, data)
+
+end
+
 function nut.item.instance(index, uniqueID, data, x, y, callback)
 	if (!uniqueID or nut.item.list[uniqueID]) then
 		nut.db.insertTable({
@@ -43,7 +47,7 @@ function nut.item.instance(index, uniqueID, data, x, y, callback)
 			local item = nut.item.new(uniqueID, itemID)
 
 			if (item) then
-				item.data = data
+				item.data = (data or {})
 				item.invID = index
 
 				if (callback) then
@@ -51,7 +55,7 @@ function nut.item.instance(index, uniqueID, data, x, y, callback)
 				end
 
 				if (item.onInstanced) then
-					item:onInstanced(index, x, y)
+					item:onInstanced(index, x, y, item)
 				end
 			end
 		end, "items")
@@ -107,11 +111,10 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 	local meta = FindMetaTable("Item")
 
 	if (uniqueID) then
-		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({data = {}}, meta)
+		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({}, meta)
 			ITEM.uniqueID = uniqueID
 			ITEM.base = baseID
 			ITEM.isBase = isBaseItem
-			ITEM.data = ITEM.data or {}
 			ITEM.hooks = ITEM.hooks or {}
 			ITEM.functions = ITEM.functions or {}
 			ITEM.functions.drop = ITEM.functions.drop or {
@@ -251,7 +254,7 @@ function nut.item.new(uniqueID, id)
 	local stockItem = nut.item.list[uniqueID]
 
 	if (stockItem) then
-		local item = setmetatable({}, {__index = stockItem})
+		local item = setmetatable({data = {}}, {__index = stockItem})
 		item.id = id
 		item.data = {}
 
