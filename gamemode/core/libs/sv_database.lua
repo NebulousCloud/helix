@@ -265,8 +265,8 @@ CREATE TABLE IF NOT EXISTS `nut_players` (
 ]]
 
 local DROP_QUERY = [[
-DROP TABLE IF EXISTS `nut_characters` ;
-DROP TABLE IF EXISTS `nut_items` ;
+DROP TABLE IF EXISTS `nut_characters`;
+DROP TABLE IF EXISTS `nut_items`;
 DROP TABLE IF EXISTS `nut_players`;
 DROP TABLE IF EXISTS `nut_inventories`;
 ]]
@@ -279,7 +279,7 @@ function nut.db.wipeTables()
 	if (nut.db.object) then
 		local queries = string.Explode(";", DROP_QUERY)
 
-		for i = 1, 3 do
+		for i = 1, 4 do
 			nut.db.query(queries[i], callback)
 		end
 	else
@@ -313,7 +313,7 @@ function nut.db.loadTables()
 		-- This is needed to perform multiple queries since the string is only 1 big query.
 		local queries = string.Explode(";", MYSQL_CREATE_TABLES)
 
-		for i = 1, 3 do
+		for i = 1, 4 do
 			nut.db.query(queries[i])
 		end
 	else
