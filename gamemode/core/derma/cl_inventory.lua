@@ -65,17 +65,6 @@ function PANEL:Paint(w, h)
 
 	surface.SetDrawColor(0, 0, 0, 85)
 	surface.DrawRect(2, 2, w - 4, h - 4)
-
-	--[[
-	if (self:IsDragging()) then
-		local x, y = gui.MouseX() - dragndrop.m_MouseX, gui.MouseY() - dragndrop.m_MouseY
-		
-		--self:SetPos(self.curPos.x + x, self.curPos.y + y)
-		
-		self.offsetX = math.Round(x / 64)
-		self.offsetY = math.Round(y / 64)
-	end	
-	--]]
 end
 
 function PANEL:wait(time)
@@ -320,7 +309,7 @@ PANEL = {}
 				end
 			end
 			panel.OnMouseReleased = function(this, code)
-				if (code == MOUSE_LEFT and this:IsDragging()) then
+				if (code == MOUSE_LEFT and nut.item.held == this) then
 					local data = this.dropPos
 
 					this:DragMouseRelease(code)

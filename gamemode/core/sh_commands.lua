@@ -524,6 +524,12 @@ nut.command.add("chardesc", {
 	onRun = function(client, arguments)
 		arguments = table.concat(arguments, " ")
 
+		if (!arguments:find("%S")) then
+			return client:requestString("@chgDesc", "@chgDescDesc", function(text)
+				nut.command.run(client, "chardesc", {text})
+			end, client:getChar():getDesc())
+		end
+
 		local info = nut.char.vars.desc
 		local result, fault, count = info.onValidate(arguments)
 
