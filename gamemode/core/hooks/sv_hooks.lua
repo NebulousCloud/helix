@@ -185,9 +185,17 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 			if (v.faction == client:Team()) then
 				if (v.isDefault) then
 					character:setClass(v.index)
+
+					break
 				end
 			end
 		end
+	end
+
+	if (IsValid(client.nutRagdoll)) then
+		client.nutRagdoll.nutNoReset = true
+		client.nutRagdoll.nutIgnoreDelete = true
+		client.nutRagdoll:Remove()
 	end
 
 	hook.Run("PlayerLoadout", client)

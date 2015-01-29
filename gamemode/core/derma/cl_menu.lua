@@ -89,7 +89,7 @@ local PANEL = {}
 
 	function PANEL:Think()
 		local key = input.IsKeyDown(KEY_F1)
-		if (key and self.noAnchor < CurTime() and self.anchorMode == true) then
+		if (key and (self.noAnchor or CurTime()+.4) < CurTime() and self.anchorMode == true) then
 			self.anchorMode = false
 			surface.PlaySound("buttons/lightswitch2.wav")
 		end

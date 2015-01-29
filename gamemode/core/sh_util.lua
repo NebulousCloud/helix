@@ -584,7 +584,11 @@ do
 					if (IsValid(self)) then
 						self:setLocalVar("blur", nil)
 						self:setLocalVar("ragdoll", nil)
-						self:SetPos(entity:GetPos())
+
+						if (!entity.nutNoReset) then
+							self:SetPos(entity:GetPos())
+						end
+
 						self:SetNoDraw(false)
 						self:SetNotSolid(false)
 						self:Freeze(false)
