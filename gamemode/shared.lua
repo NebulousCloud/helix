@@ -64,7 +64,9 @@ do
 	local entityMeta = FindMetaTable("Entity")
 
 	-- Developer branch stuff
-	if (VERSION <= 140714) then
+	if (VERSION <= 140714 and 
+		!entityMeta.GetSubMaterial and
+		!entityMeta.SetSubMaterial) then
 		ErrorNoHalt("Warning! Some features may not work completely since you are not using the developer branch of Garry's Mod.\n")
 
 		entityMeta.GetSubMaterial = function() end
