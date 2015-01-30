@@ -211,4 +211,8 @@ LANGUAGE = {
 	thirdpersonToggle = "Toggle Thirdperson",
 	thirdpersonClassic = "Use Classic Thirdperson",
 	equippedBag = "The bag that you moved has equipped item.",
+
+	useTip = "Uses the item.",
+	equipTip = "Equips the item.",
+	unequipTip = "Unequips the item.",
 }

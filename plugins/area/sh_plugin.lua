@@ -407,7 +407,6 @@ nut.command.add("areaadd", {
 
 			client:notify(L("areaCommand", client))
 		else
-			local data = {}
 			local min = client:getNetVar("areaMin")
 			local max = pos
 			local name = client:getNetVar("areaName")
