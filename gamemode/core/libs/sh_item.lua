@@ -25,14 +25,44 @@ nut.item.inventoryTypes = nut.item.inventoryTypes or {}
 nut.util.include("nutscript/gamemode/core/meta/sh_item.lua")
 
 -- Declare some supports for logic inventory
--- !! Temporal Fix.
 local zeroInv = nut.item.inventories[0]
 function zeroInv:getID()
 	return 0
 end
 
+-- WARNING: You have to manually sync the data to client if you're trying to use item in the logical inventory in the vgui.
 function zeroInv:add(uniqueID, quantity, data)
+	quantity = quantity or 1
 
+	if (quantity > 0) then
+		if (!isnumber(uniqueID)) then
+			if (quantity > 1) then
+				for i = 1, quantity do
+					self:add(uniqueID, 1, data)
+				end
+
+				return
+			end
+
+			local itemTable = nut.item.list[uniqueID]
+
+			if (!itemTable) then
+				return false, "invalidItem"
+			end
+
+			nut.item.instance(0, uniqueID, data, x, y, function(item)
+				if (data) then
+					item.data = table.Merge(item.data, data)
+				end
+
+				self[item:getID()] = item
+			end)
+
+			return nil, nil, 0
+		end
+	else
+		return false, "notValid"
+	end
 end
 
 function nut.item.instance(index, uniqueID, data, x, y, callback)
