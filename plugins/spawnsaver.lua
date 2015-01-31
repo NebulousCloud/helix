@@ -30,7 +30,7 @@ function PLUGIN:CharacterPreSave(character)
 end
 
 -- Called after the player's loadout has been set.
-function PLUGIN:PostPlayerLoadout(client, character, lastChar)
+function PLUGIN:PlayerLoadedChar(client, character, lastChar)
 	timer.Simple(0, function()
 		if (IsValid(client)) then
 			-- Get the saved position from the character data.
