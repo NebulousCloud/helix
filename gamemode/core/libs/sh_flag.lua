@@ -105,7 +105,13 @@ do
 
 	-- Check if the flag string contains the flags specified.
 	function character:hasFlags(flags)
-		return self:getFlags():find(flags, 1, true) != nil
+		for i = 1, #flags do
+			if (self:getFlags():find(flags:sub(i, i), 1, true)) then
+				return true
+			end
+		end
+
+		return false
 	end
 end
 

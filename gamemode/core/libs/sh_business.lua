@@ -25,12 +25,12 @@ if (SERVER) then
 		for k, v in pairs(items) do
 			local itemTable = nut.item.list[k]
 
-			if (itemTable) then
+			if (itemTable and hook.Run("CanPlayerUseBusiness", client, k) != false) then
 				local amount = math.Clamp(tonumber(v) or 0, 1, 10)
 				
 				cost = cost + (amount * (itemTable.price or 0))
 			else
-				return
+				items[k] = nil
 			end
 		end
 
