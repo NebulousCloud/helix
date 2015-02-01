@@ -240,6 +240,7 @@ function META:getItems(onlyMain)
 			if (v2 and !items[v2.id]) then
 				items[v2.id] = v2
 
+				v2.data = v2.data or {}
 				local isBag = v2.data.id
 				if (isBag and isBag != self:getID() and onlyMain != true) then
 					local bagInv = nut.item.inventories[isBag]
