@@ -283,6 +283,16 @@ do
 				end
 			end
 		end
+
+		function entityMeta:isLocked()
+			if (self:isDoor()) then
+				local datatable = self:GetSaveTable()
+
+				return (datatable.m_bLocked)
+			else
+				return
+			end
+		end
 	end
 
 	-- Makes a fake door to replace it.
