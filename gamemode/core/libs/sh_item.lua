@@ -439,7 +439,7 @@ do
 					inventory.slots[x] = inventory.slots[x] or {}
 					inventory.slots[x][y] = item
 
-					local panel = nut.gui["inv"..invID]
+					local panel = nut.gui["inv"..invID] or nut.gui.inv1
 
 					if (IsValid(panel)) then
 						local icon = panel:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)

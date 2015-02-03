@@ -596,7 +596,7 @@ do
 
 					netstream.Start(client, "charAuthed", client.nutCharList)
 					MsgN("Created character '"..id.."' for "..client:steamName()..".")
-					hook.Run("OnCharCreated", client, id)
+					hook.Run("OnCharCreated", client, nut.char.loaded[id])
 				end
 			end)
 			
@@ -622,6 +622,7 @@ do
 					if (data) then
 						for k, v in ipairs(data) do
 							nut.db.query("DELETE FROM nut_items WHERE _invID = "..v._invID)
+							nut.item.inventories[tonumber(v._invID)] = nil
 						end
 					end
 
