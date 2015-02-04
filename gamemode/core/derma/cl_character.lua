@@ -81,6 +81,25 @@ local PANEL = {}
 		self.subTitle:AlphaTo(255, 4 * fadeSpeed, 3 * fadeSpeed)
 		self.subTitle:SetExpensiveShadow(2, Color(0, 0, 0, 200))
 
+		self.icon = self:Add("DHTML")
+		self.icon:SetPos(ScrW() - 96, 8)
+		self.icon:SetSize(86, 86)
+		self.icon:SetHTML([[
+			<html>
+				<body style="margin: 0; padding: 0; overflow: hidden;">
+					<img src="]]..nut.config.get("logo", "http://nutscript.rocks/nutscript.png")..[[" />
+				</body>
+			</html>
+		]])
+	
+		self.icon.click = self.icon:Add("DButton")
+		self.icon.click:Dock(FILL)
+		self.icon.click.DoClick = function(this)
+			gui.OpenURL(nut.config.get("logoURL", "http://nutscript.rocks"))
+		end
+		self.icon.click:SetAlpha(0)
+		self.icon:SetAlpha(150)
+
 		local x, y = ScrW() * 0.1, ScrH() * 0.3
 		local i = 1
 
