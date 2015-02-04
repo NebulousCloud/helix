@@ -266,6 +266,32 @@ do
 		function entityMeta:getDoorPartner()
 			return self.nutPartner
 		end
+
+		-- Returns whether door/button is locked or not.
+		function entityMeta:isLocked()
+			if (self:IsVehicle()) then
+				local datatable = self:GetSaveTable()
+
+				if (datatable) then
+					return (datatable.VehicleLocked)
+				end
+			else
+				local datatable = self:GetSaveTable()
+
+				if (datatable) then
+					return (datatable.m_bLocked)
+				end
+			end
+
+			return
+		end
+
+		-- Returns the entity that blocking door's sequence.
+		function entityMeta:getBlocker()
+			local datatable = self:GetSaveTable()
+
+			return (datatable.pBlocker)
+		end
 	else
 		-- Returns the door's slave entity.
 		function entityMeta:getDoorPartner()
@@ -281,16 +307,6 @@ do
 
 					return v
 				end
-			end
-		end
-
-		function entityMeta:isLocked()
-			if (self:isDoor()) then
-				local datatable = self:GetSaveTable()
-
-				return (datatable.m_bLocked)
-			else
-				return
 			end
 		end
 	end
