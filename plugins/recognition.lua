@@ -27,12 +27,12 @@ do
 			end
 
 			local recognized = self:getData("rgn", "")
+			
+			if (recognized != "" and recognized:find(","..id..",")) then
+				return false;
+			end;
 
-			if (recognized:find(id..",")) then
-				return false
-			end
-
-			self:setData("rgn", recognized..id..",")
+			self:setData("rgn", recognized..","..id..",")
 
 			return true
 		end
@@ -47,7 +47,13 @@ do
 	end
 
 	function PLUGIN:IsCharRecognised(char, id)
-		return char:getData("rgn", ""):find(id..",")
+		local recognized = char:getData("rgn", "");
+		
+		if (recognized == "") then
+			return false;
+		end;
+		
+		return recognized:find(","..id..",");
 	end
 end
 
