@@ -160,7 +160,7 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 
 		if (type(itemTable.class) == "table") then
 			for k, v in pairs(itemTable.class) do
-				if (client:getChar():getCLass() == v) then
+				if (client:getChar():getClass() == v) then
 					allowed = true
 
 					break
