@@ -135,18 +135,18 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 		return false
 	end
 
-	if (itemTable.faction) then
+	if (itemTable.factions) then
 		local allowed = false
 
-		if (type(itemTable.faction) == "table") then
-			for k, v in pairs(itemTable.faction) do
+		if (type(itemTable.factions) == "table") then
+			for k, v in pairs(itemTable.factions) do
 				if (client:Team() == v) then
 					allowed = true
 
 					break
 				end
 			end
-		elseif (client:Team() != itemTable.faction) then
+		elseif (client:Team() != itemTable.factions) then
 			allowed = false
 		end
 
@@ -155,18 +155,18 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 		end
 	end
 
-	if (itemTable.class) then
+	if (itemTable.classes) then
 		local allowed = false
 
-		if (type(itemTable.class) == "table") then
-			for k, v in pairs(itemTable.class) do
+		if (type(itemTable.classes) == "table") then
+			for k, v in pairs(itemTable.classes) do
 				if (client:getChar():getClass() == v) then
 					allowed = true
 
 					break
 				end
 			end
-		elseif (client:getChar():getClass() != itemTable.class) then
+		elseif (client:getChar():getClass() != itemTable.classes) then
 			allowed = false
 		end
 
