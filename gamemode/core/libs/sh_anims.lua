@@ -330,7 +330,7 @@ nut.anim.setModelClass("models/vortigaunt_slave.mdl", "vort")
 do
 	local playerMeta = FindMetaTable("Player")
 
-	function playerMeta:forceSequence(sequence, callback, time, noFreeze)
+	function playerMeta:forceSequence(sequence, callback, time, noFreeze, finishCallback)
 		hook.Run("OnPlayerEnterSequence", self, sequence, callback, time, noFreeze)
 
 		if (!sequence) then
@@ -345,10 +345,18 @@ do
 			self.nutSeqCallback = callback
 			self.nutSeq = sequence
 
+			if (!noFreeze) then
+				self:SetMoveType(MOVETYPE_NONE)
+			end
+
 			if (time > 0) then
 				timer.Create("nutSeq"..self:EntIndex(), time, 1, function()
 					if (IsValid(self)) then
 						self:leaveSequence()
+
+						if (finishCallback) then
+							finishCallback()
+						end
 					end
 				end)
 			end

@@ -113,6 +113,8 @@ function nut.util.stringMatches(a, b)
 	return false
 end
 
+local ADJUST_SOUND = SoundDuration("npc/metropolice/pain1.wav") > 0 and "" or "../../hl2/sound/"
+
 -- Emits sounds one after the other from an entity.
 function nut.util.emitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
 	-- Let there be a delay before any sound is played.
@@ -130,7 +132,7 @@ function nut.util.emitQueuedSounds(entity, sounds, delay, spacing, volume, pitch
 		end
 
 		-- Get the length of the sound.
-		local length = SoundDuration(v)
+		local length = SoundDuration(ADJUST_SOUND..v)
 		-- If the sound has a pause before it is played, add it here.
 		delay = delay + preSet
 
