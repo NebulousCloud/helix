@@ -84,7 +84,7 @@ if (SERVER) then
 		end
 
 		local fields = "_id, _name, _desc, _model, _attribs, _data, _money, _faction"
-		local condition = "_schema = '"..nut.db.escape(SCHEMA.folder).."' AND _steamID = "..client:SteamID64()
+		local condition = "_schema = '"..nut.db.escape(SCHEMA.folder).."' AND _steamID = "..steamID64
 
 		if (id) then
 			condition = condition.." AND _id = "..id
