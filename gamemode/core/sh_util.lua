@@ -593,7 +593,7 @@ do
 		end
 
 		function playerMeta:setRagdolled(state, time, getUpGrace)
-			getUpGrace = getUpGrace or 5
+			getUpGrace = getUpGrace or time or 5
 
 			if (state) then
 				if (IsValid(self.nutRagdoll)) then

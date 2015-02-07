@@ -462,11 +462,13 @@ nut.command.add("fallover", {
 		local time = tonumber(arguments[1])
 
 		if (!isnumber(time)) then
-			time = 1	
+			time = 5
 		end
 
-		if (time) then
-			time = math.max(time, 1)
+		if (time > 0) then
+			time = math.Clamp(time, 1, 60)
+		else
+			time = nil
 		end
 
 		if (!IsValid(client.nutRagdoll)) then
