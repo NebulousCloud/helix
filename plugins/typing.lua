@@ -6,7 +6,6 @@ if (CLIENT) then
 	local TYPE_OFFSET = Vector(0, 0, 80)
 	local TYPE_OFFSET_CROUCHED = Vector(0, 0, 48)
 	local TYPE_COLOR = Color(250, 250, 250)
-	local TYPE_DISTANCE = 256 ^ 2
 
 	function PLUGIN:StartChat()
 		netstream.Start("typeStatus", 1)
@@ -20,11 +19,11 @@ if (CLIENT) then
 		local ourPos = LocalPlayer():GetPos()
 
 		for k, v in ipairs(player.GetAll()) do
-			if (v != LocalPlayer()) then
+			if (v != LocalPlayer() and v:getNetVar("typing")) then
 				local position = v:GetPos()
-				local alpha = (1 - (ourPos:DistToSqr(position) / TYPE_DISTANCE)) * 255
+				local alpha = (1 - (ourPos:DistToSqr(position) / 65536)) * 255
 
-				if (v:getNetVar("typing")) then
+				if (alpha > 0) then
 					local screen = (position + (v:Crouching() and TYPE_OFFSET_CROUCHED or TYPE_OFFSET)):ToScreen()
 
 					nut.util.drawText("(Typing)", screen.x, screen.y - 18, ColorAlpha(TYPE_COLOR, alpha), 1, 1, "nutChatFontItalics", alpha)

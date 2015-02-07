@@ -15,7 +15,7 @@
 
 nut.plugin = nut.plugin or {}
 nut.plugin.list = nut.plugin.list or {}
-ErrorNoHalt("Hi")
+
 HOOKS_CACHE = {}
 
 function nut.plugin.load(uniqueID, path, isSingleFile, variable)
