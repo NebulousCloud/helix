@@ -87,10 +87,11 @@ local PANEL = {}
 		self.icon:SetHTML([[
 			<html>
 				<body style="margin: 0; padding: 0; overflow: hidden;">
-					<img src="]]..nut.config.get("logo", "http://nutscript.rocks/nutscript.png")..[[" />
+					<img src="]]..nut.config.get("logo", "http://nutscript.rocks/nutscript.png")..[[" width="86" height="86" />
 				</body>
 			</html>
 		]])
+		self.icon:SetToolTip(nut.config.get("logoURL", "http://nutscript.rocks"))
 	
 		self.icon.click = self.icon:Add("DButton")
 		self.icon.click:Dock(FILL)

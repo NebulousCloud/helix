@@ -138,6 +138,9 @@ local PANEL = {}
 			self.entry:SetWide(self:GetWide() - 8)
 			self.entry.Paint = function(this, w, h)
 			end
+			self.entry.OnRemove = function()
+				hook.Run("FinishChat")
+			end
 			self.entry:SetTall(28)
 
 			nut.chat.history = nut.chat.history or {}
@@ -164,7 +167,6 @@ local PANEL = {}
 					end
 
 					netstream.Start("msg", text)
-					hook.Run("FinishChat")
 				end
 			end
 			self.text:SetAllowNonAsciiCharacters(true)

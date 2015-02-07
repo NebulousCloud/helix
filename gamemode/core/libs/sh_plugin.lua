@@ -15,8 +15,8 @@
 
 nut.plugin = nut.plugin or {}
 nut.plugin.list = nut.plugin.list or {}
-
-local HOOKS_CACHE = {}
+ErrorNoHalt("Hi")
+HOOKS_CACHE = {}
 
 function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 	if (hook.Run("PluginShouldLoad", uniqueID) == false) then return end
@@ -74,10 +74,6 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 
 	hook.Run("PluginLoaded", uniqueID, PLUGIN)
 
-	if (PLUGIN.OnLoaded) then
-		PLUGIN:OnLoaded()
-	end
-
 	if (uniqueID != "schema") then
 		PLUGIN.name = PLUGIN.name or "Unknown"
 		PLUGIN.desc = PLUGIN.desc or "No description available."
@@ -91,6 +87,10 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 
 		nut.plugin.list[uniqueID] = PLUGIN
 		_G[variable] = nil
+	end
+
+	if (PLUGIN.OnLoaded) then
+		PLUGIN:OnLoaded()
 	end
 end
 
