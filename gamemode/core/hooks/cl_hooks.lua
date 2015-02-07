@@ -507,6 +507,10 @@ local colorAlpha = ColorAlpha
 local teamGetColor = team.GetColor
 local drawText = nut.util.drawText
 
+function GM:DrawCharInfo(character, x, y, alpha)
+	return x, y
+end
+
 function GM:DrawEntityInfo(entity, alpha)
 	if (entity.IsPlayer(entity)) then
 		local localPlayer = LocalPlayer()
@@ -527,8 +531,7 @@ function GM:DrawEntityInfo(entity, alpha)
 			local injText, injColor = hookRun("GetInjuredText", entity)
 
 			if (injText) then
-				tx, ty = drawText(L(injText), x, y, colorAlpha(injColor, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
-				y = y + ty
+				drawText(L(injText), x, y, colorAlpha(injColor, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
 			end
 		end
 	end
