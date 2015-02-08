@@ -36,10 +36,12 @@ end
 -- On item is dropped, Remove a weapon from the player and keep the ammo in the item.
 ITEM:hook("drop", function(item)
 	if (item:getData("equip")) then
+		item:setData("equip", nil)
 		item.player.carryWeapons = item.player.carryWeapons or {}
+
 		local weapon = item.player.carryWeapons[item.weaponCategory]
 
-		if (weapon and weapon:IsValid()) then
+		if (IsValid(weapon)) then
 			item:setData("ammo", weapon:Clip1())
 			item.player:StripWeapon(item.class)
 			item.player.carryWeapons[item.weaponCategory] = nil
@@ -138,7 +140,11 @@ ITEM.functions.Equip = {
 }
 
 function ITEM:onCanBeTransfered(oldInventory, newInventory)
-	return !self:getData("equip")
+	if (self:getData("equip")) then
+		return newInventory:getID() == 0
+	end
+
+	return true
 end
 
 HOLSTER_DRAWINFO = {}

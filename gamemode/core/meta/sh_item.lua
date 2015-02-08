@@ -153,7 +153,7 @@ function ITEM:getData(key, default)
 end
 
 function ITEM:hook(name, func)
-	if (name and func) then
+	if (name) then
 		self.hooks[name] = func
 	end
 end

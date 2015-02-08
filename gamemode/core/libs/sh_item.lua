@@ -654,6 +654,10 @@ do
 					return
 				end
 
+				if (item.hooks[action]) then
+					item.hooks[action](item)
+				end
+
 				if (callback.onRun(item) != false) then
 					if (item.entity) then
 						item.entity.nutIsSafe = true
@@ -662,10 +666,6 @@ do
 						inventory:remove(item.id, nil, true)
 						nut.db.query("UPDATE nut_items SET _invID = 0 WHERE _itemID = "..item.id)
 					end
-				end
-
-				if (item.hooks[action]) then
-					item.hooks[action](item)
 				end
 
 				item.entity = nil
