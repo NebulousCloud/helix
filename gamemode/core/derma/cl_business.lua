@@ -265,6 +265,20 @@ PANEL = {}
 		self.buy:Dock(BOTTOM)
 		self.buy:SetText(L"purchase")
 		self.buy.DoClick = function(this)
+			if ((this.nextClick or 0) < CurTime()) then
+				this.nextClick = CurTime() + 0.5
+			else
+				return
+			end
+
+			if (self.preventBuy) then
+				self.finalGlow:SetText(self.final:GetText())
+				self.finalGlow:SetAlpha(255)
+				self.finalGlow:AlphaTo(0, 0.5)
+
+				return surface.PlaySound("buttons/button11.wav")
+			end
+
 			netstream.Start("bizBuy", self.itemData)
 
 			self.items:Remove()
@@ -337,6 +351,15 @@ PANEL = {}
 		self.final:Dock(TOP)
 		self.final:SetTextInset(4, 0)
 
+		self.finalGlow = self.final:Add("DLabel")
+		self.finalGlow:Dock(FILL)
+		self.finalGlow:SetFont("nutSmallFont")
+		self.finalGlow:SetTextColor(color_white)
+		self.finalGlow:SetContentAlignment(6)
+		self.finalGlow:SetAlpha(0)
+		self.finalGlow:SetTextInset(4, 0)
+
+
 		self:SetFocusTopLevel(true)
 		self.itemData = {}
 		self:onQuantityChanged()
@@ -358,6 +381,8 @@ PANEL = {}
 		self.total:SetText("- "..nut.currency.get(price))
 		self.final:SetText("Money Left: "..nut.currency.get(money - price))
 		self.final:SetTextColor((money - price) >= 0 and Color(46, 204, 113) or Color(217, 30, 24))
+
+		self.preventBuy = (money - price) < 0
 	end
 
 	function PANEL:setCart(items)
@@ -407,6 +432,8 @@ PANEL = {}
 				items[k] = nil
 			end
 		end
+
+		self:onQuantityChanged()
 	end
 
 	function PANEL:Think()
