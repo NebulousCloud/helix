@@ -1,16 +1,16 @@
 --[[
-    NutScript is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	NutScript is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    NutScript is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	NutScript is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
 PLUGIN.name = "Observer"
@@ -26,28 +26,28 @@ if (CLIENT) then
 	local dimDistance = 1024
 	function PLUGIN:HUDPaint()
 		client = LocalPlayer()
+		
+		if (client:IsAdmin() and client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle() and NUT_CVAR_ADMINESP:GetBool()) then
+			sx, sy = surface.ScreenWidth(), surface.ScreenHeight()
 
-		if (client:IsAdmin() and client:GetMoveType() == MOVETYPE_NOCLIP and 
-			!client:GetVehicle() and
-			NUT_CVAR_ADMINESP:GetBool()) then
-		    for k, v in ipairs(player.GetAll()) do
-		        if (v == client) then continue end
-		        sx, sy = ScrW(), ScrH()
-		        scrPos = v:GetPos():ToScreen()
-		        marginx, marginy = sy*.1, sy*.1
-		        x, y = math.Clamp(scrPos.x, marginx, sx - marginx), math.Clamp(scrPos.y, marginy, sy - marginy)
-		        teamColor = team.GetColor(v:Team())
-		        distance = client:GetPos():Distance(v:GetPos())
-		        factor = 1 - math.Clamp(distance/dimDistance, 0, 1)
-		        size = math.max(10, 32*factor)
-		        alpha = math.Clamp(255*factor, 80, 255)
+			for k, v in ipairs(player.GetAll()) do
+				if (v == client) then continue end
 
-		        surface.SetDrawColor(teamColor.r, teamColor.g, teamColor.b, alpha)
-		        surface.DrawLine(sx/2, sy, x, y)
-		        surface.DrawTexturedRect(x - size/2, y - size/2, size, size)
+				scrPos = v:GetPos():ToScreen()
+				marginx, marginy = sy*.1, sy*.1
+				x, y = math.Clamp(scrPos.x, marginx, sx - marginx), math.Clamp(scrPos.y, marginy, sy - marginy)
+				teamColor = team.GetColor(v:Team())
+				distance = client:GetPos():Distance(v:GetPos())
+				factor = 1 - math.Clamp(distance/dimDistance, 0, 1)
+				size = math.max(10, 32*factor)
+				alpha = math.Clamp(255*factor, 80, 255)
 
-		        nut.util.drawText(v:Name(), x, y - size, ColorAlpha(teamColor, alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, nil, alpha)
-		    end
+				surface.SetDrawColor(teamColor.r, teamColor.g, teamColor.b, alpha)
+				surface.DrawLine(sx * 0.5, sy * 0.5, x, y)
+				surface.DrawTexturedRect(x - size/2, y - size/2, size, size)
+
+				nut.util.drawText(v:Name(), x, y - size, ColorAlpha(teamColor, alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, nil, alpha)
+			end
 		end
 	end
 
@@ -70,7 +70,7 @@ else
 		if (client:IsAdmin()) then
 			-- Check if they are entering noclip.
 			if (state) then
-				-- Store their old position and looking at angle.
+				-- Store their old position and looking		 at angle.
 				client.nutObsData = {client:GetPos(), client:EyeAngles()}
 				-- Hide them so they are not visible.
 				client:SetNoDraw(true)
