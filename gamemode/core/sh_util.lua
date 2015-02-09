@@ -1,16 +1,16 @@
 --[[
-    NutScript is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	NutScript is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    NutScript is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	NutScript is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
 -- Includes a file from the prefix.
@@ -251,6 +251,43 @@ if (CLIENT) then
 			xalign = alignX or 0,
 			yalign = alignY or 0
 		}, 1, alpha or (color.a * 0.575))
+	end
+
+	-- Wraps text so it does not pass a certain width.
+	function nut.util.wrapText(text, width, font)
+		font = font or "nutChatFont"
+		surface.SetFont(font)
+
+		local exploded = string.Explode("%s", text, true)
+		local line = ""
+		local lines = {}
+		local w = surface.GetTextSize(text)
+		local maxW = 0
+		
+		if (w <= width) then
+			return {(text:gsub("%s", " "))}, w
+		end
+		
+		for i = 1, #exploded do
+			local word = exploded[i]
+			line = line.." "..word
+			w = surface.GetTextSize(line)
+			
+			if (w > width) then
+				lines[#lines + 1] = line
+				line = ""
+				
+				if (w > maxW) then
+					maxW = w
+				end
+			end
+		end
+
+		if (line != "") then
+			lines[#lines + 1] = line
+		end
+		
+		return lines, maxW
 	end
 end
 

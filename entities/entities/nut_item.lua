@@ -91,10 +91,23 @@ else
 		if (itemTable) then
 			local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
 			local x, y = position.x, position.y
-			
+			local description = itemTable.getDesc(itemTable)
+
+			if (description != self.desc) then
+				self.desc = description
+				self.lines, self.offset = nut.util.wrapText(description, ScrW() / 3, "nutSmallFont")
+				self.offset = self.offset * 0.5
+			end
+
 			itemTable.entity = self
 				nut.util.drawText(itemTable.name, x, y, colorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
-				nut.util.drawText(itemTable.getDesc(itemTable), x, y + 16, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+
+				local lines = self.lines
+				local offset = self.offset
+
+				for i = 1, #lines do
+					nut.util.drawText(lines[i], x, y + (i * 16), colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+				end
 			itemTable.entity = nil
 		end		
 	end
