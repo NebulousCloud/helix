@@ -498,6 +498,36 @@ do
 		return trace.HitPos + trace.HitNormal*36
 	end
 
+	-- Do an action that requires the player to stare at something.
+	function playerMeta:doStaredAction(entity, callback, time, onCancel, distance)
+		local uniqueID = "nutStare"..self:UniqueID()
+		local data = {}
+		data.filter = self
+
+		timer.Create(uniqueID, 0.2, time / 0.2, function()
+			if (IsValid(self) and IsValid(entity)) then
+				data.start = self:GetShootPos()
+				data.endpos = data.start + self:GetAimVector()*(distance or 96)
+
+				if (util.TraceLine(data).Entity != entity) then
+					timer.Remove(uniqueID)
+
+					if (onCancel) then
+						onCancel()
+					end
+				elseif (callback and timer.RepsLeft(uniqueID) == 0) then
+					callback()
+				end
+			else
+				timer.Remove(uniqueID)
+
+				if (onCancel) then
+					onCancel()
+				end
+			end
+		end)
+	end
+
 	if (SERVER) then
 		-- Sets whether or not the weapon is raised.
 		function playerMeta:setWepRaised(state)

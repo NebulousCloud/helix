@@ -214,5 +214,6 @@ LANGUAGE = {
 	useTip = "Uses the item.",
 	equipTip = "Equips the item.",
 	unequipTip = "Unequips the item.",
-	consumables = "Consumables"
+	consumables = "Consumables",
+	plyNotValid = "You are not looking at a valid player."
 }
