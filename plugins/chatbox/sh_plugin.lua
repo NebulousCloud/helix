@@ -80,7 +80,7 @@ if (CLIENT) then
 	end
 else
 	netstream.Hook("msg", function(client, text)
-		if ((client.nutNextChat or 0) < CurTime()) then
+		if ((client.nutNextChat or 0) < CurTime() and text:find("%S")) then
 			hook.Run("PlayerSay", client, text)
 			client.nutNextChat = CurTime() + math.max(#text / 250, 0.4)
 		end

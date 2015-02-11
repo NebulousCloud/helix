@@ -188,6 +188,12 @@ function ITEM:remove()
 	end
 
 	if (SERVER and !noReplication) then
+		local entity = self:getEntity()
+
+		if (IsValid(entity)) then
+			entity:Remove()
+		end
+		
 		local receiver = inv.getReceiver and inv:getReceiver()
 
 		if (self.invID != 0) then

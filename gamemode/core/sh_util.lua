@@ -466,6 +466,11 @@ do
 			end
 		end
 
+		-- If the player has been forced to have their weapon lowered.
+		if (self:getNetVar("restricted")) then
+			return false
+		end
+
 		-- Returns what the gamemode decides.
 		return self:getNetVar("raised", false)
 	end
