@@ -511,9 +511,15 @@ local colorAlpha = ColorAlpha
 local teamGetColor = team.GetColor
 local drawText = nut.util.drawText
 
-function GM:DrawCharInfo(character, x, y, alpha)
-	return x, y
+function GM:DrawCharInfo(client, character, info)
+	local injText, injColor = hookRun("GetInjuredText", client)
+
+	if (injText) then
+		info[#info + 1] = {L(injText), injColor}
+	end
 end
+
+local charInfo = {}
 
 function GM:DrawEntityInfo(entity, alpha)
 	if (entity.IsPlayer(entity)) then
@@ -523,19 +529,19 @@ function GM:DrawEntityInfo(entity, alpha)
 
 		if (character) then
 			local x, y = position.x, position.y
-			local tx, ty = 0, 0
-			tx, ty = drawText(hookRun("GetDisplayedName", entity) or character.getName(character), x, y, colorAlpha(teamGetColor(entity.Team(entity)), alpha), 1, 1, nil, alpha * 0.65)
-			y = y + ty
-			
-			tx, ty = drawText(character.getDesc(character), x, y, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
-			y = y + ty
+			local ty = 0
 
-			x, y = hookRun("DrawCharInfo", character, x, y, alpha)
-			
-			local injText, injColor = hookRun("GetInjuredText", entity)
+			charInfo = {}
+			charInfo[1] = {hookRun("GetDisplayedName", entity) or character.getName(character), teamGetColor(entity.Team(entity))}
+			charInfo[2] = {character.getDesc(character)}
 
-			if (injText) then
-				drawText(L(injText), x, y, colorAlpha(injColor, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+			hookRun("DrawCharInfo", entity, character, charInfo)
+
+			for i = 1, #charInfo do
+				local info = charInfo[i]
+				
+				_, ty = drawText(info[1], x, y, colorAlpha(info[2] or color_white, alpha), 1, 1, "nutSmallFont")
+				y = y + ty
 			end
 		end
 	end
