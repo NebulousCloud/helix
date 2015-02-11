@@ -509,7 +509,7 @@ do
 		local data = {}
 		data.filter = self
 
-		timer.Create(uniqueID, 0.2, time / 0.2, function()
+		timer.Create(uniqueID, 0.1, time / 0.1, function()
 			if (IsValid(self) and IsValid(entity)) then
 				data.start = self:GetShootPos()
 				data.endpos = data.start + self:GetAimVector()*(distance or 96)

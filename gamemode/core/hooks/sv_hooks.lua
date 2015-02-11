@@ -105,7 +105,7 @@ function GM:KeyPress(client, key)
 			data.filter = client
 		local entity = util.TraceLine(data).Entity
 
-		if (IsValid(entity) and entity:isDoor()) then
+		if (IsValid(entity) and entity:isDoor() or entity:IsPlayer()) then
 			hook.Run("PlayerUse", client, entity)
 		end
 	end
@@ -121,7 +121,7 @@ function GM:CanPlayerInteractItem(client, action, item)
 	if (client:getNetVar("restricted")) then
 		return false
 	end
-	
+
 	if (action == "drop" and hook.Run("CanPlayerDropItem", client, item) == false) then
 		return false
 	end
