@@ -466,6 +466,10 @@ function GM:HUDPaint()
 		end
 	end
 
+	if (localPlayer.getLocalVar(localPlayer, "restricted") and !localPlayer.getLocalVar(localPlayer, "restrictNoMsg")) then
+		nut.util.drawText(L"restricted", scrW * 0.5, scrH * 0.33, nil, 1, 1, "nutBigFont")
+	end
+
 	nut.menu.drawAll()
 	nut.bar.drawAll()
 	nut.hud.drawAll(false)

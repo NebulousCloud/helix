@@ -77,7 +77,7 @@ function GM:PlayerUse(client, entity)
 	if (client:getNetVar("restricted")) then
 		return false
 	end
-	
+
 	if (entity:isDoor()) then
 		local result = hook.Run("CanPlayerUseDoor", client, entity)
 
@@ -118,6 +118,10 @@ function GM:KeyRelease(client, key)
 end
 
 function GM:CanPlayerInteractItem(client, action, item)
+	if (client:getNetVar("restricted")) then
+		return false
+	end
+	
 	if (action == "drop" and hook.Run("CanPlayerDropItem", client, item) == false) then
 		return false
 	end

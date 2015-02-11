@@ -609,6 +609,42 @@ do
 
 			netstream.Start(self, "strReq", time, title, subTitle, default)
 		end
+
+		-- Removes a player's weapon and restricts interactivity.
+		function playerMeta:setRestricted(state, noMessage)
+			if (state) then
+				self:setNetVar("restricted", true)
+				
+				if (noMessage) then
+					self:setLocalVar("restrictNoMsg", true)
+				end
+
+				self.nutRestrictWeps = self.nutRestrictWeps or {}
+
+				for k, v in ipairs(self:GetWeapons()) do
+					self.nutRestrictWeps[#self.nutRestrictWeps + 1] = v:GetClass()
+					v:Remove()
+				end
+
+				hook.Run("OnPlayerRestricted", self)
+			else
+				self:setNetVar("restricted")
+
+				if (self:getLocalVar("restrictNoMsg")) then
+					self:setLocalVar("restrictNoMsg")
+				end
+
+				if (self.nutRestrictWeps) then
+					for k, v in ipairs(self.nutRestrictWeps) do
+						self:Give(v)
+					end
+
+					self.nutRestrictWeps = nil
+				end
+
+				hook.Run("OnPlayerUnRestricted", self)
+			end
+		end
 	end
 
 	-- Player ragdoll utility stuff.

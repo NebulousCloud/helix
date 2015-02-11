@@ -215,5 +215,6 @@ LANGUAGE = {
 	equipTip = "Equips the item.",
 	unequipTip = "Unequips the item.",
 	consumables = "Consumables",
-	plyNotValid = "You are not looking at a valid player."
+	plyNotValid = "You are not looking at a valid player.",
+	restricted = "You have been restrained."
 }
