@@ -50,7 +50,7 @@ function PANEL:setItem(itemTable)
 	self.icon:Dock(FILL)
 	self.icon:DockMargin(5, 5, 5, 10)
 	self.icon:InvalidateLayout(true)
-	self.icon:SetModel(itemTable.model)
+	self.icon:SetModel(itemTable.model, itemTable.skin or 0)
 	self.icon:SetToolTip(itemTable:getDesc())
 	self.icon.DoClick = function(this)
 		if (!IsValid(nut.gui.checkout) and (this.nextClick or 0) < CurTime()) then
@@ -368,11 +368,13 @@ PANEL = {}
 	function PANEL:onQuantityChanged()
 		local price = 0
 		local money = LocalPlayer():getChar():getMoney()
+		local valid = 0
 
 		for k, v in pairs(self.itemData) do
 			local itemTable = nut.item.list[k]
 
-			if (itemTable) then
+			if (itemTable and v > 0) then
+				valid = valid + 1
 				price = price + (v * (itemTable.price or 0))
 			end
 		end
@@ -382,7 +384,7 @@ PANEL = {}
 		self.final:SetText("Money Left: "..nut.currency.get(money - price))
 		self.final:SetTextColor((money - price) >= 0 and Color(46, 204, 113) or Color(217, 30, 24))
 
-		self.preventBuy = (money - price) < 0
+		self.preventBuy = (money - price) < 0 or valid == 0
 	end
 
 	function PANEL:setCart(items)
@@ -422,7 +424,7 @@ PANEL = {}
 					local value = tonumber(this:GetValue())
 
 					if (value) then
-						items[k] = math.Clamp(math.Round(value), 1, 10)
+						items[k] = math.Clamp(math.Round(value), 0, 10)
 						self:onQuantityChanged()
 					else
 						this:SetValue(1)

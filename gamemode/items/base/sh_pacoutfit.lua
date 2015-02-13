@@ -44,6 +44,25 @@ ITEM.pacData = {
 		},
 	},
 }
+--[[
+
+-- This will change a certain part of the model.
+ITEM.replacements = {"group01", "group02"}
+-- This will change the player's model completely.
+ITEM.replacements = "models/manhack.mdl"
+-- This will have multiple replacements.
+ITEM.replacements = {
+	{"male", "female"},
+	{"group01", "group02"}
+}
+
+-- This will apply body groups.
+ITEM.bodyGroups = {
+	["blade"] = 1,
+	["bladeblur"] = 1
+}
+
+--]]
 
 -- Inventory drawing
 if (CLIENT) then
@@ -56,19 +75,36 @@ if (CLIENT) then
 	end
 end
 
+function ITEM:removeParts(client)
+	local character = item.player:getChar()
+	
+	item:setData("equip", false)
+	character:removePart(item.uniqueID)
+
+	for k, v in pairs(self.bodyGroups or {}) do
+		local index = client:FindBodygroupByName(k)
+
+		if (index > -1) then
+			client:SetBodygroup(index, 0)
+		end
+	end
+
+	if (character:getData("oldMdl")) then
+		client:setModel(character:getData("oldMdl"))
+		character:setData("oldMdl")
+	end
+
+	if (item.attribBoosts) then
+		for k, _ in pairs(item.attribBoosts) do
+			character:removeBoost(item.uniqueID, k)
+		end
+	end
+end
+
 -- On item is dropped, Remove a weapon from the player and keep the ammo in the item.
 ITEM:hook("drop", function(item)
 	if (item:getData("equip")) then
-		local char = item.player:getChar()
-		
-		item:setData("equip", false)
-		char:removePart(item.uniqueID)
-
-		if (item.attribBoosts) then
-			for k, _ in pairs(item.attribBoosts) do
-				char:removeBoost(item.uniqueID, k)
-			end
-		end
+		item:removeParts(item.player)
 	end
 end)
 
@@ -78,16 +114,7 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 	tip = "equipTip",
 	icon = "icon16/cross.png",
 	onRun = function(item)
-		local char = item.player:getChar()
-
-		item:setData("equip", false)
-		char:removePart(item.uniqueID)
-
-		if (item.attribBoosts) then
-			for k, _ in pairs(item.attribBoosts) do
-				char:removeBoost(item.uniqueID, k)
-			end
-		end
+		item:removeParts(item.player)
 		
 		return false
 	end,
@@ -134,5 +161,9 @@ ITEM.functions.Equip = {
 }
 
 function ITEM:onCanBeTransfered(oldInventory, newInventory)
-	return !self:getData("equip")
+	if (newInventory and self:getData("equip")) then
+		return newInventory:getID() == 0
+	end
+
+	return true
 end

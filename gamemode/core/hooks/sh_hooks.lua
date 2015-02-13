@@ -175,8 +175,8 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 		end
 	end
 
-	if (itemTable.flags) then
-		if (!client:getChar():hasFlags(itemTable.flags)) then
+	if (itemTable.flag) then
+		if (!client:getChar():hasFlags(itemTable.flag)) then
 			return false
 		end
 	end

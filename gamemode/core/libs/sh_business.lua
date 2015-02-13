@@ -16,7 +16,12 @@
 if (SERVER) then
 	netstream.Hook("bizBuy", function(client, items)
 		local char = client:getChar()
+
 		if (!char) then
+			return
+		end
+
+		if (table.Count(items) < 1) then
 			return
 		end
 
@@ -26,12 +31,20 @@ if (SERVER) then
 			local itemTable = nut.item.list[k]
 
 			if (itemTable and hook.Run("CanPlayerUseBusiness", client, k) != false) then
-				local amount = math.Clamp(tonumber(v) or 0, 1, 10)
+				local amount = math.Clamp(tonumber(v) or 0, 0, 10)
 				
-				cost = cost + (amount * (itemTable.price or 0))
+				if (amount == 0) then
+					items[k] = nil
+				else
+					cost = cost + (amount * (itemTable.price or 0))
+				end
 			else
 				items[k] = nil
 			end
+		end
+
+		if (table.Count(items) < 1) then
+			return
 		end
 
 		if (char:hasMoney(cost)) then
