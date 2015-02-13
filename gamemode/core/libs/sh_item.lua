@@ -410,6 +410,7 @@ do
 			local item = nut.item.instances[id]
 
 			if (item) then
+				item.data = item.data or {}
 				item.data[key] = value
 
 				local panel = item.invID and nut.gui["inv"..item.invID] or nut.gui.inv1

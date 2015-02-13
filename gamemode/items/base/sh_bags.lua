@@ -68,6 +68,7 @@ end
 
 -- Called when the item first appears for a client.
 function ITEM:onSendData(client)
+	print(client)
 	local inventory = nut.item.inventories[self:getData("id")]
 
 	if (inventory) then
