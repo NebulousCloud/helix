@@ -62,8 +62,6 @@ local PANEL = {}
 		entity:SetPoseParameter("head_yaw", (xRatio - xRatio2)*90 - 5)
 		entity:SetAngles(MODEL_ANGLE)
 		entity:SetIK(false)
-
-		self.brightness = math.abs(math.sin(RealTime() * 0.2))
 	end
 
 	function PANEL:DrawModel()

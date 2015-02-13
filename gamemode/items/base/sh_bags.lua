@@ -59,20 +59,23 @@ ITEM.functions.View = {
 function ITEM:onInstanced(invID, x, y)
 	local inventory = nut.item.inventories[invID]
 
-	if (inventory) then
-		nut.item.newInv(inventory.owner, self.uniqueID, function(inventory)
-			self:setData("id", inventory:getID())
-		end)
-	end
+	nut.item.newInv(inventory and inventory.owner or 0, self.uniqueID, function(inventory)
+		self:setData("id", inventory:getID())
+	end)
 end
 
 -- Called when the item first appears for a client.
-function ITEM:onSendData(client)
-	print(client)
+function ITEM:onSendData()
 	local inventory = nut.item.inventories[self:getData("id")]
 
 	if (inventory) then
-		inventory:sync(client)
+		inventory:sync(self.player)
+	else
+		local owner = self.player:getChar():getID()
+
+		nut.item.restoreInv(self:getData("id"), self.invWidth, self.invHeight, function(inventory)
+			inventory:setOwner(owner, true)
+		end)
 	end
 end
 

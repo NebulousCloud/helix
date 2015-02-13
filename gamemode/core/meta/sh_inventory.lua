@@ -91,11 +91,23 @@ function META:printAll()
 	print("------------------------")
 end
 
-function META:setOwner(owner)
+function META:setOwner(owner, fullUpdate)
 	if (type(owner) == "Player" and owner:getNetVar("charID")) then
 		owner = owner:getNetVar("charID")
 	elseif (type(owner) != "number") then
 		return
+	end
+
+	if (SERVER and fullUpdate) then
+		for k, v in ipairs(player.GetAll()) do
+			if (v:getNetVar("charID") == owner) then
+				self:sync(v, true)
+
+				break
+			end
+		end
+
+		nut.db.query("UPDATE nut_inventories SET _charID = "..owner.." WHERE _invID = "..self:getID())
 	end
 
 	self.owner = owner
@@ -317,8 +329,8 @@ function META:hasItem(targetID, data)
 end
 
 if (SERVER) then
-	function META:sendSlot(x, y, item)
-		local receiver = self:getReceiver()
+	function META:sendSlot(x, y, item, receiver)
+		receiver = receiver or self:getReceiver()
 		local sendData = item and item.data and table.Count(item.data) > 0 and item.data or nil
 
 		if (type(receiver) == "Player" and IsValid(receiver)) then
@@ -328,6 +340,7 @@ if (SERVER) then
 		end
 
 		if (item) then
+			print(item.player)
 			if (type(receiver) == "table") then
 				for k, v in pairs(receiver) do
 					item:call("onSendData", v)

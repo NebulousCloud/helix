@@ -76,6 +76,11 @@ local PANEL = {}
 
 					if (items[k] <= 0) then
 						item:Remove()
+						items[k] = nil
+					end
+
+					if (table.Count(items) == 0) then
+						self:Remove()
 					end
 				end
 

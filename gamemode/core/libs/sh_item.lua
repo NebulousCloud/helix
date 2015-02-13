@@ -647,25 +647,27 @@ do
 
 			local callback = item.functions[action]
 
-			if (item.functions[action]) then
+			if (callback) then
 				if (callback.onCanRun and callback.onCanRun(item) == false) then
 					item.entity = nil
 					item.player = nil
 
 					return
 				end
+				
+				local entity = item.entity
 
 				if (item.hooks[action]) then
 					item.hooks[action](item)
 				end
 
 				if (callback.onRun(item) != false) then
-					if (item.entity) then
-						item.entity.nutIsSafe = true
-						item.entity:Remove()
+					if (IsValid(entity)) then
+						entity.nutIsSafe = true
+						entity:Remove()
 					else
 						inventory:remove(item.id, nil, true)
-						nut.db.query("UPDATE nut_items SET _invID = 0 WHERE _itemID = "..item.id)
+						nut.db.query("DELETE FROM nut_items WHERE _itemID = "..item.id)
 					end
 				end
 

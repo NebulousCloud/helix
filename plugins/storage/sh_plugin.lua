@@ -104,7 +104,6 @@ if (SERVER) then
 					
 					nut.item.restoreInv(v[3], data2.width, data2.height, function(inventory)
 						function inventory:onCanTransfer(client, oldX, oldY, x, y, newInvID)
-							print(self)
 							return hook.Run("StorageCanTransfer", inventory, client, oldX, oldY, x, y, newInvID)
 						end
 
