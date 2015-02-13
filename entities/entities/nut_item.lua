@@ -89,6 +89,10 @@ else
 		local itemTable = self.getItemTable(self)
 
 		if (itemTable) then
+			local oldData = itemTable.data
+			itemTable.data = self.getNetVar(self, "data", {})
+			itemTable.entity = self
+
 			local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
 			local x, y = position.x, position.y
 			local description = itemTable.getDesc(itemTable)
@@ -98,17 +102,18 @@ else
 				self.lines, self.offset = nut.util.wrapText(description, ScrW() / 3, "nutSmallFont")
 				self.offset = self.offset * 0.5
 			end
+			
+			nut.util.drawText(itemTable.name, x, y, colorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
 
-			itemTable.entity = self
-				nut.util.drawText(itemTable.name, x, y, colorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
+			local lines = self.lines
+			local offset = self.offset
 
-				local lines = self.lines
-				local offset = self.offset
+			for i = 1, #lines do
+				nut.util.drawText(lines[i], x, y + (i * 16), colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+			end
 
-				for i = 1, #lines do
-					nut.util.drawText(lines[i], x, y + (i * 16), colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
-				end
 			itemTable.entity = nil
+			itemTable.data = oldData
 		end		
 	end
 

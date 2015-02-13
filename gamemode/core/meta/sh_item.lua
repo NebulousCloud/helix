@@ -94,12 +94,12 @@ function ITEM:getOwner()
 	end
 end
 
-function ITEM:setData(key, value, receivers, noSave, checkEntity)
+function ITEM:setData(key, value, receivers, noSave, noCheckEntity)
 	self.data = self.data or {}
 	self.data[key] = value
 
 	if (SERVER) then
-		if (checkEntity) then
+		if (!noCheckEntity) then
 			local ent = self:getEntity()
 
 			if (IsValid(ent)) then

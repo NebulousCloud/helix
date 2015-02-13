@@ -107,7 +107,7 @@ function nut.item.newInv(owner, invType, callback)
 	}, function(data, invID)
 		local inventory = nut.item.createInv(invData.w, invData.h, invID)
 
-		if (owner > 0) then
+		if (owner and owner > 0) then
 			for k, v in ipairs(player.GetAll()) do
 				if (v:getChar() and v:getChar():getID() == owner) then
 					inventory:setOwner(owner)
