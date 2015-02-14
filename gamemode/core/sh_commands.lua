@@ -411,6 +411,8 @@ nut.command.add("plywhitelist", {
 					return
 				end
 			end
+
+			return "@invalidFaction"
 		end
 	end
 })
