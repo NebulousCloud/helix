@@ -55,7 +55,7 @@ function GM:OnPickupMoney(client, moneyEntity)
 		local amount = moneyEntity:getAmount()
 
 		client:getChar():giveMoney(amount)
-		client:notify(L("moneyTaken", client, nut.currency.get(amount)))
+		client:notifyLocalized("moneyTaken", nut.currency.get(amount))
 	end
 end
 

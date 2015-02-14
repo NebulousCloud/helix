@@ -263,7 +263,7 @@ do
 
 					-- Use this method of checking time in case the oocDelay config changes.
 					if (lastOOC <= delay) then
-						speaker:notify(L("oocDelay", speaker, delay - math.ceil(lastOOC)))
+						speaker:notifyLocalized("oocDelay", delay - math.ceil(lastOOC))
 
 						return false
 					end
@@ -309,7 +309,7 @@ do
 
 					-- Use this method of checking time in case the oocDelay config changes.
 					if (lastLOOC <= delay) then
-						speaker:notify(L("loocDelay", speaker, delay - math.ceil(lastLOOC)))
+						speaker:notifyLocalized("loocDelay", delay - math.ceil(lastLOOC))
 
 						return false
 					end

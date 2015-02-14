@@ -127,7 +127,7 @@ if (SERVER) then
 		if (IsValid(target)) then
 			return target
 		else
-			client:notify(L("plyNoExist", client))
+			client:notifyLocalized("plyNoExist")
 		end
 	end
 
@@ -175,7 +175,7 @@ if (SERVER) then
 				nut.command.run(client, match, arguments)
 			else
 				if (IsValid(client)) then
-					client:notify(L("cmdNoExist", client))
+					client:notifyLocalized("cmdNoExist")
 				else
 					print("Sorry, that command does not exist.")
 				end

@@ -161,7 +161,7 @@ if (SERVER) then
 		-- If area is valid, merge editData to areaData.
 		local areaData = table.Copy(nut.area.getArea(areaID))
 		if (areaData) then
-			client:notify(L("areaModified", client, areaID))
+			client:notifyLocalized("areaModified", areaID)
 			PLUGIN.areaTable[areaID] = table.Merge(areaData, editData)
 		end
 	end)
@@ -198,7 +198,7 @@ if (SERVER) then
 		-- If area is valid, merge editData to areaData.
 		local areaData = table.Copy(nut.area.getArea(areaID))
 		if (areaData) then
-			client:notify(L("areaRemoved", client, areaID))
+			client:notifyLocalized("areaRemoved", areaID)
 			PLUGIN.areaTable[areaID] = nil
 		end
 	end)
@@ -405,7 +405,7 @@ nut.command.add("areaadd", {
 			client:setNetVar("areaMin", pos, client)
 			client:setNetVar("areaName", name, client)
 
-			client:notify(L("areaCommand", client))
+			client:notifyLocalized("areaCommand")
 		else
 			local min = client:getNetVar("areaMin")
 			local max = pos
@@ -417,7 +417,7 @@ nut.command.add("areaadd", {
 			client:setNetVar("areaName", nil, client)
 
 			nut.area.addArea(name, min, max)
-			client:notify(L("areaAdded", client, name))
+			client:notifyLocalized("areaAdded", name)
 		end
 	end
 })
@@ -432,7 +432,7 @@ nut.command.add("arearemove", {
 
 		local areaData = nut.area.getArea(areaID)
 		if (areaData) then
-			client:notify(L("areaRemoved", client, areaData.name))
+			client:notifyLocalized("areaRemoved", areaData.name)
 
 			table.remove(PLUGIN.areaTable, areaID)
 		end
@@ -451,7 +451,7 @@ nut.command.add("areachange", {
 
 		local areaData = nut.area.getArea(areaID)
 		if (areaData) then
-			client:notify(L("areaChanged", client, name, areaData.name))
+			client:notifyLocalized("areaChanged", name, areaData.name)
 			areaData.name = name
 		end
 	end

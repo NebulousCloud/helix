@@ -136,7 +136,7 @@ if (SERVER) then
 			if (entity.password and entity.password == password) then
 				entity:OpenInv(client)
 			else
-				client:notify(L("wrongPassword", client))
+				client:notifyLocalized("wrongPassword")
 			end
 		end
 	end)
@@ -213,14 +213,14 @@ nut.command.add("storagelock", {
 			if (password != "") then
 				ent:setNetVar("locked", true)
 				ent.password = password
-				client:notify(L("storPass", client, password))
+				client:notifyLocalized("storPass", password)
 			else
 				ent:setNetVar("locked", nil)
 				ent.password = nil
-				client:notify(L("storPassRmv", client))
+				client:notifyLocalized("storPassRmv")
 			end
 		else
-			client:notify(L("invalid", client, "Entity"))
+			client:notifyLocalized("invalid", "Entity")
 		end
 	end
 })

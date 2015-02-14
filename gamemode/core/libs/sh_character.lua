@@ -518,7 +518,7 @@ do
 			if (client:getChar() and client:getChar():getID() == id) then
 				netstream.Start(client, "charLoaded")
 				
-				return client:notify(L("usingChar", client))
+				return client:notifyLocalized("usingChar")
 			end
 
 			local character = nut.char.loaded[id]

@@ -138,7 +138,7 @@ function GM:CanPlayerTakeItem(client, item)
 		local char = client:getChar()
 		
 		if (item.prevOwner and item.prevPlayer and item.prevPlayer == client and item.prevOwner != char.id) then
-			client:notify(L("playerCharBelonging", client))
+			client:notifyLocalized("playerCharBelonging")
 
 			return false
 		end
@@ -569,7 +569,7 @@ function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 				if (v:getData("equip") == true) then
 					local owner = itemObject:getOwner()
 					if (owner and IsValid(owner)) then
-						owner:notify(L("equippedBag", owner))
+						owner:notifyLocalized("equippedBag")
 					end
 
 					return false

@@ -95,11 +95,11 @@ if (SERVER) then
 
 			if (isSell) then
 				if (item) then
-					client:notifyLocalized(L("businessSell", client, item.name, price))
+					client:notifyLocalized("businessSell", item.name, price)
 				end
 			else
 				if (item) then
-					client:notify(L("businessPurchase", client, item.name, price))
+					client:notifyLocalized("businessPurchase", item.name, price)
 				end
 			end
 		end

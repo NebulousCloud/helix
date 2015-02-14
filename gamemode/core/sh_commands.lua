@@ -113,7 +113,7 @@ nut.command.add("charsetmodel", {
 		if (IsValid(target) and target:getChar()) then
 			target:getChar():setModel(arguments[2])
 			target:SetupHands()
-			nut.util.notify(L("cChangeModel", client, client:Name(), target:Name(), arguments[2]))
+			nut.util.notifyLocalized("cChangeModel", client:Name(), target:Name(), arguments[2])
 		end
 	end
 })
@@ -141,7 +141,7 @@ nut.command.add("charsetattrib", {
 				for k, v in pairs(nut.attribs.list) do
 					if (nut.util.stringMatches(L(v.name, client), attribName) or nut.util.stringMatches(k, attribName)) then
 						char:setAttrib(k, math.abs(attribNumber))
-						client:notify(L("attribSet", client, target:Name(), L(v.name, client), math.abs(attribNumber)))
+						client:notifyLocalized("attribSet", target:Name(), L(v.name, client), math.abs(attribNumber))
 
 						return
 					end
@@ -174,7 +174,7 @@ nut.command.add("charaddattrib", {
 				for k, v in pairs(nut.attribs.list) do
 					if (nut.util.stringMatches(L(v.name, client), attribName) or nut.util.stringMatches(k, attribName)) then
 						char:updateAttrib(k, math.abs(attribNumber))
-						client:notify(L("attribUpdate", client, target:Name(), L(v.name, client), math.abs(attribNumber)))
+						client:notifyLocalized("attribUpdate", target:Name(), L(v.name, client), math.abs(attribNumber))
 
 						return
 					end
@@ -200,7 +200,7 @@ nut.command.add("charsetname", {
 		local targetName = table.concat(arguments, " ")
 
 		if (IsValid(target) and target:getChar()) then
-			nut.util.notify(L("cChangeName", client, client:Name(), target:Name(), targetName))
+			nut.util.notifyLocalized("cChangeName", client:Name(), target:Name(), targetName)
 
 			target:getChar():setName(targetName)
 		end
@@ -240,7 +240,7 @@ nut.command.add("charkick", {
 			local char = target:getChar()
 			if (char) then
 				for k, v in ipairs(player.GetAll()) do
-					v:notify(L("charKick", v, v:Name(), target:Name()))
+					v:notifyLocalized("charKick", v:Name(), target:Name())
 				end
 
 				char:kick()
@@ -363,7 +363,7 @@ nut.command.add("charsetmoney", {
 			if (char and amount) then
 				amount = math.Round(amount)
 				char:setMoney(amount)
-				client:notify(L("setMoney", client, target:Name(), nut.currency.get(amount)))
+				clientnotifyLocalized("setMoney", target:Name(), nut.currency.get(amount))
 			end
 		end
 	end
@@ -490,11 +490,11 @@ nut.command.add("beclass", {
 				local v = nut.class.list[num]
 
 				if (char:joinClass(num)) then
-					client:notify(L("becomeClass", client, L(v.name, client)))
+					client:notifyLocalized("becomeClass", L(v.name, client))
 
 					return
 				else
-					client:notify(L("becomeClassFail", client, L(v.name, client)))
+					client:notifyLocalized("becomeClassFail", L(v.name, client))
 
 					return
 				end
@@ -502,11 +502,11 @@ nut.command.add("beclass", {
 				for k, v in ipairs(nut.class.list) do
 					if (nut.util.stringMatches(v.uniqueID, class) or nut.util.stringMatches(L(v.name, client), class)) then
 						if (char:joinClass(k)) then
-							client:notify(L("becomeClass", client, L(v.name, client)))
+							client:notifyLocalized("becomeClass", L(v.name, client))
 
 							return
 						else
-							client:notify(L("becomeClassFail", client, L(v.name, client)))
+							client:notifyLocalized("becomeClassFail", L(v.name, client))
 
 							return
 						end
@@ -514,9 +514,9 @@ nut.command.add("beclass", {
 				end
 			end
 			
-			client:notify(L("invalid", client, L("class", client)))
+			client:notifyLocalized("invalid", L("class", client))
 		else
-			client:notify(L("illegalAccess", client))
+			client:notifyLocalized("illegalAccess")
 		end
 	end
 })
