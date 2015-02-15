@@ -123,7 +123,7 @@ hook.Add("BuildHelpMenu", "nutBasicHelp", function(tabs)
 					<span style="font-size: smaller;">
 					<b>%s</b>: %s<br />
 					<b>%s</b>: %s
-			]]):format(v.name or "Unknown", L"desc", v.desc, L"author", v.author)
+			]]):format(v.name or "Unknown", L"desc", v.desc or L"noDesc", L"author", v.author)
 
 			if (v.version) then
 				body = body.."<br /><b>"..L"version".."</b>: "..v.version
