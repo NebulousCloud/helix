@@ -39,7 +39,7 @@ if (CLIENT) then
 			return
 		end
 
-		if (SUPPRESS_CROSSHAIR or g_ContextMenu:IsVisible() or nut.gui.char:IsVisible()) then
+		if (hook.Run("ShouldDrawCrosshair") == false or g_ContextMenu:IsVisible() or nut.gui.char:IsVisible()) then
 			return
 		end
 
