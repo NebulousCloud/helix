@@ -133,4 +133,8 @@ do
 			client:StripWeapon("gmod_tool")
 		end
 	end)
+
+	nut.flag.add("c", "Access to spawn chairs.")
+	nut.flag.add("C", "Access to spawn vehicles.")
+	nut.flag.add("r", "Access to spawn ragdolls.")
 end

@@ -81,13 +81,44 @@ nut.command.add("flaggive", {
 			local flags = arguments[2]
 
 			if (!flags) then
-				-- to-do: create a system to send dialog messages that are networked.
-				return L("invalidArg", client, 2)
+				local available = ""
+
+				-- Aesthetics~~
+				for k, v in SortedPairs(nut.flag.list) do
+					if (!target:getChar():hasFlags(k)) then
+						available = available..k
+					end
+				end
+
+				return client:requestString("@flagGiveTitle", "@flagGiveDesc", function(text)
+					nut.command.run(client, "flaggive", {target:Name(), text})
+				end, available)
 			end
 
 			target:getChar():giveFlags(flags)
 
 			nut.util.notifyLocalized("flagGive", nil, client:Name(), target:Name(), flags)
+		end
+	end
+})
+
+nut.command.add("flagtake", {
+	syntax = "<string name> [string flags]",
+	onRun = function(client, arguments)
+		local target = nut.command.findPlayer(client, arguments[1])
+
+		if (IsValid(target) and target:getChar()) then
+			local flags = arguments[2]
+
+			if (!flags) then
+				return client:requestString("@flagTakeTitle", "@flagTakeDesc", function(text)
+					nut.command.run(client, "flagtake", {target:Name(), text})
+				end, target:getChar():getFlags())
+			end
+
+			target:getChar():takeFlags(flags)
+
+			nut.util.notifyLocalized("flagTake", nil, client:Name(), target:Name(), flags)
 		end
 	end
 })

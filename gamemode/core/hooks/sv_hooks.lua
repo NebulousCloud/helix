@@ -258,7 +258,6 @@ GM.PlayerGiveSWEP = IsAdmin
 GM.PlayerSpawnEffect = IsAdmin
 GM.PlayerSpawnNPC = IsAdmin
 GM.PlayerSpawnSENT = IsAdmin
-GM.PlayerSpawnVehicle = IsAdmin
 
 function GM:PlayerSpawnProp(client)
 	if (client:getChar() and client:getChar():hasFlags("e")) then
@@ -273,6 +272,18 @@ function GM:PlayerSpawnRagdoll(client)
 		return true
 	end
 
+	return false
+end
+
+function GM:PlayerSpawnVehicle(client, model, name, data)
+	if (client:getChar()) then
+		if (data.Category == "Chairs") then
+			return client:getChar():hasFlags("c")
+		else
+			return client:getChar():hasFlags("C")
+		end
+	end
+	
 	return false
 end
 
