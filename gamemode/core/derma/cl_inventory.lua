@@ -90,9 +90,23 @@ PANEL = {}
 
 		self.panels = {}
 	end
-	
+		
+	function PANEL:OnRemove()
+		if (self.childPanels) then
+			for k, v in ipairs(self.childPanels) do
+				if (v != self) then
+					v:Remove()
+				end
+			end
+		end
+	end
+
 	function PANEL:setInventory(inventory)
 		if (inventory.slots) then
+			if (IsValid(nut.gui.inv1) and nut.gui.inv1.childPanels and inventory != LocalPlayer():getChar():getInv()) then
+				table.insert(nut.gui.inv1.childPanels, self)
+			end
+
 			self.invID = inventory:getID()
 			self:SetSize(64, 64)
 			self:setGridSize(inventory:getSize())
@@ -395,6 +409,7 @@ vgui.Register("nutInventory", PANEL, "DFrame")
 hook.Add("CreateMenuButtons", "nutInventory", function(tabs)
 	tabs["inv"] = function(panel)		
 		nut.gui.inv1 = panel:Add("nutInventory")
+		nut.gui.inv1.childPanels = {}
 
 		local inventory = LocalPlayer():getChar():getInv()
 
