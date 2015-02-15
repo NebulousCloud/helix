@@ -42,7 +42,7 @@ function nut.hud.drawDeath()
 		end
 	end
 
-	if (nut.gui.char:IsVisible() or !owner:getChar()) then
+	if (IsValid(nut.char.gui) and nut.gui.char:IsVisible() or !owner:getChar()) then
 		return
 	end
 
