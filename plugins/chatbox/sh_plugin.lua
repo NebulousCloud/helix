@@ -48,13 +48,6 @@ if (CLIENT) then
 		end
 	end
 
-	if (NS_DEVELOPER) then
-		if (IsValid(PLUGIN.panel)) then
-			PLUGIN.panel:Remove()
-			PLUGIN:createChat()
-		end
-	end
-
 	chat.nutAddText = chat.nutAddText or chat.AddText
 
 	local PLUGIN = PLUGIN
@@ -78,6 +71,13 @@ if (CLIENT) then
 			chat.PlaySound()
 		end
 	end
+
+	concommand.Add("fixchatplz", function()
+		if (IsValid(PLUGIN.panel)) then
+			PLUGIN.panel:Remove()
+			PLUGIN:createChat()
+		end
+	end)
 else
 	netstream.Hook("msg", function(client, text)
 		if ((client.nutNextChat or 0) < CurTime() and text:find("%S")) then
