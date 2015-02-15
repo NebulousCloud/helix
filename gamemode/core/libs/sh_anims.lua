@@ -66,10 +66,13 @@ nut.anim.citizen_male = {
 	},
 	glide = ACT_GLIDE,
 	vehicle = {
-		["prop_vehicle_prisoner_pod"] = {"sitchair1", Vector(0, 0, -25), Angle()},
-		["prop_vehicle_jeep"] = {"sitchair1", Vector(12, 0, -18), Angle()}
+		["prop_vehicle_prisoner_pod"] = {"podpose", Vector(-3, 0, 0)},
+		["prop_vehicle_jeep"] = {"sitchair1", Vector(14, 0, -14)},
+		["prop_vehicle_airboat"] = {"sitchair1", Vector(8, 0, -20)},
+		chair = {"sitchair1", Vector(1, 0, -23)}
 	},
 }
+
 nut.anim.citizen_female = {
 	normal = {
 		[ACT_MP_STAND_IDLE] = {ACT_IDLE, ACT_IDLE_MANNEDGUN},
@@ -121,10 +124,7 @@ nut.anim.citizen_female = {
 		attack = ACT_MELEE_ATTACK_SWING
 	},
 	glide = ACT_GLIDE,
-	vehicle = {
-		["prop_vehicle_prisoner_pod"] = {"sitchair1", Vector(0, 0, -25), Angle()},
-		["prop_vehicle_jeep"] = {"sitchair1", Vector(12, 0, -18), Angle()}
-	},
+	vehicle = nut.anim.citizen_male.vehicle
 }
 nut.anim.metrocop = {
 	normal = {
@@ -173,7 +173,13 @@ nut.anim.metrocop = {
 		[ACT_MP_RUN] = {ACT_RUN, ACT_RUN},
 		attack = ACT_MELEE_ATTACK_SWING_GESTURE
 	},
-	glide = ACT_GLIDE
+	glide = ACT_GLIDE,
+	vehicle = {
+		chair = {ACT_COVER_PISTOL_LOW, Vector(5, 0, -5)},
+		["prop_vehicle_airboat"] = {ACT_COVER_PISTOL_LOW, Vector(10, 0, 0)},
+		["prop_vehicle_jeep"] = {ACT_COVER_PISTOL_LOW, Vector(18, -2, 4)},
+		["prop_vehicle_prisoner_pod"] = {ACT_IDLE, Vector(-4, -0.5, 0)}
+	}
 }
 nut.anim.overwatch = {
 	normal = {

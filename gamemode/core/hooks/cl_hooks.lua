@@ -359,6 +359,8 @@ function GM:CalcView(client, origin, angles, fov)
 			return view
 		end
 	end
+
+	return self.BaseClass:CalcView(client, origin, angles, fov)
 end
 
 local nextUpdate = 0
