@@ -66,7 +66,7 @@ function GM:TranslateActivity(client, act)
 				end
 			end
 
-			local holdType = weapon:GetHoldType()
+			local holdType = weapon.HoldType or weapon:GetHoldType()
 			local value = PLAYER_HOLDTYPE_TRANSLATOR[holdType] or "passive"
 			local tree = nut.anim.player[value]
 
@@ -121,7 +121,7 @@ function GM:TranslateActivity(client, act)
 			client:ManipulateBonePosition(0, Vector())
 
 			if (IsValid(weapon)) then
-				subClass = weapon:GetHoldType()
+				subClass = weapon.HoldType or weapon:GetHoldType()
 				subClass = HOLDTYPE_TRANSLATOR[subClass] or subClass
 			end
 
@@ -208,7 +208,7 @@ function GM:DoAnimationEvent(client, event, data)
 		local weapon = client:GetActiveWeapon()
 
 		if (IsValid(weapon)) then
-			local holdType = weapon:GetHoldType()
+			local holdType = weapon.HoldType or weapon:GetHoldType()
 			holdType = HOLDTYPE_TRANSLATOR[holdType] or holdType
 
 			local animation = nut.anim[class][holdType]
