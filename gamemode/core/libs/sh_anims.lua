@@ -183,46 +183,46 @@ nut.anim.metrocop = {
 }
 nut.anim.overwatch = {
 	normal = {
-		[ACT_MP_STAND_IDLE] = {"idle_unarmed", "man_gun"},
-		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
+		[ACT_MP_STAND_IDLE] = {"idle_unarmed", ACT_IDLE_ANGRY},
+		[ACT_MP_CROUCH_IDLE] = {ACT_CROUCHIDLE, ACT_CROUCHIDLE},
 		[ACT_MP_WALK] = {"walkunarmed_all", ACT_WALK_RIFLE},
-		[ACT_MP_CROUCHWALK] = {"crouch_walkall", "crouch_walkall"},
-		[ACT_MP_RUN] = {"runall", ACT_RUN_AIM_RIFLE}
+		[ACT_MP_CROUCHWALK] = {ACT_WALK_CROUCH_RIFLE, ACT_WALK_CROUCH_RIFLE},
+		[ACT_MP_RUN] = {ACT_RUN_AIM_RIFLE, ACT_RUN_AIM_RIFLE}
 	},
 	pistol = {
 		[ACT_MP_STAND_IDLE] = {"idle_unarmed", ACT_IDLE_ANGRY_SMG1},
-		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
+		[ACT_MP_CROUCH_IDLE] = {ACT_CROUCHIDLE, ACT_CROUCHIDLE},
 		[ACT_MP_WALK] = {"walkunarmed_all", ACT_WALK_RIFLE},
-		[ACT_MP_CROUCHWALK] = {"crouch_walkall", "crouch_walkall"},
-		[ACT_MP_RUN] = {"runall", ACT_RUN_AIM_RIFLE}
+		[ACT_MP_CROUCHWALK] = {ACT_WALK_CROUCH_RIFLE, ACT_WALK_CROUCH_RIFLE},
+		[ACT_MP_RUN] = {ACT_RUN_AIM_RIFLE, ACT_RUN_AIM_RIFLE}
 	},
 	smg = {
 		[ACT_MP_STAND_IDLE] = {ACT_IDLE_SMG1, ACT_IDLE_ANGRY_SMG1},
-		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
+		[ACT_MP_CROUCH_IDLE] = {ACT_CROUCHIDLE, ACT_CROUCHIDLE},
 		[ACT_MP_WALK] = {ACT_WALK_RIFLE, ACT_WALK_AIM_RIFLE},
-		[ACT_MP_CROUCHWALK] = {"crouch_walkall", "crouch_walkall"},
+		[ACT_MP_CROUCHWALK] = {ACT_WALK_CROUCH_RIFLE, ACT_WALK_CROUCH_RIFLE},
 		[ACT_MP_RUN] = {ACT_RUN_RIFLE, ACT_RUN_AIM_RIFLE}
 	},
 	shotgun = {
 		[ACT_MP_STAND_IDLE] = {ACT_IDLE_SMG1, ACT_IDLE_ANGRY_SHOTGUN},
-		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
+		[ACT_MP_CROUCH_IDLE] = {ACT_CROUCHIDLE, ACT_CROUCHIDLE},
 		[ACT_MP_WALK] = {ACT_WALK_RIFLE, ACT_WALK_AIM_SHOTGUN},
-		[ACT_MP_CROUCHWALK] = {"crouch_walkall", "crouch_walkall"},
+		[ACT_MP_CROUCHWALK] = {ACT_WALK_CROUCH_RIFLE, ACT_WALK_CROUCH_RIFLE},
 		[ACT_MP_RUN] = {ACT_RUN_RIFLE, ACT_RUN_AIM_SHOTGUN}
 	},
 	grenade = {
-		[ACT_MP_STAND_IDLE] = {"idle_unarmed", "man_gun"},
-		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
+		[ACT_MP_STAND_IDLE] = {"idle_unarmed", ACT_IDLE_ANGRY},
+		[ACT_MP_CROUCH_IDLE] = {ACT_CROUCHIDLE, ACT_CROUCHIDLE},
 		[ACT_MP_WALK] = {"walkunarmed_all", ACT_WALK_RIFLE},
-		[ACT_MP_CROUCHWALK] = {"crouch_walkall", "crouch_walkall"},
-		[ACT_MP_RUN] = {"runall", ACT_RUN_AIM_RIFLE}
+		[ACT_MP_CROUCHWALK] = {ACT_WALK_CROUCH_RIFLE, ACT_WALK_CROUCH_RIFLE},
+		[ACT_MP_RUN] = {ACT_RUN_AIM_RIFLE, ACT_RUN_AIM_RIFLE}
 	},
 	melee = {
-		[ACT_MP_STAND_IDLE] = {"idle_unarmed", "man_gun"},
-		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
+		[ACT_MP_STAND_IDLE] = {"idle_unarmed", ACT_IDLE_ANGRY},
+		[ACT_MP_CROUCH_IDLE] = {ACT_CROUCHIDLE, ACT_CROUCHIDLE},
 		[ACT_MP_WALK] = {"walkunarmed_all", ACT_WALK_RIFLE},
-		[ACT_MP_CROUCHWALK] = {"crouch_walkall", "crouch_walkall"},
-		[ACT_MP_RUN] = {"runall", ACT_RUN_AIM_RIFLE},
+		[ACT_MP_CROUCHWALK] = {ACT_WALK_CROUCH_RIFLE, ACT_WALK_CROUCH_RIFLE},
+		[ACT_MP_RUN] = {ACT_RUN_AIM_RIFLE, ACT_RUN_AIM_RIFLE},
 		attack = ACT_MELEE_ATTACK_SWING_GESTURE
 	},
 	glide = ACT_GLIDE
