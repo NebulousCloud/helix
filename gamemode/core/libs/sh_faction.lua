@@ -52,6 +52,19 @@ function nut.faction.loadFromDir(directory)
 			end
 
 			nut.util.include(directory.."/"..v, "shared")
+
+			if (!FACTION.name) then
+				error("Faction '"..k.."' is missing a name. You need to add a FACTION.name = \"Name\"")
+			end
+
+			if (!FACTION.desc) then
+				error("Faction '"..k.."' is missing a description. You need to add a FACTION.desc = \"Description\"")
+			end
+
+			if (!FACTION.color) then
+				error("Faction '"..k.."' is missing a color. You need to add FACTION.color = Color(1, 2, 3)")
+			end
+
 			team.SetUp(FACTION.index, FACTION.name or "Unknown", FACTION.color or Color(125, 125, 125))
 
 			if (!FACTION.models) then
