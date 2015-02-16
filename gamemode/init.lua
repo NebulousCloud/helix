@@ -39,3 +39,10 @@ end)
 -- Resources that are required for players to download are here.
 resource.AddFile("materials/nutscript/gui/vignette.png")
 resource.AddFile("resource/fonts/fontello.ttf")
+
+concommand.Add("nut_setowner", function(client, command, arguments)
+    if (!IsValid(client)) then
+        MsgC(Color(255, 0, 0), "** 'nut_setowner' has been deprecated in NutScript 1.1\n")
+        MsgC(Color(255, 0, 0), "** Instead, please install an admin mod and use that instead.\n")
+    end
+end)

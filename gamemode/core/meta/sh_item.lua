@@ -305,10 +305,18 @@ if (SERVER) then
 						curInv:remove(self.id, false, true)
 						self.invID = invID
 
+						if (self.onTransfered) then
+							self:onTransfered()
+						end
+
 						return true
 					elseif (self.invID > 0 and prevID == 0) then
 						local inventory = nut.item.inventories[0]
 						inventory[self.id] = nil
+
+						if (self.onTransfered) then
+							self:onTransfered()
+						end
 
 						return true
 					end
@@ -331,6 +339,10 @@ if (SERVER) then
 					local inventory = nut.item.inventories[0]
 					inventory[self:getID()] = self
 
+					if (self.onTransfered) then
+						self:onTransfered()
+					end
+						
 					return true
 				end
 			else
