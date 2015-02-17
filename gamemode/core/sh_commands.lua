@@ -73,6 +73,7 @@ nut.command.add("setvoicemail", {
 })
 
 nut.command.add("flaggive", {
+	adminOnly = true,
 	syntax = "<string name> [string flags]",
 	onRun = function(client, arguments)
 		local target = nut.command.findPlayer(client, arguments[1])
@@ -103,6 +104,7 @@ nut.command.add("flaggive", {
 })
 
 nut.command.add("flagtake", {
+	adminOnly = true,
 	syntax = "<string name> [string flags]",
 	onRun = function(client, arguments)
 		local target = nut.command.findPlayer(client, arguments[1])
@@ -133,6 +135,7 @@ nut.command.add("toggleraise", {
 })
 
 nut.command.add("charsetmodel", {
+	adminOnly = true,
 	syntax = "<string name> <string model>",
 	onRun = function(client, arguments)
 		if (!arguments[2]) then
@@ -216,6 +219,7 @@ nut.command.add("charaddattrib", {
 })
 
 nut.command.add("charsetname", {
+	adminOnly = true,
 	syntax = "<string name> <string model>",
 	onRun = function(client, arguments)
 		local target = nut.command.findPlayer(client, arguments[1])
@@ -239,6 +243,7 @@ nut.command.add("charsetname", {
 })
 
 nut.command.add("chargiveitem", {
+	adminOnly = true,
 	syntax = "<string name> <string item>",
 	onRun = function(client, arguments)
 		if (!arguments[2]) then
@@ -263,6 +268,7 @@ nut.command.add("chargiveitem", {
 })
 
 nut.command.add("charkick", {
+	adminOnly = true,
 	syntax = "<string name>",
 	onRun = function(client, arguments)
 		local target = nut.command.findPlayer(client, arguments[1])
