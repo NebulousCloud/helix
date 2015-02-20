@@ -66,15 +66,26 @@ end
 
 -- Called when the item first appears for a client.
 function ITEM:onSendData()
-	local inventory = nut.item.inventories[self:getData("id")]
+	local index = self:getData("id")
 
-	if (inventory) then
-		inventory:sync(self.player)
+	if (index) then
+		local inventory = nut.item.inventories[index]
+
+		if (inventory) then
+			inventory:sync(self.player)
+		else
+			local owner = self.player:getChar():getID()
+
+			nut.item.restoreInv(self:getData("id"), self.invWidth, self.invHeight, function(inventory)
+				inventory:setOwner(owner, true)
+			end)
+		end
 	else
-		local owner = self.player:getChar():getID()
+		local inventory = nut.item.inventories[self.invID]
+		local client = self.player
 
-		nut.item.restoreInv(self:getData("id"), self.invWidth, self.invHeight, function(inventory)
-			inventory:setOwner(owner, true)
+		nut.item.newInv(self.player:getChar():getID(), self.uniqueID, function(inventory)
+			self:setData("id", inventory:getID())
 		end)
 	end
 end
