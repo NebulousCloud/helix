@@ -599,7 +599,7 @@ function GM:ItemShowEntityMenu(entity)
 		end
 	end
 
-	itemTable.client = LocalPlayer()
+	itemTable.player = LocalPlayer()
 	itemTable.entity = entity
 
 	for k, v in SortedPairs(itemTable.functions) do
@@ -630,7 +630,7 @@ function GM:ItemShowEntityMenu(entity)
 		entity.nutMenuIndex = nut.menu.add(options, entity)
 	end
 
-	itemTable.client = nil
+	itemTable.player = nil
 	itemTable.entity = nil
 end
 

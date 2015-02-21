@@ -348,35 +348,37 @@ PANEL = {}
 			end
 			panel.doRightClick = function(this)
 				if (itemTable) then
-					itemTable.client = LocalPlayer()
+					itemTable.player = LocalPlayer()
 						local menu = DermaMenu()
 							for k, v in SortedPairs(itemTable.functions) do
 								if (v.onCanRun) then
 									if (v.onCanRun(itemTable) == false) then
-										itemTable.client = nil
+										itemTable.player = nil
 
 										continue
 									end
 								end
 
 								menu:AddOption(L(v.name or k), function()
-									local send = true
+									itemTable.player = LocalPlayer()
+										local send = true
 
-									if (v.onClick) then
-										send = v.onClick(itemTable)
-									end
+										if (v.onClick) then
+											send = v.onClick(itemTable)
+										end
 
-									if (v.sound) then
-										surface.PlaySound(v.sound)
-									end
+										if (v.sound) then
+											surface.PlaySound(v.sound)
+										end
 
-									if (send != false) then
-										netstream.Start("invAct", k, itemTable.id, self.invID)
-									end
+										if (send != false) then
+											netstream.Start("invAct", k, itemTable.id, self.invID)
+										end
+									itemTable.player = nil
 								end):SetImage(v.icon or "icon16/brick.png")
 							end
 						menu:Open()
-					itemTable.client = nil
+					itemTable.player = nil
 				end
 			end
 			
