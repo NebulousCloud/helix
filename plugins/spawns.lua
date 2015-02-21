@@ -13,6 +13,8 @@
     along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
+local PLUGIN = PLUGIN
+
 PLUGIN.name = "Spawns"
 PLUGIN.desc = "Spawn points for factions and classes."
 PLUGIN.author = "Chessnut"
@@ -57,8 +59,6 @@ end
 function PLUGIN:SaveSpawns()
 	self:setData(self.spawns)
 end
-
-local PLUGIN = PLUGIN
 
 nut.command.add("spawnadd", {
 	adminOnly = true,
