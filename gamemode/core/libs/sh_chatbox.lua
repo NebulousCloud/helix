@@ -153,7 +153,7 @@ if (SERVER) then
 		local class = nut.chat.classes[chatType]
 
 		if (class and class.onCanSay(speaker, text) != false) then
-			if (class.onCanHear) then
+			if (class.onCanHear and !receivers) then
 				receivers = {}
 
 				for k, v in ipairs(player.GetAll()) do
