@@ -71,7 +71,7 @@ function nut.faction.loadFromDir(directory)
 				FACTION.models = CITIZEN_MODELS
 			end
 
-			FACTION.uniqueID = niceName
+			FACTION.uniqueID = FACTION.uniqueID or niceName
 
 			for k, v in pairs(FACTION.models) do
 				if (type(v) == "string") then
