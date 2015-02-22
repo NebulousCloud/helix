@@ -394,7 +394,7 @@ do
 		dummy:Spawn()
 		dummy:SetColor(color)
 		dummy:SetMaterial(self:GetMaterial())
-		dummy:SetSkin(self:GetSkin())
+		dummy:SetSkin(self:GetSkin() or 0)
 		dummy:SetRenderMode(RENDERMODE_TRANSALPHA)
 		dummy:CallOnRemove("restoreDoor", function()
 			if (IsValid(self)) then
