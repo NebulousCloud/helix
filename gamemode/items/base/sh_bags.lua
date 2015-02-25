@@ -64,6 +64,14 @@ function ITEM:onInstanced(invID, x, y)
 	end)
 end
 
+function ITEM:getInv()
+	local index = self:getData("id")
+
+	if (index) then
+		return nut.item.inventories[index]
+	end
+end
+
 -- Called when the item first appears for a client.
 function ITEM:onSendData()
 	local index = self:getData("id")
@@ -104,8 +112,18 @@ end
 function ITEM:onCanBeTransfered(oldInventory, newInventory)
 	local index = self:getData("id")
 
-	if (newInventory and newInventory:getID() == index) then
-		return false
+	if (newInventory) then
+		local index2 = newInventory:getID()
+
+		if (index == index2) then
+			return false
+		end
+
+		for k, v in pairs(self:getInv():getItems()) do
+			if (v:getData("id") == index2) then
+				return false
+			end
+		end
 	end
 	
 	return !newInventory or newInventory:getID() != oldInventory:getID()

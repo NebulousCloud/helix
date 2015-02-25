@@ -22,6 +22,10 @@ ITEM.desc = ITEM.desc or "An item that is undefined."
 ITEM.id = ITEM.id or 0
 ITEM.uniqueID = "undefined"
 
+function ITEM:__eq(other)
+	return self:getID() == other:getID()
+end
+
 function ITEM:__tostring()
 	return "item["..self.uniqueID.."]["..self.id.."]"
 end
