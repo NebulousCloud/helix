@@ -32,6 +32,7 @@ end
 function GM:ScoreboardHide()
 	if (IsValid(nut.gui.score)) then
 		nut.gui.score:SetVisible(false)
+		CloseDermaMenus()
 	end
 
 	gui.EnableScreenClicker(false)
@@ -759,6 +760,14 @@ function GM:OnCharInfoSetup(infoPanel)
 			end
 		end
 	end
+end
+
+function GM:ShowPlayerOptions(client, options)
+	options["viewProfile"] = {"icon16/user.png", function()
+		if (IsValid(client)) then
+			client:ShowProfile()
+		end	
+	end}
 end
 
 function GM:DrawNutModelView(panel, ent)

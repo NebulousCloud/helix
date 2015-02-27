@@ -143,12 +143,22 @@ local PANEL = {}
 		slot.model:SetModel(client:GetModel(), client:GetSkin())
 		slot.model:SetSize(64, 64)
 		slot.model.PaintOver = function() end
-		slot.model:SetToolTip(L("sbOptions", client:Name()))
 		slot.model.OnMousePressed = function()
 			local menu = DermaMenu()
-				hook.Run("ShowPlayerOptions", client, menu)
+				local options = {}
+
+				hook.Run("ShowPlayerOptions", client, options)
+
+				if (table.Count(options) > 0) then
+					for k, v in SortedPairs(options) do
+						menu:AddOption(L2(k), v[2]):SetImage(v[1])
+					end
+				end
 			menu:Open()
+
+			RegisterDermaMenuForClose(menu)
 		end
+		slot.model:SetToolTip(L("sbOptions", client:Name()))
 
 		slot.name = slot:Add("DLabel")
 		slot.name:SetText(client:Name())
@@ -200,6 +210,7 @@ local PANEL = {}
 
 			if (self.lastModel != model) then
 				self.model:SetModel(client:GetModel(), client:GetSkin())
+				self.model:SetToolTip(L("sbOptions", client:Name()))
 				self.lastModel = model
 			end
 
@@ -216,6 +227,11 @@ local PANEL = {}
 		parent:SizeToChildren(false, true)
 
 		return slot
+	end
+
+	function PANEL:OnRemove()
+		print("Close")
+		CloseDermaMenus()
 	end
 
 	function PANEL:Paint(w, h)

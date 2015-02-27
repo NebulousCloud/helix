@@ -220,5 +220,6 @@ LANGUAGE = {
 	unequipTip = "Unequips the item.",
 	consumables = "Consumables",
 	plyNotValid = "You are not looking at a valid player.",
-	restricted = "You have been restrained."
+	restricted = "You have been restrained.",
+	viewProfile = "View Steam Profile"
 }
