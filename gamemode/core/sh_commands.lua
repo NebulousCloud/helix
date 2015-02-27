@@ -388,8 +388,9 @@ nut.command.add("charsetmoney", {
 	syntax = "<string target> <number amount>",
 	onRun = function(client, arguments)
 		local amount = tonumber(arguments[2])
+
 		if (!amount or !isnumber(amount) or amount <= 0) then
-			return L("invalidArg", client, 2)
+			return "@invalidArg", 2
 		end
 
 		local target = nut.command.findPlayer(client, arguments[1])
@@ -410,22 +411,19 @@ nut.command.add("dropmoney", {
 	syntax = "<number amount>",
 	onRun = function(client, arguments)
 		local amount = tonumber(arguments[1])
+
 		if (!amount or !isnumber(amount) or amount <= 0) then
-			return L("invalidArg", client, 1)
+			return "@invalidArg", 1
 		end
 
 		if (!client:getChar():hasMoney(amount)) then
 			return
 		end
 
-		local data = {}
-			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector()*96
-			data.filter = client
-		local trace = util.TraceLine(data)
-		local pos = trace.HitPos
+		amount = math.Round(amount)
 
-		nut.currency.spawn(pos, math.Round(amount))
+		client:getChar():takeMoney(amount)
+		nut.currency.spawn(client:getItemDropPos(), amount)
 	end
 })
 
