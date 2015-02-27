@@ -721,17 +721,13 @@ do
 	playerMeta.SteamName = playerMeta.steamName
 
 	function playerMeta:getChar()
-		return nut.char.loaded[self:getNetVar("char")]
+		return nut.char.loaded[self.getNetVar(self, "char")]
 	end
 
 	function playerMeta:Name()
-		local character = self:getChar()
-
-		if (character) then
-			return character:getName()
-		else
-			return self:steamName()
-		end
+		local character = self.getChar(self)
+		
+		return character and character.getName(character) or self.steamName(self)
 	end
 
 	playerMeta.Nick = playerMeta.Name
