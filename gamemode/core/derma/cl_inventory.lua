@@ -41,22 +41,18 @@ function PANEL:Init()
 end
 
 function PANEL:PaintOver(w, h)
-	local inventory = self.inv
+	local itemTable = nut.item.instances[self.itemID]
 
-	if (inventory) then
-		local itemTable = nut.item.instances[self.itemID]
+	if (self.waiting and self.waiting > CurTime()) then
+		local wait = (self.waiting - CurTime()) / self.waitingTime
+		surface.SetDrawColor(255, 255, 255, 100*wait)
+		surface.DrawRect(2, 2, w - 4, h - 4)
+	end
 
-		if (self.waiting and self.waiting > CurTime()) then
-			local wait = (self.waiting - CurTime()) / self.waitingTime
-			surface.SetDrawColor(255, 255, 255, 100*wait)
-			surface.DrawRect(2, 2, w - 4, h - 4)
-		end
+	if (itemTable and itemTable.paintOver) then
+		local w, h = self:GetSize()
 
-		if (itemTable and itemTable.paintOver) then
-			local w, h = self:GetSize()
-
-			itemTable.paintOver(self, itemTable, w, h)
-		end
+		itemTable.paintOver(self, itemTable, w, h)
 	end
 end
 

@@ -447,7 +447,8 @@ do
 
 						if (IsValid(icon)) then
 							icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, item:getDesc()))
-
+							icon.itemID = item.id
+							
 							panel.panels[item.id] = icon
 						end
 					end
