@@ -253,9 +253,20 @@ nut.command.add("chargiveitem", {
 		local target = nut.command.findPlayer(client, arguments[1])
 
 		if (IsValid(target) and target:getChar()) then
-			local inv = target:getChar():getInv()
+			local uniqueID = arguments[2]:lower()
 
-			local succ, err = target:getChar():getInv():add(arguments[2])
+			if (!nut.item.list[uniqueID]) then
+				for k, v in SortedPairs(nut.item.list) do
+					if (nut.util.stringMatches(v.name, uniqueID)) then
+						uniqueID = k
+
+						break
+					end
+				end
+			end
+
+			local inv = target:getChar():getInv()
+			local succ, err = target:getChar():getInv():add(uniqueID)
 
 			if (succ) then
 				target:notify("Item successfully created.")

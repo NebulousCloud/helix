@@ -116,7 +116,7 @@ function ITEM:setData(key, value, receivers, noSave, noCheckEntity)
 	end
 
 	if (receivers != false) then
-		if (self:getOwner()) then
+		if (receivers or self:getOwner()) then
 			netstream.Start(receivers or self:getOwner(), "invData", self:getID(), key, value)
 		end
 	end

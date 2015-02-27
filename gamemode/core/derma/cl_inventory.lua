@@ -44,7 +44,7 @@ function PANEL:PaintOver(w, h)
 	local inventory = self.inv
 
 	if (inventory) then
-		local itemTable = inventory:getItemAt(self.gridX, self.gridY)
+		local itemTable = nut.item.instances[self.itemID]
 
 		if (self.waiting and self.waiting > CurTime()) then
 			local wait = (self.waiting - CurTime()) / self.waitingTime
@@ -122,6 +122,7 @@ PANEL = {}
 
 						if (IsValid(icon)) then
 							icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, item:getDesc()))
+							icon.itemID = item.id
 
 							self.panels[item.id] = icon
 						end

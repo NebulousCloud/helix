@@ -284,7 +284,7 @@ function nut.item.new(uniqueID, id)
 	local stockItem = nut.item.list[uniqueID]
 
 	if (stockItem) then
-		local item = setmetatable({data = {}}, {__index = stockItem})
+		local item = setmetatable({}, {__index = stockItem})
 		item.id = id
 		item.data = {}
 
