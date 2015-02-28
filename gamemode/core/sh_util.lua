@@ -469,12 +469,12 @@ do
 
 	-- Returns whether or not the player has their weapon raised.
 	function playerMeta:isWepRaised()
-		local weapon = self:GetActiveWeapon()
+		local weapon = self.GetActiveWeapon(self)
 
 		-- Some weapons may have their own properties.
 		if (IsValid(weapon)) then
 			-- If their weapon is always raised, return true.
-			if (weapon.IsAlwaysRaised or ALWAYS_RAISED[weapon:GetClass()]) then
+			if (weapon.IsAlwaysRaised or ALWAYS_RAISED[weapon.GetClass(weapon)]) then
 				return true
 			-- Return false if always lowered.
 			elseif (weapon.IsAlwaysLowered or weapon.NeverRaised) then
@@ -483,17 +483,19 @@ do
 		end
 
 		-- If the player has been forced to have their weapon lowered.
-		if (self:getNetVar("restricted")) then
+		if (self.getNetVar(self, "restricted")) then
 			return false
 		end
 
 		-- Returns what the gamemode decides.
-		return self:getNetVar("raised", false)
+		return self.getNetVar(self, "raised", false)
 	end
 
+	local vectorLength2D = FindMetaTable("Vector").Length2D
+	
 	-- Checks if the player is running by seeing if the speed is faster than walking.
 	function playerMeta:isRunning()
-		return self:GetVelocity():Length2D() > (self:GetWalkSpeed() + 10)
+		return vectorLength2D(self.GetVelocity(self)) > (self.GetWalkSpeed(self) + 10)
 	end
 
 	-- Checks if the player has a female model.

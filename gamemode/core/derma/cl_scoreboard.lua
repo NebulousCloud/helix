@@ -46,9 +46,12 @@ local PANEL = {}
 			surface.DrawRect(0, 0, w, h)
 		end
 
-		self.scroll = self:Add("DListLayout")
+		self.scroller = self:Add("DScrollPanel")
+		self.scroller:Dock(FILL)
+		self.scroller:DockMargin(1, 0, 1, 0)
+
+		self.scroll = self.scroller:Add("DListLayout")
 		self.scroll:Dock(FILL)
-		self.scroll:DockMargin(1, 0, 1, 0)
 
 		self.nextUpdate = 0
 		self.players = {}
@@ -104,7 +107,7 @@ local PANEL = {}
 	end
 
 	function PANEL:Think()
-		if (self.nextUpdate < CurTime()) then
+		if ((self.nextUpdate or 0) < CurTime()) then
 			for k, v in ipairs(player.GetAll()) do
 				if (v:getChar()) then
 					if (!IsValid(v:getChar().nutScoreSlot)) then

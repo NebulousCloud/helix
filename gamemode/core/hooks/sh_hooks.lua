@@ -17,7 +17,7 @@ function GM:PlayerNoClip(client)
 	return client:IsAdmin()
 end
 
-HOLDTYPE_TRANSLATOR = {}
+local HOLDTYPE_TRANSLATOR = {}
 HOLDTYPE_TRANSLATOR[""] = "normal"
 HOLDTYPE_TRANSLATOR["physgun"] = "smg"
 HOLDTYPE_TRANSLATOR["ar2"] = "smg"
@@ -34,7 +34,7 @@ HOLDTYPE_TRANSLATOR["camera"] = "smg"
 HOLDTYPE_TRANSLATOR["magic"] = "normal"
 HOLDTYPE_TRANSLATOR["revolver"] = "pistol"
 
-PLAYER_HOLDTYPE_TRANSLATOR = {}
+local PLAYER_HOLDTYPE_TRANSLATOR = {}
 PLAYER_HOLDTYPE_TRANSLATOR[""] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["fist"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["pistol"] = "normal"
@@ -47,17 +47,22 @@ PLAYER_HOLDTYPE_TRANSLATOR["knife"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["duel"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["bugbait"] = "normal"
 
+local getModelClass = nut.anim.getModelClass
+local IsValid = IsValid
+local string = string
+local type = type
+
 function GM:TranslateActivity(client, act)
-	local model = client:GetModel():lower()
-	local class = nut.anim.getModelClass(model)
-	local weapon = client:GetActiveWeapon()
+	local model = string.lower(client.GetModel(client))
+	local class = getModelClass(model)
+	local weapon = client.GetActiveWeapon(client)
 
 	if (class == "player") then
-		if (IsValid(weapon) and !client:isWepRaised() and client:OnGround()) then
-			if (model:find("zombie")) then
+		if (IsValid(weapon) and !client.isWepRaised(client) and client.OnGround(client)) then
+			if (string.find(model, "zombie")) then
 				local tree = nut.anim.zombie
 
-				if (model:find("fast")) then
+				if (string.find(model, "fast")) then
 					tree = nut.anim.fastZombie
 				end
 
@@ -66,7 +71,7 @@ function GM:TranslateActivity(client, act)
 				end
 			end
 
-			local holdType = weapon.HoldType or weapon:GetHoldType()
+			local holdType = weapon.HoldType or weapon.GetHoldType(weapon)
 			local value = PLAYER_HOLDTYPE_TRANSLATOR[holdType] or "passive"
 			local tree = nut.anim.player[value]
 
@@ -75,7 +80,7 @@ function GM:TranslateActivity(client, act)
 			end
 		end
 
-		return self.BaseClass:TranslateActivity(client, act)
+		return self.BaseClass.TranslateActivity(self, client, act)
 	end
 
 	local tree = nut.anim[class]
@@ -83,53 +88,48 @@ function GM:TranslateActivity(client, act)
 	if (tree) then
 		local subClass = "normal"
 
-		if (client:InVehicle()) then
-			local vehicle = client:GetVehicle()
+		if (client.InVehicle(client)) then
+			local vehicle = client.GetVehicle(client)
+			local class = vehicle:isChair() and "chair" or vehicle:GetClass()
 
-			if (IsValid(vehicle)) then
-				local class = vehicle:isChair() and "chair" or vehicle:GetClass()
+			if (tree.vehicle and tree.vehicle[class]) then
+				local act = tree.vehicle[class][1]
+				local fixvec = tree.vehicle[class][2]
+				--local fixang = tree.vehicle[class][3]
 
-				if (tree.vehicle and tree.vehicle[class]) then
-					local act = tree.vehicle[class][1]
-					local fixvec = tree.vehicle[class][2]
-					--local fixang = tree.vehicle[class][3]
+				if (fixvec) then
+					client.ManipulateBonePosition(client, 0, fixvec)
+				end
 
-					if (fixvec) then
-						client:ManipulateBonePosition(0, fixvec)
-					end
-
-					if (type(act) == "string") then
-						client.CalcSeqOverride = client:LookupSequence(act)
-
-						return
-					else
-						return act
-					end
-				else
-					act = tree.normal[ACT_MP_CROUCH_IDLE][1]
-
-					if (type(act) == "string") then
-						client.CalcSeqOverride = client:LookupSequence(act)
-					end
+				if (type(act) == "string") then
+					client.CalcSeqOverride = client.LookupSequence(client, act)
 
 					return
+				else
+					return act
 				end
+			else
+				act = tree.normal[ACT_MP_CROUCH_IDLE][1]
+
+				if (type(act) == "string") then
+					client.CalcSeqOverride = client:LookupSequence(act)
+				end
+
+				return
 			end
-		end
-		
-		if (client:OnGround()) then
-			client:ManipulateBonePosition(0, Vector())
+		elseif (client.OnGround(client)) then
+			client.ManipulateBonePosition(client, 0, vector_origin)
 
 			if (IsValid(weapon)) then
-				subClass = weapon.HoldType or weapon:GetHoldType()
+				subClass = weapon.HoldType or weapon.GetHoldType(weapon)
 				subClass = HOLDTYPE_TRANSLATOR[subClass] or subClass
 			end
 
 			if (tree[subClass] and tree[subClass][act]) then
-				local act2 = tree[subClass][act][client:isWepRaised() and 2 or 1]
+				local act2 = tree[subClass][act][client.isWepRaised(client) and 2 or 1]
 
 				if (type(act2) == "string") then
-					client.CalcSeqOverride = client:LookupSequence(act2)
+					client.CalcSeqOverride = client.LookupSequence(client, act2)
 
 					return
 				end
