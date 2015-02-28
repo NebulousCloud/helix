@@ -80,7 +80,7 @@ function GM:TranslateActivity(client, act)
 			end
 		end
 
-		return self.BaseClass.TranslateActivity(self, client, act)
+		return self.BaseClass.TranslateActivity(self.BaseClass, client, act)
 	end
 
 	local tree = nut.anim[class]
