@@ -280,6 +280,7 @@ PANEL = {}
 			end
 
 			netstream.Start("bizBuy", self.itemData)
+			self.itemData = {}
 
 			self.items:Remove()
 			self.data:Remove()
