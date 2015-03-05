@@ -326,16 +326,17 @@ do
 			noSpaceAfter = true,
 			filter = "ooc"
 		})
+
+		-- Roll information in chat.
+		nut.chat.register("roll", {
+			format = "%s has rolled %s.",
+			color = Color(155, 111, 176),
+			filter = "actions",
+			font = "nutChatFontItalics",
+			onCanHear = nut.config.get("chatRange", 280)
+		})
 	end)
 end
-
--- Roll information in chat.
-nut.chat.register("roll", {
-	format = "%s has rolled %s.",
-	color = Color(155, 111, 176),
-	filter = "actions",
-	font = "nutChatFontItalics"
-})
 
 -- Private messages between players.
 nut.chat.register("pm", {
