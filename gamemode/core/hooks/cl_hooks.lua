@@ -47,25 +47,25 @@ function GM:LoadFonts(font)
 
 	surface.CreateFont("nutTitleFont", {
 		font = font,
-		size = 72,
+		size = ScreenScale(30),
 		weight = 1000
 	})
 
 	surface.CreateFont("nutSubTitleFont", {
 		font = font,
-		size = 36,
+		size = ScreenScale(18),
 		weight = 500
 	})
 
 	surface.CreateFont("nutMenuButtonFont", {
 		font = font,
-		size = 36,
+		size = ScreenScale(14),
 		weight = 1000
 	})
 
 	surface.CreateFont("nutMenuButtonLightFont", {
 		font = font,
-		size = 36,
+		size = ScreenScale(14),
 		weight = 200
 	})
 
@@ -846,4 +846,9 @@ function GM:PostPlayerDraw(client)
 			end
 		end
 	end
+end
+
+function GM:ScreenResolutionChanged(oldW, oldH)
+	RunConsoleCommand("fixchatplz")
+	hook.Run("LoadFonts", nut.config.get("font"))
 end
