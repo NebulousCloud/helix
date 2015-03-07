@@ -46,16 +46,15 @@ local PANEL = {}
 			surface.DrawRect(0, 0, w, h)
 		end
 
-		self.scroller = self:Add("DScrollPanel")
-		self.scroller:Dock(FILL)
-		self.scroller:DockMargin(1, 0, 1, 0)
-
-		self.scroll = self.scroller:Add("DListLayout")
+		self.scroll = self:Add("DScrollPanel")
 		self.scroll:Dock(FILL)
+		self.scroll:DockMargin(1, 0, 1, 0)
+		self.scroll.VBar:SetWide(0)
 
 		self.nextUpdate = 0
 		self.players = {}
 		self.slots = {}
+		self.i = {}
 
 		self:populate()
 	end
@@ -98,7 +97,7 @@ local PANEL = {}
 			self.teams[k] = list
 			self.tallies[k] = team.NumPlayers(k)
 
-			self.i = 0
+			self.i[k] = 0
 
 			for k, v in ipairs(team.GetPlayers(k)) do
 				self:addPlayer(v, list)
@@ -129,7 +128,13 @@ local PANEL = {}
 	end
 
 	function PANEL:addPlayer(client, parent)
-		if (!client:getChar() and !IsValid(parent)) then return end
+		if (!client:getChar()) then return end
+
+		if (!IsValid(parent)) then
+			return self:populate()
+		end
+
+		local index = client:Team()
 
 		parent:SetTall(28)
 
@@ -137,7 +142,7 @@ local PANEL = {}
 		slot:Dock(TOP)
 		slot:SetTall(64)
 		slot:DockMargin(0, 0, 0, 1)
-		slot.Paint = paintFunctions[self.i]
+		slot.Paint = paintFunctions[self.i[index] or 0]
 		slot.character = client:getChar()
 
 		client:getChar().nutScoreSlot = slot
@@ -223,17 +228,17 @@ local PANEL = {}
 			end
 		end
 
-		self.i = math.abs(self.i - 1)
+		self.i[index] = math.abs(self.i[index] - 1)
 		self.slots[#self.slots + 1] = slot
 
 		parent:SetVisible(true)
 		parent:SizeToChildren(false, true)
+		parent:InvalidateLayout(true)
 
 		return slot
 	end
 
 	function PANEL:OnRemove()
-		print("Close")
 		CloseDermaMenus()
 	end
 

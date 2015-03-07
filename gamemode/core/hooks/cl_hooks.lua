@@ -536,7 +536,17 @@ function GM:DrawEntityInfo(entity, alpha)
 
 			charInfo = {}
 			charInfo[1] = {hookRun("GetDisplayedName", entity) or character.getName(character), teamGetColor(entity.Team(entity))}
-			charInfo[2] = {character.getDesc(character)}
+
+			local description = character.getDesc(character)
+
+			if (description != entity.nutDescCache) then
+				entity.nutDescCache = description
+				entity.nutDescLines = nut.util.wrapText(description, ScrW() / 3, "nutSmallFont")
+			end
+
+			for i = 1, #entity.nutDescLines do
+				charInfo[#charInfo + 1] = {entity.nutDescLines[i]}
+			end
 
 			hookRun("DrawCharInfo", entity, character, charInfo)
 
