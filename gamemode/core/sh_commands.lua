@@ -412,7 +412,7 @@ nut.command.add("charsetmoney", {
 			if (char and amount) then
 				amount = math.Round(amount)
 				char:setMoney(amount)
-				clientnotifyLocalized("setMoney", target:Name(), nut.currency.get(amount))
+				client:notifyLocalized("setMoney", target:Name(), nut.currency.get(amount))
 			end
 		end
 	end
