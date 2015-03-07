@@ -159,7 +159,7 @@ local PANEL = {}
 
 				if (table.Count(options) > 0) then
 					for k, v in SortedPairs(options) do
-						menu:AddOption(L2(k), v[2]):SetImage(v[1])
+						menu:AddOption(L(k), v[2]):SetImage(v[1])
 					end
 				end
 			menu:Open()

@@ -310,7 +310,13 @@ function GM:GetDefaultCharName(client, faction)
 end
 
 function GM:CanPlayerUseChar(client, char)
-	if (char:getData("banned")) then
+	local banned = char:getData("banned")
+
+	if (banned) then
+		if (type(banned) == "number" and banned < os.time()) then
+			return
+		end
+
 		return false, "@charBanned"
 	end
 end
