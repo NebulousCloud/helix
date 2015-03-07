@@ -1,17 +1,3 @@
---[[
-    NutScript is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    NutScript is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
---]]
 
 local PANEL = {}
 
@@ -19,16 +5,29 @@ AccessorFunc( PANEL, "m_bHangOpen", "HangOpen" )
 
 
 function PANEL:Init()
+
+	--
+	-- This makes it so that when you're hovering over this panel
+	-- you can `click` on the world. Your viewmodel will aim etc.
+	--
 	self:SetWorldClicker( true )
 
 	self.Canvas = vgui.Create( "DCategoryList", self )
 	self.m_bHangOpen = false
+	
+	--self.Canvas:EnableVerticalScrollbar( true )
+	--self.Canvas:SetSpacing( 0 )
+	--self.Canvas:SetPadding( 5 )
+	--self.Canvas:SetDrawBackground( false )
+	
 end
+
 
 function PANEL:Open()
 
 	self:SetHangOpen( false )
 	
+	-- If the spawn menu is open, try to close it..
 	if ( g_SpawnMenu:IsVisible() ) then
 		g_SpawnMenu:Close( true )
 	end
@@ -46,7 +45,11 @@ function PANEL:Open()
 
 	local bShouldShow = true;
 
+	-- TODO: Any situation in which we shouldn't show the tool menu on the context menu?
+	
+	-- Set up the active panel..
 	if ( bShouldShow && IsValid( spawnmenu.ActiveControlPanel() ) ) then
+
 		self.OldParent = spawnmenu.ActiveControlPanel():GetParent()
 		self.OldPosX, self.OldPosY = spawnmenu.ActiveControlPanel():GetPos()
 		spawnmenu.ActiveControlPanel():SetParent( self )
@@ -54,8 +57,11 @@ function PANEL:Open()
 		self.Canvas:AddItem( spawnmenu.ActiveControlPanel() )
 		self.Canvas:Rebuild()
 		self.Canvas:SetVisible( true )
+
 	else
+
 		self.Canvas:SetVisible( false )
+
 	end
 	
 	self:InvalidateLayout( true )
@@ -86,7 +92,7 @@ end
 
 function PANEL:PerformLayout()
 	
-	self:SetPos( 0, 0 )
+	self:SetPos( 0, -32 )
 	self:SetSize( ScrW(), ScrH() )
 
 	self.Canvas:SetWide( 311 )
@@ -126,6 +132,8 @@ end
 
 
 function PANEL:RestoreControlPanel()
+
+	-- Restore the active panel
 	if ( !spawnmenu.ActiveControlPanel() ) then return end
 	if ( !self.OldParent ) then return end
 	
@@ -133,11 +141,19 @@ function PANEL:RestoreControlPanel()
 	spawnmenu.ActiveControlPanel():SetPos( self.OldPosX, self.OldPosY )
 	
 	self.OldParent = nil
+
 end
 
+--
+-- Note here: EditablePanel is important! Child panels won't be able to get
+-- keyboard input if it's a DPanel or a Panel. You need to either have an EditablePanel
+-- or a DFrame (which is derived from EditablePanel) as your first panel attached to the system.
+--
 vgui.Register( "ContextMenu", PANEL, "EditablePanel" )
 
+
 function CreateContextMenu()
+
 	if ( IsValid( g_ContextMenu ) ) then
 		g_ContextMenu:Remove()
 		g_ContextMenu = nil
@@ -146,6 +162,10 @@ function CreateContextMenu()
 	g_ContextMenu = vgui.Create( "ContextMenu" )
 	g_ContextMenu:SetVisible( false )
 	
+	--
+	-- We're blocking clicks to the world - but we don't want to
+	-- so feed clicks to the proper functions..
+	--
 	g_ContextMenu.OnMousePressed = function( p, code )
 		hook.Run( "GUIMousePressed", code, gui.ScreenToVector( gui.MousePos() ) )
 	end
@@ -154,24 +174,81 @@ function CreateContextMenu()
 	end
 	
 	hook.Run( "ContextMenuCreated", g_ContextMenu )
+
+
+	local IconLayout = g_ContextMenu:Add( "DIconLayout" )
+	IconLayout:Dock( LEFT )
+	IconLayout:SetWorldClicker( true )
+	IconLayout:SetBorder( 8 )
+	IconLayout:SetSpaceX( 8 )
+	IconLayout:SetSpaceY( 8 )
+	IconLayout:SetWide( 200 )
+	IconLayout:SetLayoutDir( LEFT )
+
+	for k, v in pairs( list.Get( "DesktopWindows" ) ) do
+		
+		local icon = IconLayout:Add( "DButton" )
+		icon:SetText( "" )
+		icon:SetSize( 80, 82 )
+		icon.Paint = function()end
+
+		local label = icon:Add( "DLabel" )
+		label:Dock( BOTTOM )
+		label:SetText( v.title )
+		label:SetContentAlignment( 5 )
+		label:SetTextColor( Color( 255, 255, 255, 255 ) )
+		label:SetExpensiveShadow( 1, Color( 0, 0, 0, 200 ) )
+
+		local image = icon:Add( "DImage" )
+		image:SetImage( v.icon )
+		image:SetSize( 64, 64 )
+		image:Dock( TOP )
+		image:DockMargin( 8, 0, 8, 0 )
+
+		icon.DoClick = function()
+
+			--
+			-- v might have changed using autorefresh so grab it again
+			--
+			local newv = list.Get( "DesktopWindows" )[ k ]
+
+			if ( v.onewindow ) then
+				if ( IsValid( icon.Window ) ) then icon.Window:Center() return end
+			end
+
+			-- Make the window
+			icon.Window = g_ContextMenu:Add( "DFrame" )
+			icon.Window:SetSize( newv.width, newv.height )
+			icon.Window:SetTitle( newv.title )
+			icon.Window:Center()
+
+			newv.init( icon, icon.Window )
+
+		end
+
+	end
+
 end
 
+
 function GM:OnContextMenuOpen()
+
+	-- Let the gamemode decide whether we should open or not..
 	if ( !hook.Call( "ContextMenuOpen", GAMEMODE ) ) then return end
 		
 	if ( IsValid( g_ContextMenu ) && !g_ContextMenu:IsVisible() ) then
 		g_ContextMenu:Open()
+
+		vgui.Create("nutQuick")
+
 		menubar.ParentTo( g_ContextMenu )
 	end
-
-	vgui.Create("nutQuick", g_ContextMenu)
-
-	for k, v in ipairs(nut.bar.list) do
-		v.visible = true
-	end
+	
 end
 
+
 function GM:OnContextMenuClose()
+
 	if ( IsValid( g_ContextMenu ) ) then
 		g_ContextMenu:Close()
 	end
@@ -179,81 +256,43 @@ function GM:OnContextMenuClose()
 	if (IsValid(nut.gui.quick)) then
 		nut.gui.quick:Remove()
 	end
-
-	for k, v in ipairs(nut.bar.list) do
-		v.visible = nil
-	end
 end
 
-
-
-
-local PANEL = {}
-
-AccessorFunc( PANEL, "m_bBackground", 			"PaintBackground",	FORCE_BOOL )
-AccessorFunc( PANEL, "m_bBackground", 			"DrawBackground", 	FORCE_BOOL )
-AccessorFunc( PANEL, "m_bIsMenuComponent", 		"IsMenu", 			FORCE_BOOL )
-
-AccessorFunc( PANEL, "m_bDisabled", 	"Disabled" )
-AccessorFunc( PANEL, "m_bgColor", 		"BackgroundColor" )
-
-Derma_Hook( PANEL, "Paint", "Paint", "MenuBar" )
-
---[[---------------------------------------------------------
-	
------------------------------------------------------------]]
-function PANEL:Init()
-
-	self:Dock( TOP )
-	self:SetTall( 24 )
-	self:SetDrawBackground(false)
-	self.Menus = {}
-
-end
-
-function PANEL:Paint()
-end
-
-function PANEL:GetOpenMenu()
-
-	for k, v in pairs( self.Menus ) do
-		if ( v:IsVisible() ) then return v end
-	end
-	
-	return nil
-
-end
-
-function PANEL:AddOrGetMenu( label )
-
-	if ( self.Menus[ label ] ) then return self.Menus[ label ] end
-	return self:AddMenu( label )
-
-end
-
-function PANEL:AddMenu( label )
+DMenuBar.AddMenu = function( self, label )
 
 	local m = DermaMenu()
-		m:SetDeleteSelf( true )
+		m:SetDeleteSelf( false )
 		m:SetDrawColumn( true )
 		m:Hide()
 	self.Menus[ label ] = m
-
+	
+	local b = self:Add( "DButton" )
+	b:SetText( label )
+	b:Dock( LEFT )
+	b:SetTextColor(color_black)
+	b:DockMargin( 5, 0, 0, 0 )
+	b:SetIsMenu( true )
+	b:SetDrawBackground( false )
+	b:SizeToContentsX( 16 )
+	b.DoClick = function() 
+	
+		if ( m:IsVisible() ) then
+			m:Hide() 
+			return 
+		end
+	
+		local x, y = b:LocalToScreen( 0, 0 )
+		m:Open( x, y + b:GetTall(), false, b )
+		
+	end
+	
+	b.OnCursorEntered = function()
+		local opened = self:GetOpenMenu()
+		if ( !IsValid( opened ) || opened == m ) then return end
+		opened:Hide()
+		b:DoClick()
+	end
+	
 	return m
 
 end
-
-function PANEL:OnRemove()
-	for id, pnl in pairs( self.Menus ) do
-		pnl:Remove()
-	end
-end
-
---[[---------------------------------------------------------
-   Name: GenerateExample
------------------------------------------------------------]]
-function PANEL:GenerateExample( ClassName, PropertySheet, Width, Height )
-end
-
-
-derma.DefineControl( "DMenuBar", "", PANEL, "DPanel" )

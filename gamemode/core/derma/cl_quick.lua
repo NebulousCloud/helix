@@ -21,7 +21,9 @@ local PANEL = {}
 		self:SetPos(ScrW() - 36, -36)
 		self:MakePopup()
 		self:SetKeyBoardInputEnabled(false)
-
+		self:SetZPos(999)
+		self:SetMouseInputEnabled(true)
+		
 		self.title = self:Add("DLabel")
 		self.title:SetTall(36)
 		self.title:Dock(TOP)
