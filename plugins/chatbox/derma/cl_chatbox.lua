@@ -221,6 +221,7 @@ local PANEL = {}
 		local name = L(filter)
 
 		local tab = self.tabs:Add("DButton")
+		tab:SetFont("nutChatFont")
 		tab:SetText(name:upper())
 		tab:SizeToContents()
 		tab:DockMargin(0, 0, 3, 0)
@@ -228,7 +229,6 @@ local PANEL = {}
 		tab:Dock(LEFT)
 		tab:SetTextColor(color_white)
 		tab:SetExpensiveShadow(1, Color(0, 0, 0, 200))
-		tab:SetFont("nutChatFont")
 		tab.Paint = PaintFilterButton
 		tab.DoClick = function(this)
 			this.active = !this.active
