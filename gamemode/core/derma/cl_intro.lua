@@ -99,7 +99,7 @@ local PANEL = {}
 		end
 		self.cover:SetPos(-100, 0)
 
-		timer.Simple(45, function()
+		timer.Simple(5, function()
 			if (IsValid(self)) then
 				self:addContinue()
 			end

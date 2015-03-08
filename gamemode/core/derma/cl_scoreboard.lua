@@ -109,7 +109,7 @@ local PANEL = {}
 		if ((self.nextUpdate or 0) < CurTime()) then
 			for k, v in ipairs(player.GetAll()) do
 				if (v:getChar()) then
-					if (!IsValid(v:getChar().nutScoreSlot)) then
+					if (!IsValid(v.nutScoreSlot)) then
 						local teamID = v:Team()
 
 						self:addPlayer(v, self.teams[teamID])
@@ -129,6 +129,7 @@ local PANEL = {}
 
 	function PANEL:addPlayer(client, parent)
 		if (!client:getChar()) then return end
+		if (IsValid(client.nutScoreSlot)) then client.nutScoreSlot:Remove() end
 
 		if (!IsValid(parent)) then
 			return self:populate()
@@ -145,7 +146,7 @@ local PANEL = {}
 		slot.Paint = paintFunctions[self.i[index] or 0]
 		slot.character = client:getChar()
 
-		client:getChar().nutScoreSlot = slot
+		client.nutScoreSlot = slot
 
 		slot.model = slot:Add("SpawnIcon")
 		slot.model:SetModel(client:GetModel(), client:GetSkin())
