@@ -233,12 +233,10 @@ function META:getReceiver()
 	end
 end
 
-function META:getItemByID(id)
-	for k, v in pairs(self.slots) do
-		for k2, v2 in pairs(v) do
-			if (v2.id == id) then
-				return k, k2
-			end
+function META:getItemByID(id, onlyMain)
+	for k, v in pairs(self:getItems(onlyMain)) do
+		if (v.id == id) then
+			return v
 		end
 	end
 end
@@ -289,20 +287,16 @@ function META:getBags()
 end
 
 function META:matchData(id, matchData)
-	local x, y = self:getItemByID(id)
+	local item = self:getItemByID(id)
 
-	if (x and y) then
-		local item = self:getItemAt(x, y)
-
-		if (item) then
-			for dataKey, dataVal in pairs(data) do
-				if (itemData[dataKey] != dataVal) then
-					return false
-				end
+	if (item) then
+		for dataKey, dataVal in pairs(data) do
+			if (itemData[dataKey] != dataVal) then
+				return false
 			end
-
-			return true
 		end
+
+		return true
 	end
 end
 
