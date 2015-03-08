@@ -721,7 +721,7 @@ end
 
 function GM:ShouldDrawLocalPlayer(client)
 	if (nut.gui.char:IsVisible()) then
-		return true
+		return false
 	end
 end
 
