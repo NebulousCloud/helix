@@ -523,7 +523,7 @@ local PANEL = {}
 		if (source:find("%S")) then
 			local function callback(music, errorID, fault)
 				if (music) then
-					music:SetVolume(0.33)
+					music:SetVolume(0.5)
 
 					nut.menuMusic = music
 					nut.menuMusic:Play()
@@ -549,7 +549,7 @@ local PANEL = {}
 			timer.Create("nutMusicFader", 0.1, 0, function()
 				if (nut.menuMusic) then
 					fraction = 1 - math.TimeFraction(start, finish, RealTime())
-					nut.menuMusic:SetVolume(fraction * 0.33)
+					nut.menuMusic:SetVolume(fraction * 0.5)
 
 					if (fraction <= 0) then
 						nut.menuMusic:Stop()
