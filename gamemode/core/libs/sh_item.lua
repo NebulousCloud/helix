@@ -277,7 +277,7 @@ function nut.item.loadFromDir(directory)
 end
 
 function nut.item.new(uniqueID, id)
-	if (nut.item.instances[id]) then
+	if (nut.item.instances[id] and nut.item.instances[id].uniqueID == uniqueID) then
 		return nut.item.instances[id]
 	end
 
@@ -667,8 +667,7 @@ do
 						entity.nutIsSafe = true
 						entity:Remove()
 					else
-						inventory:remove(item.id, nil, true)
-						nut.db.query("DELETE FROM nut_items WHERE _itemID = "..item.id)
+						item:remove()
 					end
 				end
 

@@ -334,7 +334,6 @@ if (SERVER) then
 		end
 
 		if (item) then
-			print(item.player)
 			if (type(receiver) == "table") then
 				for k, v in pairs(receiver) do
 					item:call("onSendData", v)
