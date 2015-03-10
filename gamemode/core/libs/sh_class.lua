@@ -16,7 +16,7 @@
 nut.class = nut.class or {}
 nut.class.list = {}
 
-local charMeta = FindMetaTable("Character")
+local charMeta = nut.meta.character
 
 -- Register classes from a directory.
 function nut.class.loadFromDir(directory)

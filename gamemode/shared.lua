@@ -60,44 +60,6 @@ do
 
 		return result
 	end
-
-	local entityMeta = FindMetaTable("Entity")
-
-	-- Developer branch stuff
-	if (VERSION <= 140714 and 
-		!entityMeta.GetSubMaterial and
-		!entityMeta.SetSubMaterial) then
-		ErrorNoHalt("Warning! Some features may not work completely since you are not using the developer branch of Garry's Mod.\n")
-
-		entityMeta.GetSubMaterial = function() end
-		entityMeta.SetSubMaterial = function() end
-
-		--[[---------------------------------------------------------
-		   Name: string.PatternSafe( string )
-		   Desc: Takes a string and escapes it for insertion in to a Lua pattern
-		-----------------------------------------------------------]]
-		local pattern_escape_replacements = {
-			["("] = "%(",
-			[")"] = "%)",
-			["."] = "%.",
-			["%"] = "%%",
-			["+"] = "%+",
-			["-"] = "%-",
-			["*"] = "%*",
-			["?"] = "%?",
-			["["] = "%[",
-			["]"] = "%]",
-			["^"] = "%^",
-			["$"] = "%$",
-			["\0"] = "%z"
-		}
-
-		function string.PatternSafe( str )
-
-			return ( str:gsub( ".", pattern_escape_replacements ) )
-
-		end
-	end
 end
 
 -- Include core framework files.

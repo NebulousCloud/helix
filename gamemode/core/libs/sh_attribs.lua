@@ -51,7 +51,7 @@ end
 
 -- Add updating of attributes to the character metatable.
 do
-	local charMeta = FindMetaTable("Character")
+	local charMeta = nut.meta.character
 	
 	if (SERVER) then
 		function charMeta:updateAttrib(key, value)

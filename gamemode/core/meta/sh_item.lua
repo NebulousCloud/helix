@@ -13,9 +13,7 @@
     along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
-local _R = debug.getregistry()
-
-local ITEM = _R.Item or {}
+local ITEM = nut.meta.item or {}
 ITEM.__index = ITEM
 ITEM.name = "Undefined"
 ITEM.desc = ITEM.desc or "An item that is undefined."
@@ -363,4 +361,4 @@ if (SERVER) then
 	end
 end
 
-_R.Item = ITEM
+nut.meta.item = ITEM

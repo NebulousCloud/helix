@@ -13,9 +13,7 @@
     along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
-local _R = debug.getregistry()
-
-local META = _R.Inventory or {}
+local META = nut.meta.inventory or {}
 META.__index = META
 META.slots = META.slots or {}
 META.w = META.w or 4
@@ -469,4 +467,4 @@ if (SERVER) then
 	end
 end
 
-_R.Inventory = META
+nut.meta.inventory = META

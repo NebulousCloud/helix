@@ -60,7 +60,7 @@ function GM:OnPickupMoney(client, moneyEntity)
 end
 
 do
-	local character = FindMetaTable("Character")
+	local character = nut.meta.character
 
 	function character:hasMoney(amount)
 		if (amount < 0) then

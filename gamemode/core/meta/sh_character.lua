@@ -13,10 +13,8 @@
     along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
-local _R = debug.getregistry()
-
 -- Create the character metatable.
-local CHAR = _R.Character or {}
+local CHAR = nut.meta.character or {}
 CHAR.__index = CHAR
 CHAR.id = CHAR.id or 0
 CHAR.vars = CHAR.vars or {}
@@ -260,5 +258,5 @@ function nut.char.registerVar(key, data)
 	CHAR.vars[key] = data.default
 end
 
--- Allows access to the character metatable using FindMetatable("Character")
-_R.Character = CHAR
+-- Allows access to the character metatable using nut.meta.character
+nut.meta.character = CHAR

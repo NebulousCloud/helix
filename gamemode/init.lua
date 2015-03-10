@@ -16,7 +16,7 @@
 -- Include features from the Sandbox gamemode.
 DeriveGamemode("sandbox")
 -- Define a global shared table to store NutScript information.
-nut = nut or {util = {}}
+nut = nut or {util = {}, meta = {}}
 
 -- Send the following files to players.
 AddCSLuaFile("cl_init.lua")

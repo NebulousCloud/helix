@@ -8,7 +8,7 @@ PLUGIN.desc = "It's PAC3 Integration for Nutscript.\nYou can get friendly versio
 nut.pac = nut.pac or {}
 nut.pac.list = nut.pac.list or {}
 
-local charMeta = FindMetaTable("Character")
+local charMeta = nut.meta.character
 
 function nut.pac.registerPart(id, outfit)
 	nut.pac.list[id] = outfit

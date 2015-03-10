@@ -47,7 +47,7 @@ end
 
 do
 	-- Extend the character metatable to allow flag giving/taking.
-	local character = FindMetaTable("Character")
+	local character = nut.meta.character
 
 	-- Flags can only be set server-side.
 	if (SERVER) then

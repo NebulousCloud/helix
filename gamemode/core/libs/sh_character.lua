@@ -167,7 +167,7 @@ if (SERVER) then
 end
 
 function nut.char.new(data, id, client, steamID)
-	local character = setmetatable({vars = {}}, FindMetaTable("Character"))
+	local character = setmetatable({vars = {}}, nut.meta.character)
 		for k, v in pairs(data) do
 			if (v != nil) then
 				character.vars[k] = v

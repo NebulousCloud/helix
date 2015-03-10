@@ -138,7 +138,7 @@ function nut.item.load(path, baseID, isBaseItem)
 end
 
 function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
-	local meta = FindMetaTable("Item")
+	local meta = nut.meta.item
 
 	if (uniqueID) then
 		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({}, meta)
@@ -300,7 +300,7 @@ do
 	nut.util.include("nutscript/gamemode/core/meta/sh_inventory.lua")
 
 	function nut.item.createInv(w, h, id)
-		local inventory = setmetatable({w = w, h = h, id = id, slots = {}}, FindMetaTable("Inventory"))
+		local inventory = setmetatable({w = w, h = h, id = id, slots = {}}, nut.meta.inventory)
 			nut.item.inventories[id] = inventory
 			
 		return inventory

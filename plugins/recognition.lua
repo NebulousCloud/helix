@@ -18,7 +18,7 @@ PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Adds the ability to recognize people."
 
 do
-	local character = FindMetaTable("Character")
+	local character = nut.meta.character
 
 	if (SERVER) then
 		function character:recognize(id)
