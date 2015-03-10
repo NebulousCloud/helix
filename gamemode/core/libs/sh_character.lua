@@ -392,12 +392,11 @@ do
 				bar:DockMargin(2, 2, 2, 2)
 				bar:setText(L(v.name))
 				bar.onChanged = function(this, difference)
-					total = total + difference
-
-					if (total > maximum) then
+					if ((total + difference) > maximum) then
 						return false
 					end
 
+					total = total + difference
 					panel.payload.attribs[k] = panel.payload.attribs[k] + difference
 				end
 
