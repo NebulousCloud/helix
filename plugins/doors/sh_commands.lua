@@ -188,7 +188,7 @@ nut.command.add("doorsetfaction", {
 
 				-- Loop through each faction, checking the uniqueID and name.
 				for k, v in pairs(nut.faction.teams) do
-					if (nut.util.stringMatches(k, name) or nut.util.stringMatches(k, v.name)) then
+					if (nut.util.stringMatches(k, name) or nut.util.stringMatches(L(v.name, client), name)) then
 						-- This faction matches the provided string.
 						faction = v
 
@@ -208,7 +208,7 @@ nut.command.add("doorsetfaction", {
 					entity:setNetVar("faction", faction.index)
 				end)
 
-				client:notifyLocalized("dSetFaction", L2(faction.name, client) or faction.name)
+				client:notifyLocalized("dSetFaction", L(faction.name, client))
 			-- The faction was not found.
 			elseif (arguments[1]) then
 				client:notifyLocalized("invalidFaction")
