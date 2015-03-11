@@ -376,6 +376,7 @@ end
 
 function GM:Move(client, moveData)
 	local char = client:getChar()
+
 	if (char) then
 		if (client:getNetVar("actAng")) then
 			moveData:SetForwardSpeed(0)
@@ -384,21 +385,23 @@ function GM:Move(client, moveData)
 
 		if (client:GetMoveType() == MOVETYPE_WALK and moveData:KeyDown(IN_WALK)) then
 			local mf, ms = 0, 0
-
+			local speed = client:GetWalkSpeed()
+			local ratio = nut.config.get("walkRatio")
+			
 			if (moveData:KeyDown(IN_FORWARD)) then
-				mf = .4
+				mf = ratio
 			elseif (moveData:KeyDown(IN_BACK)) then
-				mf = -.4
+				mf = -ratio
 			end
 
 			if (moveData:KeyDown(IN_MOVELEFT)) then
-				ms = -.4
+				ms = -ratio
 			elseif (moveData:KeyDown(IN_MOVERIGHT)) then
-				ms = .4
+				ms = ratio
 			end
 
-			moveData:SetForwardSpeed(mf * client:GetWalkSpeed()) 
-			moveData:SetSideSpeed(ms * client:GetWalkSpeed()) 
+			moveData:SetForwardSpeed(mf * speed) 
+			moveData:SetSideSpeed(ms * speed) 
 		end
 	end
 end

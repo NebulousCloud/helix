@@ -84,6 +84,11 @@ end, {
 	data = {min = 75, max = 500},
 	category = "characters"
 })
+nut.config.add("walkRatio", 0.5, "How fast one goes when holding ALT.", nil, {
+	form = "Float",
+	data = {min = 0, max = 1},
+	category = "characters"
+})
 nut.config.add("punchStamina", 10, "How much stamina punches use up.", nil, {
 	data = {min = 0, max = 100},
 	category = "characters"
