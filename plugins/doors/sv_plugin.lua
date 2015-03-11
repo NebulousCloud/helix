@@ -157,11 +157,15 @@ function PLUGIN:CanPlayerUseDoor(client, entity)
 	if (entity:getNetVar("disabled")) then
 		return false
 	end
+end
 
-	local faction = entity:getNetVar("faction")
+-- Whether or not a player a player has any abilities over the door, such as locking.
+function PLUGIN:CanPlayerAccessDoor(client, door, access)
+	local faction = door:getNetVar("faction")
 
-	if (faction and client:Team() != faction) then
-		return false
+	-- If the door has a faction set which the client is a member of, allow access.
+	if (faction and client:Team() == faction) then
+		return true
 	end
 end
 
@@ -177,7 +181,7 @@ function PLUGIN:ShowTeam(client)
 	local trace = util.TraceLine(data)
 	local entity = trace.Entity
 
-	if (IsValid(entity) and entity:isDoor()) then
+	if (IsValid(entity) and entity:isDoor() and !entity:getNetVar("faction")) then
 		if (entity:checkDoorAccess(client, DOOR_TENANT)) then
 			netstream.Start(client, "doorMenu", entity, entity.nutAccess)
 		elseif (!IsValid(entity:getNetVar("owner"))) then

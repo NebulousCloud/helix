@@ -30,17 +30,17 @@ do
 	local entityMeta = FindMetaTable("Entity")
 
 	function entityMeta:checkDoorAccess(client, access)
-		if (!self:isDoor() or !self.nutAccess) then
+		if (!self:isDoor()) then
 			return false
 		end
 
 		access = access or DOOR_GUEST
 
-		if (hook.Run("CanPlayerAccessDoor", client, door, access) == true) then
+		if (hook.Run("CanPlayerAccessDoor", client, self, access)) then
 			return true
 		end
 
-		if ((self.nutAccess[client] or 0) >= access) then
+		if (self.nutAccess and (self.nutAccess[client] or 0) >= access) then
 			return true
 		end
 
