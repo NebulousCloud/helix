@@ -69,7 +69,7 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 	end
 
 	function PLUGIN:getData(default, global, ignoreMap, refresh)
-		return nut.data.get(uniqueID2, default, global, ignoreMap, refresh)
+		return nut.data.get(uniqueID2, default, global, ignoreMap, refresh) or {}
 	end
 
 	hook.Run("PluginLoaded", uniqueID, PLUGIN)
