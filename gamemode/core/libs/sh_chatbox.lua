@@ -43,7 +43,13 @@ function nut.chat.register(chatType, data)
 	-- Allow players to use this chat type by default.
 	if (!data.onCanSay) then
 		data.onCanSay = function(speaker, text)
-			return (!data.deadChat and speaker:Alive() or true)
+			if (!data.deadCanChat and !speaker:Alive()) then
+				speaker:notifyLocalized("noPerm")
+
+				return false
+			end
+
+			return true
 		end
 	end
 
@@ -212,7 +218,8 @@ do
 			onCanHear = nut.config.get("chatRange", 280),
 			prefix = {"/me", "/action"},
 			font = "nutChatFontItalics",
-			filter = "actions"
+			filter = "actions",
+			deadCanChat = true
 		})
 
 		-- Actions and such.
@@ -223,7 +230,8 @@ do
 			onCanHear = nut.config.get("chatRange", 280),
 			prefix = {"/it"},
 			font = "nutChatFontItalics",
-			filter = "actions"
+			filter = "actions",
+			deadCanChat = true
 		})
 
 		-- Whisper chat.
@@ -333,7 +341,8 @@ do
 			color = Color(155, 111, 176),
 			filter = "actions",
 			font = "nutChatFontItalics",
-			onCanHear = nut.config.get("chatRange", 280)
+			onCanHear = nut.config.get("chatRange", 280),
+			deadCanChat = true
 		})
 	end)
 end
@@ -342,7 +351,8 @@ end
 nut.chat.register("pm", {
 	format = "%s: %s.",
 	color = Color(249, 211, 89),
-	filter = "pm"
+	filter = "pm",
+	deadCanChat = true
 })
 
 -- Global events.
