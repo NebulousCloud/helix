@@ -54,7 +54,7 @@ local PANEL = {}
 
 				if (text:sub(1, 1) == "/") then
 					local arguments = self.arguments or {}
-					local command = arguments[1] or ""
+					local command = string.PatternSafe(arguments[1] or ""):lower()
 
 					nut.util.drawBlur(this)
 
@@ -67,7 +67,7 @@ local PANEL = {}
 					for k, v in SortedPairs(nut.command.list) do
 						local k2 = "/"..k
 
-						if (k2:match(command:lower())) then
+						if (k2:match(command)) then
 							local x, y = nut.util.drawText(k2.."  ", 4, i * 20, color)
 
 							if (k == command and v.syntax) then
