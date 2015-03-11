@@ -76,10 +76,10 @@ if (CLIENT) then
 end
 
 function ITEM:removeParts(client)
-	local character = item.player:getChar()
+	local character = client:getChar()
 	
-	item:setData("equip", false)
-	character:removePart(item.uniqueID)
+	self:setData("equip", false)
+	character:removePart(self.uniqueID)
 
 	for k, v in pairs(self.bodyGroups or {}) do
 		local index = client:FindBodygroupByName(k)
@@ -94,9 +94,9 @@ function ITEM:removeParts(client)
 		character:setData("oldMdl")
 	end
 
-	if (item.attribBoosts) then
-		for k, _ in pairs(item.attribBoosts) do
-			character:removeBoost(item.uniqueID, k)
+	if (self.attribBoosts) then
+		for k, _ in pairs(self.attribBoosts) do
+			character:removeBoost(self.uniqueID, k)
 		end
 	end
 end
