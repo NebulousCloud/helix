@@ -13,8 +13,6 @@
     along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
-local PLUGIN = PLUGIN
-
 PLUGIN.name = "Spawns"
 PLUGIN.desc = "Spawn points for factions and classes."
 PLUGIN.author = "Chessnut"
@@ -64,6 +62,7 @@ nut.command.add("spawnadd", {
 	adminOnly = true,
 	syntax = "<string faction> [string class]",
 	onRun = function(client, arguments)
+		local PLUGIN = nut.plugin.list.spawns
 		local faction
 		local name = arguments[1]
 		local class = table.concat(arguments, " ", 2)
@@ -71,7 +70,7 @@ nut.command.add("spawnadd", {
 
 		if (name) then
 			for k, v in ipairs(nut.faction.indices) do
-				if (nut.util.stringMatches(v.uniqueID, name) or nut.util.stringMatches(v.name, name)) then
+				if (nut.util.stringMatches(v.uniqueID, name) or nut.util.stringMatches(L(v.name, client), name)) then
 					faction = v.uniqueID
 					info = v
 
@@ -104,7 +103,7 @@ nut.command.add("spawnadd", {
 
 				PLUGIN:SaveSpawns()
 
-				return L("spawnAdded", client, info.name)
+				return L("spawnAdded", client, L(info.name, client))
 			else
 				return L("invalidFaction", client)
 			end
@@ -118,6 +117,7 @@ nut.command.add("spawnremove", {
 	adminOnly = true,
 	syntax = "[number radius]",
 	onRun = function(client, arguments)
+		local PLUGIN = nut.plugin.list.spawns
 		local position = client:GetPos()
 		local radius = tonumber(arguments[1]) or 120
 		local i = 0
