@@ -31,52 +31,72 @@ function nut.command.add(command, data)
 	-- Store the old onRun because we're able to change it.
 	local onRun = data.onRun
 
-	-- Check if the command is for basic admins only.
-	if (data.adminOnly) then
-		data.onRun = function(client, arguments)
-			if (client:IsAdmin()) then
-				return onRun(client, arguments)
-			else
-				return "@noPerm"
+	if (!data.onCheckAccess) then
+		-- Check if the command is for basic admins only.
+		if (data.adminOnly) then
+			data.onCheckAccess = function(client)
+				return client:IsAdmin()
 			end
-		end
-	-- Or if it is only for super administrators.
-	elseif (data.superAdminOnly) then
-		data.onRun = function(client, arguments)
-			if (client:IsSuperAdmin()) then
-				return onRun(client, arguments)
-			else
-				return "@noPerm"
+		-- Or if it is only for super administrators.
+		elseif (data.superAdminOnly) then
+			data.onCheckAccess = function(client)
+				return client:IsSuperAdmin()
 			end
-		end
-	-- Or if we specify a usergroup allowed to use this.
-	elseif (data.group) then
-		-- The group property can be a table of usergroups.
-		if (type(data.group) == "table") then
-			data.onRun = function(client, arguments)
-				-- Check if the client's group is allowed.
-				for k, v in ipairs(data.group) do
-					if (client:IsUserGroup(v)) then
-						return onRun(client, arguments)
+		-- Or if we specify a usergroup allowed to use this.
+		elseif (data.group) then
+			-- The group property can be a table of usergroups.
+			if (type(data.group) == "table") then
+				data.onCheckAccess = function(client)
+					-- Check if the client's group is allowed.
+					for k, v in ipairs(data.group) do
+						if (client:IsUserGroup(v)) then
+							return true
+						end
 					end
-				end
 
-				return "@noPerm"
-			end
-		-- Otherwise it is most likely a string.
-		else
-			data.onRun = function(client, arguments)
-				if (client:IsUserGroup(data.group)) then
-					return onRun(client, arguments)
-				else
-					return "@noPerm"
+					return false
 				end
-			end		
+			-- Otherwise it is most likely a string.
+			else
+				data.onCheckAccess = function(client)
+					return client:IsUserGroup(data.group)
+				end		
+			end
+		end
+	end
+
+	local onCheckAccess = data.onCheckAccess
+
+	-- Only overwrite the onRun to check for access if there is anything to check.
+	if (onCheckAccess) then
+		local onRun = data.onRun
+
+		data.onRun = function(client, arguments)
+			if (!onCheckAccess(client)) then
+				return "@noPerm"
+			else
+				return onRun(client, arguments)
+			end
 		end
 	end
 
 	-- Add the command to the list of commands.
 	nut.command.list[command] = data
+end
+
+-- Returns whether or not a player is allowed to run a certain command.
+function nut.command.hasAccess(client, command)
+	command = nut.command.list[command]
+
+	if (command) then
+		if (command.onCheckAccess) then
+			return command.onCheckAccess(client)
+		else
+			return true
+		end
+	end
+
+	return false
 end
 
 -- Gets a table of arguments from a string.
