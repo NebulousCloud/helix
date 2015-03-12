@@ -74,9 +74,10 @@ function GM:TranslateActivity(client, act)
 				end
 			end
 
-			local holdType = weapon.HoldType or weapon.GetHoldType(weapon)
-			local value = PLAYER_HOLDTYPE_TRANSLATOR[holdType] or "passive"
-			local tree = nut.anim.player[value]
+			local holdType = weapon.GetHoldType(weapon)
+			holdType = PLAYER_HOLDTYPE_TRANSLATOR[holdType] or "passive"
+
+			local tree = nut.anim.player[holdType]
 
 			if (tree and tree[act]) then
 				return tree[act]
@@ -124,7 +125,7 @@ function GM:TranslateActivity(client, act)
 			client.ManipulateBonePosition(client, 0, vector_origin)
 
 			if (IsValid(weapon)) then
-				subClass = weapon.HoldType or weapon.GetHoldType(weapon)
+				subClass = weapon.GetHoldType(weapon)
 				subClass = HOLDTYPE_TRANSLATOR[subClass] or subClass
 			end
 
@@ -211,7 +212,7 @@ function GM:DoAnimationEvent(client, event, data)
 		local weapon = client:GetActiveWeapon()
 
 		if (IsValid(weapon)) then
-			local holdType = weapon.HoldType or weapon:GetHoldType()
+			local holdType = weapon:GetHoldType()
 			holdType = HOLDTYPE_TRANSLATOR[holdType] or holdType
 
 			local animation = nut.anim[class][holdType]
@@ -387,7 +388,7 @@ function GM:Move(client, moveData)
 			local mf, ms = 0, 0
 			local speed = client:GetWalkSpeed()
 			local ratio = nut.config.get("walkRatio")
-			
+
 			if (moveData:KeyDown(IN_FORWARD)) then
 				mf = ratio
 			elseif (moveData:KeyDown(IN_BACK)) then

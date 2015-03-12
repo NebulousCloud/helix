@@ -749,8 +749,7 @@ function GM:OnCharInfoSetup(infoPanel)
 				local tree = nut.anim[class]
 
 				if (tree) then
-					local subClass = "normal"
-					subClass = weapon.HoldType or weapon:GetHoldType()
+					local subClass = weapon:GetHoldType()
 					subClass = HOLDTYPE_TRANSLATOR[subClass] or subClass
 
 					if (tree[subClass] and tree[subClass][act]) then
