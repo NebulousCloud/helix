@@ -15,18 +15,26 @@ if (CLIENT) then
 		netstream.Start("typeStatus")
 	end
 
+	local data = {}
+
 	function PLUGIN:HUDPaint()
 		local ourPos = LocalPlayer():GetPos()
 
+		data.start = LocalPlayer():EyePos()
+
 		for k, v in ipairs(player.GetAll()) do
 			if (v != LocalPlayer() and v:getNetVar("typing")) then
-				local position = v:GetPos()
-				local alpha = (1 - (ourPos:DistToSqr(position) / 65536)) * 255
+				data.endpos = v:EyePos()
 
-				if (alpha > 0) then
-					local screen = (position + (v:Crouching() and TYPE_OFFSET_CROUCHED or TYPE_OFFSET)):ToScreen()
+				if (util.TraceLine(data).Entity == v) then
+					local position = v:GetPos()
+					local alpha = (1 - (ourPos:DistToSqr(position) / 65536)) * 255
 
-					nut.util.drawText("(Typing)", screen.x, screen.y - 18, ColorAlpha(TYPE_COLOR, alpha), 1, 1, "nutChatFontItalics", alpha)
+					if (alpha > 0) then
+						local screen = (position + (v:Crouching() and TYPE_OFFSET_CROUCHED or TYPE_OFFSET)):ToScreen()
+
+						nut.util.drawText("(Typing)", screen.x, screen.y - 18, ColorAlpha(TYPE_COLOR, alpha), 1, 1, "nutChatFontItalics", alpha)
+					end
 				end
 			end
 		end
