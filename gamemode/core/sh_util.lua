@@ -417,6 +417,17 @@ do
 				self:DrawShadow(true)
 				self.ignoreUse = false
 				self.nutIsMuted = false
+
+				for k, v in ipairs(ents.GetAll()) do
+					if (v:GetParent() == self) then
+						v:SetNotSolid(false)
+						v:SetNoDraw(false)
+
+						if (v.onDoorRestored) then
+							v:onDoorRestored(self)
+						end
+					end
+				end
 			end
 		end)
 		dummy:SetOwner(self)
@@ -434,6 +445,17 @@ do
 
 		for k, v in ipairs(self:GetBodyGroups()) do
 			dummy:SetBodygroup(v.id, self:GetBodygroup(v.id))
+		end
+
+		for k, v in ipairs(ents.GetAll()) do
+			if (v:GetParent() == self) then
+				v:SetNotSolid(true)
+				v:SetNoDraw(true)
+
+				if (v.onDoorBlasted) then
+					v:onDoorBlasted(self)
+				end
+			end
 		end
 
 		dummy:GetPhysicsObject():SetVelocity(velocity)
