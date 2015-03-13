@@ -210,6 +210,7 @@ local PANEL = {}
 
 			local name = client:Name()
 			local model = client:GetModel()
+			local skin = client:GetSkin()
 			local desc = client:getChar():getDesc()
 
 			if (self.lastName != name) then
@@ -217,10 +218,12 @@ local PANEL = {}
 				self.lastName = name
 			end
 
-			if (self.lastModel != model) then
+			if (self.lastModel != model or self.lastSkin != skin) then
 				self.model:SetModel(client:GetModel(), client:GetSkin())
 				self.model:SetToolTip(L("sbOptions", client:Name()))
+				
 				self.lastModel = model
+				self.lastSkin = skin
 			end
 
 			if (self.lastDesc != desc) then
