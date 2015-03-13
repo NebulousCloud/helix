@@ -20,9 +20,9 @@ PLUGIN.desc = "Spawn points for factions and classes."
 PLUGIN.author = "Chessnut"
 PLUGIN.spawns = PLUGIN.spawns or {}
 
-function PLUGIN:PlayerLoadedChar(client, character, lastChar)
-	if (self.spawns and table.Count(self.spawns) > 0) then
-		local class = character:getClass()
+function PLUGIN:PostPlayerLoadout(client)
+	if (self.spawns and table.Count(self.spawns) > 0 and client:getChar()) then
+		local class = client:getChar():getClass()
 		local points
 		local className = ""
 
