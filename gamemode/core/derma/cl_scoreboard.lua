@@ -203,8 +203,10 @@ local PANEL = {}
 		slot.desc:SetExpensiveShadow(1, Color(0, 0, 0, 100))
 		slot.desc:SetFont("nutSmallFont")
 
+		local oldTeam = client:Team()
+
 		function slot:update()
-			if (!IsValid(client) or !client:getChar() or !self.character or self.character != client:getChar()) then
+			if (!IsValid(client) or !client:getChar() or !self.character or self.character != client:getChar() or oldTeam != client:Team()) then
 				return self:Remove()
 			end
 
