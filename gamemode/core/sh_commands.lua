@@ -147,7 +147,52 @@ nut.command.add("charsetmodel", {
 		if (IsValid(target) and target:getChar()) then
 			target:getChar():setModel(arguments[2])
 			target:SetupHands()
-			nut.util.notifyLocalized("cChangeModel", client:Name(), target:Name(), arguments[2])
+
+			nut.util.notifyLocalized("cChangeModel", nil, client:Name(), target:Name(), arguments[2])
+		end
+	end
+})
+
+nut.command.add("charsetskin", {
+	adminOnly = true,
+	syntax = "<string name> [number skin]",
+	onRun = function(client, arguments)
+		local skin = tonumber(arguments[2])
+		local target = nut.command.findPlayer(client, arguments[1])
+
+		if (IsValid(target) and target:getChar()) then
+			target:getChar():setData("skin", skin)
+			target:SetSkin(skin or 0)
+
+			nut.util.notifyLocalized("cChangeSkin", nil, client:Name(), target:Name(), skin or 0)
+		end
+	end
+})
+
+nut.command.add("charsetbodygroup", {
+	adminOnly = true,
+	syntax = "<string name> <string bodyGroup> [number value]",
+	onRun = function(client, arguments)
+		local value = tonumber(arguments[3])
+		local target = nut.command.findPlayer(client, arguments[1])
+
+		if (IsValid(target) and target:getChar()) then
+			local index = target:FindBodygroupByName(arguments[2])
+
+			if (index > -1) then
+				if (value and value < 1) then
+					value = nil
+				end
+
+				local groups = target:getChar():getData("groups", {})
+					groups[index] = value
+				target:getChar():setData("groups", groups)
+				target:SetBodygroup(index, value or 0)
+
+				nut.util.notifyLocalized("cChangeGroups", nil, client:Name(), target:Name(), arguments[2], value or 0)
+			else
+				return "@invalidArg", 2
+			end
 		end
 	end
 })

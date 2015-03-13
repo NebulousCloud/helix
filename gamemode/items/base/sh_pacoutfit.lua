@@ -86,6 +86,13 @@ function ITEM:removeParts(client)
 
 		if (index > -1) then
 			client:SetBodygroup(index, 0)
+
+			local groups = character:getData("groups", {})
+
+			if (groups[index]) then
+				groups[index] = nil
+				character:setData("body", groups)
+			end
 		end
 	end
 
@@ -146,6 +153,29 @@ ITEM.functions.Equip = {
 
 		item:setData("equip", true)
 		char:addPart(item.uniqueID)
+
+		if (item.bodyGroups) then
+			local groups = {}
+
+			for k, value in pairs(item.bodyGroups) do
+				local index = item.player:FindBodygroupByName(k)
+
+				if (index > -1) then
+					groups[index] = value
+				end
+			end
+
+			local newGroups = character:getData("groups", {})
+
+			for index, value in pairs(groups) do
+				newGroups[index] = value
+				client:SetBodygroup(index, value)
+			end
+
+			if (table.Count(newGroups) > 0) then
+				character:setData("body", newGroups)
+			end
+		end
 
 		if (item.attribBoosts) then
 			for k, v in pairs(item.attribBoosts) do

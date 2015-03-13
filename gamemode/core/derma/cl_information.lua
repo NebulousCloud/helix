@@ -108,6 +108,12 @@ local PANEL = {}
 		end
 		
 		self.model:SetModel(LocalPlayer():GetModel())
+		self.model.Entity:SetSkin(LocalPlayer():GetSkin())
+
+		for k, v in ipairs(LocalPlayer():GetBodyGroups()) do
+			self.model.Entity:SetBodygroup(v.id, LocalPlayer():GetBodygroup(v.id))
+		end
+
 		local ent = self.model.Entity
 		if (ent and IsValid(ent)) then
 			local mats = LocalPlayer():GetMaterials()

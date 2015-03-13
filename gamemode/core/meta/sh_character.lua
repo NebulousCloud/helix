@@ -113,6 +113,14 @@ if (SERVER) then
 			client:SetTeam(self:getFaction())
 			client:setNetVar("char", self:getID())
 
+			-- Apply saved body groups.
+			for k, v in pairs(self:getData("groups", {})) do
+				client:SetBodygroup(k, v)
+			end
+
+			-- Apply a saved skin.
+			client:SetSkin(self:getData("skin", 0))
+			
 			-- Synchronize the character if we should.
 			if (!noNetworking) then
 				self:sync()
