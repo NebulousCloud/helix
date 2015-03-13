@@ -637,3 +637,41 @@ nut.command.add("chardesc", {
 		return "@descChanged"
 	end
 })
+
+nut.command.add("plytransfer", {
+	adminOnly = true,
+	syntax = "<string name> <string faction>",
+	onRun = function(client, arguments)
+		local target = nut.command.findPlayer(client, arguments[1])
+		local name = table.concat(arguments, " ", 2)
+
+		if (IsValid(target) and target:getChar()) then
+			local faction = nut.faction.teams[name]
+
+			if (!faction) then
+				for k, v in pairs(nut.faction.indices) do
+					if (nut.util.stringMatches(L(v.name, client), name)) then
+						faction = v
+
+						break
+					end
+				end
+			end
+
+			if (faction) then
+				target:getChar().vars.faction = faction.uniqueID
+				target:getChar():setFaction(faction.index)
+
+				if (faction.onTransfered) then
+					faction:onTransfered(target)
+				end
+
+				for k, v in ipairs(player.GetAll()) do
+					nut.util.notifyLocalized("cChangeFaction", v, client:Name(), target:Name(), L(faction.name, v))
+				end
+			else
+				return "@invalidFaction"
+			end
+		end
+	end
+})

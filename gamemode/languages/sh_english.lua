@@ -112,6 +112,7 @@ LANGUAGE = {
 	cChangeName = "%s changed %s's name to %s.",
 	cChangeSkin = "%s changed %s's skin to %s.",
 	cChangeGroups = "%s changed %s's \"%s\" bodygroup to %s.",
+	cChangeFaction = "%s has transfered %s to the %s faction.",
 	playerCharBelonging = "This object is your other character's belonging.",
 	business = "Business",
 	invalidFaction = "You have provided an invalid faction.",
