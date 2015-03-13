@@ -590,6 +590,10 @@ function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 	end
 end
 
+function GM:InitializedSchema()
+	game.ConsoleCommand("sbox_persist ns_"..SCHEMA.folder.."\n")
+end
+
 netstream.Hook("strReq", function(client, time, text)
 	if (client.nutStrReqs and client.nutStrReqs[time]) then
 		client.nutStrReqs[time](text)
