@@ -222,6 +222,9 @@ nut.command.add("doorsetfaction", {
 
 				client:notifyLocalized("dRemoveFaction")
 			end
+
+			-- Save the door information.
+			PLUGIN:SaveDoorData()
 		end
 	end
 })
