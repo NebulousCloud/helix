@@ -206,6 +206,17 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 		client.nutRagdoll:Remove()
 	end
 
+	local faction = nut.faction.indices[character:getFaction()]
+
+	if (faction and faction.pay and faction.pay > 0) then
+		timer.Create("nutSalary"..client:UniqueID(), faction.payTime or 300, 0, function()
+			local pay = hook.Run("GetSalaryAmount", client, faction) or faction.pay
+
+			character:giveMoney(pay)
+			client:notifyLocalized("salary", nut.currency.get(pay))
+		end)
+	end
+
 	hook.Run("PlayerLoadout", client)
 end
 

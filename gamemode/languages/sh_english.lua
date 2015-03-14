@@ -224,5 +224,6 @@ LANGUAGE = {
 	consumables = "Consumables",
 	plyNotValid = "You are not looking at a valid player.",
 	restricted = "You have been restrained.",
-	viewProfile = "View Steam Profile"
+	viewProfile = "View Steam Profile",
+	salary = "You have received %s from your salary."
 }

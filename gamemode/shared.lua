@@ -101,6 +101,22 @@ function GM:OnReloaded()
 		if (IsValid(nut.gui.score)) then
 			nut.gui.score:Remove()
 		end
+	else
+		-- Auto-reload support for faction pay timers.
+		for index, faction in ipairs(nut.faction.indices) do
+			for k, v in ipairs(team.GetPlayers(index)) do
+				if (faction.pay and faction.pay > 0) then
+					timer.Adjust("nutSalary"..v:UniqueID(), faction.payTime or 300, 0, function()
+						local pay = hook.Run("GetSalaryAmount", v, faction) or faction.pay
+
+						v:getChar():giveMoney(pay)
+						v:notifyLocalized("salary", nut.currency.get(pay))
+					end)
+				else
+					timer.Remove("nutSalary"..v:UniqueID())
+				end
+			end
+		end
 	end
 end
 
