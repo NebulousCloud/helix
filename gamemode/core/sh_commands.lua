@@ -491,19 +491,27 @@ nut.command.add("plywhitelist", {
 		local name = table.concat(arguments, " ", 2)
 
 		if (IsValid(target)) then
-			for k, v in ipairs(nut.faction.indices) do
-				if (nut.util.stringMatches(L(v.name, client), name) or nut.util.stringMatches(v.uniqueID, name)) then
-					if (target:setWhitelisted(k, true)) then
-						for k2, v2 in ipairs(player.GetAll()) do
-							v2:notifyLocalized("whitelist", client:Name(), target:Name(), L(v.name, v2))
-						end
-					end
+			local faction = nut.faction.teams[name]
 
-					return
+			if (!faction) then
+				for k, v in ipairs(nut.faction.indices) do
+					if (nut.util.stringMatches(L(v.name, client), name) or nut.util.stringMatches(v.uniqueID, name)) then
+						faction = v
+
+						break
+					end
 				end
 			end
 
-			return "@invalidFaction"
+			if (faction) then
+				if (target:setWhitelisted(faction.index, true)) then
+					for k, v in ipairs(player.GetAll()) do
+						v:notifyLocalized("whitelist", client:Name(), target:Name(), L(faction.name, v))
+					end
+				end
+			else
+				return "@invalidFaction"
+			end
 		end
 	end
 })
@@ -534,16 +542,26 @@ nut.command.add("plyunwhitelist", {
 		local name = table.concat(arguments, " ", 2)
 
 		if (IsValid(target)) then
-			for k, v in ipairs(nut.faction.indices) do
-				if (nut.util.stringMatches(L(v.name, client), name) or nut.util.stringMatches(v.uniqueID, name)) then
-					if (target:setWhitelisted(k, false)) then
-						for k2, v2 in ipairs(player.GetAll()) do
-							v2:notifyLocalized("unwhitelist", client:Name(), target:Name(), L(v.name, v2))
-						end
+			local faction = nut.faction.teams[name]
+
+			if (!faction) then
+				for k, v in ipairs(nut.faction.indices) do
+					if (nut.util.stringMatches(L(v.name, client), name) or nut.util.stringMatches(v.uniqueID, name)) then
+						faction = v
+
+						break
 					end
-					
-					return
 				end
+			end
+
+			if (faction) then
+				if (target:setWhitelisted(faction.index, false)) then
+					for k, v in ipairs(player.GetAll()) do
+						v:notifyLocalized("unwhitelist", client:Name(), target:Name(), L(faction.name, v))
+					end
+				end
+			else
+				return "@invalidFaction"
 			end
 		end
 	end
