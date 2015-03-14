@@ -155,7 +155,9 @@ local PANEL = {}
 				self.panel:Clear()
 
 				self.title:SetText(this:GetText())
+				self.title:SizeToContentsY()
 				self.title:AlphaTo(255, 0.5)
+				self.title:MoveAbove(self.panel, 8)
 
 				self.panel:AlphaTo(255, 0.5, 0.1)
 				self.activeTab = this
