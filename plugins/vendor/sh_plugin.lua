@@ -35,8 +35,8 @@ if (SERVER) then
 			local entity = ents.Create("nut_vendor")
 			entity:SetPos(v.pos)
 			entity:SetAngles(v.angles)
-			entity:SetModel(v.model)
 			entity:Spawn()
+			entity:SetModel(v.model)
 			entity:setNetVar("noBubble", v.bubble)
 			entity:setNetVar("name", v.name)
 			entity:setNetVar("desc", v.desc)
@@ -102,9 +102,7 @@ if (SERVER) then
 				entity:setMoney(value)
 			end
 
-			timer.Create("nutSaveVendorEdits", 60, 1, function()
-				PLUGIN:saveVendors()
-			end)
+			PLUGIN:saveVendors()
 		end
 	end)
 
@@ -263,9 +261,7 @@ if (SERVER) then
 				netstream.Start(recipient, "vendorUpt", uniqueID, data)
 			end
 
-			timer.Create("nutSaveVendorEdits", 60, 1, function()
-				PLUGIN:saveVendors()
-			end)
+			PLUGIN:saveVendors()
 		end
 	end)
 
@@ -274,23 +270,14 @@ if (SERVER) then
 			client.nutVendor:SetModel(model)
 			client.nutVendor:setAnim()
 
-			if (!timer.Exists("nutSaveVendorEdits")) then
-				timer.Create("nutSaveVendorEdits", 60, 1, function()
-					PLUGIN:saveVendors()
-				end)
-			end
+			PLUGIN:saveVendors()
 		end
 	end)
 
 	netstream.Hook("vendorBbl", function(client, state)
 		if (client:IsAdmin() and IsValid(client.nutVendor)) then
 			client.nutVendor:setNetVar("noBubble", state)
-
-			if (!timer.Exists("nutSaveVendorEdits")) then
-				timer.Create("nutSaveVendorEdits", 60, 1, function()
-					PLUGIN:saveVendors()
-				end)
-			end
+			PLUGIN:saveVendors()
 		end
 	end)
 
