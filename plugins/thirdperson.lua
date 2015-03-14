@@ -3,8 +3,7 @@ PLUGIN.name = "New Fancy Third Person"
 PLUGIN.author = "Black Tea"
 PLUGIN.desc = "Third Person plugin."
 
-nut.config.add("thirdperson", 0, "Allow Thirdperson in the server.", nil, {
-	data = {min = 0, max = 1},
+nut.config.add("thirdperson", false, "Allow Thirdperson in the server.", nil, {
 	category = "server"
 })
 
@@ -63,7 +62,7 @@ if (CLIENT) then
 	vgui.Register("nutTPConfig", PANEL, "DFrame")
 
 	local function isAllowed()
-		return nut.config.get("thirdperson") != 0 and true or false
+		return nut.config.get("thirdperson")
 	end
 
 	function PLUGIN:SetupQuickMenu(menu)
