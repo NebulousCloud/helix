@@ -596,6 +596,31 @@ function GM:PlayerCanHearPlayersVoice(listener, speaker)
 	return allowVoice, allowVoice
 end
 
+function GM:OnPhysgunFreeze(weapon, physObj, entity, client)
+	-- Object is already frozen (!?)
+	if (!physObj:IsMoveable()) then return false end
+	if (entity:GetUnFreezable()) then return false end
+	
+	physObj:EnableMotion(false)
+	
+	-- With the jeep we need to pause all of its physics objects
+	-- to stop it spazzing out and killing the server.
+	if (entity:GetClass() == "prop_vehicle_jeep") then
+		local objects = ent:GetPhysicsObjectCount()
+		
+		for i = 0, objects - 1 do
+			entity:GetPhysicsObjectNum(i):EnableMotion(false)
+		end
+	end
+
+	-- Add it to the player's frozen props
+	client:AddFrozenPhysicsObject(entity, physObj)
+	client:SendHint("PhysgunUnfreeze", 0.3)
+	client:SuppressHint("PhysgunFreeze")
+
+	return true
+end
+
 netstream.Hook("strReq", function(client, time, text)
 	if (client.nutStrReqs and client.nutStrReqs[time]) then
 		client.nutStrReqs[time](text)
