@@ -12,6 +12,12 @@
     You should have received a copy of the GNU General Public License
     along with NutScript.  If not, see <http://www.gnu.org/licenses/>.
 --]]
+
+--[[
+
+	Polish translation by Veran120 (http://steamcommunity.com//id/Veran120)
+
+--]]
 NAME = "Polski"
 
 LANGUAGE = {
@@ -24,7 +30,7 @@ LANGUAGE = {
 	load = "Załaduj",
 	loadTip = "Załaduj uprzednio stworzoną postać aby nią zagrać.",
 	leave = "Wyjdź",
-	leaveTip = "Wyjdź z serwera.",
+	leaveTip = "Opuść serwer.",
 	["return"] = "Powrót",
 	returnTip = "Powrót do poprzedniego menu.",
 	name = "Imię i nazwisko",
@@ -156,13 +162,13 @@ LANGUAGE = {
 	locking = "Zamykanie tego przedmiotu...",
 	unlocking = "Otwieranie tego przedmiotu...",
 	modelNoSeq = "Twój model nie obsługuje tej animacji.",
-	notNow = "Nie możesz tego aktualnie wykonać.",
+	notNow = "Nie możesz tego aktualnie zrobić.",
 	faceWall = "Musisz patrzeć na ścianę aby to wykonać.",
 	faceWallBack = "Musisz stać tyłem do ściany aby to wykonać.",
 	descChanged = "Zmieniłeś rysopis swojej postaci.",
 	charMoney = "Aktualnie posiadasz %s.",
 	charFaction = "Jesteś członkiem frakcji %s.",
-	charClass = "Piastujesz stanowisko %s w frakcji.",
+	charClass = "Piastujesz stanowisko %s we frakcji.",
 	noSpace = "Ekwipunek jest pełny.",
 	noOwner = "Nieprawidłowy właściciel.",
 	notAllowed = "Ta akcja jest niedozowolna.",
@@ -214,7 +220,7 @@ LANGUAGE = {
 	chgNameDesc = "Wprowadź nowę imię i nazwisko postaci poniżej.",
 	thirdpersonToggle = "Przełącz widok z trzeciej osoby",
 	thirdpersonClassic = "Używaj klasycznego widoku z trzeciej osoby",
-	equippedBag = "Torba którą przesunąłeś ma założony przedmiot.",
+	equippedBag = "Torba którą przesunąłeś posiada przedmiot(y).",
 	useTip = "Używa przedmiotu.",
 	equipTip = "Zakłada przedmiot.",
 	unequipTip = "Zdejmuje przedmiot.",
