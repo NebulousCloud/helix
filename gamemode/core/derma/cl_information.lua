@@ -25,16 +25,16 @@ local PANEL = {}
 		self:Center()
 
 		self.model = self:Add("nutModelPanel")
-		self.model:SetWide(ScrW() * 0.2)
+		self.model:SetWide(ScrW() * 0.25)
 		self.model:Dock(LEFT)
-		self.model:SetFOV(40)
+		self.model:SetFOV(50)
 		self.model.enableHook = true
 
 		self.info = self:Add("DPanel")
 		self.info:SetWide(ScrW() * 0.4)
 		self.info:Dock(RIGHT)
 		self.info:SetDrawBackground(false)
-		self.info:DockMargin(0, 36, 0, 0)
+		self.info:DockMargin(150, 36, 0, 0)
 
 		self.name = self.info:Add("DLabel")
 		self.name:SetFont("nutHugeFont")

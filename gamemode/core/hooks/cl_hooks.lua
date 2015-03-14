@@ -741,6 +741,7 @@ function GM:OnCharInfoSetup(infoPanel)
 				weapModel:AddEffects(EF_BONEMERGE)
 				weapModel:SetSkin(weapon:GetSkin())
 				weapModel:SetColor(weapon:GetColor())
+				weapModel:SetNoDraw(true)
 				ent.weapon = weapModel
 
 				local act = ACT_MP_STAND_IDLE
