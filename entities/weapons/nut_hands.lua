@@ -118,7 +118,9 @@ function SWEP:Precache()
 	util.PrecacheSound("physics/plastic/plastic_box_impact_hard1.wav")	
 	util.PrecacheSound("physics/plastic/plastic_box_impact_hard2.wav")	
 	util.PrecacheSound("physics/plastic/plastic_box_impact_hard3.wav")	
-	util.PrecacheSound("physics/plastic/plastic_box_impact_hard4.wav")	
+	util.PrecacheSound("physics/plastic/plastic_box_impact_hard4.wav")
+	util.PrecacheSound("physics/wood/wood_crate_impact_hard2.wav")
+	util.PrecacheSound("physics/wood/wood_crate_impact_hard3.wav")
 end
 
 function SWEP:Initialize()
@@ -265,7 +267,7 @@ function SWEP:SecondaryAttack()
 			end
 
 			self.Owner:ViewPunch(Angle(-1.3, 1.8, 0))
-			self.Owner:EmitSound("physics/plastic/plastic_box_impact_hard"..math.random(1, 4)..".wav")	
+			self.Owner:EmitSound("physics/wood/wood_crate_impact_hard"..math.random(2, 3)..".wav")	
 			self.Owner:SetAnimation(PLAYER_ATTACK1)
 
 			self:DoPunchAnimation()
