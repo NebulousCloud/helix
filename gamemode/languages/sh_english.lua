@@ -225,5 +225,6 @@ LANGUAGE = {
 	plyNotValid = "You are not looking at a valid player.",
 	restricted = "You have been restrained.",
 	viewProfile = "View Steam Profile",
-	salary = "You have received %s from your salary."
+	salary = "You have received %s from your salary.",
+	noRecog = "You do not recognize this person."
 }

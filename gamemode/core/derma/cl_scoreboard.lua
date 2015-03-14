@@ -167,7 +167,7 @@ local PANEL = {}
 
 			RegisterDermaMenuForClose(menu)
 		end
-		slot.model:SetToolTip(L("sbOptions", client:Name()))
+		slot.model:SetToolTip(L("sbOptions", client:steamName()))
 
 		slot.name = slot:Add("DLabel")
 		slot.name:SetText(client:Name())
@@ -198,7 +198,7 @@ local PANEL = {}
 		slot.desc:DockMargin(65, 0, 48, 0)
 		slot.desc:SetWrap(true)
 		slot.desc:SetContentAlignment(7)
-		slot.desc:SetText(client:getChar() and client:getChar():getDesc())
+		slot.desc:SetText(hook.Run("GetDisplayedDescription", client) or (client:getChar() and client:getChar():getDesc()) or "")
 		slot.desc:SetTextColor(color_white)
 		slot.desc:SetExpensiveShadow(1, Color(0, 0, 0, 100))
 		slot.desc:SetFont("nutSmallFont")
@@ -210,10 +210,10 @@ local PANEL = {}
 				return self:Remove()
 			end
 
-			local name = client:Name()
+			local name = hook.Run("ShouldAllowScoreboardOverride", client) and hook.Run("GetDisplayedName", client) or client:Name()
 			local model = client:GetModel()
 			local skin = client:GetSkin()
-			local desc = client:getChar():getDesc()
+			local desc = hook.Run("ShouldAllowScoreboardOverride", client) and hook.Run("GetDisplayedDescription", client) or (client:getChar() and client:getChar():getDesc()) or ""
 
 			if (self.lastName != name) then
 				self.name:SetText(name)
@@ -222,7 +222,7 @@ local PANEL = {}
 
 			if (self.lastModel != model or self.lastSkin != skin) then
 				self.model:SetModel(client:GetModel(), client:GetSkin())
-				self.model:SetToolTip(L("sbOptions", client:Name()))
+				self.model:SetToolTip(L("sbOptions", client:steamName()))
 				
 				self.lastModel = model
 				self.lastSkin = skin

@@ -53,7 +53,7 @@ do
 			return false;
 		end;
 		
-		return recognized:find(","..id..",");
+		return recognized:find(","..id..",") != nil and true or false;
 	end
 end
 
@@ -67,13 +67,25 @@ if (CLIENT) then
 		return whitelist[chatType]
 	end
 
+	function PLUGIN:GetDisplayedDescription(client)
+		if (client != LocalPlayer() and !LocalPlayer():getChar():doesRecognize(client:getChar()) and !hook.Run("IsPlayerRecognized", client)) then
+			return L"noRecog"
+		end
+	end
+
+	function PLUGIN:ShouldAllowScoreboardOverride(client)
+		if (nut.config.get("sbRecog")) then
+			return true
+		end
+	end
+
 	function PLUGIN:GetDisplayedName(client, chatType)
 		if (client != LocalPlayer()) then
 			local character = client:getChar()
 			local ourCharacter = LocalPlayer():getChar()
 
-			if (ourCharacter and character and (!ourCharacter:doesRecognize(character) or hook.Run("IsPlayerRecognized", client))) then
-				if (hook.Run("IsRecognizedChatType", chatType)) then
+			if (ourCharacter and character and !ourCharacter:doesRecognize(character) and !hook.Run("IsPlayerRecognized", client)) then
+				if (chatType and hook.Run("IsRecognizedChatType", chatType)) then
 					local description = character:getDesc()
 
 					if (#description > 40) then
@@ -81,9 +93,9 @@ if (CLIENT) then
 					end
 
 					return "["..description.."]"
-				else
-					return L"unknown"
 				end
+
+				return L"unknown"
 			end
 		end
 	end
