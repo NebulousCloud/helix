@@ -127,6 +127,10 @@ function nut.chat.parse(client, message, noSend)
 		end
 	end
 
+	if (!message:find("%S")) then
+		return
+	end
+	
 	-- Only send if needed.
 	if (SERVER and !noSend) then
 		-- Send the correct chat type out so other player see the message.
