@@ -17,7 +17,7 @@ local configGet = nut.config.get
 local teamGetColor = team.GetColor
 
 function PLUGIN:DrawEntityInfo(entity, alpha)
-	if (entity.isDoor(entity)) then
+	if (entity.isDoor(entity) and !entity:getNetVar("hidden")) then
 		local position = toScreen(entity.LocalToWorld(entity, entity.OBBCenter(entity)))
 		local x, y = position.x, position.y
 		local owner = entity.getNetVar(entity, "owner")

@@ -379,3 +379,32 @@ nut.command.add("doorremovechild", {
 		end		
 	end
 })
+
+nut.command.add("doorsethidden", {
+	adminOnly = true,
+	syntax = "<bool hidden>",
+	onRun = function(client, arguments)
+		-- Get the door the player is looking at.
+		local entity = client:GetEyeTrace().Entity
+
+		-- Validate it is a door.
+		if (IsValid(entity) and entity:isDoor()) then
+			local hidden = util.tobool(arguments[1] or true)
+
+			entity:setNetVar("hidden", hidden)
+			
+			PLUGIN:callOnDoorChildren(entity, function(child)
+				child:setNetVar("hidden", hidden)
+			end)
+
+			-- Tell the player they have made the door (un)hidden.
+			client:notifyLocalized("dSet"..(hidden and "" or "Not").."Hidden")
+
+			-- Save the door information.
+			PLUGIN:SaveDoorData()
+		else
+			-- Tell the player the door isn't valid.
+			client:notifyLocalized("dNotValid")
+		end
+	end
+})

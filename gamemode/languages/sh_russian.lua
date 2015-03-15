@@ -1,4 +1,4 @@
-
+﻿
 --Russian translation by Shadow Nova (http://steamcommunity.com/profiles/76561197989134302)
 --Edited/fixed by Schwarz Kruppzo (http://steamcommunity.com/id/schwarzkruppzo)
 NAME = "Русский"
@@ -69,6 +69,8 @@ LANGUAGE = {
 	dNotAllowedToOwn = "Вам не позволено арендовать эту дверь.",
 	dSetDisabled = "Вы сделали эту дверь нерабочей.",
 	dSetNotDisabled = "Вы сделали эту дверь вновь рабочей.",
+	dSetHidden = "Вы сделали эту дверь невидимой.",
+	dSetNotHidden = "Вы сделали эту дверь вновь видимой.",
 	dSetParentDoor = "Вы сделали эту дверь главной.",
 	dCanNotSetAsChild = "Вы не можете сделать главную дверь второстепенной.",
 	dAddChildDoor = "Вы добавили эту дверь как второстепенную.",
@@ -210,5 +212,7 @@ LANGUAGE = {
 	consumables = "Потребности",
 	plyNotValid = "Вы смотрите не на подлинного игрока.",
 	restricted = "Вы были связаны.",
-	viewProfile = "Показать профиль Steam"
+	viewProfile = "Показать профиль Steam",
+	salary = "Вы получили %s из вашей зарплаты.",
+	noRecog = "Вы не узнаёте этого человека."
 }
