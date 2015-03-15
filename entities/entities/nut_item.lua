@@ -88,7 +88,7 @@ else
 				self.offset = self.offset * 0.5
 			end
 			
-			nut.util.drawText(itemTable.name, x, y, colorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
+			nut.util.drawText(L(itemTable.name), x, y, colorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
 
 			local lines = self.lines
 			local offset = self.offset

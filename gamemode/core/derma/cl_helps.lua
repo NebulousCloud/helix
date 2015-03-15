@@ -46,7 +46,9 @@ if (CLIENT) then
 			tree:SetWide(180)
 			tree:DockMargin(0, 0, 15, 0)
 			tree.OnNodeSelected = function(this, node)
-				html:SetHTML(header..node:onGetHTML().."</body></html>")
+				if (node.onGetHTML) then
+					html:SetHTML(header..node:onGetHTML().."</body></html>")
+				end
 			end
 
 			html = panel:Add("DHTML")
