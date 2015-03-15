@@ -9,7 +9,9 @@ local variables = {
 	-- If the door is unownable.
 	"noSell",
 	-- The faction that owns a door.
-	"faction"
+	"faction",
+	-- Whether or not the door will be hidden.
+	"hidden"
 }
 
 function PLUGIN:callOnDoorChildren(entity, callback)
