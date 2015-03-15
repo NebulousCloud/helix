@@ -250,7 +250,7 @@ nut.command.add("charaddattrib", {
 
 nut.command.add("charsetname", {
 	adminOnly = true,
-	syntax = "<string name> <string model>",
+	syntax = "<string name> [string newName]",
 	onRun = function(client, arguments)
 		local target = nut.command.findPlayer(client, arguments[1])
 
