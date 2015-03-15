@@ -5,6 +5,9 @@ ITEM.model = "models/Gibs/HGIBS.mdl"
 ITEM.width = 1
 ITEM.height = 1
 ITEM.outfitCategory = "hat"
+ITEM.pacData = {}
+
+--[[
 ITEM.pacData = {
 	[1] = {
 		["children"] = {
@@ -29,7 +32,6 @@ ITEM.pacData = {
 		},
 	},
 }
---[[
 
 -- This will change a certain part of the model.
 ITEM.replacements = {"group01", "group02"}
