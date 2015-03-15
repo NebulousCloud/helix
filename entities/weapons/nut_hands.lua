@@ -209,7 +209,7 @@ function SWEP:onCanCarry(entity)
 		return false
 	end
 
-	if (IsValid(entity.carrier)) then
+	if (IsValid(entity.carrier) or IsValid(self.heldEntity)) then
 		return false
 	end
 
@@ -221,8 +221,12 @@ function SWEP:doPickup(entity)
 		return
 	end
 
-	timer.Simple(FrameTime() * 10, function()
-		if (!IsValid(entity) or entity:IsPlayerHolding()) then
+	self.heldEntity = entity
+
+	timer.Simple(0.1, function()
+		if (!IsValid(entity) or entity:IsPlayerHolding() or self.heldEntity != entity) then
+			self.heldEntity = nil
+
 			return
 		end
 
@@ -263,6 +267,8 @@ function SWEP:SecondaryAttack()
 			physObj:Wake()
 
 			self:doPickup(entity)
+		elseif (IsValid(self.heldEntity) and !self.heldEntity:IsPlayerHolding()) then
+			self.heldEntity = nil
 		end
 	end
 end
