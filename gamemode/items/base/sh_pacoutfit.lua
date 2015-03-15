@@ -66,6 +66,11 @@ function ITEM:removeParts(client)
 	self:setData("equip", false)
 	character:removePart(self.uniqueID)
 
+	if (character:getData("oldMdl")) then
+		client:SetModel(character:getData("oldMdl"))
+		character:setData("oldMdl", nil)
+	end
+
 	for k, v in pairs(self.bodyGroups or {}) do
 		local index = client:FindBodygroupByName(k)
 
@@ -138,6 +143,22 @@ ITEM.functions.Equip = {
 
 		item:setData("equip", true)
 		char:addPart(item.uniqueID)
+
+		if (item.replacements) then
+			character:setData("oldMdl", character:getData("oldMdl", item.player:GetModel()))
+
+			if (type(item.replacements) == "table") then
+				if (#item.replacements == 2 and type(item.replacements[1]) == "string") then
+					client:SetModel(client:GetModel():gsub(item.replacements[1], item.replacements[2]))
+				else
+					for k, v in ipairs(item.replacements) do
+						client:SetModel(client:GetModel():gsub(v[1], v[2]))
+					end
+				end
+			else
+				client:SetModel(item.replacements)
+			end
+		end
 
 		if (item.bodyGroups) then
 			local groups = {}
