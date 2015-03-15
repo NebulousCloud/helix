@@ -600,7 +600,7 @@ do
 
 				hook.Run("PreCharDelete", client, character)
 				nut.char.loaded[id] = nil
-				netstream.Start(nil, "charDel", id, isCurrentChar)
+				netstream.Start(nil, "charDel", id)
 				nut.db.query("DELETE FROM nut_characters WHERE _id = "..id.." AND _steamID = "..client:SteamID64())
 				nut.db.query("SELECT _invID FROM nut_inventories WHERE _charID = "..id, function(data)
 					if (data) then
@@ -668,7 +668,9 @@ do
 			end
 		end)
 
-		netstream.Hook("charDel", function(id, isCurrentChar)
+		netstream.Hook("charDel", function(id)
+			local isCurrentChar = LocalPlayer():getChar() and LocalPlayer():getChar():getID() == id
+
 			nut.char.loaded[id] = nil
 
 			for k, v in ipairs(nut.characters) do
