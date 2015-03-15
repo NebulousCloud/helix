@@ -621,6 +621,10 @@ function GM:OnPhysgunFreeze(weapon, physObj, entity, client)
 	return true
 end
 
+function GM:CanPlayerSuicide(client)
+	return false
+end
+
 netstream.Hook("strReq", function(client, time, text)
 	if (client.nutStrReqs and client.nutStrReqs[time]) then
 		client.nutStrReqs[time](text)
