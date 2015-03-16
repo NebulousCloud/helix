@@ -132,6 +132,34 @@ function ITEM:onCanBeTransfered(oldInventory, newInventory)
 	return true
 end
 
+function ITEM:onLoadout()
+	if (self:getData("equip")) then
+		local client = self.player
+		client.carryWeapons = {}
+
+		local weapon = client:Give(self.class)
+
+		if (IsValid(weapon)) then
+			local ammo = self:getData("ammo")
+
+			client.carryWeapons[self.weaponCategory] = weapon
+
+			local count = weapon:Clip1()
+			local ammoType = weapon:GetPrimaryAmmoType()
+
+			if (client:GetAmmoCount(ammoType) >= count) then
+				client:RemoveAmmo(count, ammoType)
+			end
+
+			if (ammo) then
+				weapon:SetClip1(ammo)
+			end
+		else
+			print(Format("[Nutscript] Weapon %s does not exist!", self.class))
+		end
+	end
+end
+
 HOLSTER_DRAWINFO = {}
 -- Called after the item is registered into the item tables.
 function ITEM:onRegistered()

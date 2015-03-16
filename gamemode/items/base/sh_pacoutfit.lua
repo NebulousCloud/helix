@@ -147,18 +147,18 @@ ITEM.functions.Equip = {
 		char:addPart(item.uniqueID)
 
 		if (item.replacements) then
-			character:setData("oldMdl", character:getData("oldMdl", item.player:GetModel()))
+			char:setData("oldMdl", char:getData("oldMdl", item.player:GetModel()))
 
 			if (type(item.replacements) == "table") then
 				if (#item.replacements == 2 and type(item.replacements[1]) == "string") then
-					client:SetModel(client:GetModel():gsub(item.replacements[1], item.replacements[2]))
+					char:setModel(item.player:GetModel():gsub(item.replacements[1], item.replacements[2]))
 				else
 					for k, v in ipairs(item.replacements) do
-						client:SetModel(client:GetModel():gsub(v[1], v[2]))
+						char:setModel(item.player:GetModel():gsub(v[1], v[2]))
 					end
 				end
 			else
-				client:SetModel(item.replacements)
+				char:setModel(item.replacements)
 			end
 		end
 
@@ -173,15 +173,15 @@ ITEM.functions.Equip = {
 				end
 			end
 
-			local newGroups = character:getData("groups", {})
+			local newGroups = char:getData("groups", {})
 
 			for index, value in pairs(groups) do
 				newGroups[index] = value
-				client:SetBodygroup(index, value)
+				item.player:SetBodygroup(index, value)
 			end
 
 			if (table.Count(newGroups) > 0) then
-				character:setData("body", newGroups)
+				char:setData("body", newGroups)
 			end
 		end
 

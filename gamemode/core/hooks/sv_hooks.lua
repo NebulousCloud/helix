@@ -338,35 +338,12 @@ function GM:PostPlayerLoadout(client)
 
 	if (char:getInv()) then
 		for k, v in pairs(char:getInv():getItems()) do
+			v:call("onLoadout", client)
+
 			if (v:getData("equip")) then
 				if (v.attribBoosts) then
 					for k, v in pairs(v.attribBoosts) do
 						char:addBoost(v.uniqueID, k, v)
-					end
-				end
-
-				if (v.isWeapon) then
-					client.carryWeapons = {}
-
-					local weapon = client:Give(v.class)
-
-					if (IsValid(weapon)) then
-						local ammo = v:getData("ammo")
-
-						client.carryWeapons[v.weaponCategory] = weapon
-
-						local count = weapon:Clip1()
-						local ammoType = weapon:GetPrimaryAmmoType()
-
-						if (client:GetAmmoCount(ammoType) >= count) then
-							client:RemoveAmmo(count, ammoType)
-						end
-
-						if (ammo) then
-							weapon:SetClip1(ammo)
-						end
-					else
-						print(Format("[Nutscript] Weapon %s does not exist!", v.class))
 					end
 				end
 			end
