@@ -78,9 +78,9 @@ if (CLIENT) then
 					end
 
 					return "["..description.."]"
+				elseif (!chatType) then
+					return L"unknown"
 				end
-
-				return L"unknown"
 			end
 		end
 	end
