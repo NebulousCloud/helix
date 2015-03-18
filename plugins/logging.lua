@@ -22,7 +22,7 @@ if (SERVER) then
 			if (attacker:IsWorld() or victim == attacker) then
 				nut.log.add(L("%s has died.", victim:Name()))
 			else
-				nut.log.add(L("%s killed %s with %s.", attacker:Name(), (attacker:IsPlayer() and attacker:Name() or attacker:GetClass()), inflictor:GetClass()))
+				nut.log.add(L("%s killed %s with %s.", attacker:IsPlayer() and attacker:Name() or tostring(attacker), victim:Name(), inflictor:GetClass()))
 			end
 		end
 	end
