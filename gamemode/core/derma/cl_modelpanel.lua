@@ -47,6 +47,10 @@ local PANEL = {}
 		entity:SetPoseParameter("head_yaw", (xRatio - xRatio2)*90 - 5)
 		entity:SetAngles(MODEL_ANGLE)
 		entity:SetIK(false)
+		entity:SetSequence(LocalPlayer():GetSequence())
+	 	entity:SetPoseParameter("move_yaw", 360 * LocalPlayer():GetPoseParameter("move_yaw") - 180)
+
+		self:RunAnimation()
 	end
 
 	function PANEL:DrawModel()

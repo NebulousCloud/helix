@@ -6,7 +6,7 @@ local PANEL = {}
 
 		nut.gui.info = self
 
-		self:SetSize(ScrW() * 0.6, ScrH() * 0.6)
+		self:SetSize(ScrW() * 0.6, ScrH() * 0.7)
 		self:Center()
 
 		self.model = self:Add("nutModelPanel")
@@ -19,7 +19,7 @@ local PANEL = {}
 		self.info:SetWide(ScrW() * 0.4)
 		self.info:Dock(RIGHT)
 		self.info:SetDrawBackground(false)
-		self.info:DockMargin(150, 36, 0, 0)
+		self.info:DockMargin(150, ScrH() * 0.2, 0, 0)
 
 		self.name = self.info:Add("DLabel")
 		self.name:SetFont("nutHugeFont")
@@ -48,6 +48,7 @@ local PANEL = {}
 		self.faction:DockMargin(0, 10, 0, 0)
 
 		local class = nut.class.list[LocalPlayer():getChar():getClass()]
+		
 		if (class) then
 			self.class = self.info:Add("DLabel")
 			self.class:Dock(TOP)
