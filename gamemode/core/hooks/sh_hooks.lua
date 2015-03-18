@@ -239,19 +239,22 @@ function GM:EntityEmitSound(data)
 	end
 end
 
-function GM:CalcMainActivity(client, velocity)
-	local eyeAngles = client:EyeAngles()
-	local yaw = velocity:Angle().yaw
-	local normalized = math.NormalizeAngle(yaw - eyeAngles.y)
+local vectorAngle = FindMetaTable("Vector").Angle
+local normalizeAngle = math.NormalizeAngle
 
-	client:SetPoseParameter("move_yaw", normalized)
+function GM:CalcMainActivity(client, velocity)
+	local eyeAngles = client.EyeAngles(client)
+	local yaw = vectorAngle(velocity)[2]
+	local normalized = normalizeAngle(yaw - eyeAngles[2])
+
+	client.SetPoseParameter(client, "move_yaw", normalized)
 
 	if (CLIENT) then
-		client:SetIK(false)
+		client.SetIK(client, false)
 	end
 
 	local oldSeqOverride = client.CalcSeqOverride
-	local seqIdeal, seqOverride = self.BaseClass:CalcMainActivity(client, velocity)
+	local seqIdeal, seqOverride = self.BaseClass.CalcMainActivity(self.BaseClass, client, velocity)
 	--client.CalcSeqOverride is being -1 after this line.
 
 	return seqIdeal, client.nutForceSeq or oldSeqOverride or client.CalcSeqOverride
