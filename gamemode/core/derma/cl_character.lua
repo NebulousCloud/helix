@@ -494,7 +494,13 @@ local PANEL = {}
 
 		CreateMainButtons()
 	end
-
+	
+	function PANEL:Think()
+		if (input.IsKeyDown(KEY_F1) and !LocalPlayer():getChar() and !self.choosing) then
+			self:Remove()
+		end
+	end
+	
 	function PANEL:playMusic()
 		if (nut.menuMusic) then
 			nut.menuMusic:Stop()
