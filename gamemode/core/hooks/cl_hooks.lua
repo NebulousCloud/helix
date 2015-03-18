@@ -291,7 +291,7 @@ function GM:InitializedConfig()
 end
 
 function GM:InitPostEntity()
-	nut.joinTime = CurTime()
+	nut.joinTime = RealTime() - 0.9716
 end
 
 local vignette = nut.util.getMaterial("nutscript/gui/vignette.png")

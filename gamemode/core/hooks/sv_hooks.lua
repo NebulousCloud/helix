@@ -24,7 +24,7 @@ function GM:PlayerInitialSpawn(client)
 	client:loadNutData(function(data)
 		if (!IsValid(client)) then return end
 
-		netstream.Start(client, "nutDataSync", data)
+		netstream.Start(client, "nutDataSync", data, client.nutPlayTime)
 		
 		nut.char.restore(client, function(charList)
 			if (!IsValid(client)) then return end
@@ -471,6 +471,8 @@ function GM:ShutDown()
 	hook.Run("SaveData")
 
 	for k, v in ipairs(player.GetAll()) do
+		v:saveNutData()
+
 		if (v:getChar()) then
 			v:getChar():save()
 		end

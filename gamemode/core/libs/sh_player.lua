@@ -27,8 +27,9 @@ do
 			end
 		end
 
-		netstream.Hook("nutDataSync", function(data)
+		netstream.Hook("nutDataSync", function(data, playTime)
 			nut.localData = data
+			nut.playTime = playTime
 		end)
 
 		netstream.Hook("nutData", function(key, value)

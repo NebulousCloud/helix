@@ -8,14 +8,14 @@ do
 		local timeStamp = math.floor(os.time())
 		local ip = self:IPAddress():match("%d+%.%d+%.%d+%.%d+")
 
-		nut.db.query("SELECT _data FROM nut_players WHERE _steamID = "..steamID64, function(data)
+		nut.db.query("SELECT _data, _playTime FROM nut_players WHERE _steamID = "..steamID64, function(data)
 			if (IsValid(self) and data and data[1] and data[1]._data) then
 				nut.db.updateTable({
 					_lastJoin = timeStamp,
 					_address = ip
 				}, nil, "players", "_steamID = "..steamID64)
 
-				self.nutPlayTime = tonumber(data._playTime) or 0
+				self.nutPlayTime = tonumber(data[1]._playTime) or 0
 				self.nutData = util.JSONToTable(data[1]._data)
 
 				if (callback) then

@@ -503,6 +503,19 @@ do
 	ALWAYS_RAISED["gmod_tool"] = true
 	ALWAYS_RAISED["nut_poshelper"] = true
 
+	-- Returns how many seconds the player has played on the server in total.
+	if (SERVER) then
+		function playerMeta:getPlayTime()
+			return self.nutPlayTime + (RealTime() - (self.nutJoinTime or RealTime()))
+		end
+	else
+		nut.playTime = nut.playTime or 0
+
+		function playerMeta:getPlayTime()
+			return nut.playTime + (RealTime() - nut.joinTime)
+		end
+	end
+
 	-- Returns whether or not the player has their weapon raised.
 	function playerMeta:isWepRaised()
 		local weapon = self.GetActiveWeapon(self)
