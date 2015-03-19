@@ -88,9 +88,7 @@ function PLUGIN:Tick()
 	if (IsValid(client) and NUT_CVAR_LEGS:GetBool()) then
 		local model = client:GetModel()
 
-		if (IsValid(self.legs) and self.legs:GetModel() != model) then
-			self.legs:SetModel(model)
-		elseif (!IsValid(self.legs)) then
+		if (!IsValid(self.legs) or (IsValid(self.legs) and self.legs:GetModel() != model)) then
 			self:createLegs()
 		end
 	end
