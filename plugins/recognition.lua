@@ -32,10 +32,14 @@ do
 	end
 
 	function PLUGIN:IsCharRecognised(char, id)
-		local faction = nut.faction.indices[char:getFaction()]
+		local other = nut.char.loaded[id]
 
-		if (faction and faction.isGloballyRecognized) then
-			return true
+		if (other) then
+			local faction = nut.faction.indices[other:getFaction()]
+
+			if (faction and faction.isGloballyRecognized) then
+				return true
+			end
 		end
 
 		local recognized = char:getData("rgn", "")
