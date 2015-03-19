@@ -83,8 +83,10 @@ function PLUGIN:createLegs()
 end
 
 function PLUGIN:Tick()
-	if (NUT_CVAR_LEGS:GetBool()) then
-		local model = LocalPlayer():GetModel()
+	local client = LocalPlayer()
+
+	if (IsValid(client) and NUT_CVAR_LEGS:GetBool()) then
+		local model = client:GetModel()
 
 		if (IsValid(self.legs) and self.legs:GetModel() != model) then
 			self.legs:SetModel(model)
