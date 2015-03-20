@@ -90,6 +90,10 @@ nut.config.add("logoURL", "http://nutscript.rocks/", "The URL opened when the ic
 nut.config.add("sbRecog", false, "Whether or not recognition is used in the scoreboard.", nil, {
 	category = "characters"
 })
+nut.config.add("defMoney", 0, "The amount of money that players start with.", nil, {
+	category = "characters",
+	data = {min = 0, max = 1000}
+})
 nut.config.add("allowVoice", false, "Whether or not voice chat is allowed.", nil, {
 	category = "server"
 })
