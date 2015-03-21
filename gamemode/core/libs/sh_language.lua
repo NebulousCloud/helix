@@ -43,7 +43,7 @@ if (SERVER) then
 		end
 	end
 else
-	NUT_CVAR_LANG = CreateClientConVar("nut_language", "english", true, true)
+	NUT_CVAR_LANG = CreateClientConVar("nut_language", nut.config.language or "english", true, true)
 
 	function L(key, ...)
 		local languages = nut.lang.stored
