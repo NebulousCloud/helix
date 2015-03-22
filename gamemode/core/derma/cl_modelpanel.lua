@@ -31,6 +31,7 @@ local PANEL = {}
 			if (sequence > 0) then
 				entity:ResetSequence(sequence)
 			end
+
 			entity:SetIK(false)
 		end
 	end
@@ -47,8 +48,11 @@ local PANEL = {}
 		entity:SetPoseParameter("head_yaw", (xRatio - xRatio2)*90 - 5)
 		entity:SetAngles(MODEL_ANGLE)
 		entity:SetIK(false)
-		entity:SetSequence(LocalPlayer():GetSequence())
-	 	entity:SetPoseParameter("move_yaw", 360 * LocalPlayer():GetPoseParameter("move_yaw") - 180)
+
+		if (self.copyLocalSequence) then
+			entity:SetSequence(LocalPlayer():GetSequence())
+		 	entity:SetPoseParameter("move_yaw", 360 * LocalPlayer():GetPoseParameter("move_yaw") - 180)
+		end
 
 		self:RunAnimation()
 	end

@@ -14,6 +14,7 @@ local PANEL = {}
 		self.model:Dock(LEFT)
 		self.model:SetFOV(50)
 		self.model.enableHook = true
+		self.model.copyLocalSequence = true
 
 		self.info = self:Add("DPanel")
 		self.info:SetWide(ScrW() * 0.4)

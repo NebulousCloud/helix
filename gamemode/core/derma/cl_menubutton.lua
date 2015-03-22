@@ -4,6 +4,11 @@ local PANEL = {}
 		self:SetExpensiveShadow(2, Color(0, 0, 0, 200))
 		self:SetTextColor(color_white)
 		self:SetDrawBackground(false)
+		self.OldSetTextColor = self.SetTextColor
+		self.SetTextColor = function(this, color)
+			this:OldSetTextColor(color)
+			this:SetFGColor(color)
+		end
 	end
 
 	function PANEL:setText(text, noTranslation)
@@ -22,7 +27,7 @@ local PANEL = {}
 	function PANEL:OnCursorEntered()
 		local color = self:GetTextColor()
 		self:SetTextColor(Color(math.max(color.r - 25, 0), math.max(color.g - 25, 0), math.max(color.b - 25, 0)))
-		
+
 		surface.PlaySound("ui/buttonrollover.wav")
 	end
 
