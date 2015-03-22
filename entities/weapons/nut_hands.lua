@@ -223,7 +223,7 @@ function SWEP:doPickup(entity)
 
 	self.heldEntity = entity
 
-	timer.Simple(0.1, function()
+	timer.Simple(0.2, function()
 		if (!IsValid(entity) or entity:IsPlayerHolding() or self.heldEntity != entity) then
 			self.heldEntity = nil
 
