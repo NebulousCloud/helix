@@ -355,6 +355,7 @@ local lastEntity
 local mathApproach = math.Approach
 local surface = surface
 local hookRun = hook.Run
+local toScreen = FindMetaTable("Vector").ToScreen
 
 function GM:HUDPaint()
 	local localPlayer = LocalPlayer()
@@ -392,7 +393,13 @@ function GM:HUDPaint()
 			end
 
 			if (alpha > 0) then
-				if (entity.onDrawEntityInfo) then
+				local client = entity.getNetVar(entity, "player")
+				
+				if (IsValid(client)) then
+					local position = toScreen(client.GetPos(cient) + (client.Crouching(client) and OFFSET_CROUCHING or OFFSET_NORMAL))
+						
+					hookRun("DrawEntityInfo", entity, alpha, position)
+				elseif (entity.onDrawEntityInfo) then
 					entity.onDrawEntityInfo(entity, alpha)
 				else
 					hookRun("DrawEntityInfo", entity, alpha)
@@ -494,7 +501,6 @@ function GM:GetInjuredText(client)
 	end
 end
 
-local toScreen = FindMetaTable("Vector").ToScreen
 local colorAlpha = ColorAlpha
 local teamGetColor = team.GetColor
 local drawText = nut.util.drawText
