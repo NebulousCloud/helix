@@ -509,11 +509,12 @@ end
 
 local charInfo = {}
 
-function GM:DrawEntityInfo(entity, alpha)
+function GM:DrawEntityInfo(entity, alpha, position)
 	if (entity.IsPlayer(entity)) then
 		local localPlayer = LocalPlayer()
-		local position = toScreen(entity.GetPos(entity) + (entity.Crouching(entity) and OFFSET_CROUCHING or OFFSET_NORMAL))
 		local character = entity.getChar(entity)
+		
+		position = position or toScreen(entity.GetPos(entity) + (entity.Crouching(entity) and OFFSET_CROUCHING or OFFSET_NORMAL))
 
 		if (character) then
 			local x, y = position.x, position.y
