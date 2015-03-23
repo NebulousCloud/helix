@@ -781,6 +781,7 @@ do
 				entity:SetModel(self:GetModel())
 				entity:SetSkin(self:GetSkin())
 				entity:Spawn()
+				entity:setNetVar("player", self)
 				entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 				entity:Activate()
 				entity:CallOnRemove("fixer", function()
