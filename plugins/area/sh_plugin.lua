@@ -111,9 +111,8 @@ if (SERVER) then
 		PLUGIN:saveAreas()
 	end
 
-	-- Think. Chessnut hates this. 
-	-- What do I have to do?
-	function PLUGIN:Think()
+	-- Timer instead of heavy think.
+	timer.Create("nutAreaController", 0.33, 0, function()
 		for k, v in ipairs(player.GetAll()) do
 			local char = v:getChar()
 
@@ -132,7 +131,7 @@ if (SERVER) then
 				end
 			end
 		end
-	end
+	end)
 
 	-- If area is changed, set display Area's Name to the client's screen.
 	function PLUGIN:OnPlayerAreaChanged(client, areaID)
@@ -454,7 +453,7 @@ nut.command.add("areachange", {
 		if (areaData) then
 			areaData.name = name
 			PLUGIN:saveAreas()
-			
+
 			return "@areaChanged", name, areaData.name
 		end
 	end
