@@ -31,7 +31,11 @@ function ENT:Initialize()
 		end
 	end
 
-	self:setAnim()
+	timer.Simple(1, function()
+		if (IsValid(self)) then
+			self:setAnim()
+		end
+	end)
 end
 
 function ENT:setAnim()
@@ -71,7 +75,11 @@ if (CLIENT) then
 			self.bubble:Remove()
 		elseif (!IsValid(self.bubble) and !noBubble) then
 			self:createBubble()
+		end
 
+		if ((self.nextAnimCheck or 0) < CurTime()) then
+			self:setAnim()
+			self.nextAnimCheck = CurTime() + 60
 		end
 
 		self:SetNextClientThink(CurTime() + 0.25)
