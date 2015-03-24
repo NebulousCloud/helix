@@ -394,11 +394,11 @@ function GM:HUDPaint()
 
 			if (alpha > 0) then
 				local client = entity.getNetVar(entity, "player")
-				
+
 				if (IsValid(client)) then
-					local position = toScreen(client.GetPos(cient) + (client.Crouching(client) and OFFSET_CROUCHING or OFFSET_NORMAL))
-						
-					hookRun("DrawEntityInfo", entity, alpha, position)
+					local position = toScreen(entity.LocalToWorld(entity, entity.OBBCenter(entity)))
+
+					hookRun("DrawEntityInfo", client, alpha, position)
 				elseif (entity.onDrawEntityInfo) then
 					entity.onDrawEntityInfo(entity, alpha)
 				else
@@ -475,7 +475,7 @@ function GM:PostDrawHUD()
 end
 
 function GM:ShouldDrawEntityInfo(entity)
-	if (entity:IsPlayer()) then
+	if (entity:IsPlayer() or IsValid(entity:getNetVar("player"))) then
 		if (entity == LocalPlayer() and !LocalPlayer():ShouldDrawLocalPlayer()) then
 			return false
 		end
