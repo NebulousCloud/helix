@@ -359,6 +359,11 @@ local toScreen = FindMetaTable("Vector").ToScreen
 
 function GM:HUDPaint()
 	local localPlayer = LocalPlayer()
+
+	if (!localPlayer.getChar(localPlayer)) then
+		return
+	end
+	
 	local realTime = RealTime()
 	local frameTime = FrameTime()
 	local scrW, scrH = surface.ScreenWidth(), surface.ScreenHeight()

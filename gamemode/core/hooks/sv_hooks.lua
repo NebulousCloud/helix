@@ -361,22 +361,24 @@ local deathSounds = {
 }
 
 function GM:PlayerDeath(client, inflictor, attacker)
-	if (IsValid(client.nutRagdoll)) then
-		client.nutRagdoll.nutIgnoreDelete = true
-		client.nutRagdoll:Remove()
-		client:setLocalVar("blur", nil)
+	if (client:getChar()) then
+		if (IsValid(client.nutRagdoll)) then
+			client.nutRagdoll.nutIgnoreDelete = true
+			client.nutRagdoll:Remove()
+			client:setLocalVar("blur", nil)
+		end
+
+		client:setNetVar("deathStartTime", CurTime())
+		client:setNetVar("deathTime", CurTime() + nut.config.get("spawnTime", 5))
+
+		local deathSound = hook.Run("GetPlayerDeathSound", client) or table.Random(deathSounds)
+
+		if (client:isFemale() and !deathSound:find("female")) then
+			deathSound = deathSound:gsub("male", "female")
+		end
+
+		client:EmitSound(deathSound)
 	end
-
-	client:setNetVar("deathStartTime", CurTime())
-	client:setNetVar("deathTime", CurTime() + nut.config.get("spawnTime", 5))
-
-	local deathSound = hook.Run("GetPlayerDeathSound", client) or table.Random(deathSounds)
-
-	if (client:isFemale() and !deathSound:find("female")) then
-		deathSound = deathSound:gsub("male", "female")
-	end
-
-	client:EmitSound(deathSound)
 end
 
 local painSounds = {
