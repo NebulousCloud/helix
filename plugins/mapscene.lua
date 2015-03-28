@@ -3,6 +3,11 @@ PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Adds areas of the map that are visible during character selection."
 PLUGIN.scenes = PLUGIN.scenes or {}
 
+local x3, y3 = 0, 0
+local realOrigin = Vector(0, 0, 0)
+local realAngles = Angle(0, 0, 0)
+local view = {}
+
 if (CLIENT) then
 	PLUGIN.ordered = PLUGIN.ordered or {}
 
@@ -17,8 +22,6 @@ if (CLIENT) then
 				value, key = table.Random(scenes)
 				self.index = key
 			end
-
-			local view = {}
 
 			if (self.orderedIndex or type(key) == "Vector") then
 				local curTime = CurTime()
@@ -40,8 +43,8 @@ if (CLIENT) then
 				local fraction = math.min(math.TimeFraction(self.startTime, self.finishTime, CurTime()), 1)
 
 				if (value) then
-					view.origin = LerpVector(fraction, key, value[1])
-					view.angles = LerpAngle(fraction, value[2], value[3])
+					realOrigin = LerpVector(fraction, key, value[1])
+					realAngles = LerpAngle(fraction, value[2], value[3])
 				end
 
 				if (fraction >= 1) then
@@ -67,9 +70,19 @@ if (CLIENT) then
 					end
 				end
 			elseif (value) then
-				view.origin = value[1]
-				view.angles = value[2]
+				realOrigin = value[1]
+				realAngles = value[2]
 			end
+
+			local x, y = gui.MousePos()
+			local x2, y2 = surface.ScreenWidth() * 0.5, surface.ScreenHeight() * 0.5
+			local frameTime = FrameTime() * 0.5
+
+			y3 = Lerp(frameTime, y3, math.Clamp((y - y2) / y2, -1, 1) * -6)
+			x3 = Lerp(frameTime, x3, math.Clamp((x - x2) / x2, -1, 1) * 6)
+
+			view.origin = realOrigin + realAngles:Up()*y3 + realAngles:Right()*x3
+			view.angles = realAngles + Angle(y3 * -0.5, x3 * -0.5, 0)
 
 			return view
 		end
