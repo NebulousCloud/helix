@@ -917,5 +917,9 @@ end
 
 -- Gets the current time in the UTC time-zone.
 function nut.util.getUTCTime()
-	return os.time((os.date("!*t")))
+	local date = os.date("!*t")
+	local localDate = os.date("*t")
+	localDate.isdst = false
+
+	return os.difftime(os.time(date), os.time(localDate))
 end

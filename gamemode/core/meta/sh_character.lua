@@ -48,10 +48,6 @@ if (SERVER) then
 				end
 
 				hook.Run("CharacterPostSave", self)
-
-				if (!nut.shuttingDown) then
-					MsgN("Saved character '"..self:getID().."'")
-				end
 			end, nil, "_id = "..self:getID())
 		end
 	end

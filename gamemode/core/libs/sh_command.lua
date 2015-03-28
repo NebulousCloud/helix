@@ -178,6 +178,10 @@ if (SERVER) then
 
 				-- Runs the actual command.
 				nut.command.run(client, match, arguments)
+
+				if (!realCommand) then
+					nut.log.add(client:Name().." used \""..text.."\"")
+				end
 			else
 				if (IsValid(client)) then
 					client:notifyLocalized("cmdNoExist")

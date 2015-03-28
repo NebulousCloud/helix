@@ -42,11 +42,15 @@ if (SERVER) then
 	]]
 
 	function nut.log.loadTables()
+		file.CreateDir("nutscript/logs")
+
+		--[[
 		if (nut.db.object) then
 			nut.db.query(MYSQL_CREATE_LOG)
 		else
 			nut.db.query(SQLITE_CREATE_LOG)
 		end
+		--]]
 	end
 
 	function nut.log.resetTables()
@@ -54,7 +58,20 @@ if (SERVER) then
 		nut.log.loadTables()
 	end
 
-	function nut.log.add(logString, flag, logLevel, noSave)
+	function nut.log.add(logString, flag, logLevel, noSave, extra)
+		local client
+
+		-- If the 1st argument is a player, shift every argument to correct names.
+		if (type(logString) == "Player") then
+			client = logString
+			logString = flag
+			logLevel = noSave
+			noSave = extra
+
+			-- Prefix the log with the player identification.
+			logString = (IsValid(client) and client:Name().." ("..client:SteamID()..") " or "Console")..logString
+		end
+
 		flag = flag or FLAG_NORMAL
 
 		if (flag != FLAG_SERVER) then
@@ -64,10 +81,15 @@ if (SERVER) then
 		MsgC(consoleColor, "[LOG] ", nut.log.color[flag] or color_white, logString .. "\n")
 		
 		if (!noSave) then
+			--[[
 			nut.db.insertTable({
 				_date = nut.util.getUTCTime(),
 				_text = logString
 			}, nil, "logs")
+			--]]
+
+			file.CreateDir("nutscript/logs")
+			file.Append("nutscript/logs/"..os.date("%x"):gsub("/", "-")..".txt", "["..os.date("%X").."]\t"..logString.."\r\n")
 		end
 	end
 
