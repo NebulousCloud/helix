@@ -86,6 +86,8 @@ modules.tmysql4 = {
 	end
 }
 
+MYSQLOO_QUEUE = MYSQLOO_QUEUE or {}
+
 -- mysqloo for MySQL storage.
 modules.mysqloo = {
 	query = function(query, callback)
@@ -99,6 +101,13 @@ modules.mysqloo = {
 			end
 
 			function object:onError(fault)
+				if (nut.db.object:status() == mysqloo.DATABASE_NOT_CONNECTED) then
+					MYSQLOO_QUEUE[#MYSQLOO_QUEUE + 1] = {query, callback}
+					nut.db.connect()
+
+					return
+				end
+
 				ThrowQueryFault(query, fault)
 			end
 
@@ -130,6 +139,12 @@ modules.mysqloo = {
 			nut.db.object = self
 			nut.db.escape = modules.mysqloo.escape
 			nut.db.query = modules.mysqloo.query
+
+			for k, v in ipairs(MYSQLOO_QUEUE) do
+				nut.db.query(v[1], v[2])
+			end
+
+			MYSQLOO_QUEUE = {}
 
 			if (callback) then
 				callback()
