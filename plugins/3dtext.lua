@@ -82,14 +82,7 @@ else
 			local object = nut.markup.parse("<font=nut3D2DFont>"..text:gsub("\\n", "\n"))
 			-- We want to draw a shadow on the text object.
 			object.onDrawText = function(text, font, x, y, color, alignX, alignY, alpha)
-				draw.TextShadow({
-					pos = {x, y},
-					color = ColorAlpha(color, alpha),
-					text = text,
-					xalign = 0,
-					yalign = alignY,
-					font = font
-				}, 1, alpha)
+				draw.SimpleTextOutlined(text, font, x, y, ColorAlpha(color, alpha), alignX, alignY, 2, color_black)
 			end
 
 			-- Add the text to a list of drawn text objects.
@@ -165,7 +158,7 @@ nut.command.add("textadd", {
 		angles:RotateAroundAxis(angles:Forward(), 90)
 		
 		-- Add the text.
-		PLUGIN:addText(position, angles, arguments[1], tonumber(arguments[2]))
+		PLUGIN:addText(position + angles:Up()*0.1, angles, arguments[1], tonumber(arguments[2]))
 
 		-- Tell the player the text was added.
 		return L("textAdded", client)
