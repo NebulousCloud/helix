@@ -170,11 +170,17 @@ if (SERVER) then
 
 					local char = client:getChar()
 					local items = entity.items[request]
+					local price = items[1] or itemTable.price or 0
+
+					if (!char:hasMoney(price)) then
+						client:notifyLocalized("unableTrade")
+
+						return
+					end
+
 					local x, y, bagInv = char:getInv():add(request)
 
-					if (x != false) then
-						local price = items[1] or itemTable.price or 0
-
+					if (x != false) then						
 						if (price > 0) then
 							char:takeMoney(price)
 							entity:giveMoney(price)

@@ -35,8 +35,10 @@ local PANEL = {}
 				self.authors:CenterHorizontal()
 
 				self.authors:AlphaTo(255, 3, 0.5, function()
-					self.sound:FadeOut(8)
-					self.sound:FadeOut(8)
+					if (self.sound) then
+						self.sound:FadeOut(8)
+						self.sound:FadeOut(8)
+					end
 
 					self.authors:AlphaTo(0, 3, 1, function()
 						LocalPlayer():EmitSound("music/hl2_song10.mp3", 150, 70)
