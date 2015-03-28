@@ -306,7 +306,6 @@ function GM:PlayerLoadout(client)
 		-- Set their player model to the character's model.
 		client:SetModel(character:getModel())
 		client:Give("nut_hands")
-		client:SelectWeapon("nut_hands")
 		client:SetWalkSpeed(nut.config.get("walkSpeed"))
 		client:SetRunSpeed(nut.config.get("runSpeed"))
 		
@@ -331,6 +330,8 @@ function GM:PlayerLoadout(client)
 		nut.attribs.setup(client)
 
 		hook.Run("PostPlayerLoadout", client)
+
+		client:SelectWeapon("nut_hands")
 	end
 end
 
