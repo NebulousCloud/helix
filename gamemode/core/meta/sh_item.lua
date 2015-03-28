@@ -225,9 +225,12 @@ if (SERVER) then
 	function ITEM:spawn(position, angles)
 		-- Check if the item has been created before.
 		if (nut.item.instances[self.id]) then
+			local client
+
 			-- If the first argument is a player, then we will find a position to drop
 			-- the item based off their aim.
 			if (type(position) == "Player") then
+				client = position
 				position = position:getItemDropPos()
 			end
 
@@ -237,6 +240,11 @@ if (SERVER) then
 			entity:SetAngles(angles or Angle(0, 0, 0))
 			-- Make the item represent this item.
 			entity:setItem(self.id)
+
+			if (IsValid(client)) then
+				entity.nutSteamID = client:SteamID()
+				entity.nutCharID = client:getChar():getID()
+			end
 
 			-- Return the newly created entity.
 			return entity
@@ -322,11 +330,7 @@ if (SERVER) then
 				nut.db.query("UPDATE nut_items SET _invID = 0 WHERE _itemID = "..self.id)
 
 				if (isLogical != true) then
-					local entity = self:spawn(client)
-					entity.prevPlayer = client
-					entity.prevOwner = client:getChar().id
-
-					return entity		
+					return self:spawn(client)	
 				else
 					local inventory = nut.item.inventories[0]
 					inventory[self:getID()] = self
