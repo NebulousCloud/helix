@@ -53,13 +53,14 @@ do
 end
 
 if (CLIENT) then
-	local whitelist = {}
-	whitelist["ic"] = true
-	whitelist["y"] = true
-	whitelist["w"] = true
+	CHAT_RECOGNIZED = CHAT_RECOGNIZED or {}
+	CHAT_RECOGNIZED["ic"] = true
+	CHAT_RECOGNIZED["y"] = true
+	CHAT_RECOGNIZED["w"] = true
+	CHAT_RECOGNIZED["me"] = true
 
 	function PLUGIN:IsRecognizedChatType(chatType)
-		return whitelist[chatType]
+		return CHAT_RECOGNIZED[chatType]
 	end
 
 	function PLUGIN:GetDisplayedDescription(client)
