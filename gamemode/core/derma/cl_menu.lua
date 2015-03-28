@@ -39,7 +39,26 @@ local PANEL = {}
 		hook.Run("CreateMenuButtons", tabs)
 
 		self.tabList = {}
+		
 		for name, callback in SortedPairs(tabs) do
+			if (type(callback) == "string") then
+				local body = callback
+
+				if (body:sub(1, 4) == "http") then
+					callback = function(panel)
+						local html = panel:Add("DHTML")
+						html:Dock(FILL)
+						html:OpenURL(body)
+					end
+				else
+					callback = function(panel)
+						local html = panel:Add("DHTML")
+						html:Dock(FILL)
+						html:SetHTML(body)
+					end
+				end
+			end
+
 			local tab = self:addTab(L(name), callback, name)
 			self.tabList[name] = tab
 		end

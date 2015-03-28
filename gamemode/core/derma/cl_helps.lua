@@ -47,7 +47,13 @@ if (CLIENT) then
 			tree:DockMargin(0, 0, 15, 0)
 			tree.OnNodeSelected = function(this, node)
 				if (node.onGetHTML) then
-					html:SetHTML(header..node:onGetHTML().."</body></html>")
+					local source = node:onGetHTML()
+
+					if (source:sub(1, 4) == "http") then
+						html:OpenURL(source)
+					else
+						html:SetHTML(header..node:onGetHTML().."</body></html>")
+					end
 				end
 			end
 
@@ -59,6 +65,12 @@ if (CLIENT) then
 			hook.Run("BuildHelpMenu", tabs)
 
 			for k, v in SortedPairs(tabs) do
+				if (type(v) != "function") then
+					local source = v
+
+					v = function() return tostring(source) end
+				end
+
 				tree:AddNode(L(k)).onGetHTML = v or function() return "" end
 			end
 		end
@@ -121,4 +133,6 @@ hook.Add("BuildHelpMenu", "nutBasicHelp", function(tabs)
 
 		return body
 	end
+
+	tabs["Google"] = "http://google.com"
 end)
