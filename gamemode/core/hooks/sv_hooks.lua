@@ -604,6 +604,10 @@ function GM:CanPlayerSuicide(client)
 	return false
 end
 
+function GM:AllowPlayerPickup(client, entity)
+	return false
+end
+
 netstream.Hook("strReq", function(client, time, text)
 	if (client.nutStrReqs and client.nutStrReqs[time]) then
 		client.nutStrReqs[time](text)
