@@ -914,3 +914,8 @@ do
 		end
 	end
 end
+
+-- Gets the current time in the UTC time-zone.
+function nut.util.getUTCTime()
+	return os.time((os.date("!*t")))
+end

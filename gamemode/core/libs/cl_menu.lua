@@ -80,7 +80,7 @@ function nut.menu.drawAll()
 		local startX, startY = position.x - (width * 0.5), position.y
 		local alpha = v.alpha or 0
 		-- Local player is within 96 units of the menu.
-		local inRange = position2:Distance(IsValid(v.entity) and v.entity:GetPos() or v.position) <= 96
+		local inRange = position2:DistToSqr(IsValid(v.entity) and v.entity:GetPos() or v.position) <= 9216
 		-- Check that the center of the screen is within the bounds of the menu.
 		local inside = (mX >= startX and mX <= (startX + width) and mY >= startY and mY <= (startY + height)) and inRange
 

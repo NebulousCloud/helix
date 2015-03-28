@@ -20,17 +20,54 @@ local consoleColor = Color(50, 200, 50)
 -- SUGG: Do I have to get Seperated Database? For ChatLog, For EventLog.
 
 if (SERVER) then
+	if (!nut.db) then
+		include("sv_database.lua")
+	end
+
+	local SQLITE_CREATE_LOG = [[
+		CREATE TABLE IF NOT EXISTS `nut_logs` (
+			`_id` INTEGER PRIMARY KEY,
+			`_date` INTEGER,
+			`_text` TEXT
+		);
+	]]
+
+	local MYSQL_CREATE_LOG = [[
+		CREATE TABLE IF NOT EXISTS `nut_logs` (
+			`_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+			`_date` int(11) unsigned NOT NULL,
+			`_text` tinytext NOT NULL,
+			PRIMARY KEY (`_id`)
+		);
+	]]
+
+	function nut.log.loadTables()
+		if (nut.db.object) then
+			nut.db.query(MYSQL_CREATE_LOG)
+		else
+			nut.db.query(SQLITE_CREATE_LOG)
+		end
+	end
+
+	function nut.log.resetTables()
+		nut.db.query("DROP TABLE IF EXISTS `nut_logs`")
+		nut.log.loadTables()
+	end
+
 	function nut.log.add(logString, flag, logLevel, noSave)
 		flag = flag or FLAG_NORMAL
 
 		if (flag != FLAG_SERVER) then
-				nut.log.send(nut.util.getAdmins(), logString, flag)
+			nut.log.send(nut.util.getAdmins(), logString, flag)
 		end
 
 		MsgC(consoleColor, "[LOG] ", nut.log.color[flag] or color_white, logString .. "\n")
 		
 		if (!noSave) then
-			-- insert mysql query
+			nut.db.insertTable({
+				_date = nut.util.getUTCTime(),
+				_text = logString
+			}, nil, "logs")
 		end
 	end
 

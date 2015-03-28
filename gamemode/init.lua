@@ -17,6 +17,7 @@ include("shared.lua")
 nut.db.connect(function()
 	-- Create the SQL tables if they do not exist.
 	nut.db.loadTables()
+	nut.log.loadTables()
 	
 	MsgC(Color(0, 255, 0), "NutScript has connected to the database.\n")
 end)

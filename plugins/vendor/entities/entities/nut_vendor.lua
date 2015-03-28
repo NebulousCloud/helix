@@ -184,10 +184,6 @@ else
 			return false
 		end
 
-		if (table.Count(self.factions) > 0 and !self.factions[client:Team()]) then
-			return false
-		end
-
 		if (table.Count(self.classes) > 0 and !self.classes[client:getChar():getClass()]) then
 			return false
 		end

@@ -17,7 +17,7 @@ if (CLIENT) then
 	local math_round = math.Round
 	local curGap = 0
 	local curAlpha = 0
-	local maxDistance = 1000
+	local maxDistance = 1000 ^ 2
 	local crossSize = 4
 	local crossGap = 0
 	local colors = {color_black}
@@ -62,14 +62,14 @@ if (CLIENT) then
 		local trace = util.TraceLine(data)
 
 		entity = trace.Entity
-		distance = trace.StartPos:Distance(trace.HitPos)
+		distance = trace.StartPos:DistToSqr(trace.HitPos)
 		scaleFraction = 1 - math.Clamp(distance / maxDistance, 0, .5)
 		screen = trace.HitPos:ToScreen()
 		crossSize = 4
 		crossGap = 25 * (scaleFraction - (client:isWepRaised() and 0 or .1))
 
 		if (IsValid(entity) and entity:GetClass() == "nut_item" and 
-			entity:GetPos():Distance(data.start) <= 128) then
+			entity:GetPos():DistToSqr(data.start) <= 16384) then
 			crossGap = 0
 			crossSize = 5
 		end
