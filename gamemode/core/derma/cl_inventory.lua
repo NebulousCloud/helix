@@ -102,7 +102,7 @@ PANEL = {}
 						local icon = self:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
 
 						if (IsValid(icon)) then
-							icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", item.name, item:getDesc()))
+							icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", L(item.name), L(item:getDesc())))
 							icon.itemID = item.id
 
 							self.panels[item.id] = icon
