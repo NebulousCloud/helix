@@ -97,7 +97,7 @@ function nut.chat.parse(client, message, noSend)
 		if (type(v.prefix) == "table") then
 			for _, prefix in ipairs(v.prefix) do
 				-- Checking if the start of the message has the prefix.
-				if (message:sub(1, #prefix + (noSpaceAfter and 0 or 1)) == prefix..(noSpaceAfter and "" or " ")) then
+				if (message:sub(1, #prefix + (noSpaceAfter and 0 or 1)):lower() == prefix..(noSpaceAfter and "" or " "):lower()) then
 					isChosen = true
 					chosenPrefix = prefix..(v.noSpaceAfter and "" or " ")
 
@@ -106,7 +106,7 @@ function nut.chat.parse(client, message, noSend)
 			end
 		-- Otherwise the prefix itself is checked.
 		elseif (type(v.prefix) == "string") then
-			isChosen = message:sub(1, #v.prefix + (noSpaceAfter and 1 or 0)) == v.prefix..(noSpaceAfter and "" or " ")
+			isChosen = message:sub(1, #v.prefix + (noSpaceAfter and 1 or 0)):lower() == v.prefix..(noSpaceAfter and "" or " "):lower()
 			chosenPrefix = v.prefix..(v.noSpaceAfter and "" or " ")
 		end
 
