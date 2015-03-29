@@ -11,7 +11,7 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 
 	-- Plugins within plugins situation?
 	local oldPlugin = PLUGIN
-	local PLUGIN = {folder = path, plugin = oldPlugin, uniqueID = uniqueID}
+	local PLUGIN = {folder = path, plugin = oldPlugin, uniqueID = uniqueID, name = "Unknown", desc = "Description not available", author = "Anonymous"}
 
 	if (uniqueID == "schema") then
 		if (SCHEMA) then
