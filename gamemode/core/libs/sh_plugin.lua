@@ -1,5 +1,6 @@
 nut.plugin = nut.plugin or {}
 nut.plugin.list = nut.plugin.list or {}
+nut.plugin.unloaded = nut.plugin.unloaded or {}
 
 HOOKS_CACHE = {}
 
@@ -179,14 +180,46 @@ function nut.plugin.loadFromDir(directory)
 	end
 end
 
-function nut.plugin.unload(uniqueID)
+function nut.plugin.setUnloaded(uniqueID, state, noSave)
 	local plugin = nut.plugins.list[uniqueID]
+
+	if (state) then
+		if (plugin.onLoaded) then
+			plugin:onLoaded()
+		end
+
+		if (nut.plugin.unloaded[uniqueID]) then
+			nut.plugin.list[uniqueID] = nut.plugin.unloaded[uniqueID]
+			nut.plugin.unloaded[uniqueID] = nil
+		else
+			return false
+		end
+	elseif (plugin) then
 		if (plugin.onUnload) then
 			plugin:onUnload()
 		end
-	nut.plugins.list[uniqueID] = nil
+
+		nut.plugin.unloaded[uniqueID] = nut.plugin.list[uniqueID]
+		nut.plugin.list[uniqueID] = nil
+	else
+		return false
+	end
+
+	if (SERVER and !noSave) then
+		local status
+
+		if (state) then
+			status = true
+		end
+
+		local unloaded = nut.data.get("unloaded", {}, true, true)
+			unloaded[uniqueID] = status
+		nut.data.set("unloaded", unloaded, true, true)
+	end
 
 	hook.Run("PluginUnloaded", uniqueID)
+
+	return true
 end
 
 if (SERVER) then

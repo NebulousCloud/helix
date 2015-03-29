@@ -21,6 +21,7 @@ function nut.data.set(key, value, global, ignoreMap)
 	
 	-- Cache the data value here.
 	nut.data.stored[key] = value
+
 	return path
 end
 
@@ -42,11 +43,16 @@ function nut.data.get(key, default, global, ignoreMap, refresh)
 
 	if (contents and contents != "") then
 		-- Decode the contents and return the data.
-		local decoded = pon.decode(contents)
-		local value = decoded[1]
+		local status, decoded = pcall(pon.decode, contents)
 
-		if (value != nil) then
-			return value
+		if (status) then
+			local value = decoded[1]
+
+			if (value != nil) then
+				return value
+			else
+				return default
+			end
 		else
 			return default
 		end
