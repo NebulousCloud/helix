@@ -20,7 +20,8 @@ function GM:PlayerInitialSpawn(client)
 	end
 
 	nut.config.send(client)
-
+	nut.date.send(client)
+	
 	client:loadNutData(function(data)
 		if (!IsValid(client)) then return end
 
@@ -571,6 +572,10 @@ function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 end
 
 function GM:InitializedSchema()
+	if (!nut.data.get("date", nil, false, true)) then
+		nut.data.set("data", os.time(), false, true)
+	end
+
 	game.ConsoleCommand("sbox_persist ns_"..SCHEMA.folder.."\n")
 end
 

@@ -228,5 +228,6 @@ LANGUAGE = {
 	restricted = "You have been restrained.",
 	viewProfile = "View Steam Profile",
 	salary = "You have received %s from your salary.",
-	noRecog = "You do not recognize this person."
+	noRecog = "You do not recognize this person.",
+	curTime = "The current time is %s."
 }

@@ -34,6 +34,13 @@ local PANEL = {}
 		self.desc:SetFont("nutMediumLightFont")
 		self.desc:SetTall(28)
 
+		self.time = self.info:Add("DLabel")
+		self.time:SetFont("nutMediumFont")
+		self.time:SetTall(28)
+		self.time:Dock(TOP)
+		self.time:SetTextColor(color_white)
+		self.time:SetExpensiveShadow(1, Color(0, 0, 0, 150))
+		
 		self.money = self.info:Add("DLabel")
 		self.money:Dock(TOP)
 		self.money:SetFont("nutMediumFont")
@@ -89,6 +96,14 @@ local PANEL = {}
 		self.money:SetText(L("charMoney", nut.currency.get(LocalPlayer():getChar():getMoney())))
 		self.faction:SetText(L("charFaction", L(team.GetName(LocalPlayer():Team()))))
 		
+		self.time:SetText(L("curTime", os.date("%c", nut.date.get())))
+		self.time.Think = function(this)
+			if ((this.nextTime or 0) < CurTime()) then
+				this:SetText(L("curTime", os.date("%c", nut.date.get())))
+				this.nextTime = CurTime() + 0.5
+			end
+		end
+
 		local class = nut.class.list[LocalPlayer():getChar():getClass()]
 		if (class) then
 			self.class:SetText(L("charClass", L(class.name)))
