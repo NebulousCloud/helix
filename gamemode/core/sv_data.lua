@@ -45,7 +45,7 @@ function nut.data.get(key, default, global, ignoreMap, refresh)
 		-- Decode the contents and return the data.
 		local status, decoded = pcall(pon.decode, contents)
 
-		if (status) then
+		if (status and decoded) then
 			local value = decoded[1]
 
 			if (value != nil) then
