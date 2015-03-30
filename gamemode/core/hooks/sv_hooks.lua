@@ -25,11 +25,15 @@ function GM:PlayerInitialSpawn(client)
 	client:loadNutData(function(data)
 		if (!IsValid(client)) then return end
 
+		local address = nut.util.getAddress()			
+		local noCache = client:getNutData("lastIP", address) != address
+		client:setNutData("lastIP", address)
+
 		netstream.Start(client, "nutDataSync", data, client.nutPlayTime)
-		
+
 		nut.char.restore(client, function(charList)
 			if (!IsValid(client)) then return end
-			
+
 			MsgN("Loaded ("..table.concat(charList, ", ")..") for "..client:Name())
 
 			for k, v in ipairs(charList) do
@@ -47,7 +51,7 @@ function GM:PlayerInitialSpawn(client)
 			client.nutLoaded = true
 
 			client:setNutData("intro", true)
-		end)
+		end, noCache)
 	end)
 
 	client:SetNoDraw(true)
