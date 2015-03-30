@@ -59,6 +59,17 @@ function nut.util.includeDir(directory, fromLua)
 	end
 end
 
+-- Returns the address:port of the server.
+function nut.util.getAddress()
+	local address = tonumber(GetConVarString("hostip"))
+	local ip = {}
+		ip[1] = bit.rshift(bit.band(address, 0xFF000000), 24)
+		ip[2] = bit.rshift(bit.band(address, 0x00FF0000), 16)
+		ip[3] = bit.rshift(bit.band(address, 0x0000FF00), 8)
+		ip[4] = bit.band(address, 0x000000FF)
+	return table.concat(ip, ".")..":"..GetConVarString("hostport")
+end
+
 -- Returns a table of admin players
 function nut.util.getAdmins(isSuper)
 	local admins = {}
