@@ -36,7 +36,7 @@ function PANEL:setItem(itemTable)
 	self.icon:DockMargin(5, 5, 5, 10)
 	self.icon:InvalidateLayout(true)
 	self.icon:SetModel(itemTable.model, itemTable.skin or 0)
-	self.icon:SetToolTip(itemTable:getDesc())
+	self.icon:SetToolTip(L(itemTable:getDesc()))
 	self.icon.DoClick = function(this)
 		if (!IsValid(nut.gui.checkout) and (this.nextClick or 0) < CurTime()) then
 			local parent = nut.gui.business
@@ -114,6 +114,7 @@ function PANEL:Init()
 	self.itemList:DockMargin(10, 5, 5, 5)
 	self.itemList:SetSpaceX(10)
 	self.itemList:SetSpaceY(10)
+	self.itemList:SetMinimumSize(128, 400)
 
 	self.checkout = self:Add("DButton")
 	self.checkout:Dock(BOTTOM)
@@ -200,6 +201,7 @@ function PANEL:loadItems(category, search)
 	local items = nut.item.list
 
 	self.itemList:Clear()
+	self.itemList:InvalidateLayout(true)
 
 	for uniqueID, itemTable in SortedPairsByMemberValue(items, "name") do
 		if (hook.Run("CanPlayerUseBusiness", LocalPlayer(), uniqueID) == false) then
@@ -389,7 +391,7 @@ PANEL = {}
 				slot.icon:SetPos(2, 2)
 				slot.icon:SetSize(32, 32)
 				slot.icon:SetModel(itemTable.model)
-				slot.icon:SetToolTip(itemTable:getDesc())
+				slot.icon:SetToolTip(L(itemTable:getDesc()))
 
 				slot.name = slot:Add("DLabel")
 				slot.name:SetPos(40, 2)
