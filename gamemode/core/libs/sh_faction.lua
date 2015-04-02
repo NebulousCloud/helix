@@ -72,6 +72,14 @@ function nut.faction.loadFromDir(directory)
 	end
 end
 
+function nut.faction.getIndex(uniqueID)
+	for k, v in ipairs(nut.faction.indices) do
+		if (v.uniqueID == uniqueID) then
+			return k
+		end
+	end
+end
+
 if (CLIENT) then
 	function nut.faction.hasWhitelist(faction)
 		local data = nut.faction.indices[faction]
