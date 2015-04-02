@@ -229,5 +229,11 @@ LANGUAGE = {
 	viewProfile = "View Steam Profile",
 	salary = "You have received %s from your salary.",
 	noRecog = "You do not recognize this person.",
-	curTime = "The current time is %s."
+	curTime = "The current time is %s.",
+	vendorEditor = "Vendor Editor",
+	edit = "Edit",
+	disable = "Disable",
+	vendorPriceReq = "Enter the new price for this item.",
+	vendorEditCurStock = "Edit Current Stock",
+	you = "You"
 }
