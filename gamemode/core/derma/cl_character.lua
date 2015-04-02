@@ -178,7 +178,7 @@ local PANEL = {}
 				end
 			end
 
-			if (count > 0 and #nut.characters < nut.config.get("maxChars", 5)) then
+			if (count > 0 and #nut.characters < nut.config.get("maxChars", 5) and hook.Run("ShouldMenuButtonShow", "create") != false) then
 				AddMenuLabel("create", function()
 					ClearAllButtons(function()
 						CreateReturnButton()
@@ -279,7 +279,7 @@ local PANEL = {}
 				end)
 			end
 
-			if (#nut.characters > 0) then
+			if (#nut.characters > 0 and hook.Run("ShouldMenuButtonShow", "load") != false) then
 				AddMenuLabel("load", function()
 					ClearAllButtons(function()
 						CreateReturnButton()
@@ -470,26 +470,28 @@ local PANEL = {}
 
 			local hasCharacter = LocalPlayer().getChar and LocalPlayer():getChar()
 
-			AddMenuLabel(hasCharacter and "return" or "leave", function()
-				if (!hasCharacter) then
-					if (self.darkness:GetAlpha() == 0) then
-						self.title:SetZPos(-99)
-						self.darkness:SetZPos(99)
-						self.darkness:AlphaTo(255, 1.25, 0, function()
-							timer.Simple(0.5, function()
-								RunConsoleCommand("disconnect")
+			if (hook.Run("ShouldMenuButtonShow", "leave") != false) then
+				AddMenuLabel(hasCharacter and "return" or "leave", function()
+					if (!hasCharacter) then
+						if (self.darkness:GetAlpha() == 0) then
+							self.title:SetZPos(-99)
+							self.darkness:SetZPos(99)
+							self.darkness:AlphaTo(255, 1.25, 0, function()
+								timer.Simple(0.5, function()
+									RunConsoleCommand("disconnect")
+								end)
 							end)
+						end
+					else
+						self:AlphaTo(0, 0.5, 0, function()
+							self:Remove()
+							if (OPENNEXT) then
+								vgui.Create("nutCharMenu")
+							end
 						end)
 					end
-				else
-					self:AlphaTo(0, 0.5, 0, function()
-						self:Remove()
-						if (OPENNEXT) then
-							vgui.Create("nutCharMenu")
-						end
-					end)
-				end
-			end, true)
+				end, true)
+			end
 		end
 
 		CreateMainButtons()
