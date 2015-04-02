@@ -216,6 +216,18 @@ function META:getReceiver()
 	end
 end
 
+function META:getItemCount(uniqueID, onlyMain)
+	local i = 0
+
+	for k, v in pairs(self:getItems(onlyMain)) do
+		if (v.uniqueID == uniqueID) then
+			i = i + 1
+		end
+	end
+
+	return i
+end
+
 function META:getItemByID(id, onlyMain)
 	for k, v in pairs(self:getItems(onlyMain)) do
 		if (v.id == id) then
