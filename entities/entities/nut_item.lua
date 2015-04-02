@@ -84,7 +84,7 @@ else
 
 			if (description != self.desc) then
 				self.desc = description
-				self.lines, self.offset = nut.util.wrapText(description, ScrW() / 3, "nutSmallFont")
+				self.lines, self.offset = nut.util.wrapText(description, ScrW() * 0.7, "nutSmallFont")
 				self.offset = self.offset * 0.5
 			end
 			

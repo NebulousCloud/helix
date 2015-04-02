@@ -538,7 +538,7 @@ function GM:DrawEntityInfo(entity, alpha, position)
 
 			if (description != entity.nutDescCache) then
 				entity.nutDescCache = description
-				entity.nutDescLines = nut.util.wrapText(description, ScrW() / 3, "nutSmallFont")
+				entity.nutDescLines = nut.util.wrapText(description, ScrW() * 0.7, "nutSmallFont")
 			end
 
 			for i = 1, #entity.nutDescLines do
