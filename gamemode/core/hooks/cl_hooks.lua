@@ -723,7 +723,7 @@ function GM:SetupQuickMenu(menu)
 end
 
 function GM:ShouldDrawLocalPlayer(client)
-	if (nut.gui.char:IsVisible()) then
+	if (IsValid(nut.gui.char) and nut.gui.char:IsVisible()) then
 		return false
 	end
 end
