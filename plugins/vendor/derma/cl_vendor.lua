@@ -1,621 +1,258 @@
-VENDOR_BUY = 1
-VENDOR_SELL = 2
-VENDOR_BOTH = 3
-
 local PANEL = {}
 	function PANEL:Init()
-		if (IsValid(nut.gui.vendor)) then
-			nut.gui.vendor:Remove()
-		end
-
-		nut.gui.vendor = self
-
-		self:SetSize(ScrW() * 0.5, 680)
+		self:SetSize(ScrW() * 0.45, ScrH() * 0.65)
+		self:SetTitle("")
 		self:MakePopup()
 		self:Center()
 
-		self.selling = self:Add("nutVendorItemList")
-		self.selling:Dock(LEFT)
+		local header = self:Add("DPanel")
+		header:SetTall(34)
+		header:Dock(TOP)
+
+		self.vendorName = header:Add("DLabel")
+		self.vendorName:Dock(LEFT)
+		self.vendorName:SetWide(self:GetWide() * 0.5 - 7)
+		self.vendorName:SetText("John Doe")
+		self.vendorName:SetTextInset(4, 0)
+		self.vendorName:SetTextColor(color_white)
+		self.vendorName:SetFont("nutMediumFont")
+
+		self.ourName = header:Add("DLabel")
+		self.ourName:Dock(RIGHT)
+		self.ourName:SetWide(self:GetWide() * 0.5 - 7)
+		self.ourName:SetText(L"you".." ("..nut.currency.get(LocalPlayer():getChar():getMoney())..")")
+		self.ourName:SetTextInset(0, 0)
+		self.ourName:SetTextColor(color_white)
+		self.ourName:SetFont("nutMediumFont")
+
+		local footer = self:Add("DPanel")
+		footer:SetTall(34)
+		footer:Dock(BOTTOM)
+		footer:SetDrawBackground(false)
+
+		self.vendorSell = footer:Add("DButton")
+		self.vendorSell:SetFont("nutMediumFont")
+		self.vendorSell:SetWide(self.vendorName:GetWide())
+		self.vendorSell:Dock(LEFT)
+		self.vendorSell:SetContentAlignment(5)
+		-- The text says purchase but the vendor is selling it to us.
+		self.vendorSell:SetText(L"purchase")
+		self.vendorSell.DoClick = function(this)
+			if (IsValid(self.activeSell)) then
+				netstream.Start("vendorTrade", self.activeSell.item)
+			end
+		end
+
+		self.vendorBuy = footer:Add("DButton")
+		self.vendorBuy:SetFont("nutMediumFont")
+		self.vendorBuy:SetWide(self.ourName:GetWide())
+		self.vendorBuy:Dock(RIGHT)
+		self.vendorBuy:SetContentAlignment(5)
+		self.vendorBuy:SetText(L"sell")
+		self.vendorBuy.DoClick = function(this)
+			if (IsValid(self.activeBuy)) then
+				netstream.Start("vendorTrade", self.activeBuy.item, true)
+			end
+		end
+
+		self.selling = self:Add("DScrollPanel")
 		self.selling:SetWide(self:GetWide() * 0.5 - 7)
+		self.selling:Dock(LEFT)
+		self.selling:DockMargin(0, 4, 0, 4)
 		self.selling:SetDrawBackground(true)
-		self.selling:DockMargin(0, 0, 5, 0)
-		self.selling.action:SetText(L"buy")
 
-		self.buying = self:Add("nutVendorItemList")
-		self.buying:Dock(RIGHT)
+		self.sellingItems = self.selling:Add("DListLayout")
+		self.sellingItems:SetSize(self.selling:GetSize())
+		self.sellingItems:DockPadding(0, 0, 0, 4)
+		self.sellingItems:SetTall(ScrH())
+
+		self.buying = self:Add("DScrollPanel")
 		self.buying:SetWide(self:GetWide() * 0.5 - 7)
+		self.buying:Dock(RIGHT)
+		self.buying:DockMargin(0, 4, 0, 4)
 		self.buying:SetDrawBackground(true)
-		self.buying.title:SetText(LocalPlayer():Name())
-		self.buying.title.Think = function(this)
-			if ((this.nutNextTick or 0) < CurTime()) then
-				local newText = LocalPlayer():Name().. " ("..nut.currency.symbol..LocalPlayer():getChar():getMoney()..")"
 
-				if (this:GetText() != newText) then
-					this:SetText(newText)
-				end
+		self.buyingItems = self.buying:Add("DListLayout")
+		self.buyingItems:SetSize(self.buying:GetSize())
+		self.buyingItems:DockPadding(0, 0, 0, 4)
 
-				this.nutNextTick = CurTime() + 0.2
-			end
-		end
-		self.buying.action:SetText(L"sell")
+		self.sellingList = {}
+		self.buyingList = {}
+	end
 
-		self.tally = {}
+	function PANEL:addItem(uniqueID, listID)
+		local entity = self.entity
+		local items = entity.items
+		local data = items[uniqueID]
 
-		for k, v in pairs(LocalPlayer():getChar():getInv():getItems()) do
-			if (v.base == "base_bags") then
-				continue
-			end
+		if ((!listID or listID == "selling") and !IsValid(self.sellingList[uniqueID])) then
+			if (data and data[VENDOR_MODE] and data[VENDOR_MODE] != VENDOR_BUYONLY) then
+				local item = self.sellingItems:Add("nutVendorItem")
+				item:setup(uniqueID)
 
-			self.tally[v.uniqueID] = (self.tally[v.uniqueID] or 0) + 1
-		end
-
-		self.selling.action.DoClick = function()
-			if (self.entity) then
-				local selectedItem = nut.gui.vendor.activeItem
-
-				if (IsValid(selectedItem) and !selectedItem.isSelling) then
-					netstream.Start("ventorItemTrade", self.entity, selectedItem.uniqueID)
-				end
+				self.sellingList[uniqueID] = item
+				self.sellingItems:InvalidateLayout()
 			end
 		end
 
-		self.buying.action.DoClick = function()
-			if (self.entity) then
-				local selectedItem = nut.gui.vendor.activeItem
+		if ((!listID or listID == "buying") and !IsValid(self.buyingList[uniqueID]) and LocalPlayer():getChar():getInv():hasItem(uniqueID)) then
+			if (data and data[VENDOR_MODE] and data[VENDOR_MODE] != VENDOR_SELLONLY) then
+				local item = self.buyingItems:Add("nutVendorItem")
+				item:setup(uniqueID)
+				item.isLocal = true
 
-				if (IsValid(selectedItem) and selectedItem.isSelling) then
-					netstream.Start("ventorItemTrade", self.entity, selectedItem.uniqueID, true)
-				end
+				self.buyingList[uniqueID] = item
+				self.buyingItems:InvalidateLayout()
 			end
 		end
 	end
 
-	function PANEL:setVendor(entity, items, money, stocks)
-		entity = entity or self.entity
-		items = items or self.items or {}
-		money = money or self.money or 0
-		stocks = stocks or self.stocks or {}
-
-		self.selling.items:Clear()
-		self.buying.items:Clear()
-
-		if (IsValid(entity)) then
-			entity.money = money
-
-			self.entity = entity
-			self.items = items
-			self.money = money
-			self.stocks = stocks
-
-			self.selling.title:SetText(entity:getNetVar("name"))
-			self.selling.title.Think = function(this)
-				if ((this.nutNextTick or 0) < CurTime()) then
-					local money = entity.money
-					local newText = entity:getNetVar("name")..(money and " ("..nut.currency.symbol..money..")" or "")
-
-					if (this:GetText() != newText) then
-						this:SetText(newText)
-					end
-
-					this.nutNextTick = CurTime() + 0.2
-				end
+	function PANEL:removeItem(uniqueID, listID)
+		if (!listID or listID == "selling") then
+			if (IsValid(self.sellingList[uniqueID])) then
+				self.sellingList[uniqueID]:Remove()
+				self.sellingItems:InvalidateLayout()
 			end
+		end
 
-			self:SetTitle(entity:getNetVar("name"))
-
-			local count = 0
-
-			for k, v in SortedPairs(self.tally) do
-				local mode = items[k] and items[k][2]
-
-				if (!mode or mode == VENDOR_SELL) then
-					continue
-				end
-				
-				self.buying:addItem(k, v).isSelling = true
-				count = count + 1
-			end
-
-			if (count == 0) then
-				local fault = self.buying.items:Add("DLabel")
-				fault:SetText(L"vendorNoSellItems")
-				fault:SetContentAlignment(5)
-				fault:Dock(FILL)
-				fault:SetFont("nutChatFont")
-			end
-
-			count = 0
-
-			for k, v in SortedPairs(items) do
-				if (items[k] and items[k][2] and items[k][2] == VENDOR_SELL or items[k][2] == VENDOR_BOTH) then
-					local amount = stocks and stocks[k] and stocks[k][1] or nil
-
-					if (amount and amount < 1) then
-						continue
-					end
-
-					self.selling:addItem(k, amount)
-					count = count + 1
-				end
-			end
-
-			if (count == 0) then
-				local fault = self.selling.items:Add("DLabel")
-				fault:SetText(L"vendorNoBuyItems")
-				fault:SetContentAlignment(5)
-				fault:Dock(FILL)
-				fault:SetFont("nutChatFont")
+		if (!listID or listID == "buying") then
+			if (IsValid(self.buyingList[uniqueID])) then
+				self.buyingList[uniqueID]:Remove()
+				self.buyingItems:InvalidateLayout()
 			end
 		end
 	end
 
-	function PANEL:updateStock(uniqueID, count)
-		local itemTable = nut.item.list[uniqueID]
+	function PANEL:setup(entity)
+		self.entity = entity
+		self:SetTitle(entity:getNetVar("name", ""))
+		self.vendorName:SetText(entity:getNetVar("name", "")..(entity.money and " ("..entity.money..")" or ""))
 
-		if (!itemTable) then
-			return
+		for k, v in SortedPairs(entity.items) do
+			self:addItem(k, "selling")
 		end
 
-		local panel = self.selling.itemPanels[uniqueID]
-
-		self.stocks[uniqueID] = self.stocks[uniqueID] or {}
-		self.stocks[uniqueID][1] = count
-
-		if (IsValid(panel)) then
-			panel.name:SetText(itemTable.name.. " ("..count..")")
-			panel:Remove()
-
-			if (count < 1) then
-				self:setVendor()
-			end
+		for k, v in SortedPairs(LocalPlayer():getChar():getInv():getItems()) do
+			self:addItem(v.uniqueID, "buying")
 		end
 	end
 
 	function PANEL:OnRemove()
-		LocalPlayer():ChatPrint(self.entity:getNetVar("name", "John Doe")..": "..L"vendorBye")
 		netstream.Start("vendorExit")
+
+		if (IsValid(nut.gui.vendorEditor)) then
+			nut.gui.vendorEditor:Remove()
+		end
+	end
+
+	function PANEL:Think()
+		local entity = self.entity
+
+		if (!IsValid(entity)) then
+			self:Remove()
+
+			return
+		end
+
+		if ((self.nextUpdate or 0) < CurTime()) then
+			self:SetTitle(self.entity:getNetVar("name"))
+			self.vendorName:SetText(entity:getNetVar("name", "")..(entity.money and " ("..nut.currency.get(entity.money)..")" or ""))
+			self.ourName:SetText(L"you".." ("..nut.currency.get(LocalPlayer():getChar():getMoney())..")")
+
+			self.nextUpdate = CurTime() + 0.25
+		end
+	end
+
+	function PANEL:onItemSelected(panel)
+		local price = self.entity:getPrice(panel.item, panel.isLocal)
+
+		if (panel.isLocal) then
+			self.vendorBuy:SetText(L"sell".." ("..nut.currency.get(price)..")")
+		else
+			self.vendorSell:SetText(L"purchase".." ("..nut.currency.get(price)..")")
+		end
 	end
 vgui.Register("nutVendor", PANEL, "DFrame")
 
 PANEL = {}
 	function PANEL:Init()
-		self.title = self:Add("DLabel")
-		self.title:SetTextColor(color_white)
-		self.title:SetExpensiveShadow(1, Color(0, 0, 0, 150))
-		self.title:Dock(TOP)
-		self.title:SetFont("nutBigFont")
-		self.title:SizeToContentsY()
-		self.title:SetContentAlignment(7)
-		self.title:SetTextInset(10, 5)
-		self.title.Paint = function(this, w, h)
-			surface.SetDrawColor(0, 0, 0, 150)
-			surface.DrawRect(0, 0, w, h)
-		end
-		self.title:SetTall(self.title:GetTall() + 10)
+		self:SetTall(36)
+		self:DockMargin(4, 4, 4, 0)
 
-		self.items = self:Add("DScrollPanel")
-		self.items:Dock(FILL)
-		self.items:SetDrawBackground(true)
-		self.items:DockMargin(5, 5, 5, 5)
+		self.icon = self:Add("SpawnIcon")
+		self.icon:SetPos(2, 2)
+		self.icon:SetSize(32, 32)
+		self.icon:SetModel("models/error.mdl")
 
-		self.action = self:Add("DButton")
-		self.action:Dock(BOTTOM)
-		self.action:SetTall(32)
-		self.action:SetFont("nutMediumFont")
-		self.action:SetExpensiveShadow(1, Color(0, 0, 0, 150))
+		self.name = self:Add("DLabel")
+		self.name:Dock(FILL)
+		self.name:DockMargin(42, 0, 0, 0)
+		self.name:SetFont("nutChatFont")
+		self.name:SetTextColor(color_white)
+		self.name:SetExpensiveShadow(1, Color(0, 0, 0, 200))
 
-		self.itemPanels = {}
-	end
-
-	function PANEL:addItem(uniqueID, count, isBuying)
-		local itemTable = nut.item.list[uniqueID]
-
-		if (!itemTable) then
-			return
-		end
-
-		local oldPanel = self.itemPanels[uniqueID]
-
-		if (IsValid(oldPanel)) then
-			count = count or (oldPanel.count + 1)
-
-			oldPanel.count = count
-			oldPanel.name:SetText(itemTable.name..(count and " ("..count..")" or ""))
-
-			return oldPanel
-		elseif (isBuying) then
-			count = count or 1
-		end
-
-		local color_dark = Color(0, 0, 0, 80)
-
-		local panel = self.items:Add("DPanel")
-		panel:SetTall(36)
-		panel:Dock(TOP)
-		panel:DockMargin(5, 5, 5, 0)
-		panel.Paint = function(this, w, h)
-			surface.SetDrawColor(nut.gui.vendor.activeItem == this and nut.config.get("color") or color_dark)
-			surface.DrawRect(0, 0, w, h)
-		end
-		panel.uniqueID = itemTable.uniqueID
-		panel.count = count
-
-		panel.icon = panel:Add("SpawnIcon")
-		panel.icon:SetPos(2, 2)
-		panel.icon:SetSize(32, 32)
-		panel.icon:SetModel(itemTable.model, itemTable.skin)
-
-		panel.name = panel:Add("DLabel")
-		panel.name:DockMargin(40, 2, 2, 2)
-		panel.name:Dock(FILL)
-		panel.name:SetFont("nutChatFont")
-		panel.name:SetTextColor(color_white)
-		panel.name:SetText(itemTable.name..(count and " ("..count..")" or ""))
-		panel.name:SetExpensiveShadow(1, Color(0, 0, 0, 150))
-
-		panel.overlay = panel:Add("DButton")
-		panel.overlay:SetPos(0, 0)
-		panel.overlay:SetSize(ScrW() * 0.25, 36)
-		panel.overlay:SetText("")
-		panel.overlay.Paint = function() end
-		panel.overlay.DoClick = function(this)
-			nut.gui.vendor.activeItem = panel
-		end
-
-		local items = nut.gui.vendor.items
-		local price = items[uniqueID] and items[uniqueID][1] or itemTable.price or 0
-		local price2 = math.Round(price * 0.5)
-
-		panel.overlay:SetToolTip(L("itemPriceInfo", nut.currency.get(price), nut.currency.get(price2)))
-		self.itemPanels[uniqueID] = panel
-
-		return panel
-	end
-vgui.Register("nutVendorItemList", PANEL, "DPanel")
-
-PANEL = {}
-	function PANEL:Init()
-		if (IsValid(nut.gui.vendorAdmin)) then
-			nut.gui.vendorAdmin:Remove()
-		end
-
-		nut.gui.vendorAdmin = self
-
-		self:SetTitle(L"vendorSettings")
-		self:SetSize(ScrW() * 0.25, ScrH() * 0.5)
-		self:MakePopup()
-		self:CenterVertical()
-
-		self.name = self:Add("DTextEntry")
-		self.name:Dock(TOP)
-
-		self.desc = self:Add("DTextEntry")
-		self.desc:Dock(TOP)
-		self.desc:DockMargin(0, 3, 0, 3)
-
-		self.model = self:Add("DTextEntry")
-		self.model:Dock(TOP)
-		self.model:DockMargin(0, 0, 0, 3)
-
-		self.moneyBox = self:Add("DPanel")
-		self.moneyBox:Dock(TOP)
-		self.moneyBox:DockMargin(0, 0, 0, 3)
-
-		self.money = self.moneyBox:Add("DNumberWang")
-		self.money:Dock(RIGHT)
-		self.money:SetWide(self:GetWide() * 0.6 - 4)
-		self.money:DockMargin(3, 3, 3, 3)
-
-		self.useMoney = self.moneyBox:Add("DCheckBoxLabel")
-		self.useMoney:Dock(LEFT)
-		self.useMoney:SetText(L"vendorUseMoney")
-		self.useMoney:SetWide(self:GetWide() * 0.4 - 4)
-		self.useMoney:DockMargin(4, 4, 4, 4)
-
-		self.noBubble = self:Add("DCheckBoxLabel")
-		self.noBubble:Dock(TOP)
-		self.noBubble:DockMargin(3, 0, 3, 3)
-		self.noBubble:SetText(L"vendorNoBubble")
-
-		self.items = self:Add("DListView")
-		self.items:Dock(FILL)
-		self.items:AddColumn(L"name").Header:SetTextColor(color_black)
-		self.items:AddColumn(L"mode").Header:SetTextColor(color_black)
-		self.items:AddColumn(L"price").Header:SetTextColor(color_black)
-		self.items:AddColumn(L"stock").Header:SetTextColor(color_black)
-		self.items:SetMultiSelect(false)
-
-		if (IsValid(nut.gui.vendor)) then
-			nut.gui.vendor:SetPos(nut.gui.vendor.x + self:GetWide()*0.5, nut.gui.vendor.y)
-			self:MoveLeftOf(nut.gui.vendor, 5)
-		end
-
-		self.factions = self:Add("DButton")
-		self.factions:Dock(BOTTOM)
-		self.factions:DockMargin(0, 5, 0, 0)
-		self.factions:SetText(L"vendorFaction")
-	end
-
-	local MODE_TEXT = {}
-	MODE_TEXT[0] = "none"
-	MODE_TEXT[VENDOR_BUY] = "vendorBuy"
-	MODE_TEXT[VENDOR_SELL] = "vendorSell"
-	MODE_TEXT[VENDOR_BOTH] = "vendorBoth"
-
-	function PANEL:setData(entity, items, money, stock, adminData)
-		local lastName, lastDesc
-
-		if (money) then
-			self.money:SetMinMax(0, 1000000000)
-			self.money:SetValue(money)
-			self.useMoney:SetChecked(1)
-		end
-
-		self.money.OnValueChanged = function(this, value)
-			if (this.noSend) then
-				this.noSend = nil
-
-				return
-			end
-
-			value = math.max(value, 0)
-
-			if (money != value) then
-				netstream.Start("vendorEdit", entity, "money", value)
-				money = value
-			end
-		end
-
-		self.useMoney.OnChange = function(this, state)
-			if (state) then
-				netstream.Start("vendorEdit", entity, "money", math.max(tonumber(self.money:GetValue()) or 0, 0))
+		self.click = self:Add("DButton")
+		self.click:Dock(FILL)
+		self.click:SetText("")
+		self.click.Paint = function() end
+		self.click.DoClick = function(this)
+			if (self.isLocal) then
+				nut.gui.vendor.activeBuy = self
 			else
-				netstream.Start("vendorEdit", entity, "money")
-			end
-		end
-
-		self.model:SetText(entity:GetModel())
-		self.model.OnEnter = function(this)
-			netstream.Start("vendorMdl", this:GetValue())
-		end
-
-		self.noBubble:SetValue(entity:getNetVar("noBubble") and 1 or 0)
-		self.noBubble.OnChange = function(this, state)
-			netstream.Start("vendorBbl", state)
-		end
-
-		self.name:SetText(entity:getNetVar("name"))
-		self.name.Think = function(this)
-			local curName = entity:getNetVar("name")
-
-			if (lastName != curName) then
-				self.name:SetText(curName)
-				lastName = curName
-			end
-		end
-		self.name.OnEnter = function(this)
-			netstream.Start("vendorEdit", entity, "name", this:GetText())
-		end
-
-		self.desc:SetText(entity:getNetVar("desc", ""))
-		self.desc.Think = function(this)
-			local curDesc = entity:getNetVar("desc")
-
-			if (lastDesc != curDesc) then
-				self.desc:SetText(curDesc)
-				lastDesc = curDesc
-			end
-		end
-		self.desc.OnEnter = function(this)
-			netstream.Start("vendorEdit", entity, "desc", this:GetText())
-		end
-
-		for k, v in SortedPairsByMemberValue(nut.item.list, "name") do
-			local name = v.name
-			local mode = items[k] and items[k][2] or 0
-			local price = items[k] and items[k][1] or v.price or 0
-			local curStock = stock and stock[k] and stock[k][1]
-			local maxStock = curStock and stock[k][2]
-
-			self.items:AddLine(v.name, L(MODE_TEXT[mode]), price, maxStock and (curStock.."/"..maxStock) or "∞").item = {
-				name = name,
-				mode = mode,
-				price = price,
-				curStock = curStock,
-				maxStock = maxStock,
-				uniqueID = k
-			}
-		end
-
-		self.items.OnClickLine = function(this, line, selected)
-			if (IsValid(self.menu)) then
-				self.menu:Remove()
+				nut.gui.vendor.activeSell = self
 			end
 
-			local itemData = {}
-			local loaded = false
-
-			local menu = self:Add("DFrame")
-			menu:SetTitle(line.item.name)
-			menu:SetSize(240, 180)
-			menu:MakePopup()
-			menu:SetPos(gui.MousePos())
-			menu.uniqueID = line.item.uniqueID
-
-			local settings = menu:Add("DProperties")
-			settings:Dock(FILL)
-			
-			local price = settings:CreateRow(L"properties", L"price")
-			price:Setup("Int", {min = 0, max = 1000})
-			price:SetValue(line.item.price)
-			price.DataChanged = function(this, value)
-				if (!loaded) then
-					return
-				end
-
-				itemData.price = value
-			end
-
-			local maxStock = settings:CreateRow(L"properties", L"maxStock")
-			maxStock:Setup("Int", {min = 0, max = 50})
-			maxStock:SetValue(line.item.maxStock)
-			maxStock.DataChanged = function(this, value)
-				if (!loaded) then
-					return
-				end
-				
-				itemData.maxStock = value
-			end
-
-			local stock = settings:CreateRow(L"properties", L"stock")
-			stock:Setup("Int", {min = 0, max = 50})
-			stock:SetValue(line.item.curStock)
-			stock.DataChanged = function(this, value)
-				if (!loaded) then
-					return
-				end
-				
-				itemData.stock = math.Round(value)
-			end
-
-			local mode = settings:CreateRow(L"properties", L"mode")
-			mode:Setup("Combo", {L"mode"})
-			mode:AddChoice(L(MODE_TEXT[0]), 0)
-			mode:AddChoice(L(MODE_TEXT[VENDOR_BUY]), VENDOR_BUY)
-			mode:AddChoice(L(MODE_TEXT[VENDOR_SELL]), VENDOR_SELL)
-			mode:AddChoice(L(MODE_TEXT[VENDOR_BOTH]), VENDOR_BOTH)
-			mode.DataChanged = function(this, value)
-				if (!loaded) then
-					return
-				end
-				
-				itemData.mode = value
-			end
-
-			local save = menu:Add("DButton")
-			save:Dock(BOTTOM)
-			save:DockMargin(0, 3, 0, 0)
-			save:SetText(L"save")
-			save.DoClick = function(this)
-				if (!loaded) then
-					return
-				end
-				
-				netstream.Start("vendorItemMod", entity, line.item.uniqueID, itemData)
-				menu:Remove()
-			end
-
-			timer.Simple(0, function()
-				loaded = true
-			end)
-
-			self.menu = menu
-		end
-
-		self.factions.DoClick = function(this)
-			local menu = vgui.Create("DFrame")
-			menu:SetTitle(L"vendorFaction")
-			menu:SetSize(360, 180)
-			menu:MakePopup()
-			menu:Center()
-
-			local list = menu:Add("DScrollPanel")
-			list:Dock(FILL)
-
-			self.factionBoxes = {}
-			self.classBoxes = {}
-
-			for k, v in ipairs(nut.faction.indices) do
-				local faction = list:Add("DCheckBoxLabel")
-				faction:SetText(L(v.name))
-				faction:SetBright(true)
-				faction:Dock(TOP)
-				faction:DockMargin(0, 0, 0, 4)
-				faction.OnChange = function(this, state)
-					netstream.Start("vendorFEdit", entity, k, state)
-				end
-
-				for k2, v2 in ipairs(nut.class.list) do
-					if (v2.faction == k) then
-						local class = list:Add("DCheckBoxLabel")
-						class:SetText(L(v2.name))
-						class:Dock(TOP)
-						class:DockMargin(24, 0, 0, 2)
-						class.OnChange = function(this, state)
-							netstream.Start("vendorCEdit", entity, k, state)
-						end
-
-						if (adminData and adminData.class and adminData.class[k]) then
-							class:SetChecked(true)
-						end
-
-						self.classBoxes[k2] = class
-					end
-				end
-				
-				if (adminData.faction and adminData.faction[k]) then
-					faction:SetChecked(true)
-				end
-
-				self.factionBoxes[k] = faction
-			end
+			nut.gui.vendor:onItemSelected(self)
 		end
 	end
 
-	function PANEL:update(uniqueID, data)
-		local vendor = nut.gui.vendor
-
-		if (self.menu and self.menu.uniqueID == uniqueID) then
-			self.menu:Remove()
-		end
-
-		for k, v in ipairs(self.items:GetLines()) do
-			if (v.item.uniqueID == uniqueID) then
-				if (data.mode) then
-					v:SetColumnText(2, L(MODE_TEXT[data.mode]))
-					v.item.mode = data.mode > 0 and data.mode or nil
-
-					if (IsValid(vendor)) then
-						vendor.items[uniqueID] = vendor.items[uniqueID] or {}
-						vendor.items[uniqueID][2] = v.item.mode
-					end
-				end
-
-				if (data.maxStock or data.stock) then
-					if (data.maxStock) then
-						if (data.maxStock < 1) then
-							data.maxStock = nil
-						end
-
-						v.item.maxStock = data.maxStock
-					end
-
-					if (data.stock) then
-						v.item.curStock = data.stock
-					end
-
-					if (IsValid(vendor)) then
-						vendor.stocks[uniqueID] = vendor.stocks[uniqueID] or {}
-
-						if (v.item.curStock) then
-							vendor.stocks[uniqueID][1] = v.item.curStock
-						end
-
-						if (v.item.maxStock) then
-							vendor.stocks[uniqueID][2] = v.item.maxStock
-						end
-					end
-
-					v:SetColumnText(4, v.item.maxStock and (v.item.curStock.."/"..v.item.maxStock) or "∞")
-				end
-
-				if (data.price) then
-					v.item.price = data.price
-					v:SetColumnText(3, data.price)
-				end
-
-				return
-			end
+	function PANEL:setCallback(callback)
+		self.click.DoClick = function(this)
+			callback()
+			self.selected = true
 		end
 	end
-vgui.Register("nutVendorAdmin", PANEL, "DFrame")
+
+	function PANEL:setup(uniqueID)
+		local item = nut.item.list[uniqueID]
+
+		if (item) then
+			self.item = uniqueID
+			self.icon:SetModel(item.model, item.skin or 0)
+			self.name:SetText(L(item.name))
+			self.itemName = L(item.name)
+		end
+	end
+
+	function PANEL:Think()
+		if ((self.nextUpdate or 0) < CurTime()) then
+			local name = self.itemName
+			local entity = nut.gui.vendor.entity
+
+			if (self.isLocal) then
+				local count = LocalPlayer():getChar():getInv():getItemCount(self.item)
+
+				if (count == 0) then
+					self:Remove()
+				end
+				
+				name = name.." ("..count..")"
+			elseif (entity.items[self.item] and entity.items[self.item][VENDOR_MAXSTOCK]) then
+				name = name.." ("..entity.items[self.item][VENDOR_STOCK].."/"..entity.items[self.item][VENDOR_MAXSTOCK]..")"
+			end
+
+			self.name:SetText(name)
+			self.nextUpdate = CurTime() + 0.1
+		end
+	end
+
+	function PANEL:Paint(w, h)
+		if (nut.gui.vendor.activeBuy == self or nut.gui.vendor.activeSell == self) then
+			surface.SetDrawColor(nut.config.get("color"))
+		else
+			surface.SetDrawColor(0, 0, 0, 100)
+		end
+
+		surface.DrawRect(0, 0, w, h)
+	end
+vgui.Register("nutVendorItem", PANEL, "DPanel")

@@ -235,5 +235,9 @@ LANGUAGE = {
 	disable = "Disable",
 	vendorPriceReq = "Enter the new price for this item.",
 	vendorEditCurStock = "Edit Current Stock",
-	you = "You"
+	you = "You",
+	vendorSellScale = "Sell price scale",
+	vendorNoTrade = "You are not able to trade with this vendor.",
+	vendorNoMoney = "This vendor can not afford that item.",
+	vendorNoStock = "This vendor does not have that item in stock."
 }
