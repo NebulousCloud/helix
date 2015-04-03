@@ -78,3 +78,8 @@ function nut.data.delete(key, global, ignoreMap)
 		return false
 	end
 end
+
+timer.Create("nutSaveData", 600, 0, function()
+	hook.Run("SaveData")
+	hook.Run("PersistenceSave")
+end)
