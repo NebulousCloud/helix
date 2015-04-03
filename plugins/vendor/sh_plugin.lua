@@ -305,6 +305,8 @@ if (SERVER) then
 
 				entity:takeMoney(price)
 				entity:addStock(uniqueID)
+
+				PLUGIN:saveVendors()
 			else
 				local stock = entity:getStock(uniqueID)
 
@@ -330,6 +332,8 @@ if (SERVER) then
 				end
 
 				entity:takeStock(uniqueID)
+
+				PLUGIN:saveVendors()
 			end
 		else
 			client:notifyLocalized("vendorNoTrade")

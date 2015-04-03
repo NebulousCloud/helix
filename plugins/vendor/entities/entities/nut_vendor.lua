@@ -1,6 +1,8 @@
 ENT.Type = "anim"
 ENT.PrintName = "Vendor"
-ENT.Spawnable = false
+ENT.Category = "NutScript"
+ENT.Spawnable = true
+ENT.AdminOnly = true
 
 function ENT:Initialize()
 	if (SERVER) then
@@ -15,6 +17,9 @@ function ENT:Initialize()
 		self.messages = {}
 		self.factions = {}
 		self.classes = {}
+
+		self:setNetVar("name", "John Doe")
+		self:setNetVar("desc", "")
 
 		self.receivers = {}
 
@@ -132,6 +137,24 @@ function ENT:setAnim()
 end
 
 if (SERVER) then
+	local PLUGIN = PLUGIN
+
+	function ENT:SpawnFunction(client, trace)
+		local angles = (trace.HitPos - client:GetPos()):Angle()
+		angles.r = 0
+		angles.p = 0
+		angles.y = angles.y + 180
+
+		local entity = ents.Create("nut_vendor")
+		entity:SetPos(trace.HitPos)
+		entity:SetAngles(angles)
+		entity:Spawn()
+
+		PLUGIN:saveVendors()
+		
+		return entity
+	end
+
 	function ENT:Use(activator)
 		if (!self:canAccess(activator) or hook.Run("CanPlayerUseVendor", activator) == false) then
 			if (self.messages[VENDOR_NOTRADE]) then
@@ -177,11 +200,15 @@ if (SERVER) then
 	end
 
 	function ENT:giveMoney(value)
-		self:setMoney(self:getMoney() + value)
+		if (self.money) then
+			self:setMoney(self:getMoney() + value)
+		end
 	end
 
 	function ENT:takeMoney(value)
-		self:giveMoney(-value)
+		if (self.money) then
+			self:giveMoney(-value)
+		end
 	end
 
 	function ENT:setStock(uniqueID, value)
@@ -209,6 +236,12 @@ if (SERVER) then
 		end
 		
 		self:addStock(uniqueID, -(value or 1))
+	end
+
+	function ENT:OnRemove()
+		if (!nut.shuttingDown and !self.nutIsSafe) then
+			PLUGIN:saveVendors()
+		end
 	end
 else
 	function ENT:createBubble()
