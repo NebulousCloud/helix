@@ -69,7 +69,7 @@ function ITEM:removeParts(client)
 	character:removePart(self.uniqueID)
 
 	if (character:getData("oldMdl")) then
-		client:SetModel(character:getData("oldMdl"))
+		character:setModel(character:getData("oldMdl"))
 		character:setData("oldMdl", nil)
 	end
 
@@ -86,11 +86,6 @@ function ITEM:removeParts(client)
 				character:setData("body", groups)
 			end
 		end
-	end
-
-	if (character:getData("oldMdl")) then
-		client:setModel(character:getData("oldMdl"))
-		character:setData("oldMdl")
 	end
 
 	if (self.attribBoosts) then
