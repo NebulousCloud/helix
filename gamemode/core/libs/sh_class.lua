@@ -80,7 +80,7 @@ function nut.class.canBe(client, class)
 	end
 
 	if (info.limit > 0) then
-		if (#nut.class.getPlayers(data.index) >= info.limit) then
+		if (#nut.class.getPlayers(info.index) >= info.limit) then
 			return false, "class is full"
 		end
 	end
