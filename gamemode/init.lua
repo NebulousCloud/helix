@@ -1,3 +1,6 @@
+-- Include NutScript content.
+resource.AddWorkshop("207739713")
+
 -- Include features from the Sandbox gamemode.
 DeriveGamemode("sandbox")
 -- Define a global shared table to store NutScript information.
