@@ -24,8 +24,10 @@ if (SERVER) then
 		local itemTable = nut.item.instances[itemID]
 
 		if (itemTable) then
+			local model = itemTable.onGetDropModel and itemTable:onGetDropModel(self) or itemTable.model
+
 			self:SetSkin(itemTable.skin or 0)
-			self:SetModel(itemTable.model)
+			self:SetModel(model)
 			self:PhysicsInit(SOLID_VPHYSICS)
 			self:SetSolid(SOLID_VPHYSICS)
 			self:setNetVar("id", itemTable.uniqueID)
@@ -47,6 +49,10 @@ if (SERVER) then
 			if (IsValid(physObj)) then
 				physObj:EnableMotion(true)
 				physObj:Wake()
+			end
+
+			if (itemTable.onEntityCreated) then
+				itemTable:onEntityCreated(self)
 			end
 		end
 	end
