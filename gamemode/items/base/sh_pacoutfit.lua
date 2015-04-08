@@ -141,7 +141,7 @@ ITEM.functions.Equip = {
 		item:setData("equip", true)
 		char:addPart(item.uniqueID)
 
-		if (item.replacements) then
+		if (item.replacement or item.replacements) then
 			char:setData("oldMdl", char:getData("oldMdl", item.player:GetModel()))
 
 			if (type(item.replacements) == "table") then
@@ -153,7 +153,7 @@ ITEM.functions.Equip = {
 					end
 				end
 			else
-				char:setModel(item.replacements)
+				char:setModel(item.replacement or item.replacements)
 			end
 		end
 
