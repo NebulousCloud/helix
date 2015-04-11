@@ -338,7 +338,7 @@ end
 
 -- Private messages between players.
 nut.chat.register("pm", {
-	format = "%s: %s.",
+	format = "[PM] %s: %s.",
 	color = Color(249, 211, 89),
 	filter = "pm",
 	deadCanChat = true
