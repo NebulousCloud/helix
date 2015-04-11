@@ -31,7 +31,9 @@ function PLUGIN:PostPlayerLoadout(client)
 			points = points[className] or points[""]
 
 			if (points and table.Count(points) > 0) then
-				client:SetPos(table.Random(points))
+				local position = table.Random(points)
+
+				client:SetPos(position)
 			end
 		end
 	end
@@ -53,35 +55,43 @@ nut.command.add("spawnadd", {
 		local name = arguments[1]
 		local class = table.concat(arguments, " ", 2)
 		local info
+		local info2
 
 		if (name) then
-			for k, v in ipairs(nut.faction.indices) do
-				if (nut.util.stringMatches(v.uniqueID, name) or nut.util.stringMatches(L(v.name, client), name)) then
-					faction = v.uniqueID
-					info = v
+			info = nut.faction.indices[name:lower()]
 
-					if (class and class != "") then
-						local found = false
+			if (!info) then
+				for k, v in ipairs(nut.faction.indices) do
+					if (nut.util.stringMatches(v.uniqueID, name) or nut.util.stringMatches(L(v.name, client), name)) then
+						faction = v.uniqueID
+						info = v
 
-						for k2, v2 in ipairs(nut.class.list) do
-							if (v2.faction == v.index) then
-								class = v2.uniqueID
-								found = true
-
-								break
-							end
-						end
-
-						if (!found) then
-							return L("invalidClass", client)
-						end
+						break
 					end
-
-					break
 				end
 			end
 
-			if (faction) then
+			if (info) then
+				if (class and class != "") then
+					local found = false
+
+					for k, v in ipairs(nut.class.list) do
+						if (v.faction == info.index and (v.uniqueID:lower() == class:lower() or nut.util.stringMatches(L(v.name, client), class))) then
+							class = v.uniqueID
+							info2 = v
+							found = true
+
+							break
+						end
+					end
+
+					if (!found) then
+						return L("invalidClass", client)
+					end
+				else
+					class = ""
+				end
+
 				PLUGIN.spawns[faction] = PLUGIN.spawns[faction] or {}
 				PLUGIN.spawns[faction][class] = PLUGIN.spawns[faction][class] or {}
 
@@ -89,7 +99,13 @@ nut.command.add("spawnadd", {
 
 				PLUGIN:SaveSpawns()
 
-				return L("spawnAdded", client, L(info.name, client))
+				local name = L(info.name, client)
+
+				if (info2) then
+					name = name.." ("..L(info2.name, client)..")"
+				end
+
+				return L("spawnAdded", client, name)
 			else
 				return L("invalidFaction", client)
 			end
@@ -108,10 +124,10 @@ nut.command.add("spawnremove", {
 		local i = 0
 
 		for k, v in pairs(PLUGIN.spawns) do
-			for k2, v2 in pairs(v) do
-				for k3, v3 in pairs(v2) do
+			for k2, v in pairs(v) do
+				for k3, v3 in pairs(v) do
 					if (v3:Distance(position) <= radius) then
-						v2[k3] = nil
+						v[k3] = nil
 						i = i + 1
 					end
 				end
