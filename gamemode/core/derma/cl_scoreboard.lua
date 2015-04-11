@@ -153,6 +153,18 @@ local PANEL = {}
 		end
 		slot.model:SetToolTip(L("sbOptions", client:steamName()))
 
+		for k, v in ipairs(client:GetBodyGroups()) do
+			slot.model.Entity:SetBodygroup(v.id, client:GetBodygroup(v.id))
+		end
+
+		local entity = slot.model.Entity
+
+		if (IsValid(entity)) then
+			for k, v in ipairs(client:GetMaterials()) do
+				entity:SetSubMaterial(k - 1, client:GetSubMaterial(k - 1))
+			end
+		end
+
 		slot.name = slot:Add("DLabel")
 		slot.name:SetText(client:Name())
 		slot.name:Dock(TOP)
@@ -194,11 +206,11 @@ local PANEL = {}
 				return self:Remove()
 			end
 
-			local overrideName = hook.Run("ShouldAllowScoreboardOverride", client) and hook.Run("GetDisplayedName", client)
+			local overrideName = hook.Run("ShouldAllowScoreboardOverride", client, "name") and hook.Run("GetDisplayedName", client)
 			local name = overrideName or client:Name()
 			local model = client:GetModel()
 			local skin = client:GetSkin()
-			local desc = hook.Run("ShouldAllowScoreboardOverride", client) and hook.Run("GetDisplayedDescription", client) or (client:getChar() and client:getChar():getDesc()) or ""
+			local desc = hook.Run("ShouldAllowScoreboardOverride", client, "desc") and hook.Run("GetDisplayedDescription", client) or (client:getChar() and client:getChar():getDesc()) or ""
 
 			self.model:setHidden(overrideName)
 
