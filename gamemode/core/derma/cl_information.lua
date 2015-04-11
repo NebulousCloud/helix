@@ -96,10 +96,12 @@ local PANEL = {}
 		self.money:SetText(L("charMoney", nut.currency.get(LocalPlayer():getChar():getMoney())))
 		self.faction:SetText(L("charFaction", L(team.GetName(LocalPlayer():Team()))))
 		
-		self.time:SetText(L("curTime", os.date("%c", nut.date.get())))
+		local format = "%A, %d %B %Y %X"
+		
+		self.time:SetText(L("curTime", os.date(format, nut.date.get())))
 		self.time.Think = function(this)
 			if ((this.nextTime or 0) < CurTime()) then
-				this:SetText(L("curTime", os.date("%c", nut.date.get())))
+				this:SetText(L("curTime", os.date(format, nut.date.get())))
 				this.nextTime = CurTime() + 0.5
 			end
 		end
