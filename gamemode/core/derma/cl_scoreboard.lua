@@ -133,11 +133,10 @@ local PANEL = {}
 
 		client.nutScoreSlot = slot
 
-		slot.model = slot:Add("SpawnIcon")
+		slot.model = slot:Add("nutSpawnIcon")
 		slot.model:SetModel(client:GetModel(), client:GetSkin())
 		slot.model:SetSize(64, 64)
-		slot.model.PaintOver = function() end
-		slot.model.OnMousePressed = function()
+		slot.model.DoClick = function()
 			local menu = DermaMenu()
 				local options = {}
 
@@ -195,10 +194,13 @@ local PANEL = {}
 				return self:Remove()
 			end
 
-			local name = hook.Run("ShouldAllowScoreboardOverride", client) and hook.Run("GetDisplayedName", client) or client:Name()
+			local overrideName = hook.Run("ShouldAllowScoreboardOverride", client) and hook.Run("GetDisplayedName", client)
+			local name = overrideName or client:Name()
 			local model = client:GetModel()
 			local skin = client:GetSkin()
 			local desc = hook.Run("ShouldAllowScoreboardOverride", client) and hook.Run("GetDisplayedDescription", client) or (client:getChar() and client:getChar():getDesc()) or ""
+
+			self.model:setHidden(overrideName)
 
 			if (self.lastName != name) then
 				self.name:SetText(name)
