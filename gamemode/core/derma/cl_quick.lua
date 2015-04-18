@@ -89,6 +89,7 @@ local PANEL = {}
 		button:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 		button:SetContentAlignment(4)
 		button:SetTextInset(8, 0)
+		button:SetTextColor(color_white)
 		button.Paint = paintButton
 
 		if (callback) then

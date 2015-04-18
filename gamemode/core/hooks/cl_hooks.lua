@@ -685,7 +685,7 @@ function GM:SetupQuickMenu(menu)
 		local enabled = NUT_CVAR_LANG:GetString():match(k)
 
 		if (name) then
-			name = name2.." ("..name..")"
+			name = name.." ("..name2..")"
 		else
 			name = name2
 		end

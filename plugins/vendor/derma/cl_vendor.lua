@@ -37,6 +37,7 @@ local PANEL = {}
 		self.vendorSell:SetContentAlignment(5)
 		-- The text says purchase but the vendor is selling it to us.
 		self.vendorSell:SetText(L"purchase")
+		self.vendorSell:SetTextColor(color_white)
 		self.vendorSell.DoClick = function(this)
 			if (IsValid(self.activeSell)) then
 				netstream.Start("vendorTrade", self.activeSell.item)
@@ -49,6 +50,7 @@ local PANEL = {}
 		self.vendorBuy:Dock(RIGHT)
 		self.vendorBuy:SetContentAlignment(5)
 		self.vendorBuy:SetText(L"sell")
+		self.vendorBuy:SetTextColor(color_white)
 		self.vendorBuy.DoClick = function(this)
 			if (IsValid(self.activeBuy)) then
 				netstream.Start("vendorTrade", self.activeBuy.item, true)
