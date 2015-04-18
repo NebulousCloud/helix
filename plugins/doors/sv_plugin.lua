@@ -170,7 +170,13 @@ function PLUGIN:ShowTeam(client)
 
 	if (IsValid(entity) and entity:isDoor() and !entity:getNetVar("faction")) then
 		if (entity:checkDoorAccess(client, DOOR_TENANT)) then
-			netstream.Start(client, "doorMenu", entity, entity.nutAccess)
+			local door = entity
+
+			if (IsValid(door.nutParent)) then
+				door = door.nutParent
+			end
+
+			netstream.Start(client, "doorMenu", door, door.nutAccess, entity)
 		elseif (!IsValid(entity:getNetVar("owner"))) then
 			nut.command.run(client, "doorbuy")
 		else
