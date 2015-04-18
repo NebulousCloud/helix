@@ -622,6 +622,15 @@ function GM:AllowPlayerPickup(client, entity)
 	return false
 end
 
+function GM:PreCleanupMap()
+	hook.Run("SaveData")
+	hook.Run("PersistenceSave")
+end
+
+function GM:PostCleanupMap()
+	hook.Run("LoadData")
+end
+
 netstream.Hook("strReq", function(client, time, text)
 	if (client.nutStrReqs and client.nutStrReqs[time]) then
 		client.nutStrReqs[time](text)
