@@ -534,7 +534,7 @@ local PANEL = {}
 		end
 
 		for k, v in ipairs(engine.GetAddons()) do
-			if (v.wsid == 207739713 and v.mounted) then
+			if (v.wsid == "207739713" and v.mounted) then
 				return
 			end
 		end
