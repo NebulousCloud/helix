@@ -297,9 +297,9 @@ end
 local vignette = nut.util.getMaterial("nutscript/gui/vignette.png")
 local vignetteAlphaGoal = 0
 local vignetteAlphaDelta = 0
-
 local blurGoal = 0
 local blurDelta = 0
+local hasVignetteMaterial = vignette != "___error"
 
 timer.Create("nutVignetteChecker", 1, 0, function()
 	local client = LocalPlayer()
@@ -368,11 +368,13 @@ function GM:HUDPaint()
 	local frameTime = FrameTime()
 	local scrW, scrH = surface.ScreenWidth(), surface.ScreenHeight()
 
-	vignetteAlphaDelta = mathApproach(vignetteAlphaDelta, vignetteAlphaGoal, frameTime * 30)
+	if (hasVignetteMaterial) then
+		vignetteAlphaDelta = mathApproach(vignetteAlphaDelta, vignetteAlphaGoal, frameTime * 30)
 
-	surface.SetDrawColor(0, 0, 0, 175 + vignetteAlphaDelta)
-	surface.SetMaterial(vignette)
-	surface.DrawTexturedRect(0, 0, scrW, scrH)
+		surface.SetDrawColor(0, 0, 0, 175 + vignetteAlphaDelta)
+		surface.SetMaterial(vignette)
+		surface.DrawTexturedRect(0, 0, scrW, scrH)
+	end
 
 	if (localPlayer.getChar(localPlayer) and nextUpdate < realTime) then
 		nextUpdate = realTime + 0.5
