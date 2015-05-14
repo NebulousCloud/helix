@@ -293,16 +293,21 @@ function nut.anim.setModelClass(model, class)
 	translations[model:lower()] = class
 end
 
-function nut.anim.getModelClass(model)
-	model = model:lower()
+-- Micro-optimization since the get class function gets called a lot.
+local stringLower = string.lower
+local stringFind = string.find
 
-	if (model:find("/player")) then
+function nut.anim.getModelClass(model)
+	model = stringLower(model)
+	local class = translations[model]
+
+	if (!class and stringFind(model, "/player")) then
 		return "player"
 	end
 
-	local class = translations[model:lower()] or "citizen_male"
+	class = class or "citizen_male"
 
-	if (class == "citizen_male" and (model:find("female" or model:find("alyx") or model:find("mossman")))) then
+	if (class == "citizen_male" and (stringFind(model, "female") or stringFind(model, "alyx") or stringFind(model, "mossman"))) then
 		class = "citizen_female"
 	end
 	
