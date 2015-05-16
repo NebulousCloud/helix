@@ -105,7 +105,7 @@ nut.command.add("flagtake", {
 
 			target:getChar():takeFlags(flags)
 
-			nut.util.notifyLocalized("flagTake", nil, client:Name(), target:Name(), flags)
+			nut.util.notifyLocalized("flagTake", nil, client:Name(), flags, target:Name())
 		end
 	end
 })
