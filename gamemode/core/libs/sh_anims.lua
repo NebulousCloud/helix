@@ -290,6 +290,10 @@ nut.anim.fastZombie = {
 local translations = {}
 
 function nut.anim.setModelClass(model, class)
+	if (!nut.anim[class]) then
+		error("'"..class.."' is not a valid animation class!")
+	end
+	
 	translations[model:lower()] = class
 end
 
