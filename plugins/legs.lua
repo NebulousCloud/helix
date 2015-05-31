@@ -68,6 +68,12 @@ function PLUGIN:createLegs()
 	self.legs = ClientsideModel(LocalPlayer():GetModel(), 10)
 
 	if (IsValid(self.legs)) then
+		self.legs:SetSkin(LocalPlayer():GetSkin())
+		
+		for k, v in ipairs(LocalPlayer():GetMaterials()) do
+			self.legs:SetSubMaterial(k - 1, v)
+		end
+
 		for k, v in pairs(HIDDEN_BONES) do
 			local index = self.legs:LookupBone(v)
 
@@ -82,17 +88,42 @@ function PLUGIN:createLegs()
 	end
 end
 
-function PLUGIN:Tick()
+function PLUGIN:checkChanges()
 	local client = LocalPlayer()
 
-	if (IsValid(client) and NUT_CVAR_LEGS:GetBool()) then
-		local model = client:GetModel()
+	if (!IsValid(self.legs)) then
+		return true
+	end
 
-		if (!IsValid(self.legs) or (IsValid(self.legs) and self.legs:GetModel() != model)) then
-			self:createLegs()
+	if (self.legs:GetModel() != client:GetModel()) then
+		return true
+	end
+
+	if (self.legs:GetSkin() != client:GetSkin()) then
+		return true
+	end
+
+	local newMaterials = client:GetMaterials()
+	local materials = self.legs:GetMaterials()
+
+	for k, v in ipairs(materials) do
+		if (v != newMaterials[k]) then
+			return true
 		end
 	end
 end
+
+local PLUGIN = PLUGIN
+
+timer.Create("nutLegCheck", 0.5, 0, function()
+	local client = LocalPlayer()
+
+	if (IsValid(client) and NUT_CVAR_LEGS:GetBool()) then
+		if (PLUGIN:checkChanges()) then
+			PLUGIN:createLegs()
+		end
+	end
+end)
 
 function PLUGIN:PostDrawViewModel()
 	if (NUT_CVAR_LEGS:GetBool() and IsValid(self.legs)) then
