@@ -39,12 +39,14 @@ if (SERVER) then
 	end
 else
 	function nut.date.get()
+		local realTime = RealTime()
+
 		-- Add the starting time + offset + current time played.
 		return nut.date.start + os.time({
 			year = nut.config.get("year"),
 			month = nut.config.get("month"),
 			day = nut.config.get("day")
-		}) + (RealTime() - nut.joinTime)
+		}) + (realTime - (nut.joinTime or realTime))
 	end
 
 	netstream.Hook("dateSync", function(curTime, offset)
