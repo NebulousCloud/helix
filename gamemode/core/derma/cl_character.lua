@@ -311,7 +311,7 @@ local PANEL = {}
 							surface.SetTexture(gradient2)
 							surface.DrawTexturedRect(0, 0, w, h)
 
-							this:PaintModel()
+							this:PaintModel(w, h)
 						end
 						self.fadePanels[#self.fadePanels + 1] = self.model
 
