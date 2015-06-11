@@ -172,6 +172,10 @@ modules.mysqloo = {
 		end
 
 		object:connect()
+
+		timer.Create("nutMySQLWakeUp", 300, 0, function()
+			nut.db.query("SELECT 1 + 1")
+		end)
 	end
 }
 
