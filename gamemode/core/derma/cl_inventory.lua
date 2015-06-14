@@ -391,14 +391,16 @@ PANEL = {}
 vgui.Register("nutInventory", PANEL, "DFrame")
 
 hook.Add("CreateMenuButtons", "nutInventory", function(tabs)
-	tabs["inv"] = function(panel)		
-		nut.gui.inv1 = panel:Add("nutInventory")
-		nut.gui.inv1.childPanels = {}
+	if (hook.Run("CanPlayerViewInventory") != false) then
+		tabs["inv"] = function(panel)		
+			nut.gui.inv1 = panel:Add("nutInventory")
+			nut.gui.inv1.childPanels = {}
 
-		local inventory = LocalPlayer():getChar():getInv()
+			local inventory = LocalPlayer():getChar():getInv()
 
-		if (inventory) then
-			nut.gui.inv1:setInventory(inventory)
+			if (inventory) then
+				nut.gui.inv1:setInventory(inventory)
+			end
 		end
 	end
 end)
