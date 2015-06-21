@@ -152,7 +152,7 @@ if (SERVER) then
 
 		-- Mark the character as banned and kick the character back to menu.
 		self:setData("banned", time or true)
-		self:Kick()
+		self:kick()
 	end
 end
 
