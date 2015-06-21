@@ -164,7 +164,7 @@ PANEL = {}
 		
 		if (IsValid(item)) then
 			local mouseX, mouseY = self:LocalCursorPos()
-			local dropX, dropY = math.Round((mouseX + item:GetWide()*0.5) / 64) - math.floor(item.gridW * 0.5), math.Round((mouseY + item:GetTall()*0.5) / 64) - math.floor(item.gridH * 0.5)
+			local dropX, dropY = math.ceil((mouseX - 4 - (item.gridW - 1) * 32) / 64), math.ceil((mouseY - 27 - (item.gridH - 1) * 32) / 64)
 
 			for x = 0, item.gridW - 1 do
 				for y = 0, item.gridH - 1 do
@@ -391,14 +391,16 @@ PANEL = {}
 vgui.Register("nutInventory", PANEL, "DFrame")
 
 hook.Add("CreateMenuButtons", "nutInventory", function(tabs)
-	tabs["inv"] = function(panel)		
-		nut.gui.inv1 = panel:Add("nutInventory")
-		nut.gui.inv1.childPanels = {}
+	if (hook.Run("CanPlayerViewInventory") != false) then
+		tabs["inv"] = function(panel)		
+			nut.gui.inv1 = panel:Add("nutInventory")
+			nut.gui.inv1.childPanels = {}
 
-		local inventory = LocalPlayer():getChar():getInv()
+			local inventory = LocalPlayer():getChar():getInv()
 
-		if (inventory) then
-			nut.gui.inv1:setInventory(inventory)
+			if (inventory) then
+				nut.gui.inv1:setInventory(inventory)
+			end
 		end
 	end
 end)

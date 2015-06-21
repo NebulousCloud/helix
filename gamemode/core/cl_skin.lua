@@ -6,7 +6,7 @@ local SKIN = {}
 	SKIN.Colours.Window.TitleActive = Color(0, 0, 0)
 	SKIN.Colours.Window.TitleInactive = Color(255, 255, 255)
 
-	SKIN.Colours.Button.Normal = Color(230, 230, 230)
+	SKIN.Colours.Button.Normal = Color(80, 80, 80)
 	SKIN.Colours.Button.Hover = Color(255, 255, 255)
 	SKIN.Colours.Button.Down = Color(180, 180, 180)
 	SKIN.Colours.Button.Disabled = Color(0, 0, 0, 100)

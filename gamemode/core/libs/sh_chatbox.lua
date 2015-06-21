@@ -162,7 +162,7 @@ if (SERVER) then
 				end
 			end
 
-			netstream.Start(receivers, "cMsg", speaker, chatType, text, anonymous)
+			netstream.Start(receivers, "cMsg", speaker, chatType, hook.Run("PlayerMessageSend", speaker, chatType, text, anonymous, receivers) or text, anonymous)
 		end
 	end
 else

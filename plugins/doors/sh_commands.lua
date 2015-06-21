@@ -65,6 +65,12 @@ nut.command.add("doorsell", {
 				-- Remove old door information.
 				entity:removeDoorAccessData()
 
+				-- Remove door information on child doors
+				PLUGIN:callOnDoorChildren(entity, function(child)
+					print(child)
+					child:removeDoorAccessData()
+				end)
+
 				-- Take their money and notify them.
 				client:getChar():giveMoney(price)
 				client:notifyLocalized("dSold", nut.currency.get(price))
@@ -278,6 +284,10 @@ nut.command.add("doorsettitle", {
 				entity:setNetVar("title", name)
 			elseif (client:IsAdmin()) then
 				entity:setNetVar("name", name)
+
+				PLUGIN:callOnDoorChildren(entity, function(child)
+					child:setNetVar("name", name)
+				end)
 			else
 				-- Otherwise notify the player he/she can't.
 				client:notifyLocalized("notOwner")

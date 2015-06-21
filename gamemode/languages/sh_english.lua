@@ -239,5 +239,7 @@ LANGUAGE = {
 	vendorSellScale = "Sell price scale",
 	vendorNoTrade = "You are not able to trade with this vendor.",
 	vendorNoMoney = "This vendor can not afford that item.",
-	vendorNoStock = "This vendor does not have that item in stock."
+	vendorNoStock = "This vendor does not have that item in stock.",
+	contentTitle = "NutScript Content Missing",
+	contentWarning = "You do not have the NutScript content mounted. This may result in certain features missing.\nWould you like to open the Workshop page for the NutScript content?"
 }

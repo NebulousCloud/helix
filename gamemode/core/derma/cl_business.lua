@@ -150,6 +150,7 @@ function PANEL:Init()
 		button:SetTall(36)
 		button:SetText(category)
 		button:Dock(TOP)
+		button:SetTextColor(color_white)
 		button:DockMargin(5, 5, 5, 0)
 		button:SetFont("nutMediumFont")
 		button:SetExpensiveShadow(1, Color(0, 0, 0, 150))
@@ -251,6 +252,7 @@ PANEL = {}
 		self.buy = self:Add("DButton")
 		self.buy:Dock(BOTTOM)
 		self.buy:SetText(L"purchase")
+		self.buy:SetTextColor(color_white)
 		self.buy.DoClick = function(this)
 			if ((this.nextClick or 0) < CurTime()) then
 				this.nextClick = CurTime() + 0.5

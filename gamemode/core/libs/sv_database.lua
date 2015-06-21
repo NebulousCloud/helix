@@ -46,19 +46,35 @@ modules.tmysql4 = {
 	query = function(query, callback)
 		if (nut.db.object) then
 			nut.db.object:Query(query, function(data, status, lastID)
-				if (status == QUERY_SUCCESS) then
+				if (QUERY_SUCCESS and status == QUERY_SUCCESS) then
 					if (callback) then
 						callback(data, lastID)
 					end
 				else
+					if (data and data[1]) then
+						if (data[1].status) then
+							if (callback) then
+								callback(data[1].data, data[1].lastid)
+							end
+
+							return
+						else
+							lastID = data[1].error
+						end
+					end
+
 					file.Write("nut_queryerror.txt", query)
-					ThrowQueryFault(query, lastID)
+					ThrowQueryFault(query, lastID or "")
 				end
 			end, 3)
 		end
 	end,
 	escape = function(value)
-		return tmysql and tmysql.escape(value) or sql.SQLStr(value, true)
+		if (nut.db.object) then
+			return nut.db.object:Escape(value)
+		end
+
+		return tmysql and tmysql.escape and tmysql.escape(value) or sql.SQLStr(value, true)
 	end,
 	connect = function(callback)
 		if (!pcall(require, "tmysql4")) then
@@ -156,6 +172,10 @@ modules.mysqloo = {
 		end
 
 		object:connect()
+
+		timer.Create("nutMySQLWakeUp", 300, 0, function()
+			nut.db.query("SELECT 1 + 1")
+		end)
 	end
 }
 

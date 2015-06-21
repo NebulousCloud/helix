@@ -39,23 +39,23 @@ function nut.faction.loadFromDir(directory)
 			nut.util.include(directory.."/"..v, "shared")
 
 			if (!FACTION.name) then
+				FACTION.name = "Unknown"
 				ErrorNoHalt("Faction '"..niceName.."' is missing a name. You need to add a FACTION.name = \"Name\"\n")
 			end
 
 			if (!FACTION.desc) then
+				FACTION.desc = "noDesc"
 				ErrorNoHalt("Faction '"..niceName.."' is missing a description. You need to add a FACTION.desc = \"Description\"\n")
 			end
 
 			if (!FACTION.color) then
+				FACTION.color = Color(150, 150, 150)
 				ErrorNoHalt("Faction '"..niceName.."' is missing a color. You need to add FACTION.color = Color(1, 2, 3)\n")
 			end
 
 			team.SetUp(FACTION.index, FACTION.name or "Unknown", FACTION.color or Color(125, 125, 125))
-
-			if (!FACTION.models) then
-				FACTION.models = CITIZEN_MODELS
-			end
-
+			
+			FACTION.models = FACTION.models or CITIZEN_MODELS
 			FACTION.uniqueID = FACTION.uniqueID or niceName
 
 			for k, v in pairs(FACTION.models) do

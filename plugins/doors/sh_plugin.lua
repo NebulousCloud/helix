@@ -36,6 +36,13 @@ do
 
 		access = access or DOOR_GUEST
 
+		local parent = self.nutParent
+
+		if (IsValid(parent)) then
+			print(parent)
+			return parent:checkDoorAccess(client, access)
+		end
+
 		if (hook.Run("CanPlayerAccessDoor", client, self, access)) then
 			return true
 		end
@@ -49,7 +56,7 @@ do
 
 	if (SERVER) then
 		function entityMeta:removeDoorAccessData()
-			for k, v in pairs(self.nutAccess) do
+			for k, v in pairs(self.nutAccess or {}) do
 				netstream.Start(k, "doorMenu")
 			end
 			

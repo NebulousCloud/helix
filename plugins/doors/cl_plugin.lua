@@ -47,14 +47,14 @@ function PLUGIN:DrawEntityInfo(entity, alpha)
 	end
 end
 
-netstream.Hook("doorMenu", function(entity, access)
+netstream.Hook("doorMenu", function(entity, access, door2)
 	if (IsValid(nut.gui.door)) then
 		return nut.gui.door:Remove()
 	end
 
 	if (IsValid(entity)) then
 		nut.gui.door = vgui.Create("nutDoorMenu")
-		nut.gui.door:setDoor(entity, access)
+		nut.gui.door:setDoor(entity, access, door2)
 	end
 end)
 

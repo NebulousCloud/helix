@@ -106,6 +106,7 @@ local PANEL = {}
 		self.faction = self:Add("DButton")
 		self.faction:SetText(L"vendorFaction")
 		self.faction:Dock(TOP)
+		self.faction:SetTextColor(color_white)
 		self.faction:DockMargin(0, 4, 0, 0)
 		self.faction.DoClick = function(this)
 			if (IsValid(nut.gui.editorFaction)) then

@@ -239,7 +239,7 @@ function GM:PlayerSay(client, message)
 		end
 	end
 
-	nut.chat.send(client, chatType, hook.Run("PlayerMessageSend", client, chatType, message, anonymous) or message, anonymous)
+	nut.chat.send(client, chatType, message, anonymous)
 	nut.log.add(client:Name().." said ["..chatType:upper().."] \""..message.."\"")
 
 	hook.Run("PostPlayerSay", client, message, chatType, anonymous)
@@ -620,6 +620,15 @@ end
 
 function GM:AllowPlayerPickup(client, entity)
 	return false
+end
+
+function GM:PreCleanupMap()
+	hook.Run("SaveData")
+	hook.Run("PersistenceSave")
+end
+
+function GM:PostCleanupMap()
+	hook.Run("LoadData")
 end
 
 netstream.Hook("strReq", function(client, time, text)
