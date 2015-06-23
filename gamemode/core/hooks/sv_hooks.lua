@@ -262,6 +262,10 @@ GM.PlayerSpawnEffect = IsAdmin
 GM.PlayerSpawnNPC = IsAdmin
 GM.PlayerSpawnSENT = IsAdmin
 
+function GM:PlayerSpawnSWEP(client, weapon, info)
+	return client:IsAdmin()
+end
+
 function GM:PlayerSpawnProp(client)
 	if (client:getChar() and client:getChar():hasFlags("e")) then
 		return true
