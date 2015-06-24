@@ -83,7 +83,7 @@ function ITEM:removeParts(client)
 
 			if (groups[index]) then
 				groups[index] = nil
-				character:setData("body", groups)
+				character:setData("groups", groups)
 			end
 		end
 	end
@@ -179,7 +179,7 @@ ITEM.functions.Equip = {
 			end
 
 			if (table.Count(newGroups) > 0) then
-				char:setData("body", newGroups)
+				char:setData("groups", newGroups)
 			end
 		end
 
