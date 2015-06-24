@@ -392,32 +392,27 @@ nut.command.add("charunban", {
 })
 
 nut.command.add("givemoney", {
-	syntax = "<number amount> [string target]",
+	syntax = "<number amount>",
 	onRun = function(client, arguments)
 		local amount = tonumber(arguments[1])
+
 		if (!amount or !isnumber(amount) or amount <= 0) then
-			return L("invalidArg", client, 2)
+			return L("invalidArg", client, 1)
 		end
 
-		table.remove(arguments, 1)
+		local data = {}
+			data.start = client:GetShootPos()
+			data.endpos = data.start + client:GetAimVector()*96
+			data.filter = client
+		local target = util.TraceLine(data).Entity
 
-		local name = table.concat(arguments)
-		if (name or name != "") then
-			target = nut.command.findPlayer(client, name)
-		else
-			local data = {}
-				data.start = client:GetShootPos()
-				data.endpos = data.start + client:GetAimVector()*96
-				data.filter = client
-			local trace = util.TraceLine(data)
-
-			if (trace.Entity and trace.Entity:IsPlayer()) then
-				target = trace.Entity
-			end
-		end
-
-		if (IsValid(target) and target:getChar()) then
+		if (IsValid(target) and target:IsPlayer() and target:getChar()) then
 			amount = math.Round(amount)
+
+			if (!target:getChar():hasMoney(amount)) then
+				return
+			end
+
 			target:getChar():giveMoney(amount)
 			client:getChar():takeMoney(amount)
 		end
