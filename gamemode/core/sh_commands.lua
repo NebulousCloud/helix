@@ -409,7 +409,7 @@ nut.command.add("givemoney", {
 		if (IsValid(target) and target:IsPlayer() and target:getChar()) then
 			amount = math.Round(amount)
 
-			if (!target:getChar():hasMoney(amount)) then
+			if (!client:getChar():hasMoney(amount)) then
 				return
 			end
 
