@@ -140,8 +140,11 @@ ITEM.functions.Equip = {
 
 		item:setData("equip", true)
 		char:addPart(item.uniqueID)
-
-		if (item.replacement or item.replacements) then
+		
+		if (type(item.onGetReplacement) == "function") then
+			char:setData("oldMdl", char:getData("oldMdl", item.player:GetModel()))
+			char:setModel(item:onGetReplacement())
+		elseif (item.replacement or item.replacements) then
 			char:setData("oldMdl", char:getData("oldMdl", item.player:GetModel()))
 
 			if (type(item.replacements) == "table") then
