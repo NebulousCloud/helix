@@ -169,8 +169,8 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 					break
 				end
 			end
-		elseif (client:getChar():getClass() != itemTable.classes) then
-			allowed = false
+		elseif (client:getChar():getClass() == itemTable.classes) then
+			allowed = true
 		end
 
 		if (!allowed) then
