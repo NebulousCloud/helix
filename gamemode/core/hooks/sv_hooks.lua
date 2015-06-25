@@ -525,41 +525,6 @@ function GM:PlayerDeathSound()
 	return true
 end
 
-function GM:Think()
-	for k, v in ipairs(player.GetAll()) do
-		if (v:getChar() and v:Alive() and hook.Run("ShouldPlayerDrowned", v) != false) then
-			if (v:WaterLevel() >= 3) then
-				if (!v.drowningTime) then
-					v.drowningTime = CurTime() + 30
-					v.nextDrowning = CurTime()
-					v.drownDamage = v.drownDamage or 0
-				end
-
-				if (v.drowningTime < CurTime()) then
-					if (v.nextDrowning < CurTime()) then
-						v:ScreenFade(1, Color(0, 0, 255, 100), 1, 0)
-						v:TakeDamage(10)
-						v.drownDamage = v.drownDamage + 10
-						v.nextDrowning = CurTime() + 1
-					end
-				end
-			else
-				if (v.drowningTime) then
-					v.drowningTime = nil
-					v.nextDrowning = nil
-					v.nextRecover = CurTime() + 2
-				end
-
-				if (v.nextRecover and v.nextRecover < CurTime() and v.drownDamage > 0) then
-					v.drownDamage = v.drownDamage - 10
-					v:SetHealth(math.Clamp(v:Health() + 10, 0, v:GetMaxHealth()))
-					v.nextRecover = CurTime() + 1
-				end
-			end
-		end
-	end
-end
-
 function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 	if (itemObject.isBag) then
 		local inventory = nut.item.inventories[itemObject:getData("id")]
@@ -634,6 +599,41 @@ end
 function GM:PostCleanupMap()
 	hook.Run("LoadData")
 end
+
+timer.Create("nutLifeGuard", 1, 0, function()
+	for k, v in ipairs(player.GetAll()) do
+		if (v:getChar() and v:Alive() and hook.Run("ShouldPlayerDrowned", v) != false) then
+			if (v:WaterLevel() >= 3) then
+				if (!v.drowningTime) then
+					v.drowningTime = CurTime() + 30
+					v.nextDrowning = CurTime()
+					v.drownDamage = v.drownDamage or 0
+				end
+
+				if (v.drowningTime < CurTime()) then
+					if (v.nextDrowning < CurTime()) then
+						v:ScreenFade(1, Color(0, 0, 255, 100), 1, 0)
+						v:TakeDamage(10)
+						v.drownDamage = v.drownDamage + 10
+						v.nextDrowning = CurTime() + 1
+					end
+				end
+			else
+				if (v.drowningTime) then
+					v.drowningTime = nil
+					v.nextDrowning = nil
+					v.nextRecover = CurTime() + 2
+				end
+
+				if (v.nextRecover and v.nextRecover < CurTime() and v.drownDamage > 0) then
+					v.drownDamage = v.drownDamage - 10
+					v:SetHealth(math.Clamp(v:Health() + 10, 0, v:GetMaxHealth()))
+					v.nextRecover = CurTime() + 1
+				end
+			end
+		end
+	end
+end)
 
 netstream.Hook("strReq", function(client, time, text)
 	if (client.nutStrReqs and client.nutStrReqs[time]) then
