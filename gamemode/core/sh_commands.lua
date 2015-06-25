@@ -452,11 +452,11 @@ nut.command.add("dropmoney", {
 			return "@invalidArg", 1
 		end
 
+		amount = math.Round(amount)
+		
 		if (!client:getChar():hasMoney(amount)) then
 			return
 		end
-
-		amount = math.Round(amount)
 
 		client:getChar():takeMoney(amount)
 		nut.currency.spawn(client:getItemDropPos(), amount)
