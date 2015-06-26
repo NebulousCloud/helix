@@ -5,14 +5,20 @@ nut.bar.actionText = ""
 nut.bar.actionStart = 0
 nut.bar.actionEnd = 0
 
+function nut.bar.get(identifier)
+	for k, v in ipairs(nut.bar.list) do
+		if (v.identifier == identifier) then
+			return v
+		end
+	end
+end
+
 function nut.bar.add(getValue, color, priority, identifier)
 	if (identifier) then
-		for k, v in ipairs(nut.bar.list) do
-			if (v.identifier == identifier) then
-				table.remove(nut.bar.list, k)
-
-				break
-			end
+		local index = nut.bar.get(identifier)
+		
+		if (index) then
+			table.remove(nut.bar.list, index)
 		end
 	end
 
@@ -31,17 +37,10 @@ function nut.bar.add(getValue, color, priority, identifier)
 	return priority
 end
 
-function nut.bar.get(identifier)
-	for k, v in ipairs(nut.bar.list) do
-		if (v.identifier == identifier) then
-			return v
-		end
-	end
-end
-
 local color_dark = Color(0, 0, 0, 225)
 local gradient = nut.util.getMaterial("vgui/gradient-u")
 local gradient2 = nut.util.getMaterial("vgui/gradient-d")
+local surface = surface
 
 function nut.bar.draw(x, y, w, h, value, color)
 	nut.util.drawBlurAt(x, y, w, h)
@@ -100,26 +99,32 @@ end
 local Approach = math.Approach
 
 BAR_HEIGHT = 10
+
 function nut.bar.drawAll()
 	local w, h = surface.ScreenWidth() * 0.35, BAR_HEIGHT
 	local x, y = 4, 4
 	local deltas = nut.bar.delta
 	local frameTime = FrameTime()
 	local curTime = CurTime()
-
-	for k, v in ipairs(nut.bar.list) do
-		local realValue = v.getValue()
-		local value = Approach(deltas[k] or 0, realValue, frameTime * 0.6)
-
-		deltas[k] = value
-
-		if (deltas[k] != realValue) then
-			v.lifeTime = curTime + 5
-		end
-
-		if (v.lifeTime >= curTime or v.visible) then
-			nut.bar.draw(x, y, w, h, value, v.color, v)
-			y = y + (h + 2)
+	local updateValue = frameTime * 0.6
+	
+	for i = 1, #nut.bar.list do
+		local bar = nut.bar.list[i]
+		
+		if (bar) then
+			local realValue = bar.getValue()
+			local value = Approach(deltas[i] or 0, realValue, updateValue)
+			
+			deltas[i] = value
+			
+			if (deltas[i] != realValue) then
+				bar.lifeTime = curTime + 5
+			end
+			
+			if (bar.lifeTime >= curTime or v.visible or hook.Run("ShouldBarDraw", bar)) then
+				nut.bar.draw(x, y, w, h, value, bar.color, bar)
+				y = y + h + 2
+			end
 		end
 	end
 
