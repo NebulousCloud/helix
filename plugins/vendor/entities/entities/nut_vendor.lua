@@ -123,6 +123,11 @@ function ENT:canBuyFromPlayer(client, uniqueID)
 end
 
 function ENT:hasMoney(amount)
+	-- Vendor not using money system so they can always afford it.
+	if (!self.money) then
+		return true
+	end
+	
 	return self.money >= amount
 end
 
