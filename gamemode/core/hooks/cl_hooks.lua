@@ -755,11 +755,12 @@ function GM:OnCharInfoSetup(infoPanel)
 				local tree = nut.anim[class]
 
 				if (tree) then
-					local subClass = weapon:GetHoldType()
+					local subClass = weapon.HoldType or weapon:GetHoldType()
 					subClass = HOLDTYPE_TRANSLATOR[subClass] or subClass
 
 					if (tree[subClass] and tree[subClass][act]) then
-						local act2 = tree[subClass][act][1]
+						local branch = tree[subClass][act]
+						local act2 = type(branch) == "table" and branch[1] or branch
 
 						if (type(act2) == "string") then
 							act2 = ent:LookupSequence(act2)
