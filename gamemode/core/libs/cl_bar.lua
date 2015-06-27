@@ -125,7 +125,7 @@ function nut.bar.drawAll()
 				bar.lifeTime = curTime + 5
 			end
 			
-			if (bar.lifeTime >= curTime or v.visible or hook.Run("ShouldBarDraw", bar)) then
+			if (bar.lifeTime >= curTime or bar.visible or hook.Run("ShouldBarDraw", bar)) then
 				nut.bar.draw(x, y, w, h, value, bar.color, bar)
 				y = y + h + 2
 			end
