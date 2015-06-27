@@ -15,10 +15,10 @@ end
 
 function nut.bar.add(getValue, color, priority, identifier)
 	if (identifier) then
-		local index = nut.bar.get(identifier)
+		local oldBar = nut.bar.get(identifier)
 		
-		if (index) then
-			table.remove(nut.bar.list, index)
+		if (oldBar) then
+			table.remove(nut.bar.list, oldBar.priority)
 		end
 	end
 
