@@ -68,10 +68,10 @@ function PLUGIN:createLegs()
 	self.legs = ClientsideModel(LocalPlayer():GetModel(), 10)
 
 	if (IsValid(self.legs)) then
-		self.legs.groups = {}
+		self.legs.groups = self.legs.groups or {}
 		
-		for k, v in ipairs(self.legs:GetBodyGroups()) do
-			self.legs.groups[k] = self.legs:GetBodygroup(v.id)
+		for k, v in ipairs(LocalPlayer():GetBodyGroups()) do
+			self.legs.groups[k] = LocalPlayer():GetBodygroup(v.id)
 		end
 		
 		self.legs:SetBodyGroups(table.concat(self.legs.groups, ""))
@@ -111,7 +111,7 @@ function PLUGIN:checkChanges()
 	end
 	
 	for k, v in ipairs(self.legs:GetBodyGroups()) do
-		if (self.legs.groups[k] != self.legs:GetBodygroup(v.id)) then
+		if (self.legs.groups[k] != client:GetBodygroup(v.id)) then
 			return true
 		end
 	end
