@@ -644,12 +644,17 @@ do
 				end
 				
 				local entity = item.entity
-
+				local result
+				
 				if (item.hooks[action]) then
-					item.hooks[action](item)
+					result = item.hooks[action](item)
 				end
-
-				if (callback.onRun(item) != false) then
+				
+				if (result == nil) then
+					result = callback.onRun(item)
+				end
+				
+				if (result != false) then
 					if (IsValid(entity)) then
 						entity.nutIsSafe = true
 						entity:Remove()
