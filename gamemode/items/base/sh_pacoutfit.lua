@@ -33,6 +33,8 @@ ITEM.pacData = {
 	},
 }
 
+-- This will change a player's skin after changing the model. Keep in mind it starts at 0.
+ITEM.newSkin = 1
 -- This will change a certain part of the model.
 ITEM.replacements = {"group01", "group02"}
 -- This will change the player's model completely.
@@ -71,6 +73,15 @@ function ITEM:removeParts(client)
 	if (character:getData("oldMdl")) then
 		character:setModel(character:getData("oldMdl"))
 		character:setData("oldMdl", nil)
+	end
+	
+	if (self.newSkin) then
+		if (character:getData("oldSkin")) then
+			client:SetSkin(character:getData("oldSkin"))
+			character:setData("oldSkin", nil)
+		else
+			client:SetSkin(0)
+		end
 	end
 
 	for k, v in pairs(self.bodyGroups or {}) do
@@ -159,7 +170,12 @@ ITEM.functions.Equip = {
 				char:setModel(item.replacement or item.replacements)
 			end
 		end
-
+		
+		if (item.newSkin) then
+			char:setData("oldSkin", item.player:GetSkin())
+			item.player:SetSkin(item.newSkin)
+		end
+		
 		if (item.bodyGroups) then
 			local groups = {}
 
