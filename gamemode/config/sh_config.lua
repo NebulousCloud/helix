@@ -103,22 +103,21 @@ nut.config.add("defMoney", 0, "The amount of money that players start with.", ni
 nut.config.add("allowVoice", false, "Whether or not voice chat is allowed.", nil, {
 	category = "server"
 })
---Резиновая таблица игроков
 nut.config.add("sbWidth", 0.325, "Scoreboard's width within percent of screen width.", function(oldValue, newValue)
-	if CLIENT then if (IsValid(nut.gui.score)) then
+	if (CLIENT and IsValid(nut.gui.score)) then
 		nut.gui.score:Remove()
-	end	end
+	end
 end, {
 	form = "Float",
 	category = "visual",
-	data = {min = 0.1, max = 1}
+	data = {min = 0.2, max = 1}
 })
 nut.config.add("sbHeight", 0.825, "Scoreboard's height within percent of screen height.", function(oldValue, newValue)
-	if CLIENT then if (IsValid(nut.gui.score)) then
+	if (CLIENT and IsValid(nut.gui.score)) then
 		nut.gui.score:Remove()
-	end	end
+	end
 end, {
 	form = "Float",
 	category = "visual",
-	data = {min = 0.1, max = 1}
+	data = {min = 0.3, max = 1}
 })
