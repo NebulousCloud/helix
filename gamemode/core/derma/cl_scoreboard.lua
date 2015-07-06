@@ -14,7 +14,7 @@ local PANEL = {}
 
 		nut.gui.score = self
 
-		self:SetSize(ScrW() * 0.325, ScrH() * 0.825)
+		self:SetSize(ScrW() * nut.config.get("sbWidth"), ScrH() * nut.config.get("sbHeight"))
 		self:Center()
 
 		self.title = self:Add("DLabel")
