@@ -138,6 +138,10 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 		return false
 	end
 
+	if (itemTable.noBusiness) then
+		return false
+	end
+	
 	if (itemTable.factions) then
 		local allowed = false
 
