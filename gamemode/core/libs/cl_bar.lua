@@ -6,9 +6,11 @@ nut.bar.actionStart = 0
 nut.bar.actionEnd = 0
 
 function nut.bar.get(identifier)
-	for k, v in ipairs(nut.bar.list) do
-		if (v.identifier == identifier) then
-			return v
+	for i = 1, #nut.bar.list do
+		local bar = nut.bar.list[i]
+		
+		if (bar and bar.identifier == identifier) then
+			return bar
 		end
 	end
 end
