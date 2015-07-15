@@ -9,7 +9,7 @@ if (CLIENT) then
 end
 
 SWEP.Author = "Chessnut"
-SWEP.Instructions = "Primary Fire: [RAISED] Punch\nSecondary Fire: Knock/Pickup"
+SWEP.Instructions = "Primary Fire: Lock\nSecondary Fire: Unlock"
 SWEP.Purpose = "Hitting things and knocking on doors."
 SWEP.Drop = false
 
