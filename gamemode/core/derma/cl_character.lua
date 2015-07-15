@@ -498,7 +498,7 @@ local PANEL = {}
 	end
 	
 	function PANEL:Think()
-		if (input.IsKeyDown(KEY_F1) and !LocalPlayer():getChar() and !self.choosing) then
+		if (input.IsKeyDown(KEY_F1) and LocalPlayer():getChar() and !self.choosing) then
 			self:Remove()
 		end
 	end
