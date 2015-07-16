@@ -338,7 +338,7 @@ function GM:PlayerLoadout(client)
 		end
 
 		-- Ditto, but for classes.
-		local class = nut.class.list[LocalPlayer():getChar():getClass()]
+		local class = nut.class.list[client:getChar():getClass()]
 
 		if (class) then
 			if (class.onSpawn) then
