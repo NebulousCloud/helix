@@ -337,6 +337,21 @@ function GM:PlayerLoadout(client)
 			end
 		end
 
+		-- Ditto, but for classes.
+		local class = nut.class.list[LocalPlayer():getChar():getClass()]
+
+		if (class) then
+			if (class.onSpawn) then
+				class:onSpawn(client)
+			end
+
+			if (class.weapons) then
+				for k, v in ipairs(class.weapons) do
+					client:Give(v)
+				end
+			end
+		end
+
 		-- Apply any flags as needed.
 		nut.flag.onSpawn(client)
 		nut.attribs.setup(client)
