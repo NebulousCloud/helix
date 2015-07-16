@@ -122,4 +122,6 @@ do
 	nut.flag.add("c", "Access to spawn chairs.")
 	nut.flag.add("C", "Access to spawn vehicles.")
 	nut.flag.add("r", "Access to spawn ragdolls.")
+	nut.flag.add("e", "Access to spawn props.")
+	nut.flag.add("n", "Access to spawn NPCs.")
 end

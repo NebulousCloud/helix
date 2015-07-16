@@ -259,8 +259,11 @@ local IsAdmin = function(_, client) return client:IsAdmin() end
 -- Set the gamemode hooks to the appropriate shortcuts.
 GM.PlayerGiveSWEP = IsAdmin
 GM.PlayerSpawnEffect = IsAdmin
-GM.PlayerSpawnNPC = IsAdmin
 GM.PlayerSpawnSENT = IsAdmin
+
+function GM:PlayerSpawnNPC(client, npcType, weapon)
+	return client:IsAdmin() or client:getChar():hasFlags("n")
+end
 
 function GM:PlayerSpawnSWEP(client, weapon, info)
 	return client:IsAdmin()

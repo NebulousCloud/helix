@@ -134,5 +134,27 @@ hook.Add("BuildHelpMenu", "nutBasicHelp", function(tabs)
 		return body
 	end
 
-	tabs["Google"] = "http://google.com"
+	tabs["flags"] = function(node)
+		local body = [[<table border="0" cellspacing="8px">]]
+
+		for k, v in SortedPairs(nut.flag.list) do
+			local icon
+
+			if (LocalPlayer():getChar():hasFlags(k)) then
+				icon = [[<img src="asset://garrysmod/materials/icon16/tick.png" />]]
+			else
+				icon = [[<img src="asset://garrysmod/materials/icon16/cross.png" />]]
+			end
+
+			body = body..Format([[
+				<tr>
+					<td>%s</td>
+					<td><b>%s</b></td>
+					<td>%s</td>
+				</tr>
+			]], icon, k, v.desc)
+		end
+
+		return body.."</table>"
+	end
 end)
