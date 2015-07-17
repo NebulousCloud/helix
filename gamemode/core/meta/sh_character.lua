@@ -134,7 +134,6 @@ if (SERVER) then
 			netstream.Start(client, "charKick", id, isCurrentChar)
 
 			if (isCurrentChar) then
-				client:setNetVar("charID", nil)
 				client:setNetVar("char", nil)
 				client:Spawn()
 			end

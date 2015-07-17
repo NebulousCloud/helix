@@ -75,15 +75,15 @@ function META:printAll()
 end
 
 function META:setOwner(owner, fullUpdate)
-	if (type(owner) == "Player" and owner:getNetVar("charID")) then
-		owner = owner:getNetVar("charID")
+	if (type(owner) == "Player" and owner:getNetVar("char")) then
+		owner = owner:getNetVar("char")
 	elseif (type(owner) != "number") then
 		return
 	end
 
 	if (SERVER and fullUpdate) then
 		for k, v in ipairs(player.GetAll()) do
-			if (v:getNetVar("charID") == owner) then
+			if (v:getNetVar("char") == owner) then
 				self:sync(v, true)
 
 				break

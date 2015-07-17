@@ -9,6 +9,8 @@ if (SERVER) then
 	function nut.char.create(data, callback)
 		local timeStamp = math.floor(os.time())
 
+		data.money = data.money or nut.config.get("defMoney", 0)
+
 		nut.db.insertTable({
 			_name = data.name or "John Doe",
 			_desc = data.desc or "No description available.",
@@ -18,7 +20,7 @@ if (SERVER) then
 			_lastJoinTime = timeStamp,
 			_steamID = data.steamID,
 			_faction = data.faction or "Unknown",
-			_money = data.money or nut.config.get("defMoney", 0),
+			_money = data.money,
 			_data = data.data
 		}, function(data2, charID)
 			nut.db.query("INSERT INTO nut_inventories (_charID) VALUES ("..charID..")", function(_, invID)
@@ -616,7 +618,7 @@ do
 				hook.Run("OnCharDelete", client, id, isCurrentChar)
 				
 				if (isCurrentChar) then
-					client:setNetVar("charID", nil)
+					client:setNetVar("char", nil)
 					client:Spawn()
 				end
 			end
