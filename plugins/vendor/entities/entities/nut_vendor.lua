@@ -187,11 +187,12 @@ if (SERVER) then
 		local data = {}
 		data[1] = items
 		data[2] = self.money
+		data[3] = self.scale
 
 		if (activator:IsAdmin()) then
-			data[3] = self.messages
-			data[4] = self.factions
-			data[5] = self.classes
+			data[4] = self.messages
+			data[5] = self.factions
+			data[6] = self.classes
 		end
 
 		activator.nutVendor = self

@@ -345,7 +345,7 @@ else
 	VENDOR_TEXT[VENDOR_BUYONLY] = "vendorBuy"
 	VENDOR_TEXT[VENDOR_SELLONLY] = "vendorSell"
 
-	netstream.Hook("vendorOpen", function(index, items, money, messages, factions, classes)
+	netstream.Hook("vendorOpen", function(index, items, money, scale, messages, factions, classes)
 		local entity = Entity(index)
 
 		if (!IsValid(entity)) then
@@ -357,6 +357,7 @@ else
 		entity.messages = messages
 		entity.factions = factions
 		entity.classes = classes
+		entity.scale = scale
 
 		nut.gui.vendor = vgui.Create("nutVendor")
 		nut.gui.vendor:setup(entity)
