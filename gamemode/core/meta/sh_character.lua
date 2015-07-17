@@ -64,7 +64,7 @@ if (SERVER) then
 			local data = {}
 
 			for k, v in pairs(self.vars) do
-				if (nut.char.vars[k] and !nut.char.vars[k].noNetworking) then
+				if (nut.char.vars[k] != nil and !nut.char.vars[k].noNetworking) then
 					data[k] = v
 				end
 			end
@@ -75,7 +75,7 @@ if (SERVER) then
 			local data = {}
 
 			for k, v in pairs(nut.char.vars) do
-				if (!v.noNetworking and !v.isLocalVar) then
+				if (!v.noNetworking and !v.isLocal) then
 					data[k] = self.vars[k]
 				end
 			end
@@ -195,7 +195,7 @@ function nut.char.registerVar(key, data)
 				self.vars[key] = value
 			end
 		-- If the variable is a local one, only send the variable to the local player.
-		elseif (data.isLocalVar) then
+		elseif (data.isLocal) then
 			CHAR["set"..upperName] = function(self, value)
 				local curChar = self:getPlayer() and self:getPlayer():getChar()
 				local sendID = true

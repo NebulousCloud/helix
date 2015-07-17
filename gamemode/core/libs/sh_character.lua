@@ -454,7 +454,6 @@ do
 
 	nut.char.registerVar("var", {
 		default = {},
-		isLocalVar = false,
 		noDisplay = true,
 		onSet = function(character, key, value, noReplication, receiver)
 			local data = character:getVar()
