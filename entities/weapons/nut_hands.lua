@@ -162,10 +162,13 @@ function SWEP:PrimaryAttack()
 	timer.Simple(0.055, function()
 		if (IsValid(self) and IsValid(self.Owner)) then
 			local damage = self.Primary.Damage
-			local result = hook.Run("PlayerGetFistDamage", self.Owner, damage)
+			local context = {damage = damage}
+			local result = hook.Run("PlayerGetFistDamage", self.Owner, damage, context)
 
 			if (result != nil) then
 				damage = result
+			else
+				damage = context.damage
 			end
 
 			self.Owner:LagCompensation(true)
