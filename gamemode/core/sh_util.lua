@@ -520,7 +520,13 @@ do
 	-- Returns whether or not the player has their weapon raised.
 	function playerMeta:isWepRaised()
 		local weapon = self.GetActiveWeapon(self)
-
+		local override = hook.Run("ShouldWeaponBeRaised", self, weapon)
+		
+		-- Allow the hook to check first.
+		if (override != nil) then
+			return override
+		end
+		
 		-- Some weapons may have their own properties.
 		if (IsValid(weapon)) then
 			-- If their weapon is always raised, return true.
