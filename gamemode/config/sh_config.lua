@@ -121,3 +121,6 @@ end, {
 	category = "visual",
 	data = {min = 0.3, max = 1}
 })
+nut.config.add("wepAlwaysRaised", false, "Whether or not weapons are always raised.", nil, {
+	category = "server"
+})

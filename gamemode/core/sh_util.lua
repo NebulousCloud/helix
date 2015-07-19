@@ -543,6 +543,11 @@ do
 			return false
 		end
 
+		-- Let the config decide before actual results.
+		if (nut.config.get("wepAlwaysRaised")) then
+			return true
+		end
+
 		-- Returns what the gamemode decides.
 		return self.getNetVar(self, "raised", false)
 	end
@@ -558,7 +563,7 @@ do
 	function playerMeta:isFemale()
 		local model = self:GetModel():lower()
 
-		return model:find("female") or model:find("alyx") or model:find("mossman")
+		return model:find("female") or model:find("alyx") or model:find("mossman") or nut.anim.getModelClass(model) == "citizen_female"
 	end
 
 	-- Returns a good position in front of the player for an entity.

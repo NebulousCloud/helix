@@ -46,7 +46,7 @@ function GM:TranslateActivity(client, act)
 	local weapon = client.GetActiveWeapon(client)
 
 	if (class == "player") then
-		if (IsValid(weapon) and !client.isWepRaised(client) and client.OnGround(client)) then
+		if (!nut.config.get("wepAlwaysRaised") and IsValid(weapon) and !client.isWepRaised(client) and client.OnGround(client)) then
 			if (string.find(model, "zombie")) then
 				local tree = nut.anim.zombie
 
