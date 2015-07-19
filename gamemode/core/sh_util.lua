@@ -965,6 +965,4 @@ do
 
 		return time
 	end
-
-	print(nut.util.getStringTime("5"))
 end
