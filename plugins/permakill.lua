@@ -8,7 +8,6 @@ function PLUGIN:PlayerDeath(client, inflictor, attacker)
 	if nut.config.get("pkActive") then
 		character:setData("permakilled", true)
 		if !nut.config.get("pkWorld") and ((client == attacker) or inflictor:IsWorld()) then return end
-		end
 	end
 end
 
