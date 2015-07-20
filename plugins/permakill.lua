@@ -22,7 +22,6 @@ function PLUGIN:PlayerSpawn(client)
 	end
 end
 
-
 nut.config.add("pkActive", false, "Whether or not permakill is activated on the server.", nil, {
 	category = "Permakill"
 })
