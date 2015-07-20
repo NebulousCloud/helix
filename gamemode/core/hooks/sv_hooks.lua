@@ -13,8 +13,8 @@ function GM:PlayerInitialSpawn(client)
 		character.isBot = true
 		nut.char.loaded[os.time()] = character
 
-		client:Spawn()
 		character:setup()
+		client:Spawn()
 
 		return
 	end
@@ -55,6 +55,8 @@ function GM:PlayerInitialSpawn(client)
 	end)
 
 	client:SetNoDraw(true)
+	client:SetNotSolid(true)
+	client:Lock()
 
 	timer.Simple(1, function()
 		if (!IsValid(client)) then return end
@@ -249,7 +251,10 @@ end
 
 function GM:PlayerSpawn(client)
 	client:SetNoDraw(false)
+	client:UnLock()
+	client:SetNotSolid(false)
 	client:setAction()
+
 	hook.Run("PlayerLoadout", client)
 end
 
@@ -359,6 +364,10 @@ function GM:PlayerLoadout(client)
 		hook.Run("PostPlayerLoadout", client)
 
 		client:SelectWeapon("nut_hands")
+	else
+		client:SetNoDraw(true)
+		client:Lock()
+		client:SetNotSolid(true)
 	end
 end
 
@@ -443,10 +452,12 @@ function GM:PlayerHurt(client, attacker, health, damage)
 end
 
 function GM:PlayerDeathThink(client)
-	local deathTime = client:getNetVar("deathTime")
+	if (client:getChar()) then
+		local deathTime = client:getNetVar("deathTime")
 
-	if (deathTime and deathTime <= CurTime()) then
-		client:Spawn()
+		if (deathTime and deathTime <= CurTime()) then
+			client:Spawn()
+		end
 	end
 
 	return false

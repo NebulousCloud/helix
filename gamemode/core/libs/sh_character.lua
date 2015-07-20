@@ -531,8 +531,8 @@ do
 					currentChar:save()
 				end
 
-				client:Spawn()
 				character:setup()
+				client:Spawn()
 
 				hook.Run("PlayerLoadedChar", client, character, currentChar)
 			else
