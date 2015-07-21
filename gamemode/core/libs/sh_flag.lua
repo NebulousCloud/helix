@@ -43,19 +43,29 @@ do
 
 		-- Add a flag to the flag string.
 		function character:giveFlags(flags)
+			local addedFlags = ""
+
 			-- Get the individual flags within the flag string.
 			for i = 1, #flags do
 				local flag = flags:sub(i, i)
 				local info = nut.flag.list[flag]
 
-				-- Call the callback if the flag has been registered.
-				if (info and info.callback) then
-					-- Pass the player and true (true for the flag being given.)
-					info.callback(self:getPlayer(), true)
+				if (info) then
+					if (!character:hasFlags(flag)) then
+						addedFlags = addedFlags..flag
+					end
+
+					if (info.callback) then
+						-- Pass the player and true (true for the flag being given.)
+						info.callback(self:getPlayer(), true)
+					end
 				end
 			end
 
-			self:setFlags(self:getFlags()..flags)
+			-- Only change the flag string if it is different.
+			if (addedFlags != "") then
+				self:setFlags(self:getFlags()..addedFlags)
+			end
 		end
 
 		-- Remove the flags from the flag string.
