@@ -62,6 +62,7 @@ function GM:PlayerInitialSpawn(client)
 		if (!IsValid(client)) then return end
 		
 		client:KillSilent()
+		client:StripAmmo()
 	end)
 end
 
@@ -311,7 +312,6 @@ function GM:PlayerLoadout(client)
 	end
 	
 	client:SetWeaponColor(Vector(client:GetInfo("cl_weaponcolor")))
-	client:StripAmmo()
 	client:StripWeapons()
 	client:setLocalVar("blur", nil)
 
@@ -627,6 +627,16 @@ end
 
 function GM:PostCleanupMap()
 	hook.Run("LoadData")
+end
+
+function GM:CharacterPreSave(character)
+	local client = character:getPlayer()
+
+	for k, v in pairs(character:getInv():getItems()) do
+		if (v.onSave) then
+			v:call("onSave", client)
+		end
+	end
 end
 
 timer.Create("nutLifeGuard", 1, 0, function()

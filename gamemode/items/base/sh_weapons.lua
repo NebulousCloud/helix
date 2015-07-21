@@ -22,12 +22,14 @@ end
 ITEM:hook("drop", function(item)
 	if (item:getData("equip")) then
 		item:setData("equip", nil)
+
 		item.player.carryWeapons = item.player.carryWeapons or {}
 
 		local weapon = item.player.carryWeapons[item.weaponCategory]
 
 		if (IsValid(weapon)) then
 			item:setData("ammo", weapon:Clip1())
+
 			item.player:StripWeapon(item.class)
 			item.player.carryWeapons[item.weaponCategory] = nil
 			item.player:EmitSound("items/ammo_pickup.wav", 80)
@@ -42,7 +44,9 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 	icon = "icon16/cross.png",
 	onRun = function(item)
 		item.player.carryWeapons = item.player.carryWeapons or {}
+
 		local weapon = item.player.carryWeapons[item.weaponCategory]
+
 		if (!weapon or !IsValid(weapon)) then
 			weapon = item.player:GetWeapon(item.class)	
 		end
@@ -57,7 +61,8 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 
 		item.player:EmitSound("items/ammo_pickup.wav", 80)
 		item.player.carryWeapons[item.weaponCategory] = nil
-		item:setData("equip", false)
+
+		item:setData("equip", nil)
 		
 		return false
 	end,
@@ -74,6 +79,7 @@ ITEM.functions.Equip = {
 	onRun = function(item)
 		local client = item.player
 		local items = client:getChar():getInv():getItems()
+
 		client.carryWeapons = client.carryWeapons or {}
 
 		for k, v in pairs(items) do
@@ -95,24 +101,19 @@ ITEM.functions.Equip = {
 		local weapon = client:Give(item.class)
 
 		if (IsValid(weapon)) then
-			local ammo = item:getData("ammo")
-
 			client.carryWeapons[item.weaponCategory] = weapon
 			client:SelectWeapon(weapon:GetClass())
 			client:SetActiveWeapon(weapon)
 			client:EmitSound("items/ammo_pickup.wav", 80)
+
+			-- Remove default given ammo.
+			if (client:GetAmmoCount(weapon:GetPrimaryAmmoType()) == weapon:Clip1() and item:getData("ammo", 0) == 0) then
+				client:RemoveAmmo(weapon:Clip1(), weapon:GetPrimaryAmmoType())
+			end
+
 			item:setData("equip", true)
 
-			local count = weapon:Clip1()
-			local ammoType = weapon:GetPrimaryAmmoType()
-
-			if (client:GetAmmoCount(ammoType) >= count) then
-				client:RemoveAmmo(count, ammoType)
-			end
-
-			if (ammo) then
-				weapon:SetClip1(ammo)
-			end
+			weapon:SetClip1(item:getData("ammo", 0))
 		else
 			print(Format("[Nutscript] Weapon %s does not exist!", item.class))
 		end
@@ -135,35 +136,45 @@ end
 function ITEM:onLoadout()
 	if (self:getData("equip")) then
 		local client = self.player
-		client.carryWeapons = {}
+		client.carryWeapons = client.carryWeapons or {}
 
 		local weapon = client:Give(self.class)
 
 		if (IsValid(weapon)) then
-			local ammo = self:getData("ammo")
-
+			client:RemoveAmmo(weapon:Clip1(), weapon:GetPrimaryAmmoType())
 			client.carryWeapons[self.weaponCategory] = weapon
 
-			local count = weapon:Clip1()
-			local ammoType = weapon:GetPrimaryAmmoType()
-
-			if (client:GetAmmoCount(ammoType) >= count) then
-				client:RemoveAmmo(count, ammoType)
-			end
-
-			if (ammo) then
-				weapon:SetClip1(ammo)
-			end
+			weapon:SetClip1(self:getData("ammo", 0))
 		else
 			print(Format("[Nutscript] Weapon %s does not exist!", self.class))
 		end
 	end
 end
 
+function ITEM:onSave()
+	local weapon = self.player:GetWeapon(self.class)
+
+	if (IsValid(weapon)) then
+		self:setData("ammo", weapon:Clip1())
+	end
+end
+
 HOLSTER_DRAWINFO = {}
+
 -- Called after the item is registered into the item tables.
 function ITEM:onRegistered()
 	if (self.holsterDrawInfo) then
 		HOLSTER_DRAWINFO[self.class] = self.holsterDrawInfo
 	end
 end
+
+hook.Add("PlayerDeath", "nutStripClip", function(client)
+	client.carryWeapons = {}
+
+	for k, v in pairs(client:getChar():getInv():getItems()) do
+		if (v.isWeapon and v:getData("equip")) then
+			v:setData("ammo", nil)
+			v:setData("equip", nil)
+		end
+	end
+end)
