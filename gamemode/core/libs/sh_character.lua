@@ -154,6 +154,14 @@ if (SERVER) then
 end
 
 function nut.char.new(data, id, client, steamID)
+	if (data.name) then
+		data.name = data.name:gsub("#", "#​")
+	end
+
+	if (data.desc) then
+		data.desc = data.desc:gsub("#", "#​")
+	end
+	
 	local character = setmetatable({vars = {}}, nut.meta.character)
 		for k, v in pairs(data) do
 			if (v != nil) then

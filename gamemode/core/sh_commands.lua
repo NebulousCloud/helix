@@ -267,7 +267,7 @@ nut.command.add("charsetname", {
 		if (IsValid(target) and target:getChar()) then
 			nut.util.notifyLocalized("cChangeName", client:Name(), target:Name(), targetName)
 
-			target:getChar():setName(targetName)
+			target:getChar():setName(targetName:gsub("#", "#​"))
 		end
 	end
 })
