@@ -2,6 +2,7 @@ function GM:PlayerInitialSpawn(client)
 	client.nutJoinTime = RealTime()
 	
 	if (client:IsBot()) then
+		local botID = os.time()
 		local index = math.random(1, table.Count(nut.faction.indices))
 		local faction = nut.faction.indices[index]
 
@@ -9,8 +10,15 @@ function GM:PlayerInitialSpawn(client)
 			name = client:Name(),
 			faction = faction and faction.uniqueID or "unknown",
 			model = faction and table.Random(faction.models) or "models/gman.mdl"
-		}, os.time(), client, client:SteamID64())
+		}, botID, client, client:SteamID64())
 		character.isBot = true
+
+		local inventory = nut.item.createInv(nut.config.get("invW"), nut.config.get("invH"), botID)
+		inventory:setOwner(botID)
+		inventory.noSave = true
+
+		character.vars.inv = {inventory}
+
 		nut.char.loaded[os.time()] = character
 
 		character:setup()
