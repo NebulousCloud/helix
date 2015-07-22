@@ -525,7 +525,7 @@ do
 			if (character) then
 				local inventory = nut.item.inventories[invID]
 
-				if (inventory and !inventory.owner or (inventory.owner and inventory.owner == character:getID())) then
+				if (inventory and (!inventory.owner or (inventory.owner and inventory.owner == character:getID())) or (inventory.onCheckAccess and inventory:onCheckAccess(client))) then
 					local item = inventory:getItemAt(oldX, oldY)
 
 					if (item) then
