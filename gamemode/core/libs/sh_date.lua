@@ -3,7 +3,7 @@ nut.date.cache = nut.date.cache or {}
 nut.date.start = nut.date.start or os.time()
 
 if (!nut.config) then
-	include("sh_config.lua")
+	include("nutscript/gamemode/core/sh_config.lua")
 end
 
 nut.config.add("year", 2015, "The starting year of the schema.", nil, {
