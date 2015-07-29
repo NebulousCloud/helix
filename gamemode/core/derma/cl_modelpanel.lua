@@ -10,29 +10,32 @@ local PANEL = {}
 			self:OldSetModel(model)
 
 			local entity = self.Entity
-			local sequence = entity:LookupSequence("idle")
 
-			if (sequence <= 0) then
-				sequence = entity:LookupSequence("idle_subtle")
+			if (IsValid(entity)) then
+				local sequence = entity:LookupSequence("idle")
+
+				if (sequence <= 0) then
+					sequence = entity:LookupSequence("idle_subtle")
+				end
+
+				if (sequence <= 0) then
+					sequence = entity:LookupSequence("batonidle2")
+				end
+
+				if (sequence <= 0) then
+					sequence = entity:LookupSequence("idle_unarmed")
+				end
+
+				if (sequence <= 0) then
+					sequence = entity:LookupSequence("idle01")
+				end
+
+				if (sequence > 0) then
+					entity:ResetSequence(sequence)
+				end
+
+				entity:SetIK(false)
 			end
-
-			if (sequence <= 0) then
-				sequence = entity:LookupSequence("batonidle2")
-			end
-
-			if (sequence <= 0) then
-				sequence = entity:LookupSequence("idle_unarmed")
-			end
-
-			if (sequence <= 0) then
-				sequence = entity:LookupSequence("idle01")
-			end
-
-			if (sequence > 0) then
-				entity:ResetSequence(sequence)
-			end
-
-			entity:SetIK(false)
 		end
 	end
 
