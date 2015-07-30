@@ -425,7 +425,7 @@ nut.command.add("charsetmoney", {
 	onRun = function(client, arguments)
 		local amount = tonumber(arguments[2])
 
-		if (!amount or !isnumber(amount) or amount <= 0) then
+		if (!amount or !isnumber(amount) or amount < 0) then
 			return "@invalidArg", 2
 		end
 
