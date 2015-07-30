@@ -152,13 +152,13 @@ if (SERVER) then
 				receivers = {}
 
 				for k, v in ipairs(player.GetAll()) do
-					if (class.onCanHear(speaker, v) != false) then
+					if (v:getChar() and class.onCanHear(speaker, v) != false) then
 						receivers[#receivers + 1] = v
 					end
 				end
 
 				if (#receivers == 0) then
-					receivers = nil
+					return
 				end
 			end
 
