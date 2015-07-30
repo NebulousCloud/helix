@@ -20,14 +20,10 @@ nut.config.add("day", 1, "The starting day of the schema.", nil, {
 })
 
 if (SERVER) then
-	function nut.date.restore()
-		nut.date.start = nut.data.get("time", os.time(), false, true)
-	end
-
 	function nut.date.get()
 		local unixTime = os.time()
 
-		return (unixTime - nut.date.start) + os.time({
+		return (unixTime - (nut.date.start or unixTime)) + os.time({
 			year = nut.config.get("year"),
 			month = nut.config.get("month"),
 			day = nut.config.get("day")

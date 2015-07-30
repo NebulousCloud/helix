@@ -583,8 +583,10 @@ end
 
 function GM:InitializedSchema()
 	if (!nut.data.get("date", nil, false, true)) then
-		nut.data.set("data", os.time(), false, true)
+		nut.data.set("date", os.time(), false, true)
 	end
+
+	nut.date.start = nut.data.get("date", os.time(), false, true)
 
 	game.ConsoleCommand("sbox_persist ns_"..SCHEMA.folder.."\n")
 end
