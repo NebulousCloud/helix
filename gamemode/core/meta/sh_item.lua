@@ -150,6 +150,12 @@ function ITEM:hook(name, func)
 	end
 end
 
+function ITEM:postHook(name, func)
+	if (name) then
+		self.postHooks[name] = func
+	end
+end
+
 function ITEM:remove()
 	local inv = nut.item.inventories[self.invID]
 	local x2, y2
