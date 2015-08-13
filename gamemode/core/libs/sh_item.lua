@@ -133,6 +133,7 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 			ITEM.base = baseID
 			ITEM.isBase = isBaseItem
 			ITEM.hooks = ITEM.hooks or {}
+			ITEM.postHooks = ITEM.postHooks or {}
 			ITEM.functions = ITEM.functions or {}
 			ITEM.functions.drop = ITEM.functions.drop or {
 				tip = "dropTip",
@@ -652,6 +653,11 @@ do
 				
 				if (result == nil) then
 					result = callback.onRun(item)
+				end
+
+				if (item.postHooks[action]) then
+					-- Posthooks shouldn't override the result from onRun
+					item.postHooks[action](item)
 				end
 				
 				if (result != false) then
