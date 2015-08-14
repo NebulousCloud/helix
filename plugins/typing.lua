@@ -19,11 +19,12 @@ if (CLIENT) then
 
 	function PLUGIN:HUDPaint()
 		local ourPos = LocalPlayer():GetPos()
+		local localPlayer = LocalPlayer()
 
-		data.start = LocalPlayer():EyePos()
+		data.start = localPlayer:EyePos()
 
 		for k, v in ipairs(player.GetAll()) do
-			if (v != LocalPlayer() and v:getNetVar("typing")) then
+			if (v != localPlayer and v:getNetVar("typing") and v:GetMoveType() == MOVETYPE_WALK) then
 				data.endpos = v:EyePos()
 
 				if (util.TraceLine(data).Entity == v) then
