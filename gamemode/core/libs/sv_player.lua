@@ -3,7 +3,7 @@ local playerMeta = FindMetaTable("Player")
 -- Player data (outside of characters) handling.
 do
 	function playerMeta:loadNutData(callback)
-		local name = self:Name()
+		local name = self:SteamName()
 		local steamID64 = self:SteamID64()
 		local timeStamp = math.floor(os.time())
 		local ip = self:IPAddress():match("%d+%.%d+%.%d+%.%d+")
