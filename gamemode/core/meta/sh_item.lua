@@ -312,7 +312,7 @@ if (SERVER) then
 						self.invID = invID
 
 						if (self.onTransfered) then
-							self:onTransfered()
+							self:onTransfered(curInv, inventory)
 						end
 
 						return true
@@ -321,7 +321,7 @@ if (SERVER) then
 						inventory[self.id] = nil
 
 						if (self.onTransfered) then
-							self:onTransfered()
+							self:onTransfered(curInv, inventory)
 						end
 
 						return true
@@ -342,7 +342,7 @@ if (SERVER) then
 					inventory[self:getID()] = self
 
 					if (self.onTransfered) then
-						self:onTransfered()
+						self:onTransfered(curInv, inventory)
 					end
 						
 					return true
