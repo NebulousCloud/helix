@@ -24,6 +24,7 @@ if (SERVER) then
 	function ENT:setInventory(inventory)
 		if (inventory) then
 			self:setNetVar("id", inventory:getID())
+			
 			inventory.onAuthorizeTransfer = function(inventory, client, oldInventory, item)
 				if (IsValid(client) and IsValid(self) and self.receivers[client]) then
 					return true
@@ -39,6 +40,9 @@ if (SERVER) then
 				end
 
 				return #receivers > 0 and receivers or nil
+			end
+			inventory.onCanTransfer = function(inventory, client, oldX, oldY, x, y, newInvID)
+				return hook.Run("StorageCanTransfer", inventory, client, oldX, oldY, x, y, newInvID)
 			end
 		end
 	end
