@@ -295,6 +295,10 @@ do
 	end
 
 	function nut.item.restoreInv(invID, w, h, callback)
+		if (type(invID) != "number" or invID < 0) then
+			error("Attempt to restore inventory with an invalid ID!")
+		end
+		
 		local inventory = nut.item.createInv(w, h, invID)
 
 		nut.db.query("SELECT _itemID, _uniqueID, _data, _x, _y FROM nut_items WHERE _invID = "..invID, function(data)
