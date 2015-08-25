@@ -22,7 +22,7 @@ local PANEL = {}
 				entity:SetSkin(skin)
 			end
 
-			local sequence = entity:LookupSequence("idle")
+			local sequence = entity:SelectWeightedSequence(ACT_IDLE)
 
 			if (sequence <= 0) then
 				sequence = entity:LookupSequence("idle_unarmed")
@@ -31,23 +31,19 @@ local PANEL = {}
 			if (sequence > 0) then
 				entity:ResetSequence(sequence)
 			else
-				if (sequence <= 0) then
-					local found = false
+				local found = false
 
-					for k, v in ipairs(entity:GetSequenceList()) do
-						if (v:lower():find("idle") and v != "idlenoise") then
-							entity:ResetSequence(k)
-							found = true
+				for k, v in ipairs(entity:GetSequenceList()) do
+					if ((v:lower():find("idle") or v:lower():find("fly")) and v != "idlenoise") then
+						entity:ResetSequence(v)
+						found = true
 
-							break
-						end
+						break
 					end
+				end
 
-					if (!found) then
-						entity:ResetSequence(4)
-					end
-				else
-					entity:ResetSequence(sequence)
+				if (!found) then
+					entity:ResetSequence(4)
 				end
 			end
 

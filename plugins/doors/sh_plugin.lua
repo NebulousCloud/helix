@@ -24,7 +24,6 @@ do
 		local parent = self.nutParent
 
 		if (IsValid(parent)) then
-			print(parent)
 			return parent:checkDoorAccess(client, access)
 		end
 

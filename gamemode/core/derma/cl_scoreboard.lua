@@ -36,69 +36,61 @@ local PANEL = {}
 		self.scroll:DockMargin(1, 0, 1, 0)
 		self.scroll.VBar:SetWide(0)
 
-		self.nextUpdate = 0
-		self.players = {}
+		self.layout = self.scroll:Add("DListLayout")
+		self.layout:Dock(TOP)
+
+		self.teams = {}
 		self.slots = {}
 		self.i = {}
 
-		self:populate()
-	end
-
-	function PANEL:populate()
-		self.scroll:Clear()
-		self.teams = {}
-		self.tallies = {}
-
 		for k, v in ipairs(nut.faction.indices) do
-			self.teams[k] = {}
-
 			local color = team.GetColor(k)
 			local r, g, b = color.r, color.g, color.b
 
-			local list = self.scroll:Add("DListLayout")
+			local list = self.layout:Add("DListLayout")
 			list:Dock(TOP)
-			list:SetTall(0)
+			list:SetTall(28)
 			list.Think = function(this)
-				if (#this:GetChildren() <= 1) then
-					this:SetVisible(false)
-				else
-					this:SetVisible(true)
+				for k2, v2 in ipairs(team.GetPlayers(k)) do
+					if (!IsValid(v2.nutScoreSlot) or v2.nutScoreSlot:GetParent() != this) then
+						if (IsValid(v2.nutPlayerSlot)) then
+							v2.nutPlayerSlot:SetParent(this)
+						else
+							self:addPlayer(v2, this)
+						end
+					end
 				end
 			end
 
-			local panel = list:Add("DLabel")
-			panel:Dock(TOP)
-			panel.Paint = function(this, w, h)
-				surface.SetDrawColor(r, g, b, 50)
+			local header = list:Add("DLabel")
+			header:Dock(TOP)
+			header:SetText(L(v.name))
+			header:SetTextInset(3, 0)
+			header:SetFont("nutMediumFont")
+			header:SetTextColor(color_white)
+			header:SetExpensiveShadow(1, color_black)
+			header:SetTall(28)
+			header.Paint = function(this, w, h)
+				surface.SetDrawColor(r, g, b, 20)
 				surface.DrawRect(0, 0, w, h)
 			end
-			panel:SetText(L(v.name))
-			panel:SetTextInset(3, 0)
-			panel:SetFont("nutMediumFont")
-			panel:SetTextColor(color_white)
-			panel:SetExpensiveShadow(1, color_black)
-			panel:SetTall(28)
 
 			self.teams[k] = list
-			self.tallies[k] = team.NumPlayers(k)
-
-			self.i[k] = 0
-
-			for k, v in ipairs(team.GetPlayers(k)) do
-				self:addPlayer(v, list)
-			end
 		end
 	end
 
 	function PANEL:Think()
 		if ((self.nextUpdate or 0) < CurTime()) then
-			for k, v in ipairs(player.GetAll()) do
-				if (v:getChar()) then
-					if (!IsValid(v.nutScoreSlot)) then
-						local teamID = v:Team()
+			local visible, amount
 
-						self:addPlayer(v, self.teams[teamID])
-					end
+			for k, v in ipairs(self.teams) do
+				visible, amount = v:IsVisible(), team.NumPlayers(k)
+
+				if (visible and amount == 0) then
+					v:SetVisible(false)
+					self.layout:InvalidateLayout()
+				elseif (!visible and amount > 0) then
+					v:SetVisible(true)
 				end
 			end
 
@@ -108,21 +100,14 @@ local PANEL = {}
 				end
 			end
 
-			self.nextUpdate = CurTime() + 0.25
+			self.nextUpdate = CurTime() + 0.1
 		end
 	end
 
 	function PANEL:addPlayer(client, parent)
-		if (!client:getChar()) then return end
-		if (IsValid(client.nutScoreSlot)) then client.nutScoreSlot:Remove() end
-
-		if (!IsValid(parent)) then
-			return self:populate()
+		if (!client:getChar() or !IsValid(parent)) then
+			return
 		end
-
-		local index = client:Team()
-
-		parent:SetTall(28)
 
 		local slot = parent:Add("DPanel")
 		slot:Dock(TOP)
@@ -153,17 +138,23 @@ local PANEL = {}
 		end
 		slot.model:SetToolTip(L("sbOptions", client:steamName()))
 
-		for k, v in ipairs(client:GetBodyGroups()) do
-			slot.model.Entity:SetBodygroup(v.id, client:GetBodygroup(v.id))
-		end
-
-		local entity = slot.model.Entity
-
-		if (IsValid(entity)) then
-			for k, v in ipairs(client:GetMaterials()) do
-				entity:SetSubMaterial(k - 1, client:GetSubMaterial(k - 1))
+		timer.Simple(0, function()
+			if (!IsValid(slot)) then
+				return
 			end
-		end
+
+			local entity = slot.model.Entity
+
+			if (IsValid(entity)) then
+				for k, v in ipairs(client:GetBodyGroups()) do
+					entity:SetBodygroup(v.id, client:GetBodygroup(v.id))
+				end
+
+				for k, v in ipairs(client:GetMaterials()) do
+					entity:SetSubMaterial(k - 1, client:GetSubMaterial(k - 1))
+				end
+			end
+		end)
 
 		slot.name = slot:Add("DLabel")
 		slot.name:SetText(client:Name())
@@ -219,6 +210,17 @@ local PANEL = {}
 				self.lastName = name
 			end
 
+			local entity = self.model.Entity
+
+			if (self.lastDesc != desc) then
+				self.desc:SetText(desc)
+				self.lastDesc = desc
+			end
+
+			if (!IsValid(entity)) then
+				return
+			end
+
 			if (self.lastModel != model or self.lastSkin != skin) then
 				self.model:SetModel(client:GetModel(), client:GetSkin())
 				self.model:SetToolTip(L("sbOptions", client:steamName()))
@@ -227,13 +229,17 @@ local PANEL = {}
 				self.lastSkin = skin
 			end
 
-			if (self.lastDesc != desc) then
-				self.desc:SetText(desc)
-				self.lastDesc = desc
-			end
+			timer.Simple(0, function()
+				if (!IsValid(entity) or !IsValid(client)) then
+					return
+				end
+
+				for k, v in ipairs(client:GetBodyGroups()) do
+					entity:SetBodygroup(v.id, client:GetBodygroup(v.id))
+				end
+			end)
 		end
 
-		self.i[index] = math.abs(self.i[index] - 1)
 		self.slots[#self.slots + 1] = slot
 
 		parent:SetVisible(true)
