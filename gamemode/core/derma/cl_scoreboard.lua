@@ -113,7 +113,6 @@ local PANEL = {}
 		slot:Dock(TOP)
 		slot:SetTall(64)
 		slot:DockMargin(0, 0, 0, 1)
-		slot.Paint = paintFunctions[self.i[index] or 0]
 		slot.character = client:getChar()
 
 		client.nutScoreSlot = slot
@@ -194,7 +193,18 @@ local PANEL = {}
 
 		function slot:update()
 			if (!IsValid(client) or !client:getChar() or !self.character or self.character != client:getChar() or oldTeam != client:Team()) then
-				return self:Remove()
+				self:Remove()
+
+				local i = 0
+
+				for k, v in ipairs(parent:GetChildren()) do
+					if (IsValid(v.model) and v != self) then
+						i = i + 1
+						v.Paint = paintFunctions[i % 2]
+					end
+				end
+
+				return
 			end
 
 			local overrideName = hook.Run("ShouldAllowScoreboardOverride", client, "name") and hook.Run("GetDisplayedName", client)
@@ -245,6 +255,15 @@ local PANEL = {}
 		parent:SetVisible(true)
 		parent:SizeToChildren(false, true)
 		parent:InvalidateLayout(true)
+
+		local i = 0
+
+		for k, v in ipairs(parent:GetChildren()) do
+			if (IsValid(v.model)) then
+				i = i + 1
+				v.Paint = paintFunctions[i % 2]
+			end
+		end
 
 		return slot
 	end
