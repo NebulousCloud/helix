@@ -184,6 +184,8 @@ if (SERVER) then
 			end
 		end
 
+		self.scale = self.scale or 0.5
+
 		local data = {}
 		data[1] = items
 		data[2] = self.money
