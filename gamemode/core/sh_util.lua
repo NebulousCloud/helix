@@ -89,7 +89,11 @@ function nut.util.getMaterial(materialPath)
 end
 
 -- Finds a player by matching their names.
-function nut.util.findPlayer(name)
+function nut.util.findPlayer(name, allowPatterns)
+	if (!allowPatterns) then
+		name = string.PatternSafe(name)
+	end
+	
 	for k, v in ipairs(player.GetAll()) do
 		if (nut.util.stringMatches(v:Name(), name)) then
 			return v
