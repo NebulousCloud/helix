@@ -448,7 +448,7 @@ nut.command.add("dropmoney", {
 	onRun = function(client, arguments)
 		local amount = tonumber(arguments[1])
 
-		if (!amount or !isnumber(amount) or amount <= 0) then
+		if (!amount or !isnumber(amount) or amount < 1) then
 			return "@invalidArg", 1
 		end
 
