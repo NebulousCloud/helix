@@ -394,7 +394,7 @@ nut.command.add("charunban", {
 nut.command.add("givemoney", {
 	syntax = "<number amount>",
 	onRun = function(client, arguments)
-		local amount = tonumber(arguments[1])
+		local amount = math.floor(tonumber(arguments[1]))
 
 		if (!amount or !isnumber(amount) or amount <= 0) then
 			return L("invalidArg", client, 1)
