@@ -393,8 +393,10 @@ local PANEL = {}
 								self.model.teamColor = team.GetColor(character:getFaction())
 								
 								self.model.Entity:SetSkin(character.vars.data.skin or 0)
-								for k, v in pairs(character.vars.data.groups) do
-									self.model.Entity:SetBodygroup(k, character.vars.data.groups[k])
+								if(character.vars.data.groups) then
+									for k, v in pairs(character.vars.data.groups) do
+										self.model.Entity:SetBodygroup(k, character.vars.data.groups[k])
+									end
 								end
 								
 								id = character:getID()
