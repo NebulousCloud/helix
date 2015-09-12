@@ -201,6 +201,7 @@ LANGUAGE = {
 	youreDead = "You are Dead",
 	injMajor = "Seems critically injured.",
 	injLittle = "Seems injured",
+	toggleObserverTP = "Toggle Observer teleport",
 	toggleESP = "Toggle Admin ESP",
 	chgName = "Change Name",
 	chgNameDesc = "Enter the character's new name below.",
