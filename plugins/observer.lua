@@ -38,13 +38,21 @@ if (CLIENT) then
 
 	function PLUGIN:SetupQuickMenu(menu)
 		if (LocalPlayer():IsAdmin()) then
-			local button = menu:addCheck(L"toggleESP", function(panel, state)
+			local buttonESP = menu:addCheck(L"toggleESP", function(panel, state)
 				if (state) then
 					RunConsoleCommand("nut_obsesp", "1")
 				else
 					RunConsoleCommand("nut_obsesp", "0")
 				end
 			end, NUT_CVAR_ADMINESP:GetBool())
+		
+			local buttonTP = menu:addCheck(L"toggleObserverTP", function(panel, state)
+				if (state) then
+					RunConsoleCommand("nut_obstpback", "1")
+				else
+					RunConsoleCommand("nut_obstpback", "0")
+				end
+			end, NUT_CVAR_OBSTPBACK:GetBool())
 
 			menu:addSpacer()
 		end
