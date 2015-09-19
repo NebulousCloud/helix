@@ -1,4 +1,3 @@
-
 NAME = "Norwegian"
 
 LANGUAGE = {
@@ -125,7 +124,7 @@ LANGUAGE = {
 	Weapons = "Våpen",
 	checkout = "Gå til kassen (%s)",
 	purchase = "Kjøp",
-	purchasing"Kjøp = er...",
+	purchasing = "Kjøp = er...",
 	success = "Suksess",
 	buyFailed = "Kjøpet mislyktes.",
 	buyGood = "Kjøp vellykket!",
