@@ -127,7 +127,7 @@ end
 if (SERVER) then
 	-- Finds a player or gives an error notification.
 	function nut.command.findPlayer(client, name)
-		local target = nut.util.findPlayer(name)
+		local target = type(name) == "string" and nut.util.findPlayer(name) or NULL
 
 		if (IsValid(target)) then
 			return target
