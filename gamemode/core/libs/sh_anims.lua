@@ -343,7 +343,7 @@ do
 			time = time or self:SequenceDuration(sequence)
 
 			self.nutSeqCallback = callback
-			self.nutSeq = sequence
+			self.nutForceSeq = sequence
 
 			if (!noFreeze) then
 				self:SetMoveType(MOVETYPE_NONE)
@@ -371,7 +371,7 @@ do
 		netstream.Start(nil, "seqSet", self)
 
 		self:SetMoveType(MOVETYPE_WALK)
-		self.nutSeq = nil
+		self.nutForceSeq = nil
 
 		if (self.nutSeqCallback) then
 			self:nutSeqCallback()
