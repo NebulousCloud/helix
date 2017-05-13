@@ -3,6 +3,7 @@ PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Provides the ability to store items."
 
 PLUGIN.definitions = PLUGIN.definitions or {}
+STORAGE_DEFINITIONS = PLUGIN.definitions
 
 nut.util.include("sh_definitions.lua")
 
@@ -19,6 +20,10 @@ if (SERVER) then
 	function PLUGIN:PlayerSpawnedProp(client, model, entity)
 		local data = self.definitions[model:lower()]
 
+		if (true) then
+			return false
+		end
+
 		if (data) then
 			local storage = ents.Create("nut_storage")
 			storage:SetPos(entity:GetPos())
@@ -29,6 +34,7 @@ if (SERVER) then
 			storage:PhysicsInit(SOLID_VPHYSICS)
 
 			nut.item.newInv(0, "st"..data.name, function(inventory)
+				inventory.vars.isStorage = true
 				if (IsValid(storage)) then
 					storage:setInventory(inventory)
 				end
@@ -40,6 +46,8 @@ if (SERVER) then
 	end
 
 	function PLUGIN:saveStorage()
+		if (true) then return end -- the server will not save any storage data!
+
 		local data = {}
 
 		for k, v in ipairs(ents.FindByClass("nut_storage")) do
@@ -87,6 +95,7 @@ if (SERVER) then
 					end
 					
 					nut.item.restoreInv(v[3], data2.width, data2.height, function(inventory)
+						inventory.vars.isStorage = true
 						if (IsValid(storage)) then
 							storage:setInventory(inventory)
 						end

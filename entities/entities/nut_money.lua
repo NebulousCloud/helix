@@ -10,6 +10,7 @@ if (SERVER) then
 		self:SetModel("models/props_lab/box01a.mdl")
 		self:SetSolid(SOLID_VPHYSICS)
 		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetUseType(SIMPLE_USE)
 
 		local physObj = self:GetPhysicsObject()
 
@@ -25,6 +26,18 @@ if (SERVER) then
 	end
 
 	function ENT:Use(activator)
+		if (self.client and self.charID) then
+			local char = activator:getChar()
+			
+			if (char) then
+				if (self.charID != char:getID() and self.client == activator) then
+					activator:notifyLocalized("logged")
+					
+					return false
+				end
+			end
+		end
+		
 		if (hook.Run("OnPickupMoney", activator, self) != false) then
 			self:Remove()
 		end

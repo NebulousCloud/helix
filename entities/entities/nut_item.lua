@@ -11,6 +11,7 @@ if (SERVER) then
 		self:SetModel("models/props_junk/watermelon01.mdl")
 		self:SetSolid(SOLID_VPHYSICS)
 		self:PhysicsInit(SOLID_VPHYSICS)
+		self.health = 50
 
 		local physObj = self:GetPhysicsObject()
 
@@ -18,7 +19,29 @@ if (SERVER) then
 			physObj:EnableMotion(true)
 			physObj:Wake()
 		end
+		
+
+		timer.Simple(300, function()
+			if (IsValid(self)) then
+				self:Remove()
+			end
+		end)
 	end
+
+	function ENT:setHealth(amount)
+		self.health = amount
+	end
+	
+	function ENT:OnTakeDamage(dmginfo)
+		local damage = dmginfo:GetDamage()
+		self:setHealth(self.health - damage)
+
+		if (self.health < 0 and !self.onbreak) then
+			self.onbreak = true
+			self:Remove()
+		end
+	end
+
 
 	function ENT:setItem(itemID)
 		local itemTable = nut.item.instances[itemID]
@@ -27,6 +50,11 @@ if (SERVER) then
 			local model = itemTable.onGetDropModel and itemTable:onGetDropModel(self) or itemTable.model
 
 			self:SetSkin(itemTable.skin or 0)
+			if (itemTable.worldModel) then
+				self:SetModel(itemTable.worldModel == true and "models/props_junk/cardboard_box004a.mdl" or itemTable.worldModel)
+			else
+				self:SetModel(model)
+			end
 			self:SetModel(model)
 			self:PhysicsInit(SOLID_VPHYSICS)
 			self:SetSolid(SOLID_VPHYSICS)
@@ -67,6 +95,16 @@ if (SERVER) then
 				end
 
 				nut.db.query("DELETE FROM nut_items WHERE _itemID = "..self.nutItemID)
+			end
+		end
+	end
+	
+	function ENT:Think()
+		local it = self:getItemTable()
+		
+		if (it) then
+			if (!it.id or it.id == 0) then
+				self:Remove()
 			end
 		end
 	end

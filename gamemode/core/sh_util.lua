@@ -517,7 +517,7 @@ do
 		nut.playTime = nut.playTime or 0
 
 		function playerMeta:getPlayTime()
-			return nut.playTime + (RealTime() - nut.joinTime)
+			return nut.playTime + (RealTime() - nut.joinTime or 0)
 		end
 	end
 

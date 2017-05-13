@@ -204,6 +204,8 @@ local PANEL = {}
 												local payload = {}
 	
 												for k, v in SortedPairsByMemberValue(nut.char.vars, "index") do
+													if (k == "desc") then continue end
+
 													local value = self.creation.payload[k]
 	
 													if (!v.noDisplay or v.onValidate) then
@@ -585,7 +587,7 @@ local PANEL = {}
 vgui.Register("nutCharMenu", PANEL, "EditablePanel")
 
 hook.Add("CreateMenuButtons", "nutCharButton", function(tabs)
-	tabs["characters"] = function(panel)
+	tabs["acharacters"] = function(panel)
 		nut.gui.menu:Remove()
 		vgui.Create("nutCharMenu")
 	end

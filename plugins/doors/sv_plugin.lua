@@ -10,6 +10,8 @@ local variables = {
 	"noSell",
 	-- The faction that owns a door.
 	"faction",
+	-- The class that owns a door.
+	"class",
 	-- Whether or not the door will be hidden.
 	"hidden"
 }
@@ -127,6 +129,10 @@ function PLUGIN:SaveDoorData()
 				doorData.children = v.nutChildren
 			end
 
+			if (v.nutClassID) then
+				doorData.class = v.nutClassID
+			end
+
 			if (v.nutFactionID) then
 				doorData.faction = v.nutFactionID
 			end
@@ -154,6 +160,27 @@ function PLUGIN:CanPlayerAccessDoor(client, door, access)
 	if (faction and client:Team() == faction) then
 		return true
 	end
+
+	local class = door:getNetVar("class")
+
+	-- If the door has a faction set which the client is a member of, allow access.
+	local classData = nut.class.list[class]
+	local charClass = client:getChar():getClass()
+	local classData2 = nut.class.list[charClass]
+
+	if (class and classData and classData2) then
+		if (classData.team) then
+			if (classData.team != classData2.team) then
+				return false
+			end
+		else
+			if (charClass != class) then
+				return false
+			end
+		end
+
+		return true
+	end
 end
 
 function PLUGIN:PostPlayerLoadout(client)
@@ -168,7 +195,7 @@ function PLUGIN:ShowTeam(client)
 	local trace = util.TraceLine(data)
 	local entity = trace.Entity
 
-	if (IsValid(entity) and entity:isDoor() and !entity:getNetVar("faction")) then
+	if (IsValid(entity) and entity:isDoor() and !entity:getNetVar("faction") and !entity:getNetVar("class")) then
 		if (entity:checkDoorAccess(client, DOOR_TENANT)) then
 			local door = entity
 
@@ -177,7 +204,7 @@ function PLUGIN:ShowTeam(client)
 			end
 
 			netstream.Start(client, "doorMenu", door, door.nutAccess, entity)
-		elseif (!IsValid(entity:getNetVar("owner"))) then
+		elseif (!IsValid(entity:GetDTEntity(0))) then
 			nut.command.run(client, "doorbuy")
 		else
 			client:notifyLocalized("notAllowed")
@@ -193,14 +220,14 @@ function PLUGIN:PlayerDisconnected(client)
 			return
 		end
 		
-		if (v.isDoor and v:isDoor() and v:getNetVar("owner") == client) then
+		if (v.isDoor and v:isDoor() and v:GetDTEntity(0) == client) then
 			v:removeDoorAccessData()
 		end
 	end
 end
 
 netstream.Hook("doorPerm", function(client, door, target, access)
-	if (IsValid(target) and target:getChar() and door.nutAccess and door:getNetVar("owner") == client and target != client) then
+	if (IsValid(target) and target:getChar() and door.nutAccess and door:GetDTEntity(0) == client and target != client) then
 		access = math.Clamp(access or 0, DOOR_NONE, DOOR_TENANT)
 
 		if (access == door.nutAccess[target]) then

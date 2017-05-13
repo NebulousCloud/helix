@@ -43,17 +43,17 @@ if (SERVER) then
 					if (current != value) then
 						client:setLocalVar("stm", value)
 
-						if (value == 0 and !client.nutBreathing) then
+						if (value == 0 and !client:getNetVar("brth", false)) then
 							client:SetRunSpeed(nut.config.get("walkSpeed"))
-							client.nutBreathing = true
+							client:setNetVar("brth", true)
 
-							character:updateAttrib("end", 0.1)
-							character:updateAttrib("stm", 0.01)
+							--character:updateAttrib("end", 0.1)
+							--character:updateAttrib("stm", 0.01)
 
 							hook.Run("PlayerStaminaLost", client)
-						elseif (value >= 50 and client.nutBreathing) then
+						elseif (value >= 50 and client:getNetVar("brth", false)) then
 							client:SetRunSpeed(runSpeed)
-							client.nutBreathing = false
+							client:setNetVar("brth", nil)
 						end
 					end
 				end

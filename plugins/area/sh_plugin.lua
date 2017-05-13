@@ -241,6 +241,7 @@ else
 		timer.Simple(0, function()
 			surface.CreateFont("nutAreaDisplay", {
 				font = font,
+				extended = true,
 				size = ScreenScale(nut.config.get("areaFontSize")),
 				weight = 500,
 				shadow = true,

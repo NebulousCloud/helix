@@ -81,6 +81,8 @@ local PANEL = {}
 
 	function PANEL:Think()
 		if ((self.nextUpdate or 0) < CurTime()) then
+			self.title:SetText(GetConVarString("hostname"))
+
 			local visible, amount
 
 			for k, v in ipairs(self.teams) do

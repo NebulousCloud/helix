@@ -50,6 +50,7 @@ function nut.command.add(command, data)
 		end
 	end
 
+
 	local onCheckAccess = data.onCheckAccess
 
 	-- Only overwrite the onRun to check for access if there is anything to check.
@@ -66,6 +67,19 @@ function nut.command.add(command, data)
 	end
 
 	-- Add the command to the list of commands.
+	local alias = data.alias
+	data.alias = {}
+
+	if (alias) then
+		if (type(alias) == "table") then
+			for k, v in ipairs(alias) do
+				nut.command.list[v] = data
+			end
+		elseif (type(alias) == "string") then
+			nut.command.list[data.alias] = data
+		end
+	end
+
 	nut.command.list[command] = data
 end
 
@@ -164,11 +178,21 @@ if (SERVER) then
 
 	-- Add a function to parse a regular chat string.
 	function nut.command.parse(client, text, realCommand, arguments)
-		if (realCommand or text:sub(1, 1) == COMMAND_PREFIX) then
+		if (realCommand or text:utf8sub(1, 1) == COMMAND_PREFIX) then
 			-- See if the string contains a command.
-			local match = realCommand or text:lower():match(COMMAND_PREFIX.."([_%w]+)")
-			local command = nut.command.list[match]
 
+			local match = realCommand or text:lower():match(COMMAND_PREFIX.."([_%w]+)")
+
+			-- is it unicode text?
+			-- i hate unicode.
+			if (!match) then
+				local post = string.Explode(" ", text)
+				local len = string.len(post[1])
+
+				match = post[1]:utf8sub(2, len)
+			end
+
+			local command = nut.command.list[match]
 			-- We have a valid, registered command.
 			if (command) then
 				-- Get the arguments like a console command.
@@ -180,7 +204,7 @@ if (SERVER) then
 				nut.command.run(client, match, arguments)
 
 				if (!realCommand) then
-					nut.log.add(client:Name().." used \""..text.."\"")
+					nut.log.add(client, "command", text)
 				end
 			else
 				if (IsValid(client)) then

@@ -394,7 +394,9 @@ nut.command.add("charunban", {
 nut.command.add("givemoney", {
 	syntax = "<number amount>",
 	onRun = function(client, arguments)
-		local amount = math.floor(tonumber(arguments[1]))
+		local number = tonumber(arguments[1])
+		number = number or 0
+		local amount = math.floor(number)
 
 		if (!amount or !isnumber(amount) or amount <= 0) then
 			return L("invalidArg", client, 1)
@@ -415,6 +417,9 @@ nut.command.add("givemoney", {
 
 			target:getChar():giveMoney(amount)
 			client:getChar():takeMoney(amount)
+
+			target:notifyLocalized("moneyTaken", nut.currency.get(amount))
+			client:notifyLocalized("moneyGiven", nut.currency.get(amount))
 		end
 	end
 })
@@ -459,7 +464,9 @@ nut.command.add("dropmoney", {
 		end
 
 		client:getChar():takeMoney(amount)
-		nut.currency.spawn(client:getItemDropPos(), amount)
+		local money = nut.currency.spawn(client:getItemDropPos(), amount)
+		money.client = client
+		money.charID = client:getChar():getID()
 	end
 })
 

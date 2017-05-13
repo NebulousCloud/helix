@@ -12,8 +12,8 @@ if (SERVER) then
 		data.money = data.money or nut.config.get("defMoney", 0)
 
 		nut.db.insertTable({
-			_name = data.name or "John Doe",
-			_desc = data.desc or "No description available.",
+			_name = data.name or "",
+			_desc = data.desc or "",
 			_model = data.model or "models/error.mdl",
 			_schema = SCHEMA and SCHEMA.folder or "nutscript",
 			_createTime = timeStamp,
@@ -110,11 +110,12 @@ if (SERVER) then
 
 						nut.db.query("SELECT _invID, _invType FROM nut_inventories WHERE _charID = "..id, function(data)
 							if (data and #data > 0) then
-								for k, v in ipairs(data) do
+								for k, v in pairs(data) do
 									local w, h = nut.config.get("invW"), nut.config.get("invH")
 
+									local invType 
 									if (v._invType) then
-										local invType = nut.item.inventoryTypes[v._invType]
+										invType = nut.item.inventoryTypes[v._invType]
 
 										if (invType) then
 											w, h = invType.w, invType.h
@@ -122,8 +123,13 @@ if (SERVER) then
 									end
 
 									nut.item.restoreInv(tonumber(v._invID), w, h, function(inventory)
+										if (v._invType) then
+											-- FIX THIS PLZ
+											inventory.vars.isBag = v._invType
+										end
+
 										inventory:setOwner(id)
-										character.vars.inv[k] = inventory
+										character.vars.inv[!v._invType and 1 or k] = inventory
 									end, true)
 								end
 							else
@@ -215,9 +221,11 @@ do
 
 	nut.char.registerVar("desc", {
 		field = "_desc",
-		default = "No description available.",
+		default = "",
 		index = 2,
 		onValidate = function(value, data)
+			if (noDesc) then return true end
+
 			local minLength = nut.config.get("minDescLen", 16)
 
 			if (!value or #value:gsub("%s", "") < minLength) then
@@ -322,14 +330,15 @@ do
 	})
 
 	nut.char.registerVar("class", {
-		isLocal = true,
 		noDisplay = true,
-		onSet = function(character, class)
+
+		/*onSet = function(character, class)
 			character:setVar("class", class)
 		end,
+
 		onGet = function(character, default)
 			return character:getVar("class", default)
-		end
+		end*/
 	})
 
 	nut.char.registerVar("faction", {
@@ -393,6 +402,10 @@ do
 
 					total = total + difference
 					panel.payload.attribs[k] = panel.payload.attribs[k] + difference
+				end
+
+				if (v.noStartBonus) then
+					bar:setReadOnly()
 				end
 
 				y2 = y2 + bar:GetTall() + 4
@@ -561,6 +574,8 @@ do
 
 			for k, v in SortedPairsByMemberValue(nut.char.vars, "index") do
 				local value = data[k]
+
+				if (k == "desc") then continue end
 
 				if (v.onValidate) then
 					local result = {v.onValidate(value, data, client)}

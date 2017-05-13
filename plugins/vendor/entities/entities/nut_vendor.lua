@@ -3,6 +3,7 @@ ENT.PrintName = "Vendor"
 ENT.Category = "NutScript"
 ENT.Spawnable = true
 ENT.AdminOnly = true
+ENT.isVendor = true
 
 function ENT:Initialize()
 	if (SERVER) then

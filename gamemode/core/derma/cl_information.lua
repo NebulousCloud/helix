@@ -47,14 +47,14 @@ local PANEL = {}
 		self.money:SetTextColor(color_white)
 		self.money:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 		self.money:DockMargin(0, 10, 0, 0)
-
+		
 		self.faction = self.info:Add("DLabel")
 		self.faction:Dock(TOP)
 		self.faction:SetFont("nutMediumFont")
 		self.faction:SetTextColor(color_white)
 		self.faction:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 		self.faction:DockMargin(0, 10, 0, 0)
-
+		
 		local class = nut.class.list[LocalPlayer():getChar():getClass()]
 		
 		if (class) then
@@ -126,14 +126,34 @@ local PANEL = {}
 			end
 		end
 
+		local boost = LocalPlayer():getChar():getBoosts()
+
 		for k, v in SortedPairsByMemberValue(nut.attribs.list, "name") do
+			local attribBoost = 0
+			if (boost[k]) then
+				for _, bValue in pairs(boost[k]) do
+					attribBoost = attribBoost + bValue
+				end
+			end
+
 			local bar = self.attribs:Add("nutAttribBar")
 			bar:Dock(TOP)
 			bar:DockMargin(0, 0, 0, 3)
-			bar:setValue(LocalPlayer():getChar():getAttrib(k, 0))
+
+			local attribValue = LocalPlayer():getChar():getAttrib(k, 0)
+			if (attribBoost) then
+				bar:setValue(attribValue - attribBoost or 0)
+			else
+				bar:setValue(attribValue)
+			end
+
 			bar:setMax(nut.config.get("maxAttribs"))
 			bar:setReadOnly()
-			bar:setText(L(v.name))
+			bar:setText(Format("%s [%d/%d] (%.1f",L(v.name), attribValue, nut.config.get("maxAttribs"), attribValue%1 * 100) .. "%)")
+
+			if (attribBoost) then
+				bar:setBoost(attribBoost)
+			end
 		end
 
 		hook.Run("OnCharInfoSetup", self)

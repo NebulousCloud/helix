@@ -1,3 +1,7 @@
+if (engine.ActiveGamemode() == "dayz") then
+	return
+end
+
 PLUGIN.name = "Doors"
 PLUGIN.author = "Chessnut"
 PLUGIN.desc = "A simple door system."
@@ -45,7 +49,7 @@ do
 			end
 			
 			self.nutAccess = {}
-			self:setNetVar("owner", nil)
+			self:SetDTEntity(0, nil)
 		end
 	end
 end

@@ -81,7 +81,7 @@ if (SERVER) then
 
 	function PLUGIN:CanProperty(client, property, entity)
 		if (entity:GetCreator() == client and (property == "remover" or property == "collision")) then
-			nut.log.add(client, " used "..property.." on "..getLogName(entity))
+			--nut.log.add(client, property, getLogName(entity))
 
 			return true
 		end
@@ -97,7 +97,7 @@ if (SERVER) then
 
 	function PLUGIN:PlayerSpawnedEntity(client, entity)
 		entity:SetCreator(client)
-		nut.log.add(client, "spawned "..getLogName(entity))
+		--nut.log.add(client, getLogName(entity))
 	end
 
 	function PLUGIN:PlayerSpawnedProp(client, model, entity)

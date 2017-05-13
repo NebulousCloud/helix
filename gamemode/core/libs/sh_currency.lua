@@ -55,15 +55,20 @@ do
 		return self:getMoney() >= amount
 	end
 
-	function character:giveMoney(amount)
+	function character:giveMoney(amount, kek)
+		if (!kek) then
+			nut.log.add(self:getPlayer(), "money", amount)
+		end
+		
 		self:setMoney(self:getMoney() + amount)
 
 		return true
 	end
 
 	function character:takeMoney(amount)
+		nut.log.add(self:getPlayer(), "money", -amount)
 		amount = math.abs(amount)
-		self:giveMoney(-amount)
+		self:giveMoney(-amount, true)
 
 		return true
 	end

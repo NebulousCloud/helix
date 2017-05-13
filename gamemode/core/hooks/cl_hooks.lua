@@ -27,105 +27,124 @@ function GM:LoadFonts(font)
 	surface.CreateFont("nut3D2DFont", {
 		font = font,
 		size = 2048,
+		extended = true,
 		weight = 1000
 	})
 
 	surface.CreateFont("nutTitleFont", {
 		font = font,
 		size = ScreenScale(30),
+		extended = true,
 		weight = 1000
 	})
 
 	surface.CreateFont("nutSubTitleFont", {
 		font = font,
 		size = ScreenScale(18),
+		extended = true,
 		weight = 500
 	})
 
 	surface.CreateFont("nutMenuButtonFont", {
 		font = font,
 		size = ScreenScale(14),
+		extended = true,
 		weight = 1000
 	})
 
 	surface.CreateFont("nutMenuButtonLightFont", {
 		font = font,
 		size = ScreenScale(14),
+		extended = true,
 		weight = 200
 	})
 
 	surface.CreateFont("nutToolTipText", {
 		font = font,
 		size = 20,
+		extended = true,
 		weight = 500
 	})
 
 	surface.CreateFont("nutDynFontSmall", {
 		font = font,
 		size = ScreenScale(22),
+		extended = true,
 		weight = 1000
 	})
 
 	surface.CreateFont("nutDynFontMedium", {
 		font = font,
 		size = ScreenScale(28),
+		extended = true,
 		weight = 1000
 	})
 
 	surface.CreateFont("nutDynFontBig", {
 		font = font,
 		size = ScreenScale(48),
+		extended = true,
 		weight = 1000
 	})
 
 	-- The more readable font.
 	font = "Segoe UI"
+	//-- but not in korea fucker
+	//font = "Malgun Gothic"
 
 	surface.CreateFont("nutCleanTitleFont", {
 		font = font,
 		size = 200,
+		extended = true,
 		weight = 1000
 	})
 
 	surface.CreateFont("nutHugeFont", {
 		font = font,
 		size = 72,
+		extended = true,
 		weight = 1000
 	})
 
 	surface.CreateFont("nutBigFont", {
 		font = font,
 		size = 36,
+		extended = true,
 		weight = 1000
 	})
 
 	surface.CreateFont("nutMediumFont", {
 		font = font,
 		size = 25,
+		extended = true,
 		weight = 1000
 	})
 
 	surface.CreateFont("nutMediumLightFont", {
 		font = font,
 		size = 25,
+		extended = true,
 		weight = 200
 	})
 
 	surface.CreateFont("nutGenericFont", {
 		font = font,
 		size = 20,
+		extended = true,
 		weight = 1000
 	})
 
 	surface.CreateFont("nutChatFont", {
 		font = font,
 		size = math.max(ScreenScale(7), 17),
+		extended = true,
 		weight = 200
 	})
 
 	surface.CreateFont("nutChatFontItalics", {
 		font = font,
 		size = math.max(ScreenScale(7), 17),
+		extended = true,
 		weight = 200,
 		italic = true
 	})
@@ -133,12 +152,14 @@ function GM:LoadFonts(font)
 	surface.CreateFont("nutSmallFont", {
 		font = font,
 		size = math.max(ScreenScale(6), 17),
+		extended = true,
 		weight = 500
 	})
 
 	surface.CreateFont("nutSmallBoldFont", {
 		font = font,
 		size = math.max(ScreenScale(8), 20),
+		extended = true,
 		weight = 800
 	})
 
@@ -148,41 +169,48 @@ function GM:LoadFonts(font)
 	surface.CreateFont("nutIntroTitleFont", {
 		font = font,
 		size = 200,
+		extended = true,
 		weight = 1000
 	})
 
 	surface.CreateFont("nutIntroBigFont", {
 		font = font,
 		size = 48,
+		extended = true,
 		weight = 1000
 	})
 
 	surface.CreateFont("nutIntroMediumFont", {
 		font = font,
 		size = 28,
+		extended = true,
 		weight = 1000
 	})
 
 	surface.CreateFont("nutIntroSmallFont", {
 		font = font,
 		size = 22,
+		extended = true,
 		weight = 1000
 	})
 
 	surface.CreateFont("nutIconsSmall", {
 		font = "fontello",
 		size = 22,
+		extended = true,
 		weight = 500
 	})
 
 	surface.CreateFont("nutIconsMedium", {
 		font = "fontello",
+		extended = true,
 		size = 28,
 		weight = 500
 	})
 
 	surface.CreateFont("nutIconsBig", {
 		font = "fontello",
+		extended = true,
 		size = 48,
 		weight = 500
 	})
@@ -357,7 +385,7 @@ local surface = surface
 local hookRun = hook.Run
 local toScreen = FindMetaTable("Vector").ToScreen
 
-function GM:HUDPaint()
+function GM:HUDPaintBackground()
 	local localPlayer = LocalPlayer()
 
 	if (!localPlayer.getChar(localPlayer)) then
@@ -381,19 +409,22 @@ function GM:HUDPaint()
 
 		lastTrace.start = localPlayer.GetShootPos(localPlayer)
 		lastTrace.endpos = lastTrace.start + localPlayer.GetAimVector(localPlayer)*160
-		lastTrace.filter = localPlayer
+		lastTrace.filter = localPlayer		
+		lastTrace.mins = Vector( -10, -10, -10 )
+		lastTrace.maxs = Vector( 10, 10, 10 )
+		lastTrace.mask = MASK_SHOT_HULL
 
-		lastEntity = util.TraceLine(lastTrace).Entity
+		lastEntity = util.TraceHull(lastTrace).Entity
 
 		if (IsValid(lastEntity) and (lastEntity.DrawEntityInfo or (lastEntity.onShouldDrawEntityInfo and lastEntity:onShouldDrawEntityInfo()) or hookRun("ShouldDrawEntityInfo", lastEntity))) then
 			paintedEntitiesCache[lastEntity] = true
 		end
 	end
-
+    
 	for entity, drawing in pairs(paintedEntitiesCache) do
 		if (IsValid(entity)) then
 			local goal = drawing and 255 or 0
-			local alpha = mathApproach(entity.nutAlpha or 0, goal, frameTime * 120)
+			local alpha = mathApproach(entity.nutAlpha or 0, goal, frameTime * 1000)
 
 			if (lastEntity != entity) then
 				paintedEntitiesCache[entity] = false
@@ -608,6 +639,11 @@ function GM:ItemShowEntityMenu(entity)
 
 	local options = {}
 	local itemTable = entity:getItemTable()
+
+	if (!itemTable) then
+		nut.util.notifyLocalized("tellAdmin", "wid!xt_cl")
+		return false
+	end
 
 	local function callback(index)
 		if (IsValid(entity)) then

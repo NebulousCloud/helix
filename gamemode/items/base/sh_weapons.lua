@@ -63,7 +63,11 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 		item.player.carryWeapons[item.weaponCategory] = nil
 
 		item:setData("equip", nil)
-		
+
+		if (item.onUnequipWeapon) then
+			item:onUnequipWeapon(client, weapon)
+		end
+
 		return false
 	end,
 	onCanRun = function(item)
@@ -85,11 +89,17 @@ ITEM.functions.Equip = {
 		for k, v in pairs(items) do
 			if (v.id != item.id) then
 				local itemTable = nut.item.instances[v.id]
-
-				if (itemTable.isWeapon and client.carryWeapons[item.weaponCategory] and itemTable:getData("equip")) then
-					client:notify("You're already equipping this kind of weapon")
+				
+				if (!itemTable) then
+					client:notifyLocalized("tellAdmin", "wid!xt")
 
 					return false
+				else
+					if (itemTable.isWeapon and client.carryWeapons[item.weaponCategory] and itemTable:getData("equip")) then
+						client:notifyLocalized("weaponSlotFilled")
+
+						return false
+					end
 				end
 			end
 		end
@@ -110,10 +120,13 @@ ITEM.functions.Equip = {
 			if (client:GetAmmoCount(weapon:GetPrimaryAmmoType()) == weapon:Clip1() and item:getData("ammo", 0) == 0) then
 				client:RemoveAmmo(weapon:Clip1(), weapon:GetPrimaryAmmoType())
 			end
-
 			item:setData("equip", true)
 
 			weapon:SetClip1(item:getData("ammo", 0))
+
+			if (item.onEquipWeapon) then
+				item:onEquipWeapon(client, weapon)
+			end
 		else
 			print(Format("[Nutscript] Weapon %s does not exist!", item.class))
 		end
@@ -127,7 +140,7 @@ ITEM.functions.Equip = {
 
 function ITEM:onCanBeTransfered(oldInventory, newInventory)
 	if (newInventory and self:getData("equip")) then
-		return newInventory:getID() == 0
+		return false
 	end
 
 	return true

@@ -251,7 +251,8 @@ function GM:PlayerSay(client, message)
 	end
 
 	nut.chat.send(client, chatType, message, anonymous)
-	nut.log.add(client:Name().." said ["..chatType:upper().."] \""..message.."\"")
+	nut.log.add(client, "chat", chatType and chatType:upper() or "??", message)
+	--nut.log.add(client:Name().." said ["..chatType:upper().."] \""..message.."\"")
 
 	hook.Run("PostPlayerSay", client, message, chatType, anonymous)
 
@@ -562,25 +563,6 @@ function GM:PlayerDeathSound()
 	return true
 end
 
-function GM:CanItemBeTransfered(itemObject, curInv, inventory)
-	if (itemObject.isBag) then
-		local inventory = nut.item.inventories[itemObject:getData("id")]
-
-		if (inventory) then
-			for k, v in pairs(inventory:getItems()) do
-				if (v:getData("equip") == true) then
-					local owner = itemObject:getOwner()
-					if (owner and IsValid(owner)) then
-						owner:notifyLocalized("equippedBag")
-					end
-
-					return false
-				end
-			end
-		end
-	end
-end
-
 function GM:InitializedSchema()
 	if (!nut.data.get("date", nil, false, true)) then
 		nut.data.set("date", os.time(), false, true)
@@ -637,6 +619,7 @@ end
 
 function GM:PostCleanupMap()
 	hook.Run("LoadData")
+	hook.Run("PostLoadData")
 end
 
 function GM:CharacterPreSave(character)

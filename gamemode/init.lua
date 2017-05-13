@@ -17,12 +17,17 @@ include("core/sv_data.lua")
 include("shared.lua")
 
 -- Connect to the database using SQLite, mysqloo, or tmysql4.
-nut.db.connect(function()
-	-- Create the SQL tables if they do not exist.
-	nut.db.loadTables()
-	nut.log.loadTables()
+timer.Simple(0, function()
+	hook.Run("SetupDatabase")
 	
-	MsgC(Color(0, 255, 0), "NutScript has connected to the database.\n")
+    nut.db.connect(function()
+        -- Create the SQL tables if they do not exist.
+        nut.db.loadTables()
+        nut.log.loadTables()
+        
+        MsgC(Color(0, 255, 0), "NutScript has connected to the database.\n")
+        MsgC(Color(0, 255, 0), "Database Type: " .. nut.db.module .. ".\n")
+    end)
 end)
 
 -- Resources that are required for players to download are here.

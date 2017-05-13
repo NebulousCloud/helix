@@ -79,8 +79,14 @@ function nut.item.instance(index, uniqueID, data, x, y, callback)
 	end
 end
 
-function nut.item.registerInv(invType, w, h)
+function nut.item.registerInv(invType, w, h, isBag)
 	nut.item.inventoryTypes[invType] = {w = w, h = h}
+	
+	if (isBag) then
+		nut.item.inventoryTypes[invType].isBag = invType
+	end
+	
+	return nut.item.inventoryTypes[invType]
 end
 
 function nut.item.newInv(owner, invType, callback)
@@ -91,7 +97,8 @@ function nut.item.newInv(owner, invType, callback)
 		_charID = owner
 	}, function(data, invID)
 		local inventory = nut.item.createInv(invData.w, invData.h, invID)
-
+		inventory.invType = invType
+		
 		if (owner and owner > 0) then
 			for k, v in ipairs(player.GetAll()) do
 				if (v:getChar() and v:getChar():getID() == owner) then
@@ -288,7 +295,7 @@ do
 	nut.util.include("nutscript/gamemode/core/meta/sh_inventory.lua")
 
 	function nut.item.createInv(w, h, id)
-		local inventory = setmetatable({w = w, h = h, id = id, slots = {}}, nut.meta.inventory)
+		local inventory = setmetatable({w = w, h = h, id = id, slots = {}, vars = {}}, nut.meta.inventory)
 			nut.item.inventories[id] = inventory
 			
 		return inventory
@@ -335,12 +342,12 @@ do
 						end
 					end
 				end
+				
+				inventory.slots = slots
 
-				if (#badItems > 0) then
+				if (table.Count(badItems) > 0) then
 					nut.db.query("DELETE FROM nut_items WHERE _itemID IN ("..table.concat(badItems, ", ")..")")
 				end
-
-				inventory.slots = slots
 			end
 
 			if (callback) then
@@ -354,10 +361,10 @@ do
 			local stockItem = nut.item.list[uniqueID]
 			local item = nut.item.new(uniqueID, id)
 			item.data = table.Merge(item.data, data or {})
-			item.invID = 0
+			item.invID = invID or 0
 		end)
 
-		netstream.Hook("inv", function(slots, id, w, h, owner)
+		netstream.Hook("inv", function(slots, id, w, h, owner, vars)
 			local character
 
 			if (owner) then
@@ -370,6 +377,7 @@ do
 				local inventory = nut.item.createInv(w, h, id)
 				inventory:setOwner(character:getID())
 				inventory.slots = {}
+				inventory.vars = vars
 
 				local x, y
 				
@@ -409,7 +417,10 @@ do
 
 				if (panel and panel.panels) then
 					local icon = panel.panels[id]
-					icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", L(item.name), L(item:getDesc())))
+					-- what the fuck???
+					if (icon) then
+						icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", L(item.name), L(item:getDesc())))
+					end
 				end
 			end
 		end)
@@ -513,7 +524,8 @@ do
 
 						if (itemTable and itemID) then
 							local item = nut.item.new(uniqueID, itemID)
-							item.data = table.Merge(itemTable.data, data or {})
+
+							item.data = data or {}
 							item.invID = 0
 						end
 					end
@@ -530,7 +542,12 @@ do
 			if (character) then
 				local inventory = nut.item.inventories[invID]
 
-				if (inventory and (!inventory.owner or (inventory.owner and inventory.owner == character:getID())) or (inventory.onCheckAccess and inventory:onCheckAccess(client))) then
+				if (!inventory or inventory != nil or !IsValid(inventory)) then
+					inventory:sync(client)
+					--return 
+				end
+
+				if ((!inventory.owner or (inventory.owner and inventory.owner == character:getID())) or (inventory.onCheckAccess and inventory:onCheckAccess(client))) then
 					local item = inventory:getItemAt(oldX, oldY)
 
 					if (item) then
@@ -661,7 +678,7 @@ do
 
 				if (item.postHooks[action]) then
 					-- Posthooks shouldn't override the result from onRun
-					item.postHooks[action](item)
+					item.postHooks[action](item, result)
 				end
 				
 				if (result != false) then

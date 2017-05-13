@@ -12,7 +12,11 @@ nut.command.add("doorbuy", {
 
 		-- Check if the entity is a valid door.
 		if (IsValid(entity) and entity:isDoor() and !entity:getNetVar("disabled")) then
-			if (entity:getNetVar("noSell") or IsValid(entity:getNetVar("owner")) or entity:getNetVar("faction")) then
+			if (entity:getNetVar("noSell") or IsValid(entity:GetDTEntity(0)) or entity:getNetVar("faction") or entity:getNetVar("class")) then
+				if (IsValid(entity:GetDTEntity(0))) then
+					entity:SetDTEntity(0) -- fucking hate this (PLACEHOLDER)
+				end
+				
 				return client:notifyLocalized("dNotAllowedToOwn")
 			end
 
@@ -22,18 +26,21 @@ nut.command.add("doorbuy", {
 			-- Check if the player can actually afford it.
 			if (client:getChar():hasMoney(price)) then
 				-- Set the door to be owned by this player.
-				entity:setNetVar("owner", client)
+				entity:SetDTEntity(0, client)
 				entity.nutAccess = {
 					[client] = DOOR_OWNER
 				}
 				
 				PLUGIN:callOnDoorChildren(entity, function(child)
-					child:setNetVar("owner", client)
+					child:SetDTEntity(0, client)
 				end)
 
 				-- Take their money and notify them.
 				client:getChar():takeMoney(price)
 				client:notifyLocalized("dPurchased", nut.currency.get(price))
+
+				hook.Run("OnPlayerPurchaseDoor", client, entity, true, PLUGIN.callOnDoorChildren) -- i fucking hate this life
+				nut.log.add(client, "buydoor")
 			else
 				-- Otherwise tell them they can not.
 				client:notifyLocalized("canNotAfford")
@@ -58,7 +65,7 @@ nut.command.add("doorsell", {
 		-- Check if the entity is a valid door.
 		if (IsValid(entity) and entity:isDoor() and !entity:getNetVar("disabled")) then
 			-- Check if the player owners the door.
-			if (client == entity:getNetVar("owner")) then
+			if (client == entity:GetDTEntity(0)) then
 				-- Get the price that the door is sold for.
 				local price = math.Round(entity:getNetVar("price", nut.config.get("doorCost")) * nut.config.get("doorSellRatio"))
 
@@ -67,13 +74,14 @@ nut.command.add("doorsell", {
 
 				-- Remove door information on child doors
 				PLUGIN:callOnDoorChildren(entity, function(child)
-					print(child)
 					child:removeDoorAccessData()
 				end)
 
 				-- Take their money and notify them.
 				client:getChar():giveMoney(price)
 				client:notifyLocalized("dSold", nut.currency.get(price))
+				hook.Run("OnPlayerPurchaseDoor", client, entity, false, PLUGIN.callOnDoorChildren) -- i fucking hate this life
+				nut.log.add(client, "selldoor")
 			else
 				-- Otherwise tell them they can not.
 				client:notifyLocalized("notOwner")
@@ -417,4 +425,56 @@ nut.command.add("doorsethidden", {
 			client:notifyLocalized("dNotValid")
 		end
 	end
+})
+
+nut.command.add("doorsetclass", {
+	adminOnly = true,
+	syntax = "[string faction]",
+	onRun = function(client, arguments)
+		-- Get the door the player is looking at.
+		local entity = client:GetEyeTrace().Entity
+
+		-- Validate it is a door.
+		if (IsValid(entity) and entity:isDoor() and !entity:getNetVar("disabled")) then
+			local class, classData
+
+			if (arguments[1]) then
+				local name = table.concat(arguments, " ")
+
+				for k, v in pairs(nut.class.list) do
+					if (nut.util.stringMatches(v.name, name) or nut.util.stringMatches(L(v.name, client), name)) then
+						class, classData = k, v
+
+						break
+					end
+				end
+			end
+
+			-- Check if a faction was found.
+			if (class) then
+				entity.nutClassID = class
+				entity:setNetVar("class", class)
+
+				PLUGIN:callOnDoorChildren(entity, function()
+					entity.nutClassID = class
+					entity:setNetVar("class", class)
+				end)
+
+				client:notifyLocalized("dSetClass", L(classData.name, client))
+			elseif (arguments[1]) then
+				client:notifyLocalized("invalidClass")
+			else
+				entity:setNetVar("class", nil)
+
+				PLUGIN:callOnDoorChildren(entity, function()
+					entity:setNetVar("class", nil)
+				end)
+
+				client:notifyLocalized("dRemoveClass")
+			end
+
+			PLUGIN:SaveDoorData()
+		end
+	end,
+	alias = {"jobdoor"}
 })

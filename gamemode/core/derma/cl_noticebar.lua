@@ -2,6 +2,7 @@ surface.CreateFont("nutNoticeFont", {
 	font = "Myriad Pro",
 	size = 16,
 	weight = 500,
+	extended = true,
 	antialias = true
 })
 

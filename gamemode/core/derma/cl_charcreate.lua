@@ -56,6 +56,8 @@ local PANEL = {}
 					end
 				end
 
+				if (k == "desc") then continue end
+
 				self:addLabel(k)
 
 				if (v.onDisplay) then

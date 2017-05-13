@@ -35,15 +35,18 @@
   	external database for your NutScript installation.
 --]]
 
--- Which method of storage: sqlite, tmysql4, mysqloo
-nut.db.module = "sqlite"
--- The hostname for the MySQL server.
-nut.db.hostname = "localhost"
--- The username to login to the database.
-nut.db.username = "root"
--- The password that is associated with the username.
-nut.db.password = "password"
--- The database that the user should login to.
-nut.db.database = "nutscript"
--- The port for the database, you shouldn't need to change this.
-nut.db.port = 3306
+
+function GM:SetupDatabase()
+	-- Which method of storage: sqlite, tmysql4, mysqloo
+	nut.db.module = "sqlite"
+	-- The hostname for the MySQL server.
+	nut.db.hostname = "127.0.0.1"
+	-- The username to login to the database.
+	nut.db.username = "root"
+	-- The password that is associated with the username.
+	nut.db.password = ""
+	-- The database that the user should login to.
+	nut.db.database = "nutscript"
+	-- The port for the database, you shouldn't need to change this.
+	nut.db.port = 3306
+end

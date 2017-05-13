@@ -64,44 +64,15 @@ if (CLIENT) then
 	end
 end
 
-function ITEM:removeParts(client)
-	local character = client:getChar()
+function ITEM:removePart(client)
+	local char = client:getChar()
 	
 	self:setData("equip", false)
-	character:removePart(self.uniqueID)
-
-	if (character:getData("oldMdl")) then
-		character:setModel(character:getData("oldMdl"))
-		character:setData("oldMdl", nil)
-	end
-	
-	if (self.newSkin) then
-		if (character:getData("oldSkin")) then
-			client:SetSkin(character:getData("oldSkin"))
-			character:setData("oldSkin", nil)
-		else
-			client:SetSkin(0)
-		end
-	end
-
-	for k, v in pairs(self.bodyGroups or {}) do
-		local index = client:FindBodygroupByName(k)
-
-		if (index > -1) then
-			client:SetBodygroup(index, 0)
-
-			local groups = character:getData("groups", {})
-
-			if (groups[index]) then
-				groups[index] = nil
-				character:setData("groups", groups)
-			end
-		end
-	end
+	client:removePart(self.uniqueID)
 
 	if (self.attribBoosts) then
 		for k, _ in pairs(self.attribBoosts) do
-			character:removeBoost(self.uniqueID, k)
+			char:removeBoost(self.uniqueID, k)
 		end
 	end
 end
@@ -109,7 +80,7 @@ end
 -- On item is dropped, Remove a weapon from the player and keep the ammo in the item.
 ITEM:hook("drop", function(item)
 	if (item:getData("equip")) then
-		item:removeParts(item.player)
+		item:removePart(item.player)
 	end
 end)
 
@@ -119,7 +90,7 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 	tip = "equipTip",
 	icon = "icon16/cross.png",
 	onRun = function(item)
-		item:removeParts(item.player)
+		item:removePart(item.player)
 		
 		return false
 	end,
@@ -150,54 +121,7 @@ ITEM.functions.Equip = {
 		end
 
 		item:setData("equip", true)
-		char:addPart(item.uniqueID)
-		
-		if (type(item.onGetReplacement) == "function") then
-			char:setData("oldMdl", char:getData("oldMdl", item.player:GetModel()))
-			char:setModel(item:onGetReplacement())
-		elseif (item.replacement or item.replacements) then
-			char:setData("oldMdl", char:getData("oldMdl", item.player:GetModel()))
-
-			if (type(item.replacements) == "table") then
-				if (#item.replacements == 2 and type(item.replacements[1]) == "string") then
-					char:setModel(item.player:GetModel():gsub(item.replacements[1], item.replacements[2]))
-				else
-					for k, v in ipairs(item.replacements) do
-						char:setModel(item.player:GetModel():gsub(v[1], v[2]))
-					end
-				end
-			else
-				char:setModel(item.replacement or item.replacements)
-			end
-		end
-		
-		if (item.newSkin) then
-			char:setData("oldSkin", item.player:GetSkin())
-			item.player:SetSkin(item.newSkin)
-		end
-		
-		if (item.bodyGroups) then
-			local groups = {}
-
-			for k, value in pairs(item.bodyGroups) do
-				local index = item.player:FindBodygroupByName(k)
-
-				if (index > -1) then
-					groups[index] = value
-				end
-			end
-
-			local newGroups = char:getData("groups", {})
-
-			for index, value in pairs(groups) do
-				newGroups[index] = value
-				item.player:SetBodygroup(index, value)
-			end
-
-			if (table.Count(newGroups) > 0) then
-				char:setData("groups", newGroups)
-			end
-		end
+		item.player:addPart(item.uniqueID, item)
 
 		if (item.attribBoosts) then
 			for k, v in pairs(item.attribBoosts) do
@@ -214,7 +138,7 @@ ITEM.functions.Equip = {
 
 function ITEM:onCanBeTransfered(oldInventory, newInventory)
 	if (newInventory and self:getData("equip")) then
-		return newInventory:getID() == 0
+		return false
 	end
 
 	return true

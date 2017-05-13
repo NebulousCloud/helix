@@ -4,12 +4,13 @@ renderdIcons = renderdIcons or {}
 -- To make making inventory variant, This must be followed up.
 function renderNewIcon(panel, itemTable)
 	-- re-render icons
-	if ((itemTable.iconCam and !renderdIcons[string.lower(itemTable.model)]) or itemTable.forceRender) then
+	if (itemTable.iconCam) then
+	--if ((itemTable.iconCam and !renderdIcons[string.lower(itemTable.model)]) or itemTable.forceRender) then
 		local iconCam = itemTable.iconCam
 		iconCam = {
 			cam_pos = iconCam.pos,
-			cam_fov = iconCam.fov,
 			cam_ang = iconCam.ang,
+			cam_fov = iconCam.fov,
 		}
 		renderdIcons[string.lower(itemTable.model)] = true
 		
@@ -79,6 +80,16 @@ PANEL = {}
 					v:Remove()
 				end
 			end
+		end
+	end
+
+	function PANEL:viewOnly()
+		self.viewOnly = true
+
+		for id, icon in pairs(self.panels) do
+			icon.OnMousePressed = nil
+			icon.OnMouseReleased = nil
+			icon.doRightClick = nil
 		end
 	end
 
@@ -199,10 +210,18 @@ PANEL = {}
 		local inventory = nut.item.inventories[oldInventory.invID]
 		local inventory2 = nut.item.inventories[self.invID]
 		local item
-
+		
 		if (inventory) then
 			item = inventory:getItemAt(oldX, oldY)
+			
+			if (!item) then
+				return false
+			end
 
+			if (hook.Run("CanItemBeTransfered", item, nut.item.inventories[oldInventory.invID], nut.item.inventories[self.invID]) == false) then
+				return false, "notAllowed"
+			end
+		
 			if (item.onCanBeTransfered and item:onCanBeTransfered(inventory, inventory != inventory2 and inventory2 or nil) == false) then
 				return false
 			end
@@ -294,12 +313,62 @@ PANEL = {}
 					end
 				end
 			end
+
 			panel.OnMousePressed = function(this, code)
 				if (code == MOUSE_LEFT) then
-					this:DragMousePress(code)
-					this:MouseCapture(true)
+					if (input.IsKeyDown(KEY_LCONTROL) or input.IsKeyDown(KEY_RCONTROL)) then
+						local func = itemTable.functions
 
-					nut.item.held = this
+						if (func) then
+							local use
+							local comm
+							for k, v in pairs(USABLE_FUNCS or {}) do
+								comm = v
+								use = func[comm]
+
+								if (use and use.onCanRun) then
+									if (use.onCanRun(itemTable) == false) then
+										continue
+									end
+								end
+
+								if (use) then
+									break
+								end
+							end
+
+							if (!use) then return end
+
+							if (use.onCanRun) then
+								if (use.onCanRun(itemTable) == false) then
+									itemTable.player = nil
+
+									return
+								end
+							end
+
+							itemTable.player = LocalPlayer()
+								local send = true
+
+								if (use.onClick) then
+									send = use.onClick(itemTable)
+								end
+
+								if (use.sound) then
+									surface.PlaySound(use.sound)
+								end
+
+								if (send != false) then
+									netstream.Start("invAct", comm, itemTable.id, self.invID)
+								end
+							itemTable.player = nil
+						end
+					else
+						this:DragMousePress(code)
+						this:MouseCapture(true)
+
+						nut.item.held = this
+					end
 				elseif (code == MOUSE_RIGHT and this.doRightClick) then
 					this:doRightClick()
 				end
@@ -321,7 +390,7 @@ PANEL = {}
 							data = data[inventory]
 							local oldX, oldY = this.gridX, this.gridY
 
-							if (oldX != data.x2 or oldY != data.y2 or inventory != self) then
+							if (oldX != data.x2 or oldY != data.y2 or inventory != self) then									
 								this:move(data, inventory)
 							end
 						end
@@ -402,5 +471,16 @@ hook.Add("CreateMenuButtons", "nutInventory", function(tabs)
 				nut.gui.inv1:setInventory(inventory)
 			end
 		end
+	end
+end)
+
+hook.Add("PostRenderVGUI", "nutInvHelper", function()
+	local pnl = nut.gui.inv1
+
+	if (pnl and pnl:IsVisible()) then
+		local x, y = pnl:GetPos()
+		local w, h = pnl:GetSize()
+		local color = nut.config.get("color")
+		local tx, ty = nut.util.drawText(L("ctrlInv"), x + 5, y + h, ColorAlpha(color, 255))
 	end
 end)

@@ -45,6 +45,7 @@ function ITEM:onInstanced(invID, x, y)
 	local inventory = nut.item.inventories[invID]
 
 	nut.item.newInv(inventory and inventory.owner or 0, self.uniqueID, function(inventory)
+		inventory.vars.isBag = self.uniqueID
 		self:setData("id", inventory:getID())
 	end)
 end
@@ -70,6 +71,7 @@ function ITEM:onSendData()
 			local owner = self.player:getChar():getID()
 
 			nut.item.restoreInv(self:getData("id"), self.invWidth, self.invHeight, function(inventory)
+				inventory.vars.isBag = self.uniqueID
 				inventory:setOwner(owner, true)
 			end)
 		end
@@ -78,6 +80,7 @@ function ITEM:onSendData()
 		local client = self.player
 
 		nut.item.newInv(self.player:getChar():getID(), self.uniqueID, function(inventory)
+			inventory.vars.isBag = self.uniqueID
 			self:setData("id", inventory:getID())
 		end)
 	end
@@ -98,6 +101,10 @@ function ITEM:onCanBeTransfered(oldInventory, newInventory)
 	local index = self:getData("id")
 
 	if (newInventory) then
+		if (newInventory.vars and newInventory.vars.isBag) then
+			return false
+		end
+
 		local index2 = newInventory:getID()
 
 		if (index == index2) then
@@ -111,10 +118,10 @@ function ITEM:onCanBeTransfered(oldInventory, newInventory)
 		end
 	end
 	
-	return !newInventory or newInventory:getID() != oldInventory:getID()
+	return !newInventory or newInventory:getID() != oldInventory:getID() or newInventory.vars.isBag
 end
 
 -- Called after the item is registered into the item tables.
 function ITEM:onRegistered()
-	nut.item.registerInv(self.uniqueID, self.invWidth, self.invHeight)
+	nut.item.registerInv(self.uniqueID, self.invWidth, self.invHeight, true)
 end

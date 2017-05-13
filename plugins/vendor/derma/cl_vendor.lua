@@ -198,6 +198,8 @@ PANEL = {}
 		self.click:SetText("")
 		self.click.Paint = function() end
 		self.click.DoClick = function(this)
+			SELECTED_ITEM = self
+			
 			if (self.isLocal) then
 				nut.gui.vendor.activeBuy = self
 			else
@@ -231,16 +233,18 @@ PANEL = {}
 			local name = self.itemName
 			local entity = nut.gui.vendor.entity
 
-			if (self.isLocal) then
-				local count = LocalPlayer():getChar():getInv():getItemCount(self.item)
+			if (entity) then
+				if (self.isLocal) then
+					local count = LocalPlayer():getChar():getInv():getItemCount(self.item)
 
-				if (count == 0) then
-					self:Remove()
+					if (count == 0) then
+						self:Remove()
+					end
+					
+					name = name.." ("..count..")"
+				elseif (entity.items[self.item] and entity.items[self.item][VENDOR_MAXSTOCK]) then
+					name = name.." ("..entity.items[self.item][VENDOR_STOCK].."/"..entity.items[self.item][VENDOR_MAXSTOCK]..")"
 				end
-				
-				name = name.." ("..count..")"
-			elseif (entity.items[self.item] and entity.items[self.item][VENDOR_MAXSTOCK]) then
-				name = name.." ("..entity.items[self.item][VENDOR_STOCK].."/"..entity.items[self.item][VENDOR_MAXSTOCK]..")"
 			end
 
 			self.name:SetText(name)

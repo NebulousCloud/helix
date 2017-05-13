@@ -7,6 +7,7 @@ local PANEL = {}
 		self:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 		self:SetFont("nutMediumFont")
 		self:SetTextColor(color_white)
+		self:SetDrawOnTop(true)
 	end
 
 	function PANEL:Paint(w, h)

@@ -1,3 +1,4 @@
+
 local PANEL = {}
     function PANEL:Init()
         self:SetTall(64)
@@ -84,21 +85,29 @@ local PANEL = {}
 
             self.icon:SetModel(model)
         else
-            self.icon:SetModel(LocalPlayer():GetModel())
+            local char = LocalPlayer():getChar()
+            local model = LocalPlayer():GetModel()
+
+            if (char) then
+                model = char:getModel()
+            end
+
+            self.icon:SetModel(model)
         end
 
         self.label:SetText(data.name)   
         self.data = data 
         self.class = data.index
+
         self:setNumber(#nut.class.getPlayers(data.index))
     end
 vgui.Register("nutClassPanel", PANEL, "DPanel")
 
 PANEL = {}
     function PANEL:Init()
-    	nut.gui.classes = self
+        nut.gui.classes = self
 
-    	self:SetSize(self:GetParent():GetSize())
+        self:SetSize(self:GetParent():GetSize())
 
         self.list = vgui.Create("DPanelList", self)
         self.list:Dock(FILL)
@@ -114,7 +123,10 @@ PANEL = {}
         self.list:Clear()
         
         for k, v in ipairs(nut.class.list) do
-            if (nut.class.canBe(LocalPlayer(), k)) then
+            local no, why = nut.class.canBe(LocalPlayer(), k)
+            local itsFull = ("class is full" == why)
+
+            if (no or itsFull) then
                 local panel = vgui.Create("nutClassPanel", self.list)
                 panel:setClass(v)
                 table.insert(self.classPanels, panel)
@@ -126,17 +138,21 @@ PANEL = {}
 vgui.Register("nutClasses", PANEL, "EditablePanel")
 
 hook.Add("CreateMenuButtons", "nutClasses", function(tabs)
-	for k, v in ipairs(nut.class.list) do
-		if (!nut.class.canBe(LocalPlayer(), k)) then
-			continue
-		else
+    local cnt = table.Count(nut.class.list)
+
+    if (cnt <= 1) then return end
+    
+    for k, v in ipairs(nut.class.list) do
+        if (!nut.class.canBe(LocalPlayer(), k)) then
+            continue
+        else
             tabs["classes"] = function(panel)
                 panel:Add("nutClasses")
             end
 
             return
         end
-	end
+    end
 end)
 
 netstream.Hook("classUpdate", function(joinedClient)

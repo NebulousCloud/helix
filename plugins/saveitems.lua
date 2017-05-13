@@ -49,7 +49,7 @@ function PLUGIN:SaveData()
 	local items = {}
 
 	for k, v in ipairs(ents.FindByClass("nut_item")) do
-		if (v.nutItemID) then
+		if (v.nutItemID and !v.temp) then
 			items[#items + 1] = {v.nutItemID, v:GetPos()}
 		end
 	end

@@ -195,7 +195,7 @@ function SWEP:PrimaryAttack()
 					end
 				end
 
-				hook.Run("PlayerThrowPunch", self.Owner, trace.Hit)
+				hook.Run("PlayerThrowPunch", self.Owner, trace)
 			self.Owner:LagCompensation(false)
 		end
 	end)

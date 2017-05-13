@@ -56,6 +56,8 @@ do
 					end
 				end
 			end
+
+			hook.Run("OnCharAttribUpdated", client, self, key, value)
 		end
 
 		function charMeta:setAttrib(key, value)
@@ -75,6 +77,8 @@ do
 					end
 				end
 			end
+			
+			hook.Run("OnCharAttribUpdated", client, self, key, value)
 		end
 
 		function charMeta:addBoost(boostID, attribID, boostAmount)
@@ -82,6 +86,8 @@ do
 
 			boosts[attribID] = boosts[attribID] or {}
 			boosts[attribID][boostID] = boostAmount
+
+			hook.Run("OnCharAttribBoosted", self:getPlayer(), self, attribID, boostID, boostAmount)
 
 			return self:setVar("boosts", boosts, nil, self:getPlayer())
 		end
@@ -91,6 +97,8 @@ do
 
 			boosts[attribID] = boosts[attribID] or {}
 			boosts[attribID][boostID] = nil
+
+			hook.Run("OnCharAttribBoosted", self:getPlayer(), self, attribID, boostID, true)
 
 			return self:setVar("boosts", boosts, nil, self:getPlayer())
 		end
@@ -102,6 +110,12 @@ do
 				character:getAttribs()[key] = value
 			end
 		end)
+	end
+
+	function charMeta:getBoost(attribID)
+		local boosts = self:getBoosts()
+
+		return boosts[attribID]
 	end
 
 	function charMeta:getBoosts()
