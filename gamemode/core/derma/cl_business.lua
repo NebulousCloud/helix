@@ -237,7 +237,7 @@ PANEL = {}
 
 		nut.gui.checkout = self
 
-		self:SetTitle(L"checkout")
+		self:SetTitle(L("checkout", 0))
 		self:SetSize(280, 400)
 		self:MakePopup()
 		self:Center()
