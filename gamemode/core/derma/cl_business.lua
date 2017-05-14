@@ -167,6 +167,9 @@ function PANEL:Init()
 			if (self.selected != this) then
 				self.selected = this
 				self:loadItems(realName)
+				timer.Simple(0.01, function() 
+				self.scroll:InvalidateLayout()
+end)
 			end
 		end
 		button.category = realName
