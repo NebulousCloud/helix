@@ -820,6 +820,11 @@ function GM:ShowPlayerOptions(client, options)
 			client:ShowProfile()
 		end	
 	end}
+	options["Copy Steam ID"] = {"icon16/user.png", function()
+		if (IsValid(client)) then
+			SetClipboardText(client:SteamID())
+		end
+	end}
 end
 
 function GM:DrawNutModelView(panel, ent)
