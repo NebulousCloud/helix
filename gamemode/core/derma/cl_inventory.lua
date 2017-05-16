@@ -67,6 +67,7 @@ PANEL = {}
 	function PANEL:Init()
 		self:ShowCloseButton(false)
 		self:SetDraggable(true)
+		self:Center()
 		self:MakePopup()
 		self:SetTitle(L"inv")
 
