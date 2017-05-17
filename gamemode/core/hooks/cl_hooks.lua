@@ -23,7 +23,7 @@ function GM:ScoreboardHide()
 	gui.EnableScreenClicker(false)
 end
 
-function GM:LoadFonts(font)
+function GM:LoadFonts(font, genericFont)
 	surface.CreateFont("nut3D2DFont", {
 		font = font,
 		size = 2048,
@@ -88,7 +88,7 @@ function GM:LoadFonts(font)
 	})
 
 	-- The more readable font.
-	font = "Segoe UI"
+	font = genericFont
 	//-- but not in korea fucker
 	//font = "Malgun Gothic"
 
@@ -274,7 +274,7 @@ function GM:LoadIntro()
 end
 
 function GM:InitializedConfig()
-	hook.Run("LoadFonts", nut.config.get("font"))
+	hook.Run("LoadFonts", nut.config.get("font"), nut.config.get("genericFont"))
 	
 	if (!nut.config.loaded and !IsValid(nut.gui.loading)) then
 		local loader = vgui.Create("EditablePanel")
@@ -350,7 +350,7 @@ end)
 local OFFSET_NORMAL = Vector(0, 0, 80)
 local OFFSET_CROUCHING = Vector(0, 0, 48)
 
-local paintedEntitiesCache = {}
+paintedEntitiesCache = {}
 
 function GM:CalcView(client, origin, angles, fov)
 	local view = self.BaseClass:CalcView(client, origin, angles, fov) or {}
@@ -907,5 +907,5 @@ end
 
 function GM:ScreenResolutionChanged(oldW, oldH)
 	RunConsoleCommand("fixchatplz")
-	hook.Run("LoadFonts", nut.config.get("font"))
+	hook.Run("LoadFonts", nut.config.get("font"), nut.config.get("genericFont"))
 end

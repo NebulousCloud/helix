@@ -338,6 +338,7 @@ if (SERVER) then
 						if (self.onTransfered) then
 							self:onTransfered(curInv, inventory)
 						end
+						hook.Run("OnItemTransfered", self, curInv, inventory)
 
 						return true
 					elseif (self.invID > 0 and prevID == 0) then
@@ -347,6 +348,7 @@ if (SERVER) then
 						if (self.onTransfered) then
 							self:onTransfered(curInv, inventory)
 						end
+						hook.Run("OnItemTransfered", self, curInv, inventory)
 
 						return true
 					end
@@ -368,6 +370,7 @@ if (SERVER) then
 					if (self.onTransfered) then
 						self:onTransfered(curInv, inventory)
 					end
+					hook.Run("OnItemTransfered", self, curInv, inventory)
 						
 					return true
 				end

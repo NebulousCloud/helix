@@ -17,9 +17,16 @@ nut.config.add("maxChars", 5, "The maximum number of characters a player can hav
 nut.config.add("color", Color(75, 119, 190), "The main color theme for the framework.", nil, {category = "appearance"})
 nut.config.add("font", "Impact", "The font used to display titles.", function(oldValue, newValue)
 	if (CLIENT) then
-		hook.Run("LoadFonts", newValue)
+		hook.Run("LoadFonts", newValue, nut.config.get("genericFont"))
 	end
 end, {category = "appearance"})
+
+nut.config.add("genericFont", "Segoe UI", "The font used to display generic texts.", function(oldValue, newValue)
+	if (CLIENT) then
+		hook.Run("LoadFonts", nut.config.get("font"), newValue)
+	end
+end, {category = "appearance"})
+
 nut.config.add("maxAttribs", 30, "The total maximum amount of attribute points allowed.", nil, {
 	data = {min = 1, max = 250},
 	category = "characters"

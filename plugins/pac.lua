@@ -170,13 +170,16 @@ else
 		if (!pac) then return end
 		
 		if (client and ragdoll) then
-			local parts = client:getChar():getParts()
+			local char = client:getChar()
+			if (char) then
+				local parts = char:getParts()
 
-			pac.SetupENT(ragdoll)
+				pac.SetupENT(ragdoll)
 
-			for pacKey, pacValue in pairs(parts) do
-				if (nut.pac.list[pacKey]) then
-					ragdoll:AttachPACPart(nut.pac.list[pacKey])
+				for pacKey, pacValue in pairs(parts) do
+					if (nut.pac.list[pacKey]) then
+						ragdoll:AttachPACPart(nut.pac.list[pacKey])
+					end
 				end
 			end
 		end

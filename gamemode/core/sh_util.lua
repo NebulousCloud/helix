@@ -574,16 +574,16 @@ do
 	function playerMeta:getItemDropPos()
 		-- Start a trace.
 		local data = {}
-			-- The trace starts behind the player in case they are looking at a wall.
-			data.start = self:GetShootPos() - self:GetAimVector()*64
-			-- The trace finishes 86 units infront of the player.
+			data.start = self:GetShootPos()
 			data.endpos = self:GetShootPos() + self:GetAimVector()*86
-			-- Ignore the actual player.
 			data.filter = self
-		-- Get the end position of the trace.
 		local trace = util.TraceLine(data)
+			data.start = trace.HitPos
+			data.endpos = data.start + trace.HitNormal*46
+			data.filter = {}
+		trace = util.TraceLine(data)
 
-		return trace.HitPos + trace.HitNormal*36
+		return trace.HitPos
 	end
 
 	-- Do an action that requires the player to stare at something.

@@ -262,7 +262,7 @@ nut.anim.player = {
 		[ACT_MP_STAND_IDLE] = ACT_HL2MP_IDLE,
 		[ACT_MP_CROUCH_IDLE] = ACT_HL2MP_IDLE_CROUCH,
 		[ACT_MP_WALK] = ACT_HL2MP_WALK,
-		[ACT_MP_RUN] = ACT_HL2MP_RUN
+		[ACT_MP_RUN] = "run_all_panicked"
 	},
 	passive = {
 		[ACT_MP_STAND_IDLE] = ACT_HL2MP_IDLE_PASSIVE,

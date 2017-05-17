@@ -67,7 +67,6 @@ PANEL = {}
 	function PANEL:Init()
 		self:ShowCloseButton(false)
 		self:SetDraggable(true)
-		self:Center()
 		self:MakePopup()
 		self:SetTitle(L"inv")
 
@@ -114,7 +113,13 @@ PANEL = {}
 						local icon = self:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
 
 						if (IsValid(icon)) then
-							icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", L(item.name), L(item:getDesc())))
+							local newTooltip = hook.Run("OverrideItemTooltip", self, data, item)
+
+							if (newTooltip) then
+								icon:SetToolTip(newTooltip)
+							else
+								icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", L(item.name), L(item:getDesc())))
+							end
 							icon.itemID = item.id
 
 							self.panels[item.id] = icon
@@ -402,6 +407,10 @@ PANEL = {}
 				if (itemTable) then
 					itemTable.player = LocalPlayer()
 						local menu = DermaMenu()
+						local override = hook.Run("OnCreateItemInteractionMenu", panel, menu, itemTable)
+						
+						if (override == true) then if (menu.Remove) then menu:Remove() end return end
+
 							for k, v in SortedPairs(itemTable.functions) do
 								if (v.onCanRun) then
 									if (v.onCanRun(itemTable) == false) then

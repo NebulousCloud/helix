@@ -374,9 +374,9 @@ PANEL = {}
 			end
 		end
 
-		self.current:SetText(L"yourmoney"..nut.currency.get(money))
+		self.current:SetText(L"currentMoney"..nut.currency.get(money))
 		self.total:SetText("- "..nut.currency.get(price))
-		self.final:SetText(L"moneyleft"..nut.currency.get(money - price))
+		self.final:SetText(L"moneyLeft"..nut.currency.get(money - price))
 		self.final:SetTextColor((money - price) >= 0 and Color(46, 204, 113) or Color(217, 30, 24))
 
 		self.preventBuy = (money - price) < 0 or valid == 0

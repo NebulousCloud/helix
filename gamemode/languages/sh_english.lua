@@ -230,5 +230,9 @@ LANGUAGE = {
 	vendorNoStock = "This vendor does not have that item in stock.",
 	contentTitle = "NutScript Content Missing",
 	contentWarning = "You do not have the NutScript content mounted. This may result in certain features missing.\nWould you like to open the Workshop page for the NutScript content?",
-	flags = "Flags"
+	flags = "Flags",
+
+	moneyLeft = "Your Money: ",
+	currentMoney = "Money Left: ",
+	checkout = "Checkout",
 }
