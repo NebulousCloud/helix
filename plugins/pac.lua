@@ -76,7 +76,6 @@ function meta:getParts()
 end
 
 if (SERVER) then
-	-- PAC3 파트를 입힘과 동시에 플레이어에게 저장한다.
 	function meta:addPart(uid, item)
 		if (!pac) then
 			ErrorNoHalt("NO PAC3!\n")
@@ -91,7 +90,6 @@ if (SERVER) then
 		self:setNetVar("parts", curParts)
 	end
 	
-	-- PAC3 파트를 벗김과 동시에 플레이어에게 저장한다.
 	function meta:removePart(uid)
 		if (!pac) then return end
 		
@@ -104,8 +102,6 @@ if (SERVER) then
 		self:setNetVar("parts", curParts)
 	end
 
-	-- 모든 PAC3파트를 없애고 저장된 테이블을 없앤다.
-	-- 나가거나, 캐릭터를 바꾸거나, 파트를 모두 잃거나 할때 사용.
 	function meta:resetParts()
 		if (!pac) then return end
 		
@@ -113,9 +109,6 @@ if (SERVER) then
 		self:setNetVar("parts", {})
 	end
 
-	-- 캐릭터를 바꿀때 PAC3 파트를 초기화한다.
-	-- 새로 캐릭터를 로딩할때 가지고있는 인벤토리를 기반으로 다시 모든 파트를 입힌다.
-	-- If player changes the char, remove all the vehicles on the server.
 	function PLUGIN:PlayerLoadedChar(client, curChar, prevChar)
 		-- If player is changing the char and the character ID is differs from the current char ID.
 		if (prevChar and curChar:getID() != prevChar:getID()) then
@@ -133,21 +126,10 @@ if (SERVER) then
 		end
 	end
 
-	-- 처음 들어왔을때 서버에 있는 모든 플레이어의 PAC을 다시 입힌다.
 	function PLUGIN:PlayerInitialSpawn(client)
 		netstream.Start(client, "updatePAC")
 	end
-
-	-- 이건 넛스용 래그돌 지원기능.
-	function PLUGIN:OnCharFallover(client, ragdoll, isFallen)
-		if (client and ragdoll and client:IsValid() and ragdoll:IsValid() and client:getChar() and isFallen) then
-			netstream.Start(player.GetAll(), "ragdollPAC", client, ragdoll, isFallen)
-		end
-	end
 else
-	-- 클라이언트사이드!
-
-	-- 모든 플레이어의 PAC3 보관 데이터를 읽고 입힌다.
 	netstream.Hook("updatePAC", function()
 		if (!pac) then return end
 
@@ -166,30 +148,6 @@ else
 		end
 	end)
 
-	-- 특정 래그돌에 PAC를 입힌다.
-	netstream.Hook("ragdollPAC", function(client, ragdoll, isFallen)
-		if (!pac) then return end
-		
-		if (client and ragdoll) then
-			local char = client:getChar()
-			if (char) then
-				if (!char.getParts) then return end
-				local parts = char:getParts()
-
-				pac.SetupENT(ragdoll)
-
-				for pacKey, pacValue in pairs(parts) do
-					if (nut.pac.list[pacKey]) then
-						if (ragdoll.AttachPACPart) then
-							ragdoll:AttachPACPart(nut.pac.list[pacKey])
-						end
-					end
-				end
-			end
-		end
-	end)
-
-	-- PAC3 파트를  입힌다.
 	netstream.Hook("partWear", function(wearer, outfitID)
 		if (!pac) then return end
 		
@@ -222,7 +180,6 @@ else
 		end
 	end)
 
-	-- PAC3 파트를 벗긴다.
 	netstream.Hook("partRemove", function(wearer, outfitID)
 		if (!pac) then return end
 		
@@ -239,14 +196,64 @@ else
 		end
 	end)
 
-	-- PAC3 파트를 초기화한다.
 	netstream.Hook("partReset", function(wearer, outfitList)
 		for k, v in pairs(outfitList) do
 			wearer:RemovePACPart(nut.pac.list[k])
 		end
 	end)
 
-	-- 플레이어 메뉴 화면에 PAC3 파트들을 모두 입힌다.
+	function PLUGIN:DrawPlayerRagdoll(entity)
+		local ply = entity.objCache
+		
+		if (IsValid(ply)) then
+			if (!entity.overridePAC3) then
+				if ply.pac_parts then
+					for _, part in pairs(ply.pac_parts) do
+						if part.last_owner and part.last_owner:IsValid() then
+							part:SetOwner(entity)
+							part.last_owner = nil
+						end
+					end
+				end
+				ply.pac_playerspawn = pac.RealTime -- used for events
+				
+				entity.overridePAC3 = true
+			end
+		end
+	end
+
+	function PLUGIN:OnEntityCreated(entity)
+		local class = entity:GetClass()
+		
+		-- For safe progress, I skip one frame.
+		timer.Simple(0.01, function()
+			if (class == "prop_ragdoll") then
+				if (entity:getNetVar("player")) then
+					entity.RenderOverride = function()
+						entity.objCache = entity:getNetVar("player")
+						entity:DrawModel()
+						
+						hook.Run("DrawPlayerRagdoll", entity)
+					end
+				end
+			end
+
+			if (class:find("HL2MPRagdoll")) then
+				for k, v in ipairs(player.GetAll()) do
+					if (v:GetRagdollEntity() == entity) then
+						entity.objCache = v
+					end
+				end
+				
+				entity.RenderOverride = function()
+					entity:DrawModel()
+					
+					hook.Run("DrawPlayerRagdoll", entity)
+				end
+			end
+		end)
+	end
+
 	function PLUGIN:OnCharInfoSetup(infoPanel)
 		if (pac and infoPanel.model) then
 			-- Get the F1 ModelPanel.
@@ -274,7 +281,6 @@ else
 		end
 	end
 
-	-- PAC3 파트를 드로잉할때 모드를 설정한다.
 	function PLUGIN:DrawNutModelView(panel, ent)
 		if (LocalPlayer():getChar()) then
 			if (pac) then
@@ -285,11 +291,9 @@ else
 	end
 end
 
--- 아이템에 저장된 PAC3 정보들을 모두 PAC3 파트 정보로 변환한다.
 function PLUGIN:InitializedPlugins()
 	local items = nut.item.list
 
-	-- Get all items and If pacData is exists, register new outfit.
 	for k, v in pairs(items) do
 		if (v.pacData) then
 			nut.pac.list[v.uniqueID] = v.pacData

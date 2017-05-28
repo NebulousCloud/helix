@@ -1,19 +1,13 @@
 --[[
-
 DEVELOPMENTAL VERSION;
-
 VERSION 1.2.2
 Copyright thelastpenguin™
-
 	You may use this for any purpose as long as:
 	-	You don't remove this copyright notice.
 	-	You don't claim this to be your own.
 	-	You properly credit the author, thelastpenguin™, if you publish your work based on (and/or using) this.
-
 	If you modify the code for any purpose, the above still applies to the modified code.
-
 	The author is not held responsible for any damages incured from the use of pon, you use it at your own risk.
-
 DATA TYPES SUPPORTED:
  - tables  - 		k,v - pointers
  - strings - 		k,v - pointers
@@ -23,7 +17,6 @@ DATA TYPES SUPPORTED:
  - Angles  -		k,v
  - Entities- 		k,v
  - Players - 		k,v
-
 CHANGE LOG
 V 1.1.0
  - Added Vehicle, NPC, NextBot, Player, Weapon
@@ -31,7 +24,6 @@ V 1.2.0
  - Added custom handling for k,v tables without any array component.
 V 1.2.1
  - fixed deserialization bug.
-
 THANKS TO...
  - VERCAS for the inspiration.
 ]]
@@ -110,7 +102,7 @@ do
       local tk, tv = type(k), type(v)
 
       -- WRITE KEY
-      if tk == 'strnig' then
+      if tk == 'string' then
         local pid = cache[ k ];
         if( pid )then
           output[ #output + 1 ] = format('(%x)',  pid );
@@ -185,6 +177,7 @@ do
 	encode['Weapon']  = encode['Entity'];
 	encode['NPC']     = encode['Entity'];
 	encode['NextBot'] = encode['Entity'];
+	encode['PhysObj'] = encode['Entity'];
 
 	encode['nil'] = function()
 		output[ #output + 1 ] = '?';
