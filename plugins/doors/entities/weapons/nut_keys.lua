@@ -121,7 +121,7 @@ function SWEP:PrimaryAttack()
 	if (IsValid(entity) and
 		(
 			(entity:isDoor() and entity:checkDoorAccess(self.Owner)) or
-			(entity:IsVehicle() and entity:GetDTEntity(0) == self.Owner:getChar():getID())
+			(entity:IsVehicle() and entity.CPPIGetOwner and entity:CPPIGetOwner() == self.Owner)
 		)
 	) then
 		self.Owner:setAction("@locking", time, function()
@@ -158,9 +158,15 @@ function SWEP:toggleLock(door, state)
 	elseif (door:IsVehicle()) then
 		if (state) then
 			door:Fire("lock")
+			if (door.IsSimfphyscar) then
+				door.IsLocked = true
+			end
 			self.Owner:EmitSound("doors/door_latch3.wav")
 		else
 			door:Fire("unlock")
+			if (door.IsSimfphyscar) then
+				door.IsLocked = nil
+			end
 			self.Owner:EmitSound("doors/door_latch1.wav")
 		end
 	end
@@ -196,7 +202,7 @@ function SWEP:SecondaryAttack()
 	if (IsValid(entity) and
 		(
 			(entity:isDoor() and entity:checkDoorAccess(self.Owner)) or
-			(entity:IsVehicle() and entity:GetDTEntity(0) == self.Owner:getChar():getID())
+			(entity:IsVehicle() and entity.CPPIGetOwner and entity:CPPIGetOwner() == self.Owner)
 		)
 	) then
 		self.Owner:setAction("@unlocking", time, function()

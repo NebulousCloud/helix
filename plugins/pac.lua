@@ -1,15 +1,16 @@
 -- This Library is just for PAC3 Integration.
--- You must install PAC3 / PAC3_Lite to make this library works.
--- Currently, PAC3 Lite is more friendly to NutScript.
+-- You must install PAC3 to make this library works.
+
 PLUGIN.name = "PAC3 Integration"
 PLUGIN.author = "Black Tea"
 PLUGIN.desc = "More Upgraded, More well organized PAC3 Integration made by Black Tea"
+
+if (!pace) then return end
 
 nut.pac = nut.pac or {}
 nut.pac.list = nut.pac.list or {}
 
 local meta = FindMetaTable("Player")
-
 
 -- this stores pac3 part information to plugin's table'
 function nut.pac.registerPart(id, outfit)
@@ -172,13 +173,16 @@ else
 		if (client and ragdoll) then
 			local char = client:getChar()
 			if (char) then
+				if (!char.getParts) then return end
 				local parts = char:getParts()
 
 				pac.SetupENT(ragdoll)
 
 				for pacKey, pacValue in pairs(parts) do
 					if (nut.pac.list[pacKey]) then
-						ragdoll:AttachPACPart(nut.pac.list[pacKey])
+						if (ragdoll.AttachPACPart) then
+							ragdoll:AttachPACPart(nut.pac.list[pacKey])
+						end
 					end
 				end
 			end
@@ -201,8 +205,20 @@ else
 				newPac = table.Copy(nut.pac.list[outfitID])
 				newPac = itemTable:pacAdjust(newPac, wearer)
 			end
-	
-			wearer:AttachPACPart(newPac)
+
+			if (wearer.AttachPACPart) then
+				wearer:AttachPACPart(newPac)
+			else
+				pac.SetupENT(wearer)
+
+				timer.Simple(0.1, function()
+					if (IsValid(wearer) and wearer.AttachPACPart) then
+						wearer:AttachPACPart(newPac)
+					else
+						print("alright, no more PAC3 for you. Go away.")
+					end
+				end)
+			end
 		end
 	end)
 
@@ -215,7 +231,11 @@ else
 		end
 
 		if (nut.pac.list[outfitID]) then
-			wearer:RemovePACPart(nut.pac.list[outfitID])
+			if (wearer.RemovePACPart) then
+				wearer:RemovePACPart(nut.pac.list[outfitID])
+			else
+				pac.SetupENT(wearer)
+			end
 		end
 	end)
 

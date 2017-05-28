@@ -18,12 +18,13 @@ function ITEM:getID()
 end
 
 function ITEM:getDesc()
+	if (!self.desc) then return "ERROR" end
+	
 	if (type(self.desc) == "function") then
-		print(self)
 		return "ERROR"
 	end
-
-	return CLIENT and L(self.desc or "noDesc") or self.desc
+	
+	return self.desc
 end
 
 -- Dev Buddy. You don't have to print the item data with PrintData();

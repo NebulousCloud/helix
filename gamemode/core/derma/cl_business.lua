@@ -36,7 +36,7 @@ function PANEL:setItem(itemTable)
 	self.icon:DockMargin(5, 5, 5, 10)
 	self.icon:InvalidateLayout(true)
 	self.icon:SetModel(itemTable.model, itemTable.skin or 0)
-	self.icon:SetToolTip(L(itemTable:getDesc()))
+	self.icon:SetToolTip(itemTable:getDesc() or "")
 	self.icon.DoClick = function(this)
 		if (!IsValid(nut.gui.checkout) and (this.nextClick or 0) < CurTime()) then
 			local parent = nut.gui.business
@@ -398,7 +398,7 @@ PANEL = {}
 				slot.icon:SetPos(2, 2)
 				slot.icon:SetSize(32, 32)
 				slot.icon:SetModel(itemTable.model)
-				slot.icon:SetToolTip(L(itemTable:getDesc()))
+				slot.icon:SetToolTip(itemTable:getDesc() or "")
 
 				slot.name = slot:Add("DLabel")
 				slot.name:SetPos(40, 2)

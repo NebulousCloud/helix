@@ -331,14 +331,6 @@ do
 
 	nut.char.registerVar("class", {
 		noDisplay = true,
-
-		/*onSet = function(character, class)
-			character:setVar("class", class)
-		end,
-
-		onGet = function(character, default)
-			return character:getVar("class", default)
-		end*/
 	})
 
 	nut.char.registerVar("faction", {

@@ -909,3 +909,19 @@ function GM:ScreenResolutionChanged(oldW, oldH)
 	RunConsoleCommand("fixchatplz")
 	hook.Run("LoadFonts", nut.config.get("font"), nut.config.get("genericFont"))
 end
+
+function GM:DrawDeathNotice()
+	return false
+end
+
+function GM:HUDAmmoPickedUp()
+	return false
+end
+
+function GM:HUDDrawPickupHistory()
+	return false
+end
+
+function GM:HUDDrawTargetID()
+	return false
+end

@@ -10,8 +10,8 @@
 --]]
 
 PLUGIN.definitions["models/props_junk/wood_crate001a.mdl"] = {
-	name = "나무 상자",
-	desc = "4x4의 공간을 가지고 있는 나무 상자입니다.",
+	name = "Crate",
+	desc = "A simple wooden crate.",
 	width = 4,
 	height = 4,
 }

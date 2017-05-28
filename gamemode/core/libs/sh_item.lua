@@ -419,7 +419,7 @@ do
 					local icon = panel.panels[id]
 					-- what the fuck???
 					if (icon) then
-						icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", L(item.name), L(item:getDesc())))
+						icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", L(item.name), item:getDesc() or ""))
 					end
 				end
 			end
@@ -449,7 +449,6 @@ do
 						local icon = panel:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
 
 						if (IsValid(icon)) then
-							icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", L(item.name), L(item:getDesc())))
 							icon.itemID = item.id
 							
 							panel.panels[item.id] = icon

@@ -57,6 +57,14 @@ if (CLIENT) then
 			menu:addSpacer()
 		end
 	end
+
+	function PLUGIN:ShouldDrawEntityInfo(entity)
+		if (entity:IsPlayer() or IsValid(entity:getNetVar("player"))) then
+			if (entity:IsAdmin() and entity:GetMoveType() == MOVETYPE_NOCLIP) then
+				return false
+			end
+		end
+	end
 else
 	function PLUGIN:PlayerNoClip(client, state)
 		-- Observer mode is reserved for administrators.

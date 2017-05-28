@@ -67,6 +67,7 @@ PANEL = {}
 	function PANEL:Init()
 		self:ShowCloseButton(false)
 		self:SetDraggable(true)
+		self:Center()
 		self:MakePopup()
 		self:SetTitle(L"inv")
 
@@ -118,7 +119,7 @@ PANEL = {}
 							if (newTooltip) then
 								icon:SetToolTip(newTooltip)
 							else
-								icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", L(item.name), L(item:getDesc())))
+								icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", L(item.name), item:getDesc() or ""))
 							end
 							icon.itemID = item.id
 
@@ -487,10 +488,5 @@ end)
 hook.Add("PostRenderVGUI", "nutInvHelper", function()
 	local pnl = nut.gui.inv1
 
-	if (pnl and pnl:IsVisible()) then
-		local x, y = pnl:GetPos()
-		local w, h = pnl:GetSize()
-		local color = nut.config.get("color")
-		local tx, ty = nut.util.drawText(L("ctrlInv"), x + 5, y + h, ColorAlpha(color, 255))
-	end
+	hook.Run("PostDrawInventory", pnl)
 end)
