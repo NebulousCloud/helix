@@ -52,9 +52,9 @@ nut.anim.citizen_male = {
 	glide = ACT_GLIDE,
 	vehicle = {
 		["prop_vehicle_prisoner_pod"] = {"podpose", Vector(-3, 0, 0)},
-		["prop_vehicle_jeep"] = {"sitchair1", Vector(14, 0, -14)},
-		["prop_vehicle_airboat"] = {"sitchair1", Vector(8, 0, -20)},
-		chair = {"sitchair1", Vector(1, 0, -23)}
+		["prop_vehicle_jeep"] = {ACT_BUSY_SIT_CHAIR, Vector(14, 0, -14)},
+		["prop_vehicle_airboat"] = {ACT_BUSY_SIT_CHAIR, Vector(8, 0, -20)},
+		chair = {ACT_BUSY_SIT_CHAIR, Vector(1, 0, -23)}
 	},
 }
 

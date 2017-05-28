@@ -95,7 +95,7 @@ function GM:TranslateActivity(client, act)
 				--local fixang = tree.vehicle[class][3]
 
 				if (fixvec) then
-					client.ManipulateBonePosition(client, 0, fixvec)
+					client:SetLocalPos(Vector(16.5438, -0.1642, -20.5493))
 				end
 
 				if (type(act) == "string") then

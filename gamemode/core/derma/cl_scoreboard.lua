@@ -18,7 +18,7 @@ local PANEL = {}
 		self:Center()
 
 		self.title = self:Add("DLabel")
-		self.title:SetText(GetConVarString(GetHostName()))
+		self.title:SetText(GetHostName())
 		self.title:SetFont("nutBigFont")
 		self.title:SetContentAlignment(5)
 		self.title:SetTextColor(color_white)
