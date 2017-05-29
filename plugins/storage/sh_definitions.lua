@@ -45,7 +45,7 @@ PLUGIN.definitions["models/props_c17/furniturefridge001a.mdl"] = {
 
 PLUGIN.definitions["models/props_wasteland/kitchen_fridge001a.mdl"] = {
 	name = "Large Refrigerator",
-	desc = "A large metal fox for storing even more food in.",
+	desc = "A large metal box for storing even more food in.",
 	width = 4,
 	height = 5,
 }
