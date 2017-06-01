@@ -820,11 +820,16 @@ do
 						if (entity.nutWeapons) then
 							for k, v in ipairs(entity.nutWeapons) do
 								self:Give(v)
+								if (entity.nutAmmo) then
+									for k2, v2 in ipairs(entity.nutAmmo) do
+										if v == v2[1] then
+											self:SetAmmo(v2[2], k2)
+										end
+									end
+								end
 							end
-						end
-						if (entity.nutAmmo) then
-							for k, v in ipairs(entity.nutAmmo) do
-								self:SetAmmo(v,k)
+							for k, v in ipairs(self:GetWeapons()) do
+								v:SetClip1(0)
 							end
 						end
 
@@ -884,7 +889,10 @@ do
 
 				for k, v in ipairs(self:GetWeapons()) do
 					entity.nutWeapons[#entity.nutWeapons + 1] = v:GetClass()
-					entity.nutAmmo[v:GetPrimaryAmmoType()] = self:GetAmmoCount(v:GetPrimaryAmmoType())
+					local clip = v:Clip1()
+					local reserve = self:GetAmmoCount(v:GetPrimaryAmmoType())
+					local ammo = clip + reserve
+					entity.nutAmmo[v:GetPrimaryAmmoType()] = {v:GetClass(), ammo}
 				end
 
 				self:GodDisable()
