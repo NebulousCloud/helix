@@ -822,6 +822,11 @@ do
 								self:Give(v)
 							end
 						end
+						if (entity.nutAmmo) then
+							for k, v in ipairs(entity.nutAmmo) do
+								self:SetAmmo(v,k)
+							end
+						end
 
 						if (self:isStuck()) then
 							entity:DropToFloor()
@@ -863,6 +868,7 @@ do
 				self.nutRagdoll = entity
 
 				entity.nutWeapons = {}
+				entity.nutAmmo = {}
 				entity.nutPlayer = self
 
 				if (getUpGrace) then
@@ -878,6 +884,7 @@ do
 
 				for k, v in ipairs(self:GetWeapons()) do
 					entity.nutWeapons[#entity.nutWeapons + 1] = v:GetClass()
+					entity.nutAmmo[v:GetPrimaryAmmoType()] = self:GetAmmoCount(v:GetPrimaryAmmoType())
 				end
 
 				self:GodDisable()
