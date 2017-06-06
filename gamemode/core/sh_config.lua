@@ -121,6 +121,7 @@ if (SERVER) then
 	end
 
 	netstream.Hook("cfgSet", function(client, key, value)
+		// NEED TO ADD HOOK: CanPlayerModifyConfig
 		if (client:IsSuperAdmin() and type(nut.config.stored[key].default) == type(value)) then
 			nut.config.set(key, value)
 
