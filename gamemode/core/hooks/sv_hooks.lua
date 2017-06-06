@@ -511,7 +511,7 @@ function GM:InitPostEntity()
 		end
 	end
 
-	timer.Simple(0.1, function()
+	timer.Simple(1.5, function()
 		hook.Run("LoadData")
 	end)
 end
