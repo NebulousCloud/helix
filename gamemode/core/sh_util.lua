@@ -820,6 +820,16 @@ do
 						if (entity.nutWeapons) then
 							for k, v in ipairs(entity.nutWeapons) do
 								self:Give(v)
+								if (entity.nutAmmo) then
+									for k2, v2 in ipairs(entity.nutAmmo) do
+										if v == v2[1] then
+											self:SetAmmo(v2[2], k2)
+										end
+									end
+								end
+							end
+							for k, v in ipairs(self:GetWeapons()) do
+								v:SetClip1(0)
 							end
 						end
 
@@ -863,6 +873,7 @@ do
 				self.nutRagdoll = entity
 
 				entity.nutWeapons = {}
+				entity.nutAmmo = {}
 				entity.nutPlayer = self
 
 				if (getUpGrace) then
@@ -878,6 +889,10 @@ do
 
 				for k, v in ipairs(self:GetWeapons()) do
 					entity.nutWeapons[#entity.nutWeapons + 1] = v:GetClass()
+					local clip = v:Clip1()
+					local reserve = self:GetAmmoCount(v:GetPrimaryAmmoType())
+					local ammo = clip + reserve
+					entity.nutAmmo[v:GetPrimaryAmmoType()] = {v:GetClass(), ammo}
 				end
 
 				self:GodDisable()
