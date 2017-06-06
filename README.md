@@ -7,4 +7,7 @@ NutScript 1.1 is the re-working of the original NutScript framework to provide a
 Check out the Wiki on the side tab to the right for documentation.
 
 ## Got more questions?
-Visit http://nutscript.rocks for the official NutScript website which includes forums for discussing Nutscript.
+Get on Official Discord https://discord.gg/QUbmYuD and meet the developers of Nutscript!
+In other option you can go Gitters! https://gitter.im/Chessnut/NutScript
+Maybe you can join the forum! http://nutscript.rocks
+
