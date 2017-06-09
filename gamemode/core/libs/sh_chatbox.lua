@@ -21,7 +21,7 @@ function nut.chat.register(chatType, data)
 
 		data.onCanHear = function(speaker, listener)
 			-- Length2DSqr is faster than Length2D, so just check the squares.
-			return (speaker:GetPos() - listener:GetPos()):Length2DSqr() <= range
+			return (speaker:GetPos() - listener:GetPos()):LengthSqr() <= range
 		end
 	end
 
@@ -43,7 +43,7 @@ function nut.chat.register(chatType, data)
 
 	if (!data.onChatAdd) then
 		data.format = data.format or "%s: \"%s\""
-		
+
 		data.onChatAdd = function(speaker, text, anonymous)
 			local color = data.color
 			local name = anonymous and L"someone" or hook.Run("GetDisplayedName", speaker, chatType) or (IsValid(speaker) and speaker:Name() or "Console")
@@ -124,7 +124,7 @@ function nut.chat.parse(client, message, noSend)
 
 			if (nut.chat.classes[k].noSpaceAfter and message:sub(1, 1):match("%s")) then
 				message = message:sub(2)
-			end	
+			end
 
 			break
 		end
@@ -133,7 +133,7 @@ function nut.chat.parse(client, message, noSend)
 	if (!message:find("%S")) then
 		return
 	end
-	
+
 	-- Only send if needed.
 	if (SERVER and !noSend) then
 		-- Send the correct chat type out so other player see the message.
