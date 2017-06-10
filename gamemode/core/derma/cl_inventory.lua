@@ -65,6 +65,7 @@ vgui.Register("nutItemIcon", PANEL, "SpawnIcon")
 
 PANEL = {}
 	function PANEL:Init()
+		self:MakePopup()
 		self:Center()
 		self:ShowCloseButton(false)
 		self:SetDraggable(true)
@@ -480,6 +481,7 @@ hook.Add("CreateMenuButtons", "nutInventory", function(tabs)
 			if (inventory) then
 				nut.gui.inv1:setInventory(inventory)
 			end
+			nut.gui.inv1:SetPos(panel:GetPos())
 		end
 	end
 end)
