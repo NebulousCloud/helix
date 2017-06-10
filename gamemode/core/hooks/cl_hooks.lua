@@ -466,39 +466,41 @@ function GM:HUDPaintBackground()
 
 	self.BaseClass.PaintWorldTips(self.BaseClass)
 
-	local weapon = localPlayer.GetActiveWeapon(localPlayer)
+	if (hook.Run("CanDrawAmmoHUD") != false) then
+		local weapon = localPlayer.GetActiveWeapon(localPlayer)
 
-	if (IsValid(weapon) and weapon.DrawAmmo != false) then
-		local clip = weapon.Clip1(weapon)
-		local count = localPlayer.GetAmmoCount(localPlayer, weapon.GetPrimaryAmmoType(weapon))
-		local secondary = localPlayer.GetAmmoCount(localPlayer, weapon.GetSecondaryAmmoType(weapon))
-		local x, y = scrW - 80, scrH - 80
+		if (IsValid(weapon) and weapon.DrawAmmo != false) then
+			local clip = weapon.Clip1(weapon)
+			local count = localPlayer.GetAmmoCount(localPlayer, weapon.GetPrimaryAmmoType(weapon))
+			local secondary = localPlayer.GetAmmoCount(localPlayer, weapon.GetSecondaryAmmoType(weapon))
+			local x, y = scrW - 80, scrH - 80
 
-		if (secondary > 0) then
-			nut.util.drawBlurAt(x, y, 64, 64)
+			if (secondary > 0) then
+				nut.util.drawBlurAt(x, y, 64, 64)
 
-			surface.SetDrawColor(255, 255, 255, 5)
-			surface.DrawRect(x, y, 64, 64)
-			surface.SetDrawColor(255, 255, 255, 3)
-			surface.DrawOutlinedRect(x, y, 64, 64)
+				surface.SetDrawColor(255, 255, 255, 5)
+				surface.DrawRect(x, y, 64, 64)
+				surface.SetDrawColor(255, 255, 255, 3)
+				surface.DrawOutlinedRect(x, y, 64, 64)
 
-			nut.util.drawText(secondary, x + 32, y + 32, nil, 1, 1, "nutBigFont")
-		end
+				nut.util.drawText(secondary, x + 32, y + 32, nil, 1, 1, "nutBigFont")
+			end
 
-		if (weapon.GetClass(weapon) != "weapon_slam" and clip > 0 or count > 0) then
-			x = x - (secondary > 0 and 144 or 64)
+			if (weapon.GetClass(weapon) != "weapon_slam" and clip > 0 or count > 0) then
+				x = x - (secondary > 0 and 144 or 64)
 
-			nut.util.drawBlurAt(x, y, 128, 64)
+				nut.util.drawBlurAt(x, y, 128, 64)
 
-			surface.SetDrawColor(255, 255, 255, 5)
-			surface.DrawRect(x, y, 128, 64)
-			surface.SetDrawColor(255, 255, 255, 3)
-			surface.DrawOutlinedRect(x, y, 128, 64)
+				surface.SetDrawColor(255, 255, 255, 5)
+				surface.DrawRect(x, y, 128, 64)
+				surface.SetDrawColor(255, 255, 255, 3)
+				surface.DrawOutlinedRect(x, y, 128, 64)
 
-			nut.util.drawText(clip == -1 and count or clip.."/"..count, x + 64, y + 32, nil, 1, 1, "nutBigFont")
+				nut.util.drawText(clip == -1 and count or clip.."/"..count, x + 64, y + 32, nil, 1, 1, "nutBigFont")
+			end
 		end
 	end
-
+	
 	if (localPlayer.getLocalVar(localPlayer, "restricted") and !localPlayer.getLocalVar(localPlayer, "restrictNoMsg")) then
 		nut.util.drawText(L"restricted", scrW * 0.5, scrH * 0.33, nil, 1, 1, "nutBigFont")
 	end
