@@ -27,7 +27,7 @@ VENDOR_BUYONLY = 3
 if (SERVER) then
 	local PLUGIN = PLUGIN
 
-	function PLUGIN:saveVendors()
+	function PLUGIN:SaveData()
 		local data = {}
 			for k, v in ipairs(ents.FindByClass("nut_vendor")) do
 				data[#data + 1] = {
@@ -225,7 +225,7 @@ if (SERVER) then
 				netstream.Start(entity.receivers, "vendorEdit", key, data)
 			end
 
-			PLUGIN:saveVendors()
+			PLUGIN:SaveData()
 
 			if (feedback) then
 				local receivers = {}
@@ -291,7 +291,7 @@ if (SERVER) then
 				entity:takeMoney(price)
 				entity:addStock(uniqueID)
 
-				PLUGIN:saveVendors()
+				PLUGIN:SaveData()
 				hook.Run("OnCharTradeVendor", client, entity, uniqueID, isSellingToVendor)
 			else
 				local stock = entity:getStock(uniqueID)
@@ -319,7 +319,7 @@ if (SERVER) then
 
 				entity:takeStock(uniqueID)
 
-				PLUGIN:saveVendors()
+				PLUGIN:SaveData()
 				hook.Run("OnCharTradeVendor", client, entity, uniqueID, isSellingToVendor)
 			end
 		else

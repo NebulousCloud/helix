@@ -156,8 +156,8 @@ if (SERVER) then
 		entity:SetAngles(angles)
 		entity:Spawn()
 
-		PLUGIN:saveVendors()
-		
+		PLUGIN:SaveData()
+
 		return entity
 	end
 
@@ -243,14 +243,8 @@ if (SERVER) then
 		if (!self.items[uniqueID][VENDOR_MAXSTOCK]) then
 			return
 		end
-		
-		self:addStock(uniqueID, -(value or 1))
-	end
 
-	function ENT:OnRemove()
-		if (!nut.shuttingDown and !self.nutIsSafe) then
-			PLUGIN:saveVendors()
-		end
+		self:addStock(uniqueID, -(value or 1))
 	end
 else
 	function ENT:createBubble()
