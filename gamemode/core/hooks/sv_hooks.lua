@@ -579,7 +579,7 @@ function GM:PlayerCanHearPlayersVoice(listener, speaker)
 		local listener_pos = listener:GetPos()
 		local speaker_pos = speaker:GetPos()
 		local voice_dis = math.Distance(speaker_pos.x, speaker_pos.y, listener_pos.x, listener_pos.y)
-		if voice_dis < 600 then // Set a config for this if you want - but 600 is good.
+		if voice_dis < 600 then -- Set a config for this if you want - but 600 is good.
 			allowVoice = true
 		else
 			allowVoice = false
