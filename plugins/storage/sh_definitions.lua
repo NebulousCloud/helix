@@ -18,7 +18,7 @@ PLUGIN.definitions["models/props_junk/wood_crate001a.mdl"] = {
 
 PLUGIN.definitions["models/props_c17/lockers001a.mdl"] = {
 	name = "Locker",
-	desc = "A white Locker.",
+	desc = "A white locker.",
 	width = 3,
 	height = 5,
 }
@@ -57,7 +57,7 @@ PLUGIN.definitions["models/props_junk/trashbin01a.mdl"] = {
 }
 PLUGIN.definitions["models/items/ammocrate_smg1.mdl"] = {
 	name = "Ammo Crate",
-	desc = "A Heavy Crate that stores ammo",
+	desc = "A heavy crate that stores ammo",
 	width = 5,
 	height = 3,
 	onOpen = function(entity, activator)
