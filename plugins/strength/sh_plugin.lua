@@ -3,13 +3,10 @@ PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Adds a strength attribute."
 
 if (SERVER) then
-	-- Scale the amount of damage the attribute adds.
-	local STR_MULTIPLIER = 0.3
-
 	function PLUGIN:PlayerGetFistDamage(client, damage, context)
 		if (client:getChar()) then
 			-- Add to the total fist damage.
-			context.damage = context.damage + (client:getChar():getAttrib("str", 0) * STR_MULTIPLIER)
+			context.damage = context.damage + (client:getChar():getAttrib("str", 0) * nut.config.get("strMultiplier"))
 		end
 	end
 
@@ -19,3 +16,10 @@ if (SERVER) then
 		end
 	end
 end
+
+-- Configuration for the plugin
+nut.config.add("strMultiplier", 0.3, "The strength multiplier scale", nil, {
+	form = "Float",
+	data = {min=0, max=1.0},
+	category = "Strength"
+})
