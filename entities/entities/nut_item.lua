@@ -4,7 +4,7 @@ ENT.Type = "anim"
 ENT.PrintName = "Item"
 ENT.Category = "NutScript"
 ENT.Spawnable = false
-ENT.RenderGroup 		= RENDERGROUP_BOTH
+ENT.RenderGroup = RENDERGROUP_BOTH
 
 if (SERVER) then
 	function ENT:Initialize()
