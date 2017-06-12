@@ -542,9 +542,8 @@ do
 			if (character) then
 				local inventory = nut.item.inventories[invID]
 
-				if (!inventory or inventory != nil or !IsValid(inventory)) then
+				if (!inventory or inventory == nil) then
 					inventory:sync(client)
-					--return 
 				end
 
 				if ((!inventory.owner or (inventory.owner and inventory.owner == character:getID())) or (inventory.onCheckAccess and inventory:onCheckAccess(client))) then
