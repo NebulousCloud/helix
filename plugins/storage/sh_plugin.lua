@@ -16,13 +16,13 @@ for k, v in pairs(PLUGIN.definitions) do
 	end
 end
 
+nut.config.add("saveStorage", true, "Whether or not storages will save after a server restart.", nil, {
+	category = "Storage"
+})
+
 if (SERVER) then
 	function PLUGIN:PlayerSpawnedProp(client, model, entity)
 		local data = self.definitions[model:lower()]
-
-		if (true) then
-			return false
-		end
 
 		if (data) then
 			local storage = ents.Create("nut_storage")
@@ -45,19 +45,23 @@ if (SERVER) then
 		end
 	end
 
-	function PLUGIN:saveStorage()
-		if (true) then return end -- the server will not save any storage data!
-
-		local data = {}
-
-		for k, v in ipairs(ents.FindByClass("nut_storage")) do
-			if (v:getInv()) then
-				data[#data + 1] = {v:GetPos(), v:GetAngles(), v:getNetVar("id"), v:GetModel(), v.password}
-			end
-		end
-
-		self:setData(data)
+	function PLUGIN:CanSaveStorage(entity, inventory)
+		return nut.config.get("saveStorage", true)
 	end
+
+	function PLUGIN:saveStorage()
+  	local data = {}
+
+  	for k, v in ipairs(ents.FindByClass("nut_storage")) do
+  		if (hook.Run("CanSaveStorage", v, v:getInv()) != false) then
+  			if (v:getInv()) then
+  				data[#data + 1] = {v:GetPos(), v:GetAngles(), v:getNetVar("id"), v:GetModel(), v.password}
+				end
+  		end
+  	end
+
+  	self:setData(data)
+  end
 
 	function PLUGIN:SaveData()
 		self:saveStorage()

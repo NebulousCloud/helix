@@ -50,7 +50,7 @@ if (SERVER) then
 	function ENT:OnRemove()
 		local index = self:getNetVar("id")
 
-		if (!nut.shuttingDown and !self.nutIsSafe and index) then
+		if (!nut.shuttingDown and !self.nutIsSafe and nut.entityDataLoaded and index) then
 			local item = nut.item.inventories[index]
 
 			if (item) then
