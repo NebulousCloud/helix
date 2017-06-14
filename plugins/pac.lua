@@ -210,6 +210,7 @@ else
 				if ply.pac_parts then
 					for _, part in pairs(ply.pac_parts) do
 						if part.last_owner and part.last_owner:IsValid() then
+							hook.Run("OnPAC3PartTransfered", part)
 							part:SetOwner(entity)
 							part.last_owner = nil
 						end
