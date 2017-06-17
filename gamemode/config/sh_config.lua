@@ -128,6 +128,13 @@ end, {
 	category = "visual",
 	data = {min = 0.3, max = 1}
 })
+nut.config.add("sbTitle", GetConVarString("hostname"), "The title of the scoreboard", function(oldValue, newValue)
+	if (CLIENT and IsValid(nut.gui.score)) then
+		nut.gui.score:Remove()
+	end
+end, {
+	category = "visual"
+})
 nut.config.add("wepAlwaysRaised", false, "Whether or not weapons are always raised.", nil, {
 	category = "server"
 })
