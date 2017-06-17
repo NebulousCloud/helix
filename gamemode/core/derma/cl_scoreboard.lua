@@ -81,7 +81,7 @@ local PANEL = {}
 
 	function PANEL:Think()
 		if ((self.nextUpdate or 0) < CurTime()) then
-			self.title:SetText(nut.config.get("scoreboard_title", GetConVarString("hostname")))
+			self.title:SetText(nut.config.get("sbTitle", GetConVarString("hostname")))
 
 			local visible, amount
 
