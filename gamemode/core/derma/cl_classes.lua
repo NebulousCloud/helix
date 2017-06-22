@@ -95,7 +95,7 @@ local PANEL = {}
             self.icon:SetModel(model)
         end
 
-        self.label:SetText(data.name)   
+        self.label:SetText(L(data.name))   
         self.data = data 
         self.class = data.index
 

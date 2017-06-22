@@ -119,7 +119,10 @@ PANEL = {}
 							if (newTooltip) then
 								icon:SetToolTip(newTooltip)
 							else
-								icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", L(item.name), item:getDesc() or ""))
+								icon:SetToolTip(
+									Format(nut.config.itemFormat,
+									L(item.name), item:getDesc() or "")
+								)
 							end
 							icon.itemID = item.id
 

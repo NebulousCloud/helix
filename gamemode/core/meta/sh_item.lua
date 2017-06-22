@@ -24,7 +24,7 @@ function ITEM:getDesc()
 		return "ERROR"
 	end
 	
-	return self.desc
+	return L(self.desc or "noDesc")
 end
 
 -- Dev Buddy. You don't have to print the item data with PrintData();

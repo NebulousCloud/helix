@@ -134,7 +134,6 @@ function nut.item.register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 
 	if (uniqueID) then
 		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({}, meta)
-			ITEM.name = uniqueID
 			ITEM.desc = "noDesc"
 			ITEM.uniqueID = uniqueID
 			ITEM.base = baseID
@@ -419,7 +418,10 @@ do
 					local icon = panel.panels[id]
 					-- what the fuck???
 					if (icon) then
-						icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", L(item.name), item:getDesc() or ""))
+						icon:SetToolTip(
+							Format(nut.config.itemFormat,
+							L(item.name), item:getDesc() or "")
+						)
 					end
 				end
 			end
@@ -449,7 +451,10 @@ do
 						local icon = panel:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
 
 						if (IsValid(icon)) then
-							icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", L(item.name), item:getDesc() or ""))
+							icon:SetToolTip(
+								Format(nut.config.itemFormat,
+								L(item.name), item:getDesc() or "")
+							)
 							icon.itemID = item.id
 							
 							panel.panels[item.id] = icon

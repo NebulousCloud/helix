@@ -89,9 +89,7 @@ function GM:LoadFonts(font, genericFont)
 
 	-- The more readable font.
 	font = genericFont
-	//-- but not in korea fucker
-	//font = "Malgun Gothic"
-
+	
 	surface.CreateFont("nutCleanTitleFont", {
 		font = font,
 		size = 200,
@@ -859,7 +857,7 @@ function GM:PostPlayerDraw(client)
 				local class = v:GetClass():lower()
 				local drawInfo = HOLSTER_DRAWINFO[class]
 
-				if (drawInfo) then
+				if (drawInfo and drawInfo.model) then
 					client.holsteredWeapons = client.holsteredWeapons or {}
 
 					if (!client.holsteredWeapons[class] or !IsValid(client.holsteredWeapons[class])) then
