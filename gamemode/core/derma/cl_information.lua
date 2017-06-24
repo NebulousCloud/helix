@@ -106,8 +106,9 @@ local PANEL = {}
 	end
 
 	function PANEL:setup()
+		local char = LocalPlayer():getChar()
 		if (self.desc) then
-			self.desc:SetText(LocalPlayer():getChar():getDesc())
+			self.desc:SetText(char:getDesc())
 			self.desc.OnEnter = function(this, w, h)
 				nut.command.send("chardesc", this:GetText())
 			end
@@ -121,7 +122,7 @@ local PANEL = {}
 		end
 
 		if (self.money) then
-			self.money:SetText(L("charMoney", nut.currency.get(LocalPlayer():getChar():getMoney())))
+			self.money:SetText(L("charMoney", nut.currency.get(char:getMoney())))
 		end
 
 		if (self.faction) then
@@ -141,13 +142,14 @@ local PANEL = {}
 		end
 
 		if (self.class) then
-			local class = nut.class.list[LocalPlayer():getChar():getClass()]
+			local class = nut.class.list[char:getClass()]
 			if (class) then
 				self.class:SetText(L("charClass", L(class.name)))
 			end
 		end
 		
 		if (self.model) then
+			print(LocalPlayer():GetModel())
 			self.model:SetModel(LocalPlayer():GetModel())
 			self.model.Entity:SetSkin(LocalPlayer():GetSkin())
 
@@ -165,7 +167,7 @@ local PANEL = {}
 		end
 
 		if (self.attribs) then
-			local boost = LocalPlayer():getChar():getBoosts()
+			local boost = char:getBoosts()
 
 			for k, v in SortedPairsByMemberValue(nut.attribs.list, "name") do
 				local attribBoost = 0
@@ -179,7 +181,7 @@ local PANEL = {}
 				bar:Dock(TOP)
 				bar:DockMargin(0, 0, 0, 3)
 
-				local attribValue = LocalPlayer():getChar():getAttrib(k, 0)
+				local attribValue = char:getAttrib(k, 0)
 				if (attribBoost) then
 					bar:setValue(attribValue - attribBoost or 0)
 				else

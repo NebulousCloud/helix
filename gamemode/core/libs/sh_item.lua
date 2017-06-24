@@ -624,8 +624,6 @@ do
 				return
 			end
 
-			hook.Run("OnPlayerInteractItem", client, action, item)
-
 			if (type(item) == "Entity") then
 				if (IsValid(item)) then
 					local entity = item
@@ -684,7 +682,9 @@ do
 					-- Posthooks shouldn't override the result from onRun
 					item.postHooks[action](item, result)
 				end
-				
+
+				hook.Run("OnPlayerInteractItem", client, action, item, result)
+
 				if (result != false) then
 					if (IsValid(entity)) then
 						entity.nutIsSafe = true

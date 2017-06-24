@@ -408,8 +408,8 @@ function GM:HUDPaintBackground()
 		lastTrace.start = localPlayer.GetShootPos(localPlayer)
 		lastTrace.endpos = lastTrace.start + localPlayer.GetAimVector(localPlayer)*160
 		lastTrace.filter = localPlayer		
-		lastTrace.mins = Vector( -10, -10, -10 )
-		lastTrace.maxs = Vector( 10, 10, 10 )
+		lastTrace.mins = Vector( -4, -4, -4 )
+		lastTrace.maxs = Vector( 4, 4, 4 )
 		lastTrace.mask = MASK_SHOT_HULL
 
 		lastEntity = util.TraceHull(lastTrace).Entity

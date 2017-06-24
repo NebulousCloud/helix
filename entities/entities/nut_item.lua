@@ -20,7 +20,6 @@ if (SERVER) then
 			physObj:Wake()
 		end
 		
-
 		timer.Simple(300, function()
 			if (IsValid(self)) then
 				self:Remove()
@@ -33,6 +32,7 @@ if (SERVER) then
 	end
 	
 	function ENT:OnTakeDamage(dmginfo)
+		print("wtf")
 		local damage = dmginfo:GetDamage()
 		self:setHealth(self.health - damage)
 
@@ -138,8 +138,11 @@ else
 			local offset = self.offset
 
 			for i = 1, #lines do
-				nut.util.drawText(lines[i], x, y + (i * 16), colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+				y = y + (i * 16)
+				nut.util.drawText(lines[i], x, y, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
 			end
+
+			x, y = hook.Run("DrawItemDescription", self, x, y, colorAlpha(color_white, alpha), alpha * 0.65)
 
 			itemTable.entity = nil
 			itemTable.data = oldData
