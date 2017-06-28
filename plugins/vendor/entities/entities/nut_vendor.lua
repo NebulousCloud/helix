@@ -128,7 +128,7 @@ function ENT:hasMoney(amount)
 	if (!self.money) then
 		return true
 	end
-
+	
 	return self.money >= amount
 end
 
@@ -175,7 +175,7 @@ if (SERVER) then
 		if (self.messages[VENDOR_WELCOME]) then
 			activator:ChatPrint(self:getNetVar("name")..": "..self.messages[VENDOR_WELCOME])
 		end
-
+			
 		local items = {}
 
 		-- Only send what is needed.
@@ -246,12 +246,6 @@ if (SERVER) then
 
 		self:addStock(uniqueID, -(value or 1))
 	end
-
-	function ENT:OnRemove()
-    if (!nut.shuttingDown and !self.nutIsSafe and nut.entityDataLoaded) then 
-      PLUGIN:saveVendors()
-    end
-	end
 else
 	function ENT:createBubble()
 		self.bubble = ClientsideModel("models/extras/info_speech.mdl", RENDERGROUP_OPAQUE)
@@ -261,7 +255,7 @@ else
 
 	function ENT:Draw()
 		local bubble = self.bubble
-
+		
 		if (IsValid(bubble)) then
 			local realTime = RealTime()
 
