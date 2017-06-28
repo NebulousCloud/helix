@@ -1,5 +1,7 @@
 AddCSLuaFile()
 
+DEFINE_BASECLASS( "base_anim" )
+
 ENT.Type = "anim"
 ENT.PrintName = "Item"
 ENT.Category = "NutScript"
