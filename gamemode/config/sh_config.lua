@@ -111,6 +111,11 @@ nut.config.add("defMoney", 0, "The amount of money that players start with.", ni
 nut.config.add("allowVoice", false, "Whether or not voice chat is allowed.", nil, {
 	category = "server"
 })
+nut.config.add("voiceDistance", 600.0, "How far can the voice be heard.", nil, {
+	form = "Float",
+	category = "server",
+	data = {min = 0, max = 5000}
+})
 nut.config.add("sbWidth", 0.325, "Scoreboard's width within percent of screen width.", function(oldValue, newValue)
 	if (CLIENT and IsValid(nut.gui.score)) then
 		nut.gui.score:Remove()

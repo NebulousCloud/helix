@@ -583,27 +583,25 @@ function GM:PlayerCanHearPlayersVoice(listener, speaker)
 		local listener_pos = listener:GetPos()
 		local speaker_pos = speaker:GetPos()
 		local voice_dis = math.Distance(speaker_pos.x, speaker_pos.y, listener_pos.x, listener_pos.y)
-		if voice_dis < 600 then -- Set a config for this if you want - but 600 is good.
-			allowVoice = true
-		else
+		if voice_dis > nut.config.get("voiceDistance") then
 			allowVoice = false
-		end	
+		end
 	end
-	return allowVoice, allowVoice
+	return allowVoice
 end
 
 function GM:OnPhysgunFreeze(weapon, physObj, entity, client)
 	-- Object is already frozen (!?)
 	if (!physObj:IsMoveable()) then return false end
 	if (entity:GetUnFreezable()) then return false end
-	
+
 	physObj:EnableMotion(false)
-	
+
 	-- With the jeep we need to pause all of its physics objects
 	-- to stop it spazzing out and killing the server.
 	if (entity:GetClass() == "prop_vehicle_jeep") then
 		local objects = ent:GetPhysicsObjectCount()
-		
+
 		for i = 0, objects - 1 do
 			entity:GetPhysicsObjectNum(i):EnableMotion(false)
 		end
