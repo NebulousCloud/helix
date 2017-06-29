@@ -109,7 +109,7 @@ function nut.command.extractArgs(text)
 
 		local c = text:sub(i, i)
 
-		if (c == "\"" or c == "'") then
+		if (c == "\"") then
 			local match = text:sub(i):match("%b"..c..c)
 
 			if (match) then
