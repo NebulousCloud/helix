@@ -299,7 +299,10 @@ nut.command.add("chargiveitem", {
 			local succ, err = target:getChar():getInv():add(uniqueID)
 
 			if (succ) then
-				target:notify("Item successfully created.")
+				target:notifyLocalized("itemCreated")
+				if(target != client) then
+					client:notifyLocalized("itemCreated")
+				end
 			else
 				target:notify(tostring(succ))
 				target:notify(tostring(err))
