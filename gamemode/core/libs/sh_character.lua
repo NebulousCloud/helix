@@ -567,8 +567,6 @@ do
 			for k, v in SortedPairsByMemberValue(nut.char.vars, "index") do
 				local value = data[k]
 
-				if (k == "desc") then continue end
-
 				if (v.onValidate) then
 					local result = {v.onValidate(value, data, client)}
 
