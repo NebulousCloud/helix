@@ -60,8 +60,8 @@ function GM:TranslateActivity(client, act)
 
 			local holdType = IsValid(weapon) and (weapon.HoldType or weapon.GetHoldType(weapon)) or "normal"
 
-			if (!nut.config.get("wepAlwaysRaised") and IsValid(weapon) and !client.isWepRaised(client) and client.OnGround(client)) then
-				holdType = PLAYER_HOLDTYPE_TRANSLATOR[holdType]
+			if (!nut.config.get("wepAlwaysRaised") and IsValid(weapon) and !client.isWepRaised(client) and client:OnGround()) then
+				holdType = PLAYER_HOLDTYPE_TRANSLATOR[holdType] or "passive"
 			end
 
 			local tree = nut.anim.player[holdType]
