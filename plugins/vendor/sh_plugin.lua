@@ -262,6 +262,10 @@ if (SERVER) then
 				local found = false
 				local name
 				
+				if (!entity:hasMoney(price)) then
+					return client:notifyLocalized("vendorNoMoney")
+				end
+
 				local invOkay = true
 				for k, v in pairs(client:getChar():getInv():getItems()) do
 					if (v.uniqueID == uniqueID and v:getID() != 0) then
@@ -280,10 +284,6 @@ if (SERVER) then
 				if (!invOkay) then
 					client:getChar():getInv():sync(client, true)
 					return client:notifyLocalized("tellAdmin", "trd!iid")
-				end
-				
-				if (!entity:hasMoney(price)) then
-					return client:notifyLocalized("vendorNoMoney")
 				end
 
 				client:getChar():giveMoney(price)
@@ -305,7 +305,7 @@ if (SERVER) then
 				end
 
 				local name = L(nut.item.list[uniqueID].name, client)
-
+			
 				client:getChar():takeMoney(price)
 				client:notifyLocalized("businessPurchase", name, nut.currency.get(price))
 				
