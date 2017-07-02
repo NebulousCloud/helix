@@ -1,10 +1,12 @@
-surface.CreateFont("nutNoticeFont", {
-	font = "Myriad Pro",
-	size = 16,
-	weight = 500,
-	extended = true,
-	antialias = true
-})
+hook.Add("LoadFonts", "nutNoticeFont", function(font, genericFont)
+	surface.CreateFont("nutNoticeFont", {
+		font = genericFont,
+		size = 16,
+		weight = 500,
+		extended = true,
+		antialias = true
+	})
+end)
 
 local PANEL = {}
 
