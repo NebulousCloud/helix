@@ -106,7 +106,9 @@ if (SERVER) then
 
 					local character = nut.char.new(data, id, client)
 						hook.Run("CharacterRestored", character)
-						character.vars.inv = {}
+						character.vars.inv = {
+							[1] = 1, -- reserved
+						}
 
 						nut.db.query("SELECT _invID, _invType FROM nut_inventories WHERE _charID = "..id, function(data)
 							if (data and #data > 0) then
@@ -124,12 +126,13 @@ if (SERVER) then
 
 									nut.item.restoreInv(tonumber(v._invID), w, h, function(inventory)
 										if (v._invType) then
-											-- FIX THIS PLZ
 											inventory.vars.isBag = v._invType
+											table.insert(character.vars.inv, inventory)
+										else
+											character.vars.inv[1] = inventory
 										end
 
 										inventory:setOwner(id)
-										character.vars.inv[!v._invType and 1 or k] = inventory
 									end, true)
 								end
 							else
