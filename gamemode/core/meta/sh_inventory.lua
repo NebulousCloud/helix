@@ -85,15 +85,17 @@ function META:setOwner(owner, fullUpdate)
 		return
 	end
 
-	if (SERVER and fullUpdate) then
-		for k, v in ipairs(player.GetAll()) do
-			if (v:getNetVar("char") == owner) then
-				self:sync(v, true)
+	if (SERVER) then
+		if (fullUpdate) then
+			for k, v in ipairs(player.GetAll()) do
+				if (v:getNetVar("char") == owner) then
+					self:sync(v, true)
 
-				break
+					break
+				end
 			end
 		end
-
+		
 		nut.db.query("UPDATE nut_inventories SET _charID = "..owner.." WHERE _invID = "..self:getID())
 	end
 

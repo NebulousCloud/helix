@@ -86,6 +86,15 @@ function ITEM:onSendData()
 	end
 end
 
+ITEM:hook("drop", function(item)
+	-- to be sure.
+	if (SERVER) then
+		local index = item:getData("id")
+
+		nut.db.query("UPDATE nut_inventories SET _charID = 0 WHERE _invID = "..index)
+	end
+end)
+
 -- Called before the item is permanently deleted.
 function ITEM:onRemoved()
 	local index = self:getData("id")

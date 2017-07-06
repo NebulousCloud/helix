@@ -106,8 +106,11 @@ if (SERVER) then
 			if (!noNetworking) then
 				self:sync()
 				
+				-- wtf
 				for k, v in ipairs(self:getInv(true)) do
-					v:sync(client)
+					if (type(v) == "table") then 
+						v:sync(client)	
+					end
 				end
 			end
 
