@@ -24,11 +24,10 @@ if (CLIENT) then
 		onRun = function(client, arguments)
 			RunConsoleCommand("pac_restart")
 		end,
-		alias = {"새로고침"}
 	})
 
 	-- Disable few features of PAC3's feature.
-	function PLUGIN:PluginLoaded()
+	function PLUGIN:InitializedPlugins()
 		-- remove useless PAC3 shits
 
 		hook.Remove("HUDPaint", "pac_InPAC3Editor")
