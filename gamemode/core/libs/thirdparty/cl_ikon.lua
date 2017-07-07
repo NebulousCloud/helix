@@ -1,6 +1,7 @@
+if (SERVER) then return end
 /*
 	BLACK TEA ICON LIBRARY FOR NUTSCRIPT 1.1
-	VERSION: 0.95 - EXPERIMENTAL
+	VERSION: 0.8 - EXPERIMENTAL
 
 	- FREE TO USE FOR ALL PROJECTS
 */
@@ -17,7 +18,7 @@ ikon.maxSize = 8 -- 8x8 (512^2) is max icon size. eitherwise, fuck off.
 	Initialize hooks and RT Screens.
 	returns nothing
 */
-local schemaName = schemaName or SCHEMA.folder
+local schemaName = schemaName or (SCHEMA and SCHEMA.folder)
 
 local List = {}
 function ikon:init()
@@ -56,7 +57,7 @@ if (schemaName) then
 	ikon:init()
 end
 
-hook.Run("InitializedSchema", "updatePath", function()
+hook.Add("InitializedSchema", "updatePath", function()
 	schemaName = SCHEMA.folder
 	ikon:init()
 end)
