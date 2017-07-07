@@ -1,41 +1,100 @@
 /*
 	BLACK TEA ICON LIBRARY FOR NUTSCRIPT 1.1
-	VERSION: 0.4 - EXPERIMENTAL
+	VERSION: 0.95 - EXPERIMENTAL
 
 	- FREE TO USE FOR ALL PROJECTS
 */
 
-
 /*
 	Default Tables.
 */
+
 ikon = ikon or {}
 ikon.dev = false
 ikon.maxSize = 8 -- 8x8 (512^2) is max icon size. eitherwise, fuck off.
 
+/*
+	Initialize hooks and RT Screens.
+	returns nothing
+*/
+local schemaName = schemaName or SCHEMA.folder
+
+local List = {}
+function ikon:init()
+	if (self.dev) then
+		hook.Add("HUDPaint", "ikon_dev2", ikon.showResult)
+	else
+		hook.Remove("HUDPaint", "ikon_dev2")
+	end	
+
+	/*
+		Being good at gmod is knowing all of stinky hacks
+										- Black Tea (2017)
+	*/
+	OLD_HALOADD = OLD_HALOADD or halo.Add
+	function halo.Add(...)
+		-- shut the fuck up
+		if (ikon.rendering != true) then
+			OLD_HALOADD(...)
+		end
+	end
+
+	OLD_HALORENDER = OLD_HALORENDER or halo.Render
+	function halo.Render(...)
+		-- shut the fuck up
+		print(ikon.rendering, RealTime())
+		if (ikon.rendering != true) then
+			OLD_HALORENDER(...)
+		end
+	end
+
+	file.CreateDir("nsIcon")
+	file.CreateDir("nsIcon/" .. schemaName)
+end
+
+if (schemaName) then
+	ikon:init()
+end
+
+hook.Run("InitializedSchema", "updatePath", function()
+	schemaName = SCHEMA.folder
+	ikon:init()
+end)
 
 local TEXTURE_FLAGS_CLAMP_S = 0x0004
 local TEXTURE_FLAGS_CLAMP_T = 0x0008
+ikon.max = ikon.maxSize * 64
 ikon.RT = GetRenderTargetEx("nsIconRendered",
-												ikon.maxSize * 64,
-												ikon.maxSize * 64, 
+												ikon.max,
+												ikon.max, 
 												RT_SIZE_NO_CHANGE,
 												MATERIAL_RT_DEPTH_SHARED,
 												bit.bor(TEXTURE_FLAGS_CLAMP_S, TEXTURE_FLAGS_CLAMP_T),
 												CREATERENDERTARGETFLAGS_UNFILTERABLE_OK,
  												IMAGE_FORMAT_RGBA8888)
 
+local tex_effect = GetRenderTarget( "rt_itemshop_outline",
+												ikon.max,
+												ikon.max)
+
+local mat_outline = CreateMaterial("itemshop_outline","UnlitGeneric",{
+	["$basetexture"] = tex_effect:GetName(),
+	["$translucent"] = 1
+})
 /*
 	Developer hook.
 	returns nothing.
 */
 
-function ikon:renderHook(demo)
-	local w, h = ikon.curWidth * 64, ikon.curHeight * 64
-	
-	surface.SetDrawColor(255, 255, 255, 255)
-	surface.DrawOutlinedRect(-1, -1, 0, 0) -- yeah fuck you
+local sovietUnion = {
+	BOX_TOP = Color( 255, 255, 255 ),
+	BOX_FRONT = Color( 255, 255, 255 ),
+}
+function ikon:renderHook()
+	-- ???
+	if ( halo.RenderedEntity() == ikon.renderEntity ) then return end
 
+	local w, h = ikon.curWidth * 64, ikon.curHeight * 64
 	local x, y = 0, 0
 	
 	local tab
@@ -45,28 +104,92 @@ function ikon:renderHook(demo)
 			origin = ikon.info.pos,
 			angles = ikon.info.ang,
 			fov = ikon.info.fov,
+			outline = ikon.info.outline,
+			outCol = ikon.info.outlineColor
 		}
-		if (!demo) then
-			ikon.info = nil
-		end
 	else
 		tab = PositionSpawnIcon(ikon.renderEntity, ikon.renderEntity:GetPos(), true)
 	end
 
-	cam.Start3D(tab.origin, tab.angles, tab.fov, 0, 0, w, h) -- ikon.FOV
+	-- Taking MDave's Tip
 		xpcall(function()
-			-- maybe can add some stencil buffer for neat effects.
-			render.SuppressEngineLighting( true )
-			render.SetLightingOrigin( ikon.renderEntity:GetPos() )
-			render.ResetModelLighting( 1, 1, 1 )
-			render.SetColorModulation( 1, 1, 1 ) -- ikon.colorOverride
-			render.SetBlend(0.999)
+				render.SetWriteDepthToDestAlpha( false )
+				render.SuppressEngineLighting( true )
+				render.Clear( 0, 0, 0, 0, true, true )
 
-			ikon.renderEntity:DrawModel()
+				render.SetLightingOrigin( Vector( 0, 0, 0 ) )
+				render.ResetModelLighting( 200/255, 200/255, 200/255 )
+				render.SetColorModulation( 1, 1, 1 )
 
-			render.SuppressEngineLighting( false )
+				for i = 0, 6 do
+					local col = sovietUnion[i]
+					if ( col ) then
+						render.SetModelLighting( i, col.r / 255, col.g / 255, col.b / 255 )
+					end
+				end
+
+				-- wink wink
+				-- sorry :)
+
+				if (tab.outline) then
+					render.SetStencilEnable(true)
+					render.ClearStencil()
+					render.SetStencilWriteMask(137) -- yeah random number to avoid confliction
+					render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
+					render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
+					render.SetStencilFailOperation(STENCILOPERATION_REPLACE)
+				end
+				
+				if (ikon.info and ikon.info.drawHook) then
+					ikon.info.drawHook(ikon.renderEntity)
+				end
+
+				cam.Start3D(tab.origin, tab.angles, tab.fov, 0, 0, w, h) -- ikon.FOV
+					render.SetBlend(1)
+					ikon.renderEntity:DrawModel()	
+				cam.End3D()
+
+				if (tab.outline) then
+					render.PushRenderTarget( tex_effect )
+					render.Clear(0,0,0,0)
+					render.ClearDepth()
+					cam.Start2D()
+						cam.Start3D(tab.origin, tab.angles, tab.fov, 0, 0, w, h) -- ikon.FOV
+								render.SetBlend(0)
+								ikon.renderEntity:DrawModel()	
+
+								render.SetStencilWriteMask(138) -- fuck off
+								render.SetStencilTestMask(1)
+								render.SetStencilReferenceValue(1)
+								render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
+								render.SetStencilPassOperation(STENCILOPERATION_KEEP)
+								render.SetStencilFailOperation(STENCILOPERATION_KEEP)
+								cam.Start2D()
+									surface.SetDrawColor( tab.outCol or color_white )
+									surface.DrawRect( 0,0,ScrW(),ScrH() )
+								cam.End2D()
+						cam.End3D()
+					cam.End2D()
+					render.PopRenderTarget()
+					
+					render.SetBlend(1)
+					render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_NOTEQUAL)
+					
+					-- lele
+					cam.Start2D()
+						surface.SetMaterial( mat_outline )
+						surface.DrawTexturedRectUV( -2,0, w, h, 0, 0, w/ikon.max, h/ikon.max)
+						surface.DrawTexturedRectUV( 2,0, w, h, 0, 0, w/ikon.max, h/ikon.max)
+						surface.DrawTexturedRectUV( 0,2, w, h, 0, 0, w/ikon.max, h/ikon.max)
+						surface.DrawTexturedRectUV( 0,-2, w, h, 0, 0, w/ikon.max, h/ikon.max)
+					cam.End2D()
+
+					render.SetStencilEnable(false)
+				end
+				
+				render.SuppressEngineLighting( false )
+				render.SetWriteDepthToDestAlpha( true )
 		end, function(rrer) print(rrer) end)
-	cam.End3D()
 end
 
 local testName = "renderedMeme"
@@ -78,61 +201,21 @@ function ikon:showResult()
 	surface.SetDrawColor(255, 255, 255, 255)
 	surface.DrawOutlinedRect(x, 0, w, h)
 
-	local ikon = ikon:getIcon(testName)
-	if (ikon) then
-		surface.SetMaterial(ikon)
-		surface.DrawTexturedRect(x, 0, 128, 64)
-	end
-end
-
-/*
-	Initialize hooks and RT Screens.
-	returns nothing
-*/
-function ikon:init()
-	if (self.dev) then
-		hook.Add("HUDPaint", "ikon_dev", ikon.renderHook)
-		hook.Add("HUDPaint", "ikon_dev2", ikon.showResult)
-	
-		ikon:renderIcon(testName,
-		2,
-		1,
-		"models/weapons/w_357.mdl",
-		{
-			ang	= Angle(-10.678423881531, 226.70967102051, 0),
-			fov	= 5.1215815407636,
-			pos	= Vector(163.49705505371, 166.93612670898, -42.777050018311)
-		},
-		true)
-	else
-		hook.Remove("HUDPaint", "ikon_dev")
-		hook.Remove("HUDPaint", "ikon_dev2")
-	end	
-
-	file.CreateDir("nsIcon")
+	surface.SetMaterial(mat_outline)
+	surface.DrawTexturedRect(x, 0, w, h)
 end
 
 /*
 	Renders the Icon with given arguments.
 	returns nothing
 */
-/*
-ikon.example = CreateMaterial("yourmomfaggot23", "UnlitGeneric", {
-																	["$ignorez"] = 1,
-																	["$vertexcolor"] = 1,
-																	["$vertexalpha"] = 1,
-																	["$nolod"] = 1,
-																	["$alphatest"] = 1,
-																	["$basetexture"] = ikon.RT:GetName()
-																})*/
 ikon.requestList = ikon.requestList or {}
 
-
-
-
+IKON_BUSY = 1
 IKON_PROCESSING = 0
 IKON_DUMBFUCK = -1
 function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
+	if (#ikon.requestList > 0) then return IKON_BUSY end
 	if (ikon.requestList[name]) then return IKON_PROCESSING end
 	if (!w or !h or !mdl) then return IKON_DUMBFUCK end
 	local akasic
@@ -156,18 +239,11 @@ function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
 	ikon.renderEntity:SetModel(ikon.renderModel)
 	local oldRT = render.GetRenderTarget()
 	render.PushRenderTarget(ikon.RT)
-	cam.Start2D()			
-		-- make america more safer - Donald Trump
-		xpcall(function()
-			render.ClearDepth()
-			render.Clear(255, 255, 255, 0)
-		
-			render.SetViewPort(0, 0, w, h)
-				ikon:renderHook()
-			render.SetViewPort(0, 0, sw, sh)
-		end, function(rrer) print(rrer) end)				
-	cam.End2D()
 	
+	ikon.rendering = true
+		ikon:renderHook()
+	ikon.rendering = nil
+
 	akasic = render.Capture({
 		['format'] = 'png',
 		['alpha'] = true,
@@ -176,8 +252,8 @@ function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
 		['w'] = w,
 		['h'] = h
 	})
-	file.Write("nsIcon/" .. name .. ".png", akasic)
-
+	file.Write("nsIcon/" .. schemaName .. "/" .. name .. ".png", akasic)
+	ikon.info = nil
 	render.PopRenderTarget()
 
 	-- lol blame your shit mate
@@ -187,6 +263,7 @@ function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
 		-- if you know better solution, give me to it.
 		local noshit = tostring(os.time())
 		file.Write(noshit .. ".png", akasic)
+
 		timer.Simple(0, function()
 		local wtf = Material("../data/".. noshit ..".png")
 
@@ -196,6 +273,7 @@ function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
 		-- make small ass texture and put that thing in here?
 	end
 	ikon.requestList[name] = nil
+	return true
 end
 
 /*
@@ -208,12 +286,17 @@ function ikon:getIcon(name)
 		return ikon.cache[name] -- yeah return cache
 	end
 
-	if (file.Exists("nsIcon/" .. name .. ".png", "DATA")) then
-		ikon.cache[name] = Material("../data/nsIcon/".. name ..".png")
+	if (file.Exists("nsIcon/" .. schemaName .. "/" .. name .. ".png", "DATA")) then
+		ikon.cache[name] = Material("../data/nsIcon/" .. schemaName .. "/".. name ..".png")
 		return ikon.cache[name] -- yeah return cache		
 	else
 		return false -- retryd
 	end
 end
 
-ikon:init()
+-- use this command for memergency case.
+-- like ruining everyone's dream.
+concommand.Add("nut_flushicon", function()
+	ikon.cache = {}
+	file.Delete("nsIcon/" .. schemaName)
+end)

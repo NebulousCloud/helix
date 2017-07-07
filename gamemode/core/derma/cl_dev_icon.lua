@@ -1,3 +1,4 @@
+
 ICON_INFO = ICON_INFO or {}
 ICON_INFO.camPos = ICON_INFO.camPos or Vector()
 ICON_INFO.camAng = ICON_INFO.camAng or Angle()
@@ -6,6 +7,8 @@ ICON_INFO.w = ICON_INFO.w or 1
 ICON_INFO.h = ICON_INFO.h or 1
 ICON_INFO.modelAng = ICON_INFO.modelAng or Angle()
 ICON_INFO.modelName = ICON_INFO.modelName or "models/Items/grenadeAmmo.mdl"
+ICON_INFO.outline = ICON_INFO.outline or false
+ICON_INFO.outlineColor = ICON_INFO.outlineColor or Color(255, 255, 255)
 
 local vTxt = "xyz"
 local aTxt = "pyr"
@@ -127,6 +130,8 @@ local function renderAction(self)
 				pos = ICON_INFO.camPos,
 				ang = ICON_INFO.camAng,
 				fov = ICON_INFO.FOV,
+				outline = ICON_INFO.outline,
+				outlineColor = ICON_INFO.outlineColor
 			},
 			true
 		)
@@ -137,7 +142,14 @@ local function renderAction(self)
 		print("ITEM.iconCam = {")
 		print("\tpos = Vector("..tab.cam_pos.x..", "..tab.cam_pos.y..", "..tab.cam_pos.z.."),")
 		print("\tang = Angle("..tab.cam_ang.p..", "..tab.cam_ang.y..", "..tab.cam_ang.r.."),")
-		print("\tfov = "..tab.cam_fov)
+		print("\tfov = "..tab.cam_fov .. ",")
+		if (ICON_INFO.outline) then
+			print("\toutline = true,")
+			print("\toutlineColor = Color("..
+			ICON_INFO.outlineColor.r .. ", " ..
+			ICON_INFO.outlineColor.g .. ", " ..
+			ICON_INFO.outlineColor.b .. ")")
+		end
 		print("}")
 	end
 end
@@ -295,6 +307,31 @@ function PANEL:Init()
 				ICON_INFO.camAng[i] = value
 			end
 		end
+	end
+
+	local aaoa = self.list:Add("DPanel")
+	aaoa:Dock(TOP)	 
+	aaoa:DockMargin(10, 0, 0, 5)
+	aaoa:SetHeight(250)
+
+	self.color = aaoa:Add("DCheckBoxLabel")
+	self.color:SetText("Draw Outline?") 		
+	self.color:SetValue(ICON_INFO.outline)		 
+	self.color:DockMargin(10, 5, 0, 5)
+	self.color:Dock(TOP)	 
+	function self.color:OnChange(bool)
+		ICON_INFO.outline = bool
+	end
+
+	self.colormixer = aaoa:Add( "DColorMixer" )
+	self.colormixer:Dock( FILL )			--Make self.colormixer fill place of Frame
+	self.colormixer:SetPalette( true ) 		--Show/hide the palette			DEF:true
+	self.colormixer:SetAlphaBar( false ) 		--Show/hide the alpha bar		DEF:true
+	self.colormixer:SetWangs( true )			--Show/hide the R G B A indicators 	DEF:true
+	self.colormixer:SetColor( ICON_INFO.outlineColor  )	--Set the default color
+	self.colormixer:DockMargin(10, 5, 0, 5)
+	function self.colormixer:ValueChanged(value)
+		 ICON_INFO.outlineColor = value
 	end
 
 	self:SetupEditor()
