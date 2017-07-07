@@ -25,7 +25,7 @@ local iconSize = 64
 function PANEL:Init()
 	self:SetPos(50, 50)
 	self:ShowCloseButton(false)
-	self:SetTitle("PREVIEW")
+	self:SetTitle("RENDER PREVIEW")
 
 	self.model = self:Add("DModelPanel")
 	self.model:SetPos(5, 22)
@@ -35,7 +35,7 @@ function PANEL:Init()
 	end
 	function self.model:LayoutEntity()
 	end
-
+	
 	self:AdjustSize(ICON_INFO.w, ICON_INFO.h)
 end
 
@@ -69,6 +69,17 @@ function PANEL:Init()
 		surface.SetDrawColor(255, 255, 255)
 		surface.DrawOutlinedRect(0, 0, w, h)
 	end
+	
+	self.model.Icon:SetVisible(false)
+	self.model.Paint = function(self, x, y)
+		local exIcon = ikon:getIcon("iconEditor")
+		if (exIcon) then
+			surface.SetMaterial(exIcon)
+			surface.SetDrawColor(color_white)
+			surface.DrawTexturedRect(0, 0, x, y)
+		end
+	end
+			
 
 	self:AdjustSize(ICON_INFO.w, ICON_INFO.h)
 end
@@ -106,7 +117,19 @@ local function renderAction(self)
 		tab.cam_fov = iconModel:GetFOV()
 
 		icon:SetModel(ent:GetModel())
-		icon:RebuildSpawnIconEx( tab )
+		
+		ikon:renderIcon(
+			"iconEditor",
+			ICON_INFO.w,
+			ICON_INFO.h,
+			ICON_INFO.modelName,
+			{
+				pos = ICON_INFO.camPos,
+				ang = ICON_INFO.camAng,
+				fov = ICON_INFO.FOV,
+			},
+			true
+		)
 
 		print("ITEM.model = \""..ICON_INFO.modelName:gsub("\\", "/"):lower().."\"")
 		print("ITEM.width = "..ICON_INFO.w)

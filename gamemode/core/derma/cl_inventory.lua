@@ -41,11 +41,16 @@ function PANEL:PaintOver(w, h)
 	end
 end
 
+function PANEL:ExtraPaint(w, h)
+end
+
 function PANEL:Paint(w, h)
 	local parent = self:GetParent()
 
 	surface.SetDrawColor(0, 0, 0, 85)
 	surface.DrawRect(2, 2, w - 4, h - 4)
+
+	self:ExtraPaint(w, h)
 end
 
 function PANEL:wait(time)
@@ -283,8 +288,29 @@ PANEL = {}
 			if (self.panels[itemTable:getID()]) then
 				self.panels[itemTable:getID()]:Remove()
 			end
-
-			renderNewIcon(panel, itemTable)
+			
+			if (itemTable.exRender) then
+				panel.Icon:SetVisible(false)
+				panel.ExtraPaint = function(self, x, y)
+					local exIcon = ikon:getIcon(itemTable.uniqueID)
+					if (exIcon) then
+						surface.SetMaterial(exIcon)
+						surface.SetDrawColor(color_white)
+						surface.DrawTexturedRect(0, 0, x, y)
+					else
+						ikon:renderIcon(
+							itemTable.uniqueID,
+							itemTable.width,
+							itemTable.height,
+							itemTable.model,
+							itemTable.iconCam
+						)
+					end
+				end
+			else
+				-- yeah..
+				renderNewIcon(panel, itemTable)
+			end
 
 			panel.move = function(this, data, inventory, noSend)
 				local oldX, oldY = this.gridX, this.gridY

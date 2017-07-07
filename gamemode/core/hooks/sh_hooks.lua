@@ -425,4 +425,4 @@ function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 	end
 end
 
- function GM:ShowHelp() end
+function GM:ShowHelp() end
