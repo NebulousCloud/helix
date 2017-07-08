@@ -43,7 +43,6 @@ function ikon:init()
 	OLD_HALORENDER = OLD_HALORENDER or halo.Render
 	function halo.Render(...)
 		-- shut the fuck up
-		print(ikon.rendering, RealTime())
 		if (ikon.rendering != true) then
 			OLD_HALORENDER(...)
 		end
