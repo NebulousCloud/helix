@@ -1,4 +1,3 @@
-if (SERVER) then return end
 /*
 	BLACK TEA ICON LIBRARY FOR NUTSCRIPT 1.1
 	VERSION: 0.8 - EXPERIMENTAL
@@ -73,11 +72,11 @@ ikon.RT = GetRenderTargetEx("nsIconRendered",
 												CREATERENDERTARGETFLAGS_UNFILTERABLE_OK,
  												IMAGE_FORMAT_RGBA8888)
 
-local tex_effect = GetRenderTarget( "rt_itemshop_outline",
+local tex_effect = GetRenderTarget( "nsIconRenderedOutline",
 												ikon.max,
 												ikon.max)
 
-local mat_outline = CreateMaterial("itemshop_outline","UnlitGeneric",{
+local mat_outline = CreateMaterial("nsIconRenderedTemp","UnlitGeneric",{
 	["$basetexture"] = tex_effect:GetName(),
 	["$translucent"] = 1
 })
