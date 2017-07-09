@@ -56,7 +56,11 @@ if (SERVER) then
   		if (hook.Run("CanSaveStorage", v, v:getInv()) != false) then
   			if (v:getInv()) then
   				data[#data + 1] = {v:GetPos(), v:GetAngles(), v:getNetVar("id"), v:GetModel(), v.password}
-				end
+			end
+		else
+			local index = v:getNetVar("id")
+			nut.db.query("DELETE FROM nut_items WHERE _invID = "..index)
+			nut.db.query("DELETE FROM nut_inventories WHERE _invID = "..index)
   		end
   	end
 
