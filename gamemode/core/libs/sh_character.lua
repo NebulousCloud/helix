@@ -107,12 +107,16 @@ if (SERVER) then
 					local character = nut.char.new(data, id, client)
 						hook.Run("CharacterRestored", character)
 						character.vars.inv = {
-							[1] = 1, -- reserved
+							[1] = -1,
 						}
 
 						nut.db.query("SELECT _invID, _invType FROM nut_inventories WHERE _charID = "..id, function(data)
 							if (data and #data > 0) then
 								for k, v in pairs(data) do
+									if (v._invType and isstring(v._invType) and v._invType == "NULL") then
+										v._invType = nil
+									end
+
 									local w, h = nut.config.get("invW"), nut.config.get("invH")
 
 									local invType 
@@ -143,7 +147,9 @@ if (SERVER) then
 									local inventory = nut.item.createInv(w, h, invID)
 									inventory:setOwner(id)
 
-									character.vars.inv[1] = inventory
+									character.vars.inv = {
+										inventory
+									}
 								end, "inventories")
 							end
 						end)
