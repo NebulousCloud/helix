@@ -273,12 +273,7 @@ function META:getItems(onlyMain)
 	for k, v in pairs(self.slots) do
 		for k2, v2 in pairs(v) do
 			if (type(v2) == "boolean") then
-				ErrorNoHalt("FUCKING WHAT?")
-				ErrorNoHalt("CAN'T TAKE IT ANYMORE")
-				ErrorNoHalt("=-=-=-=-=- FULL DEBUG MODE -=-=-=-=-=-=")
-				PrintTable(self.slots)
-				ErrorNoHalt("=-=-=-=-=- FUCKING WHAT? -=-=-=-=-=-=")
-				PrintTable(v)
+				print("you should not get this problem, if you see this message report to me.")
 			end
 
 			if (v2 and !items[v2.id]) then
