@@ -45,16 +45,6 @@ if (CLIENT) then
 		--STOP BREAKING STUFFS!
 	end)
 
-	-- Reject unauthorized PAC3 submits
-	net.Receive("pac_submit", function(_, ply)
-		if (!ply:IsSuperAdmin()) then
-			ply:notifyLocalized("illegalAccess")
-		return end
-
-		local data = pac.NetDeserializeTable()
-		pace.HandleReceivedData(ply, data)
-	end)
-
 	-- You should be admin to access PAC3 editor.
 	function PLUGIN:PrePACEditorOpen()
 		local client = LocalPlayer()
@@ -65,6 +55,17 @@ if (CLIENT) then
 
 		return true
 	end
+else
+	-- Reject unauthorized PAC3 submits
+	net.Receive("pac_submit", function(_, ply)
+		if (!ply) then return end -- ???
+		if (!ply:IsSuperAdmin()) then
+			ply:notifyLocalized("illegalAccess")
+		return end
+
+		local data = pac.NetDeserializeTable()
+		pace.HandleReceivedData(ply, data)
+	end)
 end
 
 -- Get Player's PAC3 Parts.
