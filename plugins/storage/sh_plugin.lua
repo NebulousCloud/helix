@@ -22,9 +22,11 @@ nut.config.add("saveStorage", true, "Whether or not storages will save after a s
 
 if (SERVER) then
 	function PLUGIN:PlayerSpawnedProp(client, model, entity)
-		local data = self.definitions[model:lower()]
+		local data = STORAGE_DEFINITIONS[model:lower()]
 
 		if (data) then
+			if (hook.Run("CanPlayerSpawnStorage", client, model, entity) == false) then return end
+			
 			local storage = ents.Create("nut_storage")
 			storage:SetPos(entity:GetPos())
 			storage:SetAngles(entity:GetAngles())
