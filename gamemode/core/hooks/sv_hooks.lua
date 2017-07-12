@@ -176,6 +176,12 @@ function GM:EntityTakeDamage(entity, dmgInfo)
 	end
 end
 
+function GM:PrePlayerLoadedChar(client, character, lastChar)
+	-- Remove all skins
+	client:SetBodyGroups("000000000")
+	client:SetSkin(0)
+end
+
 function GM:PlayerLoadedChar(client, character, lastChar)
 	if (lastChar) then
 		local charEnts = lastChar:getVar("charEnts") or {}
@@ -217,6 +223,7 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 			client:notifyLocalized("salary", nut.currency.get(pay))
 		end)
 	end
+
 
 	hook.Run("PlayerLoadout", client)
 end

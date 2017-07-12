@@ -89,7 +89,7 @@ function ITEM:setData(key, value, receivers, noSave, noCheckEntity)
 	if (SERVER) then
 		if (!noCheckEntity) then
 			local ent = self:getEntity()
-			
+
 			if (IsValid(ent)) then
 				local data = ent:getNetVar("data", {})
 				data[key] = value
@@ -141,13 +141,6 @@ function ITEM:getData(key, default)
 	end
 
 	return
-	/*
-	local itemTable = nut.item.list[self.uniqueID]
-
-	if (itemTable and itemTable.data) then
-		return itemTable.data[key]
-	end
-	*/
 end
 
 

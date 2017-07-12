@@ -553,6 +553,7 @@ do
 					currentChar:save()
 				end
 
+				hook.Run("PrePlayerLoadedChar", client, character, currentChar)
 				character:setup()
 				client:Spawn()
 
