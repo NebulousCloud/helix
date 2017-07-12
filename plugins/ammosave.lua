@@ -69,13 +69,13 @@ function PLUGIN:PlayerLoadedChar(client)
 		if (!character) then
 			return
 		end
-		
+
 		local ammoTable = character:getData("ammo")
 
 		-- Check if the ammotable is exists.
 		if (ammoTable) then
 			for k, v in pairs(ammoTable) do
-				client:SetAmmo(v, k)
+				client:SetAmmo(v, tostring(k))
 			end
 		end
 	end)
