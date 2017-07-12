@@ -89,6 +89,7 @@ function ITEM:setData(key, value, receivers, noSave, noCheckEntity)
 	if (SERVER) then
 		if (!noCheckEntity) then
 			local ent = self:getEntity()
+			
 			if (IsValid(ent)) then
 				local data = ent:getNetVar("data", {})
 				data[key] = value

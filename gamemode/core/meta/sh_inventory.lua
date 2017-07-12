@@ -458,10 +458,6 @@ if (SERVER) then
 					targetInv.slots[x][y] = true
 
 					nut.item.instance(targetInv:getID(), uniqueID, data, x, y, function(item)
-						if (data) then
-							item.data = table.Merge(item.data, data)
-						end
-
 						item.gridX = x
 						item.gridY = y
 

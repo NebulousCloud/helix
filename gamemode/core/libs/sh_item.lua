@@ -36,10 +36,6 @@ function zeroInv:add(uniqueID, quantity, data)
 			end
 
 			nut.item.instance(0, uniqueID, data, x, y, function(item)
-				if (data) then
-					item.data = table.Merge(item.data, data)
-				end
-
 				self[item:getID()] = item
 			end)
 
@@ -62,7 +58,11 @@ function nut.item.instance(index, uniqueID, data, x, y, callback)
 			local item = nut.item.new(uniqueID, itemID)
 
 			if (item) then
-				item.data = (data or {})
+				item.data = {}
+				if (data) then
+					item.data = data
+				end
+				
 				item.invID = index
 
 				if (callback) then
@@ -322,7 +322,11 @@ do
 							local item2 = nut.item.new(item._uniqueID, itemID)
 
 							if (item2) then
-								item2.data = table.Merge(item2.data, data or {})
+								item2.data = {}
+								if (data) then
+									item2.data = data
+								end
+
 								item2.gridX = x
 								item2.gridY = y
 								item2.invID = invID
@@ -359,7 +363,12 @@ do
 		netstream.Hook("item", function(uniqueID, id, data, invID)
 			local stockItem = nut.item.list[uniqueID]
 			local item = nut.item.new(uniqueID, id)
-			item.data = table.Merge(item.data, data or {})
+
+			item.data = {}
+			if (data) then
+				item.data = data
+			end
+
 			item.invID = invID or 0
 		end)
 
@@ -386,8 +395,13 @@ do
 					inventory.slots[x] = inventory.slots[x] or {}
 
 					local item = nut.item.new(v[3], v[4])
-						item.data = table.Merge(item.data, v[5] or {})
-						item.invID = item.invID or id
+
+					item.data = {}
+					if (v[5]) then
+						item.data = v[5]
+					end
+
+					item.invID = item.invID or id
 					inventory.slots[x][y] = item
 				end
 
@@ -416,7 +430,7 @@ do
 
 				if (panel and panel.panels) then
 					local icon = panel.panels[id]
-					-- what the fuck???
+
 					if (icon) then
 						icon:SetToolTip(
 							Format(nut.config.itemFormat,
@@ -440,7 +454,12 @@ do
 				if (inventory) then
 					local item = uniqueID and id and nut.item.new(uniqueID, id) or nil
 					item.invID = invID
-					item.data = data
+
+					item.data = {}
+					-- Let's just be sure about it kk?
+					if (data) then
+						item.data = data
+					end
 
 					inventory.slots[x] = inventory.slots[x] or {}
 					inventory.slots[x][y] = item

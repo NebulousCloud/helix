@@ -76,8 +76,6 @@ if (SERVER) then
 					if (!status) then
 						return client:notifyLocalized("noFit")
 					end
-
-					--netstream.Hook("updtShp", uniqueID)
 				end
 					
 				hook.Run("OnTakeShipmentItem", client, uniqueID, amount)
