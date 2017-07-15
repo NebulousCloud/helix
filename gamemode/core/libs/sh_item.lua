@@ -624,7 +624,7 @@ do
 			end
 		end)
 
-		netstream.Hook("invAct", function(client, action, item, invID)
+		netstream.Hook("invAct", function(client, action, item, invID, data)
 			local character = client:getChar()
 
 			if (!character) then
@@ -639,7 +639,7 @@ do
 				end
 			end
 
-			if (hook.Run("CanPlayerInteractItem", client, action, item) == false) then
+			if (hook.Run("CanPlayerInteractItem", client, action, item, data) == false) then
 				return
 			end
 
@@ -679,7 +679,7 @@ do
 			local callback = item.functions[action]
 
 			if (callback) then
-				if (callback.onCanRun and callback.onCanRun(item) == false) then
+				if (callback.onCanRun and callback.onCanRun(item, data) == false) then
 					item.entity = nil
 					item.player = nil
 
@@ -690,19 +690,19 @@ do
 				local result
 				
 				if (item.hooks[action]) then
-					result = item.hooks[action](item)
+					result = item.hooks[action](item, data)
 				end
 				
 				if (result == nil) then
-					result = callback.onRun(item)
+					result = callback.onRun(item, data)
 				end
 
 				if (item.postHooks[action]) then
 					-- Posthooks shouldn't override the result from onRun
-					item.postHooks[action](item, result)
+					item.postHooks[action](item, result, data)
 				end
 
-				hook.Run("OnPlayerInteractItem", client, action, item, result)
+				hook.Run("OnPlayerInteractItem", client, action, item, result, data)
 
 				if (result != false) then
 					if (IsValid(entity)) then

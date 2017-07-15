@@ -439,7 +439,6 @@ PANEL = {}
 						local override = hook.Run("OnCreateItemInteractionMenu", panel, menu, itemTable)
 						
 						if (override == true) then if (menu.Remove) then menu:Remove() end return end
-
 							for k, v in SortedPairs(itemTable.functions) do
 								if (v.onCanRun) then
 									if (v.onCanRun(itemTable) == false) then
@@ -449,23 +448,69 @@ PANEL = {}
 									end
 								end
 
-								menu:AddOption(L(v.name or k), function()
-									itemTable.player = LocalPlayer()
-										local send = true
+								-- is Multi-Option Function
+								if (v.isMulti) then
+									local subMenu, subMenuOption = menu:AddSubMenu(L(v.name or k), function()
+										itemTable.player = LocalPlayer()
+											local send = true
 
-										if (v.onClick) then
-											send = v.onClick(itemTable)
-										end
+											if (v.onClick) then
+												send = v.onClick(itemTable)
+											end
 
-										if (v.sound) then
-											surface.PlaySound(v.sound)
-										end
+											if (v.sound) then
+												surface.PlaySound(v.sound)
+											end
 
-										if (send != false) then
-											netstream.Start("invAct", k, itemTable.id, self.invID)
+											if (send != false) then
+												netstream.Start("invAct", k, itemTable.id, self.invID)
+											end
+										itemTable.player = nil
+									end)
+									subMenuOption:SetImage(v.icon or "icon16/brick.png")
+
+									if (v.multiOptions) then
+										local options = isfunction(v.multiOptions) and v.multiOptions(itemTable, LocalPlayer()) or v.multiOptions
+
+										for _, sub in pairs(options) do
+											subMenu:AddOption(L(sub.name or "subOption"), function()
+												itemTable.player = LocalPlayer()
+													local send = true
+
+													if (v.onClick) then
+														send = v.onClick(itemTable)
+													end
+
+													if (v.sound) then
+														surface.PlaySound(v.sound)
+													end
+
+													if (send != false) then
+														netstream.Start("invAct", k, itemTable.id, self.invID, sub.data)
+													end
+												itemTable.player = nil
+											end)
 										end
-									itemTable.player = nil
-								end):SetImage(v.icon or "icon16/brick.png")
+									end
+								else
+									menu:AddOption(L(v.name or k), function()
+										itemTable.player = LocalPlayer()
+											local send = true
+
+											if (v.onClick) then
+												send = v.onClick(itemTable)
+											end
+
+											if (v.sound) then
+												surface.PlaySound(v.sound)
+											end
+
+											if (send != false) then
+												netstream.Start("invAct", k, itemTable.id, self.invID)
+											end
+										itemTable.player = nil
+									end):SetImage(v.icon or "icon16/brick.png")
+								end
 							end
 						menu:Open()
 					itemTable.player = nil
