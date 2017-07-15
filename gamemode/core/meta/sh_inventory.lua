@@ -298,11 +298,13 @@ function META:getBags()
 
 	for k, v in pairs(self.slots) do
 		for k2, v2 in pairs(v) do
-			local isBag = v2.data.id
+			if (v2.data) then
+				local isBag = v2.data.id
 
-			if (!table.HasValue(invs, isBag)) then
-				if (isBag and isBag != self:getID()) then
-					table.insert(invs, isBag)
+				if (!table.HasValue(invs, isBag)) then
+					if (isBag and isBag != self:getID()) then
+						table.insert(invs, isBag)
+					end
 				end
 			end
 		end
