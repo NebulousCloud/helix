@@ -101,8 +101,37 @@ vgui.Register("iconRenderPreview", PANEL, "DFrame")
 /*
 	EDITOR FUNCTION
 */
-local function action()
+local function action(self)
+		local p1 = self.prev
+		local p = self.prev2
+		local icon = p.model
+		local iconModel = p1.model
 
+		local ent = iconModel:GetEntity()
+		local tab = {}
+		tab.ent		= ent
+		tab.cam_pos = iconModel:GetCamPos()
+		tab.cam_ang = iconModel:GetLookAng()
+		tab.cam_fov = iconModel:GetFOV()
+		
+		local text =
+		"ITEM.model = \""..ICON_INFO.modelName:gsub("\\", "/"):lower().."\"" .. "\n"..
+		"ITEM.width = "..ICON_INFO.w .."\n"..
+		"ITEM.height = "..ICON_INFO.h .."\n"..
+		"ITEM.iconCam = {" .."\n"..
+		"\tpos = Vector("..tab.cam_pos.x..", "..tab.cam_pos.y..", "..tab.cam_pos.z..")" .."\n"..
+		"\tang = Angle("..tab.cam_ang.p..", "..tab.cam_ang.y..", "..tab.cam_ang.r..")" .."\n"..
+		"\tfov = "..tab.cam_fov .. "," .."\n"
+		if (ICON_INFO.outline) then
+			text = text .. "\toutline = true," .. "\n" ..
+			"\toutlineColor = Color("..
+			ICON_INFO.outlineColor.r .. ", " ..
+			ICON_INFO.outlineColor.g .. ", " ..
+			ICON_INFO.outlineColor.b .. ")" .. "\n"
+		end
+		text = text .. "}"
+
+		SetClipboardText(text)
 end
 
 local function renderAction(self)
@@ -136,21 +165,24 @@ local function renderAction(self)
 			true
 		)
 
-		print("ITEM.model = \""..ICON_INFO.modelName:gsub("\\", "/"):lower().."\"")
-		print("ITEM.width = "..ICON_INFO.w)
-		print("ITEM.height = "..ICON_INFO.h)
-		print("ITEM.iconCam = {")
-		print("\tpos = Vector("..tab.cam_pos.x..", "..tab.cam_pos.y..", "..tab.cam_pos.z.."),")
-		print("\tang = Angle("..tab.cam_ang.p..", "..tab.cam_ang.y..", "..tab.cam_ang.r.."),")
-		print("\tfov = "..tab.cam_fov .. ",")
+		local text =
+		"ITEM.model = \""..ICON_INFO.modelName:gsub("\\", "/"):lower().."\"" .. "\n"..
+		"ITEM.width = "..ICON_INFO.w .."\n"..
+		"ITEM.height = "..ICON_INFO.h .."\n"..
+		"ITEM.iconCam = {" .."\n"..
+		"\tpos = Vector("..tab.cam_pos.x..", "..tab.cam_pos.y..", "..tab.cam_pos.z..",)" .."\n"..
+		"\tang = Angle("..tab.cam_ang.p..", "..tab.cam_ang.y..", "..tab.cam_ang.r..",)" .."\n"..
+		"\tfov = "..tab.cam_fov .. "," .."\n"
 		if (ICON_INFO.outline) then
-			print("\toutline = true,")
-			print("\toutlineColor = Color("..
+			text = text .. "\toutline = true," .. "\n" ..
+			"\toutlineColor = Color("..
 			ICON_INFO.outlineColor.r .. ", " ..
 			ICON_INFO.outlineColor.g .. ", " ..
-			ICON_INFO.outlineColor.b .. ")")
+			ICON_INFO.outlineColor.b .. ")" .. "\n"
 		end
-		print("}")
+		text = text .. "}"
+
+		print(text)
 	end
 end
 
@@ -189,7 +221,9 @@ function PANEL:Init()
 	self.copy:SetText("COPY")
 	self.copy:SetTall(30)
 	self.copy:DockMargin(5, 5, 5, 0)
-	self.copy.DoClick = action
+	self.copy.DoClick = function()
+		action(self)
+	end
 
 	self:AddText("Presets")
 	for i = 1, 5 do
