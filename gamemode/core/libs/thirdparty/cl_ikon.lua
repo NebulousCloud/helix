@@ -1,8 +1,41 @@
 /*
 	BLACK TEA ICON LIBRARY FOR NUTSCRIPT 1.1
-	VERSION: 0.8 - EXPERIMENTAL
 
-	- FREE TO USE FOR ALL PROJECTS
+	The MIT License (MIT)
+
+	Copyright (c) 2017, Kyu Yeon Lee(Black Tea Za rebel1324)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy of
+	this software and associated documentation files (the "Software"), to deal in
+	the Software without restriction, including without limitation the rights to
+	use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+	the Software, and to permit persons to whom the Software is furnished to do so, subject
+	to the following conditions:
+
+	The above copyright notice and thispermission notice shall be included in all copies
+	or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+	INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+	PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+	FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+	ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+	DEALINGS IN THE SOFTWARE.
+	
+	TL;DR: https://tldrlegal.com/license/mit-license
+	OK - 
+			Commercial Use
+			Modify
+			Distribute
+			Sublicense
+			Private Use
+	
+	NOT OK -
+			Hold Liable
+	
+	MUST -
+			Include Copyright
+			Include License
 */
 
 /*
@@ -60,6 +93,10 @@ hook.Add("InitializedSchema", "updatePath", function()
 	ikon:init()
 end)
 
+/*
+	IKON Library Essential Material/Texture Declare
+*/
+
 local TEXTURE_FLAGS_CLAMP_S = 0x0004
 local TEXTURE_FLAGS_CLAMP_T = 0x0008
 ikon.max = ikon.maxSize * 64
@@ -80,17 +117,19 @@ local mat_outline = CreateMaterial("nsIconRenderedTemp","UnlitGeneric",{
 	["$basetexture"] = tex_effect:GetName(),
 	["$translucent"] = 1
 })
+
 /*
 	Developer hook.
 	returns nothing.
 */
 
-local sovietUnion = {
+-- Okay, sovietUnion wasn't pretty good name for the variation.
+local lightPositions = {
 	BOX_TOP = Color( 255, 255, 255 ),
 	BOX_FRONT = Color( 255, 255, 255 ),
 }
 function ikon:renderHook()
-	-- ???
+	-- Go Away, GMOD Halo.
 	if ( halo.RenderedEntity() == ikon.renderEntity ) then return end
 
 	local w, h = ikon.curWidth * 64, ikon.curHeight * 64
@@ -121,14 +160,11 @@ function ikon:renderHook()
 				render.SetColorModulation( 1, 1, 1 )
 
 				for i = 0, 6 do
-					local col = sovietUnion[i]
+					local col = lightPositions[i]
 					if ( col ) then
 						render.SetModelLighting( i, col.r / 255, col.g / 255, col.b / 255 )
 					end
 				end
-
-				-- wink wink
-				-- sorry :)
 
 				if (tab.outline) then
 					render.SetStencilEnable(true)
@@ -139,11 +175,14 @@ function ikon:renderHook()
 					render.SetStencilFailOperation(STENCILOPERATION_REPLACE)
 				end
 				
+				/*
+					Add more effects on the Models!
+				*/
 				if (ikon.info and ikon.info.drawHook) then
 					ikon.info.drawHook(ikon.renderEntity)
 				end
 
-				cam.Start3D(tab.origin, tab.angles, tab.fov, 0, 0, w, h) -- ikon.FOV
+				cam.Start3D(tab.origin, tab.angles, tab.fov, 0, 0, w, h) 
 					render.SetBlend(1)
 					ikon.renderEntity:DrawModel()	
 				cam.End3D()
@@ -153,11 +192,11 @@ function ikon:renderHook()
 					render.Clear(0,0,0,0)
 					render.ClearDepth()
 					cam.Start2D()
-						cam.Start3D(tab.origin, tab.angles, tab.fov, 0, 0, w, h) -- ikon.FOV
+						cam.Start3D(tab.origin, tab.angles, tab.fov, 0, 0, w, h)
 								render.SetBlend(0)
 								ikon.renderEntity:DrawModel()	
 
-								render.SetStencilWriteMask(138) -- fuck off
+								render.SetStencilWriteMask(138) -- could you please?
 								render.SetStencilTestMask(1)
 								render.SetStencilReferenceValue(1)
 								render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
@@ -174,7 +213,10 @@ function ikon:renderHook()
 					render.SetBlend(1)
 					render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_NOTEQUAL)
 					
-					-- lele
+					/*
+						Thanks for Noiwex
+						NxServ.eu
+					*/
 					cam.Start2D()
 						surface.SetMaterial( mat_outline )
 						surface.DrawTexturedRectUV( -2,0, w, h, 0, 0, w/ikon.max, h/ikon.max)
@@ -212,12 +254,13 @@ ikon.requestList = ikon.requestList or {}
 
 IKON_BUSY = 1
 IKON_PROCESSING = 0
-IKON_DUMBFUCK = -1
+IKON_SOMETHINGWRONG = -1
 function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
 	if (#ikon.requestList > 0) then return IKON_BUSY end
 	if (ikon.requestList[name]) then return IKON_PROCESSING end
-	if (!w or !h or !mdl) then return IKON_DUMBFUCK end
-	local akasic
+	if (!w or !h or !mdl) then return IKON_SOMETHINGWRONG end
+
+	local capturedIcon
 	ikon.curWidth = w or 1
 	ikon.curHeight = h or 1
 	ikon.renderModel = mdl
@@ -243,7 +286,7 @@ function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
 		ikon:renderHook()
 	ikon.rendering = nil
 
-	akasic = render.Capture({
+	capturedIcon = render.Capture({
 		['format'] = 'png',
 		['alpha'] = true,
 		['x'] = 0,
@@ -251,7 +294,7 @@ function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
 		['w'] = w,
 		['h'] = h
 	})
-	file.Write("nsIcon/" .. schemaName .. "/" .. name .. ".png", akasic)
+	file.Write("nsIcon/" .. schemaName .. "/" .. name .. ".png", capturedIcon)
 	ikon.info = nil
 	render.PopRenderTarget()
 
@@ -261,7 +304,7 @@ function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
 		-- you rendered wrong shit
 		-- if you know better solution, give me to it.
 		local noshit = tostring(os.time())
-		file.Write(noshit .. ".png", akasic)
+		file.Write(noshit .. ".png", capturedIcon)
 
 		timer.Simple(0, function()
 		local wtf = Material("../data/".. noshit ..".png")
