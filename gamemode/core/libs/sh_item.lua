@@ -46,7 +46,7 @@ function zeroInv:add(uniqueID, quantity, data)
 	end
 end
 
-function nut.item.instance(index, uniqueID, data, x, y, callback)
+function nut.item.instance(index, uniqueID, itemData, x, y, callback)
 	if (!uniqueID or nut.item.list[uniqueID]) then
 		nut.db.insertTable({
 			_invID = index,
@@ -60,7 +60,7 @@ function nut.item.instance(index, uniqueID, data, x, y, callback)
 			if (item) then
 				item.data = {}
 				if (data) then
-					item.data = data
+					item.data = itemData
 				end
 				
 				item.invID = index
