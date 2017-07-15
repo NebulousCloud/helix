@@ -493,6 +493,7 @@ function GM:PlayerDisconnected(client)
 			end
 		end
 
+		hook.Run("OnCharDisconnect", client, character)
 		character:save()
 	end
 end
