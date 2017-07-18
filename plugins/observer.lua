@@ -61,7 +61,7 @@ if (CLIENT) then
 	function PLUGIN:ShouldDrawEntityInfo(entity)
 		if (IsValid(entity)) then
 			if (entity:IsPlayer() or IsValid(entity:getNetVar("player"))) then
-				if (entity:IsAdmin() and entity:GetMoveType() == MOVETYPE_NOCLIP) then
+				if (entity.IsAdmin and entity:IsAdmin() and entity:GetMoveType() == MOVETYPE_NOCLIP) then
 					return false
 				end
 			end
