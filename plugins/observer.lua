@@ -82,6 +82,8 @@ else
 				client:DrawShadow(false)
 				-- Don't allow the player to get hurt.
 				client:GodEnable()
+				-- Don't allow npcs to target the player.
+				client:SetNoTarget(true)
 				hook.Run("OnPlayerObserve", client, state)
 			else
 				if (client.nutObsData) then
@@ -109,6 +111,8 @@ else
 				client:DrawShadow(true)
 				-- Let the player take damage again.
 				client:GodDisable()
+				-- Let npcs target the player again.
+				client:SetNoTarget(false)
 				hook.Run("OnPlayerObserve", client, state)
 			end
 		end
