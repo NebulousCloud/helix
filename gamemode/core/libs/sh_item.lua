@@ -51,7 +51,7 @@ function nut.item.instance(index, uniqueID, itemData, x, y, callback)
 		nut.db.insertTable({
 			_invID = index,
 			_uniqueID = uniqueID,
-			_data = data,
+			_data = itemData,
 			_x = x,
 			_y = y
 		}, function(data, itemID)
@@ -60,7 +60,7 @@ function nut.item.instance(index, uniqueID, itemData, x, y, callback)
 			if (item) then
 				item.data = {}
 				if (data) then
-					item.data = itemData
+					item.data = table.Merge(data, itemData)
 				end
 				
 				item.invID = index
@@ -308,6 +308,8 @@ do
 		local inventory = nut.item.createInv(w, h, invID)
 
 		nut.db.query("SELECT _itemID, _uniqueID, _data, _x, _y FROM nut_items WHERE _invID = "..invID, function(data)
+			local badItemsUniqueID = {}
+			
 			if (data) then
 				local slots = {}
 				local badItems = {}
@@ -338,9 +340,11 @@ do
 									end
 								end
 							else
+								badItemsUniqueID[#badItemsUniqueID + 1] = item._uniqueID
 								badItems[#badItems + 1] = itemID
 							end
 						else
+							badItemsUniqueID[#badItemsUniqueID + 1] = item._uniqueID
 							badItems[#badItems + 1] = itemID
 						end
 					end
@@ -354,7 +358,7 @@ do
 			end
 
 			if (callback) then
-				callback(inventory)
+				callback(inventory, badItemsUniqueID)
 			end
 		end)
 	end
