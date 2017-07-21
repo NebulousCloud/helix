@@ -91,6 +91,10 @@ function nut.class.canBe(client, class)
 	return info:onCanBe(client)
 end
 
+function nut.class.get(identifier)
+	return nut.class.list[identifier]
+end
+
 function nut.class.getPlayers(class)
 	local players = {}
 	for k, v in ipairs(player.GetAll()) do

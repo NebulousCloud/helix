@@ -116,6 +116,10 @@ function nut.item.newInv(owner, invType, callback)
 	end, "inventories")
 end
 
+function nut.item.get(identifier)
+	return nut.item.base[identifier] or nut.item.list[identifier]
+end
+
 function nut.item.load(path, baseID, isBaseItem)
 	local uniqueID = path:match("sh_([_%w]+)%.lua")
 
