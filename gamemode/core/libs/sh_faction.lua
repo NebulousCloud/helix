@@ -72,6 +72,10 @@ function nut.faction.loadFromDir(directory)
 	end
 end
 
+function nut.faction.get(identifier)
+	return nut.faction.indices[identifier] or nut.faction.teams[identifier]
+end
+
 function nut.faction.getIndex(uniqueID)
 	for k, v in ipairs(nut.faction.indices) do
 		if (v.uniqueID == uniqueID) then
