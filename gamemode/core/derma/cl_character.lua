@@ -76,12 +76,12 @@ local PANEL = {}
 				</body>
 			</html>
 		]])
-		self.icon:SetToolTip("https://steamcommunity.com/linkfilter/?url=" .. nut.config.get("logoURL", "http://nutscript.rocks"))
+		self.icon:SetToolTip(nut.config.get("logoURL", "http://nutscript.rocks"))
 	
 		self.icon.click = self.icon:Add("DButton")
 		self.icon.click:Dock(FILL)
 		self.icon.click.DoClick = function(this)
-			gui.OpenURL("https://steamcommunity.com/linkfilter/?url=" .. nut.config.get("logoURL", "http://nutscript.rocks"))
+			gui.OpenURL(nut.config.get("logoURL", "http://nutscript.rocks"))
 		end
 		self.icon.click:SetAlpha(0)
 		self.icon:SetAlpha(150)
