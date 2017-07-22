@@ -88,14 +88,18 @@ function nut.util.getMaterial(materialPath)
 	return nut.util.cachedMaterials[materialPath]
 end
 
--- Finds a player by matching their names.
-function nut.util.findPlayer(name, allowPatterns)
+-- Finds a player by matching their name or steam id.
+function nut.util.findPlayer(identifier, allowPatterns)
+	if (string.find(identifier, "STEAM_(%d+):(%d+):(%d+)")) then
+		return player.GetBySteamID(identifier)
+	end
+
 	if (!allowPatterns) then
-		name = string.PatternSafe(name)
+		identifier = string.PatternSafe(identifier)
 	end
 
 	for k, v in ipairs(player.GetAll()) do
-		if (nut.util.stringMatches(v:Name(), name)) then
+		if (nut.util.stringMatches(v:Name(), identifier)) then
 			return v
 		end
 	end
