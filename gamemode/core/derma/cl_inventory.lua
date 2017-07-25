@@ -194,30 +194,39 @@ PANEL = {}
 			for x = 0, item.gridW - 1 do
 				for y = 0, item.gridH - 1 do
 					local x2, y2 = dropX + x, dropY + y
+					
+					-- Is Drag and Drop icon is in the Frame?
+					if (self.slots[x2] and IsValid(self.slots[x2][y2])) then
+						local bool = self:isEmpty(x2, y2, item)
 
-					if (self:isValidSlot(x2, y2, item)) then
-						surface.SetDrawColor(0, 255, 0, 10)
-						
 						if (x == 0 and y == 0) then
 							item.dropPos = item.dropPos or {}
 							item.dropPos[self] = {x = (x2 - 1)*64 + 4, y = (y2 - 1)*64 + 27, x2 = x2, y2 = y2}
+							
+							if (bool) then
+								surface.SetDrawColor(0, 255, 0, 10)
+
+								item.dropPos[self].item = nil
+							else
+								surface.SetDrawColor(255, 255, 0, 10)
+								
+								item.dropPos[self].item = self.slots[x2][y2].item
+							end
 						end
+					
+						surface.DrawRect((x2 - 1)*64 + 4, (y2 - 1)*64 + 27, 64, 64)
 					else
-						surface.SetDrawColor(255, 0, 0, 10)
-						
 						if (item.dropPos) then
 							item.dropPos[self] = nil
 						end
 					end
-					
-					surface.DrawRect((x2 - 1)*64 + 4, (y2 - 1)*64 + 27, 64, 64)
 				end
 			end
 		end
 	end
 	
-	function PANEL:isValidSlot(x, y, this)
-		return self.slots[x] and IsValid(self.slots[x][y]) and (!IsValid(self.slots[x][y].item) or self.slots[x][y].item == this)
+	function PANEL:isEmpty(x, y, this)
+		return (!IsValid(self.slots[x][y].item) or self.slots[x][y].item == this)
 	end
 	
 	function PANEL:onTransfer(oldX, oldY, x, y, oldInventory, noSend)
@@ -284,6 +293,7 @@ PANEL = {}
 			panel.inv = inventory
 
 			local itemTable = inventory:getItemAt(panel.gridX, panel.gridY)
+			panel.itemTable = itemTable
 
 			if (self.panels[itemTable:getID()]) then
 				self.panels[itemTable:getID()]:Remove()
@@ -411,7 +421,7 @@ PANEL = {}
 			panel.OnMouseReleased = function(this, code)
 				if (code == MOUSE_LEFT and nut.item.held == this) then
 					local data = this.dropPos
-
+					
 					this:DragMouseRelease(code)
 					this:MouseCapture(false)
 					this:SetZPos(99)
@@ -420,13 +430,67 @@ PANEL = {}
 
 					if (data) then
 						local inventory = table.GetFirstKey(data)
-
+						
 						if (IsValid(inventory)) then
 							data = data[inventory]
-							local oldX, oldY = this.gridX, this.gridY
 
-							if (oldX != data.x2 or oldY != data.y2 or inventory != self) then									
-								this:move(data, inventory)
+							if (IsValid(data.item)) then
+								inventory = panel.inv
+
+								if (inventory) then
+									local targetItem = data.item.itemTable
+									
+									if (targetItem) then
+										-- to make sure...
+										if (targetItem.id == itemTable.id) then return end
+
+										if (itemTable.functions) then
+											local combine = itemTable.functions.combine
+
+											-- does the item has the combine feature?
+											if (combine) then
+												itemTable.player = LocalPlayer()
+
+												-- canRun == can item combine into?
+												if (combine.onCanRun and (combine.onCanRun(itemTable, targetItem.id) != false)) then
+													netstream.Start("invAct", "combine", itemTable.id, inventory:getID(), targetItem.id)
+												end
+
+												itemTable.player = nil
+											else
+												/*
+													-- Drag and drop bag transfer requires half-recode of Inventory GUI.
+													-- It will be there. But it will take some time.
+
+													-- okay, the bag doesn't have any combine function.
+													-- then, what's next? yes. moving the item in the bag.
+
+													if (targetItem.isBag) then
+														-- get the inventory.
+														local bagInv = targetItem.getInv and targetItem:getInv()
+														-- Is the bag's inventory exists?
+														if (bagInv) then
+															print(bagInv, "baggeD")
+															local mx, my = bagInv:findEmptySlot(itemTable.width, itemTable.height, true)
+															
+															-- we found slot for the inventory.
+															if (mx and my) then		
+																print(bagInv, "move")						
+																this:move({x2 = mx, y2 = my}, bagInv)
+															end
+														end
+													end
+												*/
+											end
+										end
+									end
+								end
+							else
+								local oldX, oldY = this.gridX, this.gridY
+
+								if (oldX != data.x2 or oldY != data.y2 or inventory != self) then									
+									this:move(data, inventory)
+								end
 							end
 						end
 					end
@@ -440,6 +504,8 @@ PANEL = {}
 						
 						if (override == true) then if (menu.Remove) then menu:Remove() end return end
 							for k, v in SortedPairs(itemTable.functions) do
+								if (k == "combine") then continue end -- we don't need combine on the menu mate. 
+
 								if (v.onCanRun) then
 									if (v.onCanRun(itemTable) == false) then
 										itemTable.player = nil

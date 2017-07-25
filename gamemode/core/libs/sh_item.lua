@@ -120,6 +120,10 @@ function nut.item.get(identifier)
 	return nut.item.base[identifier] or nut.item.list[identifier]
 end
 
+function nut.item.getInv(invID)
+	return nut.item.inventories[invID]
+end
+
 function nut.item.load(path, baseID, isBaseItem)
 	local uniqueID = path:match("sh_([_%w]+)%.lua")
 
@@ -685,7 +689,6 @@ do
 			end
 
 			local callback = item.functions[action]
-
 			if (callback) then
 				if (callback.onCanRun and callback.onCanRun(item, data) == false) then
 					item.entity = nil
