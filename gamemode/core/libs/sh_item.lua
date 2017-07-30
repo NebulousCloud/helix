@@ -347,6 +347,10 @@ do
 										slots[x + x2][y + y2] = item2
 									end
 								end
+
+								if (item2.onRestored) then
+									item2:onRestored(item2, invID)
+								end
 							else
 								badItemsUniqueID[#badItemsUniqueID + 1] = item._uniqueID
 								badItems[#badItems + 1] = itemID
