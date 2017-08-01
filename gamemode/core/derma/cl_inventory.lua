@@ -191,6 +191,7 @@ PANEL = {}
 			local mouseX, mouseY = self:LocalCursorPos()
 			local dropX, dropY = math.ceil((mouseX - 4 - (item.gridW - 1) * 32) / 64), math.ceil((mouseY - 27 - (item.gridH - 1) * 32) / 64)
 
+
 			item.dropPos = item.dropPos or {}
 			if (item.dropPos[self]) then
 				item.dropPos[self].item = nil
@@ -215,7 +216,9 @@ PANEL = {}
 						else
 							surface.SetDrawColor(255, 255, 0, 10)
 							
-							item.dropPos[self].item = self.slots[x2][y2].item
+							if (self.slots[x2] and self.slots[x2][y2]) then
+								item.dropPos[self].item = self.slots[x2][y2].item
+							end
 						end
 					
 						surface.DrawRect((x2 - 1)*64 + 4, (y2 - 1)*64 + 27, 64, 64)
@@ -438,6 +441,10 @@ PANEL = {}
 						if (IsValid(inventory)) then
 							data = data[inventory]
 
+							if (data.drop) then
+								return
+							end
+
 							if (IsValid(data.item)) then
 								inventory = panel.inv
 
@@ -496,8 +503,6 @@ PANEL = {}
 									this:move(data, inventory)
 								end
 							end
-						else
-							nut.util.notify("fialeD")
 						end
 					end
 				end
