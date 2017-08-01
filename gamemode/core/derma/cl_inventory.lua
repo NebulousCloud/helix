@@ -184,6 +184,7 @@ PANEL = {}
 		end
 	end
 	
+	local activePanels = {}
 	function PANEL:PaintOver(w, h)
 		local item = nut.item.held
 		
@@ -191,6 +192,11 @@ PANEL = {}
 			local mouseX, mouseY = self:LocalCursorPos()
 			local dropX, dropY = math.ceil((mouseX - 4 - (item.gridW - 1) * 32) / 64), math.ceil((mouseY - 27 - (item.gridH - 1) * 32) / 64)
 
+			if ((mouseX < -w*0.05 or mouseX > w*1.05) or (mouseY < h*0.05 or mouseY > h*1.05)) then
+				activePanels[self] = nil
+			else
+				activePanels[self] = true
+			end
 
 			item.dropPos = item.dropPos or {}
 			if (item.dropPos[self]) then
@@ -434,16 +440,24 @@ PANEL = {}
 					this:SetZPos(99)
 
 					nut.item.held = nil
+					
+					if (table.Count(activePanels) == 0) then
+						local item = this.itemTable
+						local inv = this.inv
+
+						if (item and inv) then
+							netstream.Start("invAct", "drop", item.id, inv:getID(), item.id)
+						end
+						
+						return false
+					end
+					activePanels = {}
 
 					if (data) then
 						local inventory = table.GetFirstKey(data)
 						
 						if (IsValid(inventory)) then
 							data = data[inventory]
-
-							if (data.drop) then
-								return
-							end
 
 							if (IsValid(data.item)) then
 								inventory = panel.inv
