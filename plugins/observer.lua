@@ -29,7 +29,7 @@ if (CLIENT) then
 
 				surface.SetDrawColor(teamColor.r, teamColor.g, teamColor.b, alpha)
 				surface.DrawLine(sx * 0.5, sy * 0.5, x, y)
-				surface.DrawTexturedRect(x - size/2, y - size/2, size, size)
+				surface.DrawRect(x - size/2, y - size/2, size, size)
 
 				nut.util.drawText(v:Name(), x, y - size, ColorAlpha(teamColor, alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, nil, alpha)
 			end
