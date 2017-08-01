@@ -216,7 +216,7 @@ PANEL = {}
 						else
 							surface.SetDrawColor(255, 255, 0, 10)
 							
-							if (self.slots[x2] and self.slots[x2][y2]) then
+							if (self.slots[x2] and self.slots[x2][y2] and item.dropPos[self]) then
 								item.dropPos[self].item = self.slots[x2][y2].item
 							end
 						end
