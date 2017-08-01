@@ -65,10 +65,6 @@ function GM:Initialize()
 	nut.plugin.initialize()
 	-- Restore the configurations from earlier if applicable.
 	nut.config.load()
-
-	if (SERVER and hook.Run("ShouldCleanDataItems") != false) then
-		nut.db.query("DELETE FROM nut_items WHERE _invID = 0")
-	end
 end
 
 ITSTIMETOSTOP = false

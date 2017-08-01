@@ -2,11 +2,6 @@ PLUGIN.name = "Save Items"
 PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Saves items that were dropped."
 
-function PLUGIN:ShouldCleanDataItems()
-	-- We will handle the cleansing of items ourselves.
-	return false
-end
-
 function PLUGIN:LoadData()
 	local items = self:getData()
 
