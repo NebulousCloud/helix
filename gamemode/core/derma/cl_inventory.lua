@@ -191,6 +191,11 @@ PANEL = {}
 			local mouseX, mouseY = self:LocalCursorPos()
 			local dropX, dropY = math.ceil((mouseX - 4 - (item.gridW - 1) * 32) / 64), math.ceil((mouseY - 27 - (item.gridH - 1) * 32) / 64)
 
+			item.dropPos = item.dropPos or {}
+			if (item.dropPos[self]) then
+				item.dropPos[self].item = nil
+			end
+
 			for x = 0, item.gridW - 1 do
 				for y = 0, item.gridH - 1 do
 					local x2, y2 = dropX + x, dropY + y
@@ -198,20 +203,19 @@ PANEL = {}
 					-- Is Drag and Drop icon is in the Frame?
 					if (self.slots[x2] and IsValid(self.slots[x2][y2])) then
 						local bool = self:isEmpty(x2, y2, item)
+						
+						surface.SetDrawColor(0, 0, 255, 10)
 
 						if (x == 0 and y == 0) then
-							item.dropPos = item.dropPos or {}
 							item.dropPos[self] = {x = (x2 - 1)*64 + 4, y = (y2 - 1)*64 + 27, x2 = x2, y2 = y2}
+						end
 							
-							if (bool) then
-								surface.SetDrawColor(0, 255, 0, 10)
-
-								item.dropPos[self].item = nil
-							else
-								surface.SetDrawColor(255, 255, 0, 10)
-								
-								item.dropPos[self].item = self.slots[x2][y2].item
-							end
+						if (bool) then
+							surface.SetDrawColor(0, 255, 0, 10)
+						else
+							surface.SetDrawColor(255, 255, 0, 10)
+							
+							item.dropPos[self].item = self.slots[x2][y2].item
 						end
 					
 						surface.DrawRect((x2 - 1)*64 + 4, (y2 - 1)*64 + 27, 64, 64)
@@ -421,7 +425,7 @@ PANEL = {}
 			panel.OnMouseReleased = function(this, code)
 				if (code == MOUSE_LEFT and nut.item.held == this) then
 					local data = this.dropPos
-					
+
 					this:DragMouseRelease(code)
 					this:MouseCapture(false)
 					this:SetZPos(99)
@@ -492,6 +496,8 @@ PANEL = {}
 									this:move(data, inventory)
 								end
 							end
+						else
+							nut.util.notify("fialeD")
 						end
 					end
 				end
