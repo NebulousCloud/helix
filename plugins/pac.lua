@@ -212,7 +212,7 @@ else
 						if part.last_owner and part.last_owner:IsValid() then
 							hook.Run("OnPAC3PartTransfered", part)
 							part:SetOwner(entity)
-							part.last_owner = nil
+							part.last_owner = entity
 						end
 					end
 				end
