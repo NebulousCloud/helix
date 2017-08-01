@@ -138,10 +138,12 @@ else
 
 			local lines = self.lines
 			local offset = self.offset
-
-			for i = 1, #lines do
-				y = y + (i * 16)
-				nut.util.drawText(lines[i], x, y, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+			
+			if (lines) then
+				for i = 1, #lines do
+					y = y + (i * 16)
+					nut.util.drawText(lines[i], x, y, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+				end
 			end
 
 			x, y = hook.Run("DrawItemDescription", self, x, y, colorAlpha(color_white, alpha), alpha * 0.65)
