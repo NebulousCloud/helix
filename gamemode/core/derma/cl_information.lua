@@ -149,7 +149,6 @@ local PANEL = {}
 		end
 		
 		if (self.model) then
-			print(LocalPlayer():GetModel())
 			self.model:SetModel(LocalPlayer():GetModel())
 			self.model.Entity:SetSkin(LocalPlayer():GetSkin())
 
