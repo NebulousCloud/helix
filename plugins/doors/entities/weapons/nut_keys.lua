@@ -40,7 +40,7 @@ SWEP.LowerAngles2 = Angle(0, 5, -22)
 
 SWEP.IsAlwaysLowered = true
 SWEP.FireWhenLowered = true
-SWEP.HoldType = "normal"
+SWEP.HoldType = "passive"
 
 function SWEP:PreDrawViewModel(viewModel, weapon, client)
 	local hands = player_manager.TranslatePlayerHands(player_manager.TranslateToPlayerModelName(client:GetModel()))
