@@ -2,6 +2,19 @@ PLUGIN.name = "Save Items"
 PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Saves items that were dropped."
 
+/*
+		for k, v in ipairs(items) do
+			-- do something
+		end
+	end
+
+	function PLUGIN:ShouldDeleteSavedItems()
+		return true
+	end
+*/
+
+-- as title says.
+
 function PLUGIN:LoadData()
 	local items = self:getData()
 
@@ -17,25 +30,37 @@ function PLUGIN:LoadData()
 		if (#idRange > 0) then
 			local range = "("..table.concat(idRange, ", ")..")"
 
-			nut.db.query("SELECT _itemID, _uniqueID, _data FROM nut_items WHERE _itemID IN "..range, function(data)
-				if (data) then
-					for k, v in ipairs(data) do
-						local itemID = tonumber(v._itemID)
-						local data = util.JSONToTable(v._data or "[]")
-						local uniqueID = v._uniqueID
-						local itemTable = nut.item.list[uniqueID]
-						local position = positions[itemID]
+			if (hook.Run("ShouldDeleteSavedItems") == true) then
+				-- don't spawn saved item and just delete them.
+				nut.db.query("DELETE FROM nut_items WHERE _itemID IN " .. range)
+				print("Server Deleted Server Items (does not includes Logical Items)")
+				print(range)
+			else
+				nut.db.query("SELECT _itemID, _uniqueID, _data FROM nut_items WHERE _itemID IN "..range, function(data)
+					if (data) then
+						local loadedItems = {}
 
-						if (itemTable and itemID) then
+						for k, v in ipairs(data) do
+							local itemID = tonumber(v._itemID)
+							local data = util.JSONToTable(v._data or "[]")
+							local uniqueID = v._uniqueID
+							local itemTable = nut.item.list[uniqueID]
 							local position = positions[itemID]
-							local item = nut.item.new(uniqueID, itemID)
-							item.data = data or {}
-							item:spawn(position).nutItemID = itemID
-							item.invID = 0
+
+							if (itemTable and itemID) then
+								local position = positions[itemID]
+								local item = nut.item.new(uniqueID, itemID)
+								item.data = data or {}
+								item:spawn(position).nutItemID = itemID
+
+								item.invID = 0
+								table.insert(loadedItems, item)
+							end
 						end
+
 					end
-				end
-			end)
+				end)
+			end
 		end
 	end
 end
