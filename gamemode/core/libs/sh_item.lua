@@ -58,11 +58,7 @@ function nut.item.instance(index, uniqueID, itemData, x, y, callback)
 			local item = nut.item.new(uniqueID, itemID)
 
 			if (item) then
-				item.data = {}
-				if (data) then
-					item.data = table.Merge(data, itemData)
-				end
-				
+				item.data = itemData or {}				
 				item.invID = index
 
 				if (callback) then
