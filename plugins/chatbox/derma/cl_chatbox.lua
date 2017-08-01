@@ -184,7 +184,17 @@ local PANEL = {}
 
 	local function OnDrawText(text, font, x, y, color, alignX, alignY, alpha)
 		alpha = alpha or 255
-		draw.SimpleTextOutlined(text, font, x, y, ColorAlpha(color, alpha), 0, alignY, 1, ColorAlpha(color_black, alpha * 0.6))
+
+		surface.SetTextPos(x+1, y+1)
+		surface.SetTextColor(0, 0, 0, alpha)
+		surface.SetFont(font)
+		surface.DrawText(text)
+
+		surface.SetTextPos(x, y)
+		surface.SetTextColor(color.r, color.g, color.b, alpha)
+		surface.SetFont(font)
+		surface.DrawText(text)
+		--draw.SimpleTextOutlined(text, font, x, y, ColorAlpha(color, alpha), 0, alignY, 1, ColorAlpha(color_black, alpha * 0.6))
 	end
 
 	local function PaintFilterButton(this, w, h)
