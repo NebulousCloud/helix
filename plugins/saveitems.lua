@@ -3,6 +3,7 @@ PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Saves items that were dropped."
 
 /*
+	function PLUGIN:OnSavedItemLoaded(items)
 		for k, v in ipairs(items) do
 			-- do something
 		end
@@ -58,6 +59,7 @@ function PLUGIN:LoadData()
 							end
 						end
 
+						hook.Run("OnSavedItemLoaded", loadedItems) -- when you have something in the dropped item.
 					end
 				end)
 			end
