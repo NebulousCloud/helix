@@ -3,6 +3,48 @@ PLUGIN.author = "Black Tea"
 PLUGIN.desc = "You can modfiy the logging text/lists on this plugin."
  
 if (SERVER) then
+	nut.log.addType("chat", function(client, ...)
+		local arg = {...}
+		return (Format("[%s] %s: %s", arg[1], client:Name(), arg[2]))
+	end)
+	nut.log.addType("command", function(client, ...)
+		local arg = {...}
+		return (Format("%s used command '%s'", client:Name(), arg[1]))
+	end)
+	nut.log.addType("charLoad", function(client, ...)
+		local arg = {...}
+		return (Format("%s loaded the character #%s(%s)", client:Name(), arg[1], arg[2]))
+	end)
+	nut.log.addType("charDelete", function(client, ...)
+		local arg = {...}
+		return (Format("%s(%s) deleted character (%s)", client:steamName(), client:SteamID(), arg[1]))
+	end)
+	nut.log.addType("itemUse", function(client, ...)
+		local arg = {...}
+		local item = arg[2]
+		return (Format("%s tried '%s' to item '%s'(#%s)", client:Name(), arg[1], item.name, item.id))
+	end)
+	nut.log.addType("shipment", function(client, ...)
+		local arg = {...}
+		return (Format("%s took '%s' from the shipment", client:Name(), arg[1]))
+	end)
+	nut.log.addType("shipmentO", function(client, ...)
+		local arg = {...}
+		return (Format("%s ordered a shipment", client:Name()))
+	end)
+	nut.log.addType("buy", function(client, ...)
+		local arg = {...}
+		return (Format("%s purchased '%s' from the NPC", client:Name(), arg[1]))
+	end)
+	nut.log.addType("buydoor", function(client, ...)
+		local arg = {...}
+		return (Format("%s purchased the door", client:Name()))
+	end)
+	nut.log.addType("buydoor", function(client, ...)
+		local arg = {...}
+		return (Format("%s purchased the door", client:Name()))
+	end)
+
 	local L = Format
 
 	function PLUGIN:CharacterLoaded(id)
@@ -37,22 +79,22 @@ if (SERVER) then
 	}
 
 	function PLUGIN:OnPlayerInteractItem(client, action, item)
-			if (type(item) == "Entity") then
-				if (IsValid(item)) then
-					local entity = item
-					local itemID = item.nutItemID
-					item = nut.item.instances[itemID]
-				else
-					return
-				end
-			elseif (type(item) == "number") then
-				item = nut.item.instances[item]
-			end
-
-			if (!item) then
+		if (type(item) == "Entity") then
+			if (IsValid(item)) then
+				local entity = item
+				local itemID = item.nutItemID
+				item = nut.item.instances[itemID]
+			else
 				return
 			end
+		elseif (type(item) == "number") then
+			item = nut.item.instances[item]
+		end
 
-			nut.log.add(client, "itemUse", action, item)
+		if (!item) then
+			return
+		end
+
+		nut.log.add(client, "itemUse", action, item)
 	end
 end
