@@ -46,7 +46,7 @@ do
 				local attrib = self:getAttribs()
 				local client = self:getPlayer()
 
-				attrib[key] = math.min((attrib[key] or 0) + value, nut.config.get("maxAttribs", 30))
+				attrib[key] = math.min((attrib[key] or 0) + value, attribute.maxValue or nut.config.get("maxAttribs", 30))
 
 				if (IsValid(client)) then
 					netstream.Start(client, "attrib", self:getID(), key, attrib[key])

@@ -384,7 +384,7 @@ do
 
 			local y2 = 0
 			local total = 0
-			local maximum = hook.Run("GetMaxAttribPoints", LocalPlayer(), panel.payload) or nut.config.get("maxAttribs")
+			local maximum = hook.Run("GetStartAttribPoints", LocalPlayer(), panel.payload) or nut.config.get("maxAttribs", 30)
 
 			panel.payload.attribs = {}
 
@@ -424,7 +424,7 @@ do
 						count = count + v
 					end
 
-					if (count > (hook.Run("GetMaxAttribPoints", client, info) or nut.config.get("maxAttribs"))) then
+					if (count > (hook.Run("GetStartAttribPoints", client, count) or nut.config.get("maxAttribs", 30))) then
 						return false, "unknownError"
 					end
 				else

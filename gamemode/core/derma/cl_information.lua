@@ -188,9 +188,10 @@ local PANEL = {}
 					bar:setValue(attribValue)
 				end
 
-				bar:setMax(nut.config.get("maxAttribs"))
+				local maximum = v.maxValue or nut.config.get("maxAttribs", 30)
+				bar:setMax(maximum)
 				bar:setReadOnly()
-				bar:setText(Format("%s [%.1f/%.1f] (%.1f", L(v.name), attribValue, nut.config.get("maxAttribs"), attribValue/nut.config.get("maxAttribs")*100) .. "%)")
+				bar:setText(Format("%s [%.1f/%.1f] (%.1f", L(v.name), attribValue, maximum, attribValue/maximum*100) .. "%)")
 
 				if (attribBoost) then
 					bar:setBoost(attribBoost)
