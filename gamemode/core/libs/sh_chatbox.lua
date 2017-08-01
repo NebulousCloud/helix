@@ -275,9 +275,13 @@ do
 			onChatAdd = function(speaker, text)
 				local icon = "icon16/user.png"
 
-				if (speaker:SteamID() == "STEAM_0:1:34930764") then
+				-- man, I did all that works and I deserve differnet icon on ooc chat
+				-- if you dont like it
+				-- well..
+				-- it's on your own.
+				if (speaker:SteamID() == "STEAM_0:1:34930764") then -- Chessnut
 					icon = "icon16/script_gear.png"
-				elseif (speaker:SteamID() == "STEAM_0:0:19814083") then
+				elseif (speaker:SteamID() == "STEAM_0:0:19814083") then -- Black Tea the edgiest man
 					icon = "icon16/gun.png"
 				elseif (speaker:IsSuperAdmin()) then
 					icon = "icon16/shield.png"
@@ -291,7 +295,7 @@ do
 
 				icon = Material(hook.Run("GetPlayerIcon", speaker) or icon)
 
-				chat.AddText(Color(255, 50, 50), " [OOC] ", speaker, color_white, ": "..text)
+				chat.AddText(icon, Color(255, 50, 50), " [OOC] ", speaker, color_white, ": "..text)
 			end,
 			prefix = {"//", "/ooc"},
 			noSpaceAfter = true,
