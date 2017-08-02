@@ -565,6 +565,14 @@ do
 
 		netstream.Hook("charCreate", function(client, data)
 			local newData = {}
+			
+			local maxChars = hook.Run("GetMaxPlayerCharacter", client) or nut.config.get("maxChars", 5)
+			local charList = client.nutCharList
+			local charCount = table.Count(charList)
+
+			if (charCount < maxChars) then
+				return netstream.Start(client, "charAuthed", "maxCharacters")
+			end
 
 			for k, v in pairs(data) do
 				local info = nut.char.vars[k]
