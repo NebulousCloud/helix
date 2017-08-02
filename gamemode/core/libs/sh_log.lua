@@ -50,10 +50,20 @@ if (SERVER) then
 		return text
 	end
 
+	function nut.log.addRaw(logString)		
+		nut.log.send(nut.util.getAdmins(), logString)
+		
+		Msg("[LOG] ", logString .. "\n")
+		
+		if (!noSave) then
+			file.Append("nutscript/logs/"..os.date("%x"):gsub("/", "-")..".txt", "["..os.date("%X").."]\t"..logString.."\r\n")
+		end
+	end
+
 	function nut.log.add(client, logType, ...)
 		local logString = nut.log.getString(client, logType, ...)
 		if (logString == -1) then return end
-		
+
 		nut.log.send(nut.util.getAdmins(), logString)
 		
 		Msg("[LOG] ", logString .. "\n")
