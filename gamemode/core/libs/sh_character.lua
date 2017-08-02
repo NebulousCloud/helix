@@ -570,7 +570,7 @@ do
 			local charList = client.nutCharList
 			local charCount = table.Count(charList)
 
-			if (charCount < maxChars) then
+			if (charCount >= maxChars) then
 				return netstream.Start(client, "charAuthed", "maxCharacters")
 			end
 
