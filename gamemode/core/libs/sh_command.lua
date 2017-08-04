@@ -14,8 +14,6 @@ function nut.command.add(command, data)
 	end
 
 	-- Store the old onRun because we're able to change it.
-	local onRun = data.onRun
-
 	if (!data.onCheckAccess) then
 		-- Check if the command is for basic admins only.
 		if (data.adminOnly) then
@@ -50,13 +48,13 @@ function nut.command.add(command, data)
 		end
 	end
 
-
 	local onCheckAccess = data.onCheckAccess
 
 	-- Only overwrite the onRun to check for access if there is anything to check.
 	if (onCheckAccess) then
 		local onRun = data.onRun
 
+		data._onRun = data.onRun -- for refactoring purpose.
 		data.onRun = function(client, arguments)
 			if (!onCheckAccess(client)) then
 				return "@noPerm"
@@ -68,7 +66,6 @@ function nut.command.add(command, data)
 
 	-- Add the command to the list of commands.
 	local alias = data.alias
-	data.alias = {}
 
 	if (alias) then
 		if (type(alias) == "table") then
@@ -76,7 +73,7 @@ function nut.command.add(command, data)
 				nut.command.list[v] = data
 			end
 		elseif (type(alias) == "string") then
-			nut.command.list[data.alias] = data
+			nut.command.list[alias] = data
 		end
 	end
 
