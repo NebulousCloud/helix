@@ -12,7 +12,7 @@ if (SERVER) then
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetUseType(SIMPLE_USE)
 		self.receivers = {}
-
+		
 		local physObj = self:GetPhysicsObject()
 
 		if (IsValid(physObj)) then
@@ -50,7 +50,7 @@ if (SERVER) then
 	function ENT:OnRemove()
 		local index = self:getNetVar("id")
 
-		if (!nut.shuttingDown and !self.nutIsSafe and index) then
+		if (!nut.shuttingDown and !self.nutIsSafe and nut.entityDataLoaded and index) then
 			local item = nut.item.inventories[index]
 
 			if (item) then
@@ -94,7 +94,9 @@ if (SERVER) then
 
 				if (self:getNetVar("locked")) then
 					self:EmitSound(def.locksound or "doors/default_locked.wav")
-					netstream.Start(activator, "invLock", self)
+					if (!self.keypad) then
+						netstream.Start(activator, "invLock", self)
+					end
 				else
 					self:OpenInv(activator)
 				end

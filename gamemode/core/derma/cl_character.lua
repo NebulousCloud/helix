@@ -178,7 +178,8 @@ local PANEL = {}
 				end
 			end
 
-			if (count > 0 and #nut.characters < nut.config.get("maxChars", 5) and hook.Run("ShouldMenuButtonShow", "create") != false) then
+			local maxChars = hook.Run("GetMaxPlayerCharacter", LocalPlayer()) or nut.config.get("maxChars", 5)
+			if (count > 0 and #nut.characters < maxChars and hook.Run("ShouldMenuButtonShow", "create") != false) then
 				AddMenuLabel("create", function()
 					ClearAllButtons(function()
 						CreateReturnButton()
@@ -202,47 +203,47 @@ local PANEL = {}
 										self.finish.DoClick = function(this)
 											if (!self.creation.creating) then
 												local payload = {}
-	
+
 												for k, v in SortedPairsByMemberValue(nut.char.vars, "index") do
 													local value = self.creation.payload[k]
-	
+
 													if (!v.noDisplay or v.onValidate) then
 														if (v.onValidate) then
 															local result = {v.onValidate(value, self.creation.payload, LocalPlayer())}
-	
+
 															if (result[1] == false) then
 																self.creation.notice:setType(1)
 																self.creation.notice:setText(L(unpack(result, 2)).."!")
-	
+
 																return
 															end
 														end
-	
+
 														payload[k] = value
 													end
 												end
-	
+
 												self.creation.notice:setType(6)
 												self.creation.notice:setText(L"creating")
 												self.creation.creating = true
 												self.finish:AlphaTo(0, 0.5, 0)
-	
+
 												netstream.Hook("charAuthed", function(fault, ...)
 													timer.Remove("nutCharTimeout")
-	
+
 													if (type(fault) == "string") then
 														self.creation.notice:setType(1)
 														self.creation.notice:setText(L(fault, ...))
 														self.creation.creating = nil
 														self.finish:AlphaTo(255, 0.5, 0)
-	
+
 														return
 													end
-	
+
 													if (type(fault) == "table") then
 														nut.characters = fault
 													end
-	
+
 													for k, v in pairs(self.fadePanels) do
 														if (IsValid(v)) then
 															v:AlphaTo(0, 0.25, 0, function()
@@ -585,7 +586,7 @@ local PANEL = {}
 vgui.Register("nutCharMenu", PANEL, "EditablePanel")
 
 hook.Add("CreateMenuButtons", "nutCharButton", function(tabs)
-	tabs["characters"] = function(panel)
+	tabs["Characters"] = function(panel)
 		nut.gui.menu:Remove()
 		vgui.Create("nutCharMenu")
 	end

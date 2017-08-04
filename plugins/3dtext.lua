@@ -82,7 +82,16 @@ else
 			local object = nut.markup.parse("<font=nut3D2DFont>"..text:gsub("\\n", "\n"))
 			-- We want to draw a shadow on the text object.
 			object.onDrawText = function(text, font, x, y, color, alignX, alignY, alpha)
-				draw.SimpleTextOutlined(text, font, x, y, ColorAlpha(color, alpha), alignX, alignY, 2, color_black)
+				surface.SetTextPos(x+1, y+1)
+				surface.SetTextColor(0, 0, 0, alpha)
+				surface.SetFont(font)
+				surface.DrawText(text)
+
+				surface.SetTextPos(x, y)
+				surface.SetTextColor(color.r, color.g, color.b, alpha)
+				surface.SetFont(font)
+				surface.DrawText(text)
+				--draw.SimpleTextOutlined(text, font, x, y, ColorAlpha(color, alpha), alignX, alignY, 2, color_black)
 			end
 
 			-- Add the text to a list of drawn text objects.

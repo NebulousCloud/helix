@@ -3,6 +3,7 @@ PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Provides the ability to store items."
 
 PLUGIN.definitions = PLUGIN.definitions or {}
+STORAGE_DEFINITIONS = PLUGIN.definitions
 
 nut.util.include("sh_definitions.lua")
 
@@ -15,11 +16,17 @@ for k, v in pairs(PLUGIN.definitions) do
 	end
 end
 
+nut.config.add("saveStorage", true, "Whether or not storages will save after a server restart.", nil, {
+	category = "Storage"
+})
+
 if (SERVER) then
 	function PLUGIN:PlayerSpawnedProp(client, model, entity)
-		local data = self.definitions[model:lower()]
+		local data = STORAGE_DEFINITIONS[model:lower()]
 
 		if (data) then
+			if (hook.Run("CanPlayerSpawnStorage", client, model, entity) == false) then return end
+			
 			local storage = ents.Create("nut_storage")
 			storage:SetPos(entity:GetPos())
 			storage:SetAngles(entity:GetAngles())
@@ -29,6 +36,7 @@ if (SERVER) then
 			storage:PhysicsInit(SOLID_VPHYSICS)
 
 			nut.item.newInv(0, "st"..data.name, function(inventory)
+				inventory.vars.isStorage = true
 				if (IsValid(storage)) then
 					storage:setInventory(inventory)
 				end
@@ -39,17 +47,27 @@ if (SERVER) then
 		end
 	end
 
-	function PLUGIN:saveStorage()
-		local data = {}
-
-		for k, v in ipairs(ents.FindByClass("nut_storage")) do
-			if (v:getInv()) then
-				data[#data + 1] = {v:GetPos(), v:GetAngles(), v:getNetVar("id"), v:GetModel(), v.password}
-			end
-		end
-
-		self:setData(data)
+	function PLUGIN:CanSaveStorage(entity, inventory)
+		return nut.config.get("saveStorage", true)
 	end
+
+	function PLUGIN:saveStorage()
+  	local data = {}
+
+  	for k, v in ipairs(ents.FindByClass("nut_storage")) do
+  		if (hook.Run("CanSaveStorage", v, v:getInv()) != false) then
+  			if (v:getInv()) then
+  				data[#data + 1] = {v:GetPos(), v:GetAngles(), v:getNetVar("id"), v:GetModel(), v.password}
+			end
+		else
+			local index = v:getNetVar("id")
+			nut.db.query("DELETE FROM nut_items WHERE _invID = "..index)
+			nut.db.query("DELETE FROM nut_inventories WHERE _invID = "..index)
+  		end
+  	end
+
+  	self:setData(data)
+  end
 
 	function PLUGIN:SaveData()
 		self:saveStorage()
@@ -87,6 +105,8 @@ if (SERVER) then
 					end
 					
 					nut.item.restoreInv(v[3], data2.width, data2.height, function(inventory)
+						inventory.vars.isStorage = true
+						
 						if (IsValid(storage)) then
 							storage:setInventory(inventory)
 						end

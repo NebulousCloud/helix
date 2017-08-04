@@ -32,6 +32,7 @@ LANGUAGE = {
 	no = "No",
 	yes = "Yes",
 	itemInfo = "Name: %s\nDescription: %s",
+	itemCreated = "Item successfully created.",
 	cloud_no_repo = "The repository provided is not valid.",
 	cloud_no_plugin = "The plugin provided is not valid.",
 	inv = "Inventory",
@@ -230,5 +231,11 @@ LANGUAGE = {
 	vendorNoStock = "This vendor does not have that item in stock.",
 	contentTitle = "NutScript Content Missing",
 	contentWarning = "You do not have the NutScript content mounted. This may result in certain features missing.\nWould you like to open the Workshop page for the NutScript content?",
-	flags = "Flags"
+	flags = "Flags",
+	chooseTip = "Choose this character to play with.",
+	deleteTip = "Delete this character.",
+
+	moneyLeft = "Your Money: ",
+	currentMoney = "Money Left: ",
+	checkout = "Checkout",
 }

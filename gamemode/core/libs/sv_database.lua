@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS `nut_characters` (
 	`_createTime` int(11) unsigned NOT NULL,
 	`_lastJoinTime` int(4) DEFAULT NULL,
 	`_steamID` bigint(20) unsigned NOT NULL,
-	`_data` tinytext,
+	`_data` longtext,
 	`_money` int(11) unsigned DEFAULT NULL,
 	`_faction` varchar(50) NOT NULL,
 	PRIMARY KEY (`_id`)

@@ -176,6 +176,12 @@ function GM:EntityTakeDamage(entity, dmgInfo)
 	end
 end
 
+function GM:PrePlayerLoadedChar(client, character, lastChar)
+	-- Remove all skins
+	client:SetBodyGroups("000000000")
+	client:SetSkin(0)
+end
+
 function GM:PlayerLoadedChar(client, character, lastChar)
 	if (lastChar) then
 		local charEnts = lastChar:getVar("charEnts") or {}
@@ -218,6 +224,7 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 		end)
 	end
 
+
 	hook.Run("PlayerLoadout", client)
 end
 
@@ -251,7 +258,8 @@ function GM:PlayerSay(client, message)
 	end
 
 	nut.chat.send(client, chatType, message, anonymous)
-	nut.log.add(client:Name().." said ["..chatType:upper().."] \""..message.."\"")
+	nut.log.add(client, "chat", chatType and chatType:upper() or "??", message)
+	--nut.log.add(client:Name().." said ["..chatType:upper().."] \""..message.."\"")
 
 	hook.Run("PostPlayerSay", client, message, chatType, anonymous)
 
@@ -485,6 +493,7 @@ function GM:PlayerDisconnected(client)
 			end
 		end
 
+		hook.Run("OnCharDisconnect", client, character)
 		character:save()
 	end
 end
@@ -512,6 +521,10 @@ function GM:InitPostEntity()
 
 	timer.Simple(0.1, function()
 		hook.Run("LoadData")
+	end)
+
+	timer.Simple(2, function()
+		nut.entityDataLoaded = true
 	end)
 end
 
@@ -562,25 +575,6 @@ function GM:PlayerDeathSound()
 	return true
 end
 
-function GM:CanItemBeTransfered(itemObject, curInv, inventory)
-	if (itemObject.isBag) then
-		local inventory = nut.item.inventories[itemObject:getData("id")]
-
-		if (inventory) then
-			for k, v in pairs(inventory:getItems()) do
-				if (v:getData("equip") == true) then
-					local owner = itemObject:getOwner()
-					if (owner and IsValid(owner)) then
-						owner:notifyLocalized("equippedBag")
-					end
-
-					return false
-				end
-			end
-		end
-	end
-end
-
 function GM:InitializedSchema()
 	if (!nut.data.get("date", nil, false, true)) then
 		nut.data.set("date", os.time(), false, true)
@@ -593,22 +587,29 @@ end
 
 function GM:PlayerCanHearPlayersVoice(listener, speaker)
 	local allowVoice = nut.config.get("allowVoice")
-	
-	return allowVoice, allowVoice
+	if allowVoice then
+		local listener_pos = listener:GetPos()
+		local speaker_pos = speaker:GetPos()
+		local voice_dis = math.Distance(speaker_pos.x, speaker_pos.y, listener_pos.x, listener_pos.y)
+		if voice_dis > nut.config.get("voiceDistance") then
+			allowVoice = false
+		end
+	end
+	return allowVoice
 end
 
 function GM:OnPhysgunFreeze(weapon, physObj, entity, client)
 	-- Object is already frozen (!?)
 	if (!physObj:IsMoveable()) then return false end
 	if (entity:GetUnFreezable()) then return false end
-	
+
 	physObj:EnableMotion(false)
-	
+
 	-- With the jeep we need to pause all of its physics objects
 	-- to stop it spazzing out and killing the server.
 	if (entity:GetClass() == "prop_vehicle_jeep") then
 		local objects = ent:GetPhysicsObjectCount()
-		
+
 		for i = 0, objects - 1 do
 			entity:GetPhysicsObjectNum(i):EnableMotion(false)
 		end
@@ -637,6 +638,7 @@ end
 
 function GM:PostCleanupMap()
 	hook.Run("LoadData")
+	hook.Run("PostLoadData")
 end
 
 function GM:CharacterPreSave(character)

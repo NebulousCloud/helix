@@ -12,8 +12,8 @@ if (SERVER) then
 		data.money = data.money or nut.config.get("defMoney", 0)
 
 		nut.db.insertTable({
-			_name = data.name or "John Doe",
-			_desc = data.desc or "No description available.",
+			_name = data.name or "",
+			_desc = data.desc or "",
 			_model = data.model or "models/error.mdl",
 			_schema = SCHEMA and SCHEMA.folder or "nutscript",
 			_createTime = timeStamp,
@@ -106,15 +106,22 @@ if (SERVER) then
 
 					local character = nut.char.new(data, id, client)
 						hook.Run("CharacterRestored", character)
-						character.vars.inv = {}
+						character.vars.inv = {
+							[1] = -1,
+						}
 
 						nut.db.query("SELECT _invID, _invType FROM nut_inventories WHERE _charID = "..id, function(data)
 							if (data and #data > 0) then
-								for k, v in ipairs(data) do
+								for k, v in pairs(data) do
+									if (v._invType and isstring(v._invType) and v._invType == "NULL") then
+										v._invType = nil
+									end
+
 									local w, h = nut.config.get("invW"), nut.config.get("invH")
 
+									local invType 
 									if (v._invType) then
-										local invType = nut.item.inventoryTypes[v._invType]
+										invType = nut.item.inventoryTypes[v._invType]
 
 										if (invType) then
 											w, h = invType.w, invType.h
@@ -122,8 +129,14 @@ if (SERVER) then
 									end
 
 									nut.item.restoreInv(tonumber(v._invID), w, h, function(inventory)
+										if (v._invType) then
+											inventory.vars.isBag = v._invType
+											table.insert(character.vars.inv, inventory)
+										else
+											character.vars.inv[1] = inventory
+										end
+
 										inventory:setOwner(id)
-										character.vars.inv[k] = inventory
 									end, true)
 								end
 							else
@@ -134,7 +147,9 @@ if (SERVER) then
 									local inventory = nut.item.createInv(w, h, invID)
 									inventory:setOwner(id)
 
-									character.vars.inv[1] = inventory
+									character.vars.inv = {
+										inventory
+									}
 								end, "inventories")
 							end
 						end)
@@ -215,9 +230,11 @@ do
 
 	nut.char.registerVar("desc", {
 		field = "_desc",
-		default = "No description available.",
+		default = "",
 		index = 2,
 		onValidate = function(value, data)
+			if (noDesc) then return true end
+
 			local minLength = nut.config.get("minDescLen", 16)
 
 			if (!value or #value:gsub("%s", "") < minLength) then
@@ -322,14 +339,7 @@ do
 	})
 
 	nut.char.registerVar("class", {
-		isLocal = true,
 		noDisplay = true,
-		onSet = function(character, class)
-			character:setVar("class", class)
-		end,
-		onGet = function(character, default)
-			return character:getVar("class", default)
-		end
 	})
 
 	nut.char.registerVar("faction", {
@@ -374,7 +384,7 @@ do
 
 			local y2 = 0
 			local total = 0
-			local maximum = hook.Run("GetMaxAttribPoints", LocalPlayer(), panel.payload) or nut.config.get("maxAttribs")
+			local maximum = hook.Run("GetStartAttribPoints", LocalPlayer(), panel.payload) or nut.config.get("maxAttribs", 30)
 
 			panel.payload.attribs = {}
 
@@ -395,6 +405,10 @@ do
 					panel.payload.attribs[k] = panel.payload.attribs[k] + difference
 				end
 
+				if (v.noStartBonus) then
+					bar:setReadOnly()
+				end
+
 				y2 = y2 + bar:GetTall() + 4
 			end
 
@@ -410,7 +424,7 @@ do
 						count = count + v
 					end
 
-					if (count > (hook.Run("GetMaxAttribPoints", client, info) or nut.config.get("maxAttribs"))) then
+					if (count > (hook.Run("GetStartAttribPoints", client, count) or nut.config.get("maxAttribs", 30))) then
 						return false, "unknownError"
 					end
 				else
@@ -539,6 +553,7 @@ do
 					currentChar:save()
 				end
 
+				hook.Run("PrePlayerLoadedChar", client, character, currentChar)
 				character:setup()
 				client:Spawn()
 
@@ -550,6 +565,14 @@ do
 
 		netstream.Hook("charCreate", function(client, data)
 			local newData = {}
+			
+			local maxChars = hook.Run("GetMaxPlayerCharacter", client) or nut.config.get("maxChars", 5)
+			local charList = client.nutCharList
+			local charCount = table.Count(charList)
+
+			if (charCount >= maxChars) then
+				return netstream.Start(client, "charAuthed", "maxCharacters")
+			end
 
 			for k, v in pairs(data) do
 				local info = nut.char.vars[k]

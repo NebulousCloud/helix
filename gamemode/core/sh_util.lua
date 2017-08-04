@@ -3,7 +3,7 @@ function nut.util.include(fileName, state)
 	if (!fileName) then
 		error("[NutScript] No file name specified for including.")
 	end
-	
+
 	-- Only include server-side if we're on the server.
 	if ((state == "server" or fileName:find("sv_")) and SERVER) then
 		include(fileName)
@@ -47,11 +47,11 @@ end
 -- Returns the address:port of the server.
 function nut.util.getAddress()
 	local address = tonumber(GetConVarString("hostip"))
-		
+
 	if (!address) then
 		return "127.0.0.1"..":"..GetConVarString("hostport")
 	end
-	
+
 	local ip = {}
 		ip[1] = bit.rshift(bit.band(address, 0xFF000000), 24)
 		ip[2] = bit.rshift(bit.band(address, 0x00FF0000), 16)
@@ -88,14 +88,18 @@ function nut.util.getMaterial(materialPath)
 	return nut.util.cachedMaterials[materialPath]
 end
 
--- Finds a player by matching their names.
-function nut.util.findPlayer(name, allowPatterns)
-	if (!allowPatterns) then
-		name = string.PatternSafe(name)
+-- Finds a player by matching their name or steam id.
+function nut.util.findPlayer(identifier, allowPatterns)
+	if (string.find(identifier, "STEAM_(%d+):(%d+):(%d+)")) then
+		return player.GetBySteamID(identifier)
 	end
-	
+
+	if (!allowPatterns) then
+		identifier = string.PatternSafe(identifier)
+	end
+
 	for k, v in ipairs(player.GetAll()) do
-		if (nut.util.stringMatches(v:Name(), name)) then
+		if (nut.util.stringMatches(v:Name(), identifier)) then
 			return v
 		end
 	end
@@ -114,7 +118,7 @@ function nut.util.stringMatches(a, b)
 		if (a:find(b)) then return true end
 		if (a2:find(b2)) then return true end
 	end
-	
+
 	return false
 end
 
@@ -185,7 +189,7 @@ end
 
 if (CLIENT) then
 	NUT_CVAR_CHEAP = CreateClientConVar("nut_cheapblur", 0, true)
-	
+
 	local useCheapBlur = NUT_CVAR_CHEAP:GetBool()
 	local blur = nut.util.getMaterial("pp/blurscreen")
 
@@ -197,7 +201,7 @@ if (CLIENT) then
 	function nut.util.drawBlur(panel, amount, passes)
 		-- Intensity of the blur.
 		amount = amount or 5
-		
+
 		if (useCheapBlur) then
 			surface.SetDrawColor(50, 50, 50, amount * 20)
 			surface.DrawRect(0, 0, panel:GetWide(), panel:GetTall())
@@ -206,7 +210,7 @@ if (CLIENT) then
 			surface.SetDrawColor(255, 255, 255)
 
 			local x, y = panel:LocalToScreen(0, 0)
-			
+
 			for i = -(passes or 0.2), 1, 0.2 do
 				-- Do things to the blur material to make it blurry.
 				blur:SetFloat("$blur", i * amount)
@@ -268,20 +272,20 @@ if (CLIENT) then
 		local lines = {}
 		local w = surface.GetTextSize(text)
 		local maxW = 0
-		
+
 		if (w <= width) then
 			return {(text:gsub("%s", " "))}, w
 		end
-		
+
 		for i = 1, #exploded do
 			local word = exploded[i]
 			line = line.." "..word
 			w = surface.GetTextSize(line)
-			
+
 			if (w > width) then
 				lines[#lines + 1] = line
 				line = ""
-				
+
 				if (w > maxW) then
 					maxW = w
 				end
@@ -291,7 +295,7 @@ if (CLIENT) then
 		if (line != "") then
 			lines[#lines + 1] = line
 		end
-		
+
 		return lines, maxW
 	end
 
@@ -303,7 +307,7 @@ if (CLIENT) then
 
 		if (scrW != LAST_WIDTH or scrH != LAST_HEIGHT) then
 			hook.Run("ScreenResolutionChanged", LAST_WIDTH, LAST_HEIGHT)
-			
+
 			LAST_WIDTH = scrW
 			LAST_HEIGHT = scrH
 		end
@@ -517,7 +521,7 @@ do
 		nut.playTime = nut.playTime or 0
 
 		function playerMeta:getPlayTime()
-			return nut.playTime + (RealTime() - nut.joinTime)
+			return nut.playTime + (RealTime() - nut.joinTime or 0)
 		end
 	end
 
@@ -525,12 +529,12 @@ do
 	function playerMeta:isWepRaised()
 		local weapon = self.GetActiveWeapon(self)
 		local override = hook.Run("ShouldWeaponBeRaised", self, weapon)
-		
+
 		-- Allow the hook to check first.
 		if (override != nil) then
 			return override
 		end
-		
+
 		-- Some weapons may have their own properties.
 		if (IsValid(weapon)) then
 			-- If their weapon is always raised, return true.
@@ -557,7 +561,7 @@ do
 	end
 
 	local vectorLength2D = FindMetaTable("Vector").Length2D
-	
+
 	-- Checks if the player is running by seeing if the speed is faster than walking.
 	function playerMeta:isRunning()
 		return vectorLength2D(self.GetVelocity(self)) > (self.GetWalkSpeed(self) + 10)
@@ -574,16 +578,16 @@ do
 	function playerMeta:getItemDropPos()
 		-- Start a trace.
 		local data = {}
-			-- The trace starts behind the player in case they are looking at a wall.
-			data.start = self:GetShootPos() - self:GetAimVector()*64
-			-- The trace finishes 86 units infront of the player.
+			data.start = self:GetShootPos()
 			data.endpos = self:GetShootPos() + self:GetAimVector()*86
-			-- Ignore the actual player.
 			data.filter = self
-		-- Get the end position of the trace.
 		local trace = util.TraceLine(data)
+			data.start = trace.HitPos
+			data.endpos = data.start + trace.HitNormal*46
+			data.filter = {}
+		trace = util.TraceLine(data)
 
-		return trace.HitPos + trace.HitNormal*36
+		return trace.HitPos
 	end
 
 	-- Do an action that requires the player to stare at something.
@@ -652,7 +656,7 @@ do
 				if (callback) then
 					callback(self)
 				end
-				
+
 				return
 			end
 
@@ -697,7 +701,7 @@ do
 		function playerMeta:setRestricted(state, noMessage)
 			if (state) then
 				self:setNetVar("restricted", true)
-				
+
 				if (noMessage) then
 					self:setLocalVar("restrictNoMsg", true)
 				end
@@ -820,6 +824,16 @@ do
 						if (entity.nutWeapons) then
 							for k, v in ipairs(entity.nutWeapons) do
 								self:Give(v)
+								if (entity.nutAmmo) then
+									for k2, v2 in ipairs(entity.nutAmmo) do
+										if v == v2[1] then
+											self:SetAmmo(v2[2], tostring(k2))
+										end
+									end
+								end
+							end
+							for k, v in ipairs(self:GetWeapons()) do
+								v:SetClip1(0)
 							end
 						end
 
@@ -863,6 +877,7 @@ do
 				self.nutRagdoll = entity
 
 				entity.nutWeapons = {}
+				entity.nutAmmo = {}
 				entity.nutPlayer = self
 
 				if (getUpGrace) then
@@ -878,6 +893,10 @@ do
 
 				for k, v in ipairs(self:GetWeapons()) do
 					entity.nutWeapons[#entity.nutWeapons + 1] = v:GetClass()
+					local clip = v:Clip1()
+					local reserve = self:GetAmmoCount(v:GetPrimaryAmmoType())
+					local ammo = clip + reserve
+					entity.nutAmmo[v:GetPrimaryAmmoType()] = {v:GetClass(), ammo}
 				end
 
 				self:GodDisable()
@@ -894,7 +913,7 @@ do
 						if (IsValid(entity) and IsValid(self)) then
 							local velocity = entity:GetVelocity()
 							entity.nutLastVelocity = velocity
-							
+
 							self:SetPos(entity:GetPos())
 
 							if (velocity:Length2D() >= 8) then
@@ -966,7 +985,7 @@ do
 
 		for amount, unit in text:lower():gmatch("(%d+)(%a+)") do
 			amount = tonumber(amount)
-			
+
 			if (amount and TIME_UNITS[unit]) then
 				time = time + math.abs(amount * TIME_UNITS[unit])
 			end

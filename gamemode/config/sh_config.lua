@@ -1,5 +1,6 @@
 -- You can change the default language here:
 nut.config.language = "english"
+nut.config.itemFormat = "<font=nutGenericFont>%s</font>\n<font=nutSmallFont>%s</font>"
 
 --[[
 	DO NOT CHANGE ANYTHING BELOW THIS.
@@ -17,9 +18,16 @@ nut.config.add("maxChars", 5, "The maximum number of characters a player can hav
 nut.config.add("color", Color(75, 119, 190), "The main color theme for the framework.", nil, {category = "appearance"})
 nut.config.add("font", "Impact", "The font used to display titles.", function(oldValue, newValue)
 	if (CLIENT) then
-		hook.Run("LoadFonts", newValue)
+		hook.Run("LoadFonts", newValue, nut.config.get("genericFont"))
 	end
 end, {category = "appearance"})
+
+nut.config.add("genericFont", "Segoe UI", "The font used to display generic texts.", function(oldValue, newValue)
+	if (CLIENT) then
+		hook.Run("LoadFonts", nut.config.get("font"), newValue)
+	end
+end, {category = "appearance"})
+
 nut.config.add("maxAttribs", 30, "The total maximum amount of attribute points allowed.", nil, {
 	data = {min = 1, max = 250},
 	category = "characters"
@@ -103,6 +111,11 @@ nut.config.add("defMoney", 0, "The amount of money that players start with.", ni
 nut.config.add("allowVoice", false, "Whether or not voice chat is allowed.", nil, {
 	category = "server"
 })
+nut.config.add("voiceDistance", 600.0, "How far can the voice be heard.", nil, {
+	form = "Float",
+	category = "server",
+	data = {min = 0, max = 5000}
+})
 nut.config.add("sbWidth", 0.325, "Scoreboard's width within percent of screen width.", function(oldValue, newValue)
 	if (CLIENT and IsValid(nut.gui.score)) then
 		nut.gui.score:Remove()
@@ -120,6 +133,13 @@ end, {
 	form = "Float",
 	category = "visual",
 	data = {min = 0.3, max = 1}
+})
+nut.config.add("sbTitle", GetConVarString("hostname"), "The title of the scoreboard", function(oldValue, newValue)
+	if (CLIENT and IsValid(nut.gui.score)) then
+		nut.gui.score:Remove()
+	end
+end, {
+	category = "visual"
 })
 nut.config.add("wepAlwaysRaised", false, "Whether or not weapons are always raised.", nil, {
 	category = "server"

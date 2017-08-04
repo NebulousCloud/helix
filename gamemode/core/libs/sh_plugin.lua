@@ -80,6 +80,20 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 	end
 end
 
+function nut.plugin.getHook(pluginName, hookName)
+	local h = HOOKS_CACHE[hookName]
+
+	if (h) then
+		local p = nut.plugin.list[pluginName]
+		
+		if (p) then
+			return h[p]
+		end
+	end
+
+	return
+end
+
 function nut.plugin.loadEntities(path)
 	local files, folders
 
@@ -181,7 +195,7 @@ function nut.plugin.loadFromDir(directory)
 end
 
 function nut.plugin.setUnloaded(uniqueID, state, noSave)
-	local plugin = nut.plugins.list[uniqueID]
+	local plugin = nut.plugin.list[uniqueID]
 
 	if (state) then
 		if (plugin.onLoaded) then

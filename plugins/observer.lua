@@ -29,7 +29,7 @@ if (CLIENT) then
 
 				surface.SetDrawColor(teamColor.r, teamColor.g, teamColor.b, alpha)
 				surface.DrawLine(sx * 0.5, sy * 0.5, x, y)
-				surface.DrawTexturedRect(x - size/2, y - size/2, size, size)
+				surface.DrawRect(x - size/2, y - size/2, size, size)
 
 				nut.util.drawText(v:Name(), x, y - size, ColorAlpha(teamColor, alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, nil, alpha)
 			end
@@ -57,6 +57,16 @@ if (CLIENT) then
 			menu:addSpacer()
 		end
 	end
+
+	function PLUGIN:ShouldDrawEntityInfo(entity)
+		if (IsValid(entity)) then
+			if (entity:IsPlayer() or IsValid(entity:getNetVar("player"))) then
+				if (entity.IsAdmin and entity:IsAdmin() and entity:GetMoveType() == MOVETYPE_NOCLIP) then
+					return false
+				end
+			end
+		end
+	end
 else
 	function PLUGIN:PlayerNoClip(client, state)
 		-- Observer mode is reserved for administrators.
@@ -72,6 +82,8 @@ else
 				client:DrawShadow(false)
 				-- Don't allow the player to get hurt.
 				client:GodEnable()
+				-- Don't allow npcs to target the player.
+				client:SetNoTarget(true)
 				hook.Run("OnPlayerObserve", client, state)
 			else
 				if (client.nutObsData) then
@@ -99,6 +111,8 @@ else
 				client:DrawShadow(true)
 				-- Let the player take damage again.
 				client:GodDisable()
+				-- Let npcs target the player again.
+				client:SetNoTarget(false)
 				hook.Run("OnPlayerObserve", client, state)
 			end
 		end

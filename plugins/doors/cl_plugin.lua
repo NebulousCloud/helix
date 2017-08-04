@@ -17,16 +17,30 @@ local configGet = nut.config.get
 local teamGetColor = team.GetColor
 
 function PLUGIN:DrawEntityInfo(entity, alpha)
-	if (entity.isDoor(entity) and !entity:getNetVar("hidden")) then
+	if (entity.isDoor(entity) and !entity:getNetVar("hidden") and hook.Run("CanDrawDoorInfo") != false) then
 		local position = toScreen(entity.LocalToWorld(entity, entity.OBBCenter(entity)))
 		local x, y = position.x, position.y
-		local owner = entity.getNetVar(entity, "owner")
+		local owner = entity.GetDTEntity(entity, 0)
 		local name = entity.getNetVar(entity, "title", entity.getNetVar(entity, "name", IsValid(owner) and L"dTitleOwned" or L"dTitle"))
 		local faction = entity.getNetVar(entity, "faction")
+		local class = entity.getNetVar(entity, "class")
 		local color
 
 		if (faction) then
 			color = teamGetColor(faction)
+		else
+			color = configGet("color")
+		end
+
+		local classData
+		if (class) then
+			classData = nut.class.list[class]
+			
+			if (classData) then
+				color = classData.color
+			else
+				color = configGet("color")
+			end
 		else
 			color = configGet("color")
 		end
@@ -40,6 +54,10 @@ function PLUGIN:DrawEntityInfo(entity, alpha)
 
 			if (info) then
 				drawText(L("dOwnedBy", L2(info.name) or info.name), x, y + 16, colorAlpha(color_white, alpha), 1, 1)
+			end
+		elseif (class) then
+			if (classData) then
+				drawText(L("dOwnedBy", L2(classData.name) or classData.name), x, y + 16, colorAlpha(color_white, alpha), 1, 1)
 			end
 		else
 			drawText(entity.getNetVar(entity, "noSell") and L"dIsNotOwnable" or L"dIsOwnable", x, y + 16, colorAlpha(color_white, alpha), 1, 1)

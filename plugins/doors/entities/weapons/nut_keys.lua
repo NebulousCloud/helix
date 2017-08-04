@@ -31,24 +31,24 @@ SWEP.Secondary.DefaultClip = 0
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = ""
 
-SWEP.ViewModel = Model("models/weapons/c_arms_cstrike.mdl")
+SWEP.ViewModel = Model("models/weapons/c_arms_animations.mdl")
 SWEP.WorldModel = ""
 
-SWEP.UseHands = true
+SWEP.UseHands = false
 SWEP.LowerAngles = Angle(0, 5, -14)
 SWEP.LowerAngles2 = Angle(0, 5, -22)
 
 SWEP.IsAlwaysLowered = true
 SWEP.FireWhenLowered = true
-SWEP.HoldType = "fist"
+SWEP.HoldType = "passive"
 
 function SWEP:PreDrawViewModel(viewModel, weapon, client)
 	local hands = player_manager.TranslatePlayerHands(player_manager.TranslateToPlayerModelName(client:GetModel()))
 
 	if (hands and hands.model) then
-		viewModel:SetModel(hands.model)
-		viewModel:SetSkin(hands.skin)
-		viewModel:SetBodyGroups(hands.body)
+		--viewModel:SetModel(hands.model)
+		--viewModel:SetSkin(hands.skin)
+		--viewModel:SetBodyGroups(hands.body)
 	end
 end
 
@@ -63,8 +63,8 @@ function SWEP:Deploy()
 	local viewModel = self.Owner:GetViewModel()
 
 	if (IsValid(viewModel)) then
-		viewModel:SetPlaybackRate(1)
-		viewModel:ResetSequence(ACT_VM_FISTS_DRAW)
+		--viewModel:SetPlaybackRate(1)
+		--viewModel:ResetSequence(ACT_VM_FISTS_DRAW)
 	end
 
 	return true
@@ -121,7 +121,7 @@ function SWEP:PrimaryAttack()
 	if (IsValid(entity) and
 		(
 			(entity:isDoor() and entity:checkDoorAccess(self.Owner)) or
-			(entity:IsVehicle() and entity:getNetVar("owner") == self.Owner:getChar():getID())
+			(entity:IsVehicle() and entity.CPPIGetOwner and entity:CPPIGetOwner() == self.Owner)
 		)
 	) then
 		self.Owner:setAction("@locking", time, function()
@@ -158,9 +158,15 @@ function SWEP:toggleLock(door, state)
 	elseif (door:IsVehicle()) then
 		if (state) then
 			door:Fire("lock")
+			if (door.IsSimfphyscar) then
+				door.IsLocked = true
+			end
 			self.Owner:EmitSound("doors/door_latch3.wav")
 		else
 			door:Fire("unlock")
+			if (door.IsSimfphyscar) then
+				door.IsLocked = nil
+			end
 			self.Owner:EmitSound("doors/door_latch1.wav")
 		end
 	end
@@ -196,7 +202,7 @@ function SWEP:SecondaryAttack()
 	if (IsValid(entity) and
 		(
 			(entity:isDoor() and entity:checkDoorAccess(self.Owner)) or
-			(entity:IsVehicle() and entity:getNetVar("owner") == self.Owner:getChar():getID())
+			(entity:IsVehicle() and entity.CPPIGetOwner and entity:CPPIGetOwner() == self.Owner)
 		)
 	) then
 		self.Owner:setAction("@unlocking", time, function()

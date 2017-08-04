@@ -13,17 +13,17 @@ local PANEL = {}
 			if (IsValid(line.player)) then
 				local menu = DermaMenu()
 					menu:AddOption(L"tenant", function()
-						if (self.access[line.player] != DOOR_TENANT) then
+						if (self.accessData and self.accessData[line.player] != DOOR_TENANT) then
 							netstream.Start("doorPerm", self.door, line.player, DOOR_TENANT)
 						end
 					end):SetImage("icon16/user_add.png")
 					menu:AddOption(L"guest", function()
-						if (self.access[line.player] != DOOR_GUEST) then
+						if (self.accessData and self.accessData[line.player] != DOOR_GUEST) then
 							netstream.Start("doorPerm", self.door, line.player, DOOR_GUEST)
 						end
 					end):SetImage("icon16/user_green.png")
 					menu:AddOption(L"none", function()
-						if (self.access[line.player] != DOOR_NONE) then
+						if (self.accessData and self.accessData[line.player] != DOOR_NONE) then
 							netstream.Start("doorPerm", self.door, line.player, DOOR_NONE)
 						end
 					end):SetImage("icon16/user_red.png")
@@ -76,7 +76,7 @@ local PANEL = {}
 	function PANEL:checkAccess(access)
 		access = access or DOOR_GUEST
 
-		if (self.accessData[LocalPlayer()] >= access) then
+		if ((self.accessData[LocalPlayer()] or 0) >= access) then
 			return true
 		end
 

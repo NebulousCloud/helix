@@ -1,16 +1,19 @@
 AddCSLuaFile()
 
+DEFINE_BASECLASS( "base_anim" )
+
 ENT.Type = "anim"
 ENT.PrintName = "Item"
 ENT.Category = "NutScript"
 ENT.Spawnable = false
-ENT.RenderGroup 		= RENDERGROUP_BOTH
+ENT.RenderGroup = RENDERGROUP_BOTH
 
 if (SERVER) then
 	function ENT:Initialize()
 		self:SetModel("models/props_junk/watermelon01.mdl")
 		self:SetSolid(SOLID_VPHYSICS)
 		self:PhysicsInit(SOLID_VPHYSICS)
+		self.health = 50
 
 		local physObj = self:GetPhysicsObject()
 
@@ -18,7 +21,29 @@ if (SERVER) then
 			physObj:EnableMotion(true)
 			physObj:Wake()
 		end
+		
+		timer.Simple(300, function()
+			if (IsValid(self)) then
+				self:Remove()
+			end
+		end)
 	end
+
+	function ENT:setHealth(amount)
+		self.health = amount
+	end
+	
+	function ENT:OnTakeDamage(dmginfo)
+		print("wtf")
+		local damage = dmginfo:GetDamage()
+		self:setHealth(self.health - damage)
+
+		if (self.health < 0 and !self.onbreak) then
+			self.onbreak = true
+			self:Remove()
+		end
+	end
+
 
 	function ENT:setItem(itemID)
 		local itemTable = nut.item.instances[itemID]
@@ -27,6 +52,11 @@ if (SERVER) then
 			local model = itemTable.onGetDropModel and itemTable:onGetDropModel(self) or itemTable.model
 
 			self:SetSkin(itemTable.skin or 0)
+			if (itemTable.worldModel) then
+				self:SetModel(itemTable.worldModel == true and "models/props_junk/cardboard_box004a.mdl" or itemTable.worldModel)
+			else
+				self:SetModel(model)
+			end
 			self:SetModel(model)
 			self:PhysicsInit(SOLID_VPHYSICS)
 			self:SetSolid(SOLID_VPHYSICS)
@@ -70,6 +100,16 @@ if (SERVER) then
 			end
 		end
 	end
+	
+	function ENT:Think()
+		local it = self:getItemTable()
+		
+		if (it) then
+			if (!it.id or it.id == 0) then
+				self:Remove()
+			end
+		end
+	end
 else
 	ENT.DrawEntityInfo = true
 
@@ -98,10 +138,15 @@ else
 
 			local lines = self.lines
 			local offset = self.offset
-
-			for i = 1, #lines do
-				nut.util.drawText(lines[i], x, y + (i * 16), colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+			
+			if (lines) then
+				for i = 1, #lines do
+					y = y + (i * 16)
+					nut.util.drawText(lines[i], x, y, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+				end
 			end
+
+			x, y = hook.Run("DrawItemDescription", self, x, y, colorAlpha(color_white, alpha), alpha * 0.65)
 
 			itemTable.entity = nil
 			itemTable.data = oldData

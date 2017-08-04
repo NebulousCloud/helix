@@ -1,3 +1,4 @@
+
 ICON_INFO = ICON_INFO or {}
 ICON_INFO.camPos = ICON_INFO.camPos or Vector()
 ICON_INFO.camAng = ICON_INFO.camAng or Angle()
@@ -6,6 +7,8 @@ ICON_INFO.w = ICON_INFO.w or 1
 ICON_INFO.h = ICON_INFO.h or 1
 ICON_INFO.modelAng = ICON_INFO.modelAng or Angle()
 ICON_INFO.modelName = ICON_INFO.modelName or "models/Items/grenadeAmmo.mdl"
+ICON_INFO.outline = ICON_INFO.outline or false
+ICON_INFO.outlineColor = ICON_INFO.outlineColor or Color(255, 255, 255)
 
 local vTxt = "xyz"
 local aTxt = "pyr"
@@ -25,7 +28,7 @@ local iconSize = 64
 function PANEL:Init()
 	self:SetPos(50, 50)
 	self:ShowCloseButton(false)
-	self:SetTitle("PREVIEW")
+	self:SetTitle("RENDER PREVIEW")
 
 	self.model = self:Add("DModelPanel")
 	self.model:SetPos(5, 22)
@@ -35,7 +38,7 @@ function PANEL:Init()
 	end
 	function self.model:LayoutEntity()
 	end
-
+	
 	self:AdjustSize(ICON_INFO.w, ICON_INFO.h)
 end
 
@@ -69,6 +72,17 @@ function PANEL:Init()
 		surface.SetDrawColor(255, 255, 255)
 		surface.DrawOutlinedRect(0, 0, w, h)
 	end
+	
+	self.model.Icon:SetVisible(false)
+	self.model.Paint = function(self, x, y)
+		local exIcon = ikon:getIcon("iconEditor")
+		if (exIcon) then
+			surface.SetMaterial(exIcon)
+			surface.SetDrawColor(color_white)
+			surface.DrawTexturedRect(0, 0, x, y)
+		end
+	end
+			
 
 	self:AdjustSize(ICON_INFO.w, ICON_INFO.h)
 end
@@ -87,8 +101,37 @@ vgui.Register("iconRenderPreview", PANEL, "DFrame")
 /*
 	EDITOR FUNCTION
 */
-local function action()
+local function action(self)
+		local p1 = self.prev
+		local p = self.prev2
+		local icon = p.model
+		local iconModel = p1.model
 
+		local ent = iconModel:GetEntity()
+		local tab = {}
+		tab.ent		= ent
+		tab.cam_pos = iconModel:GetCamPos()
+		tab.cam_ang = iconModel:GetLookAng()
+		tab.cam_fov = iconModel:GetFOV()
+		
+		local text =
+		"ITEM.model = \""..ICON_INFO.modelName:gsub("\\", "/"):lower().."\"" .. "\n"..
+		"ITEM.width = "..ICON_INFO.w .."\n"..
+		"ITEM.height = "..ICON_INFO.h .."\n"..
+		"ITEM.iconCam = {" .."\n"..
+		"\tpos = Vector("..tab.cam_pos.x..", "..tab.cam_pos.y..", "..tab.cam_pos.z..")" .."\n"..
+		"\tang = Angle("..tab.cam_ang.p..", "..tab.cam_ang.y..", "..tab.cam_ang.r..")" .."\n"..
+		"\tfov = "..tab.cam_fov .. "," .."\n"
+		if (ICON_INFO.outline) then
+			text = text .. "\toutline = true," .. "\n" ..
+			"\toutlineColor = Color("..
+			ICON_INFO.outlineColor.r .. ", " ..
+			ICON_INFO.outlineColor.g .. ", " ..
+			ICON_INFO.outlineColor.b .. ")" .. "\n"
+		end
+		text = text .. "}"
+
+		SetClipboardText(text)
 end
 
 local function renderAction(self)
@@ -106,16 +149,40 @@ local function renderAction(self)
 		tab.cam_fov = iconModel:GetFOV()
 
 		icon:SetModel(ent:GetModel())
-		icon:RebuildSpawnIconEx( tab )
+		
+		ikon:renderIcon(
+			"iconEditor",
+			ICON_INFO.w,
+			ICON_INFO.h,
+			ICON_INFO.modelName,
+			{
+				pos = ICON_INFO.camPos,
+				ang = ICON_INFO.camAng,
+				fov = ICON_INFO.FOV,
+				outline = ICON_INFO.outline,
+				outlineColor = ICON_INFO.outlineColor
+			},
+			true
+		)
 
-		print("ITEM.model = \""..ICON_INFO.modelName:gsub("\\", "/"):lower().."\"")
-		print("ITEM.width = "..ICON_INFO.w)
-		print("ITEM.height = "..ICON_INFO.h)
-		print("ITEM.iconCam = {")
-		print("\tpos = Vector("..tab.cam_pos.x..", "..tab.cam_pos.y..", "..tab.cam_pos.z.."),")
-		print("\tang = Angle("..tab.cam_ang.p..", "..tab.cam_ang.y..", "..tab.cam_ang.r.."),")
-		print("\tfov = "..tab.cam_fov)
-		print("}")
+		local text =
+		"ITEM.model = \""..ICON_INFO.modelName:gsub("\\", "/"):lower().."\"" .. "\n"..
+		"ITEM.width = "..ICON_INFO.w .."\n"..
+		"ITEM.height = "..ICON_INFO.h .."\n"..
+		"ITEM.iconCam = {" .."\n"..
+		"\tpos = Vector("..tab.cam_pos.x..", "..tab.cam_pos.y..", "..tab.cam_pos.z..",)" .."\n"..
+		"\tang = Angle("..tab.cam_ang.p..", "..tab.cam_ang.y..", "..tab.cam_ang.r..",)" .."\n"..
+		"\tfov = "..tab.cam_fov .. "," .."\n"
+		if (ICON_INFO.outline) then
+			text = text .. "\toutline = true," .. "\n" ..
+			"\toutlineColor = Color("..
+			ICON_INFO.outlineColor.r .. ", " ..
+			ICON_INFO.outlineColor.g .. ", " ..
+			ICON_INFO.outlineColor.b .. ")" .. "\n"
+		end
+		text = text .. "}"
+
+		print(text)
 	end
 end
 
@@ -154,7 +221,9 @@ function PANEL:Init()
 	self.copy:SetText("COPY")
 	self.copy:SetTall(30)
 	self.copy:DockMargin(5, 5, 5, 0)
-	self.copy.DoClick = action
+	self.copy.DoClick = function()
+		action(self)
+	end
 
 	self:AddText("Presets")
 	for i = 1, 5 do
@@ -272,6 +341,31 @@ function PANEL:Init()
 				ICON_INFO.camAng[i] = value
 			end
 		end
+	end
+
+	local aaoa = self.list:Add("DPanel")
+	aaoa:Dock(TOP)	 
+	aaoa:DockMargin(10, 0, 0, 5)
+	aaoa:SetHeight(250)
+
+	self.color = aaoa:Add("DCheckBoxLabel")
+	self.color:SetText("Draw Outline?") 		
+	self.color:SetValue(ICON_INFO.outline)		 
+	self.color:DockMargin(10, 5, 0, 5)
+	self.color:Dock(TOP)	 
+	function self.color:OnChange(bool)
+		ICON_INFO.outline = bool
+	end
+
+	self.colormixer = aaoa:Add( "DColorMixer" )
+	self.colormixer:Dock( FILL )			--Make self.colormixer fill place of Frame
+	self.colormixer:SetPalette( true ) 		--Show/hide the palette			DEF:true
+	self.colormixer:SetAlphaBar( false ) 		--Show/hide the alpha bar		DEF:true
+	self.colormixer:SetWangs( true )			--Show/hide the R G B A indicators 	DEF:true
+	self.colormixer:SetColor( ICON_INFO.outlineColor  )	--Set the default color
+	self.colormixer:DockMargin(10, 5, 0, 5)
+	function self.colormixer:ValueChanged(value)
+		 ICON_INFO.outlineColor = value
 	end
 
 	self:SetupEditor()

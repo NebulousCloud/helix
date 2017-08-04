@@ -18,7 +18,7 @@ local PANEL = {}
 		self:Center()
 
 		self.title = self:Add("DLabel")
-		self.title:SetText(GetConVarString("hostname"))
+		self.title:SetText(GetHostName())
 		self.title:SetFont("nutBigFont")
 		self.title:SetContentAlignment(5)
 		self.title:SetTextColor(color_white)
@@ -81,6 +81,8 @@ local PANEL = {}
 
 	function PANEL:Think()
 		if ((self.nextUpdate or 0) < CurTime()) then
+			self.title:SetText(nut.config.get("sbTitle"))
+
 			local visible, amount
 
 			for k, v in ipairs(self.teams) do

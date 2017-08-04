@@ -8,8 +8,8 @@ function renderNewIcon(panel, itemTable)
 		local iconCam = itemTable.iconCam
 		iconCam = {
 			cam_pos = iconCam.pos,
-			cam_fov = iconCam.fov,
 			cam_ang = iconCam.ang,
+			cam_fov = iconCam.fov,
 		}
 		renderdIcons[string.lower(itemTable.model)] = true
 		
@@ -41,11 +41,16 @@ function PANEL:PaintOver(w, h)
 	end
 end
 
+function PANEL:ExtraPaint(w, h)
+end
+
 function PANEL:Paint(w, h)
 	local parent = self:GetParent()
 
 	surface.SetDrawColor(0, 0, 0, 85)
 	surface.DrawRect(2, 2, w - 4, h - 4)
+
+	self:ExtraPaint(w, h)
 end
 
 function PANEL:wait(time)
@@ -64,9 +69,10 @@ vgui.Register("nutItemIcon", PANEL, "SpawnIcon")
 
 PANEL = {}
 	function PANEL:Init()
+		self:MakePopup()
+		self:Center()
 		self:ShowCloseButton(false)
 		self:SetDraggable(true)
-		self:MakePopup()
 		self:SetTitle(L"inv")
 
 		self.panels = {}
@@ -79,6 +85,16 @@ PANEL = {}
 					v:Remove()
 				end
 			end
+		end
+	end
+
+	function PANEL:viewOnly()
+		self.viewOnly = true
+
+		for id, icon in pairs(self.panels) do
+			icon.OnMousePressed = nil
+			icon.OnMouseReleased = nil
+			icon.doRightClick = nil
 		end
 	end
 
@@ -102,7 +118,16 @@ PANEL = {}
 						local icon = self:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
 
 						if (IsValid(icon)) then
-							icon:SetToolTip("Item #"..item.id.."\n"..L("itemInfo", L(item.name), L(item:getDesc())))
+							local newTooltip = hook.Run("OverrideItemTooltip", self, data, item)
+
+							if (newTooltip) then
+								icon:SetToolTip(newTooltip)
+							else
+								icon:SetToolTip(
+									Format(nut.config.itemFormat,
+									L(item.name), item:getDesc() or "")
+								)
+							end
 							icon.itemID = item.id
 
 							self.panels[item.id] = icon
@@ -159,6 +184,7 @@ PANEL = {}
 		end
 	end
 	
+	local activePanels = {}
 	function PANEL:PaintOver(w, h)
 		local item = nut.item.held
 		
@@ -166,43 +192,72 @@ PANEL = {}
 			local mouseX, mouseY = self:LocalCursorPos()
 			local dropX, dropY = math.ceil((mouseX - 4 - (item.gridW - 1) * 32) / 64), math.ceil((mouseY - 27 - (item.gridH - 1) * 32) / 64)
 
+			if ((mouseX < -w*0.05 or mouseX > w*1.05) or (mouseY < h*0.05 or mouseY > h*1.05)) then
+				activePanels[self] = nil
+			else
+				activePanels[self] = true
+			end
+
+			item.dropPos = item.dropPos or {}
+			if (item.dropPos[self]) then
+				item.dropPos[self].item = nil
+			end
+
 			for x = 0, item.gridW - 1 do
 				for y = 0, item.gridH - 1 do
 					local x2, y2 = dropX + x, dropY + y
-
-					if (self:isValidSlot(x2, y2, item)) then
-						surface.SetDrawColor(0, 255, 0, 10)
+					
+					-- Is Drag and Drop icon is in the Frame?
+					if (self.slots[x2] and IsValid(self.slots[x2][y2])) then
+						local bool = self:isEmpty(x2, y2, item)
 						
+						surface.SetDrawColor(0, 0, 255, 10)
+
 						if (x == 0 and y == 0) then
-							item.dropPos = item.dropPos or {}
 							item.dropPos[self] = {x = (x2 - 1)*64 + 4, y = (y2 - 1)*64 + 27, x2 = x2, y2 = y2}
 						end
+							
+						if (bool) then
+							surface.SetDrawColor(0, 255, 0, 10)
+						else
+							surface.SetDrawColor(255, 255, 0, 10)
+							
+							if (self.slots[x2] and self.slots[x2][y2] and item.dropPos[self]) then
+								item.dropPos[self].item = self.slots[x2][y2].item
+							end
+						end
+					
+						surface.DrawRect((x2 - 1)*64 + 4, (y2 - 1)*64 + 27, 64, 64)
 					else
-						surface.SetDrawColor(255, 0, 0, 10)
-						
 						if (item.dropPos) then
 							item.dropPos[self] = nil
 						end
 					end
-					
-					surface.DrawRect((x2 - 1)*64 + 4, (y2 - 1)*64 + 27, 64, 64)
 				end
 			end
 		end
 	end
 	
-	function PANEL:isValidSlot(x, y, this)
-		return self.slots[x] and IsValid(self.slots[x][y]) and (!IsValid(self.slots[x][y].item) or self.slots[x][y].item == this)
+	function PANEL:isEmpty(x, y, this)
+		return (!IsValid(self.slots[x][y].item) or self.slots[x][y].item == this)
 	end
 	
 	function PANEL:onTransfer(oldX, oldY, x, y, oldInventory, noSend)
 		local inventory = nut.item.inventories[oldInventory.invID]
 		local inventory2 = nut.item.inventories[self.invID]
 		local item
-
+		
 		if (inventory) then
 			item = inventory:getItemAt(oldX, oldY)
+			
+			if (!item) then
+				return false
+			end
 
+			if (hook.Run("CanItemBeTransfered", item, nut.item.inventories[oldInventory.invID], nut.item.inventories[self.invID]) == false) then
+				return false, "notAllowed"
+			end
+		
 			if (item.onCanBeTransfered and item:onCanBeTransfered(inventory, inventory != inventory2 and inventory2 or nil) == false) then
 				return false
 			end
@@ -251,12 +306,34 @@ PANEL = {}
 			panel.inv = inventory
 
 			local itemTable = inventory:getItemAt(panel.gridX, panel.gridY)
+			panel.itemTable = itemTable
 
 			if (self.panels[itemTable:getID()]) then
 				self.panels[itemTable:getID()]:Remove()
 			end
-
-			renderNewIcon(panel, itemTable)
+			
+			if (itemTable.exRender) then
+				panel.Icon:SetVisible(false)
+				panel.ExtraPaint = function(self, x, y)
+					local exIcon = ikon:getIcon(itemTable.uniqueID)
+					if (exIcon) then
+						surface.SetMaterial(exIcon)
+						surface.SetDrawColor(color_white)
+						surface.DrawTexturedRect(0, 0, x, y)
+					else
+						ikon:renderIcon(
+							itemTable.uniqueID,
+							itemTable.width,
+							itemTable.height,
+							itemTable.model,
+							itemTable.iconCam
+						)
+					end
+				end
+			else
+				-- yeah..
+				renderNewIcon(panel, itemTable)
+			end
 
 			panel.move = function(this, data, inventory, noSend)
 				local oldX, oldY = this.gridX, this.gridY
@@ -294,12 +371,62 @@ PANEL = {}
 					end
 				end
 			end
+
 			panel.OnMousePressed = function(this, code)
 				if (code == MOUSE_LEFT) then
-					this:DragMousePress(code)
-					this:MouseCapture(true)
+					if (input.IsKeyDown(KEY_LCONTROL) or input.IsKeyDown(KEY_RCONTROL)) then
+						local func = itemTable.functions
 
-					nut.item.held = this
+						if (func) then
+							local use
+							local comm
+							for k, v in pairs(USABLE_FUNCS or {}) do
+								comm = v
+								use = func[comm]
+
+								if (use and use.onCanRun) then
+									if (use.onCanRun(itemTable) == false) then
+										continue
+									end
+								end
+
+								if (use) then
+									break
+								end
+							end
+
+							if (!use) then return end
+
+							if (use.onCanRun) then
+								if (use.onCanRun(itemTable) == false) then
+									itemTable.player = nil
+
+									return
+								end
+							end
+
+							itemTable.player = LocalPlayer()
+								local send = true
+
+								if (use.onClick) then
+									send = use.onClick(itemTable)
+								end
+
+								if (use.sound) then
+									surface.PlaySound(use.sound)
+								end
+
+								if (send != false) then
+									netstream.Start("invAct", comm, itemTable.id, self.invID)
+								end
+							itemTable.player = nil
+						end
+					else
+						this:DragMousePress(code)
+						this:MouseCapture(true)
+
+						nut.item.held = this
+					end
 				elseif (code == MOUSE_RIGHT and this.doRightClick) then
 					this:doRightClick()
 				end
@@ -313,16 +440,82 @@ PANEL = {}
 					this:SetZPos(99)
 
 					nut.item.held = nil
+					
+					if (table.Count(activePanels) == 0) then
+						local item = this.itemTable
+						local inv = this.inv
+
+						if (item and inv) then
+							netstream.Start("invAct", "drop", item.id, inv:getID(), item.id)
+						end
+						
+						return false
+					end
+					activePanels = {}
 
 					if (data) then
 						local inventory = table.GetFirstKey(data)
-
+						
 						if (IsValid(inventory)) then
 							data = data[inventory]
-							local oldX, oldY = this.gridX, this.gridY
 
-							if (oldX != data.x2 or oldY != data.y2 or inventory != self) then
-								this:move(data, inventory)
+							if (IsValid(data.item)) then
+								inventory = panel.inv
+
+								if (inventory) then
+									local targetItem = data.item.itemTable
+									
+									if (targetItem) then
+										-- to make sure...
+										if (targetItem.id == itemTable.id) then return end
+
+										if (itemTable.functions) then
+											local combine = itemTable.functions.combine
+
+											-- does the item has the combine feature?
+											if (combine) then
+												itemTable.player = LocalPlayer()
+
+												-- canRun == can item combine into?
+												if (combine.onCanRun and (combine.onCanRun(itemTable, targetItem.id) != false)) then
+													netstream.Start("invAct", "combine", itemTable.id, inventory:getID(), targetItem.id)
+												end
+
+												itemTable.player = nil
+											else
+												/*
+													-- Drag and drop bag transfer requires half-recode of Inventory GUI.
+													-- It will be there. But it will take some time.
+
+													-- okay, the bag doesn't have any combine function.
+													-- then, what's next? yes. moving the item in the bag.
+
+													if (targetItem.isBag) then
+														-- get the inventory.
+														local bagInv = targetItem.getInv and targetItem:getInv()
+														-- Is the bag's inventory exists?
+														if (bagInv) then
+															print(bagInv, "baggeD")
+															local mx, my = bagInv:findEmptySlot(itemTable.width, itemTable.height, true)
+															
+															-- we found slot for the inventory.
+															if (mx and my) then		
+																print(bagInv, "move")						
+																this:move({x2 = mx, y2 = my}, bagInv)
+															end
+														end
+													end
+												*/
+											end
+										end
+									end
+								end
+							else
+								local oldX, oldY = this.gridX, this.gridY
+
+								if (oldX != data.x2 or oldY != data.y2 or inventory != self) then									
+									this:move(data, inventory)
+								end
 							end
 						end
 					end
@@ -332,7 +525,12 @@ PANEL = {}
 				if (itemTable) then
 					itemTable.player = LocalPlayer()
 						local menu = DermaMenu()
+						local override = hook.Run("OnCreateItemInteractionMenu", panel, menu, itemTable)
+						
+						if (override == true) then if (menu.Remove) then menu:Remove() end return end
 							for k, v in SortedPairs(itemTable.functions) do
+								if (k == "combine") then continue end -- we don't need combine on the menu mate. 
+
 								if (v.onCanRun) then
 									if (v.onCanRun(itemTable) == false) then
 										itemTable.player = nil
@@ -341,23 +539,69 @@ PANEL = {}
 									end
 								end
 
-								menu:AddOption(L(v.name or k), function()
-									itemTable.player = LocalPlayer()
-										local send = true
+								-- is Multi-Option Function
+								if (v.isMulti) then
+									local subMenu, subMenuOption = menu:AddSubMenu(L(v.name or k), function()
+										itemTable.player = LocalPlayer()
+											local send = true
 
-										if (v.onClick) then
-											send = v.onClick(itemTable)
-										end
+											if (v.onClick) then
+												send = v.onClick(itemTable)
+											end
 
-										if (v.sound) then
-											surface.PlaySound(v.sound)
-										end
+											if (v.sound) then
+												surface.PlaySound(v.sound)
+											end
 
-										if (send != false) then
-											netstream.Start("invAct", k, itemTable.id, self.invID)
+											if (send != false) then
+												netstream.Start("invAct", k, itemTable.id, self.invID)
+											end
+										itemTable.player = nil
+									end)
+									subMenuOption:SetImage(v.icon or "icon16/brick.png")
+
+									if (v.multiOptions) then
+										local options = isfunction(v.multiOptions) and v.multiOptions(itemTable, LocalPlayer()) or v.multiOptions
+
+										for _, sub in pairs(options) do
+											subMenu:AddOption(L(sub.name or "subOption"), function()
+												itemTable.player = LocalPlayer()
+													local send = true
+
+													if (v.onClick) then
+														send = v.onClick(itemTable)
+													end
+
+													if (v.sound) then
+														surface.PlaySound(v.sound)
+													end
+
+													if (send != false) then
+														netstream.Start("invAct", k, itemTable.id, self.invID, sub.data)
+													end
+												itemTable.player = nil
+											end)
 										end
-									itemTable.player = nil
-								end):SetImage(v.icon or "icon16/brick.png")
+									end
+								else
+									menu:AddOption(L(v.name or k), function()
+										itemTable.player = LocalPlayer()
+											local send = true
+
+											if (v.onClick) then
+												send = v.onClick(itemTable)
+											end
+
+											if (v.sound) then
+												surface.PlaySound(v.sound)
+											end
+
+											if (send != false) then
+												netstream.Start("invAct", k, itemTable.id, self.invID)
+											end
+										itemTable.player = nil
+									end):SetImage(v.icon or "icon16/brick.png")
+								end
 							end
 						menu:Open()
 					itemTable.player = nil
@@ -401,6 +645,13 @@ hook.Add("CreateMenuButtons", "nutInventory", function(tabs)
 			if (inventory) then
 				nut.gui.inv1:setInventory(inventory)
 			end
+			nut.gui.inv1:SetPos(panel:GetPos())
 		end
 	end
+end)
+
+hook.Add("PostRenderVGUI", "nutInvHelper", function()
+	local pnl = nut.gui.inv1
+
+	hook.Run("PostDrawInventory", pnl)
 end)

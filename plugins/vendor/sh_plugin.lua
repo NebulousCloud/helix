@@ -27,7 +27,7 @@ VENDOR_BUYONLY = 3
 if (SERVER) then
 	local PLUGIN = PLUGIN
 
-	function PLUGIN:saveVendors()
+	function PLUGIN:SaveData()
 		local data = {}
 			for k, v in ipairs(ents.FindByClass("nut_vendor")) do
 				data[#data + 1] = {
@@ -84,26 +84,6 @@ if (SERVER) then
 	end
 
 	function PLUGIN:OnCharTradeVendor(client, vendor, x, y, invID, price, isSell)
-		if (invID) then
-			local inv = nut.item.inventories[invID]
-			local item = inv:getItemAt(x, y)
-
-			if (price) then
-				price = nut.currency.get(price)
-			else
-				price = L("free", client):upper()
-			end
-
-			if (isSell) then
-				if (item) then
-					client:notifyLocalized("businessSell", item.name, price)
-				end
-			else
-				if (item) then
-					client:notifyLocalized("businessPurchase", item.name, price)
-				end
-			end
-		end
 	end
 
 	netstream.Hook("vendorExit", function(client)
@@ -245,7 +225,7 @@ if (SERVER) then
 				netstream.Start(entity.receivers, "vendorEdit", key, data)
 			end
 
-			PLUGIN:saveVendors()
+			PLUGIN:SaveData()
 
 			if (feedback) then
 				local receivers = {}
@@ -281,10 +261,15 @@ if (SERVER) then
 			if (isSellingToVendor) then
 				local found = false
 				local name
+				
+				if (!entity:hasMoney(price)) then
+					return client:notifyLocalized("vendorNoMoney")
+				end
 
+				local invOkay = true
 				for k, v in pairs(client:getChar():getInv():getItems()) do
-					if (v.uniqueID == uniqueID) then
-						v:remove()
+					if (v.uniqueID == uniqueID and v:getID() != 0) then
+						invOkay = v:remove()
 						found = true
 						name = L(v.name, client)
 
@@ -295,18 +280,19 @@ if (SERVER) then
 				if (!found) then
 					return
 				end
-
-				if (!entity:hasMoney(price)) then
-					return client:notifyLocalized("vendorNoMoney")
+				
+				if (!invOkay) then
+					client:getChar():getInv():sync(client, true)
+					return client:notifyLocalized("tellAdmin", "trd!iid")
 				end
 
 				client:getChar():giveMoney(price)
 				client:notifyLocalized("businessSell", name, nut.currency.get(price))
-
 				entity:takeMoney(price)
 				entity:addStock(uniqueID)
 
-				PLUGIN:saveVendors()
+				PLUGIN:SaveData()
+				hook.Run("OnCharTradeVendor", client, entity, uniqueID, isSellingToVendor)
 			else
 				local stock = entity:getStock(uniqueID)
 
@@ -319,9 +305,9 @@ if (SERVER) then
 				end
 
 				local name = L(nut.item.list[uniqueID].name, client)
-
+			
 				client:getChar():takeMoney(price)
-				client:notifyLocalized("businessPurchase", name, price)
+				client:notifyLocalized("businessPurchase", name, nut.currency.get(price))
 				
 				entity:giveMoney(price)
 
@@ -333,7 +319,8 @@ if (SERVER) then
 
 				entity:takeStock(uniqueID)
 
-				PLUGIN:saveVendors()
+				PLUGIN:SaveData()
+				hook.Run("OnCharTradeVendor", client, entity, uniqueID, isSellingToVendor)
 			end
 		else
 			client:notifyLocalized("vendorNoTrade")

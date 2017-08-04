@@ -85,8 +85,14 @@ function nut.class.canBe(client, class)
 		end
 	end
 
+	hook.Run("CanPlayerJoinClass", client, class, info)
+
 	-- See if the class allows the player to join it.
 	return info:onCanBe(client)
+end
+
+function nut.class.get(identifier)
+	return nut.class.list[identifier]
 end
 
 function nut.class.getPlayers(class)
@@ -123,10 +129,22 @@ function charMeta:joinClass(class)
 end
 
 function charMeta:kickClass()
-	self:setClass()
-
 	local client = self:getPlayer()
-	hook.Run("OnPlayerJoinClass", client, class)
+	if (!client) then return end
+	
+	local goClass
+
+	for k, v in pairs(nut.class.list) do
+		if (v.faction == client:Team() and v.isDefault) then
+			goClass = k
+			
+			break
+		end
+	end
+
+	self:joinClass(goClass)
+	
+	hook.Run("OnPlayerJoinClass", client, goClass)
 end
 
 function GM:OnPlayerJoinClass(client, class, oldClass)

@@ -15,6 +15,18 @@ function nut.config.setDefault(key, value)
 	end
 end
 
+function nut.config.forceSet(key, value, noSave)
+	local config = nut.config.stored[key]
+
+	if (config) then
+		config.value = value
+	end
+
+	if (noSave) then
+		nut.config.save()
+	end
+end
+
 function nut.config.set(key, value)
 	local config = nut.config.stored[key]
 
@@ -109,6 +121,7 @@ if (SERVER) then
 	end
 
 	netstream.Hook("cfgSet", function(client, key, value)
+		// NEED TO ADD HOOK: CanPlayerModifyConfig
 		if (client:IsSuperAdmin() and type(nut.config.stored[key].default) == type(value)) then
 			nut.config.set(key, value)
 
@@ -168,7 +181,7 @@ end
 
 if (CLIENT) then
 	hook.Add("CreateMenuButtons", "nutConfig", function(tabs)
-		if (LocalPlayer():IsSuperAdmin()) then
+		if (LocalPlayer():IsSuperAdmin() and hook.Run("CanPlayerUseConfig", LocalPlayer()) != false) then
 			tabs["config"] = function(panel)
 				local scroll = panel:Add("DScrollPanel")
 				scroll:Dock(FILL)

@@ -1,3 +1,7 @@
+if (engine.ActiveGamemode() == "dayz") then
+	return
+end
+
 PLUGIN.name = "Doors"
 PLUGIN.author = "Chessnut"
 PLUGIN.desc = "A simple door system."
@@ -40,12 +44,15 @@ do
 
 	if (SERVER) then
 		function entityMeta:removeDoorAccessData()
-			for k, v in pairs(self.nutAccess or {}) do
-				netstream.Start(k, "doorMenu")
+			-- Don't ask why. This happened with 60 player servers.
+			if (IsValid(self)) then
+				for k, v in pairs(self.nutAccess or {}) do
+					netstream.Start(k, "doorMenu")
+				end
+				
+				self.nutAccess = {}
+				self:SetDTEntity(0, nil)
 			end
-			
-			self.nutAccess = {}
-			self:setNetVar("owner", nil)
 		end
 	end
 end

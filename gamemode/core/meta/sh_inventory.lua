@@ -3,6 +3,7 @@ META.__index = META
 META.slots = META.slots or {}
 META.w = META.w or 4
 META.h = META.h or 4
+META.vars = META.vars or {}
 
 function META:getID()
 	return self.id or 0
@@ -71,6 +72,9 @@ function META:printAll()
 				end
 			end
 		end
+
+		print("INVVARS")
+		PrintTable(self.vars or {})
 	print("------------------------")
 end
 
@@ -81,15 +85,17 @@ function META:setOwner(owner, fullUpdate)
 		return
 	end
 
-	if (SERVER and fullUpdate) then
-		for k, v in ipairs(player.GetAll()) do
-			if (v:getNetVar("char") == owner) then
-				self:sync(v, true)
+	if (SERVER) then
+		if (fullUpdate) then
+			for k, v in ipairs(player.GetAll()) do
+				if (v:getNetVar("char") == owner) then
+					self:sync(v, true)
 
-				break
+					break
+				end
 			end
 		end
-
+		
 		nut.db.query("UPDATE nut_inventories SET _charID = "..owner.." WHERE _invID = "..self:getID())
 	end
 
@@ -228,12 +234,36 @@ function META:getItemCount(uniqueID, onlyMain)
 	return i
 end
 
+function META:getItemsByUniqueID(uniqueID, onlyMain)
+	local items = {}
+
+	for k, v in pairs(self:getItems(onlyMain)) do
+		if (v.uniqueID == uniqueID) then
+			table.insert(items, v)
+		end
+	end
+
+	return items
+end
+
 function META:getItemByID(id, onlyMain)
 	for k, v in pairs(self:getItems(onlyMain)) do
 		if (v.id == id) then
 			return v
 		end
 	end
+end
+
+function META:getItemsByID(id, onlyMain)
+	local items = {}
+
+	for k, v in pairs(self:getItems(onlyMain)) do
+		if (v.id == id) then
+			table.insert(items, v)
+		end
+	end
+
+	return items
 end
 
 -- This function may pretty heavy.
@@ -268,11 +298,13 @@ function META:getBags()
 
 	for k, v in pairs(self.slots) do
 		for k2, v2 in pairs(v) do
-			local isBag = v2.data.id
+			if (v2.data) then
+				local isBag = v2.data.id
 
-			if (!table.HasValue(invs, isBag)) then
-				if (isBag and isBag != self:getID()) then
-					table.insert(invs, isBag)
+				if (!table.HasValue(invs, isBag)) then
+					if (isBag and isBag != self:getID()) then
+						table.insert(invs, isBag)
+					end
 				end
 			end
 		end
@@ -340,7 +372,7 @@ if (SERVER) then
 	end
 
 	function META:add(uniqueID, quantity, data, x, y, noReplication)
-		quantity = quantity or 1
+	quantity = quantity or 1
 
 		if (quantity > 0) then
 			if (type(uniqueID) != "number" and quantity > 1) then
@@ -364,6 +396,10 @@ if (SERVER) then
 
 					if (bagInv) then
 						targetInv = bagInv
+					end
+
+					if (hook.Run("CanItemBeTransfered", item, nut.item.inventories[0], targetInv) == false) then
+						return false, "notAllowed"
 					end
 
 					if (x and y) then
@@ -410,16 +446,16 @@ if (SERVER) then
 				if (bagInv) then
 					targetInv = bagInv
 				end
-				
+
+				if (hook.Run("CanItemBeTransfered", itemTable, nut.item.inventories[0], targetInv) == false) then
+					return false, "notAllowed"
+				end
+
 				if (x and y) then
 					targetInv.slots[x] = targetInv.slots[x] or {}
 					targetInv.slots[x][y] = true
 
 					nut.item.instance(targetInv:getID(), uniqueID, data, x, y, function(item)
-						if (data) then
-							item.data = table.Merge(item.data, data)
-						end
-
 						item.gridX = x
 						item.gridY = y
 
@@ -456,7 +492,7 @@ if (SERVER) then
 			end
 		end
 		
-		netstream.Start(receiver, "inv", slots, self:getID(), self.w, self.h, (receiver == nil or fullUpdate) and self.owner or nil)
+		netstream.Start(receiver, "inv", slots, self:getID(), self.w, self.h, (receiver == nil or fullUpdate) and self.owner or nil, self.vars or {})
 
 		for k, v in pairs(self:getItems()) do
 			v:call("onSendData", receiver)

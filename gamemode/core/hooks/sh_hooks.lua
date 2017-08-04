@@ -42,9 +42,8 @@ local HOLDTYPE_TRANSLATOR = HOLDTYPE_TRANSLATOR
 
 function GM:TranslateActivity(client, act)
 	local model = string.lower(client.GetModel(client))
-	local class = getModelClass(model)
+	local class = getModelClass(model) or "player"
 	local weapon = client.GetActiveWeapon(client)
-
 	if (class == "player") then
 		if (!nut.config.get("wepAlwaysRaised") and IsValid(weapon) and !client.isWepRaised(client) and client.OnGround(client)) then
 			if (string.find(model, "zombie")) then
@@ -59,13 +58,22 @@ function GM:TranslateActivity(client, act)
 				end
 			end
 
-			local holdType = weapon.HoldType or weapon.GetHoldType(weapon)
-			holdType = PLAYER_HOLDTYPE_TRANSLATOR[holdType] or "passive"
+			local holdType = IsValid(weapon) and (weapon.HoldType or weapon.GetHoldType(weapon)) or "normal"
+
+			if (!nut.config.get("wepAlwaysRaised") and IsValid(weapon) and !client.isWepRaised(client) and client:OnGround()) then
+				holdType = PLAYER_HOLDTYPE_TRANSLATOR[holdType] or "passive"
+			end
 
 			local tree = nut.anim.player[holdType]
 
 			if (tree and tree[act]) then
-				return tree[act]
+				if (type(tree[act]) == "string") then
+					client.CalcSeqOverride = client.LookupSequence(client, tree[act])
+
+					return
+				else
+					return tree[act]
+				end
 			end
 		end
 
@@ -87,7 +95,7 @@ function GM:TranslateActivity(client, act)
 				--local fixang = tree.vehicle[class][3]
 
 				if (fixvec) then
-					client.ManipulateBonePosition(client, 0, fixvec)
+					client:SetLocalPos(Vector(16.5438, -0.1642, -20.5493))
 				end
 
 				if (type(act) == "string") then
@@ -252,11 +260,7 @@ function GM:CalcMainActivity(client, velocity)
 	local normalized = normalizeAngle(yaw - eyeAngles[2])
 
 	client.SetPoseParameter(client, "move_yaw", normalized)
-
-	if (CLIENT) then
-		client.SetIK(client, false)
-	end
-
+	
 	local oldSeqOverride = client.CalcSeqOverride
 	local seqIdeal, seqOverride = self.BaseClass.CalcMainActivity(self.BaseClass, client, velocity)
 	--client.CalcSeqOverride is being -1 after this line.
@@ -398,3 +402,27 @@ function GM:Move(client, moveData)
 		end
 	end
 end
+
+function GM:CanItemBeTransfered(itemObject, curInv, inventory)
+	if (itemObject and itemObject.isBag) then
+		local inventory = nut.item.inventories[itemObject:getData("id")]
+
+		if (inventory) then
+			for k, v in pairs(inventory:getItems()) do
+				if (v:getData("equip") == true) then
+					local owner = itemObject:getOwner()
+					
+					if (owner and IsValid(owner)) then
+						if (SERVER) then
+							owner:notifyLocalized("equippedBag")
+						end
+					end
+
+					return false
+				end
+			end
+		end
+	end
+end
+
+function GM:ShowHelp() end

@@ -62,17 +62,7 @@ local PANEL = {}
 			local tab = self:addTab(L(name), callback, name)
 			self.tabList[name] = tab
 		end
-		--[[
-		if (lastMenuTab and tabs[lastMenuTab]) then
-			if (lastMenuTab == "characters") then
-				lastMenuTab = nil
-			else
-				timer.Simple(.1, function()
-					self.tabList[lastMenuTab]:DoClick()
-				end)
-			end
-		end
-		--]]
+		
 		self.noAnchor = CurTime() + .4
 		self.anchorMode = true
 		self:MakePopup()

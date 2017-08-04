@@ -64,7 +64,7 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:GetDisplayedDescription(client)
-		if (client:getChar() and client != LocalPlayer() and !LocalPlayer():getChar():doesRecognize(client:getChar()) and !hook.Run("IsPlayerRecognized", client)) then
+		if (client:getChar() and client != LocalPlayer() and LocalPlayer():getChar() and !LocalPlayer():getChar():doesRecognize(client:getChar()) and !hook.Run("IsPlayerRecognized", client)) then
 			return L"noRecog"
 		end
 	end

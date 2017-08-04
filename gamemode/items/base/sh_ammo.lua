@@ -13,7 +13,7 @@ end
 
 if (CLIENT) then
 	function ITEM:paintOver(item, w, h)
-		draw.SimpleText(item.ammoAmount, "DermaDefault", w - 3, h - 3, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 1, color_black)
+		draw.SimpleText(item.ammoAmount, "DermaDefault", w , h - 5, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 1, color_black)
 	end
 end
 

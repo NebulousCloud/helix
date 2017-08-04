@@ -2,7 +2,6 @@ AddCSLuaFile()
 
 if (CLIENT) then
 	SWEP.PrintName = "Hands"
-	SWEP.PrintName = "Hands"
 	SWEP.Slot = 0
 	SWEP.SlotPos = 1
 	SWEP.DrawAmmo = false
@@ -195,7 +194,7 @@ function SWEP:PrimaryAttack()
 					end
 				end
 
-				hook.Run("PlayerThrowPunch", self.Owner, trace.Hit)
+				hook.Run("PlayerThrowPunch", self.Owner, trace)
 			self.Owner:LagCompensation(false)
 		end
 	end)
