@@ -204,7 +204,7 @@ CREATE TABLE IF NOT EXISTS `nut_characters` (
 	`_name` varchar(70) NOT NULL,
 	`_desc` text NOT NULL,
 	`_model` varchar(160) NOT NULL,
-	`_attribs` varchar(180) DEFAULT NULL,
+	`_attribs` varchar(500) DEFAULT NULL,
 	`_schema` varchar(24) NOT NULL,
 	`_createTime` int(11) unsigned NOT NULL,
 	`_lastJoinTime` int(4) DEFAULT NULL,
@@ -226,7 +226,7 @@ CREATE TABLE IF NOT EXISTS `nut_items` (
 	`_itemID` int(11) unsigned NOT NULL AUTO_INCREMENT,
 	`_invID` int(11) unsigned NOT NULL,
 	`_uniqueID` varchar(60) NOT NULL,
-	`_data` varchar(255) DEFAULT NULL,
+	`_data` varchar(500) DEFAULT NULL,
 	`_x` smallint(4) NOT NULL,
 	`_y` smallint(4) NOT NULL,
 	PRIMARY KEY (`_itemID`)
