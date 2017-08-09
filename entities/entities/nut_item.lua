@@ -130,20 +130,14 @@ else
 
 			if (description != self.desc) then
 				self.desc = description
-				self.lines, self.offset = nut.util.wrapText(description, ScrW() * 0.7, "nutSmallFont")
-				self.offset = self.offset * 0.5
+				self.markup = nut.markup.parse("<font=nutItemDescFont>" .. description .. "</font>", ScrW() * 0.7)
 			end
 			
 			nut.util.drawText(L(itemTable.name), x, y, colorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
 
-			local lines = self.lines
-			local offset = self.offset
-			
-			if (lines) then
-				for i = 1, #lines do
-					y = y + (i * 16)
-					nut.util.drawText(lines[i], x, y, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
-				end
+			y = y + 12
+			if (self.markup) then
+				self.markup:draw(x, y, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			end
 
 			x, y = hook.Run("DrawItemDescription", self, x, y, colorAlpha(color_white, alpha), alpha * 0.65)
