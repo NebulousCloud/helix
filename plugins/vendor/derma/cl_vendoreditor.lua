@@ -165,7 +165,7 @@ local PANEL = {}
 
 				-- Set the price of the item.
 				menu:AddOption(L"price", function()
-					Derma_StringRequest(L(itemTable.name), L"vendorPriceReq", entity:getPrice(uniqueID), function(text)
+					Derma_StringRequest(itemTable.getName and itemTable:getName() or L(itemTable.name), L"vendorPriceReq", entity:getPrice(uniqueID), function(text)
 						text = tonumber(text)
 
 						if (text == itemTable.price) then
@@ -189,14 +189,14 @@ local PANEL = {}
 				stock:AddOption(L"edit", function()
 					local _, max = entity:getStock(uniqueID)
 
-					Derma_StringRequest(L(itemTable.name), L"vendorStockReq", max or 1, function(text)
+					Derma_StringRequest(itemTable.getName and itemTable:getName() or L(itemTable.name), L"vendorStockReq", max or 1, function(text)
 						self:updateVendor("stockMax", {uniqueID, text})
 					end)
 				end):SetImage("icon16/table_edit.png")
 
 				-- Edit the current stock of this item.
 				stock:AddOption(L"vendorEditCurStock", function()
-					Derma_StringRequest(L(itemTable.name), L"vendorStockCurReq", entity:getStock(uniqueID) or 0, function(text)
+					Derma_StringRequest(itemTable.getName and itemTable:getName() or L(itemTable.name), L"vendorStockCurReq", entity:getStock(uniqueID) or 0, function(text)
 						self:updateVendor("stock", {uniqueID, text})
 					end)					
 				end):SetImage("icon16/table_edit.png")
@@ -208,7 +208,7 @@ local PANEL = {}
 		for k, v in SortedPairs(nut.item.list) do
 			local mode = entity.items[k] and entity.items[k][VENDOR_MODE]
 			local current, max = entity:getStock(k)
-			local panel = self.items:AddLine(L(v.name), mode and L(VENDOR_TEXT[mode]) or L"none", entity:getPrice(k), max and current.."/"..max or "-")
+			local panel = self.items:AddLine(v.getName and v:getName() or L(v.name), mode and L(VENDOR_TEXT[mode]) or L"none", entity:getPrice(k), max and current.."/"..max or "-")
 
 			panel.item = k
 			self.lines[k] = panel

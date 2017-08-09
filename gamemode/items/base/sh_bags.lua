@@ -25,7 +25,7 @@ ITEM.functions.View = {
 				panel = vgui.Create("nutInventory", parent)
 				panel:setInventory(inventory)
 				panel:ShowCloseButton(true)
-				panel:SetTitle(item.name)
+				panel:SetTitle(item.getName and item:getName() or L(item.name))
 
 				nut.gui["inv"..index] = panel
 			else

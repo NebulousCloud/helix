@@ -19,7 +19,7 @@ function PANEL:setItem(itemTable)
 
 	self.name = self:Add("DLabel")
 	self.name:Dock(TOP)
-	self.name:SetText(L(itemTable.name))
+	self.name:SetText(itemTable.getName and itemTable:getName() or L(itemTable.name))
 	self.name:SetContentAlignment(5)
 	self.name:SetTextColor(color_white)
 	self.name:SetFont("nutSmallFont")
@@ -38,7 +38,7 @@ function PANEL:setItem(itemTable)
 	self.icon:SetModel(itemTable.model, itemTable.skin or 0)
 	self.icon:SetToolTip(
 		Format(nut.config.itemFormat,
-		L(itemTable.name), itemTable:getDesc() or "")
+		itemTable.getName and itemTable:getName() or L(itemTable.name), itemTable:getDesc() or "")
 	)
 	self.icon.itemID = true
 	self.icon.DoClick = function(this)
@@ -408,7 +408,7 @@ PANEL = {}
 				slot.name:SetPos(40, 2)
 				slot.name:SetSize(180, 32)
 				slot.name:SetFont("nutChatFont")
-				slot.name:SetText(L(itemTable.name).." ("..(itemTable.price and nut.currency.get(itemTable.price) or L"free":upper())..")")
+				slot.name:SetText(L(itemTable.getName and itemTable:getName() or L(itemTable.name)).." ("..(itemTable.price and nut.currency.get(itemTable.price) or L"free":upper())..")")
 				slot.name:SetTextColor(color_white)
 
 				slot.quantity = slot:Add("DTextEntry")

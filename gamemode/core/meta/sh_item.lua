@@ -17,12 +17,12 @@ function ITEM:getID()
 	return self.id
 end
 
+function ITEM:getName()
+	return (CLIENT and L(self.name) or self.name)
+end
+
 function ITEM:getDesc()
 	if (!self.desc) then return "ERROR" end
-	
-	if (type(self.desc) == "function") then
-		return "ERROR"
-	end
 	
 	return L(self.desc or "noDesc")
 end
