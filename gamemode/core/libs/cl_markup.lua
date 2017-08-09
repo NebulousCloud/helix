@@ -305,6 +305,7 @@ function parse(ml, maxwidth)
 	local thisMaxY = 0
 	local new_block_list = {}
 	local ymaxes = {}
+	local texOffset = 0
 	
 	local lineHeight = 0
 	for i = 1, #blocks do
@@ -323,12 +324,11 @@ function parse(ml, maxwidth)
 				local ch = string.utf8sub(block.text,j,j)
 				
 				if (ch == "\n") then
-				
 					if (thisY == 0) then
-						thisY = lineHeight;
-						thisMaxY = lineHeight;
+						thisY = lineHeight + texOffset;
+						thisMaxY = lineHeight + texOffset;
 					else
-						lineHeight = thisY
+						lineHeight = thisY + texOffset
 					end
 				
 					if (string.utf8len(curString) > 0) then
@@ -491,8 +491,10 @@ function parse(ml, maxwidth)
 					x = xOffset,
 					y = yOffset
 				}
+			
 			table.insert(new_block_list, newBlock)
-			xOffset = xOffset + block.w
+			xOffset = xOffset + block.w + 1
+			texOffset = block.h/2
 		end
 	end
 	
