@@ -169,6 +169,15 @@ function GM:LoadFonts(font, genericFont)
 		weight = 800
 	})
 
+	surface.CreateFont("nutItemBoldFont", {
+		font = font,
+		shadow = true,
+		size = math.max(ScreenScale(8), 20),
+		extended = true,
+		weight = 800
+	})
+
+
 	-- Introduction fancy font.
 	font = "Cambria"
 

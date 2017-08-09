@@ -55,7 +55,7 @@ else
 					if (k == self.index - 1) then
 						self.infoAlpha = Lerp(frameTime * 3, self.infoAlpha, 255)
 
-						self.markup:Draw(x + 5 + shiftX, y + 30, 0, 0, self.infoAlpha * fraction)
+						self.markup:Draw(x + 6 + shiftX, y + 30, 0, 0, self.infoAlpha * fraction)
 					end
 				end
 
@@ -104,12 +104,12 @@ else
 				if (weapon[v] and weapon[v]:find("%S")) then
 					local color = nut.config.get("color")
 
-					text = text.."<font=nutSmallBoldFont><color="..color.r..","..color.g..","..color.b..">"..L(v).."</font></color>\n"..weapon[v].."\n"
+					text = text.."<font=nutItemBoldFont><color="..color.r..","..color.g..","..color.b..">"..L(v).."</font></color>\n"..weapon[v].."\n"
 				end
 			end
 
 			if (text != "") then
-				self.markup = markup.Parse("<font=nutSmallFont>"..text, ScrW() * 0.3)
+				self.markup = markup.Parse("<font=nutItemDescFont>"..text, ScrW() * 0.3)
 				self.infoAlpha = 0
 			end
 
