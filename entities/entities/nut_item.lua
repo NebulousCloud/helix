@@ -107,6 +107,12 @@ if (SERVER) then
 		if (it) then
 			if (!it.id or it.id == 0) then
 				self:Remove()
+
+				return
+			end
+				
+			if (itemTable.think) then
+				itemTable:think(entity)
 			end
 		end
 	end
