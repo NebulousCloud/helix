@@ -166,6 +166,102 @@ if (SERVER) then
 			nut.char.cache[steamID64] = characters
 		end)
 	end
+
+	function nut.char.loadChar(callback, noCache, id)
+		local fields = "_id, _name, _desc, _model, _attribs, _data, _money, _faction"
+		local condition = "_schema = '"..nut.db.escape(SCHEMA.folder)
+
+		if (id) then
+			condition = condition.." AND _id = "..id
+		else
+			ErrorNoHalt("Tried to load invalid character with nut.char.loadChar")
+
+			return
+		end
+
+		nut.db.query("SELECT "..fields.." FROM nut_characters WHERE "..condition, function(data)
+			for k, v in ipairs(data or {}) do
+				local id = tonumber(v._id)
+
+				if (id) then
+					local data = {}
+
+					for k2, v2 in pairs(nut.char.vars) do
+						if (v2.field and v[v2.field]) then
+							local value = tostring(v[v2.field])
+
+							if (type(v2.default) == "number") then
+								value = tonumber(value) or v2.default
+							elseif (type(v2.default) == "boolean") then
+								value = tobool(vlaue)
+							elseif (type(v2.default) == "table") then
+								value = util.JSONToTable(value)
+							end
+
+							data[k2] = value
+						end
+					end
+
+					local character = nut.char.new(data, id)
+						hook.Run("CharacterRestored", character)
+						character.vars.inv = {
+							[1] = -1,
+						}
+
+						nut.db.query("SELECT _invID, _invType FROM nut_inventories WHERE _charID = "..id, function(data)
+							if (data and #data > 0) then
+								for k, v in pairs(data) do
+									if (v._invType and isstring(v._invType) and v._invType == "NULL") then
+										v._invType = nil
+									end
+
+									local w, h = nut.config.get("invW"), nut.config.get("invH")
+
+									local invType 
+									if (v._invType) then
+										invType = nut.item.inventoryTypes[v._invType]
+
+										if (invType) then
+											w, h = invType.w, invType.h
+										end
+									end
+
+									nut.item.restoreInv(tonumber(v._invID), w, h, function(inventory)
+										if (v._invType) then
+											inventory.vars.isBag = v._invType
+											table.insert(character.vars.inv, inventory)
+										else
+											character.vars.inv[1] = inventory
+										end
+
+										inventory:setOwner(id)
+									end, true)
+								end
+							else
+								nut.db.insertTable({
+									_charID = id
+								}, function(_, invID)
+									local w, h = nut.config.get("invW"), nut.config.get("invH")
+									local inventory = nut.item.createInv(w, h, invID)
+									inventory:setOwner(id)
+
+									character.vars.inv = {
+										inventory
+									}
+								end, "inventories")
+							end
+						end)
+					nut.char.loaded[id] = character
+				else
+					ErrorNoHalt("[NutScript] Attempt to load character '"..(data._name or "nil").."' with invalid ID!")
+				end
+			end
+
+			if (callback) then
+				callback(character)
+			end
+		end)
+	end
 end
 
 function nut.char.new(data, id, client, steamID)
