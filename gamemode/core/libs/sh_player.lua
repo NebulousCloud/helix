@@ -56,4 +56,38 @@ do
 
 		return false
 	end
+
+	function playerMeta:getItems()
+		local char = self:getChar()
+		
+		if (char) then
+			local inv = char:getInv()
+
+			if (inv) then
+				return inv:getItems()
+			end
+		end
+	end
+
+	function playerMeta:getClass()
+		local char = self:getChar()
+
+		if (char) then
+			return char:getClass()
+		end
+	end
+
+	function playerMeta:getClassData()
+		local char = self:getChar()
+
+		if (char) then
+			local class = char:getClass()
+
+			if (class) then
+				local classData = nut.class.list[class]
+
+				return classData
+			end
+		end
+	end
 end
