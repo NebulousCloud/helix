@@ -397,15 +397,15 @@ PANEL = {}
 
 							if (!use) then return end
 
-							if (use.onCanRun) then
-								if (use.onCanRun(itemTable) == false) then
-									itemTable.player = nil
-
-									return
-								end
-							end
-
 							itemTable.player = LocalPlayer()
+								if (use.onCanRun) then
+									if (use.onCanRun(itemTable) == false) then
+										itemTable.player = nil
+
+										return
+									end
+								end
+
 								local send = true
 
 								if (use.onClick) then
