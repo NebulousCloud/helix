@@ -261,6 +261,7 @@ if (SERVER) then
 
 			-- Spawn the actual item entity.
 			local entity = ents.Create("nut_item")
+			entity:Spawn()
 			entity:SetPos(position)
 			entity:SetAngles(angles or Angle(0, 0, 0))
 			-- Make the item represent this item.

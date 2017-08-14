@@ -1,7 +1,6 @@
 AddCSLuaFile()
 
-DEFINE_BASECLASS( "base_anim" )
-
+ENT.Base = "base_entity"
 ENT.Type = "anim"
 ENT.PrintName = "Item"
 ENT.Category = "NutScript"
@@ -22,11 +21,7 @@ if (SERVER) then
 			physObj:Wake()
 		end
 		
-		timer.Simple(300, function()
-			if (IsValid(self)) then
-				self:Remove()
-			end
-		end)
+		hook.Run("OnItemSpawned", self)
 	end
 
 	function ENT:setHealth(amount)
@@ -34,7 +29,6 @@ if (SERVER) then
 	end
 	
 	function ENT:OnTakeDamage(dmginfo)
-		print("wtf")
 		local damage = dmginfo:GetDamage()
 		self:setHealth(self.health - damage)
 
@@ -43,7 +37,6 @@ if (SERVER) then
 			self:Remove()
 		end
 	end
-
 
 	function ENT:setItem(itemID)
 		local itemTable = nut.item.instances[itemID]
@@ -89,11 +82,26 @@ if (SERVER) then
 
 	function ENT:OnRemove()
 		if (!nut.shuttingDown and !self.nutIsSafe and self.nutItemID) then
-			local item = nut.item.instances[self.nutItemID]
+			local itemTable = nut.item.instances[self.nutItemID]
+			
+			if (self.onbreak) then
+				self:EmitSound("physics/cardboard/cardboard_box_break"..math.random(1, 3)..".wav")
+				local position = self:LocalToWorld(self:OBBCenter())
 
-			if (item) then
-				if (item.onRemoved) then
-					item:onRemoved()
+				local effect = EffectData()
+					effect:SetStart(position)
+					effect:SetOrigin(position)
+					effect:SetScale(3)
+				util.Effect("GlassImpact", effect)
+
+				if (itemTable.onDestoryed) then
+					itemTable:onDestoryed(self)
+				end
+			end
+
+			if (itemTable) then
+				if (itemTable.onRemoved) then
+					itemTable:onRemoved()
 				end
 
 				nut.db.query("DELETE FROM nut_items WHERE _itemID = "..self.nutItemID)
@@ -102,19 +110,13 @@ if (SERVER) then
 	end
 	
 	function ENT:Think()
-		local it = self:getItemTable()
-		
-		if (it) then
-			if (!it.id or it.id == 0) then
-				self:Remove()
-
-				return
-			end
+		local itemTable = self:getItemTable()
 				
-			if (itemTable.think) then
-				itemTable:think(entity)
-			end
+		if (itemTable.think) then
+			itemTable:think(entity)
 		end
+
+		return true
 	end
 else
 	ENT.DrawEntityInfo = true
@@ -159,6 +161,10 @@ else
 		if (itemTable and itemTable.drawEntity) then
 			itemTable:drawEntity(self, itemTable)
 		end
+	end
+
+	function ENT:Draw()
+		self:DrawModel()
 	end
 end
 
