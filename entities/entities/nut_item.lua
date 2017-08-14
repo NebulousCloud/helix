@@ -83,7 +83,7 @@ if (SERVER) then
 	function ENT:OnRemove()
 		if (!nut.shuttingDown and !self.nutIsSafe and self.nutItemID) then
 			local itemTable = nut.item.instances[self.nutItemID]
-			
+
 			if (self.onbreak) then
 				self:EmitSound("physics/cardboard/cardboard_box_break"..math.random(1, 3)..".wav")
 				local position = self:LocalToWorld(self:OBBCenter())
@@ -113,7 +113,7 @@ if (SERVER) then
 		local itemTable = self:getItemTable()
 				
 		if (itemTable.think) then
-			itemTable:think(entity)
+			itemTable:think(self)
 		end
 
 		return true
@@ -159,7 +159,7 @@ else
 		local itemTable = self:getItemTable()
 
 		if (itemTable and itemTable.drawEntity) then
-			itemTable:drawEntity(self, itemTable)
+			itemTable:drawEntity(self)
 		end
 	end
 
@@ -168,8 +168,12 @@ else
 	end
 end
 
+function ENT:getItemID()
+	return self:getNetVar("id", "")
+end
+
 function ENT:getItemTable()
-	return nut.item.list[self:getNetVar("id", "")]
+	return nut.item.list[self:getItemID()]
 end
 
 function ENT:getData(key, default)
