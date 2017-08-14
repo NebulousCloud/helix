@@ -692,3 +692,17 @@ netstream.Hook("strReq", function(client, time, text)
 		client.nutStrReqs[time] = nil
 	end
 end)
+
+function GM:GetPreferredCarryAngles(entity)
+	if (entity:GetClass() == "nut_item") then
+		local itemTable = entity:getItemTable()
+
+		if (itemTable) then
+			local preferedAngle = itemTable.preferedAngle
+
+			if (preferedAngle) then -- I don't want to return something
+				return preferedAngle
+			end
+		end
+	end
+end
