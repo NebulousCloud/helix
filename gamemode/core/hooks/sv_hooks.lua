@@ -608,7 +608,7 @@ function GM:OnPhysgunFreeze(weapon, physObj, entity, client)
 	-- With the jeep we need to pause all of its physics objects
 	-- to stop it spazzing out and killing the server.
 	if (entity:GetClass() == "prop_vehicle_jeep") then
-		local objects = ent:GetPhysicsObjectCount()
+		local objects = entity:GetPhysicsObjectCount()
 
 		for i = 0, objects - 1 do
 			entity:GetPhysicsObjectNum(i):EnableMotion(false)
