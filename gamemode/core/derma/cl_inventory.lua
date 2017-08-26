@@ -290,8 +290,7 @@ PANEL = {}
 			panel:SetSize(w * 64, h * 64)
 			panel:SetZPos(999)
 			panel:InvalidateLayout(true)
-			panel:SetModel(model)
-			panel:SetSkin(skin)
+			panel:SetModel(model, skin)
 			panel:SetPos(self.slots[x][y]:GetPos())
 			panel.gridX = x
 			panel.gridY = y
