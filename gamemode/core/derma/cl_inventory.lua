@@ -115,7 +115,7 @@ PANEL = {}
 					local item = nut.item.instances[data.id]
 
 					if (item and !IsValid(self.panels[item.id])) then
-						local icon = self:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
+						local icon = self:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height, item.skin or 0)
 
 						if (IsValid(icon)) then
 							local newTooltip = hook.Run("OverrideItemTooltip", self, data, item)
@@ -281,7 +281,7 @@ PANEL = {}
 		end
 	end
 
-	function PANEL:addIcon(model, x, y, w, h)
+	function PANEL:addIcon(model, x, y, w, h, skin)
 		w = w or 1
 		h = h or 1
 		
@@ -291,6 +291,7 @@ PANEL = {}
 			panel:SetZPos(999)
 			panel:InvalidateLayout(true)
 			panel:SetModel(model)
+			panel:SetSkin(skin)
 			panel:SetPos(self.slots[x][y]:GetPos())
 			panel.gridX = x
 			panel.gridY = y
