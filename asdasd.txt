@@ -1,0 +1,609 @@
+local langkey = "english"
+do
+	local langTable = {
+		DOB = "Date of Birth",
+		age = "Age",
+		weight = "Body Weight",
+		height = "Body Height",
+		religion = "Religion",
+		haircolor = "Hair Color",
+		eyecolor = "Eye Color",
+		bloodtype = "Blood Type",
+		POB = "Place of Birth",
+		notValidCharReg = "You've put wrong Value in %s.",
+	}
+
+	table.Merge(nut.lang.stored[langkey], langTable)
+end
+
+if (nut.char.vars and nut.char.vars.desc) then
+    nut.char.vars.desc.onValidate = function() end
+    nut.char.vars.desc.default = ""
+    nut.char.vars.desc.noDisplay = true
+end
+
+local regions = {
+    "Germany",
+    "Russia",
+    "Poland",
+    "Ukraine",
+    "France",
+    "Great Britain",
+    "Spain",
+    "Maybe United States",
+    "Austria",
+    "Hungary",
+    "Czechoslovakia",
+    "Romania",
+    "Bulgaria",
+    "Yugoslavia",
+    "Greece",
+    "Italy",
+}
+
+local bType = {
+    "O +",
+    "O -",
+    "A +",
+    "A -",
+    "B +",
+    "B -",
+    "AB +",
+    "AB -",
+}
+
+local religions = {
+    "Atheist",
+    "Catholic-Christian",
+    "Protestant-Christian",
+    "Buddhist",
+    "Hinduist",
+    "Jew",
+    "Muslim ",
+    "Pagan",
+}
+
+local bodyColors = {
+    "Black",
+    "Dark Purple",
+    "Blonde",
+    "Yellow",
+    "Green",
+    "Shrek Green",
+    "Power Ranger Red",
+    "Ginger"
+}
+
+local newVars = {
+    age = {
+        name = "Age",
+        min = 17,
+        max = 78,
+        type = 1,
+    },
+    height = {
+        name = "Height",
+        min = 52,
+        max = 67,
+        type = 1,
+    },
+    weight = {
+        name = "Weight",
+        min = 110,
+        max = 295,
+        type = 1,
+    },
+    bloodtype = {
+        name = "Blood Type",
+        min = 1,
+        max = #bType,
+        type = 2,
+        dataTable = bType,
+    },
+    POB = {
+        name = "Place of Birth",
+        min = 1,
+        max = #regions,
+        type = 2,
+        dataTable = regions,
+    },
+    religion = {
+        name = "Religions",
+        min = 1,
+        max = #religions,
+        type = 2,
+        dataTable = religions,
+    },
+    DOB = {
+        name = "Date of Birth",
+        min = 1,
+        max = 2,
+        type = 3,
+    },
+    haircolor = {
+        name = "Hair Colors",
+        min = 1,
+        max = #bodyColors,
+        type = 2,
+        dataTable = bodyColors,
+    },
+    eyecolor = {
+        name = "Eye Colors",
+        min = 1,
+        max = #bodyColors,
+        type = 2,
+        dataTable = bodyColors,
+    },
+}
+
+hook.Add("OnCharCreated", "nutcrasheD", function (client, char)
+    for k, v in pairs(newVars) do
+	    local upperName = k:sub(1, 1):upper()..k:sub(2)
+        local toVar = char.vars[k]
+        local func = char["set" .. upperName]
+        
+        func(char, toVar)
+    end
+end)
+
+for k, v in pairs(newVars) do
+	nut.char.registerVar(k, {
+		noDisplay = false,
+        default = v.min,
+		onSet = function(character, value)
+			character:setData(k, value)
+		end,
+		onGet = function(character, default)
+			character:getData(k, default)
+		end,
+		onValidate = function(value, data, client)
+            if (v.type == 3) then
+                if (value:len() == 4) then
+                    local mm, dd = tonumber(value:sub(1, 2)), tonumber(value:sub(3, 4))
+
+                    if (mm < 1 or mm > 12) then
+                        return false, L("notValidCharReg", L(k))
+                    elseif (dd < 1 or dd > 31) then
+                        return false, L("notValidCharReg", L(k))
+                    end
+                else
+                    return false, L("notValidCharReg", L(k))
+                end
+            else
+                if (!value or value > v.max or value < v.min) then
+                    return false, L("notValidCharReg", L(k))
+                end
+            end
+		end,
+        onDisplay = function(panel, y)
+            if (v.type == 1) then
+                local textBox = panel:Add("DNumberWang")
+                textBox:SetFont("nutMenuButtonLightFont")
+                textBox:SetWide(math.max(panel:GetWide()*.2, 100))
+                textBox:SetPos(0, panel.lastY)
+                textBox:SetTall(36)
+                textBox:SetMin(v.min)
+                textBox:SetMax(v.max)
+                textBox:SetValue(v.min)
+                panel.lastY = panel.lastY + textBox:GetTall() + 8
+
+                textBox.OnValueChanged = function(this)
+                    panel.payload[k] = this:GetValue()
+                end
+                panel.payload[k] = textBox:GetValue()
+            elseif (v.type == 2) then
+                local textBox = panel:Add("DComboBox")
+                textBox:SetFont("nutMenuButtonLightFont")
+                textBox:SetWide(math.max(panel:GetWide()*.5, 200))
+                textBox:SetPos(0, panel.lastY)
+                textBox:SetTall(36)
+                panel.lastY = panel.lastY + textBox:GetTall() + 8
+
+                for i = 1, #v.dataTable do
+                    textBox:AddChoice(v.dataTable[i], i)
+
+                    if (i == 1) then
+                        textBox:ChooseOptionID(i)
+                    end
+                end
+
+                textBox.OnSelect = function(this)
+                    local a, d = textBox:GetSelected()
+                    panel.payload[k] = d
+                end
+
+                local a, d = textBox:GetSelected()
+                panel.payload[k] = d
+            elseif (v.type == 3) then
+                local textBox = panel:Add("DNumberWang")
+                textBox:SetFont("nutMenuButtonLightFont")
+                textBox:SetWide(math.max(panel:GetWide()*.2, 100))
+                textBox:SetPos(0, panel.lastY)
+                textBox:SetMin(1)
+                textBox:SetMax(12)
+                textBox:SetValue(1)
+                textBox:SetTall(36)
+                
+                local textBox2 = panel:Add("DNumberWang")
+                textBox2:SetFont("nutMenuButtonLightFont")
+                textBox2:SetWide(math.max(panel:GetWide()*.2, 100))
+                textBox2:SetPos(textBox:GetWide() + 10, panel.lastY)
+                textBox2:SetMin(1)
+                textBox2:SetMax(31)
+                textBox2:SetValue(1)
+                textBox2:SetTall(36)
+
+                panel.lastY = panel.lastY + textBox:GetTall() + 8
+
+                textBox.OnValueChanged = function(this)
+                    panel.payload[k] = tostring(Format("%.2d", textBox:GetValue())) .. tostring(Format("%.2d", textBox2:GetValue()))
+                end 
+                panel.payload[k] = tostring(Format("%.2d", textBox:GetValue())) .. tostring(Format("%.2d", textBox2:GetValue()))
+            end
+        end,
+	})
+end
+
+if (CLIENT) then
+    local matCover = Material("passport_cover.png")
+    local matInside = Material("passport_inside.png")
+    PASSPORT_COVER = 0
+    PASSPORT_INSIDE = 1
+    
+    local font = "Georgia"
+	surface.CreateFont( "nutPassportNumberThicc", {
+		font = font,
+		extended = true,
+		size = 17,
+		weight = 1000,
+		antialias = true,
+	} )
+	surface.CreateFont( "nutPassportNumber", {
+		font = font,
+		extended = true,
+		size = 17,
+		weight = 500,
+		antialias = true,
+	} )
+	surface.CreateFont( "nutPassportText", {
+		font = font,
+		extended = true,
+		size = 17,
+		weight = 800,
+		antialias = true,
+	} )
+	surface.CreateFont( "nutPassportName", {
+		font = font,
+		extended = true,
+		size = 22,
+		weight = 1000,
+		antialias = true,
+	} )
+
+    local char = LocalPlayer():getChar()
+    local charCID = Format("%.6d", math.random(0, 999999))
+    local age = 30
+    local textColor = Color(22, 22, 22, 210)
+    local rtPassport
+    -- Okay, sovietUnion wasn't pretty good name for the variation.
+    local lightPositions = {
+        BOX_TOP = Color( 255, 255, 255 ),
+        BOX_FRONT = Color( 255, 255, 255 ),
+    }
+
+    local pageInfo = {
+        [PASSPORT_COVER] = { 
+            render = function(w, h, self, pas)
+                surface.SetMaterial(matCover)
+                surface.SetDrawColor(255, 255, 255)
+                surface.DrawTexturedRect(0, 0, w, h)
+
+                draw.SimpleText(charCID, "nutPassportNumberThicc", w*.766, h*.5, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            end,
+            draw.sim
+        },
+        [PASSPORT_INSIDE] = {
+            render = function(w, h, self, pas)
+                local char = self.char
+                surface.SetMaterial(matInside)
+                surface.SetDrawColor(255, 255, 255)
+                surface.DrawTexturedRect(0, 0, w, h)
+                
+                local m = {w*.078, h*.09, w*.35, h*.565}
+                surface.SetDrawColor(255, 255, 255)
+
+                
+	            local ax, ay = self:LocalToScreen( m[1], m[2] )
+                xpcall(function()
+                        PASSPORT_CLIENTSIDEMODEL:SetFlexScale(1)
+                        for i = 0, 64 do
+                            local aa = PASSPORT_CLIENTSIDEMODEL:GetPoseParameterName(i)
+                            if (aa) then
+                                PASSPORT_CLIENTSIDEMODEL:SetPoseParameter(aa, 0)
+                            end
+                            PASSPORT_CLIENTSIDEMODEL:SetFlexWeight(i, 0)
+                        end
+                        
+                        cam.Start3D(Vector(150, 0, 65), Angle(0, 180, 0), 5, ax*1.008, ay*1.085, m[3], m[4], 1, 4096) 
+                            render.SuppressEngineLighting( true )
+
+                            render.SetLightingOrigin( PASSPORT_CLIENTSIDEMODEL:GetPos() )
+                            render.ResetModelLighting( 200/255, 200/255, 200/255 )
+                            render.SetColorModulation( 1, 1, 1 )
+
+                            for i = 0, 6 do
+                                local col = lightPositions[i]
+                                if ( col ) then
+                                    render.SetModelLighting( i, col.r / 255, col.g / 255, col.b / 255 )
+                                end
+                            end
+            
+                            render.SetBlend(1)
+                            PASSPORT_CLIENTSIDEMODEL:DrawModel()	
+                        
+                            render.SuppressEngineLighting( false )
+                        cam.End3D()
+                end, function(rrer) print(rrer) end)
+                
+                draw.SimpleText(char:getName(), "nutPassportName", w*.26, h*.765, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+
+                local th = h*.05
+                local margin = h*.0573
+                local age = char:getData("age", 20)
+                local feets = char:getData("height", 110)
+                local weight = char:getData("weight", 200)
+                local bt = char:getData("bloodtype", 1)
+                local rel = char:getData("religion", 1)
+                local eycol = char:getData("eyecolor", 1)
+                local hcol = char:getData("haircolor", 1)
+                local bd = char:getData("DOB", "1224")
+                local pob = char:getData("POB", 1)
+
+                draw.SimpleText("Age", "nutPassportText", w*.55, th, textColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                draw.SimpleText(age, "nutPassportNumber", w*.95, th, textColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                th = th + margin
+                draw.SimpleText("Date of Birth", "nutPassportText", w*.55, th, textColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                draw.SimpleText(Format("%s. %s. %s", bd:sub(1, 2), bd:sub(3, 4), 1944 - age), "nutPassportNumber", w*.95, th, textColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                th = th + margin
+                draw.SimpleText("Place of Birth", "nutPassportText", w*.55, th, textColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                draw.SimpleText(regions[pob], "nutPassportNumber", w*.95, th, textColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                th = th + margin
+                draw.SimpleText("Height", "nutPassportText", w*.55, th, textColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                draw.SimpleText(Format("%s\" %s'", math.floor(feets/10), feets%10), "nutPassportNumber", w*.95, th, textColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                th = th + margin
+                draw.SimpleText("Weight", "nutPassportText", w*.55, th, textColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                draw.SimpleText(Format("%s lbs", weight), "nutPassportNumber", w*.95, th, textColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                th = th + margin
+                draw.SimpleText("Hair Color", "nutPassportText", w*.55, th, textColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                draw.SimpleText(bodyColors[hcol], "nutPassportNumber", w*.95, th, textColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                th = th + margin
+                draw.SimpleText("Eye Color", "nutPassportText", w*.55, th, textColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                draw.SimpleText(bodyColors[eycol], "nutPassportNumber", w*.95, th, textColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                th = th + margin
+                draw.SimpleText("Religion", "nutPassportText", w*.55, th, textColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                draw.SimpleText(religions[rel], "nutPassportNumber", w*.95, th, textColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                th = th + margin
+                draw.SimpleText("Blood Type", "nutPassportText", w*.55, th, textColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                draw.SimpleText(bType[bt], "nutPassportNumber", w*.95, th, textColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+            end,
+        }
+    }
+
+    local PANEL = {}
+
+    function PANEL:Init()
+        -- init frame
+        self:SetSize(600, 460)
+        self:Center()
+        self:MakePopup()
+        self:SetTitle("Passport Examination")
+        
+        -- dock controls, bottom
+        self.controls = self:Add("DPanel")
+        self.controls:Dock(BOTTOM)
+        self.controls:SetTall(33)
+        self.controls.Paint = function() end
+        self:setupControl()
+        
+        -- dock contents, fill
+        self.contents = self:Add("DPanel")
+        self.contents:Dock(FILL)
+        self.contents:DockMargin(0, 0, 0, 5)
+        self.contents.Paint = function(pas, w, h)
+            self:renderPassport(w, h, pas)
+        end
+
+        self.maxPages = 2
+        self.curPage = PASSPORT_INSIDE
+        self:setPage(self.curPage)
+    end
+
+    function PANEL:setupControl()
+        self.right = self.controls:Add("DButton")
+        self.right.dir = 1
+        self.right:Dock(RIGHT)
+        self.right:SetFont("Marlett")
+        self.right:SetText("4")
+        self.right:SetColor(color_white)
+
+        self.left = self.controls:Add("DButton")
+        self.left.dir = -1
+        self.left:Dock(LEFT)
+        self.left:SetFont("Marlett")
+        self.left:SetText("3")
+        self.left:SetColor(color_white)
+
+        local btn = function(bt)
+            self.curPage = (self.curPage + bt.dir)%self.maxPages
+            self:setPage(self.curPage)
+        end
+
+        self.right.DoClick = btn
+        self.left.DoClick = btn
+    end
+
+    function PANEL:getPassportMaterial()
+
+    end
+
+    function PANEL:renderPassport(w, h, pas)
+        local page = pageInfo[self.curPage]
+
+        if (page) then
+            if (page.render) then
+                page.render(w, h, self, pas)
+            else
+                surface.SetDrawColor(0, 0, 255, 50)
+                surface.DrawRect(0, 0, w, h)
+
+                draw.SimpleText("No Rendering Information Provided", "ChatFont", w/2, h/2, color_white, 1, 1)
+            end
+        else
+            surface.SetDrawColor(255, 0, 0, 50)
+            surface.DrawRect(0, 0, w, h)
+
+            draw.SimpleText("No Drawing Information Provided", "ChatFont", w/2, h/2, color_white, 1, 1)
+        end
+    end
+
+    function PANEL:setData(id)
+        local item = nut.item.instances[id]
+
+        if (item) then
+
+        else
+            self:Remove()
+            print("fuckoff")
+        end
+    end
+
+    function PANEL:setPage()
+
+    end
+
+    vgui.Register("nutPassport", PANEL, "DFrame")
+end
+
+local uniqueID = "item_passport"
+local ITEM = nut.item.register(uniqueID, nil, nil, nil, true)
+ITEM.name = "German Passport"
+ITEM.desc = "a Passport"
+ITEM.isPassport = true
+ITEM.width = 1
+ITEM.height = 1
+ITEM.price = 1500
+ITEM.category = "Identification"
+ITEM.model = "models/props_junk/metalgascan.mdl"
+
+/*
+    data = {
+        ownerID = 22, -- get's owner's character id. !! localize it plz!
+        fakeData = {
+            name or desc keke whatever
+        },
+    }
+*/
+
+function ITEM:getDesc()
+    return "This is example text!"
+end
+
+ITEM:hook("drop", function(item)
+    local client = item.player
+
+    item:setData("owner", client:getChar().id)
+end)
+
+if (CLIENT) then
+    netstream.Hook("nutPassportOpen", function(id)
+        local character = nut.char.loaded[id]
+
+        if (character) then
+            PASSPORT_CLIENTSIDEMODEL = PASSPORT_CLIENTSIDEMODEL or ClientsideModel("models/Gibs/HGIBS.mdl")
+            PASSPORT_CLIENTSIDEMODEL:SetModel(character:getModel())
+            PASSPORT_CLIENTSIDEMODEL:SetNoDraw(true)
+            PASSPORT_CLIENTSIDEMODEL:SetSequence(0)
+
+            local ppFrame = vgui.Create("nutPassport")
+            ppFrame.char = character
+        end
+    end)
+else
+    local function openFire(target, owner, charID)
+        if (IsValid(target) and IsValid(owner)) then
+            if (target == owner) then
+                netstream.Start(target, "nutPassportOpen", charID)
+            else
+                netstream.Start(target, "item", self.uniqueID, self:getID(), self.data, self.invID)
+
+                -- to avoid null item opening.
+                timer.Simple(0, function()
+                    netstream.Start(target, "nutPassportOpen", charID)
+                end)
+            end
+        end
+    end
+
+    function ITEM:openPassportTo(target, owner)
+        local charID = self:getData("owner", owner:getChar():getID())
+        local character = nut.char.loaded[charID]
+
+        if (!character) then
+            nut.char.loadChar(function(char)
+                if (char) then
+                    char:sync(target)
+
+                    openFire(target, owner, charID)
+                end
+            end, false, id)
+
+            return
+        else
+            -- owner recognizes target.
+            openFire(target, owner, charID)
+        end
+    end
+end
+
+ITEM.functions.examine = {
+	name = "Examine",
+	tip = "examineTip",
+	icon = "icon16/eye.png",
+	onRun = function(item)
+        local client = item.player
+
+        if (IsValid(client)) then
+            item:openPassportTo(client, client)
+        end
+
+        return false
+    end,
+}
+
+ITEM.functions.submit = {
+	name = "Submit",
+	tip = "examineTip",
+	icon = "icon16/page_go.png",
+	isMulti = true,
+	onRun = function(item)
+        local client = item.player
+
+        if (IsValid(client)) then
+            local trace = client:GetEyeTraceNoCursor()
+            local target = trace.Entity
+
+            if (IsValid(target)) then
+                local dist = client:GetPos():Distance(target:GetPos())
+
+                if (dist < 128) then
+                    item:openPassportTo(target, client)
+                end
+            end
+
+            return false
+        end
+    end,
+    onCanRun = function(item)
+        return (!IsValid(item.entity))
+    end,
+}

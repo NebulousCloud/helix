@@ -321,7 +321,7 @@ nut.command.add("charkick", {
 			local char = target:getChar()
 			if (char) then
 				for k, v in ipairs(player.GetAll()) do
-					v:notifyLocalized("charKick", v:Name(), target:Name())
+					v:notifyLocalized("charKick", client:Name(), target:Name())
 				end
 
 				char:kick()

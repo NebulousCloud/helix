@@ -172,7 +172,7 @@ if (SERVER) then
 		local condition = "_schema = '"..nut.db.escape(SCHEMA.folder)
 
 		if (id) then
-			condition = condition.." AND _id = "..id
+			condition = condition.."' AND _id = "..id
 		else
 			ErrorNoHalt("Tried to load invalid character with nut.char.loadChar")
 
