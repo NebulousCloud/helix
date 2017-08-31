@@ -12,7 +12,7 @@ do
 			end
 
 			local recognized = self:getData("rgn", "")
-			
+
 			if (recognized != "" and recognized:find(","..id..",")) then
 				return false;
 			end;
@@ -28,7 +28,7 @@ do
 			id = id:getID()
 		end
 
-		return hook.Run("IsCharRecognised", self, id)
+		return hook.Run("IsCharRecognised", self, id) != false
 	end
 
 	function PLUGIN:IsCharRecognised(char, id)
@@ -38,17 +38,19 @@ do
 			local faction = nut.faction.indices[other:getFaction()]
 
 			if (faction and faction.isGloballyRecognized) then
-				return true
+				return
 			end
 		end
 
 		local recognized = char:getData("rgn", "")
-		
+
 		if (recognized == "") then
 			return false
 		end
-		
-		return recognized:find(","..id..",") != nil and true or false
+
+		if (!recognized:find(","..id..",")) then
+			return false
+		end
 	end
 end
 
