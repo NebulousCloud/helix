@@ -405,6 +405,12 @@ end
 
 function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 	if (itemObject and itemObject.isBag) then
+		if (inventory.id != 0 and curInv.id != inventory.id) then
+			if (inventory.vars and inventory.vars.isBag) then
+				return false 
+			end
+		end
+
 		local inventory = nut.item.inventories[itemObject:getData("id")]
 
 		if (inventory) then

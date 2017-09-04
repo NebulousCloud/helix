@@ -93,8 +93,11 @@ function nut.item.newInv(owner, invType, callback)
 		_charID = owner
 	}, function(data, invID)
 		local inventory = nut.item.createInv(invData.w, invData.h, invID)
-		inventory.invType = invType
 		
+		if (invType) then
+			inventory.vars.isBag = invType
+		end
+
 		if (owner and owner > 0) then
 			for k, v in ipairs(player.GetAll()) do
 				if (v:getChar() and v:getChar():getID() == owner) then

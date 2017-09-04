@@ -66,6 +66,7 @@ function ITEM:onSendData()
 		local inventory = nut.item.inventories[index]
 
 		if (inventory) then
+			inventory.vars.isBag = self.uniqueID
 			inventory:sync(self.player)
 		else
 			local owner = self.player:getChar():getID()
@@ -80,20 +81,27 @@ function ITEM:onSendData()
 		local client = self.player
 
 		nut.item.newInv(self.player:getChar():getID(), self.uniqueID, function(inventory)
-			inventory.vars.isBag = self.uniqueID
 			self:setData("id", inventory:getID())
 		end)
 	end
 end
 
-ITEM:hook("drop", function(item)
-	-- to be sure.
-	if (SERVER) then
-		local index = item:getData("id")
+ITEM.postHooks.drop = function(item, result)
+	local index = item:getData("id")
 
-		nut.db.query("UPDATE nut_inventories SET _charID = 0 WHERE _invID = "..index)
-	end
-end)
+	nut.db.query("UPDATE nut_inventories SET _charID = 0 WHERE _invID = "..index)
+	netstream.Start(item.player, "nutBagDrop", index)
+end
+
+if (CLIENT) then
+	netstream.Hook("nutBagDrop", function(index)
+		local panel = nut.gui["inv"..index]
+
+		if (panel and panel:IsVisible()) then
+			panel:Close()
+		end
+	end)
+end
 
 -- Called before the item is permanently deleted.
 function ITEM:onRemoved()
