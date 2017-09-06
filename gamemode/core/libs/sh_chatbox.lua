@@ -255,6 +255,10 @@ do
 		-- Out of character.
 		nut.chat.register("ooc", {
 			onCanSay =  function(speaker, text)
+			if (!nut.config.get("allowGlobalOOC")) then
+				speaker:notifyLocalized("Global OOC is disabled on this server.")
+				return false		
+			else
 				local delay = nut.config.get("oocDelay", 10)
 
 				-- Only need to check the time if they have spoken in OOC chat before.
@@ -271,6 +275,7 @@ do
 
 				-- Save the last time they spoke in OOC.
 				speaker.nutLastOOC = CurTime()
+			end
 			end,
 			onChatAdd = function(speaker, text)
 				local icon = "icon16/user.png"
