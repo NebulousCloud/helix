@@ -43,6 +43,9 @@ nut.config.add("oocDelay", 10, "The delay before a player can use OOC chat again
 	data = {min = 0, max = 10000},
 	category = "chat"
 })
+nut.config.add("allowGlobalOOC", true, "Whether or not Global OOC is enabled.", nil, {
+	category = "chat"
+})
 nut.config.add("loocDelay", 0, "The delay before a player can use LOOC chat again in seconds.", nil, {
 	data = {min = 0, max = 10000},
 	category = "chat"
