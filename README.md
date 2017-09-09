@@ -11,5 +11,5 @@ In other option you can go Gitters! https://gitter.im/Chessnut/NutScript
 Maybe you can join the forum! http://nutscript.rocks
 
 =======
-Come to here
+Come here
 and play Nutscript
