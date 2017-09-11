@@ -331,7 +331,11 @@ function GM:CanProperty(client, property, entity)
 end
 
 function GM:PhysgunPickup(client, entity)
-	if (client:IsAdmin()) then
+	if (client:IsSuperAdmin()) then
+		return true
+	end
+	
+	if (client:IsAdmin() and !(entity:IsPlayer() and entity:IsSuperAdmin())) then
 		return true
 	end
 
