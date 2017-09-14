@@ -748,7 +748,7 @@ end
 nut.char.RegisterVar("inv", {
 	noNetworking = true,
 	noDisplay = true,
-	onGet = function(character, index)
+	OnGet = function(character, index)
 		if (index and type(index) != "number") then
 			return character.vars.inv or {}
 		end

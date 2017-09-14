@@ -32,8 +32,8 @@ if (SERVER) then
 		local damage = dmginfo:GetDamage()
 		self:SetHealth(self.health - damage)
 
-		if (self.health < 0 and !self.onbreak) then
-			self.onbreak = true
+		if (self.health < 0 and !self.OnBreak) then
+			self.OnBreak = true
 			self:Remove()
 		end
 	end
@@ -42,7 +42,7 @@ if (SERVER) then
 		local itemTable = nut.item.instances[itemID]
 
 		if (itemTable) then
-			local model = itemTable.onGetDropModel and itemTable:onGetDropModel(self) or itemTable.model
+			local model = itemTable.OnGetDropModel and itemTable:OnGetDropModel(self) or itemTable.model
 
 			self:SetSkin(itemTable.skin or 0)
 			if (itemTable.worldModel) then
@@ -84,7 +84,7 @@ if (SERVER) then
 		if (!nut.shuttingDown and !self.nutIsSafe and self.nutItemID) then
 			local itemTable = nut.item.instances[self.nutItemID]
 
-			if (self.onbreak) then
+			if (self.OnBreak) then
 				self:EmitSound("physics/cardboard/cardboard_box_break"..math.random(1, 3)..".wav")
 				local position = self:LocalToWorld(self:OBBCenter())
 

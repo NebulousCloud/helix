@@ -198,8 +198,8 @@ function nut.plugin.SetUnloaded(uniqueID, state, noSave)
 	local plugin = nut.plugin.list[uniqueID]
 
 	if (state) then
-		if (plugin.onLoaded) then
-			plugin:onLoaded()
+		if (plugin.OnLoaded) then
+			plugin:OnLoaded()
 		end
 
 		if (nut.plugin.unloaded[uniqueID]) then
@@ -209,8 +209,8 @@ function nut.plugin.SetUnloaded(uniqueID, state, noSave)
 			return false
 		end
 	elseif (plugin) then
-		if (plugin.onUnload) then
-			plugin:onUnload()
+		if (plugin.OnUnload) then
+			plugin:OnUnload()
 		end
 
 		nut.plugin.unloaded[uniqueID] = nut.plugin.list[uniqueID]

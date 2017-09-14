@@ -309,7 +309,7 @@ do
 
 			return hook.Run("GetDefaultCharName", client, data.faction) or value:sub(1, 70)
 		end,
-		onPostSetup = function(panel, faction, payload)
+		OnPostSetup = function(panel, faction, payload)
 			local name, disabled = hook.Run("GetDefaultCharName", LocalPlayer(), faction)
 
 			if (name) then
@@ -353,11 +353,11 @@ do
 
 			character.vars.model = value
 		end,
-		onGet = function(character, default)
+		OnGet = function(character, default)
 			return character.vars.model or default
 		end,
 		index = 3,
-		onDisplay = function(panel, y)
+		OnDisplay = function(panel, y)
 			local scroll = panel:Add("DScrollPanel")
 			scroll:SetSize(panel:GetWide(), 260)
 			scroll:SetPos(0, y)
@@ -416,7 +416,7 @@ do
 				return false, "needModel"
 			end
 		end,
-		onAdjust = function(client, data, value, newData)
+		OnAdjust = function(client, data, value, newData)
 			local faction = nut.faction.indices[data.faction]
 
 			if (faction) then
@@ -448,7 +448,7 @@ do
 				client:SetTeam(value)
 			end
 		end,
-		onGet = function(character, default)
+		OnGet = function(character, default)
 			local faction = nut.faction.teams[character.vars.faction]
 
 			return faction and faction.index or 0
@@ -463,7 +463,7 @@ do
 
 			return false
 		end,
-		onAdjust = function(client, data, value, newData)
+		OnAdjust = function(client, data, value, newData)
 			newData.faction = nut.faction.indices[value].uniqueID
 		end
 	})
@@ -473,7 +473,7 @@ do
 		default = {},
 		isLocal = true,
 		index = 4,
-		onDisplay = function(panel, y)
+		OnDisplay = function(panel, y)
 			local container = panel:Add("DPanel")
 			container:SetPos(0, y)
 			container:SetWide(panel:GetWide() - 16)
@@ -555,7 +555,7 @@ do
 
 			character.vars.data = data
 		end,
-		onGet = function(character, key, default)
+		OnGet = function(character, key, default)
 			local data = character.vars.data or {}
 
 			if (key) then
@@ -595,7 +595,7 @@ do
 
 			character.vars.vars = data
 		end,
-		onGet = function(character, key, default)
+		OnGet = function(character, key, default)
 			character.vars.vars = character.vars.vars or {}
 			local data = character.vars.vars or {}
 
@@ -691,8 +691,8 @@ do
 							data[k] = result[1]
 						end
 
-						if (v.onAdjust) then
-							v.onAdjust(client, data, value, newData)
+						if (v.OnAdjust) then
+							v.OnAdjust(client, data, value, newData)
 						end
 					end
 				end

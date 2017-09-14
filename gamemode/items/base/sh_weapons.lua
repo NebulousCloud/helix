@@ -64,8 +64,8 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 
 		item:SetData("equip", nil)
 
-		if (item.onUnequipWeapon) then
-			item:onUnequipWeapon(client, weapon)
+		if (item.OnUnequipWeapon) then
+			item:OnUnequipWeapon(client, weapon)
 		end
 
 		return false
@@ -124,8 +124,8 @@ ITEM.functions.Equip = {
 
 			weapon:SetClip1(item:GetData("ammo", 0))
 
-			if (item.onEquipWeapon) then
-				item:onEquipWeapon(client, weapon)
+			if (item.OnEquipWeapon) then
+				item:OnEquipWeapon(client, weapon)
 			end
 		else
 			print(Format("[Nutscript] Weapon %s does not exist!", item.class))

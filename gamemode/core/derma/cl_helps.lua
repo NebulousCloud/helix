@@ -46,13 +46,13 @@ if (CLIENT) then
 			tree:SetWide(180)
 			tree:DockMargin(0, 0, 15, 0)
 			tree.OnNodeSelected = function(this, node)
-				if (node.onGetHTML) then
-					local source = node:onGetHTML()
+				if (node.OnGetHTML) then
+					local source = node:OnGetHTML()
 
 					if (source:sub(1, 4) == "http") then
 						html:OpenURL(source)
 					else
-						html:SetHTML(header..node:onGetHTML().."</body></html>")
+						html:SetHTML(header..node:OnGetHTML().."</body></html>")
 					end
 				end
 			end
@@ -71,7 +71,7 @@ if (CLIENT) then
 					v = function() return tostring(source) end
 				end
 
-				tree:AddNode(L(k)).onGetHTML = v or function() return "" end
+				tree:AddNode(L(k)).OnGetHTML = v or function() return "" end
 			end
 		end
 	end)

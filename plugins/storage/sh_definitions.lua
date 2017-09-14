@@ -60,7 +60,7 @@ PLUGIN.definitions["models/items/ammocrate_smg1.mdl"] = {
 	desc = "A heavy crate that stores ammo",
 	width = 5,
 	height = 3,
-	onOpen = function(entity, activator)
+	OnOpen = function(entity, activator)
 		local seq = entity:LookupSequence("Close")
 		entity:ResetSequence(seq)
 

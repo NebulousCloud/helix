@@ -124,9 +124,9 @@ ITEM.functions.Equip = {
 
 		item:SetData("equip", true)
 		
-		if (type(item.onGetReplacement) == "function") then
+		if (type(item.OnGetReplacement) == "function") then
 			char:SetData("oldMdl", char:GetData("oldMdl", item.player:GetModel()))
-			char:SetModel(item:onGetReplacement())
+			char:SetModel(item:OnGetReplacement())
 		elseif (item.replacement or item.replacements) then
 			char:SetData("oldMdl", char:GetData("oldMdl", item.player:GetModel()))
 

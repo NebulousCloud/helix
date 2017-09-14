@@ -226,8 +226,8 @@ function nut.char.RegisterVar(key, data)
 
 	-- The get functions are shared.
 	-- Overwrite the get function if desired.
-	if (data.onGet) then
-		CHAR["Get"..upperName] = data.onGet
+	if (data.OnGet) then
+		CHAR["Get"..upperName] = data.OnGet
 	-- Otherwise return the character variable or default if it does not exist.
 	else
 		CHAR["Get"..upperName] = function(self, default)

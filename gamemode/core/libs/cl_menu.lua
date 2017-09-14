@@ -36,7 +36,7 @@ function nut.menu.Add(options, position, onRemove)
 		-- Store the attached entity if there is one.
 		entity = entity,
 		-- Called after the menu has faded out.
-		onRemove = onRemove
+		OnRemove = onRemove
 	})
 end
 
@@ -66,8 +66,8 @@ function nut.menu.DrawAll()
 			else
 				table.Remove(nut.menu.list, k)
 
-				if (v.onRemove) then
-					v:onRemove()
+				if (v.OnRemove) then
+					v:OnRemove()
 				end
 
 				continue
@@ -101,8 +101,8 @@ function nut.menu.DrawAll()
 				-- Remove the menu from being drawn.
 				table.Remove(nut.menu.list, k)
 
-				if (v.onRemove) then
-					v:onRemove()
+				if (v.OnRemove) then
+					v:OnRemove()
 				end
 
 				-- Skip to the next menu, the logic for this one is done.

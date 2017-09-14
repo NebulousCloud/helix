@@ -58,14 +58,14 @@ local PANEL = {}
 
 				self:addLabel(k)
 
-				if (v.onDisplay) then
-					local panel = v.onDisplay(self, self.lastY)
+				if (v.OnDisplay) then
+					local panel = v.OnDisplay(self, self.lastY)
 
 					if (IsValid(panel)) then
 						self.lastY = self.lastY + panel:GetTall() + 8
 
-						if (v.onPostSetup) then
-							v.onPostSetup(panel, faction, self.payload)
+						if (v.OnPostSetup) then
+							v.OnPostSetup(panel, faction, self.payload)
 						end
 					end
 				elseif (type(v.default) == "string") then
@@ -74,8 +74,8 @@ local PANEL = {}
 						self.payload[k] = this:GetText()
 					end
 
-					if (v.onPostSetup) then
-						v.onPostSetup(textBox, faction, self.payload)
+					if (v.OnPostSetup) then
+						v.OnPostSetup(textBox, faction, self.payload)
 					end
 				end
 			end

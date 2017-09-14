@@ -432,8 +432,8 @@ do
 						v:SetNotSolid(false)
 						v:SetNoDraw(false)
 
-						if (v.onDoorRestored) then
-							v:onDoorRestored(self)
+						if (v.OnDoorRestored) then
+							v:OnDoorRestored(self)
 						end
 					end
 				end
@@ -461,8 +461,8 @@ do
 				v:SetNotSolid(true)
 				v:SetNoDraw(true)
 
-				if (v.onDoorBlasted) then
-					v:onDoorBlasted(self)
+				if (v.OnDoorBlasted) then
+					v:OnDoorBlasted(self)
 				end
 			end
 		end

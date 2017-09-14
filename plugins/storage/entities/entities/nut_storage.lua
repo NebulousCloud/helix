@@ -69,8 +69,8 @@ if (SERVER) then
 		local inventory = self:GetInv()
 		local def = PLUGIN.definitions[self:GetModel():lower()]
 
-		if (def.onOpen) then
-			def.onOpen(self, activator)
+		if (def.OnOpen) then
+			def.OnOpen(self, activator)
 		end
 
 		activator:SetAction("Opening...", OPEN_TIME, function()
