@@ -224,8 +224,8 @@ function ITEM:Remove()
 		if (!noDelete) then
 			local item = nut.item.instances[self.id]
 
-			if (item and item.onRemoved) then
-				item:onRemoved()
+			if (item and item.OnRemoved) then
+				item:OnRemoved()
 			end
 			
 			nut.db.query("DELETE FROM nut_items WHERE _itemID = "..self.id)

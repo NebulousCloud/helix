@@ -51,10 +51,10 @@ function PANEL:SetItem(itemTable)
 		end
 	end
 	self.icon.PaintOver = function(this, w, h)
-		if (itemTable and itemTable.paintOver) then
+		if (itemTable and itemTable.PaintOver) then
 			local w, h = this:GetSize()
 
-			itemTable.paintOver(this, itemTable, w, h)
+			itemTable.PaintOver(this, itemTable, w, h)
 		end
 	end
 

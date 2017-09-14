@@ -207,9 +207,9 @@ local PANEL = {}
 												for k, v in SortedPairsByMemberValue(nut.char.vars, "index") do
 													local value = self.creation.payload[k]
 
-													if (!v.noDisplay or v.onValidate) then
-														if (v.onValidate) then
-															local result = {v.onValidate(value, self.creation.payload, LocalPlayer())}
+													if (!v.noDisplay or v.OnValidate) then
+														if (v.OnValidate) then
+															local result = {v.OnValidate(value, self.creation.payload, LocalPlayer())}
 
 															if (result[1] == false) then
 																self.creation.notice:SetType(1)

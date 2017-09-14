@@ -34,10 +34,10 @@ function PANEL:PaintOver(w, h)
 		surface.DrawRect(2, 2, w - 4, h - 4)
 	end
 
-	if (itemTable and itemTable.paintOver) then
+	if (itemTable and itemTable.PaintOver) then
 		local w, h = self:GetSize()
 
-		itemTable.paintOver(self, itemTable, w, h)
+		itemTable.PaintOver(self, itemTable, w, h)
 	end
 end
 
@@ -384,8 +384,8 @@ PANEL = {}
 								comm = v
 								use = func[comm]
 
-								if (use and use.onCanRun) then
-									if (use.onCanRun(itemTable) == false) then
+								if (use and use.OnCanRun) then
+									if (use.OnCanRun(itemTable) == false) then
 										continue
 									end
 								end
@@ -398,8 +398,8 @@ PANEL = {}
 							if (!use) then return end
 
 							itemTable.player = LocalPlayer()
-								if (use.onCanRun) then
-									if (use.onCanRun(itemTable) == false) then
+								if (use.OnCanRun) then
+									if (use.OnCanRun(itemTable) == false) then
 										itemTable.player = nil
 
 										return
@@ -408,8 +408,8 @@ PANEL = {}
 
 								local send = true
 
-								if (use.onClick) then
-									send = use.onClick(itemTable)
+								if (use.OnClick) then
+									send = use.OnClick(itemTable)
 								end
 
 								if (use.sound) then
@@ -477,7 +477,7 @@ PANEL = {}
 												itemTable.player = LocalPlayer()
 
 												-- canRun == can item combine into?
-												if (combine.onCanRun and (combine.onCanRun(itemTable, targetItem.id) != false)) then
+												if (combine.OnCanRun and (combine.OnCanRun(itemTable, targetItem.id) != false)) then
 													netstream.Start("invAct", "combine", itemTable.id, inventory:GetID(), targetItem.id)
 												end
 
@@ -531,8 +531,8 @@ PANEL = {}
 							for k, v in SortedPairs(itemTable.functions) do
 								if (k == "combine") then continue end -- we don't need combine on the menu mate. 
 
-								if (v.onCanRun) then
-									if (v.onCanRun(itemTable) == false) then
+								if (v.OnCanRun) then
+									if (v.OnCanRun(itemTable) == false) then
 										itemTable.player = nil
 
 										continue
@@ -545,8 +545,8 @@ PANEL = {}
 										itemTable.player = LocalPlayer()
 											local send = true
 
-											if (v.onClick) then
-												send = v.onClick(itemTable)
+											if (v.OnClick) then
+												send = v.OnClick(itemTable)
 											end
 
 											if (v.sound) then
@@ -568,8 +568,8 @@ PANEL = {}
 												itemTable.player = LocalPlayer()
 													local send = true
 
-													if (v.onClick) then
-														send = v.onClick(itemTable)
+													if (v.OnClick) then
+														send = v.OnClick(itemTable)
 													end
 
 													if (v.sound) then
@@ -588,8 +588,8 @@ PANEL = {}
 										itemTable.player = LocalPlayer()
 											local send = true
 
-											if (v.onClick) then
-												send = v.onClick(itemTable)
+											if (v.OnClick) then
+												send = v.OnClick(itemTable)
 											end
 
 											if (v.sound) then

@@ -301,8 +301,8 @@ end
 function GM:GetDefaultCharName(client, faction)
 	local info = nut.faction.indices[faction]
 
-	if (info and info.onGetDefaultName) then
-		return info:onGetDefaultName(client)
+	if (info and info.OnGetDefaultName) then
+		return info:OnGetDefaultName(client)
 	end
 end
 

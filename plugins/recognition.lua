@@ -137,7 +137,7 @@ else
 		if (level < 2) then
 			local entity = client:GetEyeTraceNoCursor().Entity
 
-			if (IsValid(entity) and entity:IsPlayer() and entity:GetChar() and nut.chat.classes.ic.onCanHear(client, entity)) then
+			if (IsValid(entity) and entity:IsPlayer() and entity:GetChar() and nut.chat.classes.ic.OnCanHear(client, entity)) then
 				targets[1] = entity
 			end
 		else
@@ -152,7 +152,7 @@ else
 			class = nut.chat.classes[class]
 
 			for k, v in ipairs(player.GetAll()) do
-				if (client != v and v:GetChar() and class.onCanHear(client, v)) then
+				if (client != v and v:GetChar() and class.OnCanHear(client, v)) then
 					targets[#targets + 1] = v
 				end
 			end

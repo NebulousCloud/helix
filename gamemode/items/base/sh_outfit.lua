@@ -30,7 +30,7 @@ ITEM.bodyGroups = {
 -- Inventory drawing
 if (CLIENT) then
 	-- Draw camo if it is available.
-	function ITEM:paintOver(item, w, h)
+	function ITEM:PaintOver(item, w, h)
 		if (item:GetData("equip")) then
 			surface.SetDrawColor(110, 255, 110, 100)
 			surface.DrawRect(w - 14, h - 14, 8, 8)
@@ -96,7 +96,7 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 		
 		return false
 	end,
-	onCanRun = function(item)
+	OnCanRun = function(item)
 		return (!IsValid(item.entity) and item:GetData("equip") == true)
 	end
 }
@@ -179,7 +179,7 @@ ITEM.functions.Equip = {
 		
 		return false
 	end,
-	onCanRun = function(item)
+	OnCanRun = function(item)
 		return (!IsValid(item.entity) and item:GetData("equip") != true)
 	end
 }

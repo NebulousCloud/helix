@@ -10,7 +10,7 @@ ITEM.weaponCategory = "sidearm"
 
 -- Inventory drawing
 if (CLIENT) then
-	function ITEM:paintOver(item, w, h)
+	function ITEM:PaintOver(item, w, h)
 		if (item:GetData("equip")) then
 			surface.SetDrawColor(110, 255, 110, 100)
 			surface.DrawRect(w - 14, h - 14, 8, 8)
@@ -70,7 +70,7 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 
 		return false
 	end,
-	onCanRun = function(item)
+	OnCanRun = function(item)
 		return (!IsValid(item.entity) and item:GetData("equip") == true)
 	end
 }
@@ -133,7 +133,7 @@ ITEM.functions.Equip = {
 
 		return false
 	end,
-	onCanRun = function(item)
+	OnCanRun = function(item)
 		return (!IsValid(item.entity) and item:GetData("equip") != true)
 	end
 }
@@ -146,7 +146,7 @@ function ITEM:OnCanBeTransfered(oldInventory, newInventory)
 	return true
 end
 
-function ITEM:onLoadout()
+function ITEM:OnLoadout()
 	if (self:GetData("equip")) then
 		local client = self.player
 		client.carryWeapons = client.carryWeapons or {}
@@ -164,7 +164,7 @@ function ITEM:onLoadout()
 	end
 end
 
-function ITEM:onSave()
+function ITEM:OnSave()
 	local weapon = self.player:GetWeapon(self.class)
 
 	if (IsValid(weapon)) then
@@ -175,7 +175,7 @@ end
 HOLSTER_DRAWINFO = {}
 
 -- Called after the item is registered into the item tables.
-function ITEM:onRegistered()
+function ITEM:OnRegistered()
 	if (self.holsterDrawInfo) then
 		HOLSTER_DRAWINFO[self.class] = self.holsterDrawInfo
 	end

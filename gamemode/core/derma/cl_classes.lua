@@ -6,12 +6,12 @@ local PANEL = {}
         local function assignClick(panel)   
             panel.OnMousePressed = function()
                 self.pressing = -1
-                self:onClick()
+                self:OnClick()
             end
             panel.OnMouseReleased = function()
                 if (self.pressing) then
                     self.pressing = nil
-                    --self:onClick()
+                    --self:OnClick()
                 end
             end
         end
@@ -62,7 +62,7 @@ local PANEL = {}
         assignClick(self.label) 
     end
 
-    function PANEL:onClick()
+    function PANEL:OnClick()
         nut.command.Send("beclass", self.class)
     end
 

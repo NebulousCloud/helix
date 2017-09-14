@@ -634,7 +634,7 @@ nut.command.Add("chardesc", {
 		end
 
 		local info = nut.char.vars.desc
-		local result, fault, count = info.onValidate(arguments)
+		local result, fault, count = info.OnValidate(arguments)
 
 		if (result == false) then
 			return "@"..fault, count

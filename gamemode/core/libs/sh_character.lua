@@ -302,7 +302,7 @@ do
 		field = "_name",
 		default = "John Doe",
 		index = 1,
-		onValidate = function(value, data, client)
+		OnValidate = function(value, data, client)
 			if (!value or !value:find("%S")) then
 				return false, "invalid", "name"
 			end
@@ -328,7 +328,7 @@ do
 		field = "_desc",
 		default = "",
 		index = 2,
-		onValidate = function(value, data)
+		OnValidate = function(value, data)
 			if (noDesc) then return true end
 
 			local minLength = nut.config.Get("minDescLen", 16)
@@ -344,7 +344,7 @@ do
 	nut.char.RegisterVar("model", {
 		field = "_model",
 		default = "models/error.mdl",
-		onSet = function(character, value)
+		OnSet = function(character, value)
 			local client = character:GetPlayer()
 
 			if (IsValid(client) and client:GetChar() == character) then
@@ -405,7 +405,7 @@ do
 
 			return scroll
 		end,
-		onValidate = function(value, data)
+		OnValidate = function(value, data)
 			local faction = nut.faction.indices[data.faction]
 
 			if (faction) then
@@ -441,7 +441,7 @@ do
 	nut.char.RegisterVar("faction", {
 		field = "_faction",
 		default = "Citizen",
-		onSet = function(character, value)
+		OnSet = function(character, value)
 			local client = character:GetPlayer()
 
 			if (IsValid(client)) then
@@ -454,7 +454,7 @@ do
 			return faction and faction.index or 0
 		end,
 		noDisplay = true,
-		onValidate = function(value, data, client)
+		OnValidate = function(value, data, client)
 			if (value) then
 				if (client:HasWhitelist(value)) then
 					return true
@@ -511,7 +511,7 @@ do
 			container:SetTall(y2)
 			return container
 		end,
-		onValidate = function(value, data, client)
+		OnValidate = function(value, data, client)
 			if (value != nil) then
 				if (type(value) == "table") then
 					local count = 0
@@ -543,7 +543,7 @@ do
 		isLocal = true,
 		noDisplay = true,
 		field = "_data",
-		onSet = function(character, key, value, noReplication, receiver)
+		OnSet = function(character, key, value, noReplication, receiver)
 			local data = character:GetData()
 			local client = character:GetPlayer()
 
@@ -575,7 +575,7 @@ do
 	nut.char.RegisterVar("var", {
 		default = {},
 		noDisplay = true,
-		onSet = function(character, key, value, noReplication, receiver)
+		OnSet = function(character, key, value, noReplication, receiver)
 			local data = character:GetVar()
 			local client = character:GetPlayer()
 
@@ -673,7 +673,7 @@ do
 			for k, v in pairs(data) do
 				local info = nut.char.vars[k]
 
-				if (!info or (!info.onValidate and info.noDisplay)) then
+				if (!info or (!info.OnValidate and info.noDisplay)) then
 					data[k] = nil
 				end
 			end
@@ -681,8 +681,8 @@ do
 			for k, v in SortedPairsByMemberValue(nut.char.vars, "index") do
 				local value = data[k]
 
-				if (v.onValidate) then
-					local result = {v.onValidate(value, data, client)}
+				if (v.OnValidate) then
+					local result = {v.OnValidate(value, data, client)}
 
 					if (result[1] == false) then
 						return netstream.Start(client, "charAuthed", unpack(result, 2))

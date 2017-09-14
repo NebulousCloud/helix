@@ -74,8 +74,8 @@ if (SERVER) then
 				physObj:Wake()
 			end
 
-			if (itemTable.onEntityCreated) then
-				itemTable:onEntityCreated(self)
+			if (itemTable.OnEntityCreated) then
+				itemTable:OnEntityCreated(self)
 			end
 		end
 	end
@@ -94,14 +94,14 @@ if (SERVER) then
 					effect:SetScale(3)
 				util.Effect("GlassImpact", effect)
 
-				if (itemTable.onDestoryed) then
-					itemTable:onDestoryed(self)
+				if (itemTable.OnDestoryed) then
+					itemTable:OnDestoryed(self)
 				end
 			end
 
 			if (itemTable) then
-				if (itemTable.onRemoved) then
-					itemTable:onRemoved()
+				if (itemTable.OnRemoved) then
+					itemTable:OnRemoved()
 				end
 
 				nut.db.query("DELETE FROM nut_items WHERE _itemID = "..self.nutItemID)
@@ -112,8 +112,8 @@ if (SERVER) then
 	function ENT:Think()
 		local itemTable = self:GetItemTable()
 				
-		if (itemTable.think) then
-			itemTable:think(self)
+		if (itemTable.Think) then
+			itemTable:Think(self)
 		end
 
 		return true
@@ -158,8 +158,8 @@ else
 	function ENT:DrawTranslucent()
 		local itemTable = self:GetItemTable()
 
-		if (itemTable and itemTable.drawEntity) then
-			itemTable:drawEntity(self)
+		if (itemTable and itemTable.DrawEntity) then
+			itemTable:DrawEntity(self)
 		end
 	end
 

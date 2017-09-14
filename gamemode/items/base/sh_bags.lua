@@ -9,7 +9,7 @@ ITEM.invHeight = 2
 ITEM.isBag = true
 ITEM.functions.View = {
 	icon = "icon16/briefcase.png",
-	onClick = function(item)
+	OnClick = function(item)
 		local index = item:GetData("id")
 
 		if (index) then
@@ -35,13 +35,13 @@ ITEM.functions.View = {
 
 		return false
 	end,
-	onCanRun = function(item)
+	OnCanRun = function(item)
 		return !IsValid(item.entity) and item:GetData("id")
 	end
 }
 
 -- Called when a new instance of this item has been made.
-function ITEM:onInstanced(invID, x, y)
+function ITEM:OnInstanced(invID, x, y)
 	local inventory = nut.item.inventories[invID]
 
 	nut.item.NewInv(inventory and inventory.owner or 0, self.uniqueID, function(inventory)
@@ -104,7 +104,7 @@ if (CLIENT) then
 end
 
 -- Called before the item is permanently deleted.
-function ITEM:onRemoved()
+function ITEM:OnRemoved()
 	local index = self:GetData("id")
 
 	if (index) then
@@ -139,6 +139,6 @@ function ITEM:OnCanBeTransfered(oldInventory, newInventory)
 end
 
 -- Called after the item is registered into the item tables.
-function ITEM:onRegistered()
+function ITEM:OnRegistered()
 	nut.item.RegisterInv(self.uniqueID, self.invWidth, self.invHeight, true)
 end

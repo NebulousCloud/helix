@@ -29,11 +29,11 @@ function GM:PlayerInitialSpawn(client)
 
 	nut.config.Send(client)
 	nut.date.Send(client)
-	
+
 	client:LoadNutData(function(data)
 		if (!IsValid(client)) then return end
 
-		local address = nut.util.GetAddress()			
+		local address = nut.util.GetAddress()
 		local noCache = client:GetNutData("lastIP", address) != address
 		client:SetNutData("lastIP", address)
 
@@ -68,7 +68,7 @@ function GM:PlayerInitialSpawn(client)
 
 	timer.Simple(1, function()
 		if (!IsValid(client)) then return end
-		
+
 		client:KillSilent()
 		client:StripAmmo()
 	end)
@@ -137,7 +137,7 @@ end
 function GM:CanPlayerTakeItem(client, item)
 	if (type(item) == "Entity") then
 		local char = client:GetChar()
-		
+
 		if (item.nutSteamID and item.nutSteamID == client:SteamID() and item.nutCharID != char:GetID()) then
 			client:NotifyLocalized("playerCharBelonging")
 
@@ -346,8 +346,8 @@ function GM:PlayerLoadout(client)
 
 		if (faction) then
 			-- If their faction wants to do something when the player spawns, let it.
-			if (faction.onSpawn) then
-				faction:onSpawn(client)
+			if (faction.OnSpawn) then
+				faction:OnSpawn(client)
 			end
 
 			-- If the faction has default weapons, give them to the player.
@@ -362,8 +362,8 @@ function GM:PlayerLoadout(client)
 		local class = nut.class.list[client:GetChar():GetClass()]
 
 		if (class) then
-			if (class.onSpawn) then
-				class:onSpawn(client)
+			if (class.OnSpawn) then
+				class:OnSpawn(client)
 			end
 
 			if (class.weapons) then
@@ -393,7 +393,7 @@ function GM:PostPlayerLoadout(client)
 
 	if (char:GetInv()) then
 		for k, v in pairs(char:GetInv():GetItems()) do
-			v:Call("onLoadout", client)
+			v:Call("OnLoadout", client)
 
 			if (v:GetData("equip")) then
 				if (v.attribBoosts) then
@@ -645,8 +645,8 @@ function GM:CharacterPreSave(character)
 	local client = character:GetPlayer()
 
 	for k, v in pairs(character:GetInv():GetItems()) do
-		if (v.onSave) then
-			v:Call("onSave", client)
+		if (v.OnSave) then
+			v:Call("OnSave", client)
 		end
 	end
 end

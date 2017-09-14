@@ -189,8 +189,8 @@ function nut.char.RegisterVar(key, data)
 	-- Provide functions to change the variable if allowed.
 	if (SERVER and !data.isNotModifiable) then
 		-- Overwrite the set function if desired.
-		if (data.onSet) then
-			CHAR["Set"..upperName] = data.onSet
+		if (data.OnSet) then
+			CHAR["Set"..upperName] = data.OnSet
 		-- Have the set function only set on the server if no networking.
 		elseif (data.noNetworking) then
 			CHAR["Set"..upperName] = function(self, value)

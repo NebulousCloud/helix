@@ -65,8 +65,8 @@ function nut.item.Instance(index, uniqueID, itemData, x, y, callback)
 					callback(item)
 				end
 
-				if (item.onInstanced) then
-					item:onInstanced(index, x, y, item)
+				if (item.OnInstanced) then
+					item:OnInstanced(index, x, y, item)
 				end
 			end
 		end, "items")
@@ -156,7 +156,7 @@ function nut.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 
 					return false
 				end,
-				onCanRun = function(item)
+				OnCanRun = function(item)
 					return (!IsValid(item.entity) and !item.noDrop)
 				end
 			}
@@ -178,7 +178,7 @@ function nut.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 						end
 					end
 				end,
-				onCanRun = function(item)
+				OnCanRun = function(item)
 					return IsValid(item.entity)
 				end
 			}
@@ -235,8 +235,8 @@ function nut.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 			ITEM.height = ITEM.height or 1
 			ITEM.category = ITEM.category or "misc"
 
-			if (ITEM.onRegistered) then
-				ITEM:onRegistered()
+			if (ITEM.OnRegistered) then
+				ITEM:OnRegistered()
 			end
 
 			(isBaseItem and nut.item.base or nut.item.list)[ITEM.uniqueID] = ITEM
@@ -347,8 +347,8 @@ do
 									end
 								end
 
-								if (item2.onRestored) then
-									item2:onRestored(item2, invID)
+								if (item2.OnRestored) then
+									item2:OnRestored(item2, invID)
 								end
 							else
 								badItemsUniqueID[#badItemsUniqueID + 1] = item._uniqueID
@@ -693,7 +693,7 @@ do
 
 			local callback = item.functions[action]
 			if (callback) then
-				if (callback.onCanRun and callback.onCanRun(item, data) == false) then
+				if (callback.OnCanRun and callback.OnCanRun(item, data) == false) then
 					item.entity = nil
 					item.player = nil
 

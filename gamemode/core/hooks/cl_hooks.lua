@@ -431,7 +431,7 @@ function GM:HUDPaintBackground()
 
 		lastEntity = util.TraceHull(lastTrace).Entity
 
-		if (IsValid(lastEntity) and (lastEntity.DrawEntityInfo or (lastEntity.onShouldDrawEntityInfo and lastEntity:onShouldDrawEntityInfo()) or hookRun("ShouldDrawEntityInfo", lastEntity))) then
+		if (IsValid(lastEntity) and (lastEntity.DrawEntityInfo or (lastEntity.OnShouldDrawEntityInfo and lastEntity:OnShouldDrawEntityInfo()) or hookRun("ShouldDrawEntityInfo", lastEntity))) then
 			paintedEntitiesCache[lastEntity] = true
 		end
 	end
@@ -674,8 +674,8 @@ function GM:ItemShowEntityMenu(entity)
 	for k, v in SortedPairs(itemTable.functions) do
 		if (k == "combine") then continue end -- yeah, noob protection
 
-		if (v.onCanRun) then
-			if (v.onCanRun(itemTable) == false) then
+		if (v.OnCanRun) then
+			if (v.OnCanRun(itemTable) == false) then
 				continue
 			end
 		end
@@ -683,8 +683,8 @@ function GM:ItemShowEntityMenu(entity)
 		options[L(v.name or k)] = function()
 			local send = true
 
-			if (v.onClick) then
-				send = v.onClick(itemTable)
+			if (v.OnClick) then
+				send = v.OnClick(itemTable)
 			end
 
 			if (v.sound) then

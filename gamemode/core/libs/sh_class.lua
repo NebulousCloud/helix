@@ -47,8 +47,8 @@ function nut.class.LoadFromDir(directory)
 			end
 
 			-- Allow classes to be joinable by default.
-			if (!CLASS.onCanBe) then
-				CLASS.onCanBe = function(client)
+			if (!CLASS.OnCanBe) then
+				CLASS.OnCanBe = function(client)
 					return true
 				end
 			end
@@ -88,7 +88,7 @@ function nut.class.CanBe(client, class)
 	hook.Run("CanPlayerJoinClass", client, class, info)
 
 	-- See if the class allows the player to join it.
-	return info:onCanBe(client)
+	return info:OnCanBe(client)
 end
 
 function nut.class.Get(identifier)
@@ -151,12 +151,12 @@ function GM:OnPlayerJoinClass(client, class, oldClass)
 	local info = nut.class.list[class]
 	local info2 = nut.class.list[oldClass]
 
-	if (info.onSet) then
-		info:onSet(client)
+	if (info.OnSet) then
+		info:OnSet(client)
 	end
 
-	if (info2 and info2.onLeave) then
-		info2:onLeave(client)
+	if (info2 and info2.OnLeave) then
+		info2:OnLeave(client)
 	end
 
 	netstream.Start(nil, "classUpdate", client)

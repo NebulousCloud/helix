@@ -12,7 +12,7 @@ function ITEM:GetDesc()
 end
 
 if (CLIENT) then
-	function ITEM:paintOver(item, w, h)
+	function ITEM:PaintOver(item, w, h)
 		draw.SimpleText(item.ammoAmount, "DermaDefault", w , h - 5, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 1, color_black)
 	end
 end
