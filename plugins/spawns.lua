@@ -50,7 +50,7 @@ end
 nut.command.Add("spawnadd", {
 	adminOnly = true,
 	syntax = "<string faction> [string class]",
-	onRun = function(client, arguments)
+	OnRun = function(client, arguments)
 		local faction
 		local name = arguments[1]
 		local class = table.concat(arguments, " ", 2)
@@ -118,7 +118,7 @@ nut.command.Add("spawnadd", {
 nut.command.Add("spawnremove", {
 	adminOnly = true,
 	syntax = "[number radius]",
-	onRun = function(client, arguments)
+	OnRun = function(client, arguments)
 		local position = client:GetPos()
 		local radius = tonumber(arguments[1]) or 120
 		local i = 0

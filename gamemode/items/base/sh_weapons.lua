@@ -42,7 +42,7 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 	name = "Unequip",
 	tip = "equipTip",
 	icon = "icon16/cross.png",
-	onRun = function(item)
+	OnRun = function(item)
 		item.player.carryWeapons = item.player.carryWeapons or {}
 
 		local weapon = item.player.carryWeapons[item.weaponCategory]
@@ -80,7 +80,7 @@ ITEM.functions.Equip = {
 	name = "Equip",
 	tip = "equipTip",
 	icon = "icon16/tick.png",
-	onRun = function(item)
+	OnRun = function(item)
 		local client = item.player
 		local items = client:GetChar():GetInv():GetItems()
 

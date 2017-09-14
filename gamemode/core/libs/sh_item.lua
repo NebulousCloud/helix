@@ -151,7 +151,7 @@ function nut.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 			ITEM.functions.drop = ITEM.functions.drop or {
 				tip = "dropTip",
 				icon = "icon16/world.png",
-				onRun = function(item)
+				OnRun = function(item)
 					item:Transfer()
 
 					return false
@@ -163,7 +163,7 @@ function nut.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 			ITEM.functions.take = ITEM.functions.take or {
 				tip = "takeTip",
 				icon = "icon16/box.png",
-				onRun = function(item)
+				OnRun = function(item)
 					local status, result = item.player:GetChar():GetInv():Add(item.id)
 
 					if (!status) then
@@ -585,7 +585,7 @@ do
 					inventory:Sync(client)
 				end
 
-				if ((!inventory.owner or (inventory.owner and inventory.owner == character:GetID())) or (inventory.onCheckAccess and inventory:onCheckAccess(client))) then
+				if ((!inventory.owner or (inventory.owner and inventory.owner == character:GetID())) or (inventory.OnCheckAccess and inventory:OnCheckAccess(client))) then
 					local item = inventory:GetItemAt(oldX, oldY)
 
 					if (item) then
@@ -708,11 +708,11 @@ do
 				end
 				
 				if (result == nil) then
-					result = callback.onRun(item, data)
+					result = callback.OnRun(item, data)
 				end
 
 				if (item.postHooks[action]) then
-					-- Posthooks shouldn't override the result from onRun
+					-- Posthooks shouldn't override the result from OnRun
 					item.postHooks[action](item, result, data)
 				end
 

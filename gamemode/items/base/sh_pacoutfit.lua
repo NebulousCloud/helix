@@ -89,7 +89,7 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 	name = "Unequip",
 	tip = "equipTip",
 	icon = "icon16/cross.png",
-	onRun = function(item)
+	OnRun = function(item)
 		item:RemovePart(item.player)
 		
 		return false
@@ -104,7 +104,7 @@ ITEM.functions.Equip = {
 	name = "Equip",
 	tip = "equipTip",
 	icon = "icon16/tick.png",
-	onRun = function(item)
+	OnRun = function(item)
 		local char = item.player:GetChar()
 		local items = char:GetInv():GetItems()
 

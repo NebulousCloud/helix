@@ -9,27 +9,27 @@ function nut.command.Add(command, data)
 	data.syntax = data.syntax or "[none]"
 
 	-- Why bother adding a command if it doesn't do anything.
-	if (!data.onRun) then
+	if (!data.OnRun) then
 		return ErrorNoHalt("Command '"..command.."' does not have a callback, not adding!\n")
 	end
 
-	-- Store the old onRun because we're able to change it.
-	if (!data.onCheckAccess) then
+	-- Store the old OnRun because we're able to change it.
+	if (!data.OnCheckAccess) then
 		-- Check if the command is for basic admins only.
 		if (data.adminOnly) then
-			data.onCheckAccess = function(client)
+			data.OnCheckAccess = function(client)
 				return client:IsAdmin()
 			end
 		-- Or if it is only for super administrators.
 		elseif (data.superAdminOnly) then
-			data.onCheckAccess = function(client)
+			data.OnCheckAccess = function(client)
 				return client:IsSuperAdmin()
 			end
 		-- Or if we specify a usergroup allowed to use this.
 		elseif (data.group) then
 			-- The group property can be a table of usergroups.
 			if (type(data.group) == "table") then
-				data.onCheckAccess = function(client)
+				data.OnCheckAccess = function(client)
 					-- Check if the client's group is allowed.
 					for k, v in ipairs(data.group) do
 						if (client:IsUserGroup(v)) then
@@ -41,25 +41,25 @@ function nut.command.Add(command, data)
 				end
 			-- Otherwise it is most likely a string.
 			else
-				data.onCheckAccess = function(client)
+				data.OnCheckAccess = function(client)
 					return client:IsUserGroup(data.group)
 				end		
 			end
 		end
 	end
 
-	local onCheckAccess = data.onCheckAccess
+	local OnCheckAccess = data.OnCheckAccess
 
-	-- Only overwrite the onRun to check for access if there is anything to check.
-	if (onCheckAccess) then
-		local onRun = data.onRun
+	-- Only overwrite the OnRun to check for access if there is anything to check.
+	if (OnCheckAccess) then
+		local OnRun = data.OnRun
 
-		data._onRun = data.onRun -- for refactoring purpose.
-		data.onRun = function(client, arguments)
-			if (!onCheckAccess(client)) then
+		data._OnRun = data.OnRun -- for refactoring purpose.
+		data.OnRun = function(client, arguments)
+			if (!OnCheckAccess(client)) then
 				return "@noPerm"
 			else
-				return onRun(client, arguments)
+				return OnRun(client, arguments)
 			end
 		end
 	end
@@ -85,8 +85,8 @@ function nut.command.HasAccess(client, command)
 	command = nut.command.list[command]
 
 	if (command) then
-		if (command.onCheckAccess) then
-			return command.onCheckAccess(client)
+		if (command.OnCheckAccess) then
+			return command.OnCheckAccess(client)
 		else
 			return true
 		end
@@ -153,7 +153,7 @@ if (SERVER) then
 
 		if (command) then
 			-- Run the command's callback and get the return.
-			local results = {command.onRun(client, arguments or {})}
+			local results = {command.OnRun(client, arguments or {})}
 			local result = results[1]
 			
 			-- If a string is returned, it is a notification.

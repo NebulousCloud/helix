@@ -1,7 +1,7 @@
 nut.chat = nut.chat or {}
 nut.chat.classes = nut.char.classes or {}
 
-local DUMMY_COMMAND = {syntax = "<string text>", onRun = function() end}
+local DUMMY_COMMAND = {syntax = "<string text>", OnRun = function() end}
 
 if (!nut.command) then
 	include("sh_command.lua")

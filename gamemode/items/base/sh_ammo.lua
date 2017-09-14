@@ -22,7 +22,7 @@ ITEM.functions.use = { -- sorry, for name order.
 	name = "Load",
 	tip = "useTip",
 	icon = "icon16/add.png",
-	onRun = function(item)
+	OnRun = function(item)
 		item.player:GiveAmmo(item.ammoAmount, item.ammo)
 		item.player:EmitSound("items/ammo_pickup.wav", 110)
 		

@@ -144,7 +144,7 @@ end
 nut.command.Add("paneladd", {
 	adminOnly = true,
 	syntax = "<string url> [number w] [number h] [number scale]",
-	onRun = function(client, arguments)
+	OnRun = function(client, arguments)
 		if (!arguments[1]) then
 			return L("invalidArg", 1)
 		end
@@ -167,7 +167,7 @@ nut.command.Add("paneladd", {
 nut.command.Add("panelremove", {
 	adminOnly = true,
 	syntax = "[number radius]",
-	onRun = function(client, arguments)
+	OnRun = function(client, arguments)
 		-- Get the origin to remove panel.
 		local trace = client:GetEyeTrace()
 		local position = trace.HitPos
