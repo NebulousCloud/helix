@@ -11,7 +11,7 @@ ITEM.weaponCategory = "sidearm"
 -- Inventory drawing
 if (CLIENT) then
 	function ITEM:paintOver(item, w, h)
-		if (item:getData("equip")) then
+		if (item:GetData("equip")) then
 			surface.SetDrawColor(110, 255, 110, 100)
 			surface.DrawRect(w - 14, h - 14, 8, 8)
 		end
@@ -19,16 +19,16 @@ if (CLIENT) then
 end
 
 -- On item is dropped, Remove a weapon from the player and keep the ammo in the item.
-ITEM:hook("drop", function(item)
-	if (item:getData("equip")) then
-		item:setData("equip", nil)
+ITEM:Hook("drop", function(item)
+	if (item:GetData("equip")) then
+		item:SetData("equip", nil)
 
 		item.player.carryWeapons = item.player.carryWeapons or {}
 
 		local weapon = item.player.carryWeapons[item.weaponCategory]
 
 		if (IsValid(weapon)) then
-			item:setData("ammo", weapon:Clip1())
+			item:SetData("ammo", weapon:Clip1())
 
 			item.player:StripWeapon(item.class)
 			item.player.carryWeapons[item.weaponCategory] = nil
@@ -52,7 +52,7 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 		end
 
 		if (weapon and weapon:IsValid()) then
-			item:setData("ammo", weapon:Clip1())
+			item:SetData("ammo", weapon:Clip1())
 		
 			item.player:StripWeapon(item.class)
 		else
@@ -62,7 +62,7 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 		item.player:EmitSound("items/ammo_pickup.wav", 80)
 		item.player.carryWeapons[item.weaponCategory] = nil
 
-		item:setData("equip", nil)
+		item:SetData("equip", nil)
 
 		if (item.onUnequipWeapon) then
 			item:onUnequipWeapon(client, weapon)
@@ -71,7 +71,7 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 		return false
 	end,
 	onCanRun = function(item)
-		return (!IsValid(item.entity) and item:getData("equip") == true)
+		return (!IsValid(item.entity) and item:GetData("equip") == true)
 	end
 }
 
@@ -82,7 +82,7 @@ ITEM.functions.Equip = {
 	icon = "icon16/tick.png",
 	onRun = function(item)
 		local client = item.player
-		local items = client:getChar():getInv():getItems()
+		local items = client:GetChar():GetInv():GetItems()
 
 		client.carryWeapons = client.carryWeapons or {}
 
@@ -91,12 +91,12 @@ ITEM.functions.Equip = {
 				local itemTable = nut.item.instances[v.id]
 				
 				if (!itemTable) then
-					client:notifyLocalized("tellAdmin", "wid!xt")
+					client:NotifyLocalized("tellAdmin", "wid!xt")
 
 					return false
 				else
-					if (itemTable.isWeapon and client.carryWeapons[item.weaponCategory] and itemTable:getData("equip")) then
-						client:notifyLocalized("weaponSlotFilled")
+					if (itemTable.isWeapon and client.carryWeapons[item.weaponCategory] and itemTable:GetData("equip")) then
+						client:NotifyLocalized("weaponSlotFilled")
 
 						return false
 					end
@@ -117,12 +117,12 @@ ITEM.functions.Equip = {
 			client:EmitSound("items/ammo_pickup.wav", 80)
 
 			-- Remove default given ammo.
-			if (client:GetAmmoCount(weapon:GetPrimaryAmmoType()) == weapon:Clip1() and item:getData("ammo", 0) == 0) then
+			if (client:GetAmmoCount(weapon:GetPrimaryAmmoType()) == weapon:Clip1() and item:GetData("ammo", 0) == 0) then
 				client:RemoveAmmo(weapon:Clip1(), weapon:GetPrimaryAmmoType())
 			end
-			item:setData("equip", true)
+			item:SetData("equip", true)
 
-			weapon:SetClip1(item:getData("ammo", 0))
+			weapon:SetClip1(item:GetData("ammo", 0))
 
 			if (item.onEquipWeapon) then
 				item:onEquipWeapon(client, weapon)
@@ -134,12 +134,12 @@ ITEM.functions.Equip = {
 		return false
 	end,
 	onCanRun = function(item)
-		return (!IsValid(item.entity) and item:getData("equip") != true)
+		return (!IsValid(item.entity) and item:GetData("equip") != true)
 	end
 }
 
-function ITEM:onCanBeTransfered(oldInventory, newInventory)
-	if (newInventory and self:getData("equip")) then
+function ITEM:OnCanBeTransfered(oldInventory, newInventory)
+	if (newInventory and self:GetData("equip")) then
 		return false
 	end
 
@@ -147,7 +147,7 @@ function ITEM:onCanBeTransfered(oldInventory, newInventory)
 end
 
 function ITEM:onLoadout()
-	if (self:getData("equip")) then
+	if (self:GetData("equip")) then
 		local client = self.player
 		client.carryWeapons = client.carryWeapons or {}
 
@@ -157,7 +157,7 @@ function ITEM:onLoadout()
 			client:RemoveAmmo(weapon:Clip1(), weapon:GetPrimaryAmmoType())
 			client.carryWeapons[self.weaponCategory] = weapon
 
-			weapon:SetClip1(self:getData("ammo", 0))
+			weapon:SetClip1(self:GetData("ammo", 0))
 		else
 			print(Format("[Nutscript] Weapon %s does not exist!", self.class))
 		end
@@ -168,7 +168,7 @@ function ITEM:onSave()
 	local weapon = self.player:GetWeapon(self.class)
 
 	if (IsValid(weapon)) then
-		self:setData("ammo", weapon:Clip1())
+		self:SetData("ammo", weapon:Clip1())
 	end
 end
 
@@ -184,10 +184,10 @@ end
 hook.Add("PlayerDeath", "nutStripClip", function(client)
 	client.carryWeapons = {}
 
-	for k, v in pairs(client:getChar():getInv():getItems()) do
-		if (v.isWeapon and v:getData("equip")) then
-			v:setData("ammo", nil)
-			v:setData("equip", nil)
+	for k, v in pairs(client:GetChar():GetInv():GetItems()) do
+		if (v.isWeapon and v:GetData("equip")) then
+			v:SetData("ammo", nil)
+			v:SetData("equip", nil)
 		end
 	end
 end)

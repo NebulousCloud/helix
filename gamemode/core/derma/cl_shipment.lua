@@ -12,7 +12,7 @@ local PANEL = {}
 		self.list:Dock(FILL)
 	end
 
-	function PANEL:setItems(entity, items)
+	function PANEL:SetItems(entity, items)
 		self.entity = entity
 		self.items = true
 		self.itemPanels = {}
@@ -30,7 +30,7 @@ local PANEL = {}
 				item.icon:SetPos(2, 2)
 				item.icon:SetSize(32, 32)
 				item.icon:SetModel(itemTable.model)
-				item.icon:SetToolTip(itemTable:getDesc())
+				item.icon:SetToolTip(itemTable:GetDesc())
 
 				item.quantity = item.icon:Add("DLabel")
 				item.quantity:SetSize(32, 32)

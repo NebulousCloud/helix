@@ -10,9 +10,9 @@ local PANEL = {}
 
 		self.name = self:Add("DTextEntry")
 		self.name:Dock(TOP)
-		self.name:SetText(entity:getNetVar("name", "John Doe"))
+		self.name:SetText(entity:GetNetVar("name", "John Doe"))
 		self.name.OnEnter = function(this)
-			if (entity:getNetVar("name") != this:GetText()) then
+			if (entity:GetNetVar("name") != this:GetText()) then
 				self:updateVendor("name", this:GetText())
 			end
 		end
@@ -20,9 +20,9 @@ local PANEL = {}
 		self.desc = self:Add("DTextEntry")
 		self.desc:Dock(TOP)
 		self.desc:DockMargin(0, 4, 0, 0)
-		self.desc:SetText(entity:getNetVar("desc", ""))
+		self.desc:SetText(entity:GetNetVar("desc", ""))
 		self.desc.OnEnter = function(this)
-			if (entity:getNetVar("desc") != this:GetText()) then
+			if (entity:GetNetVar("desc") != this:GetText()) then
 				self:updateVendor("desc", this:GetText())
 			end
 		end
@@ -60,7 +60,7 @@ local PANEL = {}
 		self.bubble:SetText(L"vendorNoBubble")
 		self.bubble:Dock(TOP)
 		self.bubble:DockMargin(0, 4, 0, 0)
-		self.bubble:SetValue(entity:getNetVar("noBubble") and 1 or 0)
+		self.bubble:SetValue(entity:GetNetVar("noBubble") and 1 or 0)
 		self.bubble.OnChange = function(this, value)
 			if (this.noSend) then
 				this.noSend = nil
@@ -116,7 +116,7 @@ local PANEL = {}
 			nut.gui.editorFaction = vgui.Create("nutVendorFactionEditor")
 			nut.gui.editorFaction.updateVendor = self.updateVendor
 			nut.gui.editorFaction.entity = entity
-			nut.gui.editorFaction:setup()
+			nut.gui.editorFaction:Setup()
 		end
 
 		local menu
@@ -165,7 +165,7 @@ local PANEL = {}
 
 				-- Set the price of the item.
 				menu:AddOption(L"price", function()
-					Derma_StringRequest(itemTable.getName and itemTable:getName() or L(itemTable.name), L"vendorPriceReq", entity:getPrice(uniqueID), function(text)
+					Derma_StringRequest(itemTable.GetName and itemTable:GetName() or L(itemTable.name), L"vendorPriceReq", entity:GetPrice(uniqueID), function(text)
 						text = tonumber(text)
 
 						if (text == itemTable.price) then
@@ -187,16 +187,16 @@ local PANEL = {}
 
 				-- Edit the maximum stock for this item.
 				stock:AddOption(L"edit", function()
-					local _, max = entity:getStock(uniqueID)
+					local _, max = entity:GetStock(uniqueID)
 
-					Derma_StringRequest(itemTable.getName and itemTable:getName() or L(itemTable.name), L"vendorStockReq", max or 1, function(text)
+					Derma_StringRequest(itemTable.GetName and itemTable:GetName() or L(itemTable.name), L"vendorStockReq", max or 1, function(text)
 						self:updateVendor("stockMax", {uniqueID, text})
 					end)
 				end):SetImage("icon16/table_edit.png")
 
 				-- Edit the current stock of this item.
 				stock:AddOption(L"vendorEditCurStock", function()
-					Derma_StringRequest(itemTable.getName and itemTable:getName() or L(itemTable.name), L"vendorStockCurReq", entity:getStock(uniqueID) or 0, function(text)
+					Derma_StringRequest(itemTable.GetName and itemTable:GetName() or L(itemTable.name), L"vendorStockCurReq", entity:GetStock(uniqueID) or 0, function(text)
 						self:updateVendor("stock", {uniqueID, text})
 					end)					
 				end):SetImage("icon16/table_edit.png")
@@ -207,8 +207,8 @@ local PANEL = {}
 
 		for k, v in SortedPairs(nut.item.list) do
 			local mode = entity.items[k] and entity.items[k][VENDOR_MODE]
-			local current, max = entity:getStock(k)
-			local panel = self.items:AddLine(v.getName and v:getName() or L(v.name), mode and L(VENDOR_TEXT[mode]) or L"none", entity:getPrice(k), max and current.."/"..max or "-")
+			local current, max = entity:GetStock(k)
+			local panel = self.items:AddLine(v.GetName and v:GetName() or L(v.name), mode and L(VENDOR_TEXT[mode]) or L"none", entity:GetPrice(k), max and current.."/"..max or "-")
 
 			panel.item = k
 			self.lines[k] = panel

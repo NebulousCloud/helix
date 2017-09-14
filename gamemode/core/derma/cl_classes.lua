@@ -24,7 +24,7 @@ local PANEL = {}
         self.icon.PaintOver = function(this, w, h)
             /*
             if (panel.payload.model == k) then
-                local color = nut.config.get("color", color_white)
+                local color = nut.config.Get("color", color_white)
 
                 surface.SetDrawColor(color.r, color.g, color.b, 200)
 
@@ -63,10 +63,10 @@ local PANEL = {}
     end
 
     function PANEL:onClick()
-        nut.command.send("beclass", self.class)
+        nut.command.Send("beclass", self.class)
     end
 
-    function PANEL:setNumber(number)
+    function PANEL:SetNumber(number)
         local limit = self.data.limit
 
         if (limit > 0) then
@@ -76,7 +76,7 @@ local PANEL = {}
         end
     end
 
-    function PANEL:setClass(data)
+    function PANEL:SetClass(data)
         if (data.model) then
             local model = data.model
             if (type(model):lower() == "table") then
@@ -85,11 +85,11 @@ local PANEL = {}
 
             self.icon:SetModel(model)
         else
-            local char = LocalPlayer():getChar()
+            local char = LocalPlayer():GetChar()
             local model = LocalPlayer():GetModel()
 
             if (char) then
-                model = char:getModel()
+                model = char:GetModel()
             end
 
             self.icon:SetModel(model)
@@ -99,7 +99,7 @@ local PANEL = {}
         self.data = data 
         self.class = data.index
 
-        self:setNumber(#nut.class.getPlayers(data.index))
+        self:SetNumber(#nut.class.GetPlayers(data.index))
     end
 vgui.Register("nutClassPanel", PANEL, "DPanel")
 
@@ -116,19 +116,19 @@ PANEL = {}
         self.list:SetPadding(5)
 
         self.classPanels = {}
-        self:loadClasses()
+        self:LoadClasses()
     end
 
-    function PANEL:loadClasses()
+    function PANEL:LoadClasses()
         self.list:Clear()
         
         for k, v in ipairs(nut.class.list) do
-            local no, why = nut.class.canBe(LocalPlayer(), k)
+            local no, why = nut.class.CanBe(LocalPlayer(), k)
             local itsFull = ("class is full" == why)
 
             if (no or itsFull) then
                 local panel = vgui.Create("nutClassPanel", self.list)
-                panel:setClass(v)
+                panel:SetClass(v)
                 table.insert(self.classPanels, panel)
 
                 self.list:AddItem(panel)
@@ -143,7 +143,7 @@ hook.Add("CreateMenuButtons", "nutClasses", function(tabs)
     if (cnt <= 1) then return end
     
     for k, v in ipairs(nut.class.list) do
-        if (!nut.class.canBe(LocalPlayer(), k)) then
+        if (!nut.class.CanBe(LocalPlayer(), k)) then
             continue
         else
             tabs["classes"] = function(panel)
@@ -158,12 +158,12 @@ end)
 netstream.Hook("classUpdate", function(joinedClient)
     if (nut.gui.classes and nut.gui.classes:IsVisible()) then
         if (joinedClient == LocalPlayer()) then
-            nut.gui.classes:loadClasses()
+            nut.gui.classes:LoadClasses()
         else
             for k, v in ipairs(nut.gui.classes.classPanels) do
                 local data = v.data
 
-                v:setNumber(#nut.class.getPlayers(data.index))
+                v:SetNumber(#nut.class.GetPlayers(data.index))
             end
         end
     end

@@ -3,7 +3,7 @@ PLUGIN.author = "Chessnut"
 PLUGIN.desc = "Adds acts that can be performed."
 PLUGIN.acts = PLUGIN.acts or {}
 
-nut.util.include("sh_setup.lua")
+nut.util.Include("sh_setup.lua")
 
 for k, v in pairs(PLUGIN.acts) do
 	local data = {}
@@ -23,20 +23,20 @@ for k, v in pairs(PLUGIN.acts) do
 
 		data.onRun = function(client, arguments)
 			if (client.nutSeqUntimed) then
-				client:setNetVar("actAng")
-				client:leaveSequence()
+				client:SetNetVar("actAng")
+				client:LeaveSequence()
 				client.nutSeqUntimed = nil
 
 				return
 			end
 
 			if (!client:Alive() or
-				client:setLocalVar("ragdoll")) then
+				client:SetLocalVar("ragdoll")) then
 				return
 			end
 
 			if ((client.nutNextAct or 0) < CurTime()) then
-				local class = nut.anim.getModelClass(client:GetModel())
+				local class = nut.anim.GetModelClass(client:GetModel())
 				local info = v[class]
 
 				if (info) then
@@ -58,21 +58,21 @@ for k, v in pairs(PLUGIN.acts) do
 						sequence = info.sequence
 					end
 
-					local duration = client:forceSequence(sequence, nil, info.untimed and 0 or nil)
+					local duration = client:ForceSequence(sequence, nil, info.untimed and 0 or nil)
 
 					client.nutSeqUntimed = info.untimed
 					client.nutNextAct = CurTime() + (info.untimed and 4 or duration) + 1
-					client:setNetVar("actAng", client:GetAngles())
+					client:SetNetVar("actAng", client:GetAngles())
 				else
 					return "@modelNoSeq"
 				end
 			end
 		end
-	nut.command.add("act"..k, data)
+	nut.command.Add("act"..k, data)
 end
 
 function PLUGIN:UpdateAnimation(client, moveData)
-	local angles = client:getNetVar("actAng")
+	local angles = client:GetNetVar("actAng")
 
 	if (angles) then
 		client:SetRenderAngles(angles)
@@ -80,27 +80,27 @@ function PLUGIN:UpdateAnimation(client, moveData)
 end
 
 function PLUGIN:OnPlayerLeaveSequence(client)
-	client:setNetVar("actAng")
+	client:SetNetVar("actAng")
 end
 
 function PLUGIN:PlayerDeath(client)
 	if (client.nutSeqUntimed) then
-		client:setNetVar("actAng")
-		client:leaveSequence()
+		client:SetNetVar("actAng")
+		client:LeaveSequence()
 		client.nutSeqUntimed = nil
 	end
 end
 
 function PLUGIN:OnCharFallover(client)
 	if (client.nutSeqUntimed) then
-		client:setNetVar("actAng")
-		client:leaveSequence()
+		client:SetNetVar("actAng")
+		client:LeaveSequence()
 		client.nutSeqUntimed = nil
 	end
 end
 
 function PLUGIN:ShouldDrawLocalPlayer(client)
-	if (client:getNetVar("actAng")) then
+	if (client:GetNetVar("actAng")) then
 		return true
 	end
 end
@@ -109,7 +109,7 @@ local GROUND_PADDING = Vector(0, 0, 8)
 local PLAYER_OFFSET = Vector(0, 0, 72)
 
 function PLUGIN:CalcView(client, origin, angles, fov)
-	if (client:getNetVar("actAng")) then
+	if (client:GetNetVar("actAng")) then
 		local view = {}
 			local data = {}
 				data.start = client:GetPos() + PLAYER_OFFSET
@@ -121,11 +121,11 @@ function PLUGIN:CalcView(client, origin, angles, fov)
 end
 
 function PLUGIN:PlayerBindPress(client, bind, pressed)
-	if (client:getNetVar("actAng")) then
+	if (client:GetNetVar("actAng")) then
 		bind = bind:lower()
 
 		if (bind:find("+jump") and pressed) then
-			nut.command.send("actsit")
+			nut.command.Send("actsit")
 
 			return true
 		end

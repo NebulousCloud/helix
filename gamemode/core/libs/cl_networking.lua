@@ -22,13 +22,13 @@ netstream.Hook("gVar", function(key, value)
 	nut.net.globals[key] = value
 end)
 
-function getNetVar(key, default)
+function GetNetVar(key, default)
 	local value = nut.net.globals[key]
 
 	return value != nil and value or default
 end
 
-function entityMeta:getNetVar(key, default)
+function entityMeta:GetNetVar(key, default)
 	local index = self:EntIndex()
 
 	if (nut.net[index] and nut.net[index][key] != nil) then
@@ -38,4 +38,4 @@ function entityMeta:getNetVar(key, default)
 	return default
 end
 
-playerMeta.getLocalVar = entityMeta.getNetVar
+playerMeta.GetLocalVar = entityMeta.GetNetVar

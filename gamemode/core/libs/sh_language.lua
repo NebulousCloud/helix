@@ -2,11 +2,11 @@ nut.lang = nut.lang or {}
 nut.lang.stored = nut.lang.stored or {}
 nut.lang.names = nut.lang.names or {}
 
-function nut.lang.loadFromDir(directory)
+function nut.lang.LoadFromDir(directory)
 	for k, v in ipairs(file.Find(directory.."/sh_*.lua", "LUA")) do
 		local niceName = v:sub(4, -5):lower()
 
-		nut.util.include(directory.."/"..v, "shared")
+		nut.util.Include(directory.."/"..v, "shared")
 
 		if (LANGUAGE) then
 			if (NAME) then

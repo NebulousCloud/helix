@@ -24,13 +24,13 @@ if (SERVER) then
 		hook.Run("OnItemSpawned", self)
 	end
 
-	function ENT:setHealth(amount)
+	function ENT:SetHealth(amount)
 		self.health = amount
 	end
 	
 	function ENT:OnTakeDamage(dmginfo)
 		local damage = dmginfo:GetDamage()
-		self:setHealth(self.health - damage)
+		self:SetHealth(self.health - damage)
 
 		if (self.health < 0 and !self.onbreak) then
 			self.onbreak = true
@@ -38,7 +38,7 @@ if (SERVER) then
 		end
 	end
 
-	function ENT:setItem(itemID)
+	function ENT:SetItem(itemID)
 		local itemTable = nut.item.instances[itemID]
 
 		if (itemTable) then
@@ -53,11 +53,11 @@ if (SERVER) then
 			self:SetModel(model)
 			self:PhysicsInit(SOLID_VPHYSICS)
 			self:SetSolid(SOLID_VPHYSICS)
-			self:setNetVar("id", itemTable.uniqueID)
+			self:SetNetVar("id", itemTable.uniqueID)
 			self.nutItemID = itemID
 
 			if (table.Count(itemTable.data) > 0) then
-				self:setNetVar("data", itemTable.data)
+				self:SetNetVar("data", itemTable.data)
 			end
 
 			local physObj = self:GetPhysicsObject()
@@ -110,7 +110,7 @@ if (SERVER) then
 	end
 	
 	function ENT:Think()
-		local itemTable = self:getItemTable()
+		local itemTable = self:GetItemTable()
 				
 		if (itemTable.think) then
 			itemTable:think(self)
@@ -124,24 +124,24 @@ else
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
 
-	function ENT:onDrawEntityInfo(alpha)
-		local itemTable = self.getItemTable(self)
+	function ENT:OnDrawEntityInfo(alpha)
+		local itemTable = self.GetItemTable(self)
 
 		if (itemTable) then
 			local oldData = itemTable.data
-			itemTable.data = self.getNetVar(self, "data", {})
+			itemTable.data = self.GetNetVar(self, "data", {})
 			itemTable.entity = self
 
 			local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
 			local x, y = position.x, position.y
-			local description = itemTable.getDesc(itemTable)
+			local description = itemTable.GetDesc(itemTable)
 
 			if (description != self.desc) then
 				self.desc = description
 				self.markup = nut.markup.parse("<font=nutItemDescFont>" .. description .. "</font>", ScrW() * 0.7)
 			end
 			
-			nut.util.drawText(itemTable.getName and itemTable:getName() or L(itemTable.name), x, y, colorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
+			nut.util.DrawText(itemTable.GetName and itemTable:GetName() or L(itemTable.name), x, y, colorAlpha(nut.config.Get("color"), alpha), 1, 1, nil, alpha * 0.65)
 
 			y = y + 12
 			if (self.markup) then
@@ -156,7 +156,7 @@ else
 	end
 
 	function ENT:DrawTranslucent()
-		local itemTable = self:getItemTable()
+		local itemTable = self:GetItemTable()
 
 		if (itemTable and itemTable.drawEntity) then
 			itemTable:drawEntity(self)
@@ -168,16 +168,16 @@ else
 	end
 end
 
-function ENT:getItemID()
-	return self:getNetVar("id", "")
+function ENT:GetItemID()
+	return self:GetNetVar("id", "")
 end
 
-function ENT:getItemTable()
-	return nut.item.list[self:getItemID()]
+function ENT:GetItemTable()
+	return nut.item.list[self:GetItemID()]
 end
 
-function ENT:getData(key, default)
-	local data = self:getNetVar("data", {})
+function ENT:GetData(key, default)
+	local data = self:GetNetVar("data", {})
 
 	return data[key] or default
 end

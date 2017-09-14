@@ -50,7 +50,7 @@ ikon.maxSize = 8 -- 8x8 (512^2) is max icon size. eitherwise, fuck off.
 	Initialize hooks and RT Screens.
 	returns nothing
 */
-local schemaName = schemaName or (SCHEMA and SCHEMA.folder)
+local schemaName = schemaName or (Schema and Schema.folder)
 
 local List = {}
 function ikon:init()
@@ -68,7 +68,7 @@ function ikon:init()
 	function halo.Add(...)
 		-- shut the fuck up
 		if (ikon.rendering != true) then
-			OLD_HALOADD(...)
+			OLD_HALOAdd(...)
 		end
 	end
 
@@ -89,7 +89,7 @@ if (schemaName) then
 end
 
 hook.Add("InitializedSchema", "updatePath", function()
-	schemaName = SCHEMA.folder
+	schemaName = Schema.folder
 	ikon:init()
 end)
 
@@ -323,7 +323,7 @@ end
 	returns IMaterial
 */
 ikon.cache = ikon.cache or {}
-function ikon:getIcon(name)
+function ikon:GetIcon(name)
 	if (ikon.cache[name]) then
 		return ikon.cache[name] -- yeah return cache
 	end

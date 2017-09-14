@@ -1,13 +1,13 @@
 nut.config = nut.config or {}
 nut.config.stored = nut.config.stored or {}
 
-function nut.config.add(key, value, desc, callback, data, noNetworking, schemaOnly)
+function nut.config.Add(key, value, desc, callback, data, noNetworking, schemaOnly)
 	local oldConfig = nut.config.stored[key]
 
 	nut.config.stored[key] = {data = data, value = oldConfig and oldConfig.value or value, default = value, desc = desc, noNetworking = noNetworking, global = !schemaOnly, callback = callback}
 end
 
-function nut.config.setDefault(key, value)
+function nut.config.SetDefault(key, value)
 	local config = nut.config.stored[key]
 
 	if (config) then
@@ -15,7 +15,7 @@ function nut.config.setDefault(key, value)
 	end
 end
 
-function nut.config.forceSet(key, value, noSave)
+function nut.config.ForceSet(key, value, noSave)
 	local config = nut.config.stored[key]
 
 	if (config) then
@@ -23,11 +23,11 @@ function nut.config.forceSet(key, value, noSave)
 	end
 
 	if (noSave) then
-		nut.config.save()
+		nut.config.Save()
 	end
 end
 
-function nut.config.set(key, value)
+function nut.config.Set(key, value)
 	local config = nut.config.stored[key]
 
 	if (config) then
@@ -43,12 +43,12 @@ function nut.config.set(key, value)
 				config.callback(oldValue, value)
 			end
 
-			nut.config.save()
+			nut.config.Save()
 		end
 	end
 end
 
-function nut.config.get(key, default)
+function nut.config.Get(key, default)
 	local config = nut.config.stored[key]
 
 	if (config) then
@@ -62,10 +62,10 @@ function nut.config.get(key, default)
 	return default
 end
 
-function nut.config.load()
+function nut.config.Load()
 	if (SERVER) then
-		local globals = nut.data.get("config", nil, true, true)
-		local data = nut.data.get("config", nil, false, true)
+		local globals = nut.data.Get("config", nil, true, true)
+		local data = nut.data.Get("config", nil, false, true)
 
 		if (globals) then
 			for k, v in pairs(globals) do
@@ -82,12 +82,12 @@ function nut.config.load()
 		end
 	end
 
-	nut.util.include("nutscript/gamemode/config/sh_config.lua")
+	nut.util.Include("nutscript/gamemode/config/sh_config.lua")
 	hook.Run("InitializedConfig")
 end
 
 if (SERVER) then
-	function nut.config.getChangedValues()
+	function nut.config.GetChangedValues()
 		local data = {}
 
 		for k, v in pairs(nut.config.stored) do
@@ -99,15 +99,15 @@ if (SERVER) then
 		return data
 	end
 
-	function nut.config.send(client)
-		netstream.Start(client, "cfgList", nut.config.getChangedValues())
+	function nut.config.Send(client)
+		netstream.Start(client, "cfgList", nut.config.GetChangedValues())
 	end
 
-	function nut.config.save()
+	function nut.config.Save()
 		local globals = {}
 		local data = {}
 
-		for k, v in pairs(nut.config.getChangedValues()) do
+		for k, v in pairs(nut.config.GetChangedValues()) do
 			if (nut.config.stored[k].global) then
 				globals[k] = v
 			else
@@ -116,14 +116,14 @@ if (SERVER) then
 		end
 
 		-- Global and schema data set respectively.
-		nut.data.set("config", globals, true, true)
-		nut.data.set("config", data, false, true)
+		nut.data.Set("config", globals, true, true)
+		nut.data.Set("config", data, false, true)
 	end
 
 	netstream.Hook("cfgSet", function(client, key, value)
 		// NEED TO ADD HOOK: CanPlayerModifyConfig
 		if (client:IsSuperAdmin() and type(nut.config.stored[key].default) == type(value)) then
-			nut.config.set(key, value)
+			nut.config.Set(key, value)
 
 			if (type(value) == "table") then
 				local value2 = "["
@@ -138,7 +138,7 @@ if (SERVER) then
 				value = value2
 			end
 
-			nut.util.notifyLocalized("cfgSet", nil, client:Name(), key, tostring(value), v)
+			nut.util.NotifyLocalized("cfgSet", nil, client:Name(), key, tostring(value), v)
 		end
 	end)
 else
@@ -218,10 +218,10 @@ if (CLIENT) then
 
 							if (formType == "number") then
 								form = "Int"
-								value = tonumber(nut.config.get(k)) or value
+								value = tonumber(nut.config.Get(k)) or value
 							elseif (formType == "boolean") then
 								form = "Boolean"
-								value = util.tobool(nut.config.get(k))
+								value = util.tobool(nut.config.Get(k))
 							else
 								form = "Generic"
 							end

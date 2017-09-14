@@ -12,15 +12,15 @@ local SKIN = {}
 	SKIN.Colours.Button.Disabled = Color(0, 0, 0, 100)
 
 	function SKIN:PaintFrame(panel)
-		nut.util.drawBlur(panel, 10)
+		nut.util.DrawBlur(panel, 10)
 
 		surface.SetDrawColor(45, 45, 45, 200)
 		surface.DrawRect(0, 0, panel:GetWide(), panel:GetTall())
 
-		surface.SetDrawColor(nut.config.get("color"))
+		surface.SetDrawColor(nut.config.Get("color"))
 		surface.DrawRect(0, 0, panel:GetWide(), 24)
 
-		surface.SetDrawColor(nut.config.get("color"))
+		surface.SetDrawColor(nut.config.Get("color"))
 		surface.DrawOutlinedRect(0, 0, panel:GetWide(), panel:GetTall())
 
 	end

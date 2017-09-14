@@ -6,12 +6,12 @@ function PANEL:Init()
 	self:SetSize(size, size * 1.4)
 end
 
-function PANEL:setItem(itemTable)
+function PANEL:SetItem(itemTable)
 	self.itemName = L(itemTable.name):lower()
 
 	self.price = self:Add("DLabel")
 	self.price:Dock(BOTTOM)
-	self.price:SetText(itemTable.price and nut.currency.get(itemTable.price) or L"free":upper())
+	self.price:SetText(itemTable.price and nut.currency.Get(itemTable.price) or L"free":upper())
 	self.price:SetContentAlignment(5)
 	self.price:SetTextColor(color_white)
 	self.price:SetFont("nutSmallFont")
@@ -19,7 +19,7 @@ function PANEL:setItem(itemTable)
 
 	self.name = self:Add("DLabel")
 	self.name:Dock(TOP)
-	self.name:SetText(itemTable.getName and itemTable:getName() or L(itemTable.name))
+	self.name:SetText(itemTable.GetName and itemTable:GetName() or L(itemTable.name))
 	self.name:SetContentAlignment(5)
 	self.name:SetTextColor(color_white)
 	self.name:SetFont("nutSmallFont")
@@ -38,7 +38,7 @@ function PANEL:setItem(itemTable)
 	self.icon:SetModel(itemTable.model, itemTable.skin or 0)
 	self.icon:SetToolTip(
 		Format(nut.config.itemFormat,
-		itemTable.getName and itemTable:getName() or L(itemTable.name), itemTable:getDesc() or "")
+		itemTable.GetName and itemTable:GetName() or L(itemTable.name), itemTable:GetDesc() or "")
 	)
 	self.icon.itemID = true
 	self.icon.DoClick = function(this)
@@ -105,13 +105,13 @@ function PANEL:Init()
 		local text = self.search:GetText():lower()
 
 		if (self.selected) then
-			self:loadItems(self.selected.category, text:find("%S") and text or nil)
+			self:LoadItems(self.selected.category, text:find("%S") and text or nil)
 			self.scroll:InvalidateLayout()
 		end
 	end
 	self.search.PaintOver = function(this, cw, ch)
 		if (self.search:GetValue() == "" and !self.search:HasFocus()) then
-			nut.util.drawText("V", 10, ch/2 - 1, color_black, 3, 1, "nutIconsSmall")
+			nut.util.DrawText("V", 10, ch/2 - 1, color_black, 3, 1, "nutIconsSmall")
 		end
 	end
 
@@ -131,8 +131,8 @@ function PANEL:Init()
 	self.checkout:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 	self.checkout:SetText(L("checkout", 0))
 	self.checkout.DoClick = function()
-		if (!IsValid(nut.gui.checkout) and self:getCartCount() > 0) then
-			self:Add("nutBusinessCheckout"):setCart(self.cart)
+		if (!IsValid(nut.gui.checkout) and self:GetCartCount() > 0) then
+			self:Add("nutBusinessCheckout"):SetCart(self.cart)
 		end
 	end
 
@@ -161,7 +161,7 @@ function PANEL:Init()
 		button:SetFont("nutMediumFont")
 		button:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 		button.Paint = function(this, w, h)
-			surface.SetDrawColor(self.selected == this and nut.config.get("color") or dark)
+			surface.SetDrawColor(self.selected == this and nut.config.Get("color") or dark)
 			surface.DrawRect(0, 0, w, h)
 
 			surface.SetDrawColor(0, 0, 0, 50)
@@ -170,7 +170,7 @@ function PANEL:Init()
 		button.DoClick = function(this)
 			if (self.selected != this) then
 				self.selected = this
-				self:loadItems(realName)
+				self:LoadItems(realName)
 				timer.Simple(0.01, function() 
 					self.scroll:InvalidateLayout()
 				end)
@@ -187,11 +187,11 @@ function PANEL:Init()
 	end
 
 	if (self.selected) then
-		self:loadItems(self.selected.category)
+		self:LoadItems(self.selected.category)
 	end
 end
 
-function PANEL:getCartCount()
+function PANEL:GetCartCount()
 	local count = 0
 
 	for k, v in pairs(self.cart) do
@@ -203,10 +203,10 @@ end
 
 function PANEL:buyItem(uniqueID)
 	self.cart[uniqueID] = (self.cart[uniqueID] or 0) + 1
-	self.checkout:SetText(L("checkout", self:getCartCount()))
+	self.checkout:SetText(L("checkout", self:GetCartCount()))
 end
 
-function PANEL:loadItems(category, search)
+function PANEL:LoadItems(category, search)
 	category = category	or "misc"
 	local items = nut.item.list
 
@@ -223,15 +223,15 @@ function PANEL:loadItems(category, search)
 				continue
 			end
 
-			self.itemList:Add("nutBusinessItem"):setItem(itemTable)
+			self.itemList:Add("nutBusinessItem"):SetItem(itemTable)
 		end
 	end
 end
 
-function PANEL:setPage()
+function PANEL:SetPage()
 end
 
-function PANEL:getPageItems()
+function PANEL:GetPageItems()
 end
 
 vgui.Register("nutBusiness", PANEL, "EditablePanel")
@@ -366,7 +366,7 @@ PANEL = {}
 
 	function PANEL:onQuantityChanged()
 		local price = 0
-		local money = LocalPlayer():getChar():getMoney()
+		local money = LocalPlayer():GetChar():GetMoney()
 		local valid = 0
 
 		for k, v in pairs(self.itemData) do
@@ -378,15 +378,15 @@ PANEL = {}
 			end
 		end
 
-		self.current:SetText(L"currentMoney"..nut.currency.get(money))
-		self.total:SetText("- "..nut.currency.get(price))
-		self.final:SetText(L"moneyLeft"..nut.currency.get(money - price))
+		self.current:SetText(L"currentMoney"..nut.currency.Get(money))
+		self.total:SetText("- "..nut.currency.Get(price))
+		self.final:SetText(L"moneyLeft"..nut.currency.Get(money - price))
 		self.final:SetTextColor((money - price) >= 0 and Color(46, 204, 113) or Color(217, 30, 24))
 
 		self.preventBuy = (money - price) < 0 or valid == 0
 	end
 
-	function PANEL:setCart(items)
+	function PANEL:SetCart(items)
 		self.itemData = items
 
 		for k, v in SortedPairs(items) do
@@ -408,7 +408,7 @@ PANEL = {}
 				slot.name:SetPos(40, 2)
 				slot.name:SetSize(180, 32)
 				slot.name:SetFont("nutChatFont")
-				slot.name:SetText(L(itemTable.getName and itemTable:getName() or L(itemTable.name)).." ("..(itemTable.price and nut.currency.get(itemTable.price) or L"free":upper())..")")
+				slot.name:SetText(L(itemTable.GetName and itemTable:GetName() or L(itemTable.name)).." ("..(itemTable.price and nut.currency.Get(itemTable.price) or L"free":upper())..")")
 				slot.name:SetTextColor(color_white)
 
 				slot.quantity = slot:Add("DTextEntry")

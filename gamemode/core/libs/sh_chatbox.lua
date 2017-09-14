@@ -8,7 +8,7 @@ if (!nut.command) then
 end
 
 -- Registers a new chat type with the information provided.
-function nut.chat.register(chatType, data)
+function nut.chat.Register(chatType, data)
 	if (!data.onCanHear) then
 		-- Have a substitute if the canHear property is not found.
 		data.onCanHear = function(speaker, listener)
@@ -29,7 +29,7 @@ function nut.chat.register(chatType, data)
 	if (!data.onCanSay) then
 		data.onCanSay = function(speaker, text)
 			if (!data.deadCanChat and !speaker:Alive()) then
-				speaker:notifyLocalized("noPerm")
+				speaker:NotifyLocalized("noPerm")
 
 				return false
 			end
@@ -62,11 +62,11 @@ function nut.chat.register(chatType, data)
 		if (type(data.prefix) == "table") then
 			for k, v in ipairs(data.prefix) do
 				if (v:sub(1, 1) == "/") then
-					nut.command.add(v:sub(2), DUMMY_COMMAND)
+					nut.command.Add(v:sub(2), DUMMY_COMMAND)
 				end
 			end
 		else
-			nut.command.add(chatType, DUMMY_COMMAND)
+			nut.command.Add(chatType, DUMMY_COMMAND)
 		end
 	end
 
@@ -77,7 +77,7 @@ function nut.chat.register(chatType, data)
 end
 
 -- Identifies which chat mode should be used.
-function nut.chat.parse(client, message, noSend)
+function nut.chat.Parse(client, message, noSend)
 	local anonymous = false
 	local chatType = "ic"
 
@@ -137,7 +137,7 @@ function nut.chat.parse(client, message, noSend)
 	-- Only send if needed.
 	if (SERVER and !noSend) then
 		-- Send the correct chat type out so other player see the message.
-		nut.chat.send(client, chatType, hook.Run("PlayerMessageSend", client, chatType, message, anonymous) or message, anonymous)
+		nut.chat.Send(client, chatType, hook.Run("PlayerMessageSend", client, chatType, message, anonymous) or message, anonymous)
 	end
 
 	-- Return the chosen chat type and the message that was sent if needed for some reason.
@@ -147,7 +147,7 @@ end
 
 if (SERVER) then
 	-- Send a chat message using the specified chat type.
-	function nut.chat.send(speaker, chatType, text, anonymous, receivers)
+	function nut.chat.Send(speaker, chatType, text, anonymous, receivers)
 		local class = nut.chat.classes[chatType]
 
 		if (class and class.onCanSay(speaker, text) != false) then
@@ -155,7 +155,7 @@ if (SERVER) then
 				receivers = {}
 
 				for k, v in ipairs(player.GetAll()) do
-					if (v:getChar() and class.onCanHear(speaker, v) != false) then
+					if (v:GetChar() and class.onCanHear(speaker, v) != false) then
 						receivers[#receivers + 1] = v
 					end
 				end
@@ -189,25 +189,25 @@ do
 	-- Load the chat types after the configs so we can access changed configs.
 	hook.Add("InitializedConfig", "nutChatTypes", function()
 		-- The default in-character chat.
-		nut.chat.register("ic", {
+		nut.chat.Register("ic", {
 			format = "%s says \"%s\"",
 			onGetColor = function(speaker, text)
 				-- If you are looking at the speaker, make it greener to easier identify who is talking.
 				if (LocalPlayer():GetEyeTrace().Entity == speaker) then
-					return nut.config.get("chatListenColor")
+					return nut.config.Get("chatListenColor")
 				end
 
 				-- Otherwise, use the normal chat color.
-				return nut.config.get("chatColor")
+				return nut.config.Get("chatColor")
 			end,
-			onCanHear = nut.config.get("chatRange", 280)
+			onCanHear = nut.config.Get("chatRange", 280)
 		})
 
 		-- Actions and such.
-		nut.chat.register("me", {
+		nut.chat.Register("me", {
 			format = "**%s %s",
 			onGetColor = nut.chat.classes.ic.onGetColor,
-			onCanHear = nut.config.get("chatRange", 280),
+			onCanHear = nut.config.Get("chatRange", 280),
 			prefix = {"/me", "/action"},
 			font = "nutChatFontItalics",
 			filter = "actions",
@@ -215,11 +215,11 @@ do
 		})
 
 		-- Actions and such.
-		nut.chat.register("it", {
+		nut.chat.Register("it", {
 			onChatAdd = function(speaker, text)
-				chat.AddText(nut.config.get("chatColor"), "**"..text)
+				chat.AddText(nut.config.Get("chatColor"), "**"..text)
 			end,
-			onCanHear = nut.config.get("chatRange", 280),
+			onCanHear = nut.config.Get("chatRange", 280),
 			prefix = {"/it"},
 			font = "nutChatFontItalics",
 			filter = "actions",
@@ -227,7 +227,7 @@ do
 		})
 
 		-- Whisper chat.
-		nut.chat.register("w", {
+		nut.chat.Register("w", {
 			format = "%s whispers \"%s\"",
 			onGetColor = function(speaker, text)
 				local color = nut.chat.classes.ic.onGetColor(speaker, text)
@@ -235,12 +235,12 @@ do
 				-- Make the whisper chat slightly darker than IC chat.
 				return Color(color.r - 35, color.g - 35, color.b - 35)
 			end,
-			onCanHear = nut.config.get("chatRange", 280) * 0.25,
+			onCanHear = nut.config.Get("chatRange", 280) * 0.25,
 			prefix = {"/w", "/whisper"}
 		})
 
 		-- Yelling out loud.
-		nut.chat.register("y", {
+		nut.chat.Register("y", {
 			format = "%s yells \"%s\"",
 			onGetColor = function(speaker, text)
 				local color = nut.chat.classes.ic.onGetColor(speaker, text)
@@ -248,18 +248,18 @@ do
 				-- Make the yell chat slightly brighter than IC chat.
 				return Color(color.r + 35, color.g + 35, color.b + 35)
 			end,
-			onCanHear = nut.config.get("chatRange", 280) * 2,
+			onCanHear = nut.config.Get("chatRange", 280) * 2,
 			prefix = {"/y", "/yell"}
 		})
 
 		-- Out of character.
-		nut.chat.register("ooc", {
+		nut.chat.Register("ooc", {
 			onCanSay =  function(speaker, text)
-			if (!nut.config.get("allowGlobalOOC")) then
-				speaker:notifyLocalized("Global OOC is disabled on this server.")
+			if (!nut.config.Get("allowGlobalOOC")) then
+				speaker:NotifyLocalized("Global OOC is disabled on this server.")
 				return false		
 			else
-				local delay = nut.config.get("oocDelay", 10)
+				local delay = nut.config.Get("oocDelay", 10)
 
 				-- Only need to check the time if they have spoken in OOC chat before.
 				if (delay > 0 and speaker.nutLastOOC) then
@@ -267,7 +267,7 @@ do
 
 					-- Use this method of checking time in case the oocDelay config changes.
 					if (lastOOC <= delay) then
-						speaker:notifyLocalized("oocDelay", delay - math.ceil(lastOOC))
+						speaker:NotifyLocalized("oocDelay", delay - math.ceil(lastOOC))
 
 						return false
 					end
@@ -308,9 +308,9 @@ do
 		})
 
 		-- Local out of character.
-		nut.chat.register("looc", {
+		nut.chat.Register("looc", {
 			onCanSay =  function(speaker, text)
-				local delay = nut.config.get("loocDelay", 0)
+				local delay = nut.config.Get("loocDelay", 0)
 
 				-- Only need to check the time if they have spoken in OOC chat before.
 				if (delay > 0 and speaker.nutLastLOOC) then
@@ -318,7 +318,7 @@ do
 
 					-- Use this method of checking time in case the oocDelay config changes.
 					if (lastLOOC <= delay) then
-						speaker:notifyLocalized("loocDelay", delay - math.ceil(lastLOOC))
+						speaker:NotifyLocalized("loocDelay", delay - math.ceil(lastLOOC))
 
 						return false
 					end
@@ -328,28 +328,28 @@ do
 				speaker.nutLastLOOC = CurTime()
 			end,
 			onChatAdd = function(speaker, text)
-				chat.AddText(Color(255, 50, 50), "[LOOC] ", nut.config.get("chatColor"), speaker:Name()..": "..text)
+				chat.AddText(Color(255, 50, 50), "[LOOC] ", nut.config.Get("chatColor"), speaker:Name()..": "..text)
 			end,
-			onCanHear = nut.config.get("chatRange", 280),
+			onCanHear = nut.config.Get("chatRange", 280),
 			prefix = {".//", "[[", "/looc"},
 			noSpaceAfter = true,
 			filter = "ooc"
 		})
 
 		-- Roll information in chat.
-		nut.chat.register("roll", {
+		nut.chat.Register("roll", {
 			format = "%s has rolled %s.",
 			color = Color(155, 111, 176),
 			filter = "actions",
 			font = "nutChatFontItalics",
-			onCanHear = nut.config.get("chatRange", 280),
+			onCanHear = nut.config.Get("chatRange", 280),
 			deadCanChat = true
 		})
 	end)
 end
 
 -- Private messages between players.
-nut.chat.register("pm", {
+nut.chat.Register("pm", {
 	format = "[PM] %s: %s.",
 	color = Color(249, 211, 89),
 	filter = "pm",
@@ -357,7 +357,7 @@ nut.chat.register("pm", {
 })
 
 -- Global events.
-nut.chat.register("event", {
+nut.chat.Register("event", {
 	onCanSay =  function(speaker, text)
 		return speaker:IsAdmin()
 	end,

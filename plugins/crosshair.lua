@@ -25,11 +25,11 @@ if (CLIENT) then
 
 	function PLUGIN:PostDrawHUD()
 		local client = LocalPlayer()
-		if (!client:getChar() or !client:Alive()) then
+		if (!client:GetChar() or !client:Alive()) then
 			return
 		end
 
-		local entity = Entity(client:getLocalVar("ragdoll", 0))
+		local entity = Entity(client:GetLocalVar("ragdoll", 0))
 		if (entity:IsValid()) then
 			return
 		end
@@ -66,7 +66,7 @@ if (CLIENT) then
 		scaleFraction = 1 - math.Clamp(distance / maxDistance, 0, .5)
 		screen = trace.HitPos:ToScreen()
 		crossSize = 4
-		crossGap = 25 * (scaleFraction - (client:isWepRaised() and 0 or .1))
+		crossGap = 25 * (scaleFraction - (client:IsWepRaised() and 0 or .1))
 
 		if (IsValid(entity) and entity:GetClass() == "nut_item" and 
 			entity:GetPos():DistToSqr(data.start) <= 16384) then
@@ -75,7 +75,7 @@ if (CLIENT) then
 		end
 
 		curGap = Lerp(ft * 2, curGap, crossGap)
-		curAlpha = Lerp(ft * 2, curAlpha, (!client:isWepRaised() and 255 or 150))
+		curAlpha = Lerp(ft * 2, curAlpha, (!client:IsWepRaised() and 255 or 150))
 		curAlpha = hook.Run("GetCrosshairAlpha", curAlpha) or curAlpha
 		colors[2] = Color(255, curAlpha, curAlpha, curAlpha)
 

@@ -6,26 +6,26 @@ do
 	local character = nut.meta.character
 
 	if (SERVER) then
-		function character:recognize(id)
-			if (type(id) != "number" and id.getID) then
-				id = id:getID()
+		function character:Recognize(id)
+			if (type(id) != "number" and id.GetID) then
+				id = id:GetID()
 			end
 
-			local recognized = self:getData("rgn", "")
+			local recognized = self:GetData("rgn", "")
 
 			if (recognized != "" and recognized:find(","..id..",")) then
 				return false;
 			end;
 
-			self:setData("rgn", recognized..","..id..",")
+			self:SetData("rgn", recognized..","..id..",")
 
 			return true
 		end
 	end
 
-	function character:doesRecognize(id)
-		if (type(id) != "number" and id.getID) then
-			id = id:getID()
+	function character:DoesRecognize(id)
+		if (type(id) != "number" and id.GetID) then
+			id = id:GetID()
 		end
 
 		return hook.Run("IsCharRecognised", self, id) != false
@@ -35,14 +35,14 @@ do
 		local other = nut.char.loaded[id]
 
 		if (other) then
-			local faction = nut.faction.indices[other:getFaction()]
+			local faction = nut.faction.indices[other:GetFaction()]
 
 			if (faction and faction.isGloballyRecognized) then
 				return
 			end
 		end
 
-		local recognized = char:getData("rgn", "")
+		local recognized = char:GetData("rgn", "")
 
 		if (recognized == "") then
 			return false
@@ -66,25 +66,25 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:GetDisplayedDescription(client)
-		if (client:getChar() and client != LocalPlayer() and LocalPlayer():getChar() and !LocalPlayer():getChar():doesRecognize(client:getChar()) and !hook.Run("IsPlayerRecognized", client)) then
+		if (client:GetChar() and client != LocalPlayer() and LocalPlayer():GetChar() and !LocalPlayer():GetChar():DoesRecognize(client:GetChar()) and !hook.Run("IsPlayerRecognized", client)) then
 			return L"noRecog"
 		end
 	end
 
 	function PLUGIN:ShouldAllowScoreboardOverride(client)
-		if (nut.config.get("sbRecog")) then
+		if (nut.config.Get("sbRecog")) then
 			return true
 		end
 	end
 
 	function PLUGIN:GetDisplayedName(client, chatType)
 		if (client != LocalPlayer()) then
-			local character = client:getChar()
-			local ourCharacter = LocalPlayer():getChar()
+			local character = client:GetChar()
+			local ourCharacter = LocalPlayer():GetChar()
 
-			if (ourCharacter and character and !ourCharacter:doesRecognize(character) and !hook.Run("IsPlayerRecognized", client)) then
+			if (ourCharacter and character and !ourCharacter:DoesRecognize(character) and !hook.Run("IsPlayerRecognized", client)) then
 				if (chatType and hook.Run("IsRecognizedChatType", chatType)) then
-					local description = character:getDesc()
+					local description = character:GetDesc()
 
 					if (#description > 40) then
 						description = description:utf8sub(1, 37).."..."
@@ -126,7 +126,7 @@ if (CLIENT) then
 	end
 else
 	function PLUGIN:ShowSpare1(client)
-		if (client:getChar()) then
+		if (client:GetChar()) then
 			netstream.Start(client, "rgnMenu")
 		end
 	end
@@ -137,7 +137,7 @@ else
 		if (level < 2) then
 			local entity = client:GetEyeTraceNoCursor().Entity
 
-			if (IsValid(entity) and entity:IsPlayer() and entity:getChar() and nut.chat.classes.ic.onCanHear(client, entity)) then
+			if (IsValid(entity) and entity:IsPlayer() and entity:GetChar() and nut.chat.classes.ic.onCanHear(client, entity)) then
 				targets[1] = entity
 			end
 		else
@@ -152,18 +152,18 @@ else
 			class = nut.chat.classes[class]
 
 			for k, v in ipairs(player.GetAll()) do
-				if (client != v and v:getChar() and class.onCanHear(client, v)) then
+				if (client != v and v:GetChar() and class.onCanHear(client, v)) then
 					targets[#targets + 1] = v
 				end
 			end
 		end
 
 		if (#targets > 0) then
-			local id = client:getChar():getID()
+			local id = client:GetChar():GetID()
 			local i = 0
 
 			for k, v in ipairs(targets) do
-				if (v:getChar():recognize(id)) then
+				if (v:GetChar():Recognize(id)) then
 					i = i + 1
 				end
 			end

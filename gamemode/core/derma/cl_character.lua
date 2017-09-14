@@ -17,7 +17,7 @@ local PANEL = {}
 			self:playMusic()
 		end
 
-		if (IsValid(nut.gui.char) or (LocalPlayer().getChar and LocalPlayer():getChar())) then
+		if (IsValid(nut.gui.char) or (LocalPlayer().GetChar and LocalPlayer():GetChar())) then
 			nut.gui.char:Remove()
 			fadeSpeed = 0
 		end
@@ -42,7 +42,7 @@ local PANEL = {}
 		self.title:SetPos(0, 64)
 		self.title:SetSize(ScrW(), 64)
 		self.title:SetFont("nutTitleFont")
-		self.title:SetText(L2("schemaName") or SCHEMA.name or L"unknown")
+		self.title:SetText(L2("schemaName") or Schema.name or L"unknown")
 		self.title:SizeToContentsY()
 		self.title:SetTextColor(color_white)
 		self.title:SetZPos(100)
@@ -59,7 +59,7 @@ local PANEL = {}
 		self.subTitle:MoveBelow(self.title, 0)
 		self.subTitle:SetSize(ScrW(), 64)
 		self.subTitle:SetFont("nutSubTitleFont")
-		self.subTitle:SetText(L2("schemaDesc") or SCHEMA.desc or L"noDesc")
+		self.subTitle:SetText(L2("schemaDesc") or Schema.desc or L"noDesc")
 		self.subTitle:SizeToContentsY()
 		self.subTitle:SetTextColor(color_white)
 		self.subTitle:SetAlpha(0)
@@ -72,16 +72,16 @@ local PANEL = {}
 		self.icon:SetHTML([[
 			<html>
 				<body style="margin: 0; padding: 0; overflow: hidden;">
-					<img src="]]..nut.config.get("logo", "http://nutscript.rocks/nutscript.png")..[[" width="86" height="86" />
+					<img src="]]..nut.config.Get("logo", "http://nutscript.rocks/nutscript.png")..[[" width="86" height="86" />
 				</body>
 			</html>
 		]])
-		self.icon:SetToolTip(nut.config.get("logoURL", "http://nutscript.rocks"))
+		self.icon:SetToolTip(nut.config.Get("logoURL", "http://nutscript.rocks"))
 	
 		self.icon.click = self.icon:Add("DButton")
 		self.icon.click:Dock(FILL)
 		self.icon.click.DoClick = function(this)
-			gui.OpenURL(nut.config.get("logoURL", "http://nutscript.rocks"))
+			gui.OpenURL(nut.config.Get("logoURL", "http://nutscript.rocks"))
 		end
 		self.icon.click:SetAlpha(0)
 		self.icon:SetAlpha(150)
@@ -97,7 +97,7 @@ local PANEL = {}
 
 			local label = parent:Add("nutMenuButton")
 			label:SetPos(x, y)
-			label:setText(text, noTranslation)
+			label:SetText(text, noTranslation)
 			label:SetAlpha(0)
 			label:AlphaTo(255, 0.3, (fadeSpeed * 6) + 0.15 * i, function()
 				if (isLast) then
@@ -173,12 +173,12 @@ local PANEL = {}
 			local count = 0
 
 			for k, v in pairs(nut.faction.teams) do
-				if (nut.faction.hasWhitelist(v.index)) then
+				if (nut.faction.HasWhitelist(v.index)) then
 					count = count + 1
 				end
 			end
 
-			local maxChars = hook.Run("GetMaxPlayerCharacter", LocalPlayer()) or nut.config.get("maxChars", 5)
+			local maxChars = hook.Run("GetMaxPlayerCharacter", LocalPlayer()) or nut.config.Get("maxChars", 5)
 			if (count > 0 and #nut.characters < maxChars and hook.Run("ShouldMenuButtonShow", "create") != false) then
 				AddMenuLabel("create", function()
 					ClearAllButtons(function()
@@ -187,18 +187,18 @@ local PANEL = {}
 						local fadedIn = false
 
 						for k, v in SortedPairs(nut.faction.teams) do
-							if (nut.faction.hasWhitelist(v.index)) then
+							if (nut.faction.HasWhitelist(v.index)) then
 								AddMenuLabel(L(v.name), function()
 									if (!self.creation or self.creation.faction != v.index) then
 										self.creation = self:Add("nutCharCreate")
 										self.creation:SetAlpha(fadedIn and 255 or 0)
-										self.creation:setUp(v.index)
+										self.creation:SetUp(v.index)
 										self.creation:AlphaTo(255, 0.5, 0)
 										self.fadePanels[#self.fadePanels + 1] = self.creation
 	
 										self.finish = self:Add("nutMenuButton")
 										self.finish:SetPos(ScrW() * 0.3 - 32, ScrH() * 0.3 + 16)
-										self.finish:setText("finish")
+										self.finish:SetText("finish")
 										self.finish:MoveBelow(self.creation, 4)
 										self.finish.DoClick = function(this)
 											if (!self.creation.creating) then
@@ -212,8 +212,8 @@ local PANEL = {}
 															local result = {v.onValidate(value, self.creation.payload, LocalPlayer())}
 
 															if (result[1] == false) then
-																self.creation.notice:setType(1)
-																self.creation.notice:setText(L(unpack(result, 2)).."!")
+																self.creation.notice:SetType(1)
+																self.creation.notice:SetText(L(unpack(result, 2)).."!")
 
 																return
 															end
@@ -223,8 +223,8 @@ local PANEL = {}
 													end
 												end
 
-												self.creation.notice:setType(6)
-												self.creation.notice:setText(L"creating")
+												self.creation.notice:SetType(6)
+												self.creation.notice:SetText(L"creating")
 												self.creation.creating = true
 												self.finish:AlphaTo(0, 0.5, 0)
 
@@ -232,8 +232,8 @@ local PANEL = {}
 													timer.Remove("nutCharTimeout")
 
 													if (type(fault) == "string") then
-														self.creation.notice:setType(1)
-														self.creation.notice:setText(L(fault, ...))
+														self.creation.notice:SetType(1)
+														self.creation.notice:SetText(L(fault, ...))
 														self.creation.creating = nil
 														self.finish:AlphaTo(255, 0.5, 0)
 
@@ -258,8 +258,8 @@ local PANEL = {}
 	
 												timer.Create("nutCharTimeout", 20, 1, function()
 													if (IsValid(self.creation) and self.creation.creating) then
-														self.creation.notice:setType(1)
-														self.creation.notice:setText(L"unknownError")
+														self.creation.notice:SetType(1)
+														self.creation.notice:SetText(L"unknownError")
 														self.creation.creating = nil
 														self.finish:AlphaTo(255, 0.5, 0)
 													end
@@ -318,7 +318,7 @@ local PANEL = {}
 
 						self.choose = self.model:Add("nutMenuButton")
 						self.choose:SetWide(self.model:GetWide() * 0.45)
-						self.choose:setText("choose")
+						self.choose:SetText("choose")
 						self.choose:Dock(LEFT)
 						self.choose.DoClick = function()
 							if ((self.nextUse or 0) < CurTime()) then
@@ -331,9 +331,9 @@ local PANEL = {}
 
 							if (status == false) then
 								if (result:sub(1, 1) == "@") then
-									nut.util.notifyLocalized(result:sub(2))
+									nut.util.NotifyLocalized(result:sub(2))
 								else
-									nut.util.notify(result)
+									nut.util.Notify(result)
 								end
 
 								return
@@ -353,7 +353,7 @@ local PANEL = {}
 										surface.DrawRect(0, 0, w, h)
 									end
 
-									local curChar = LocalPlayer():getChar() and LocalPlayer():getChar():getID()
+									local curChar = LocalPlayer():GetChar() and LocalPlayer():GetChar():GetID()
 
 									netstream.Hook("charLoaded", function()
 										if (IsValid(darkness)) then
@@ -374,11 +374,11 @@ local PANEL = {}
 
 						self.delete = self.model:Add("nutMenuButton")
 						self.delete:SetWide(self.model:GetWide() * 0.45)
-						self.delete:setText("delete")
+						self.delete:SetText("delete")
 						self.delete:Dock(RIGHT)
 						self.delete.DoClick = function()
 							local menu = DermaMenu()
-								local confirm = menu:AddSubMenu(L("delConfirm", nut.char.loaded[id]:getName()))
+								local confirm = menu:AddSubMenu(L("delConfirm", nut.char.loaded[id]:GetName()))
 								confirm:AddOption(L"no"):SetImage("icon16/cross.png")
 								confirm:AddOption(L"yes", function()
 									netstream.Start("charDel", id)
@@ -389,21 +389,21 @@ local PANEL = {}
 						self.characters = {}
 
 						local function SetupCharacter(character)
-							if (id != character:getID()) then
-								self.model:SetModel(character:getModel())
-								self.model.teamColor = team.GetColor(character:getFaction())
+							if (id != character:GetID()) then
+								self.model:SetModel(character:GetModel())
+								self.model.teamColor = team.GetColor(character:GetFaction())
 
 								if (IsValid(self.model.Entity)) then
-									self.model.Entity:SetSkin(character:getData("skin", 0))
+									self.model.Entity:SetSkin(character:GetData("skin", 0))
 
-									local groups = character:getData("groups", {})
+									local groups = character:GetData("groups", {})
 
 									for k, v in pairs(groups) do
 										self.model.Entity:SetBodygroup(k, v)
 									end
 								end
 								
-								id = character:getID()
+								id = character:GetID()
 							end
 						end
 
@@ -418,7 +418,7 @@ local PANEL = {}
 
 								if (character) then
 									local label = self.charList:Add("nutMenuButton")
-									label:setText(character:getName(), true)
+									label:SetText(character:GetName(), true)
 									label:Dock(TOP)
 									label:DockMargin(0, 0, 0, 4)
 									label.DoClick = function(this)
@@ -428,13 +428,13 @@ local PANEL = {}
 										end
 
 										lastButton = this
-										this.color = nut.config.get("color")
+										this.color = nut.config.Get("color")
 										SetupCharacter(character)
 									end
 
 									if (first) then
 										SetupCharacter(character)
-										label.color = nut.config.get("color")
+										label.color = nut.config.Get("color")
 										lastButton = label
 										first = nil
 									end
@@ -444,14 +444,14 @@ local PANEL = {}
 										self.charList:SetWide(width)
 									end
 
-									self.characters[#self.characters + 1] = {label = label, id = character:getID()}
+									self.characters[#self.characters + 1] = {label = label, id = character:GetID()}
 								end
 							end
 						end
 
 						SetupCharList()
 
-						function self:setupCharList()
+						function self:SetupCharList()
 							if (#nut.characters == 0) then
 								if (IsValid(self.creation) and self.creation.creating) then
 									return
@@ -479,7 +479,7 @@ local PANEL = {}
 				end)
 			end
 
-			local hasCharacter = LocalPlayer().getChar and LocalPlayer():getChar()
+			local hasCharacter = LocalPlayer().GetChar and LocalPlayer():GetChar()
 
 			if (hook.Run("ShouldMenuButtonShow", "leave") != false) then
 				AddMenuLabel(hasCharacter and "return" or "leave", function()
@@ -509,7 +509,7 @@ local PANEL = {}
 	end
 	
 	function PANEL:Think()
-		if (input.IsKeyDown(KEY_F1) and LocalPlayer():getChar() and !self.choosing) then
+		if (input.IsKeyDown(KEY_F1) and LocalPlayer():GetChar() and !self.choosing) then
 			self:Remove()
 		end
 	end
@@ -522,7 +522,7 @@ local PANEL = {}
 
 		timer.Remove("nutMusicFader")
 
-		local source = nut.config.get("music", ""):lower()
+		local source = nut.config.Get("music", ""):lower()
 
 		if (source:find("%S")) then
 			local function callback(music, errorID, fault)

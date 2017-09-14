@@ -2,7 +2,7 @@ nut.menu = nut.menu or {}
 nut.menu.list = nut.menu.list or {}
 
 -- Adds a new menu to the list of drawn menus.
-function nut.menu.add(options, position, onRemove)
+function nut.menu.Add(options, position, onRemove)
 	-- Set up the width of the menu.
 	local width = 0
 	local entity
@@ -44,7 +44,7 @@ end
 local gradient = Material("vgui/gradient-u")
 
 -- A function to draw all of the active menus or hide them when needed.
-function nut.menu.drawAll()
+function nut.menu.DrawAll()
 	local frameTime = FrameTime() * 30
 	local mX, mY = ScrW() * 0.5, ScrH() * 0.5
 	local position2 = LocalPlayer():GetPos()
@@ -64,7 +64,7 @@ function nut.menu.drawAll()
 				position = v.entPos:ToScreen()
 			-- The attached entity is gone, remove the menu.
 			else
-				table.remove(nut.menu.list, k)
+				table.Remove(nut.menu.list, k)
 
 				if (v.onRemove) then
 					v:onRemove()
@@ -99,7 +99,7 @@ function nut.menu.drawAll()
 			-- If it has completely faded away, remove it.
 			if (v.alpha == 0) then
 				-- Remove the menu from being drawn.
-				table.remove(nut.menu.list, k)
+				table.Remove(nut.menu.list, k)
 
 				if (v.onRemove) then
 					v:onRemove()
@@ -138,12 +138,12 @@ function nut.menu.drawAll()
 			-- Check if the button is hovered.
 			if (inside and mY >= y and mY <= (y + 28)) then
 				-- If so, draw a colored rectangle to indicate it.
-				surface.SetDrawColor(ColorAlpha(nut.config.get("color"), v.alpha + math.cos(RealTime() * 8) * 40))
+				surface.SetDrawColor(ColorAlpha(nut.config.Get("color"), v.alpha + math.cos(RealTime() * 8) * 40))
 				surface.DrawRect(startX, y, width, 28)
 			end
 
 			-- Draw the button's text.
-			nut.util.drawText(k2, startX + 4, y, ColorAlpha(color_white, v.alpha), nil, nil, "nutMediumFont")
+			nut.util.DrawText(k2, startX + 4, y, ColorAlpha(color_white, v.alpha), nil, nil, "nutMediumFont")
 
 			-- Make sure we draw the next button in line.
 			i = i + 1
@@ -152,7 +152,7 @@ function nut.menu.drawAll()
 end
 
 -- Determines which menu is being looked at
-function nut.menu.getActiveMenu()
+function nut.menu.GetActiveMenu()
 	local mX, mY = ScrW() * 0.5, ScrH() * 0.5
 	local position2 = LocalPlayer():GetPos()
 
@@ -169,7 +169,7 @@ function nut.menu.getActiveMenu()
 				position = (v.entPos or entity:LocalToWorld(v.position)):ToScreen()
 			-- The attached entity is gone, remove the menu.
 			else
-				table.remove(nut.menu.list, k)
+				table.Remove(nut.menu.list, k)
 
 				continue
 			end
@@ -210,8 +210,8 @@ function nut.menu.getActiveMenu()
 end
 
 -- Handles whenever a button has been pressed.
-function nut.menu.onButtonPressed(menu, callback)
-	table.remove(nut.menu.list, menu)
+function nut.menu.OnButtonPressed(menu, callback)
+	table.Remove(nut.menu.list, menu)
 
 	if (callback) then
 		callback()

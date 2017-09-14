@@ -24,7 +24,7 @@ if (CLIENT) then
 		data.start = localPlayer:EyePos()
 
 		for k, v in ipairs(player.GetAll()) do
-			if (v != localPlayer and v:getNetVar("typing") and v:GetMoveType() == MOVETYPE_WALK) then
+			if (v != localPlayer and v:GetNetVar("typing") and v:GetMoveType() == MOVETYPE_WALK) then
 				data.endpos = v:EyePos()
 
 				if (util.TraceLine(data).Entity == v) then
@@ -34,7 +34,7 @@ if (CLIENT) then
 					if (alpha > 0) then
 						local screen = (position + (v:Crouching() and TYPE_OFFSET_CROUCHED or TYPE_OFFSET)):ToScreen()
 
-						nut.util.drawText("(Typing)", screen.x, screen.y - 18, ColorAlpha(TYPE_COLOR, alpha), 1, 1, "nutChatFontItalics", alpha)
+						nut.util.DrawText("(Typing)", screen.x, screen.y - 18, ColorAlpha(TYPE_COLOR, alpha), 1, 1, "nutChatFontItalics", alpha)
 					end
 				end
 			end
@@ -48,6 +48,6 @@ else
 			state = nil
 		end
 
-		client:setNetVar("typing", state)
+		client:SetNetVar("typing", state)
 	end)
 end

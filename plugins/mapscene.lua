@@ -115,7 +115,7 @@ if (CLIENT) then
 
 		for k, v in ipairs(PLUGIN.ordered) do
 			if (v[1] == key) then
-				table.remove(PLUGIN.ordered, k)
+				table.Remove(PLUGIN.ordered, k)
 
 				break
 			end
@@ -133,18 +133,18 @@ if (CLIENT) then
 	end)
 else
 	function PLUGIN:SaveScenes()
-		self:setData(self.scenes)
+		self:SetData(self.scenes)
 	end
 
 	function PLUGIN:LoadData()
-		self.scenes = self:getData() or {}
+		self.scenes = self:GetData() or {}
 	end
 
 	function PLUGIN:PlayerInitialSpawn(client)
 		netstream.Start(client, "mapScnInit", self.scenes)
 	end
 
-	function PLUGIN:addScene(position, angles, position2, angles2)
+	function PLUGIN:AddScene(position, angles, position2, angles2)
 		local data
 
 		if (position2) then
@@ -162,7 +162,7 @@ end
 
 local PLUGIN = PLUGIN
 
-nut.command.add("mapsceneadd", {
+nut.command.Add("mapsceneadd", {
 	adminOnly = true,
 	syntax = "[bool isPair]",
 	onRun = function(client, arguments)
@@ -175,10 +175,10 @@ nut.command.add("mapsceneadd", {
 			return L("mapRepeat", client)
 		else
 			if (client.nutScnPair) then
-				PLUGIN:addScene(client.nutScnPair[1], client.nutScnPair[2], position, angles)
+				PLUGIN:AddScene(client.nutScnPair[1], client.nutScnPair[2], position, angles)
 				client.nutScnPair = nil
 			else
-				PLUGIN:addScene(position, angles)
+				PLUGIN:AddScene(position, angles)
 			end
 
 			return L("mapAdd", client)
@@ -186,7 +186,7 @@ nut.command.add("mapsceneadd", {
 	end
 })
 
-nut.command.add("mapsceneremove", {
+nut.command.Add("mapsceneremove", {
 	adminOnly = true,
 	syntax = "[number radius]",
 	onRun = function(client, arguments)

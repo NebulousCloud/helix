@@ -93,7 +93,7 @@ function SWEP:Initialize()
 end
 
 function SWEP:PrimaryAttack()
-	local time = nut.config.get("doorLockTime", 1)
+	local time = nut.config.Get("doorLockTime", 1)
 	local time2 = math.max(time, 1)
 
 	self:SetNextPrimaryFire(CurTime() + time2)
@@ -120,11 +120,11 @@ function SWEP:PrimaryAttack()
 	--]]
 	if (IsValid(entity) and
 		(
-			(entity:isDoor() and entity:checkDoorAccess(self.Owner)) or
+			(entity:IsDoor() and entity:CheckDoorAccess(self.Owner)) or
 			(entity:IsVehicle() and entity.CPPIGetOwner and entity:CPPIGetOwner() == self.Owner)
 		)
 	) then
-		self.Owner:setAction("@locking", time, function()
+		self.Owner:SetAction("@locking", time, function()
 			self:toggleLock(entity, true)
 		end)			
 
@@ -137,8 +137,8 @@ function SWEP:toggleLock(door, state)
 		return
 	end
 
-	if (door:isDoor()) then
-		local partner = door:getDoorPartner()
+	if (door:IsDoor()) then
+		local partner = door:GetDoorPartner()
 
 		if (state) then
 			if (IsValid(partner)) then
@@ -173,7 +173,7 @@ function SWEP:toggleLock(door, state)
 end
 
 function SWEP:SecondaryAttack()
-	local time = nut.config.get("doorLockTime", 1)
+	local time = nut.config.Get("doorLockTime", 1)
 	local time2 = math.max(time, 1)
 
 	self:SetNextPrimaryFire(CurTime() + time2)
@@ -201,11 +201,11 @@ function SWEP:SecondaryAttack()
 	*/
 	if (IsValid(entity) and
 		(
-			(entity:isDoor() and entity:checkDoorAccess(self.Owner)) or
+			(entity:IsDoor() and entity:CheckDoorAccess(self.Owner)) or
 			(entity:IsVehicle() and entity.CPPIGetOwner and entity:CPPIGetOwner() == self.Owner)
 		)
 	) then
-		self.Owner:setAction("@unlocking", time, function()
+		self.Owner:SetAction("@unlocking", time, function()
 			self:toggleLock(entity, false)
 		end)
 

@@ -73,7 +73,7 @@ local PANEL = {}
 			end
 
 			if (!suppress or !suppress.class) then
-				local class = nut.class.list[LocalPlayer():getChar():getClass()]
+				local class = nut.class.list[LocalPlayer():GetChar():GetClass()]
 				
 				if (class) then
 					self.class = self.info:Add("DLabel")
@@ -105,12 +105,12 @@ local PANEL = {}
 		hook.Run("CreateCharInfo", self)
 	end
 
-	function PANEL:setup()
-		local char = LocalPlayer():getChar()
+	function PANEL:Setup()
+		local char = LocalPlayer():GetChar()
 		if (self.desc) then
-			self.desc:SetText(char:getDesc())
+			self.desc:SetText(char:GetDesc())
 			self.desc.OnEnter = function(this, w, h)
-				nut.command.send("chardesc", this:GetText())
+				nut.command.Send("chardesc", this:GetText())
 			end
 		end
 
@@ -122,7 +122,7 @@ local PANEL = {}
 		end
 
 		if (self.money) then
-			self.money:SetText(L("charMoney", nut.currency.get(char:getMoney())))
+			self.money:SetText(L("charMoney", nut.currency.Get(char:GetMoney())))
 		end
 
 		if (self.faction) then
@@ -132,17 +132,17 @@ local PANEL = {}
 		if (self.time) then
 			local format = "%A, %d %B %Y %X"
 			
-			self.time:SetText(L("curTime", os.date(format, nut.date.get())))
+			self.time:SetText(L("curTime", os.date(format, nut.date.Get())))
 			self.time.Think = function(this)
 				if ((this.nextTime or 0) < CurTime()) then
-					this:SetText(L("curTime", os.date(format, nut.date.get())))
+					this:SetText(L("curTime", os.date(format, nut.date.Get())))
 					this.nextTime = CurTime() + 0.5
 				end
 			end
 		end
 
 		if (self.class) then
-			local class = nut.class.list[char:getClass()]
+			local class = nut.class.list[char:GetClass()]
 			if (class) then
 				self.class:SetText(L("charClass", L(class.name)))
 			end
@@ -166,7 +166,7 @@ local PANEL = {}
 		end
 
 		if (self.attribs) then
-			local boost = char:getBoosts()
+			local boost = char:GetBoosts()
 
 			for k, v in SortedPairsByMemberValue(nut.attribs.list, "name") do
 				local attribBoost = 0
@@ -180,20 +180,20 @@ local PANEL = {}
 				bar:Dock(TOP)
 				bar:DockMargin(0, 0, 0, 3)
 
-				local attribValue = char:getAttrib(k, 0)
+				local attribValue = char:GetAttrib(k, 0)
 				if (attribBoost) then
-					bar:setValue(attribValue - attribBoost or 0)
+					bar:SetValue(attribValue - attribBoost or 0)
 				else
-					bar:setValue(attribValue)
+					bar:SetValue(attribValue)
 				end
 
-				local maximum = v.maxValue or nut.config.get("maxAttribs", 30)
-				bar:setMax(maximum)
-				bar:setReadOnly()
-				bar:setText(Format("%s [%.1f/%.1f] (%.1f", L(v.name), attribValue, maximum, attribValue/maximum*100) .. "%)")
+				local maximum = v.maxValue or nut.config.Get("maxAttribs", 30)
+				bar:SetMax(maximum)
+				bar:SetReadOnly()
+				bar:SetText(Format("%s [%.1f/%.1f] (%.1f", L(v.name), attribValue, maximum, attribValue/maximum*100) .. "%)")
 
 				if (attribBoost) then
-					bar:setBoost(attribBoost)
+					bar:SetBoost(attribBoost)
 				end
 			end
 		end

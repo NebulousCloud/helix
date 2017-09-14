@@ -3,7 +3,7 @@ local playerMeta = FindMetaTable("Player")
 -- nutData information for the player.
 do
 	if (SERVER) then
-		function playerMeta:getNutData(key, default)
+		function playerMeta:GetNutData(key, default)
 			if (key == true) then
 				return self.nutData
 			end
@@ -17,7 +17,7 @@ do
 			end
 		end
 	else
-		function playerMeta:getNutData(key, default)
+		function playerMeta:GetNutData(key, default)
 			local data = nut.localData and nut.localData[key]
 
 			if (data == nil) then
@@ -41,7 +41,7 @@ end
 
 -- Whitelist networking information here.
 do	
-	function playerMeta:hasWhitelist(faction)
+	function playerMeta:HasWhitelist(faction)
 		local data = nut.faction.indices[faction]
 
 		if (data) then
@@ -49,39 +49,39 @@ do
 				return true
 			end
 
-			local nutData = self:getNutData("whitelists", {})
+			local nutData = self:GetNutData("whitelists", {})
 
-			return nutData[SCHEMA.folder] and nutData[SCHEMA.folder][data.uniqueID] == true or false
+			return nutData[Schema.folder] and nutData[Schema.folder][data.uniqueID] == true or false
 		end
 
 		return false
 	end
 
-	function playerMeta:getItems()
-		local char = self:getChar()
+	function playerMeta:GetItems()
+		local char = self:GetChar()
 		
 		if (char) then
-			local inv = char:getInv()
+			local inv = char:GetInv()
 
 			if (inv) then
-				return inv:getItems()
+				return inv:GetItems()
 			end
 		end
 	end
 
-	function playerMeta:getClass()
-		local char = self:getChar()
+	function playerMeta:GetClass()
+		local char = self:GetChar()
 
 		if (char) then
-			return char:getClass()
+			return char:GetClass()
 		end
 	end
 
-	function playerMeta:getClassData()
-		local char = self:getChar()
+	function playerMeta:GetClassData()
+		local char = self:GetChar()
 
 		if (char) then
-			local class = char:getClass()
+			local class = char:GetClass()
 
 			if (class) then
 				local classData = nut.class.list[class]

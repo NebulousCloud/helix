@@ -27,7 +27,7 @@ local CITIZEN_MODELS = {
 	"models/humans/group01/female_04.mdl"
 }
 
-function nut.faction.loadFromDir(directory)
+function nut.faction.LoadFromDir(directory)
 	for k, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
 		local niceName = v:sub(4, -5)
 
@@ -36,7 +36,7 @@ function nut.faction.loadFromDir(directory)
 				FACTION.plugin = PLUGIN.uniqueID
 			end
 
-			nut.util.include(directory.."/"..v, "shared")
+			nut.util.Include(directory.."/"..v, "shared")
 
 			if (!FACTION.name) then
 				FACTION.name = "Unknown"
@@ -72,11 +72,11 @@ function nut.faction.loadFromDir(directory)
 	end
 end
 
-function nut.faction.get(identifier)
+function nut.faction.Get(identifier)
 	return nut.faction.indices[identifier] or nut.faction.teams[identifier]
 end
 
-function nut.faction.getIndex(uniqueID)
+function nut.faction.GetIndex(uniqueID)
 	for k, v in ipairs(nut.faction.indices) do
 		if (v.uniqueID == uniqueID) then
 			return k
@@ -85,7 +85,7 @@ function nut.faction.getIndex(uniqueID)
 end
 
 if (CLIENT) then
-	function nut.faction.hasWhitelist(faction)
+	function nut.faction.HasWhitelist(faction)
 		local data = nut.faction.indices[faction]
 
 		if (data) then
@@ -95,7 +95,7 @@ if (CLIENT) then
 
 			local nutData = nut.localData and nut.localData.whitelists or {}
 
-			return nutData[SCHEMA.folder] and nutData[SCHEMA.folder][data.uniqueID] == true or false
+			return nutData[Schema.folder] and nutData[Schema.folder][data.uniqueID] == true or false
 		end
 
 		return false

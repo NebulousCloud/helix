@@ -16,7 +16,7 @@ local variables = {
 	"hidden"
 }
 
-function PLUGIN:callOnDoorChildren(entity, callback)
+function PLUGIN:CallOnDoorChildren(entity, callback)
 	local parent
 
 	if (entity.nutChildren) then
@@ -38,15 +38,15 @@ function PLUGIN:callOnDoorChildren(entity, callback)
 	end
 end
 
-function PLUGIN:copyParentDoor(child)
+function PLUGIN:CopyParentDoor(child)
 	local parent = child.nutParent
 
 	if (IsValid(parent)) then
 		for k, v in ipairs(variables) do
-			local value = parent:getNetVar(v)
+			local value = parent:GetNetVar(v)
 
-			if (child:getNetVar(v) != value) then
-				child:setNetVar(v, value)
+			if (child:GetNetVar(v) != value) then
+				child:SetNetVar(v, value)
 			end
 		end
 	end
@@ -55,7 +55,7 @@ end
 -- Called after the entities have loaded.
 function PLUGIN:LoadData()
 	-- Restore the saved door information.
-	local data = self:getData()
+	local data = self:GetData()
 
 	if (!data) then
 		return
@@ -67,7 +67,7 @@ function PLUGIN:LoadData()
 		local entity = ents.GetMapCreatedEntity(k)
 
 		-- Check it is a valid door in-case something went wrong.
-		if (IsValid(entity) and entity:isDoor()) then
+		if (IsValid(entity) and entity:IsDoor()) then
 			-- Loop through all of our door variables.
 			for k2, v2 in pairs(v) do
 				if (k2 == "children") then
@@ -84,13 +84,13 @@ function PLUGIN:LoadData()
 					for k3, v3 in pairs(nut.faction.teams) do
 						if (k3 == v2) then
 							entity.nutFactionID = k3
-							entity:setNetVar("faction", v3.index)
+							entity:SetNetVar("faction", v3.index)
 
 							break
 						end
 					end
 				else
-					entity:setNetVar(k2, v2)
+					entity:SetNetVar(k2, v2)
 				end
 			end
 		end
@@ -104,7 +104,7 @@ function PLUGIN:SaveDoorData()
 		local doors = {}
 
 		for k, v in ipairs(ents.GetAll()) do
-			if (v:isDoor()) then
+			if (v:IsDoor()) then
 				doors[v:MapCreationID()] = v
 			end
 		end
@@ -118,10 +118,10 @@ function PLUGIN:SaveDoorData()
 
 			-- Save all of the needed variables to the doorData table.
 			for k2, v2 in ipairs(variables) do
-				local value = v:getNetVar(v2)
+				local value = v:GetNetVar(v2)
 
 				if (value) then
-					doorData[v2] = v:getNetVar(v2)
+					doorData[v2] = v:GetNetVar(v2)
 				end
 			end
 
@@ -143,29 +143,29 @@ function PLUGIN:SaveDoorData()
 			end
 		end
 	-- Save all of the door information.
-	self:setData(data)	
+	self:SetData(data)	
 end
 
 function PLUGIN:CanPlayerUseDoor(client, entity)
-	if (entity:getNetVar("disabled")) then
+	if (entity:GetNetVar("disabled")) then
 		return false
 	end
 end
 
 -- Whether or not a player a player has any abilities over the door, such as locking.
 function PLUGIN:CanPlayerAccessDoor(client, door, access)
-	local faction = door:getNetVar("faction")
+	local faction = door:GetNetVar("faction")
 
 	-- If the door has a faction set which the client is a member of, allow access.
 	if (faction and client:Team() == faction) then
 		return true
 	end
 
-	local class = door:getNetVar("class")
+	local class = door:GetNetVar("class")
 
 	-- If the door has a faction set which the client is a member of, allow access.
 	local classData = nut.class.list[class]
-	local charClass = client:getChar():getClass()
+	local charClass = client:GetChar():GetClass()
 	local classData2 = nut.class.list[charClass]
 
 	if (class and classData and classData2) then
@@ -195,8 +195,8 @@ function PLUGIN:ShowTeam(client)
 	local trace = util.TraceLine(data)
 	local entity = trace.Entity
 
-	if (IsValid(entity) and entity:isDoor() and !entity:getNetVar("faction") and !entity:getNetVar("class")) then
-		if (entity:checkDoorAccess(client, DOOR_TENANT)) then
+	if (IsValid(entity) and entity:IsDoor() and !entity:GetNetVar("faction") and !entity:GetNetVar("class")) then
+		if (entity:CheckDoorAccess(client, DOOR_TENANT)) then
 			local door = entity
 
 			if (IsValid(door.nutParent)) then
@@ -205,9 +205,9 @@ function PLUGIN:ShowTeam(client)
 
 			netstream.Start(client, "doorMenu", door, door.nutAccess, entity)
 		elseif (!IsValid(entity:GetDTEntity(0))) then
-			nut.command.run(client, "doorbuy")
+			nut.command.Run(client, "doorbuy")
 		else
-			client:notifyLocalized("notAllowed")
+			client:NotifyLocalized("notAllowed")
 		end
 
 		return true
@@ -220,14 +220,14 @@ function PLUGIN:PlayerDisconnected(client)
 			return
 		end
 		
-		if (v.isDoor and v:isDoor() and v:GetDTEntity(0) == client) then
-			v:removeDoorAccessData()
+		if (v.IsDoor and v:IsDoor() and v:GetDTEntity(0) == client) then
+			v:RemoveDoorAccessData()
 		end
 	end
 end
 
 netstream.Hook("doorPerm", function(client, door, target, access)
-	if (IsValid(target) and target:getChar() and door.nutAccess and door:GetDTEntity(0) == client and target != client) then
+	if (IsValid(target) and target:GetChar() and door.nutAccess and door:GetDTEntity(0) == client and target != client) then
 		access = math.Clamp(access or 0, DOOR_NONE, DOOR_TENANT)
 
 		if (access == door.nutAccess[target]) then

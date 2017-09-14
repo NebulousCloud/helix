@@ -1,11 +1,11 @@
 if (SERVER) then
 	-- Sends a notification to a specified recipient.
-	function nut.util.notify(message, recipient)
+	function nut.util.Notify(message, recipient)
 		netstream.Start(recipient, "notify", message)
 	end
 
 	-- Sends a translated notification.
-	function nut.util.notifyLocalized(message, recipient, ...)
+	function nut.util.NotifyLocalized(message, recipient, ...)
 		netstream.Start(recipient, "notifyL", message, ...)
 	end
 
@@ -13,13 +13,13 @@ if (SERVER) then
 		local playerMeta = FindMetaTable("Player")
 
 		-- Utility function to notify a player.
-		function playerMeta:notify(message)
-			nut.util.notify(message, self)
+		function playerMeta:Notify(message)
+			nut.util.Notify(message, self)
 		end
 
 		-- Utility function to notify a localized message to a player.
-		function playerMeta:notifyLocalized(message, ...)
-			nut.util.notifyLocalized(message, self, ...)
+		function playerMeta:NotifyLocalized(message, ...)
+			nut.util.NotifyLocalized(message, self, ...)
 		end
 	end
 else
@@ -27,7 +27,7 @@ else
 	nut.notices = nut.notices or {}
 
 	-- Create a notification panel.
-	function nut.util.notify(message)
+	function nut.util.Notify(message)
 		local notice = vgui.Create("nutNotice")
 		local i = table.insert(nut.notices, notice)
 		local scrW = ScrW()
@@ -70,7 +70,7 @@ else
 						end)
 
 						-- Remove the notice from the list and move other notices.
-						table.remove(nut.notices, k)
+						table.Remove(nut.notices, k)
 						OrganizeNotices()
 
 						break
@@ -81,8 +81,8 @@ else
 	end
 
 	-- Creates a translated notification.
-	function nut.util.notifyLocalized(message, ...)
-		nut.util.notify(L(message, ...))
+	function nut.util.NotifyLocalized(message, ...)
+		nut.util.Notify(L(message, ...))
 	end
 
 	-- Receives a notification from the server.

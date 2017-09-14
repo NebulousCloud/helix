@@ -2,7 +2,7 @@ local PANEL = {}
 	local MODEL_ANGLE = Angle(0, 45, 0)
 
 	function PANEL:Init()
-		self:setHidden(false)
+		self:SetHidden(false)
 
 		for i = 0, 5 do
 			if (i == 1 or i == 5) then
@@ -60,7 +60,7 @@ local PANEL = {}
 		end
 	end
 
-	function PANEL:setHidden(hidden)
+	function PANEL:SetHidden(hidden)
 		if (hidden) then
 			self:SetAmbientLight(color_black)
 			self:SetColor(Color(0, 0, 0))

@@ -5,12 +5,12 @@ PLUGIN.desc = "Saves the position of a character."
 -- Called right before the character has its information save.
 function PLUGIN:CharacterPreSave(character)
 	-- Get the player from the character.
-	local client = character:getPlayer()
+	local client = character:GetPlayer()
 
 	-- Check to see if we can get the player's position.
 	if (IsValid(client)) then
 		-- Store the position in the character's data.
-		character:setData("pos", {client:GetPos(), client:EyeAngles(), game.GetMap()})
+		character:SetData("pos", {client:GetPos(), client:EyeAngles(), game.GetMap()})
 	end
 end
 
@@ -19,7 +19,7 @@ function PLUGIN:PlayerLoadedChar(client, character, lastChar)
 	timer.Simple(0, function()
 		if (IsValid(client)) then
 			-- Get the saved position from the character data.
-			local position = character:getData("pos")
+			local position = character:GetData("pos")
 
 			-- Check if the position was set.
 			if (position) then
@@ -30,7 +30,7 @@ function PLUGIN:PlayerLoadedChar(client, character, lastChar)
 				end
 
 				-- Remove the position data since it is no longer needed.
-				character:setData("pos", nil)
+				character:SetData("pos", nil)
 			end
 		end
 	end)

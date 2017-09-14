@@ -45,7 +45,7 @@ local PANEL = {}
 		end
 	end
 
-	function PANEL:setup()
+	function PANEL:Setup()
 		for k, v in pairs(self.entity.factions or {}) do
 			self.factions[k]:SetChecked(true)
 		end

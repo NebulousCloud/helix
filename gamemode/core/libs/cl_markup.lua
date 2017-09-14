@@ -91,9 +91,9 @@ local function ExtractParams(p1,p2,p3)
 		local tag = string.utf8sub(p1, 2)
 		
 		if (tag == "color" or tag == "colour") then
-			table.remove(colour_stack)			
+			table.Remove(colour_stack)			
 		elseif (tag == "font" or tag == "face") then
-			table.remove(font_stack)
+			table.Remove(font_stack)
 		end
 
 	else
@@ -200,7 +200,7 @@ end
     Desc: Returns the width of a markup block
    Usage: ml:GetWidth()
 -----------------------------------------------------------]]
-function MarkupObject:getWidth()
+function MarkupObject:GetWidth()
 	return self.totalWidth
 end
 
@@ -209,7 +209,7 @@ end
     Desc: Returns the height of a markup block
    Usage: ml:GetHeight()
 -----------------------------------------------------------]]
-function MarkupObject:getHeight()
+function MarkupObject:GetHeight()
 	return self.totalHeight
 end
 

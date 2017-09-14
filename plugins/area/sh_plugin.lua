@@ -6,16 +6,16 @@ PLUGIN.areaTable = PLUGIN.areaTable or {}
 nut.area = nut.area or {}
 ALWAYS_RAISED["nut_areahelper"] = true
 
-nut.config.add("areaFontSize", 26, "The size of the font of Area Display.", 
+nut.config.Add("areaFontSize", 26, "The size of the font of Area Display.", 
 	function(oldValue, newValue)
 		if (CLIENT) then
-			hook.Run("LoadFonts", nut.config.get("font"))
+			hook.Run("LoadFonts", nut.config.Get("font"))
 		end
 	end,
 	{data = {min = 1, max = 128},
 	category = "areaPlugin"
 })
-nut.config.add("areaDispSpeed", 20, "The Appearance Speed of Area Display.", nil, {
+nut.config.Add("areaDispSpeed", 20, "The Appearance Speed of Area Display.", nil, {
 	data = {min = 1, max = 40},
 	category = "areaPlugin"
 })
@@ -24,23 +24,23 @@ local playerMeta = FindMetaTable("Player")
 local PLUGIN = PLUGIN
 
 if (SERVER) then
-	function nut.area.getArea(areaID)
+	function nut.area.GetArea(areaID)
 		return PLUGIN.areaTable[areaID]
 	end
 
-	function nut.area.getAllArea()
+	function nut.area.GetAllArea()
 		return PLUGIN.areaTable
 	end
 
 	-- This is for single check (ex: area items, checking area in commands)
-	function playerMeta:isInArea(areaID)
-		local areaData = nut.area.getArea(areaID)
+	function playerMeta:IsInArea(areaID)
+		local areaData = nut.area.GetArea(areaID)
 
 		if (!areaData) then
 			return false, "Area you specified is not valid."
 		end
 
-		local char = v:getChar()
+		local char = v:GetChar()
 
 		if (!char) then
 			return false, "Your character is not valid."
@@ -51,16 +51,16 @@ if (SERVER) then
 	end
 
 	-- This is for continous check (ex: checking gas area whatever.)
-	function playerMeta:getArea()
+	function playerMeta:GetArea()
 		return self.curArea
 	end
 
-	function PLUGIN:saveAreas()
-		self:setData(self.areaTable)
+	function PLUGIN:SaveAreas()
+		self:SetData(self.areaTable)
 	end
 
 	function PLUGIN:LoadData()
-		self.areaTable = self:getData() or {}
+		self.areaTable = self:GetData() or {}
 	end
 
 	function PLUGIN:PlayerLoadedChar(client, character, lastChar)
@@ -94,7 +94,7 @@ if (SERVER) then
 	end
 
 	-- add area.
-	function nut.area.addArea(name, vector1, vector2, desc)
+	function nut.area.AddArea(name, vector1, vector2, desc)
 		if (!name or !vector1 or !vector2) then
 			return false, "Required arguments are not provided."
 		end
@@ -108,17 +108,17 @@ if (SERVER) then
 			desc = desc or "",
 		})
 
-		PLUGIN:saveAreas()
+		PLUGIN:SaveAreas()
 	end
 
 	-- Timer instead of heavy think.
 	timer.Create("nutAreaController", 0.33, 0, function()
 		for k, v in ipairs(player.GetAll()) do
-			local char = v:getChar()
+			local char = v:GetChar()
 
 			if (char and v:Alive()) then
-				local area = v:getArea()
-				for id, areaData in pairs(nut.area.getAllArea()) do
+				local area = v:GetArea()
+				for id, areaData in pairs(nut.area.GetAllArea()) do
 					local clientPos = v:GetPos() + v:OBBCenter()
 
 					if (clientPos:WithinAABox(areaData.minVector, areaData.maxVector)) then
@@ -135,7 +135,7 @@ if (SERVER) then
 
 	-- If area is changed, set display Area's Name to the client's screen.
 	function PLUGIN:OnPlayerAreaChanged(client, areaID)
-		local areaData = nut.area.getArea(areaID)
+		local areaData = nut.area.GetArea(areaID)
 		netstream.Start(client, "displayAreaText", tostring(areaData.name))
 	end
 
@@ -146,13 +146,13 @@ if (SERVER) then
 		end
 
 		-- If area is valid, merge editData to areaData.
-		local areaData = table.Copy(nut.area.getArea(areaID))
+		local areaData = table.Copy(nut.area.GetArea(areaID))
 
 		if (areaData) then
-			client:notifyLocalized("areaModified", areaID)
+			client:NotifyLocalized("areaModified", areaID)
 
 			PLUGIN.areaTable[areaID] = table.Merge(areaData, editData)
-			PLUGIN:saveAreas()
+			PLUGIN:SaveAreas()
 		end
 	end)
 
@@ -163,7 +163,7 @@ if (SERVER) then
 		end
 
 		-- If area is valid, merge editData to areaData.
-		local areaData = table.Copy(nut.area.getArea(areaID))
+		local areaData = table.Copy(nut.area.GetArea(areaID))
 
 		if (areaData) then
 			local min, max = areaData.maxVector, areaData.minVector
@@ -177,7 +177,7 @@ if (SERVER) then
 			return false
 		end
 
-		nut.area.addArea(name, vector1, vector2)
+		nut.area.AddArea(name, vector1, vector2)
 	end)
 
 	netstream.Hook("areaRemove", function(client, areaID, editData)
@@ -187,12 +187,12 @@ if (SERVER) then
 		end
 
 		-- If area is valid, merge editData to areaData.
-		local areaData = table.Copy(nut.area.getArea(areaID))
+		local areaData = table.Copy(nut.area.GetArea(areaID))
 		if (areaData) then
-			client:notifyLocalized("areaRemoved", areaID)
+			client:NotifyLocalized("areaRemoved", areaID)
 
 			PLUGIN.areaTable[areaID] = nil
-			PLUGIN:saveAreas()
+			PLUGIN:SaveAreas()
 		end
 	end)
 else
@@ -242,7 +242,7 @@ else
 			surface.CreateFont("nutAreaDisplay", {
 				font = font,
 				extended = true,
-				size = ScreenScale(nut.config.get("areaFontSize")),
+				size = ScreenScale(nut.config.Get("areaFontSize")),
 				weight = 500,
 				shadow = true,
 			})
@@ -288,7 +288,7 @@ else
 	local ft, w, h, dsx, dsy
 
 	function displayScrText(str, time)
-		speed = nut.config.get("areaDispSpeed")
+		speed = nut.config.Get("areaDispSpeed")
 		targetScale = 1
 		dispString = str
 		dieTime = time or 5
@@ -381,7 +381,7 @@ else
 	end
 end
 
-nut.command.add("areaadd", {
+nut.command.Add("areaadd", {
 	adminOnly = true,
 	syntax = "<string name>",
 	onRun = function(client, arguments)
@@ -389,7 +389,7 @@ nut.command.add("areaadd", {
 
 		local pos = client:GetEyeTraceNoCursor().HitPos
 
-		if (!client:getNetVar("areaMin")) then
+		if (!client:GetNetVar("areaMin")) then
 			if (!name) then
 				nut.util.Notify(nut.lang.Get("missing_arg", 1), client)
 
@@ -397,74 +397,74 @@ nut.command.add("areaadd", {
 			end
 			netstream.Start(client, "displayPosition", pos)
 
-			client:setNetVar("areaMin", pos, client)
-			client:setNetVar("areaName", name, client)
+			client:SetNetVar("areaMin", pos, client)
+			client:SetNetVar("areaName", name, client)
 
 			return "@areaCommand"
 		else
-			local min = client:getNetVar("areaMin")
+			local min = client:GetNetVar("areaMin")
 			local max = pos
-			local name = client:getNetVar("areaName")
+			local name = client:GetNetVar("areaName")
 
 			netstream.Start(client, "displayPosition", pos)
 
-			client:setNetVar("areaMin", nil, client)
-			client:setNetVar("areaName", nil, client)
+			client:SetNetVar("areaMin", nil, client)
+			client:SetNetVar("areaName", nil, client)
 
-			nut.area.addArea(name, min, max)
+			nut.area.AddArea(name, min, max)
 			
 			return "@areaAdded", name
 		end
 	end
 })
 
-nut.command.add("arearemove", {
+nut.command.Add("arearemove", {
 	adminOnly = true,
 	onRun = function(client, arguments)
-		local areaID = client:getArea()
+		local areaID = client:GetArea()
 
 		if (!areaID) then
 			return
 		end
 
-		local areaData = nut.area.getArea(areaID)
+		local areaData = nut.area.GetArea(areaID)
 
 		if (areaData) then
-			table.remove(PLUGIN.areaTable, areaID)
-			PLUGIN:saveAreas()
+			table.Remove(PLUGIN.areaTable, areaID)
+			PLUGIN:SaveAreas()
 
 			return "@areaRemoved", areaData.name
 		end
 	end
 })
 
-nut.command.add("areachange", {
+nut.command.Add("areachange", {
 	adminOnly = true,
 	syntax = "<string name>",
 	onRun = function(client, arguments)
 		local name = table.concat(arguments, " ") or "Area"
-		local areaID = client:getArea()
+		local areaID = client:GetArea()
 
 		if (!areaID) then
 			return
 		end
 
-		local areaData = nut.area.getArea(areaID)
+		local areaData = nut.area.GetArea(areaID)
 
 		if (areaData) then
 			areaData.name = name
-			PLUGIN:saveAreas()
+			PLUGIN:SaveAreas()
 
 			return "@areaChanged", name, areaData.name
 		end
 	end
 })
 
-nut.command.add("areamanager", {
+nut.command.Add("areamanager", {
 	adminOnly = true,
 	onRun = function(client, arguments)
 		if (client:Alive()) then
-			netstream.Start(client, "nutAreaManager", nut.area.getAllArea())
+			netstream.Start(client, "nutAreaManager", nut.area.GetAllArea())
 		end
 	end
 })

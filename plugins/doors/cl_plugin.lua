@@ -5,7 +5,7 @@ ACCESS_LABELS[DOOR_GUEST] = "guest"
 ACCESS_LABELS[DOOR_NONE] = "none"
 
 function PLUGIN:ShouldDrawEntityInfo(entity)
-	if (entity.isDoor(entity) and !entity.getNetVar(entity, "disabled")) then
+	if (entity.IsDoor(entity) and !entity.GetNetVar(entity, "disabled")) then
 		return true
 	end
 end
@@ -13,17 +13,17 @@ end
 local toScreen = FindMetaTable("Vector").ToScreen
 local colorAlpha = ColorAlpha
 local drawText = nut.util.drawText
-local configGet = nut.config.get
+local configGet = nut.config.Get
 local teamGetColor = team.GetColor
 
 function PLUGIN:DrawEntityInfo(entity, alpha)
-	if (entity.isDoor(entity) and !entity:getNetVar("hidden") and hook.Run("CanDrawDoorInfo") != false) then
+	if (entity.IsDoor(entity) and !entity:GetNetVar("hidden") and hook.Run("CanDrawDoorInfo") != false) then
 		local position = toScreen(entity.LocalToWorld(entity, entity.OBBCenter(entity)))
 		local x, y = position.x, position.y
 		local owner = entity.GetDTEntity(entity, 0)
-		local name = entity.getNetVar(entity, "title", entity.getNetVar(entity, "name", IsValid(owner) and L"dTitleOwned" or L"dTitle"))
-		local faction = entity.getNetVar(entity, "faction")
-		local class = entity.getNetVar(entity, "class")
+		local name = entity.GetNetVar(entity, "title", entity.GetNetVar(entity, "name", IsValid(owner) and L"dTitleOwned" or L"dTitle"))
+		local faction = entity.GetNetVar(entity, "faction")
+		local class = entity.GetNetVar(entity, "class")
 		local color
 
 		if (faction) then
@@ -60,7 +60,7 @@ function PLUGIN:DrawEntityInfo(entity, alpha)
 				drawText(L("dOwnedBy", L2(classData.name) or classData.name), x, y + 16, colorAlpha(color_white, alpha), 1, 1)
 			end
 		else
-			drawText(entity.getNetVar(entity, "noSell") and L"dIsNotOwnable" or L"dIsOwnable", x, y + 16, colorAlpha(color_white, alpha), 1, 1)
+			drawText(entity.GetNetVar(entity, "noSell") and L"dIsNotOwnable" or L"dIsOwnable", x, y + 16, colorAlpha(color_white, alpha), 1, 1)
 		end
 	end
 end
@@ -72,7 +72,7 @@ netstream.Hook("doorMenu", function(entity, access, door2)
 
 	if (IsValid(entity)) then
 		nut.gui.door = vgui.Create("nutDoorMenu")
-		nut.gui.door:setDoor(entity, access, door2)
+		nut.gui.door:SetDoor(entity, access, door2)
 	end
 end)
 

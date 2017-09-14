@@ -1,4 +1,4 @@
-local gradient = nut.util.getMaterial("vgui/gradient-r.vtf")
+local gradient = nut.util.GetMaterial("vgui/gradient-r.vtf")
 local glow = surface.GetTextureID("particle/Particle_Glow_04_Additive")
 
 local PANEL = {}
@@ -30,7 +30,7 @@ local PANEL = {}
 		self.authors:SetAlpha(0)
 		self.authors:AlphaTo(255, 5, 1.5, function()
 			self.authors:AlphaTo(0, 5, 3, function()
-				self.authors:SetText("In collaboration with "..SCHEMA.author)
+				self.authors:SetText("In collaboration with "..Schema.author)
 				self.authors:SizeToContents()
 				self.authors:CenterHorizontal()
 
@@ -67,7 +67,7 @@ local PANEL = {}
 		self.name:SetExpensiveShadow(2, color_black)
 
 		self.schema = self:Add("DLabel")
-		self.schema:SetText(SCHEMA.introName and L(SCHEMA.introName) or L(SCHEMA.name))
+		self.schema:SetText(Schema.introName and L(Schema.introName) or L(Schema.name))
 		self.schema:SetFont("nutIntroBigFont")
 		self.schema:SizeToContents()
 		self.schema:Center()

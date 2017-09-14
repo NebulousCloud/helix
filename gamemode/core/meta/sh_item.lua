@@ -6,29 +6,29 @@ ITEM.id = ITEM.id or 0
 ITEM.uniqueID = "undefined"
 
 function ITEM:__eq(other)
-	return self:getID() == other:getID()
+	return self:GetID() == other:GetID()
 end
 
 function ITEM:__tostring()
 	return "item["..self.uniqueID.."]["..self.id.."]"
 end
 
-function ITEM:getID()
+function ITEM:GetID()
 	return self.id
 end
 
-function ITEM:getName()
+function ITEM:GetName()
 	return (CLIENT and L(self.name) or self.name)
 end
 
-function ITEM:getDesc()
+function ITEM:GetDesc()
 	if (!self.desc) then return "ERROR" end
 	
 	return L(self.desc or "noDesc")
 end
 
 -- Dev Buddy. You don't have to print the item data with PrintData();
-function ITEM:print(detail)
+function ITEM:Print(detail)
 	if (detail == true) then
 		print(Format("%s[%s]: >> [%s](%s,%s)", self.uniqueID, self.id, self.owner, self.gridX, self.gridY))
 	else
@@ -37,15 +37,15 @@ function ITEM:print(detail)
 end
 
 -- Dev Buddy, You don't have to make another function to print the item Data.
-function ITEM:printData()
-	self:print(true)
+function ITEM:PrintData()
+	self:Print(true)
 	print("ITEM DATA:")
 	for k, v in pairs(self.data) do
 		print(Format("[%s] = %s", k, v))
 	end
 end
 
-function ITEM:call(method, client, entity, ...)
+function ITEM:Call(method, client, entity, ...)
 	local oldPlayer, oldEntity = self.player, self.entity
 
 	self.player = client or self.player
@@ -64,55 +64,55 @@ function ITEM:call(method, client, entity, ...)
 	self.entity = oldEntity
 end
 
-function ITEM:getOwner()
+function ITEM:GetOwner()
 	local inventory = nut.item.inventories[self.invID]
 
 	if (inventory) then
-		return (inventory.getReceiver and inventory:getReceiver())
+		return (inventory.GetReceiver and inventory:GetReceiver())
 	end
 
-	local id = self:getID()
+	local id = self:GetID()
 
 	for k, v in ipairs(player.GetAll()) do
-		local character = v:getChar()
+		local character = v:GetChar()
 
-		if (character and character:getInv():getItemByID(id)) then
+		if (character and character:GetInv():GetItemByID(id)) then
 			return v
 		end
 	end
 end
 
-function ITEM:setData(key, value, receivers, noSave, noCheckEntity)
+function ITEM:SetData(key, value, receivers, noSave, noCheckEntity)
 	self.data = self.data or {}
 	self.data[key] = value
 
 	if (SERVER) then
 		if (!noCheckEntity) then
-			local ent = self:getEntity()
+			local ent = self:GetEntity()
 
 			if (IsValid(ent)) then
-				local data = ent:getNetVar("data", {})
+				local data = ent:GetNetVar("data", {})
 				data[key] = value
 
-				ent:setNetVar("data", data)
+				ent:SetNetVar("data", data)
 			end
 		end
 	end
 
 	if (receivers != false) then
-		if (receivers or self:getOwner()) then
-			netstream.Start(receivers or self:getOwner(), "invData", self:getID(), key, value)
+		if (receivers or self:GetOwner()) then
+			netstream.Start(receivers or self:GetOwner(), "invData", self:GetID(), key, value)
 		end
 	end
 
 	if (!noSave) then
 		if (nut.db) then
-			nut.db.updateTable({_data = self.data}, nil, "items", "_itemID = "..self:getID())
+			nut.db.UpdateTable({_data = self.data}, nil, "items", "_itemID = "..self:GetID())
 		end
 	end	
 end
 
-function ITEM:getData(key, default)
+function ITEM:GetData(key, default)
 	self.data = self.data or {}
 
 	if (self.data) then
@@ -125,7 +125,7 @@ function ITEM:getData(key, default)
 		if (value != nil) then
 			return value
 		elseif (IsValid(self.entity)) then
-			local data = self.entity:getNetVar("data", {})
+			local data = self.entity:GetNetVar("data", {})
 			local value = data[key]
 
 			if (value != nil) then
@@ -144,19 +144,19 @@ function ITEM:getData(key, default)
 end
 
 
-function ITEM:hook(name, func)
+function ITEM:Hook(name, func)
 	if (name) then
 		self.hooks[name] = func
 	end
 end
 
-function ITEM:postHook(name, func)
+function ITEM:PostHook(name, func)
 	if (name) then
 		self.postHooks[name] = func
 	end
 end
 
-function ITEM:remove()
+function ITEM:Remove()
 	local inv = nut.item.inventories[self.invID]
 	local x2, y2
 
@@ -177,11 +177,11 @@ function ITEM:remove()
 		end
 
 		if (failed) then
-			local items = inv:getItems()
+			local items = inv:GetItems()
 
 			inv.slots = {}
 			for k, v in pairs(items) do
-				if (v.invID == inv:getID()) then
+				if (v.invID == inv:GetID()) then
 					for x = self.gridX, self.gridX + (self.width - 1) do
 						for y = self.gridY, self.gridY + (self.height - 1) do
 							inv.slots[x][y] = v.id
@@ -191,7 +191,7 @@ function ITEM:remove()
 			end
 
 			if (IsValid(inv.owner) and inv.owner:IsPlayer()) then
-				inv:sync(inv.owner, true)
+				inv:Sync(inv.owner, true)
 			end
 
 			return false
@@ -205,19 +205,19 @@ function ITEM:remove()
 	end
 
 	if (SERVER and !noReplication) then
-		local entity = self:getEntity()
+		local entity = self:GetEntity()
 
 		if (IsValid(entity)) then
 			entity:Remove()
 		end
 		
-		local receiver = inv.getReceiver and inv:getReceiver()
+		local receiver = inv.GetReceiver and inv:GetReceiver()
 
 		if (self.invID != 0) then
-			if (IsValid(receiver) and receiver:getChar() and inv.owner == receiver:getChar():getID()) then
-				netstream.Start(receiver, "invRm", self.id, inv:getID())
+			if (IsValid(receiver) and receiver:GetChar() and inv.owner == receiver:GetChar():GetID()) then
+				netstream.Start(receiver, "invRm", self.id, inv:GetID())
 			else
-				netstream.Start(receiver, "invRm", self.id, inv:getID(), inv.owner)
+				netstream.Start(receiver, "invRm", self.id, inv:GetID(), inv.owner)
 			end
 		end
 
@@ -237,8 +237,8 @@ function ITEM:remove()
 end
 
 if (SERVER) then
-	function ITEM:getEntity()
-		local id = self:getID()
+	function ITEM:GetEntity()
+		local id = self:GetID()
 
 		for k, v in ipairs(ents.FindByClass("nut_item")) do
 			if (v.nutItemID == id) then
@@ -247,7 +247,7 @@ if (SERVER) then
 		end
 	end
 	-- Spawn an item entity based off the item table.
-	function ITEM:spawn(position, angles)
+	function ITEM:Spawn(position, angles)
 		-- Check if the item has been created before.
 		if (nut.item.instances[self.id]) then
 			local client
@@ -256,7 +256,7 @@ if (SERVER) then
 			-- the item based off their aim.
 			if (type(position) == "Player") then
 				client = position
-				position = position:getItemDropPos()
+				position = position:GetItemDropPos()
 			end
 
 			-- Spawn the actual item entity.
@@ -265,11 +265,11 @@ if (SERVER) then
 			entity:SetPos(position)
 			entity:SetAngles(angles or Angle(0, 0, 0))
 			-- Make the item represent this item.
-			entity:setItem(self.id)
+			entity:SetItem(self.id)
 
 			if (IsValid(client)) then
 				entity.nutSteamID = client:SteamID()
-				entity.nutCharID = client:getChar():getID()
+				entity.nutCharID = client:GetChar():GetID()
 			end
 
 			-- Return the newly created entity.
@@ -278,7 +278,7 @@ if (SERVER) then
 	end
 
 	-- Transfers an item to a specific inventory.
-	function ITEM:transfer(invID, x, y, client, noReplication, isLogical)		
+	function ITEM:Transfer(invID, x, y, client, noReplication, isLogical)		
 		invID = invID or 0
 		
 		if (self.invID == invID) then
@@ -295,14 +295,14 @@ if (SERVER) then
 		local authorized = false
 
 		if (curInv and !IsValid(client)) then
-			client = (curInv.getReceiver and curInv:getReceiver() or nil)
+			client = (curInv.GetReceiver and curInv:GetReceiver() or nil)
 		end
 
-		if (inventory and inventory.onAuthorizeTransfer and inventory:onAuthorizeTransfer(client, curInv, self)) then
+		if (inventory and inventory.OnAuthorizeTransfer and inventory:OnAuthorizeTransfer(client, curInv, self)) then
 			authorized = true
 		end
 
-		if (!authorized and self.onCanBeTransfered and self:onCanBeTransfered(curInv, inventory) == false) then
+		if (!authorized and self.OnCanBeTransfered and self:OnCanBeTransfered(curInv, inventory) == false) then
 			return false, "notAllowed"
 		end
 
@@ -312,7 +312,7 @@ if (SERVER) then
 				local bagInv
 
 				if (!x and !y) then
-					x, y, bagInv = inventory:findEmptySlot(self.width, self.height)
+					x, y, bagInv = inventory:FindEmptySlot(self.width, self.height)
 				end
 
 				if (bagInv) then
@@ -324,15 +324,15 @@ if (SERVER) then
 				end
 
 				local prevID = self.invID
-				local status, result = targetInv:add(self.id, nil, nil, x, y, noReplication)
+				local status, result = targetInv:Add(self.id, nil, nil, x, y, noReplication)
 
 				if (status) then
 					if (self.invID > 0 and prevID != 0) then
-						curInv:remove(self.id, false, true)
+						curInv:Remove(self.id, false, true)
 						self.invID = invID
 
-						if (self.onTransfered) then
-							self:onTransfered(curInv, inventory)
+						if (self.OnTransfered) then
+							self:OnTransfered(curInv, inventory)
 						end
 						hook.Run("OnItemTransfered", self, curInv, inventory)
 
@@ -341,8 +341,8 @@ if (SERVER) then
 						local inventory = nut.item.inventories[0]
 						inventory[self.id] = nil
 
-						if (self.onTransfered) then
-							self:onTransfered(curInv, inventory)
+						if (self.OnTransfered) then
+							self:OnTransfered(curInv, inventory)
 						end
 						hook.Run("OnItemTransfered", self, curInv, inventory)
 
@@ -354,17 +354,17 @@ if (SERVER) then
 			elseif (IsValid(client)) then
 				self.invID = 0
 
-				curInv:remove(self.id, false, true)
+				curInv:Remove(self.id, false, true)
 				nut.db.query("UPDATE nut_items SET _invID = 0 WHERE _itemID = "..self.id)
 
 				if (isLogical != true) then
-					return self:spawn(client)	
+					return self:Spawn(client)	
 				else
 					local inventory = nut.item.inventories[0]
-					inventory[self:getID()] = self
+					inventory[self:GetID()] = self
 
-					if (self.onTransfered) then
-						self:onTransfered(curInv, inventory)
+					if (self.OnTransfered) then
+						self:OnTransfered(curInv, inventory)
 					end
 					hook.Run("OnItemTransfered", self, curInv, inventory)
 						

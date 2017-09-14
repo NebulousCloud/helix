@@ -10,8 +10,8 @@ local PANEL = {}
 		self:SetPos(ScrW() * 0.3, ScrH() * 0.3 + 16)
 
 		self.notice = self:Add("nutNoticeBar")
-		self.notice:setType(4)
-		self.notice:setText(L"charCreateTip")
+		self.notice:SetType(4)
+		self.notice:SetText(L"charCreateTip")
 		self.notice:SetWide(self:GetWide())
 
 		self.payload = {}
@@ -44,7 +44,7 @@ local PANEL = {}
 		return textBox
 	end
 
-	function PANEL:setUp(faction)
+	function PANEL:SetUp(faction)
 		self.faction = faction
 		self.payload.faction = self.faction
 		

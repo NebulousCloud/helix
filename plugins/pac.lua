@@ -20,7 +20,7 @@ end
 -- Fixing the PAC3's default stuffs to fit on Nutscript.
 if (CLIENT) then
 	-- fixpac command. you can fix the PAC3 errors with this.
-	nut.command.add("fixpac", {
+	nut.command.Add("fixpac", {
 		onRun = function(client, arguments)
 			RunConsoleCommand("pac_restart")
 		end,
@@ -60,7 +60,7 @@ else
 	net.Receive("pac_submit", function(_, ply)
 		if (!ply) then return end -- ???
 		if (!ply:IsSuperAdmin()) then
-			ply:notifyLocalized("illegalAccess")
+			ply:NotifyLocalized("illegalAccess")
 		return end
 
 		local data = pac.NetDeserializeTable()
@@ -69,58 +69,58 @@ else
 end
 
 -- Get Player's PAC3 Parts.
-function meta:getParts()
+function meta:GetParts()
 	if (!pac) then return end
 	
-	return self:getNetVar("parts", {})
+	return self:GetNetVar("parts", {})
 end
 
 if (SERVER) then
-	function meta:addPart(uid, item)
+	function meta:AddPart(uid, item)
 		if (!pac) then
 			ErrorNoHalt("NO PAC3!\n")
 		return end
 		
-		local curParts = self:getParts()
+		local curParts = self:GetParts()
 
 		-- wear the parts.
 		netstream.Start(player.GetAll(), "partWear", self, uid)
 		curParts[uid] = true
 
-		self:setNetVar("parts", curParts)
+		self:SetNetVar("parts", curParts)
 	end
 	
-	function meta:removePart(uid)
+	function meta:RemovePart(uid)
 		if (!pac) then return end
 		
-		local curParts = self:getParts()
+		local curParts = self:GetParts()
 
 		-- remove the parts.
 		netstream.Start(player.GetAll(), "partRemove", self, uid)
 		curParts[uid] = nil
 
-		self:setNetVar("parts", curParts)
+		self:SetNetVar("parts", curParts)
 	end
 
-	function meta:resetParts()
+	function meta:ResetParts()
 		if (!pac) then return end
 		
-		netstream.Start(player.GetAll(), "partReset", self, self:getParts())
-		self:setNetVar("parts", {})
+		netstream.Start(player.GetAll(), "partReset", self, self:GetParts())
+		self:SetNetVar("parts", {})
 	end
 
 	function PLUGIN:PlayerLoadedChar(client, curChar, prevChar)
 		-- If player is changing the char and the character ID is differs from the current char ID.
-		if (prevChar and curChar:getID() != prevChar:getID()) then
-			client:resetParts()
+		if (prevChar and curChar:GetID() != prevChar:GetID()) then
+			client:ResetParts()
 		end
 
 		-- After resetting all PAC3 outfits, wear all equipped PAC3 outfits.
 		if (curChar) then
-			local inv = curChar:getInv()
-			for k, v in pairs(inv:getItems()) do
-				if (v:getData("equip") == true and v.pacData) then
-					client:addPart(v.uniqueID, v)
+			local inv = curChar:GetInv()
+			for k, v in pairs(inv:GetItems()) do
+				if (v:GetData("equip") == true and v.pacData) then
+					client:AddPart(v.uniqueID, v)
 				end
 			end
 		end
@@ -134,10 +134,10 @@ else
 		if (!pac) then return end
 
 		for k, v in ipairs(player.GetAll()) do
-			local char = v:getChar()
+			local char = v:GetChar()
 
 			if (char) then
-				local parts = client:getParts()
+				local parts = client:GetParts()
 
 				for pacKey, pacValue in pairs(parts) do
 					if (nut.pac.list[pacKey]) then
@@ -229,9 +229,9 @@ else
 		-- For safe progress, I skip one frame.
 		timer.Simple(0.01, function()
 			if (class == "prop_ragdoll") then
-				if (entity:getNetVar("player")) then
+				if (entity:GetNetVar("player")) then
 					entity.RenderOverride = function()
-						entity.objCache = entity:getNetVar("player")
+						entity.objCache = entity:GetNetVar("player")
 						entity:DrawModel()
 						
 						hook.Run("DrawPlayerRagdoll", entity)
@@ -266,7 +266,7 @@ else
 				-- Setup function table.
 				pac.SetupENT(ent)
 
-				local parts = LocalPlayer():getParts()
+				local parts = LocalPlayer():GetParts()
 
 				-- Wear current player's PAC3 Outfits on the ModelPanel's Clientside Model Entity.
 				for k, v in pairs(parts) do
@@ -283,7 +283,7 @@ else
 	end
 
 	function PLUGIN:DrawNutModelView(panel, ent)
-		if (LocalPlayer():getChar()) then
+		if (LocalPlayer():GetChar()) then
 			if (pac) then
 				pac.RenderOverride(ent, "opaque")
 				pac.RenderOverride(ent, "translucent", true)

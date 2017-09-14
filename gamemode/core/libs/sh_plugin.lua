@@ -4,7 +4,7 @@ nut.plugin.unloaded = nut.plugin.unloaded or {}
 
 HOOKS_CACHE = {}
 
-function nut.plugin.load(uniqueID, path, isSingleFile, variable)
+function nut.plugin.Load(uniqueID, path, isSingleFile, variable)
 	if (hook.Run("PluginShouldLoad", uniqueID) == false) then return end
 
 	variable = variable or "PLUGIN"
@@ -14,11 +14,11 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 	local PLUGIN = {folder = path, plugin = oldPlugin, uniqueID = uniqueID, name = "Unknown", desc = "Description not available", author = "Anonymous"}
 
 	if (uniqueID == "schema") then
-		if (SCHEMA) then
-			PLUGIN = SCHEMA
+		if (Schema) then
+			PLUGIN = Schema
 		end
 
-		variable = "SCHEMA"
+		variable = "Schema"
 		PLUGIN.folder = engine.ActiveGamemode()
 	elseif (nut.plugin.list[uniqueID]) then
 		PLUGIN = nut.plugin.list[uniqueID]
@@ -28,20 +28,20 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 	PLUGIN.loading = true
 
 	if (!isSingleFile) then
-		nut.lang.loadFromDir(path.."/languages")
-		nut.util.includeDir(path.."/libs", true)
-		nut.attribs.loadFromDir(path.."/attributes")
-		nut.faction.loadFromDir(path.."/factions")
-		nut.class.loadFromDir(path.."/classes")
-		nut.item.loadFromDir(path.."/items")
-		nut.plugin.loadFromDir(path.."/plugins")
-		nut.util.includeDir(path.."/derma", true)
-		nut.plugin.loadEntities(path.."/entities")
+		nut.lang.LoadFromDir(path.."/languages")
+		nut.util.IncludeDir(path.."/libs", true)
+		nut.attribs.LoadFromDir(path.."/attributes")
+		nut.faction.LoadFromDir(path.."/factions")
+		nut.class.LoadFromDir(path.."/classes")
+		nut.item.LoadFromDir(path.."/items")
+		nut.plugin.LoadFromDir(path.."/plugins")
+		nut.util.IncludeDir(path.."/derma", true)
+		nut.plugin.LoadEntities(path.."/entities")
 
 		hook.Run("DoPluginIncludes", path, PLUGIN)
 	end
 	
-	nut.util.include(isSingleFile and path or path.."/sh_"..variable:lower()..".lua", "shared")
+	nut.util.Include(isSingleFile and path or path.."/sh_"..variable:lower()..".lua", "shared")
 	PLUGIN.loading = false
 
 	local uniqueID2 = uniqueID
@@ -50,12 +50,12 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 		uniqueID2 = PLUGIN.name
 	end
 
-	function PLUGIN:setData(value, global, ignoreMap)
-		nut.data.set(uniqueID2, value, global, ignoreMap)
+	function PLUGIN:SetData(value, global, ignoreMap)
+		nut.data.Set(uniqueID2, value, global, ignoreMap)
 	end
 
-	function PLUGIN:getData(default, global, ignoreMap, refresh)
-		return nut.data.get(uniqueID2, default, global, ignoreMap, refresh) or {}
+	function PLUGIN:GetData(default, global, ignoreMap, refresh)
+		return nut.data.Get(uniqueID2, default, global, ignoreMap, refresh) or {}
 	end
 
 	hook.Run("PluginLoaded", uniqueID, PLUGIN)
@@ -80,7 +80,7 @@ function nut.plugin.load(uniqueID, path, isSingleFile, variable)
 	end
 end
 
-function nut.plugin.getHook(pluginName, hookName)
+function nut.plugin.GetHook(pluginName, hookName)
 	local h = HOOKS_CACHE[hookName]
 
 	if (h) then
@@ -94,20 +94,20 @@ function nut.plugin.getHook(pluginName, hookName)
 	return
 end
 
-function nut.plugin.loadEntities(path)
+function nut.plugin.LoadEntities(path)
 	local files, folders
 
 	local function IncludeFiles(path2, clientOnly)
 		if (SERVER and file.Exists(path2.."init.lua", "LUA") or CLIENT) then
-			nut.util.include(path2.."init.lua", clientOnly and "client" or "server")
+			nut.util.Include(path2.."init.lua", clientOnly and "client" or "server")
 
 			if (file.Exists(path2.."cl_init.lua", "LUA")) then
-				nut.util.include(path2.."cl_init.lua", "client")
+				nut.util.Include(path2.."cl_init.lua", "client")
 			end
 
 			return true
 		elseif (file.Exists(path2.."shared.lua", "LUA")) then
-			nut.util.include(path2.."shared.lua")
+			nut.util.Include(path2.."shared.lua")
 
 			return true
 		end
@@ -142,7 +142,7 @@ function nut.plugin.loadEntities(path)
 
 			_G[variable] = table.Copy(default)
 				_G[variable].ClassName = niceName
-				nut.util.include(path.."/"..folder.."/"..v, clientOnly and "client" or "shared")
+				nut.util.Include(path.."/"..folder.."/"..v, clientOnly and "client" or "shared")
 
 				if (clientOnly) then
 					if (CLIENT) then
@@ -173,28 +173,28 @@ function nut.plugin.loadEntities(path)
 	HandleEntityInclusion("effects", "EFFECT", effects and effects.Register, nil, true)
 end
 
-function nut.plugin.initialize()
-	nut.plugin.load("schema", engine.ActiveGamemode().."/schema")
+function nut.plugin.Initialize()
+	nut.plugin.Load("schema", engine.ActiveGamemode().."/schema")
 	hook.Run("InitializedSchema")
 
-	nut.plugin.loadFromDir(engine.ActiveGamemode().."/plugins")
-	nut.plugin.loadFromDir("nutscript/plugins")
+	nut.plugin.LoadFromDir(engine.ActiveGamemode().."/plugins")
+	nut.plugin.LoadFromDir("nutscript/plugins")
 	hook.Run("InitializedPlugins")
 end
 
-function nut.plugin.loadFromDir(directory)
+function nut.plugin.LoadFromDir(directory)
 	local files, folders = file.Find(directory.."/*", "LUA")
 
 	for k, v in ipairs(folders) do
-		nut.plugin.load(v, directory.."/"..v)
+		nut.plugin.Load(v, directory.."/"..v)
 	end
 
 	for k, v in ipairs(files) do
-		nut.plugin.load(string.StripExtension(v), directory.."/"..v, true)
+		nut.plugin.Load(string.StripExtension(v), directory.."/"..v, true)
 	end
 end
 
-function nut.plugin.setUnloaded(uniqueID, state, noSave)
+function nut.plugin.SetUnloaded(uniqueID, state, noSave)
 	local plugin = nut.plugin.list[uniqueID]
 
 	if (state) then
@@ -226,9 +226,9 @@ function nut.plugin.setUnloaded(uniqueID, state, noSave)
 			status = true
 		end
 
-		local unloaded = nut.data.get("unloaded", {}, true, true)
+		local unloaded = nut.data.Get("unloaded", {}, true, true)
 			unloaded[uniqueID] = status
-		nut.data.set("unloaded", unloaded, true, true)
+		nut.data.Set("unloaded", unloaded, true, true)
 	end
 
 	hook.Run("PluginUnloaded", uniqueID)
@@ -244,7 +244,7 @@ if (SERVER) then
 		MsgN(fault)
 	end
 
-	function nut.plugin.loadRepo(url, name, callback, faultCallback)
+	function nut.plugin.LoadRepo(url, name, callback, faultCallback)
 		name = name or url
 
 		local curPlugin = ""
@@ -312,7 +312,7 @@ if (SERVER) then
 		end)
 	end
 
-	function nut.plugin.download(repo, plugin, callback)
+	function nut.plugin.Download(repo, plugin, callback)
 		local plugins = nut.plugin.repos[repo]
 
 		if (plugins) then
@@ -376,7 +376,7 @@ if (SERVER) then
 		end
 	end
 
-	function nut.plugin.loadFromLocal(repo, plugin)
+	function nut.plugin.LoadFromLocal(repo, plugin)
 
 	end
 
@@ -385,13 +385,13 @@ if (SERVER) then
 		local name = arguments[2] or "default"
 
 		if (!IsValid(client)) then
-			nut.plugin.loadRepo(url, name)
+			nut.plugin.LoadRepo(url, name)
 		end
 	end)
 
 	concommand.Add("nut_cloudget", function(client, _, arguments)
 		if (!IsValid(client)) then
-			local status, result = nut.plugin.download(arguments[2] or "default", arguments[1])
+			local status, result = nut.plugin.Download(arguments[2] or "default", arguments[1])
 
 			if (status == false) then
 				MsgN("* ERROR: "..result)
@@ -416,8 +416,8 @@ do
 			end
 		end
 
-		if (SCHEMA and SCHEMA[name]) then
-			local result = {SCHEMA[name](SCHEMA, ...)}
+		if (Schema and Schema[name]) then
+			local result = {Schema[name](Schema, ...)}
 
 			if (#result > 0) then
 				return unpack(result)

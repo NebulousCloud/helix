@@ -241,7 +241,7 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 	local client = LocalPlayer()
 	local value = 0
 
-	if (!client:isWepRaised()) then
+	if (!client:IsWepRaised()) then
 		value = 100
 	end
 
@@ -289,7 +289,7 @@ function GM:LoadIntro()
 end
 
 function GM:InitializedConfig()
-	hook.Run("LoadFonts", nut.config.get("font"), nut.config.get("genericFont"))
+	hook.Run("LoadFonts", nut.config.Get("font"), nut.config.Get("genericFont"))
 	
 	if (!nut.config.loaded and !IsValid(nut.gui.loading)) then
 		local loader = vgui.Create("EditablePanel")
@@ -309,7 +309,7 @@ function GM:InitializedConfig()
 
 		timer.Simple(5, function()
 			if (IsValid(nut.gui.loading)) then
-				local fault = getNetVar("dbError")
+				local fault = GetNetVar("dbError")
 
 				if (fault) then
 					label:SetText(fault and L"dbError" or L"loading")
@@ -337,7 +337,7 @@ function GM:InitPostEntity()
 	nut.joinTime = RealTime() - 0.9716
 end
 
-local vignette = nut.util.getMaterial("nutscript/gui/vignette.png")
+local vignette = nut.util.GetMaterial("nutscript/gui/vignette.png")
 local vignetteAlphaGoal = 0
 local vignetteAlphaDelta = 0
 local blurGoal = 0
@@ -369,7 +369,7 @@ paintedEntitiesCache = {}
 
 function GM:CalcView(client, origin, angles, fov)
 	local view = self.BaseClass:CalcView(client, origin, angles, fov) or {}
-	local entity = Entity(client:getLocalVar("ragdoll", 0))
+	local entity = Entity(client:GetLocalVar("ragdoll", 0))
 	local ragdoll = client:GetRagdollEntity()
 
 	if ((!client:ShouldDrawLocalPlayer() and IsValid(entity) and entity:IsRagdoll()) or 
@@ -403,7 +403,7 @@ local toScreen = FindMetaTable("Vector").ToScreen
 function GM:HUDPaintBackground()
 	local localPlayer = LocalPlayer()
 
-	if (!localPlayer.getChar(localPlayer)) then
+	if (!localPlayer.GetChar(localPlayer)) then
 		return
 	end
 	
@@ -419,7 +419,7 @@ function GM:HUDPaintBackground()
 		surface.DrawTexturedRect(0, 0, scrW, scrH)
 	end
 
-	if (localPlayer.getChar(localPlayer) and nextUpdate < realTime) then
+	if (localPlayer.GetChar(localPlayer) and nextUpdate < realTime) then
 		nextUpdate = realTime + 0.5
 
 		lastTrace.start = localPlayer.GetShootPos(localPlayer)
@@ -446,14 +446,14 @@ function GM:HUDPaintBackground()
 			end
 
 			if (alpha > 0) then
-				local client = entity.getNetVar(entity, "player")
+				local client = entity.GetNetVar(entity, "player")
 
 				if (IsValid(client)) then
 					local position = toScreen(entity.LocalToWorld(entity, entity.OBBCenter(entity)))
 
 					hookRun("DrawEntityInfo", client, alpha, position)
-				elseif (entity.onDrawEntityInfo) then
-					entity.onDrawEntityInfo(entity, alpha)
+				elseif (entity.OnDrawEntityInfo) then
+					entity.OnDrawEntityInfo(entity, alpha)
 				else
 					hookRun("DrawEntityInfo", entity, alpha)
 				end
@@ -469,14 +469,14 @@ function GM:HUDPaintBackground()
 		end
 	end
 
-	blurGoal = localPlayer.getLocalVar(localPlayer, "blur", 0) + (hookRun("AdjustBlurAmount", blurGoal) or 0)
+	blurGoal = localPlayer.GetLocalVar(localPlayer, "blur", 0) + (hookRun("AdjustBlurAmount", blurGoal) or 0)
 
 	if (blurDelta != blurGoal) then
 		blurDelta = mathApproach(blurDelta, blurGoal, frameTime * 20)
 	end
 
 	if (blurDelta > 0 and !localPlayer.ShouldDrawLocalPlayer(localPlayer)) then
-		nut.util.drawBlurAt(0, 0, scrW, scrH, blurDelta)
+		nut.util.DrawBlurAt(0, 0, scrW, scrH, blurDelta)
 	end
 
 	self.BaseClass.PaintWorldTips(self.BaseClass)
@@ -491,46 +491,46 @@ function GM:HUDPaintBackground()
 			local x, y = scrW - 80, scrH - 80
 
 			if (secondary > 0) then
-				nut.util.drawBlurAt(x, y, 64, 64)
+				nut.util.DrawBlurAt(x, y, 64, 64)
 
 				surface.SetDrawColor(255, 255, 255, 5)
 				surface.DrawRect(x, y, 64, 64)
 				surface.SetDrawColor(255, 255, 255, 3)
 				surface.DrawOutlinedRect(x, y, 64, 64)
 
-				nut.util.drawText(secondary, x + 32, y + 32, nil, 1, 1, "nutBigFont")
+				nut.util.DrawText(secondary, x + 32, y + 32, nil, 1, 1, "nutBigFont")
 			end
 
 			if (weapon.GetClass(weapon) != "weapon_slam" and clip > 0 or count > 0) then
 				x = x - (secondary > 0 and 144 or 64)
 
-				nut.util.drawBlurAt(x, y, 128, 64)
+				nut.util.DrawBlurAt(x, y, 128, 64)
 
 				surface.SetDrawColor(255, 255, 255, 5)
 				surface.DrawRect(x, y, 128, 64)
 				surface.SetDrawColor(255, 255, 255, 3)
 				surface.DrawOutlinedRect(x, y, 128, 64)
 
-				nut.util.drawText(clip == -1 and count or clip.."/"..count, x + 64, y + 32, nil, 1, 1, "nutBigFont")
+				nut.util.DrawText(clip == -1 and count or clip.."/"..count, x + 64, y + 32, nil, 1, 1, "nutBigFont")
 			end
 		end
 	end
 	
-	if (localPlayer.getLocalVar(localPlayer, "restricted") and !localPlayer.getLocalVar(localPlayer, "restrictNoMsg")) then
-		nut.util.drawText(L"restricted", scrW * 0.5, scrH * 0.33, nil, 1, 1, "nutBigFont")
+	if (localPlayer.GetLocalVar(localPlayer, "restricted") and !localPlayer.GetLocalVar(localPlayer, "restrictNoMsg")) then
+		nut.util.DrawText(L"restricted", scrW * 0.5, scrH * 0.33, nil, 1, 1, "nutBigFont")
 	end
 
-	nut.menu.drawAll()
-	nut.bar.drawAll()
-	nut.hud.drawAll(false)
+	nut.menu.DrawAll()
+	nut.bar.DrawAll()
+	nut.hud.DrawAll(false)
 end
 
 function GM:PostDrawHUD()
-	nut.hud.drawAll(true)
+	nut.hud.DrawAll(true)
 end
 
 function GM:ShouldDrawEntityInfo(entity)
-	if (entity:IsPlayer() or IsValid(entity:getNetVar("player"))) then
+	if (entity:IsPlayer() or IsValid(entity:GetNetVar("player"))) then
 		if (entity == LocalPlayer() and !LocalPlayer():ShouldDrawLocalPlayer()) then
 			return false
 		end
@@ -573,7 +573,7 @@ local charInfo = {}
 function GM:DrawEntityInfo(entity, alpha, position)
 	if (entity.IsPlayer(entity)) then
 		local localPlayer = LocalPlayer()
-		local character = entity.getChar(entity)
+		local character = entity.GetChar(entity)
 		
 		position = position or toScreen(entity.GetPos(entity) + (entity.Crouching(entity) and OFFSET_CROUCHING or OFFSET_NORMAL))
 
@@ -582,13 +582,13 @@ function GM:DrawEntityInfo(entity, alpha, position)
 			local ty = 0
 
 			charInfo = {}
-			charInfo[1] = {hookRun("GetDisplayedName", entity) or character.getName(character), teamGetColor(entity.Team(entity))}
+			charInfo[1] = {hookRun("GetDisplayedName", entity) or character.GetName(character), teamGetColor(entity.Team(entity))}
 
-			local description = character.getDesc(character)
+			local description = character.GetDesc(character)
 
 			if (description != entity.nutDescCache) then
 				entity.nutDescCache = description
-				entity.nutDescLines = nut.util.wrapText(description, ScrW() * 0.7, "nutSmallFont")
+				entity.nutDescLines = nut.util.WrapText(description, ScrW() * 0.7, "nutSmallFont")
 			end
 
 			for i = 1, #entity.nutDescLines do
@@ -612,16 +612,16 @@ function GM:PlayerBindPress(client, bind, pressed)
 	
 	if (bind:find("gm_showhelp") and pressed) then
 		if (IsValid(nut.gui.menu)) then
-			nut.gui.menu:remove()
-		elseif (LocalPlayer():getChar()) then
+			nut.gui.menu:Remove()
+		elseif (LocalPlayer():GetChar()) then
 			vgui.Create("nutMenu")
 		end
 
 		return true
 	elseif ((bind:find("use") or bind:find("attack")) and pressed) then
-		local menu, callback = nut.menu.getActiveMenu()
+		local menu, callback = nut.menu.GetActiveMenu()
 
-		if (menu and nut.menu.onButtonPressed(menu, callback)) then
+		if (menu and nut.menu.OnButtonPressed(menu, callback)) then
 			return true
 		elseif (bind:find("use") and pressed) then
 			local data = {}
@@ -636,7 +636,7 @@ function GM:PlayerBindPress(client, bind, pressed)
 			end
 		end
 	elseif (bind:find("jump")) then
-		nut.command.send("chargetup")
+		nut.command.Send("chargetup")
 	elseif (bind:find("speed") and client:KeyDown(IN_WALK) and pressed) then
 		if (LocalPlayer():Crouching()) then
 			RunConsoleCommand("-duck")
@@ -650,15 +650,15 @@ end
 function GM:ItemShowEntityMenu(entity)
 	for k, v in ipairs(nut.menu.list) do
 		if (v.entity == entity) then
-			table.remove(nut.menu.list, k)
+			table.Remove(nut.menu.list, k)
 		end
 	end
 
 	local options = {}
-	local itemTable = entity:getItemTable()
+	local itemTable = entity:GetItemTable()
 
 	if (!itemTable) then
-		nut.util.notifyLocalized("tellAdmin", "wid!xt_cl")
+		nut.util.NotifyLocalized("tellAdmin", "wid!xt_cl")
 		return false
 	end
 
@@ -698,7 +698,7 @@ function GM:ItemShowEntityMenu(entity)
 	end
 
 	if (table.Count(options) > 0) then
-		entity.nutMenuIndex = nut.menu.add(options, entity)
+		entity.nutMenuIndex = nut.menu.Add(options, entity)
 	end
 
 	itemTable.player = nil
@@ -806,7 +806,7 @@ function GM:OnCharInfoSetup(infoPanel)
 
 				local act = ACT_MP_STAND_IDLE
 				local model = ent:GetModel():lower()
-				local class = nut.anim.getModelClass(model)
+				local class = nut.anim.GetModelClass(model)
 				local tree = nut.anim[class]
 
 				if (tree) then
@@ -867,7 +867,7 @@ netstream.Hook("strReq", function(time, title, subTitle, default)
 end)
 
 function GM:PostPlayerDraw(client)
-	if (client and client:getChar() and client:GetNoDraw() != true) then
+	if (client and client:GetChar() and client:GetNoDraw() != true) then
 		local wep = client:GetActiveWeapon()
 		local curClass = ((wep and wep:IsValid()) and wep:GetClass():lower() or "")
 
@@ -926,7 +926,7 @@ end
 
 function GM:ScreenResolutionChanged(oldW, oldH)
 	RunConsoleCommand("fixchatplz")
-	hook.Run("LoadFonts", nut.config.get("font"), nut.config.get("genericFont"))
+	hook.Run("LoadFonts", nut.config.Get("font"), nut.config.Get("genericFont"))
 end
 
 function GM:DrawDeathNotice()
@@ -941,6 +941,6 @@ function GM:HUDDrawPickupHistory()
 	return false
 end
 
-function GM:HUDDrawTargetID()
+function GM:HUDDrawTarGetID()
 	return false
 end

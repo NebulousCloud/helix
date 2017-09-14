@@ -1,6 +1,6 @@
 local PANEL = {}
-	local gradient = nut.util.getMaterial("vgui/gradient-u")
-	local gradient2 = nut.util.getMaterial("vgui/gradient-d")
+	local gradient = nut.util.GetMaterial("vgui/gradient-u")
+	local gradient2 = nut.util.GetMaterial("vgui/gradient-d")
 	local alpha = 80
 
 	function PANEL:Init()
@@ -68,7 +68,7 @@ local PANEL = {}
 		self:MakePopup()
 
 		self.info = vgui.Create("nutCharInfo", self)
-		self.info:setup()
+		self.info:Setup()
 		self.info:SetAlpha(0)
 		self.info:AlphaTo(255, 0.5)
 	end
@@ -77,7 +77,7 @@ local PANEL = {}
 		self.noAnchor = CurTime() + .5
 
 		if (key == KEY_F1) then
-			self:remove()
+			self:Remove()
 		end
 	end
 
@@ -94,7 +94,7 @@ local PANEL = {}
 			end
 
 			if (!key) then
-				self:remove()
+				self:Remove()
 			end
 		end
 	end
@@ -102,7 +102,7 @@ local PANEL = {}
 	local color_bright = Color(240, 240, 240, 180)
 
 	function PANEL:Paint(w, h)
-		nut.util.drawBlur(self, 12)
+		nut.util.DrawBlur(self, 12)
 
 		surface.SetDrawColor(0, 0, 0)
 		surface.SetMaterial(gradient)
@@ -120,7 +120,7 @@ local PANEL = {}
 
 		local function paintTab(tab, w, h)
 			if (self.activeTab == tab) then
-				surface.SetDrawColor(ColorAlpha(nut.config.get("color"), 200))
+				surface.SetDrawColor(ColorAlpha(nut.config.Get("color"), 200))
 				surface.DrawRect(0, h - 8, w, 8)
 			elseif (tab.Hovered) then
 				surface.SetDrawColor(0, 0, 0, 50)
@@ -169,7 +169,7 @@ local PANEL = {}
 		return tab
 	end
 
-	function PANEL:setActiveTab(key)
+	function PANEL:SetActiveTab(key)
 		if (IsValid(self.tabList[key])) then
 			self.tabList[key]:DoClick()
 		end
@@ -178,7 +178,7 @@ local PANEL = {}
 	function PANEL:OnRemove()
 	end
 
-	function PANEL:remove()
+	function PANEL:Remove()
 		CloseDermaMenus()
 		
 		if (!self.closing) then

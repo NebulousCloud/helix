@@ -11,15 +11,15 @@ DOOR_TENANT = 2
 DOOR_GUEST = 1
 DOOR_NONE = 0
 
-nut.util.include("sv_plugin.lua")
-nut.util.include("cl_plugin.lua")
-nut.util.include("sh_commands.lua")
+nut.util.Include("sv_plugin.lua")
+nut.util.Include("cl_plugin.lua")
+nut.util.Include("sh_commands.lua")
 
 do
 	local entityMeta = FindMetaTable("Entity")
 
-	function entityMeta:checkDoorAccess(client, access)
-		if (!self:isDoor()) then
+	function entityMeta:CheckDoorAccess(client, access)
+		if (!self:IsDoor()) then
 			return false
 		end
 
@@ -28,7 +28,7 @@ do
 		local parent = self.nutParent
 
 		if (IsValid(parent)) then
-			return parent:checkDoorAccess(client, access)
+			return parent:CheckDoorAccess(client, access)
 		end
 
 		if (hook.Run("CanPlayerAccessDoor", client, self, access)) then
@@ -43,7 +43,7 @@ do
 	end
 
 	if (SERVER) then
-		function entityMeta:removeDoorAccessData()
+		function entityMeta:RemoveDoorAccessData()
 			-- Don't ask why. This happened with 60 player servers.
 			if (IsValid(self)) then
 				for k, v in pairs(self.nutAccess or {}) do
@@ -58,16 +58,16 @@ do
 end
 
 -- Configurations for door prices.
-nut.config.add("doorCost", 10, "The price to purchase a door.", nil, {
+nut.config.Add("doorCost", 10, "The price to purchase a door.", nil, {
 	data = {min = 0, max = 500},
 	category = "dConfigName"
 })
-nut.config.add("doorSellRatio", 0.5, "How much of the door price is returned when selling a door.", nil, {
+nut.config.Add("doorSellRatio", 0.5, "How much of the door price is returned when selling a door.", nil, {
 	form = "Float",
 	data = {min = 0, max = 1.0},
 	category = "dConfigName"
 })
-nut.config.add("doorLockTime", 1, "How long it takes to (un)lock a door.", nil, {
+nut.config.Add("doorLockTime", 1, "How long it takes to (un)lock a door.", nil, {
 	form = "Float",
 	data = {min = 0, max = 10.0},
 	category = "dConfigName"

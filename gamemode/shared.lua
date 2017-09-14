@@ -48,40 +48,41 @@ do
 end
 
 -- Include core framework files.
-nut.util.include("core/cl_skin.lua")
-nut.util.includeDir("core/libs/thirdparty")
-nut.util.include("core/sh_config.lua")
-nut.util.includeDir("core/libs")
-nut.util.includeDir("core/derma")
-nut.util.includeDir("core/hooks")
+nut.util.Include("core/cl_skin.lua")
+nut.util.IncludeDir("core/libs/thirdparty")
+nut.util.Include("core/sh_config.lua")
+nut.util.IncludeDir("core/libs")
+nut.util.IncludeDir("core/derma")
+nut.util.IncludeDir("core/hooks")
 
 -- Include language and default base items.
-nut.lang.loadFromDir("nutscript/gamemode/languages")
-nut.item.loadFromDir("nutscript/gamemode/items")
+nut.lang.LoadFromDir("nutscript/gamemode/languages")
+nut.item.LoadFromDir("nutscript/gamemode/items")
 
 -- Called after the gamemode has loaded.
 function GM:Initialize()
 	-- Load all of the NutScript plugins.
-	nut.plugin.initialize()
+	nut.plugin.Initialize()
 	-- Restore the configurations from earlier if applicable.
-	nut.config.load()
+	nut.config.Load()
 end
 
-ITSTIMETOSTOP = false
+NS_RELOADED = false
+
 -- Called when a file has been modified.
 function GM:OnReloaded()
-	if (!ITSTIMETOSTOP) then
+	if (!NS_RELOADED) then
 		-- Load all of the NutScript plugins.
-		nut.plugin.initialize()
+		nut.plugin.Initialize()
 		-- Restore the configurations from earlier if applicable.
-		nut.config.load()
+		nut.config.Load()
 
-		ITSTIMETOSTOP = true
+		NS_RELOADED = true
 	end
 
 	-- Reload the default fonts.
 	if (CLIENT) then
-		hook.Run("LoadFonts", nut.config.get("font"))
+		hook.Run("LoadFonts", nut.config.Get("font"))
 
 		-- Reload the scoreboard.
 		if (IsValid(nut.gui.score)) then
@@ -95,8 +96,8 @@ function GM:OnReloaded()
 					timer.Adjust("nutSalary"..v:UniqueID(), faction.payTime or 300, 0, function()
 						local pay = hook.Run("GetSalaryAmount", v, faction) or faction.pay
 
-						v:getChar():giveMoney(pay)
-						v:notifyLocalized("salary", nut.currency.get(pay))
+						v:GetChar():GiveMoney(pay)
+						v:NotifyLocalized("salary", nut.currency.Get(pay))
 					end)
 				else
 					timer.Remove("nutSalary"..v:UniqueID())
@@ -107,7 +108,7 @@ function GM:OnReloaded()
 end
 
 -- Include default NutScript chat commands.
-nut.util.include("core/sh_commands.lua")
+nut.util.Include("core/sh_commands.lua")
 
 if (SERVER and game.IsDedicated()) then
 	concommand.Remove("gm_save")

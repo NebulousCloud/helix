@@ -55,21 +55,21 @@ function PANEL:Init()
 	self:SetTall(28)
 end
 
-function PANEL:setType(value)
+function PANEL:SetType(value)
 	self.type = value
 	return
 end
 
-function PANEL:setText(value)
+function PANEL:SetText(value)
 	self.text:SetText(value)
 end
 
-function PANEL:setFont(value)
+function PANEL:SetFont(value)
 	self.text:SetFont(value)
 end
 
 function PANEL:Paint()
-	self.material = nut.util.getMaterial(self.pnlTypes[self.type].icon)
+	self.material = nut.util.GetMaterial(self.pnlTypes[self.type].icon)
 
 	local col = self.pnlTypes[self.type].col
 	local mat = self.material

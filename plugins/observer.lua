@@ -31,7 +31,7 @@ if (CLIENT) then
 				surface.DrawLine(sx * 0.5, sy * 0.5, x, y)
 				surface.DrawRect(x - size/2, y - size/2, size, size)
 
-				nut.util.drawText(v:Name(), x, y - size, ColorAlpha(teamColor, alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, nil, alpha)
+				nut.util.DrawText(v:Name(), x, y - size, ColorAlpha(teamColor, alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, nil, alpha)
 			end
 		end
 	end
@@ -60,7 +60,7 @@ if (CLIENT) then
 
 	function PLUGIN:ShouldDrawEntityInfo(entity)
 		if (IsValid(entity)) then
-			if (entity:IsPlayer() or IsValid(entity:getNetVar("player"))) then
+			if (entity:IsPlayer() or IsValid(entity:GetNetVar("player"))) then
 				if (entity.IsAdmin and entity:IsAdmin() and entity:GetMoveType() == MOVETYPE_NOCLIP) then
 					return false
 				end

@@ -43,7 +43,7 @@ else
 				end
 
 				local theta = (k - index) * 0.1
-				local color = ColorAlpha(k == self.index and nut.config.get("color") or color_white, (255 - math.abs(theta * 3) * 255) * fraction)
+				local color = ColorAlpha(k == self.index and nut.config.Get("color") or color_white, (255 - math.abs(theta * 3) * 255) * fraction)
 				local lastY = 0
 				local shiftX = ScrW()*.02
 
@@ -72,7 +72,7 @@ else
 				matrix:Scale(Vector(1, 1, 0) * scale)
 
 				cam.PushModelMatrix(matrix)
-					nut.util.drawText(v:GetPrintName():upper(), 2, ty/2, color, 0, 1, "nutSubTitleFont")
+					nut.util.DrawText(v:GetPrintName():upper(), 2, ty/2, color, 0, 1, "nutSubTitleFont")
 				cam.PopModelMatrix()
 			end
 
@@ -89,7 +89,7 @@ else
 		"Instructions"
 	}
 
-	function PLUGIN:onIndexChanged()
+	function PLUGIN:OnIndexChanged()
 		self.alpha = 1
 		self.fadeTime = CurTime() + 5
 
@@ -102,7 +102,7 @@ else
 
 			for k, v in ipairs(weaponInfo) do
 				if (weapon[v] and weapon[v]:find("%S")) then
-					local color = nut.config.get("color")
+					local color = nut.config.Get("color")
 
 					text = text.."<font=nutItemBoldFont><color="..color.r..","..color.g..","..color.b..">"..L(v).."</font></color>\n"..weapon[v].."\n"
 				end
@@ -132,7 +132,7 @@ else
 					self.index = #client:GetWeapons()
 				end
 
-				self:onIndexChanged()
+				self:OnIndexChanged()
 
 				return true
 			elseif (bind:find("invnext") and pressed) then
@@ -142,12 +142,12 @@ else
 					self.index = 1
 				end
 
-				self:onIndexChanged()
+				self:OnIndexChanged()
 
 				return true
 			elseif (bind:find("slot")) then
 				self.index = math.Clamp(tonumber(bind:match("slot(%d)")) or 1, 1, #LocalPlayer():GetWeapons())
-				self:onIndexChanged()
+				self:OnIndexChanged()
 
 				return true
 			elseif (bind:find("attack") and pressed and self.alpha > 0) then

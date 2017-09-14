@@ -19,8 +19,8 @@ function ENT:Initialize()
 		self.factions = {}
 		self.classes = {}
 
-		self:setNetVar("name", "John Doe")
-		self:setNetVar("desc", "")
+		self:SetNetVar("name", "John Doe")
+		self:SetNetVar("desc", "")
 
 		self.receivers = {}
 
@@ -34,12 +34,12 @@ function ENT:Initialize()
 
 	timer.Simple(1, function()
 		if (IsValid(self)) then
-			self:setAnim()
+			self:SetAnim()
 		end
 	end)
 end
 
-function ENT:canAccess(client)
+function ENT:CanAccess(client)
 	if (client:IsAdmin()) then
 		return true
 	end
@@ -56,7 +56,7 @@ function ENT:canAccess(client)
 	end
 
 	if (allowed and self.classes and table.Count(self.classes) > 0) then
-		local class = nut.class.list[client:getChar():getClass()]
+		local class = nut.class.list[client:GetChar():GetClass()]
 		local uniqueID = class and class.uniqueID
 
 		if (!self.classes[uniqueID]) then
@@ -67,13 +67,13 @@ function ENT:canAccess(client)
 	return true
 end
 
-function ENT:getStock(uniqueID)
+function ENT:GetStock(uniqueID)
 	if (self.items[uniqueID] and self.items[uniqueID][VENDOR_MAXSTOCK]) then
 		return self.items[uniqueID][VENDOR_STOCK] or 0, self.items[uniqueID][VENDOR_MAXSTOCK]
 	end
 end
 
-function ENT:getPrice(uniqueID, selling)
+function ENT:GetPrice(uniqueID, selling)
 	local price = nut.item.list[uniqueID] and self.items[uniqueID] and self.items[uniqueID][VENDOR_PRICE] or nut.item.list[uniqueID].price or 0
 
 	if (selling) then
@@ -83,10 +83,10 @@ function ENT:getPrice(uniqueID, selling)
 	return price
 end
 
-function ENT:canSellToPlayer(client, uniqueID)
+function ENT:CanSellToPlayer(client, uniqueID)
 	local data = self.items[uniqueID]
 
-	if (!data or !client:getChar() or !nut.item.list[uniqueID]) then
+	if (!data or !client:GetChar() or !nut.item.list[uniqueID]) then
 		return false
 	end
 
@@ -94,7 +94,7 @@ function ENT:canSellToPlayer(client, uniqueID)
 		return false
 	end
 
-	if (!client:getChar():hasMoney(self:getPrice(uniqueID))) then
+	if (!client:GetChar():HasMoney(self:GetPrice(uniqueID))) then
 		return false
 	end
 
@@ -105,10 +105,10 @@ function ENT:canSellToPlayer(client, uniqueID)
 	return true
 end
 
-function ENT:canBuyFromPlayer(client, uniqueID)
+function ENT:CanBuyFromPlayer(client, uniqueID)
 	local data = self.items[uniqueID]
 
-	if (!data or !client:getChar() or !nut.item.list[uniqueID]) then
+	if (!data or !client:GetChar() or !nut.item.list[uniqueID]) then
 		return false
 	end
 
@@ -116,14 +116,14 @@ function ENT:canBuyFromPlayer(client, uniqueID)
 		return false
 	end
 
-	if (!self:hasMoney(data[VENDOR_PRICE] or nut.item.list[uniqueID].price or 0)) then
+	if (!self:HasMoney(data[VENDOR_PRICE] or nut.item.list[uniqueID].price or 0)) then
 		return false
 	end
 
 	return true
 end
 
-function ENT:hasMoney(amount)
+function ENT:HasMoney(amount)
 	-- Vendor not using money system so they can always afford it.
 	if (!self.money) then
 		return true
@@ -132,7 +132,7 @@ function ENT:hasMoney(amount)
 	return self.money >= amount
 end
 
-function ENT:setAnim()
+function ENT:SetAnim()
 	for k, v in ipairs(self:GetSequenceList()) do
 		if (v:lower():find("idle") and v != "idlenoise") then
 			return self:ResetSequence(k)
@@ -162,9 +162,9 @@ if (SERVER) then
 	end
 
 	function ENT:Use(activator)
-		if (!self:canAccess(activator) or hook.Run("CanPlayerUseVendor", activator) == false) then
+		if (!self:CanAccess(activator) or hook.Run("CanPlayerUseVendor", activator) == false) then
 			if (self.messages[VENDOR_NOTRADE]) then
-				activator:ChatPrint(self:getNetVar("name")..": "..self.messages[VENDOR_NOTRADE])
+				activator:ChatPrint(self:GetNetVar("name")..": "..self.messages[VENDOR_NOTRADE])
 			end
 
 			return
@@ -173,7 +173,7 @@ if (SERVER) then
 		self.receivers[#self.receivers + 1] = activator
 
 		if (self.messages[VENDOR_WELCOME]) then
-			activator:ChatPrint(self:getNetVar("name")..": "..self.messages[VENDOR_WELCOME])
+			activator:ChatPrint(self:GetNetVar("name")..": "..self.messages[VENDOR_WELCOME])
 		end
 			
 		local items = {}
@@ -202,25 +202,25 @@ if (SERVER) then
 		netstream.Start(activator, "vendorOpen", self:EntIndex(), unpack(data))
 	end
 
-	function ENT:setMoney(value)
+	function ENT:SetMoney(value)
 		self.money = value
 
 		netstream.Start(self.receivers, "vendorMoney", value)
 	end
 
-	function ENT:giveMoney(value)
+	function ENT:GiveMoney(value)
 		if (self.money) then
-			self:setMoney(self:getMoney() + value)
+			self:SetMoney(self:GetMoney() + value)
 		end
 	end
 
-	function ENT:takeMoney(value)
+	function ENT:TakeMoney(value)
 		if (self.money) then
-			self:giveMoney(-value)
+			self:GiveMoney(-value)
 		end
 	end
 
-	function ENT:setStock(uniqueID, value)
+	function ENT:SetStock(uniqueID, value)
 		if (!self.items[uniqueID][VENDOR_MAXSTOCK]) then
 			return
 		end
@@ -231,23 +231,23 @@ if (SERVER) then
 		netstream.Start(self.receivers, "vendorStock", uniqueID, value)
 	end
 
-	function ENT:addStock(uniqueID, value)
+	function ENT:AddStock(uniqueID, value)
 		if (!self.items[uniqueID][VENDOR_MAXSTOCK]) then
 			return
 		end
 
-		self:setStock(uniqueID, self:getStock(uniqueID) + (value or 1))
+		self:SetStock(uniqueID, self:GetStock(uniqueID) + (value or 1))
 	end
 
-	function ENT:takeStock(uniqueID, value)
+	function ENT:TakeStock(uniqueID, value)
 		if (!self.items[uniqueID][VENDOR_MAXSTOCK]) then
 			return
 		end
 
-		self:addStock(uniqueID, -(value or 1))
+		self:AddStock(uniqueID, -(value or 1))
 	end
 else
-	function ENT:createBubble()
+	function ENT:CreateBubble()
 		self.bubble = ClientsideModel("models/extras/info_speech.mdl", RENDERGROUP_OPAQUE)
 		self.bubble:SetPos(self:GetPos() + Vector(0, 0, 84))
 		self.bubble:SetModelScale(0.6, 0)
@@ -267,16 +267,16 @@ else
 	end
 
 	function ENT:Think()
-		local noBubble = self:getNetVar("noBubble")
+		local noBubble = self:GetNetVar("noBubble")
 
 		if (IsValid(self.bubble) and noBubble) then
 			self.bubble:Remove()
 		elseif (!IsValid(self.bubble) and !noBubble) then
-			self:createBubble()
+			self:CreateBubble()
 		end
 
 		if ((self.nextAnimCheck or 0) < CurTime()) then
-			self:setAnim()
+			self:SetAnim()
 			self.nextAnimCheck = CurTime() + 60
 		end
 
@@ -295,16 +295,16 @@ else
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
 	local drawText = nut.util.drawText
-	local configGet = nut.config.get
+	local configGet = nut.config.Get
 
 	ENT.DrawEntityInfo = true
 
-	function ENT:onDrawEntityInfo(alpha)
+	function ENT:OnDrawEntityInfo(alpha)
 		local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)) + TEXT_OFFSET)
 		local x, y = position.x, position.y
-		local desc = self.getNetVar(self, "desc")
+		local desc = self.GetNetVar(self, "desc")
 
-		drawText(self.getNetVar(self, "name", "John Doe"), x, y, colorAlpha(configGet("color"), alpha), 1, 1, nil, alpha * 0.65)
+		drawText(self.GetNetVar(self, "name", "John Doe"), x, y, colorAlpha(configGet("color"), alpha), 1, 1, nil, alpha * 0.65)
 
 		if (desc) then
 			drawText(desc, x, y + 16, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
@@ -312,6 +312,6 @@ else
 	end
 end
 
-function ENT:getMoney()
+function ENT:GetMoney()
 	return self.money
 end

@@ -5,18 +5,18 @@ PLUGIN.desc = "Provides the ability to store items."
 PLUGIN.definitions = PLUGIN.definitions or {}
 STORAGE_DEFINITIONS = PLUGIN.definitions
 
-nut.util.include("sh_definitions.lua")
+nut.util.Include("sh_definitions.lua")
 
 for k, v in pairs(PLUGIN.definitions) do
 	if (v.name and v.width and v.height) then
-		nut.item.registerInv("st"..v.name, v.width, v.height)
+		nut.item.RegisterInv("st"..v.name, v.width, v.height)
 	else
 		ErrorNoHalt("[NutScript] Storage for '"..k.."' is missing all inventory information!\n")
 		PLUGIN.definitions[k] = nil
 	end
 end
 
-nut.config.add("saveStorage", true, "Whether or not storages will save after a server restart.", nil, {
+nut.config.Add("saveStorage", true, "Whether or not storages will save after a server restart.", nil, {
 	category = "Storage"
 })
 
@@ -35,46 +35,46 @@ if (SERVER) then
 			storage:SetSolid(SOLID_VPHYSICS)
 			storage:PhysicsInit(SOLID_VPHYSICS)
 
-			nut.item.newInv(0, "st"..data.name, function(inventory)
+			nut.item.NewInv(0, "st"..data.name, function(inventory)
 				inventory.vars.isStorage = true
 				if (IsValid(storage)) then
-					storage:setInventory(inventory)
+					storage:SetInventory(inventory)
 				end
 			end)
 
-			self:saveStorage()
+			self:SaveStorage()
 			entity:Remove()
 		end
 	end
 
 	function PLUGIN:CanSaveStorage(entity, inventory)
-		return nut.config.get("saveStorage", true)
+		return nut.config.Get("saveStorage", true)
 	end
 
-	function PLUGIN:saveStorage()
+	function PLUGIN:SaveStorage()
   	local data = {}
 
   	for k, v in ipairs(ents.FindByClass("nut_storage")) do
-  		if (hook.Run("CanSaveStorage", v, v:getInv()) != false) then
-  			if (v:getInv()) then
-  				data[#data + 1] = {v:GetPos(), v:GetAngles(), v:getNetVar("id"), v:GetModel(), v.password}
+  		if (hook.Run("CanSaveStorage", v, v:GetInv()) != false) then
+  			if (v:GetInv()) then
+  				data[#data + 1] = {v:GetPos(), v:GetAngles(), v:GetNetVar("id"), v:GetModel(), v.password}
 			end
 		else
-			local index = v:getNetVar("id")
+			local index = v:GetNetVar("id")
 			nut.db.query("DELETE FROM nut_items WHERE _invID = "..index)
 			nut.db.query("DELETE FROM nut_inventories WHERE _invID = "..index)
   		end
   	end
 
-  	self:setData(data)
+  	self:SetData(data)
   end
 
 	function PLUGIN:SaveData()
-		self:saveStorage()
+		self:SaveStorage()
 	end
 
 	function PLUGIN:StorageItemRemoved(entity, inventory)
-		self:saveStorage()
+		self:SaveStorage()
 	end
 
 	function PLUGIN:StorageCanTransfer(inventory, client, oldX, oldY, x, y, newInvID)
@@ -84,7 +84,7 @@ if (SERVER) then
 	end
 
 	function PLUGIN:LoadData()
-		local data = self:getData()
+		local data = self:GetData()
 
 		if (data) then
 			for k, v in ipairs(data) do
@@ -101,14 +101,14 @@ if (SERVER) then
 					
 					if (v[5]) then
 						storage.password = v[5]
-						storage:setNetVar("locked", true)
+						storage:SetNetVar("locked", true)
 					end
 					
-					nut.item.restoreInv(v[3], data2.width, data2.height, function(inventory)
+					nut.item.RestoreInv(v[3], data2.width, data2.height, function(inventory)
 						inventory.vars.isStorage = true
 						
 						if (IsValid(storage)) then
-							storage:setInventory(inventory)
+							storage:SetInventory(inventory)
 						end
 					end)
 
@@ -139,7 +139,7 @@ if (SERVER) then
 			if (entity.password and entity.password == password) then
 				entity:OpenInv(client)
 			else
-				client:notifyLocalized("wrongPassword")
+				client:NotifyLocalized("wrongPassword")
 			end
 		end
 	end)
@@ -167,16 +167,16 @@ else
 				nut.gui.inv1 = vgui.Create("nutInventory")
 				nut.gui.inv1:ShowCloseButton(true)
 
-				local inventory2 = LocalPlayer():getChar():getInv()
+				local inventory2 = LocalPlayer():GetChar():GetInv()
 
 				if (inventory2) then
-					nut.gui.inv1:setInventory(inventory2)
+					nut.gui.inv1:SetInventory(inventory2)
 				end
 
 				local panel = vgui.Create("nutInventory")
 				panel:ShowCloseButton(true)
 				panel:SetTitle(data.name)
-				panel:setInventory(inventory)
+				panel:SetInventory(inventory)
 				panel:MoveLeftOf(nut.gui.inv1, 4)
 				panel.OnClose = function(this)
 					if (IsValid(nut.gui.inv1) and !IsValid(nut.gui.menu)) then
@@ -203,7 +203,7 @@ else
 	end)
 end
 
-nut.command.add("storagelock", {
+nut.command.Add("storagelock", {
 	adminOnly = true,
 	syntax = "[string password]",
 	onRun = function(client, arguments)
@@ -214,16 +214,16 @@ nut.command.add("storagelock", {
 			local password = table.concat(arguments, " ")
 
 			if (password != "") then
-				ent:setNetVar("locked", true)
+				ent:SetNetVar("locked", true)
 				ent.password = password
-				client:notifyLocalized("storPass", password)
+				client:NotifyLocalized("storPass", password)
 			else
-				ent:setNetVar("locked", nil)
+				ent:SetNetVar("locked", nil)
 				ent.password = nil
-				client:notifyLocalized("storPassRmv")
+				client:NotifyLocalized("storPassRmv")
 			end
 		else
-			client:notifyLocalized("invalid", "Entity")
+			client:NotifyLocalized("invalid", "Entity")
 		end
 	end
 })

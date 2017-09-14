@@ -98,15 +98,15 @@ PANEL = {}
 		end
 	end
 
-	function PANEL:setInventory(inventory)
+	function PANEL:SetInventory(inventory)
 		if (inventory.slots) then
-			if (IsValid(nut.gui.inv1) and nut.gui.inv1.childPanels and inventory != LocalPlayer():getChar():getInv()) then
+			if (IsValid(nut.gui.inv1) and nut.gui.inv1.childPanels and inventory != LocalPlayer():GetChar():GetInv()) then
 				table.insert(nut.gui.inv1.childPanels, self)
 			end
 
-			self.invID = inventory:getID()
+			self.invID = inventory:GetID()
 			self:SetSize(64, 64)
-			self:setGridSize(inventory:getSize())
+			self:SetGridSize(inventory:GetSize())
 
 			for x, items in pairs(inventory.slots) do
 				for y, data in pairs(items) do
@@ -125,7 +125,7 @@ PANEL = {}
 							else
 								icon:SetToolTip(
 									Format(nut.config.itemFormat,
-									item.getName and item:getName() or L(item.name), item:getDesc() or "")
+									item.GetName and item:GetName() or L(item.name), item:GetDesc() or "")
 								)
 							end
 							icon.itemID = item.id
@@ -140,7 +140,7 @@ PANEL = {}
 		self:Center()
 	end
 
-	function PANEL:setGridSize(w, h)
+	function PANEL:SetGridSize(w, h)
 		self.gridW = w
 		self.gridH = h
 		
@@ -248,7 +248,7 @@ PANEL = {}
 		local item
 		
 		if (inventory) then
-			item = inventory:getItemAt(oldX, oldY)
+			item = inventory:GetItemAt(oldX, oldY)
 			
 			if (!item) then
 				return false
@@ -258,7 +258,7 @@ PANEL = {}
 				return false, "notAllowed"
 			end
 		
-			if (item.onCanBeTransfered and item:onCanBeTransfered(inventory, inventory != inventory2 and inventory2 or nil) == false) then
+			if (item.OnCanBeTransfered and item:OnCanBeTransfered(inventory, inventory != inventory2 and inventory2 or nil) == false) then
 				return false
 			end
 		end
@@ -305,17 +305,17 @@ PANEL = {}
 
 			panel.inv = inventory
 
-			local itemTable = inventory:getItemAt(panel.gridX, panel.gridY)
+			local itemTable = inventory:GetItemAt(panel.gridX, panel.gridY)
 			panel.itemTable = itemTable
 
-			if (self.panels[itemTable:getID()]) then
-				self.panels[itemTable:getID()]:Remove()
+			if (self.panels[itemTable:GetID()]) then
+				self.panels[itemTable:GetID()]:Remove()
 			end
 			
 			if (itemTable.exRender) then
 				panel.Icon:SetVisible(false)
 				panel.ExtraPaint = function(self, x, y)
-					local exIcon = ikon:getIcon(itemTable.uniqueID)
+					local exIcon = ikon:GetIcon(itemTable.uniqueID)
 					if (exIcon) then
 						surface.SetMaterial(exIcon)
 						surface.SetDrawColor(color_white)
@@ -446,7 +446,7 @@ PANEL = {}
 						local inv = this.inv
 
 						if (item and inv) then
-							netstream.Start("invAct", "drop", item.id, inv:getID(), item.id)
+							netstream.Start("invAct", "drop", item.id, inv:GetID(), item.id)
 						end
 						
 						return false
@@ -478,7 +478,7 @@ PANEL = {}
 
 												-- canRun == can item combine into?
 												if (combine.onCanRun and (combine.onCanRun(itemTable, targetItem.id) != false)) then
-													netstream.Start("invAct", "combine", itemTable.id, inventory:getID(), targetItem.id)
+													netstream.Start("invAct", "combine", itemTable.id, inventory:GetID(), targetItem.id)
 												end
 
 												itemTable.player = nil
@@ -492,11 +492,11 @@ PANEL = {}
 
 													if (targetItem.isBag) then
 														-- get the inventory.
-														local bagInv = targetItem.getInv and targetItem:getInv()
+														local bagInv = targetItem.GetInv and targetItem:GetInv()
 														-- Is the bag's inventory exists?
 														if (bagInv) then
 															print(bagInv, "baggeD")
-															local mx, my = bagInv:findEmptySlot(itemTable.width, itemTable.height, true)
+															local mx, my = bagInv:FindEmptySlot(itemTable.width, itemTable.height, true)
 															
 															-- we found slot for the inventory.
 															if (mx and my) then		
@@ -640,10 +640,10 @@ hook.Add("CreateMenuButtons", "nutInventory", function(tabs)
 			nut.gui.inv1 = panel:Add("nutInventory")
 			nut.gui.inv1.childPanels = {}
 
-			local inventory = LocalPlayer():getChar():getInv()
+			local inventory = LocalPlayer():GetChar():GetInv()
 
 			if (inventory) then
-				nut.gui.inv1:setInventory(inventory)
+				nut.gui.inv1:SetInventory(inventory)
 			end
 			nut.gui.inv1:SetPos(panel:GetPos())
 		end

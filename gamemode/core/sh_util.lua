@@ -1,5 +1,5 @@
 -- Includes a file from the prefix.
-function nut.util.include(fileName, state)
+function nut.util.Include(fileName, state)
 	if (!fileName) then
 		error("[NutScript] No file name specified for including.")
 	end
@@ -26,13 +26,13 @@ function nut.util.include(fileName, state)
 end
 
 -- Include files based off the prefix within a directory.
-function nut.util.includeDir(directory, fromLua)
+function nut.util.IncludeDir(directory, fromLua)
 	-- By default, we include relatively to NutScript.
 	local baseDir = "nutscript"
 
 	-- If we're in a schema, include relative to the schema.
-	if (SCHEMA and SCHEMA.folder and SCHEMA.loading) then
-		baseDir = SCHEMA.folder.."/schema/"
+	if (Schema and Schema.folder and Schema.loading) then
+		baseDir = Schema.folder.."/schema/"
 	else
 		baseDir = baseDir.."/gamemode/"
 	end
@@ -40,12 +40,12 @@ function nut.util.includeDir(directory, fromLua)
 	-- Find all of the files within the directory.
 	for k, v in ipairs(file.Find((fromLua and "" or baseDir)..directory.."/*.lua", "LUA")) do
 		-- Include the file from the prefix.
-		nut.util.include(directory.."/"..v)
+		nut.util.Include(directory.."/"..v)
 	end
 end
 
 -- Returns the address:port of the server.
-function nut.util.getAddress()
+function nut.util.GetAddress()
 	local address = tonumber(GetConVarString("hostip"))
 
 	if (!address) then
@@ -61,7 +61,7 @@ function nut.util.getAddress()
 end
 
 -- Returns a table of admin players
-function nut.util.getAdmins(isSuper)
+function nut.util.GetAdmins(isSuper)
 	local admins = {}
 
 	for k, v in ipairs(player.GetAll()) do
@@ -80,7 +80,7 @@ function nut.util.getAdmins(isSuper)
 end
 
 -- Returns a single cached copy of a material or creates it if it doesn't exist.
-function nut.util.getMaterial(materialPath)
+function nut.util.GetMaterial(materialPath)
 	-- Cache the material.
 	nut.util.cachedMaterials = nut.util.cachedMaterials or {}
 	nut.util.cachedMaterials[materialPath] = nut.util.cachedMaterials[materialPath] or Material(materialPath)
@@ -89,7 +89,7 @@ function nut.util.getMaterial(materialPath)
 end
 
 -- Finds a player by matching their name or steam id.
-function nut.util.findPlayer(identifier, allowPatterns)
+function nut.util.FindPlayer(identifier, allowPatterns)
 	if (string.find(identifier, "STEAM_(%d+):(%d+):(%d+)")) then
 		return player.GetBySteamID(identifier)
 	end
@@ -99,14 +99,14 @@ function nut.util.findPlayer(identifier, allowPatterns)
 	end
 
 	for k, v in ipairs(player.GetAll()) do
-		if (nut.util.stringMatches(v:Name(), identifier)) then
+		if (nut.util.StringMatches(v:Name(), identifier)) then
 			return v
 		end
 	end
 end
 
 -- Returns whether or a not a string matches.
-function nut.util.stringMatches(a, b)
+function nut.util.StringMatches(a, b)
 	if (a and b) then
 		local a2, b2 = a:lower(), b:lower()
 
@@ -125,7 +125,7 @@ end
 local ADJUST_SOUND = SoundDuration("npc/metropolice/pain1.wav") > 0 and "" or "../../hl2/sound/"
 
 -- Emits sounds one after the other from an entity.
-function nut.util.emitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
+function nut.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
 	-- Let there be a delay before any sound is played.
 	delay = delay or 0
 	spacing = spacing or 0.1
@@ -161,7 +161,7 @@ function nut.util.emitQueuedSounds(entity, sounds, delay, spacing, volume, pitch
 	return delay
 end
 
-function nut.util.gridVector(vec, gridSize)
+function nut.util.GridVector(vec, gridSize)
 	if (gridSize <= 0) then
 		gridSize = 1
 	end
@@ -175,12 +175,12 @@ function nut.util.gridVector(vec, gridSize)
 	return vec
 end
 
-function nut.util.getAllChar()
+function nut.util.GetAllChar()
 	local charTable = {}
 
 	for k, v in ipairs(player.GetAll()) do
-		if (v:getChar()) then
-			table.insert(charTable, v:getChar():getID())
+		if (v:GetChar()) then
+			table.insert(charTable, v:GetChar():GetID())
 		end
 	end
 
@@ -191,14 +191,14 @@ if (CLIENT) then
 	NUT_CVAR_CHEAP = CreateClientConVar("nut_cheapblur", 0, true)
 
 	local useCheapBlur = NUT_CVAR_CHEAP:GetBool()
-	local blur = nut.util.getMaterial("pp/blurscreen")
+	local blur = nut.util.GetMaterial("pp/blurscreen")
 
 	cvars.AddChangeCallback("nut_cheapblur", function(name, old, new)
 		useCheapBlur = (tonumber(new) or 0) > 0
 	end)
 
 	-- Draws a blurred material over the screen, to blur things.
-	function nut.util.drawBlur(panel, amount, passes)
+	function nut.util.DrawBlur(panel, amount, passes)
 		-- Intensity of the blur.
 		amount = amount or 5
 
@@ -223,7 +223,7 @@ if (CLIENT) then
 		end
 	end
 
-	function nut.util.drawBlurAt(x, y, w, h, amount, passes)
+	function nut.util.DrawBlurAt(x, y, w, h, amount, passes)
 		-- Intensity of the blur.
 		amount = amount or 5
 
@@ -249,7 +249,7 @@ if (CLIENT) then
 	end
 
 	-- Draw a text with a shadow.
-	function nut.util.drawText(text, x, y, color, alignX, alignY, font, alpha)
+	function nut.util.DrawText(text, x, y, color, alignX, alignY, font, alpha)
 		color = color or color_white
 
 		return draw.TextShadow({
@@ -263,7 +263,7 @@ if (CLIENT) then
 	end
 
 	-- Wraps text so it does not pass a certain width.
-	function nut.util.wrapText(text, width, font)
+	function nut.util.WrapText(text, width, font)
 		font = font or "nutChatFont"
 		surface.SetFont(font)
 
@@ -319,7 +319,7 @@ do
 	local entityMeta = FindMetaTable("Entity")
 
 	-- Checks if an entity is a door by comparing its class.
-	function entityMeta:isDoor()
+	function entityMeta:IsDoor()
 		return self:GetClass():find("door")
 	end
 
@@ -334,19 +334,19 @@ do
 	end
 
 	-- Whether or not a vehicle is a chair by checking its model with the chair list.
-	function entityMeta:isChair()
+	function entityMeta:IsChair()
 		-- Micro-optimization in-case this gets used a lot.
 		return CHAIR_CACHE[self.GetModel(self)]
 	end
 
 	if (SERVER) then
 		-- Returns the door's slave entity.
-		function entityMeta:getDoorPartner()
+		function entityMeta:GetDoorPartner()
 			return self.nutPartner
 		end
 
 		-- Returns whether door/button is locked or not.
-		function entityMeta:isLocked()
+		function entityMeta:IsLocked()
 			if (self:IsVehicle()) then
 				local datatable = self:GetSaveTable()
 
@@ -365,17 +365,17 @@ do
 		end
 
 		-- Returns the entity that blocking door's sequence.
-		function entityMeta:getBlocker()
+		function entityMeta:GetBlocker()
 			local datatable = self:GetSaveTable()
 
 			return (datatable.pBlocker)
 		end
 	else
 		-- Returns the door's slave entity.
-		function entityMeta:getDoorPartner()
+		function entityMeta:GetDoorPartner()
 			local owner = self:GetOwner() or self.nutDoorOwner
 
-			if (IsValid(owner) and owner:isDoor()) then
+			if (IsValid(owner) and owner:IsDoor()) then
 				return owner
 			end
 
@@ -390,8 +390,8 @@ do
 	end
 
 	-- Makes a fake door to replace it.
-	function entityMeta:blastDoor(velocity, lifeTime, ignorePartner)
-		if (!self:isDoor()) then
+	function entityMeta:BlastDoor(velocity, lifeTime, ignorePartner)
+		if (!self:IsDoor()) then
 			return
 		end
 
@@ -402,10 +402,10 @@ do
 		velocity = velocity or VectorRand()*100
 		lifeTime = lifeTime or 120
 
-		local partner = self:getDoorPartner()
+		local partner = self:GetDoorPartner()
 
 		if (IsValid(partner) and !ignorePartner) then
-			partner:blastDoor(velocity, lifeTime, true)
+			partner:BlastDoor(velocity, lifeTime, true)
 		end
 
 		local color = self:GetColor()
@@ -514,19 +514,19 @@ do
 
 	-- Returns how many seconds the player has played on the server in total.
 	if (SERVER) then
-		function playerMeta:getPlayTime()
+		function playerMeta:GetPlayTime()
 			return self.nutPlayTime + (RealTime() - (self.nutJoinTime or RealTime()))
 		end
 	else
 		nut.playTime = nut.playTime or 0
 
-		function playerMeta:getPlayTime()
+		function playerMeta:GetPlayTime()
 			return nut.playTime + (RealTime() - nut.joinTime or 0)
 		end
 	end
 
 	-- Returns whether or not the player has their weapon raised.
-	function playerMeta:isWepRaised()
+	function playerMeta:IsWepRaised()
 		local weapon = self.GetActiveWeapon(self)
 		local override = hook.Run("ShouldWeaponBeRaised", self, weapon)
 
@@ -547,35 +547,35 @@ do
 		end
 
 		-- If the player has been forced to have their weapon lowered.
-		if (self.getNetVar(self, "restricted")) then
+		if (self.GetNetVar(self, "restricted")) then
 			return false
 		end
 
 		-- Let the config decide before actual results.
-		if (nut.config.get("wepAlwaysRaised")) then
+		if (nut.config.Get("wepAlwaysRaised")) then
 			return true
 		end
 
 		-- Returns what the gamemode decides.
-		return self.getNetVar(self, "raised", false)
+		return self.GetNetVar(self, "raised", false)
 	end
 
 	local vectorLength2D = FindMetaTable("Vector").Length2D
 
 	-- Checks if the player is running by seeing if the speed is faster than walking.
-	function playerMeta:isRunning()
+	function playerMeta:IsRunning()
 		return vectorLength2D(self.GetVelocity(self)) > (self.GetWalkSpeed(self) + 10)
 	end
 
 	-- Checks if the player has a female model.
-	function playerMeta:isFemale()
+	function playerMeta:IsFemale()
 		local model = self:GetModel():lower()
 
-		return model:find("female") or model:find("alyx") or model:find("mossman") or nut.anim.getModelClass(model) == "citizen_female"
+		return model:find("female") or model:find("alyx") or model:find("mossman") or nut.anim.GetModelClass(model) == "citizen_female"
 	end
 
 	-- Returns a good position in front of the player for an entity.
-	function playerMeta:getItemDropPos()
+	function playerMeta:GetItemDropPos()
 		-- Start a trace.
 		local data = {}
 			data.start = self:GetShootPos()
@@ -591,7 +591,7 @@ do
 	end
 
 	-- Do an action that requires the player to stare at something.
-	function playerMeta:doStaredAction(entity, callback, time, onCancel, distance)
+	function playerMeta:DoStaredAction(entity, callback, time, onCancel, distance)
 		local uniqueID = "nutStare"..self:UniqueID()
 		local data = {}
 		data.filter = self
@@ -622,9 +622,9 @@ do
 
 	if (SERVER) then
 		-- Sets whether or not the weapon is raised.
-		function playerMeta:setWepRaised(state)
+		function playerMeta:SetWepRaised(state)
 			-- Sets the networked variable for being raised.
-			self:setNetVar("raised", state)
+			self:SetNetVar("raised", state)
 
 			-- Delays any weapon shooting.
 			local weapon = self:GetActiveWeapon()
@@ -636,22 +636,22 @@ do
 		end
 
 		-- Inverts whether or not the weapon is raised.
-		function playerMeta:toggleWepRaised()
-			self:setWepRaised(!self:isWepRaised())
+		function playerMeta:ToggleWepRaised()
+			self:SetWepRaised(!self:IsWepRaised())
 
 			local weapon = self:GetActiveWeapon()
 
 			if (IsValid(weapon)) then
-				if (self:isWepRaised() and weapon.OnRaised) then
+				if (self:IsWepRaised() and weapon.OnRaised) then
 					weapon:OnRaised()
-				elseif (!self:isWepRaised() and weapon.OnLowered) then
+				elseif (!self:IsWepRaised() and weapon.OnLowered) then
 					weapon:OnLowered()
 				end
 			end
 		end
 
 		-- Performs a delayed action on a player.
-		function playerMeta:setAction(text, time, callback, startTime, finishTime)
+		function playerMeta:SetAction(text, time, callback, startTime, finishTime)
 			if (time and time <= 0) then
 				if (callback) then
 					callback(self)
@@ -688,7 +688,7 @@ do
 		end
 
 		-- Sends a Derma string request to the client.
-		function playerMeta:requestString(title, subTitle, callback, default)
+		function playerMeta:RequestString(title, subTitle, callback, default)
 			local time = math.floor(os.time())
 
 			self.nutStrReqs = self.nutStrReqs or {}
@@ -698,12 +698,12 @@ do
 		end
 
 		-- Removes a player's weapon and restricts interactivity.
-		function playerMeta:setRestricted(state, noMessage)
+		function playerMeta:SetRestricted(state, noMessage)
 			if (state) then
-				self:setNetVar("restricted", true)
+				self:SetNetVar("restricted", true)
 
 				if (noMessage) then
-					self:setLocalVar("restrictNoMsg", true)
+					self:SetLocalVar("restrictNoMsg", true)
 				end
 
 				self.nutRestrictWeps = self.nutRestrictWeps or {}
@@ -715,10 +715,10 @@ do
 
 				hook.Run("OnPlayerRestricted", self)
 			else
-				self:setNetVar("restricted")
+				self:SetNetVar("restricted")
 
-				if (self:getLocalVar("restrictNoMsg")) then
-					self:setLocalVar("restrictNoMsg")
+				if (self:GetLocalVar("restrictNoMsg")) then
+					self:SetLocalVar("restrictNoMsg")
 				end
 
 				if (self.nutRestrictWeps) then
@@ -736,7 +736,7 @@ do
 
 	-- Player ragdoll utility stuff.
 	do
-		function nut.util.findEmptySpace(entity, filter, spacing, size, height, tolerance)
+		function nut.util.FindEmptySpace(entity, filter, spacing, size, height, tolerance)
 			spacing = spacing or 32
 			size = size or 3
 			height = height or 36
@@ -779,7 +779,7 @@ do
 			return output
 		end
 
-		function playerMeta:isStuck()
+		function playerMeta:IsStuck()
 			return util.TraceEntity({
 				start = self:GetPos(),
 				endpos = self:GetPos(),
@@ -787,7 +787,7 @@ do
 			}, self).StartSolid
 		end
 
-		function playerMeta:setRagdolled(state, time, getUpGrace)
+		function playerMeta:SetRagdolled(state, time, getUpGrace)
 			getUpGrace = getUpGrace or time or 5
 
 			if (state) then
@@ -801,13 +801,13 @@ do
 				entity:SetModel(self:GetModel())
 				entity:SetSkin(self:GetSkin())
 				entity:Spawn()
-				entity:setNetVar("player", self)
+				entity:SetNetVar("player", self)
 				entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 				entity:Activate()
 				entity:CallOnRemove("fixer", function()
 					if (IsValid(self)) then
-						self:setLocalVar("blur", nil)
-						self:setLocalVar("ragdoll", nil)
+						self:SetLocalVar("blur", nil)
+						self:SetLocalVar("ragdoll", nil)
 
 						if (!entity.nutNoReset) then
 							self:SetPos(entity:GetPos())
@@ -837,16 +837,16 @@ do
 							end
 						end
 
-						if (self:isStuck()) then
+						if (self:IsStuck()) then
 							entity:DropToFloor()
 							self:SetPos(entity:GetPos() + Vector(0, 0, 16))
 
-							local positions = nut.util.findEmptySpace(self, {entity, self})
+							local positions = nut.util.FindEmptySpace(self, {entity, self})
 
 							for k, v in ipairs(positions) do
 								self:SetPos(v)
 
-								if (!self:isStuck()) then
+								if (!self:IsStuck()) then
 									return
 								end
 							end
@@ -873,7 +873,7 @@ do
 					end
 				end
 
-				self:setLocalVar("blur", 25)
+				self:SetLocalVar("blur", 25)
 				self.nutRagdoll = entity
 
 				entity.nutWeapons = {}
@@ -888,7 +888,7 @@ do
 					entity.nutStart = CurTime()
 					entity.nutFinish = entity.nutStart + time
 
-					self:setAction("@wakingUp", nil, nil, entity.nutStart, entity.nutFinish)
+					self:SetAction("@wakingUp", nil, nil, entity.nutStart, entity.nutFinish)
 				end
 
 				for k, v in ipairs(self:GetWeapons()) do
@@ -918,13 +918,13 @@ do
 
 							if (velocity:Length2D() >= 8) then
 								if (!entity.nutPausing) then
-									self:setAction()
+									self:SetAction()
 									entity.nutPausing = true
 								end
 
 								return
 							elseif (entity.nutPausing) then
-								self:setAction("@wakingUp", time)
+								self:SetAction("@wakingUp", time)
 								entity.nutPausing = false
 							end
 
@@ -939,7 +939,7 @@ do
 					end)
 				end
 
-				self:setLocalVar("ragdoll", entity:EntIndex())
+				self:SetLocalVar("ragdoll", entity:EntIndex())
 				hook.Run("OnCharFallover", self, entity, true)
 			elseif (IsValid(self.nutRagdoll)) then
 				self.nutRagdoll:Remove()
@@ -953,7 +953,7 @@ end
 -- Time related stuff.
 do
 	-- Gets the current time in the UTC time-zone.
-	function nut.util.getUTCTime()
+	function nut.util.GetUTCTime()
 		local date = os.date("!*t")
 		local localDate = os.date("*t")
 		localDate.isdst = false
@@ -974,7 +974,7 @@ do
 	-- Gets the amount of seconds from a given formatted string.
 	-- Example: 5y2d7w = 5 years, 2 days, and 7 weeks.
 	-- If just given a minute, it is assumed minutes.
-	function nut.util.getStringTime(text)
+	function nut.util.GetStringTime(text)
 		local minutes = tonumber(text)
 
 		if (minutes) then

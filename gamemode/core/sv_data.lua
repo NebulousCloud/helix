@@ -5,13 +5,13 @@ nut.data.stored = nut.data.stored or {}
 file.CreateDir("nutscript")
 
 -- Set and save data in the nutscript folder.
-function nut.data.set(key, value, global, ignoreMap)
+function nut.data.Set(key, value, global, ignoreMap)
 	-- Get the base path to write to.
-	local path = "nutscript/"..(global and "" or SCHEMA.folder.."/")..(ignoreMap and "" or game.GetMap().."/")
+	local path = "nutscript/"..(global and "" or Schema.folder.."/")..(ignoreMap and "" or game.GetMap().."/")
 
 	-- Create the schema folder if the data is not global.
 	if (!global) then
-		file.CreateDir("nutscript/"..SCHEMA.folder.."/")
+		file.CreateDir("nutscript/"..Schema.folder.."/")
 	end
 
 	-- If we're not ignoring the map, create a folder for the map.
@@ -26,7 +26,7 @@ function nut.data.set(key, value, global, ignoreMap)
 end
 
 -- Gets a piece of information for NutScript.
-function nut.data.get(key, default, global, ignoreMap, refresh)
+function nut.data.Get(key, default, global, ignoreMap, refresh)
 	-- If it exists in the cache, return the cached value so it is faster.
 	if (!refresh) then
 		local stored = nut.data.stored[key]
@@ -37,7 +37,7 @@ function nut.data.get(key, default, global, ignoreMap, refresh)
 	end
 
 	-- Get the path to read from.
-	local path = "nutscript/"..(global and "" or SCHEMA.folder.."/")..(ignoreMap and "" or game.GetMap().."/")
+	local path = "nutscript/"..(global and "" or Schema.folder.."/")..(ignoreMap and "" or game.GetMap().."/")
 	-- Read the data from a local file.
 	local contents = file.Read(path..key..".txt", "DATA")
 
@@ -63,9 +63,9 @@ function nut.data.get(key, default, global, ignoreMap, refresh)
 end
 
 -- Deletes existing data in nutscript framework.
-function nut.data.delete(key, global, ignoreMap)
+function nut.data.Delete(key, global, ignoreMap)
 	-- Get the path to read from.
-	local path = "nutscript/"..(global and "" or SCHEMA.folder.."/")..(ignoreMap and "" or game.GetMap().."/")
+	local path = "nutscript/"..(global and "" or Schema.folder.."/")..(ignoreMap and "" or game.GetMap().."/")
 	-- Read the data from a local file.
 	local contents = file.Read(path..key..".txt", "DATA")
 

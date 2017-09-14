@@ -2,15 +2,15 @@ local playerMeta = FindMetaTable("Player")
 
 -- Player data (outside of characters) handling.
 do
-	function playerMeta:loadNutData(callback)
-		local name = self:steamName()
+	function playerMeta:LoadNutData(callback)
+		local name = self:SteamName()
 		local steamID64 = self:SteamID64()
 		local timeStamp = math.floor(os.time())
 		local ip = self:IPAddress():match("%d+%.%d+%.%d+%.%d+")
 
 		nut.db.query("SELECT _data, _playTime FROM nut_players WHERE _steamID = "..steamID64, function(data)
 			if (IsValid(self) and data and data[1] and data[1]._data) then
-				nut.db.updateTable({
+				nut.db.UpdateTable({
 					_lastJoin = timeStamp,
 					_address = ip
 				}, nil, "players", "_steamID = "..steamID64)
@@ -22,7 +22,7 @@ do
 					callback(self.nutData)
 				end
 			else
-				nut.db.insertTable({
+				nut.db.InsertTable({
 					_steamID = steamID64,
 					_steamName = name,
 					_playTime = 0,
@@ -38,18 +38,18 @@ do
 		end)
 	end
 
-	function playerMeta:saveNutData()
+	function playerMeta:SaveNutData()
 		local name = self:Name()
 		local steamID64 = self:SteamID64()
 
-		nut.db.updateTable({
+		nut.db.UpdateTable({
 			_steamName = name,
 			_playTime = math.floor((self.nutPlayTime or 0) + (RealTime() - (self.nutJoinTime or RealTime() - 1))),
 			_data = self.nutData
 		}, nil, "players", "_steamID = "..steamID64)
 	end
 
-	function playerMeta:setNutData(key, value, noNetworking)
+	function playerMeta:SetNutData(key, value, noNetworking)
 		self.nutData = self.nutData or {}
 		self.nutData[key] = value
 
@@ -61,7 +61,7 @@ end
 
 -- Whitelisting information for the player.
 do
-	function playerMeta:setWhitelisted(faction, whitelisted)
+	function playerMeta:SetWhitelisted(faction, whitelisted)
 		if (!whitelisted) then
 			whitelisted = nil
 		end
@@ -69,12 +69,12 @@ do
 		local data = nut.faction.indices[faction]
 
 		if (data) then
-			local whitelists = self:getNutData("whitelists", {})
-			whitelists[SCHEMA.folder] = whitelists[SCHEMA.folder] or {}
-			whitelists[SCHEMA.folder][data.uniqueID] = whitelisted and true or nil
+			local whitelists = self:GetNutData("whitelists", {})
+			whitelists[Schema.folder] = whitelists[Schema.folder] or {}
+			whitelists[Schema.folder][data.uniqueID] = whitelisted and true or nil
 
-			self:setNutData("whitelists", whitelists)
-			self:saveNutData()
+			self:SetNutData("whitelists", whitelists)
+			self:SaveNutData()
 
 			return true
 		end

@@ -1,5 +1,5 @@
 nut.db = nut.db or {}
-nut.util.include("nutscript/gamemode/config/sv_database.lua")
+nut.util.Include("nutscript/gamemode/config/sv_database.lua")
 
 local function ThrowQueryFault(query, fault)
 	MsgC(Color(255, 0, 0), "* "..query.."\n")
@@ -10,7 +10,7 @@ local function ThrowConnectionFault(fault)
 	MsgC(Color(255, 0, 0), "NutScript has failed to connect to the database.\n")
 	MsgC(Color(255, 0, 0), fault.."\n")
 
-	setNetVar("dbError", fault)
+	SetNetVar("dbError", fault)
 end
 
 local modules = {}
@@ -78,7 +78,7 @@ modules.tmysql4 = {
 	end,
 	connect = function(callback)
 		if (!pcall(require, "tmysql4")) then
-			return setNetVar("dbError", system.IsWindows() and "Server is missing VC++ redistributables!" or "Server is missing binaries for tmysql4!")
+			return SetNetVar("dbError", system.IsWindows() and "Server is missing VC++ redistributables!" or "Server is missing binaries for tmysql4!")
 		end
 
 		local hostname = nut.db.hostname
@@ -119,7 +119,7 @@ modules.mysqloo = {
 			function object:onError(fault)
 				if (nut.db.object:status() == mysqloo.DATABASE_NOT_CONNECTED) then
 					MYSQLOO_QUEUE[#MYSQLOO_QUEUE + 1] = {query, callback}
-					nut.db.connect()
+					nut.db.Connect()
 
 					return
 				end
@@ -141,7 +141,7 @@ modules.mysqloo = {
 	end,
 	connect = function(callback)
 		if (!pcall(require, "mysqloo")) then
-			return setNetVar("dbError", system.IsWindows() and "Server is missing VC++ redistributables!" or "Server is missing binaries for mysqloo!")
+			return SetNetVar("dbError", system.IsWindows() and "Server is missing VC++ redistributables!" or "Server is missing binaries for mysqloo!")
 		end
 
 		local hostname = nut.db.hostname
@@ -183,7 +183,7 @@ modules.mysqloo = {
 nut.db.escape = modules.sqlite.escape
 nut.db.query = modules.sqlite.query
 
-function nut.db.connect(callback)
+function nut.db.Connect(callback)
 	local dbModule = modules[nut.db.module]
 
 	if (dbModule) then
@@ -291,7 +291,7 @@ DROP TABLE IF EXISTS `nut_players`;
 DROP TABLE IF EXISTS `nut_inventories`;
 ]]
 
-function nut.db.wipeTables()
+function nut.db.WipeTables()
 	local function callback()
 		MsgC(Color(255, 0, 0), "[Nutscript] ALL NUTSCRIPT DATA HAS BEEN WIPED\n")
 	end
@@ -306,7 +306,7 @@ function nut.db.wipeTables()
 		nut.db.query(DROP_QUERY, callback)
 	end
 
-	nut.db.loadTables()
+	nut.db.LoadTables()
 end
 
 local resetCalled = 0
@@ -323,12 +323,12 @@ concommand.Add("nut_recreatedb", function(client, cmd, arguments)
 			MsgC(Color(255, 0, 0), "[Nutscript] DATABASE WIPE IN PROGRESS.\n")
 			
 			hook.Run("OnWipeTables")
-			nut.db.wipeTables()
+			nut.db.WipeTables()
 		end
 	end
 end)
 
-function nut.db.loadTables()
+function nut.db.LoadTables()
 	if (nut.db.object) then
 		-- This is needed to perform multiple queries since the string is only 1 big query.
 		local queries = string.Explode(";", MYSQL_CREATE_TABLES)
@@ -343,7 +343,7 @@ function nut.db.loadTables()
 	hook.Run("OnLoadTables")
 end
 
-function nut.db.convertDataType(value)
+function nut.db.ConvertDataType(value)
 	if (type(value) == "string") then
 		return "'"..nut.db.escape(value).."'"
 	elseif (type(value) == "table") then
@@ -353,26 +353,26 @@ function nut.db.convertDataType(value)
 	return value
 end
 
-function nut.db.insertTable(value, callback, dbTable)
+function nut.db.InsertTable(value, callback, dbTable)
 	local query = "INSERT INTO "..("nut_"..(dbTable or "characters")).." ("
 	local keys = {}
 	local values = {}
 
 	for k, v in pairs(value) do
 		keys[#keys + 1] = k
-		values[#keys] = k:find("steamID") and v or nut.db.convertDataType(v)
+		values[#keys] = k:find("steamID") and v or nut.db.ConvertDataType(v)
 	end
 
 	query = query..table.concat(keys, ", ")..") VALUES ("..table.concat(values, ", ")..")"
 	nut.db.query(query, callback)
 end
 
-function nut.db.updateTable(value, callback, dbTable, condition)
+function nut.db.UpdateTable(value, callback, dbTable, condition)
 	local query = "UPDATE "..("nut_"..(dbTable or "characters")).." SET "
 	local changes = {}
 
 	for k, v in pairs(value) do
-		changes[#changes + 1] = k.." = "..(k:find("steamID") and v or nut.db.convertDataType(v))
+		changes[#changes + 1] = k.." = "..(k:find("steamID") and v or nut.db.ConvertDataType(v))
 	end
 
 	query = query..table.concat(changes, ", ")..(condition and " WHERE "..condition or "")

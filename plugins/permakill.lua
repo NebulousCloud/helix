@@ -2,28 +2,28 @@ PLUGIN.name = "Permakill"
 PLUGIN.author = "Thadah Denyse"
 PLUGIN.desc = "Adds permanent death in the server options."
 
-nut.config.add("pkActive", false, "Whether or not permakill is activated on the server.", nil, {
+nut.config.Add("pkActive", false, "Whether or not permakill is activated on the server.", nil, {
 	category = "Permakill"
 })
 
-nut.config.add("pkWorld", false, "Whether or not world and self damage produce permanent death.", nil, {
+nut.config.Add("pkWorld", false, "Whether or not world and self damage produce permanent death.", nil, {
 	category = "Permakill"
 })
 
 function PLUGIN:PlayerDeath(client, inflictor, attacker)
-	local character = client:getChar()
+	local character = client:GetChar()
 
-	if (nut.config.get("pkActive")) then
-		if !(nut.config.get("pkWorld") and (client == attacker or inflictor:IsWorld())) then
+	if (nut.config.Get("pkActive")) then
+		if !(nut.config.Get("pkWorld") and (client == attacker or inflictor:IsWorld())) then
 			return
 		end
-		character:setData("permakilled", true)
+		character:SetData("permakilled", true)
 	end
 end
 
 function PLUGIN:PlayerSpawn(client)
-	local character = client:getChar()
-	if (nut.config.get("pkActive") and character and character:getData("permakilled")) then
-		character:ban()
+	local character = client:GetChar()
+	if (nut.config.Get("pkActive") and character and character:GetData("permakilled")) then
+		character:Ban()
 	end
 end

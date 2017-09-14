@@ -4,7 +4,7 @@ nut.class.list = {}
 local charMeta = nut.meta.character
 
 -- Register classes from a directory.
-function nut.class.loadFromDir(directory)
+function nut.class.LoadFromDir(directory)
 	-- Search the directory for .lua files.
 	for k, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
 		-- Get the name without the "sh_" prefix and ".lua" suffix.
@@ -36,7 +36,7 @@ function nut.class.loadFromDir(directory)
 			end
 
 			-- Include the file so data can be modified.
-			nut.util.include(directory.."/"..v, "shared")
+			nut.util.Include(directory.."/"..v, "shared")
 
 			-- Why have a class without a faction?
 			if (!CLASS.faction or !team.Valid(CLASS.faction)) then
@@ -61,7 +61,7 @@ function nut.class.loadFromDir(directory)
 end
 
 -- Determines if a player is allowed to join a specific class.
-function nut.class.canBe(client, class)
+function nut.class.CanBe(client, class)
 	-- Get the class table by its numeric identifier.
 	local info = nut.class.list[class]
 
@@ -75,12 +75,12 @@ function nut.class.canBe(client, class)
 		return false, "not correct team"
 	end
 
-	if (client:getChar():getClass() == class) then
+	if (client:GetChar():GetClass() == class) then
 		return false, "same class request"
 	end
 
 	if (info.limit > 0) then
-		if (#nut.class.getPlayers(info.index) >= info.limit) then
+		if (#nut.class.GetPlayers(info.index) >= info.limit) then
 			return false, "class is full"
 		end
 	end
@@ -91,16 +91,16 @@ function nut.class.canBe(client, class)
 	return info:onCanBe(client)
 end
 
-function nut.class.get(identifier)
+function nut.class.Get(identifier)
 	return nut.class.list[identifier]
 end
 
-function nut.class.getPlayers(class)
+function nut.class.GetPlayers(class)
 	local players = {}
 	for k, v in ipairs(player.GetAll()) do
-		local char = v:getChar()
+		local char = v:GetChar()
 
-		if (char and char:getClass() == class) then
+		if (char and char:GetClass() == class) then
 			table.insert(players, v)
 		end
 	end
@@ -108,18 +108,18 @@ function nut.class.getPlayers(class)
 	return players
 end
 
-function charMeta:joinClass(class)
+function charMeta:JoinClass(class)
 	if (!class) then
-		self:kickClass()
+		self:KickClass()
 
 		return
 	end
 
-	local oldClass = self:getClass()
-	local client = self:getPlayer()
+	local oldClass = self:GetClass()
+	local client = self:GetPlayer()
 
-	if (nut.class.canBe(client, class)) then
-		self:setClass(class)
+	if (nut.class.CanBe(client, class)) then
+		self:SetClass(class)
 		hook.Run("OnPlayerJoinClass", client, class, oldClass)
 
 		return true
@@ -128,8 +128,8 @@ function charMeta:joinClass(class)
 	end
 end
 
-function charMeta:kickClass()
-	local client = self:getPlayer()
+function charMeta:KickClass()
+	local client = self:GetPlayer()
 	if (!client) then return end
 	
 	local goClass
@@ -142,7 +142,7 @@ function charMeta:kickClass()
 		end
 	end
 
-	self:joinClass(goClass)
+	self:JoinClass(goClass)
 	
 	hook.Run("OnPlayerJoinClass", client, goClass)
 end

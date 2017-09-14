@@ -38,7 +38,7 @@ nut.ammo.register("helicoptergun")
 -- Called right before the character has its information save.
 function PLUGIN:CharacterPreSave(character)
 	-- Get the player from the character.
-	local client = character:getPlayer()
+	local client = character:GetPlayer()
 
 	-- Check to see if we can get the player's ammo.
 	if (IsValid(client)) then
@@ -52,7 +52,7 @@ function PLUGIN:CharacterPreSave(character)
 			end
 		end
 
-		character:setData("ammo", ammoTable)
+		character:SetData("ammo", ammoTable)
 	end
 end
 
@@ -64,13 +64,13 @@ function PLUGIN:PlayerLoadedChar(client)
 		end
 
 		-- Get the saved ammo table from the character data.
-		local character = client:getChar()
+		local character = client:GetChar()
 
 		if (!character) then
 			return
 		end
 
-		local ammoTable = character:getData("ammo")
+		local ammoTable = character:GetData("ammo")
 
 		-- Check if the ammotable is exists.
 		if (ammoTable) then

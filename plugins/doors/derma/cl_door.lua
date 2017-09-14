@@ -32,14 +32,14 @@ local PANEL = {}
 		end
 	end
 
-	function PANEL:setDoor(door, access, door2)
+	function PANEL:SetDoor(door, access, door2)
 		door.nutPanel = self
 
 		self.accessData = access
 		self.door = door
 
 		for k, v in ipairs(player.GetAll()) do
-			if (v != LocalPlayer() and v:getChar()) then
+			if (v != LocalPlayer() and v:GetChar()) then
 				self.access:AddLine(v:Name(), L(ACCESS_LABELS[access[v] or 0])).player = v
 			end
 		end
@@ -52,7 +52,7 @@ local PANEL = {}
 			self.sell:DockMargin(0, 5, 0, 0)
 			self.sell.DoClick = function(this)
 				self:Remove()
-				nut.command.send("doorsell")
+				nut.command.Send("doorsell")
 			end
 		end
 
@@ -64,11 +64,11 @@ local PANEL = {}
 				if (!this:IsEditing()) then
 					local entity = IsValid(door2) and door2 or door
 
-					self.name:SetText(entity:getNetVar("title", L"dTitleOwned"))
+					self.name:SetText(entity:GetNetVar("title", L"dTitleOwned"))
 				end
 			end
 			self.name.OnEnter = function(this)
-				nut.command.send("doorsettitle", this:GetText())
+				nut.command.Send("doorsettitle", this:GetText())
 			end
 		end
 	end

@@ -75,7 +75,7 @@ function PANEL:Init()
 	
 	self.model.Icon:SetVisible(false)
 	self.model.Paint = function(self, x, y)
-		local exIcon = ikon:getIcon("iconEditor")
+		local exIcon = ikon:GetIcon("iconEditor")
 		if (exIcon) then
 			surface.SetMaterial(exIcon)
 			surface.SetDrawColor(color_white)

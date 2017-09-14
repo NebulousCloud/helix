@@ -10,7 +10,7 @@ ITEM.isBag = true
 ITEM.functions.View = {
 	icon = "icon16/briefcase.png",
 	onClick = function(item)
-		local index = item:getData("id")
+		local index = item:GetData("id")
 
 		if (index) then
 			local panel = nut.gui["inv"..index]
@@ -23,9 +23,9 @@ ITEM.functions.View = {
 
 			if (inventory and inventory.slots) then
 				panel = vgui.Create("nutInventory", parent)
-				panel:setInventory(inventory)
+				panel:SetInventory(inventory)
 				panel:ShowCloseButton(true)
-				panel:SetTitle(item.getName and item:getName() or L(item.name))
+				panel:SetTitle(item.GetName and item:GetName() or L(item.name))
 
 				nut.gui["inv"..index] = panel
 			else
@@ -36,7 +36,7 @@ ITEM.functions.View = {
 		return false
 	end,
 	onCanRun = function(item)
-		return !IsValid(item.entity) and item:getData("id")
+		return !IsValid(item.entity) and item:GetData("id")
 	end
 }
 
@@ -44,14 +44,14 @@ ITEM.functions.View = {
 function ITEM:onInstanced(invID, x, y)
 	local inventory = nut.item.inventories[invID]
 
-	nut.item.newInv(inventory and inventory.owner or 0, self.uniqueID, function(inventory)
+	nut.item.NewInv(inventory and inventory.owner or 0, self.uniqueID, function(inventory)
 		inventory.vars.isBag = self.uniqueID
-		self:setData("id", inventory:getID())
+		self:SetData("id", inventory:GetID())
 	end)
 end
 
-function ITEM:getInv()
-	local index = self:getData("id")
+function ITEM:GetInv()
+	local index = self:GetData("id")
 
 	if (index) then
 		return nut.item.inventories[index]
@@ -60,34 +60,34 @@ end
 
 -- Called when the item first appears for a client.
 function ITEM:onSendData()
-	local index = self:getData("id")
+	local index = self:GetData("id")
 
 	if (index) then
 		local inventory = nut.item.inventories[index]
 
 		if (inventory) then
 			inventory.vars.isBag = self.uniqueID
-			inventory:sync(self.player)
+			inventory:Sync(self.player)
 		else
-			local owner = self.player:getChar():getID()
+			local owner = self.player:GetChar():GetID()
 
-			nut.item.restoreInv(self:getData("id"), self.invWidth, self.invHeight, function(inventory)
+			nut.item.RestoreInv(self:GetData("id"), self.invWidth, self.invHeight, function(inventory)
 				inventory.vars.isBag = self.uniqueID
-				inventory:setOwner(owner, true)
+				inventory:SetOwner(owner, true)
 			end)
 		end
 	else
 		local inventory = nut.item.inventories[self.invID]
 		local client = self.player
 
-		nut.item.newInv(self.player:getChar():getID(), self.uniqueID, function(inventory)
-			self:setData("id", inventory:getID())
+		nut.item.NewInv(self.player:GetChar():GetID(), self.uniqueID, function(inventory)
+			self:SetData("id", inventory:GetID())
 		end)
 	end
 end
 
 ITEM.postHooks.drop = function(item, result)
-	local index = item:getData("id")
+	local index = item:GetData("id")
 
 	nut.db.query("UPDATE nut_inventories SET _charID = 0 WHERE _invID = "..index)
 	netstream.Start(item.player, "nutBagDrop", index)
@@ -105,7 +105,7 @@ end
 
 -- Called before the item is permanently deleted.
 function ITEM:onRemoved()
-	local index = self:getData("id")
+	local index = self:GetData("id")
 
 	if (index) then
 		nut.db.query("DELETE FROM nut_items WHERE _invID = "..index)
@@ -114,31 +114,31 @@ function ITEM:onRemoved()
 end
 
 -- Called when the item should tell whether or not it can be transfered between inventories.
-function ITEM:onCanBeTransfered(oldInventory, newInventory)
-	local index = self:getData("id")
+function ITEM:OnCanBeTransfered(oldInventory, newInventory)
+	local index = self:GetData("id")
 
 	if (newInventory) then
 		if (newInventory.vars and newInventory.vars.isBag) then
 			return false
 		end
 
-		local index2 = newInventory:getID()
+		local index2 = newInventory:GetID()
 
 		if (index == index2) then
 			return false
 		end
 
-		for k, v in pairs(self:getInv():getItems()) do
-			if (v:getData("id") == index2) then
+		for k, v in pairs(self:GetInv():GetItems()) do
+			if (v:GetData("id") == index2) then
 				return false
 			end
 		end
 	end
 	
-	return !newInventory or newInventory:getID() != oldInventory:getID() or newInventory.vars.isBag
+	return !newInventory or newInventory:GetID() != oldInventory:GetID() or newInventory.vars.isBag
 end
 
 -- Called after the item is registered into the item tables.
 function ITEM:onRegistered()
-	nut.item.registerInv(self.uniqueID, self.invWidth, self.invHeight, true)
+	nut.item.RegisterInv(self.uniqueID, self.invWidth, self.invHeight, true)
 end

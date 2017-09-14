@@ -6,51 +6,51 @@ function GM:PlayerInitialSpawn(client)
 		local index = math.random(1, table.Count(nut.faction.indices))
 		local faction = nut.faction.indices[index]
 
-		local character = nut.char.new({
+		local character = nut.char.New({
 			name = client:Name(),
 			faction = faction and faction.uniqueID or "unknown",
 			model = faction and table.Random(faction.models) or "models/gman.mdl"
 		}, botID, client, client:SteamID64())
 		character.isBot = true
 
-		local inventory = nut.item.createInv(nut.config.get("invW"), nut.config.get("invH"), botID)
-		inventory:setOwner(botID)
+		local inventory = nut.item.CreateInv(nut.config.Get("invW"), nut.config.Get("invH"), botID)
+		inventory:SetOwner(botID)
 		inventory.noSave = true
 
 		character.vars.inv = {inventory}
 
 		nut.char.loaded[os.time()] = character
 
-		character:setup()
+		character:Setup()
 		client:Spawn()
 
 		return
 	end
 
-	nut.config.send(client)
-	nut.date.send(client)
+	nut.config.Send(client)
+	nut.date.Send(client)
 	
-	client:loadNutData(function(data)
+	client:LoadNutData(function(data)
 		if (!IsValid(client)) then return end
 
-		local address = nut.util.getAddress()			
-		local noCache = client:getNutData("lastIP", address) != address
-		client:setNutData("lastIP", address)
+		local address = nut.util.GetAddress()			
+		local noCache = client:GetNutData("lastIP", address) != address
+		client:SetNutData("lastIP", address)
 
 		netstream.Start(client, "nutDataSync", data, client.nutPlayTime)
 
-		nut.char.restore(client, function(charList)
+		nut.char.Restore(client, function(charList)
 			if (!IsValid(client)) then return end
 
 			MsgN("Loaded ("..table.concat(charList, ", ")..") for "..client:Name())
 
 			for k, v in ipairs(charList) do
-				nut.char.loaded[v]:sync(client)
+				nut.char.loaded[v]:Sync(client)
 			end
 
 			for k, v in ipairs(player.GetAll()) do
-				if (v:getChar()) then
-					v:getChar():sync(client)
+				if (v:GetChar()) then
+					v:GetChar():Sync(client)
 				end
 			end
 
@@ -58,7 +58,7 @@ function GM:PlayerInitialSpawn(client)
 				netstream.Start(client, "charMenu", charList)
 			client.nutLoaded = true
 
-			client:setNutData("intro", true)
+			client:SetNutData("intro", true)
 		end, noCache)
 	end)
 
@@ -75,11 +75,11 @@ function GM:PlayerInitialSpawn(client)
 end
 
 function GM:PlayerUse(client, entity)
-	if (client:getNetVar("restricted")) then
+	if (client:GetNetVar("restricted")) then
 		return false
 	end
 
-	if (entity:isDoor()) then
+	if (entity:IsDoor()) then
 		local result = hook.Run("CanPlayerUseDoor", client, entity)
 
 		if (result == false) then
@@ -96,7 +96,7 @@ function GM:KeyPress(client, key)
 	if (key == IN_RELOAD) then
 		timer.Create("nutToggleRaise"..client:SteamID(), 1, 1, function()
 			if (IsValid(client)) then
-				client:toggleWepRaised()
+				client:ToggleWepRaised()
 			end
 		end)
 	elseif (key == IN_USE) then
@@ -106,7 +106,7 @@ function GM:KeyPress(client, key)
 			data.filter = client
 		local entity = util.TraceLine(data).Entity
 
-		if (IsValid(entity) and entity:isDoor() or entity:IsPlayer()) then
+		if (IsValid(entity) and entity:IsDoor() or entity:IsPlayer()) then
 			hook.Run("PlayerUse", client, entity)
 		end
 	end
@@ -119,7 +119,7 @@ function GM:KeyRelease(client, key)
 end
 
 function GM:CanPlayerInteractItem(client, action, item)
-	if (client:getNetVar("restricted")) then
+	if (client:GetNetVar("restricted")) then
 		return false
 	end
 
@@ -136,10 +136,10 @@ end
 
 function GM:CanPlayerTakeItem(client, item)
 	if (type(item) == "Entity") then
-		local char = client:getChar()
+		local char = client:GetChar()
 		
-		if (item.nutSteamID and item.nutSteamID == client:SteamID() and item.nutCharID != char:getID()) then
-			client:notifyLocalized("playerCharBelonging")
+		if (item.nutSteamID and item.nutSteamID == client:SteamID() and item.nutCharID != char:GetID()) then
+			client:NotifyLocalized("playerCharBelonging")
 
 			return false
 		end
@@ -147,11 +147,11 @@ function GM:CanPlayerTakeItem(client, item)
 end
 
 function GM:PlayerSwitchWeapon(client, oldWeapon, newWeapon)
-	client:setWepRaised(false)
+	client:SetWepRaised(false)
 end
 
 function GM:PlayerShouldTakeDamage(client, attacker)
-	return client:getChar() != nil
+	return client:GetChar() != nil
 end
 
 function GM:GetFallDamage(client, speed)
@@ -184,7 +184,7 @@ end
 
 function GM:PlayerLoadedChar(client, character, lastChar)
 	if (lastChar) then
-		local charEnts = lastChar:getVar("charEnts") or {}
+		local charEnts = lastChar:GetVar("charEnts") or {}
 
 		for k, v in ipairs(charEnts) do
 			if (v and IsValid(v)) then
@@ -192,14 +192,14 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 			end
 		end
 
-		lastChar:setVar("charEnts", nil) 
+		lastChar:SetVar("charEnts", nil) 
 	end
 
 	if (character) then
 		for k, v in pairs(nut.class.list) do
 			if (v.faction == client:Team()) then
 				if (v.isDefault) then
-					character:setClass(v.index)
+					character:SetClass(v.index)
 
 					break
 				end
@@ -213,14 +213,14 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 		client.nutRagdoll:Remove()
 	end
 
-	local faction = nut.faction.indices[character:getFaction()]
+	local faction = nut.faction.indices[character:GetFaction()]
 
 	if (faction and faction.pay and faction.pay > 0) then
 		timer.Create("nutSalary"..client:UniqueID(), faction.payTime or 300, 0, function()
 			local pay = hook.Run("GetSalaryAmount", client, faction) or faction.pay
 
-			character:giveMoney(pay)
-			client:notifyLocalized("salary", nut.currency.get(pay))
+			character:GiveMoney(pay)
+			client:NotifyLocalized("salary", nut.currency.Get(pay))
 		end)
 	end
 
@@ -232,14 +232,14 @@ function GM:CharacterLoaded(id)
 	local character = nut.char.loaded[id]
 
 	if (character) then
-		local client = character:getPlayer()
+		local client = character:GetPlayer()
 
 		if (IsValid(client)) then
 			local uniqueID = "nutSaveChar"..client:SteamID()
 
-			timer.Create(uniqueID, nut.config.get("saveInterval"), 0, function()
-				if (IsValid(client) and client:getChar()) then
-					client:getChar():save()
+			timer.Create(uniqueID, nut.config.Get("saveInterval"), 0, function()
+				if (IsValid(client) and client:GetChar()) then
+					client:GetChar():Save()
 				else
 					timer.Remove(uniqueID)
 				end
@@ -249,17 +249,17 @@ function GM:CharacterLoaded(id)
 end
 
 function GM:PlayerSay(client, message)
-	local chatType, message, anonymous = nut.chat.parse(client, message, true)
+	local chatType, message, anonymous = nut.chat.Parse(client, message, true)
 
 	if (chatType == "ic") then
-		if (nut.command.parse(client, message)) then
+		if (nut.command.Parse(client, message)) then
 			return ""
 		end
 	end
 
-	nut.chat.send(client, chatType, message, anonymous)
-	nut.log.add(client, "chat", chatType and chatType:upper() or "??", message)
-	--nut.log.add(client:Name().." said ["..chatType:upper().."] \""..message.."\"")
+	nut.chat.Send(client, chatType, message, anonymous)
+	nut.log.Add(client, "chat", chatType and chatType:upper() or "??", message)
+	--nut.log.Add(client:Name().." said ["..chatType:upper().."] \""..message.."\"")
 
 	hook.Run("PostPlayerSay", client, message, chatType, anonymous)
 
@@ -270,7 +270,7 @@ function GM:PlayerSpawn(client)
 	client:SetNoDraw(false)
 	client:UnLock()
 	client:SetNotSolid(false)
-	client:setAction()
+	client:SetAction()
 
 	hook.Run("PlayerLoadout", client)
 end
@@ -284,7 +284,7 @@ GM.PlayerSpawnEffect = IsAdmin
 GM.PlayerSpawnSENT = IsAdmin
 
 function GM:PlayerSpawnNPC(client, npcType, weapon)
-	return client:IsAdmin() or client:getChar():hasFlags("n")
+	return client:IsAdmin() or client:GetChar():HasFlags("n")
 end
 
 function GM:PlayerSpawnSWEP(client, weapon, info)
@@ -292,7 +292,7 @@ function GM:PlayerSpawnSWEP(client, weapon, info)
 end
 
 function GM:PlayerSpawnProp(client)
-	if (client:getChar() and client:getChar():hasFlags("e")) then
+	if (client:GetChar() and client:GetChar():HasFlags("e")) then
 		return true
 	end
 
@@ -300,7 +300,7 @@ function GM:PlayerSpawnProp(client)
 end
 
 function GM:PlayerSpawnRagdoll(client)
-	if (client:getChar() and client:getChar():hasFlags("r")) then
+	if (client:GetChar() and client:GetChar():HasFlags("r")) then
 		return true
 	end
 
@@ -308,11 +308,11 @@ function GM:PlayerSpawnRagdoll(client)
 end
 
 function GM:PlayerSpawnVehicle(client, model, name, data)
-	if (client:getChar()) then
+	if (client:GetChar()) then
 		if (data.Category == "Chairs") then
-			return client:getChar():hasFlags("c")
+			return client:GetChar():HasFlags("c")
 		else
-			return client:getChar():hasFlags("C")
+			return client:GetChar():HasFlags("C")
 		end
 	end
 	
@@ -329,18 +329,18 @@ function GM:PlayerLoadout(client)
 	
 	client:SetWeaponColor(Vector(client:GetInfo("cl_weaponcolor")))
 	client:StripWeapons()
-	client:setLocalVar("blur", nil)
+	client:SetLocalVar("blur", nil)
 
-	local character = client:getChar()
+	local character = client:GetChar()
 
 	-- Check if they have loaded a character.
 	if (character) then
 		client:SetupHands()
 		-- Set their player model to the character's model.
-		client:SetModel(character:getModel())
+		client:SetModel(character:GetModel())
 		client:Give("nut_hands")
-		client:SetWalkSpeed(nut.config.get("walkSpeed"))
-		client:SetRunSpeed(nut.config.get("runSpeed"))
+		client:SetWalkSpeed(nut.config.Get("walkSpeed"))
+		client:SetRunSpeed(nut.config.Get("runSpeed"))
 		
 		local faction = nut.faction.indices[client:Team()]
 
@@ -359,7 +359,7 @@ function GM:PlayerLoadout(client)
 		end
 
 		-- Ditto, but for classes.
-		local class = nut.class.list[client:getChar():getClass()]
+		local class = nut.class.list[client:GetChar():GetClass()]
 
 		if (class) then
 			if (class.onSpawn) then
@@ -374,8 +374,8 @@ function GM:PlayerLoadout(client)
 		end
 
 		-- Apply any flags as needed.
-		nut.flag.onSpawn(client)
-		nut.attribs.setup(client)
+		nut.flag.OnSpawn(client)
+		nut.attribs.Setup(client)
 
 		hook.Run("PostPlayerLoadout", client)
 
@@ -389,16 +389,16 @@ end
 
 function GM:PostPlayerLoadout(client)
 	-- Reload All Attrib Boosts
-	local char = client:getChar()
+	local char = client:GetChar()
 
-	if (char:getInv()) then
-		for k, v in pairs(char:getInv():getItems()) do
-			v:call("onLoadout", client)
+	if (char:GetInv()) then
+		for k, v in pairs(char:GetInv():GetItems()) do
+			v:Call("onLoadout", client)
 
-			if (v:getData("equip")) then
+			if (v:GetData("equip")) then
 				if (v.attribBoosts) then
 					for k, v in pairs(v.attribBoosts) do
-						char:addBoost(v.uniqueID, k, v)
+						char:AddBoost(v.uniqueID, k, v)
 					end
 				end
 			end
@@ -413,19 +413,19 @@ local deathSounds = {
 }
 
 function GM:PlayerDeath(client, inflictor, attacker)
-	if (client:getChar()) then
+	if (client:GetChar()) then
 		if (IsValid(client.nutRagdoll)) then
 			client.nutRagdoll.nutIgnoreDelete = true
 			client.nutRagdoll:Remove()
-			client:setLocalVar("blur", nil)
+			client:SetLocalVar("blur", nil)
 		end
 
-		client:setNetVar("deathStartTime", CurTime())
-		client:setNetVar("deathTime", CurTime() + nut.config.get("spawnTime", 5))
+		client:SetNetVar("deathStartTime", CurTime())
+		client:SetNetVar("deathTime", CurTime() + nut.config.Get("spawnTime", 5))
 
 		local deathSound = hook.Run("GetPlayerDeathSound", client) or table.Random(deathSounds)
 
-		if (client:isFemale() and !deathSound:find("female")) then
+		if (client:IsFemale() and !deathSound:find("female")) then
 			deathSound = deathSound:gsub("male", "female")
 		end
 
@@ -458,7 +458,7 @@ function GM:PlayerHurt(client, attacker, health, damage)
 	if ((client.nutNextPain or 0) < CurTime()) then
 		local painSound = hook.Run("GetPlayerPainSound", client) or table.Random(painSounds)
 
-		if (client:isFemale() and !painSound:find("female")) then
+		if (client:IsFemale() and !painSound:find("female")) then
 			painSound = painSound:gsub("male", "female")
 		end
 
@@ -468,8 +468,8 @@ function GM:PlayerHurt(client, attacker, health, damage)
 end
 
 function GM:PlayerDeathThink(client)
-	if (client:getChar()) then
-		local deathTime = client:getNetVar("deathTime")
+	if (client:GetChar()) then
+		local deathTime = client:GetNetVar("deathTime")
 
 		if (deathTime and deathTime <= CurTime()) then
 			client:Spawn()
@@ -480,12 +480,12 @@ function GM:PlayerDeathThink(client)
 end
 
 function GM:PlayerDisconnected(client)
-	client:saveNutData()
+	client:SaveNutData()
 
-	local character = client:getChar()
+	local character = client:GetChar()
 
 	if (character) then
-		local charEnts = character:getVar("charEnts") or {}
+		local charEnts = character:GetVar("charEnts") or {}
 
 		for k, v in ipairs(charEnts) do
 			if (v and IsValid(v)) then
@@ -494,7 +494,7 @@ function GM:PlayerDisconnected(client)
 		end
 
 		hook.Run("OnCharDisconnect", client, character)
-		character:save()
+		character:Save()
 	end
 end
 
@@ -530,15 +530,15 @@ end
 
 function GM:ShutDown()
 	nut.shuttingDown = true
-	nut.config.save()
+	nut.config.Save()
 
 	hook.Run("SaveData")
 
 	for k, v in ipairs(player.GetAll()) do
-		v:saveNutData()
+		v:SaveNutData()
 
-		if (v:getChar()) then
-			v:getChar():save()
+		if (v:GetChar()) then
+			v:GetChar():Save()
 		end
 	end
 end
@@ -561,13 +561,13 @@ function GM:ScalePlayerDamage(client, hitGroup, dmgInfo)
 end
 
 function GM:GetGameDescription()
-	return "NS - "..(SCHEMA and SCHEMA.name or "Unknown")
+	return "NS - "..(Schema and Schema.name or "Unknown")
 end
 
 function GM:OnPlayerUseBusiness(client, item)
 	-- You can manipulate purchased items with this hook.
 	-- does not requires any kind of return.
-	-- ex) item:setData("businessItem", true)
+	-- ex) item:SetData("businessItem", true)
 	-- then every purchased item will be marked as Business Item.
 end
 
@@ -576,22 +576,22 @@ function GM:PlayerDeathSound()
 end
 
 function GM:InitializedSchema()
-	if (!nut.data.get("date", nil, false, true)) then
-		nut.data.set("date", os.time(), false, true)
+	if (!nut.data.Get("date", nil, false, true)) then
+		nut.data.Set("date", os.time(), false, true)
 	end
 
-	nut.date.start = nut.data.get("date", os.time(), false, true)
+	nut.date.start = nut.data.Get("date", os.time(), false, true)
 
-	game.ConsoleCommand("sbox_persist ns_"..SCHEMA.folder.."\n")
+	game.ConsoleCommand("sbox_persist ns_"..Schema.folder.."\n")
 end
 
 function GM:PlayerCanHearPlayersVoice(listener, speaker)
-	local allowVoice = nut.config.get("allowVoice")
+	local allowVoice = nut.config.Get("allowVoice")
 	if allowVoice then
 		local listener_pos = listener:GetPos()
 		local speaker_pos = speaker:GetPos()
 		local voice_dis = math.Distance(speaker_pos.x, speaker_pos.y, listener_pos.x, listener_pos.y)
-		if voice_dis > nut.config.get("voiceDistance") then
+		if voice_dis > nut.config.Get("voiceDistance") then
 			allowVoice = false
 		end
 	end
@@ -642,18 +642,18 @@ function GM:PostCleanupMap()
 end
 
 function GM:CharacterPreSave(character)
-	local client = character:getPlayer()
+	local client = character:GetPlayer()
 
-	for k, v in pairs(character:getInv():getItems()) do
+	for k, v in pairs(character:GetInv():GetItems()) do
 		if (v.onSave) then
-			v:call("onSave", client)
+			v:Call("onSave", client)
 		end
 	end
 end
 
 timer.Create("nutLifeGuard", 1, 0, function()
 	for k, v in ipairs(player.GetAll()) do
-		if (v:getChar() and v:Alive() and hook.Run("ShouldPlayerDrowned", v) != false) then
+		if (v:GetChar() and v:Alive() and hook.Run("ShouldPlayerDrowned", v) != false) then
 			if (v:WaterLevel() >= 3) then
 				if (!v.drowningTime) then
 					v.drowningTime = CurTime() + 30
@@ -695,7 +695,7 @@ end)
 
 function GM:GetPreferredCarryAngles(entity)
 	if (entity:GetClass() == "nut_item") then
-		local itemTable = entity:getItemTable()
+		local itemTable = entity:GetItemTable()
 
 		if (itemTable) then
 			local preferedAngle = itemTable.preferedAngle

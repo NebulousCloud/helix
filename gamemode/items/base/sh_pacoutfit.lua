@@ -57,30 +57,30 @@ ITEM.bodyGroups = {
 if (CLIENT) then
 	-- Draw camo if it is available.
 	function ITEM:paintOver(item, w, h)
-		if (item:getData("equip")) then
+		if (item:GetData("equip")) then
 			surface.SetDrawColor(110, 255, 110, 100)
 			surface.DrawRect(w - 14, h - 14, 8, 8)
 		end
 	end
 end
 
-function ITEM:removePart(client)
-	local char = client:getChar()
+function ITEM:RemovePart(client)
+	local char = client:GetChar()
 	
-	self:setData("equip", false)
-	client:removePart(self.uniqueID)
+	self:SetData("equip", false)
+	client:RemovePart(self.uniqueID)
 
 	if (self.attribBoosts) then
 		for k, _ in pairs(self.attribBoosts) do
-			char:removeBoost(self.uniqueID, k)
+			char:RemoveBoost(self.uniqueID, k)
 		end
 	end
 end
 
 -- On item is dropped, Remove a weapon from the player and keep the ammo in the item.
-ITEM:hook("drop", function(item)
-	if (item:getData("equip")) then
-		item:removePart(item.player)
+ITEM:Hook("drop", function(item)
+	if (item:GetData("equip")) then
+		item:RemovePart(item.player)
 	end
 end)
 
@@ -90,12 +90,12 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 	tip = "equipTip",
 	icon = "icon16/cross.png",
 	onRun = function(item)
-		item:removePart(item.player)
+		item:RemovePart(item.player)
 		
 		return false
 	end,
 	onCanRun = function(item)
-		return (!IsValid(item.entity) and item:getData("equip") == true)
+		return (!IsValid(item.entity) and item:GetData("equip") == true)
 	end
 }
 
@@ -105,39 +105,39 @@ ITEM.functions.Equip = {
 	tip = "equipTip",
 	icon = "icon16/tick.png",
 	onRun = function(item)
-		local char = item.player:getChar()
-		local items = char:getInv():getItems()
+		local char = item.player:GetChar()
+		local items = char:GetInv():GetItems()
 
 		for k, v in pairs(items) do
 			if (v.id != item.id) then
 				local itemTable = nut.item.instances[v.id]
 
-				if (itemTable.pacData and v.outfitCategory == item.outfitCategory and itemTable:getData("equip")) then
-					item.player:notify("You're already equipping this kind of outfit")
+				if (itemTable.pacData and v.outfitCategory == item.outfitCategory and itemTable:GetData("equip")) then
+					item.player:Notify("You're already equipping this kind of outfit")
 
 					return false
 				end
 			end
 		end
 
-		item:setData("equip", true)
-		item.player:addPart(item.uniqueID, item)
+		item:SetData("equip", true)
+		item.player:AddPart(item.uniqueID, item)
 
 		if (item.attribBoosts) then
 			for k, v in pairs(item.attribBoosts) do
-				char:addBoost(item.uniqueID, k, v)
+				char:AddBoost(item.uniqueID, k, v)
 			end
 		end
 		
 		return false
 	end,
 	onCanRun = function(item)
-		return (!IsValid(item.entity) and item:getData("equip") != true)
+		return (!IsValid(item.entity) and item:GetData("equip") != true)
 	end
 }
 
-function ITEM:onCanBeTransfered(oldInventory, newInventory)
-	if (newInventory and self:getData("equip")) then
+function ITEM:OnCanBeTransfered(oldInventory, newInventory)
+	if (newInventory and self:GetData("equip")) then
 		return false
 	end
 

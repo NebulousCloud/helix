@@ -19,7 +19,7 @@ if (SERVER) then
 	end
 
 	-- Adds a panel to the list, sends it to the players, and saves data.
-	function PLUGIN:addPanel(position, angles, url, w, h, scale)
+	function PLUGIN:AddPanel(position, angles, url, w, h, scale)
 		w = w or 1024
 		h = h or 768
 		scale = math.Clamp((scale or 1) * 0.1, 0.001, 5)
@@ -37,7 +37,7 @@ if (SERVER) then
 	end
 
 	-- Removes a panel that are within the radius of a position.
-	function PLUGIN:removePanel(position, radius)
+	function PLUGIN:RemovePanel(position, radius)
 		-- Store how many panels are removed.
 		local i = 0
 		-- Default the radius to 100.
@@ -68,12 +68,12 @@ if (SERVER) then
 
 	-- Called after entities have been loaded on the map.
 	function PLUGIN:LoadData()
-		self.list = self:getData() or {}
+		self.list = self:GetData() or {}
 	end
 
 	-- Called when the plugin needs to save information.
 	function PLUGIN:SavePanels()
-		self:setData(self.list)
+		self:SetData(self.list)
 	end
 else
 	-- Receives new panel objects that need to be drawn.
@@ -141,7 +141,7 @@ else
 	end
 end
 
-nut.command.add("paneladd", {
+nut.command.Add("paneladd", {
 	adminOnly = true,
 	syntax = "<string url> [number w] [number h] [number scale]",
 	onRun = function(client, arguments)
@@ -157,14 +157,14 @@ nut.command.add("paneladd", {
 		angles:RotateAroundAxis(angles:Forward(), 90)
 		
 		-- Add the panel.
-		PLUGIN:addPanel(position + angles:Up()*0.1, angles, arguments[1], tonumber(arguments[2]), tonumber(arguments[3]), tonumber(arguments[4]))
+		PLUGIN:AddPanel(position + angles:Up()*0.1, angles, arguments[1], tonumber(arguments[2]), tonumber(arguments[3]), tonumber(arguments[4]))
 
 		-- Tell the player the panel was added.
 		return L("panelAdded", client)
 	end
 })
 
-nut.command.add("panelremove", {
+nut.command.Add("panelremove", {
 	adminOnly = true,
 	syntax = "[number radius]",
 	onRun = function(client, arguments)
@@ -172,7 +172,7 @@ nut.command.add("panelremove", {
 		local trace = client:GetEyeTrace()
 		local position = trace.HitPos
 		-- Remove the panel(s) and get the amount removed.
-		local amount = PLUGIN:removePanel(position, tonumber(arguments[1]))
+		local amount = PLUGIN:RemovePanel(position, tonumber(arguments[1]))
 
 		-- Tell the player how many panels got removed.
 		return L("panelRemoved", client, amount)

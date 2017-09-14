@@ -19,7 +19,7 @@ if (SERVER) then
 	end
 
 	-- Adds a text to the list, sends it to the players, and saves data.
-	function PLUGIN:addText(position, angles, text, scale)
+	function PLUGIN:AddText(position, angles, text, scale)
 		-- Find an ID for this text within the list of texts.
 		local index = #self.list + 1
 		-- Play with the numbers to get a 3D2D scale.
@@ -35,7 +35,7 @@ if (SERVER) then
 	end
 
 	-- Removes a text that are within the radius of a position.
-	function PLUGIN:removeText(position, radius)
+	function PLUGIN:RemoveText(position, radius)
 		-- Store how many texts are removed.
 		local i = 0
 		-- Default the radius to 100.
@@ -66,12 +66,12 @@ if (SERVER) then
 
 	-- Called after entities have been loaded on the map.
 	function PLUGIN:LoadData()
-		self.list = self:getData() or {}
+		self.list = self:GetData() or {}
 	end
 
 	-- Called when the plugin needs to save information.
 	function PLUGIN:SaveText()
-		self:setData(self.list)
+		self:SetData(self.list)
 	end
 else
 	-- Receives new text objects that need to be drawn.
@@ -155,7 +155,7 @@ else
 	end
 end
 
-nut.command.add("textadd", {
+nut.command.Add("textadd", {
 	adminOnly = true,
 	syntax = "<string text> [number scale]",
 	onRun = function(client, arguments)
@@ -167,14 +167,14 @@ nut.command.add("textadd", {
 		angles:RotateAroundAxis(angles:Forward(), 90)
 		
 		-- Add the text.
-		PLUGIN:addText(position + angles:Up()*0.1, angles, arguments[1], tonumber(arguments[2]))
+		PLUGIN:AddText(position + angles:Up()*0.1, angles, arguments[1], tonumber(arguments[2]))
 
 		-- Tell the player the text was added.
 		return L("textAdded", client)
 	end
 })
 
-nut.command.add("textremove", {
+nut.command.Add("textremove", {
 	adminOnly = true,
 	syntax = "[number radius]",
 	onRun = function(client, arguments)
@@ -182,7 +182,7 @@ nut.command.add("textremove", {
 		local trace = client:GetEyeTrace()
 		local position = trace.HitPos + trace.HitNormal*2
 		-- Remove the text(s) and get the amount removed.
-		local amount = PLUGIN:removeText(position, tonumber(arguments[1]))
+		local amount = PLUGIN:RemoveText(position, tonumber(arguments[1]))
 
 		-- Tell the player how many texts got removed.
 		return L("textRemoved", client, amount)

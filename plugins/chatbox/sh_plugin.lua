@@ -5,7 +5,7 @@ PLUGIN.desc = "Adds a chatbox that replaces the default one."
 if (CLIENT) then
 	NUT_CVAR_CHATFILTER = CreateClientConVar("nut_chatfilter", "", true, false)
 
-	function PLUGIN:createChat()
+	function PLUGIN:CreateChat()
 		if (IsValid(self.panel)) then
 			return
 		end
@@ -14,14 +14,14 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:InitPostEntity()
-		self:createChat()
+		self:CreateChat()
 	end
 
 	function PLUGIN:PlayerBindPress(client, bind, pressed)
 		bind = bind:lower()
 
 		if (bind:find("messagemode") and pressed) then
-			self.panel:setActive(true)
+			self.panel:SetActive(true)
 
 			return true
 		end
@@ -41,7 +41,7 @@ if (CLIENT) then
 		local show = true
 
 		if (IsValid(PLUGIN.panel)) then
-			show = PLUGIN.panel:addText(...)
+			show = PLUGIN.panel:AddText(...)
 		end
 
 		if (show) then
@@ -52,7 +52,7 @@ if (CLIENT) then
 
 	function PLUGIN:ChatText(index, name, text, messageType)
 		if (messageType == "none" and IsValid(self.panel)) then
-			self.panel:addText(text)
+			self.panel:AddText(text)
 			chat.PlaySound()
 		end
 	end
@@ -60,7 +60,7 @@ if (CLIENT) then
 	concommand.Add("fixchatplz", function()
 		if (IsValid(PLUGIN.panel)) then
 			PLUGIN.panel:Remove()
-			PLUGIN:createChat()
+			PLUGIN:CreateChat()
 		end
 	end)
 else

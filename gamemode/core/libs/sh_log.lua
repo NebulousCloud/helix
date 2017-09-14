@@ -24,19 +24,19 @@ if (SERVER) then
 		include("sv_database.lua")
 	end
 
-	function nut.log.loadTables()
+	function nut.log.LoadTables()
 		file.CreateDir("nutscript/logs")
 	end
 
-	function nut.log.resetTables()
+	function nut.log.ResetTables()
 	end
 
 	nut.log.types = nut.log.types or {}
-	function nut.log.addType(logType, func)
+	function nut.log.AddType(logType, func)
 		nut.log.types[logType] = func
 	end
 
-	function nut.log.getString(client, logType, ...)
+	function nut.log.GetString(client, logType, ...)
 		local text = nut.log.types[logType]
 		
 		if (text) then
@@ -50,8 +50,8 @@ if (SERVER) then
 		return text
 	end
 
-	function nut.log.addRaw(logString)		
-		nut.log.send(nut.util.getAdmins(), logString)
+	function nut.log.AddRaw(logString)		
+		nut.log.Send(nut.util.GetAdmins(), logString)
 		
 		Msg("[LOG] ", logString .. "\n")
 		
@@ -60,11 +60,11 @@ if (SERVER) then
 		end
 	end
 
-	function nut.log.add(client, logType, ...)
-		local logString = nut.log.getString(client, logType, ...)
+	function nut.log.Add(client, logType, ...)
+		local logString = nut.log.GetString(client, logType, ...)
 		if (logString == -1) then return end
 
-		nut.log.send(nut.util.getAdmins(), logString)
+		nut.log.Send(nut.util.GetAdmins(), logString)
 		
 		Msg("[LOG] ", logString .. "\n")
 		
@@ -73,13 +73,13 @@ if (SERVER) then
 		end
 	end
 
-	function nut.log.open(client)
+	function nut.log.Open(client)
 		local logData = {}
 
 		netstream.Hook(client, "nutLogView", logData)
 	end
 
-	function nut.log.send(client, logString, flag)
+	function nut.log.Send(client, logString, flag)
 		netstream.Start(client, "nutLogStream", logString, flag)
 	end
 else

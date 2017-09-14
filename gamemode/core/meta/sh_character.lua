@@ -11,17 +11,17 @@ end
 
 -- Checks if two character objects represent the same character.
 function CHAR:__eq(other)
-	return self:getID() == other:getID()
+	return self:GetID() == other:GetID()
 end
 
 -- Returns the character index from the database.
-function CHAR:getID()
+function CHAR:GetID()
 	return self.id
 end
 
 if (SERVER) then
 	-- Saves the character to the database and calls the callback if provided.
-	function CHAR:save(callback)
+	function CHAR:Save(callback)
 		-- Do not save if the character is for a bot.
 		if (self.isBot) then
 			return
@@ -42,22 +42,22 @@ if (SERVER) then
 
 		if (shouldSave != false) then
 			-- Run a query to save the character to the database.
-			nut.db.updateTable(data, function()
+			nut.db.UpdateTable(data, function()
 				if (callback) then
 					callback()
 				end
 
 				hook.Run("CharacterPostSave", self)
-			end, nil, "_id = "..self:getID())
+			end, nil, "_id = "..self:GetID())
 		end
 	end
 
 	-- Sends character information to the receiver.
-	function CHAR:sync(receiver)
+	function CHAR:Sync(receiver)
 		-- Broadcast the character information if receiver is not set.
 		if (receiver == nil) then
 			for k, v in ipairs(player.GetAll()) do
-				self:sync(v)
+				self:Sync(v)
 			end
 		-- Send all character information if the receiver is the character's owner.
 		elseif (receiver == self.player) then
@@ -69,7 +69,7 @@ if (SERVER) then
 				end
 			end
 
-			netstream.Start(self.player, "charInfo", data, self:getID())
+			netstream.Start(self.player, "charInfo", data, self:GetID())
 		-- Send public character information to the receiver.
 		else
 			local data = {}
@@ -80,41 +80,41 @@ if (SERVER) then
 				end
 			end
 
-			netstream.Start(receiver, "charInfo", data, self:getID(), self.player)
+			netstream.Start(receiver, "charInfo", data, self:GetID(), self.player)
 		end
 	end
 
 	-- Sets up the "appearance" related inforomation for the character.
-	function CHAR:setup(noNetworking)
-		local client = self:getPlayer()
+	function CHAR:Setup(noNetworking)
+		local client = self:GetPlayer()
 
 		if (IsValid(client)) then
 			-- Set the faction, model, and character index for the player.
-			client:SetModel(self:getModel())
-			client:SetTeam(self:getFaction())
-			client:setNetVar("char", self:getID())
+			client:SetModel(self:GetModel())
+			client:SetTeam(self:GetFaction())
+			client:SetNetVar("char", self:GetID())
 
 			-- Apply saved body groups.
-			for k, v in pairs(self:getData("groups", {})) do
+			for k, v in pairs(self:GetData("groups", {})) do
 				client:SetBodygroup(k, v)
 			end
 
 			-- Apply a saved skin.
-			client:SetSkin(self:getData("skin", 0))
+			client:SetSkin(self:GetData("skin", 0))
 			
 			-- Synchronize the character if we should.
 			if (!noNetworking) then
-				self:sync()
+				self:Sync()
 				
 				-- wtf
-				for k, v in ipairs(self:getInv(true)) do
+				for k, v in ipairs(self:GetInv(true)) do
 					if (type(v) == "table") then 
-						v:sync(client)	
+						v:Sync(client)	
 					end
 				end
 			end
 
-			hook.Run("CharacterLoaded", self:getID())
+			hook.Run("CharacterLoaded", self:GetID())
 
 			-- Close the character menu.
 			netstream.Start(client, "charLoaded")
@@ -123,28 +123,28 @@ if (SERVER) then
 	end
 
 	-- Forces the player to choose a character.
-	function CHAR:kick()
+	function CHAR:Kick()
 		-- Kill the player so they are not standing anywhere.
-		local client = self:getPlayer()
+		local client = self:GetPlayer()
 		client:KillSilent()
 
 		local steamID = client:SteamID64()
-		local id = self:getID()
-		local isCurrentChar = self and self:getID() == id
+		local id = self:GetID()
+		local isCurrentChar = self and self:GetID() == id
 		
 		-- Return the player to the character menu.
 		if (self and self.steamID == steamID) then			
 			netstream.Start(client, "charKick", id, isCurrentChar)
 
 			if (isCurrentChar) then
-				client:setNetVar("char", nil)
+				client:SetNetVar("char", nil)
 				client:Spawn()
 			end
 		end
 	end
 
 	-- Prevents the use of this character permanently or for a certain amount of time.
-	function CHAR:ban(time)
+	function CHAR:Ban(time)
 		time = tonumber(time)
 
 		if (time) then
@@ -153,13 +153,13 @@ if (SERVER) then
 		end
 
 		-- Mark the character as banned and kick the character back to menu.
-		self:setData("banned", time or true)
-		self:kick()
+		self:SetData("banned", time or true)
+		self:Kick()
 	end
 end
 
 -- Returns which player owns this character.
-function CHAR:getPlayer()
+function CHAR:GetPlayer()
 	-- Return the player from cache.
 	if (IsValid(self.player)) then
 		return self.player
@@ -178,7 +178,7 @@ function CHAR:getPlayer()
 end
 
 -- Sets up a new character variable.
-function nut.char.registerVar(key, data)
+function nut.char.RegisterVar(key, data)
 	-- Store information for the variable.
 	nut.char.vars[key] = data
 	data.index = data.index or table.Count(nut.char.vars)
@@ -190,16 +190,16 @@ function nut.char.registerVar(key, data)
 	if (SERVER and !data.isNotModifiable) then
 		-- Overwrite the set function if desired.
 		if (data.onSet) then
-			CHAR["set"..upperName] = data.onSet
+			CHAR["Set"..upperName] = data.onSet
 		-- Have the set function only set on the server if no networking.
 		elseif (data.noNetworking) then
-			CHAR["set"..upperName] = function(self, value)
+			CHAR["Set"..upperName] = function(self, value)
 				self.vars[key] = value
 			end
 		-- If the variable is a local one, only send the variable to the local player.
 		elseif (data.isLocal) then
-			CHAR["set"..upperName] = function(self, value)
-				local curChar = self:getPlayer() and self:getPlayer():getChar()
+			CHAR["Set"..upperName] = function(self, value)
+				local curChar = self:GetPlayer() and self:GetPlayer():GetChar()
 				local sendID = true
 
 				if (curChar and curChar == self) then
@@ -208,16 +208,16 @@ function nut.char.registerVar(key, data)
 
 				local oldVar = self.vars[key]
 					self.vars[key] = value
-				netstream.Start(self.player, "charSet", key, value, sendID and self:getID() or nil)
+				netstream.Start(self.player, "charSet", key, value, sendID and self:GetID() or nil)
 
 				hook.Run("OnCharVarChanged", self, key, oldVar, value)
 			end
 		-- Otherwise network the variable to everyone.
 		else
-			CHAR["set"..upperName] = function(self, value)
+			CHAR["Set"..upperName] = function(self, value)
 				local oldVar = self.vars[key]
 					self.vars[key] = value
-				netstream.Start(nil, "charSet", key, value, self:getID())
+				netstream.Start(nil, "charSet", key, value, self:GetID())
 				
 				hook.Run("OnCharVarChanged", self, key, oldVar, value)
 			end
@@ -227,10 +227,10 @@ function nut.char.registerVar(key, data)
 	-- The get functions are shared.
 	-- Overwrite the get function if desired.
 	if (data.onGet) then
-		CHAR["get"..upperName] = data.onGet
+		CHAR["Get"..upperName] = data.onGet
 	-- Otherwise return the character variable or default if it does not exist.
 	else
-		CHAR["get"..upperName] = function(self, default)
+		CHAR["Get"..upperName] = function(self, default)
 			local value = self.vars[key]
 
 			if (value != nil) then

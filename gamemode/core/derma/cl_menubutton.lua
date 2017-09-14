@@ -11,7 +11,7 @@ local PANEL = {}
 		end
 	end
 
-	function PANEL:setText(text, noTranslation)
+	function PANEL:SetText(text, noTranslation)
 		surface.SetFont("nutMenuButtonFont")
 
 		self:SetText(noTranslation and text:upper() or L(text):upper())
@@ -43,7 +43,7 @@ local PANEL = {}
 		if (self.color) then
 			self:SetTextColor(self.color)
 		else
-			self:SetTextColor(nut.config.get("color"))
+			self:SetTextColor(nut.config.Get("color"))
 		end
 
 		surface.PlaySound("ui/buttonclickrelease.wav")

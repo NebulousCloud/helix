@@ -6,8 +6,8 @@ PLUGIN.author = "Chessnut"
 PLUGIN.spawns = PLUGIN.spawns or {}
 
 function PLUGIN:PostPlayerLoadout(client)
-	if (self.spawns and table.Count(self.spawns) > 0 and client:getChar()) then
-		local class = client:getChar():getClass()
+	if (self.spawns and table.Count(self.spawns) > 0 and client:GetChar()) then
+		local class = client:GetChar():GetClass()
 		local points
 		local className = ""
 
@@ -40,14 +40,14 @@ function PLUGIN:PostPlayerLoadout(client)
 end
 
 function PLUGIN:LoadData()
-	self.spawns = self:getData() or {}
+	self.spawns = self:GetData() or {}
 end
 
 function PLUGIN:SaveSpawns()
-	self:setData(self.spawns)
+	self:SetData(self.spawns)
 end
 
-nut.command.add("spawnadd", {
+nut.command.Add("spawnadd", {
 	adminOnly = true,
 	syntax = "<string faction> [string class]",
 	onRun = function(client, arguments)
@@ -62,7 +62,7 @@ nut.command.add("spawnadd", {
 
 			if (!info) then
 				for k, v in ipairs(nut.faction.indices) do
-					if (nut.util.stringMatches(v.uniqueID, name) or nut.util.stringMatches(L(v.name, client), name)) then
+					if (nut.util.StringMatches(v.uniqueID, name) or nut.util.StringMatches(L(v.name, client), name)) then
 						faction = v.uniqueID
 						info = v
 
@@ -76,7 +76,7 @@ nut.command.add("spawnadd", {
 					local found = false
 
 					for k, v in ipairs(nut.class.list) do
-						if (v.faction == info.index and (v.uniqueID:lower() == class:lower() or nut.util.stringMatches(L(v.name, client), class))) then
+						if (v.faction == info.index and (v.uniqueID:lower() == class:lower() or nut.util.StringMatches(L(v.name, client), class))) then
 							class = v.uniqueID
 							info2 = v
 							found = true
@@ -115,7 +115,7 @@ nut.command.add("spawnadd", {
 	end
 })
 
-nut.command.add("spawnremove", {
+nut.command.Add("spawnremove", {
 	adminOnly = true,
 	syntax = "[number radius]",
 	onRun = function(client, arguments)

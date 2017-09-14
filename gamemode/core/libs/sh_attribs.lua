@@ -3,7 +3,7 @@ if (!nut.char) then include("sh_character.lua") end
 nut.attribs = nut.attribs or {}
 nut.attribs.list = nut.attribs.list or {}
 
-function nut.attribs.loadFromDir(directory)
+function nut.attribs.LoadFromDir(directory)
 	for k, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
 		local niceName = v:sub(4, -5)
 
@@ -12,7 +12,7 @@ function nut.attribs.loadFromDir(directory)
 				ATTRIBUTE.plugin = PLUGIN.uniqueID
 			end
 
-			nut.util.include(directory.."/"..v)
+			nut.util.Include(directory.."/"..v)
 
 			ATTRIBUTE.name = ATTRIBUTE.name or "Unknown"
 			ATTRIBUTE.desc = ATTRIBUTE.desc or "No description availalble."
@@ -22,13 +22,13 @@ function nut.attribs.loadFromDir(directory)
 	end
 end
 
-function nut.attribs.setup(client)
-	local character = client:getChar()
+function nut.attribs.Setup(client)
+	local character = client:GetChar()
 
 	if (character) then
 		for k, v in pairs(nut.attribs.list) do
-			if (v.onSetup) then
-				v:onSetup(client, character:getAttrib(k, 0))
+			if (v.OnSetup) then
+				v:OnSetup(client, character:GetAttrib(k, 0))
 			end
 		end
 	end
@@ -39,20 +39,20 @@ do
 	local charMeta = nut.meta.character
 	
 	if (SERVER) then
-		function charMeta:updateAttrib(key, value)
+		function charMeta:UpdateAttrib(key, value)
 			local attribute = nut.attribs.list[key]
 
 			if (attribute) then
-				local attrib = self:getAttribs()
-				local client = self:getPlayer()
+				local attrib = self:GetAttribs()
+				local client = self:GetPlayer()
 
-				attrib[key] = math.min((attrib[key] or 0) + value, attribute.maxValue or nut.config.get("maxAttribs", 30))
+				attrib[key] = math.min((attrib[key] or 0) + value, attribute.maxValue or nut.config.Get("maxAttribs", 30))
 
 				if (IsValid(client)) then
-					netstream.Start(client, "attrib", self:getID(), key, attrib[key])
+					netstream.Start(client, "attrib", self:GetID(), key, attrib[key])
 
-					if (attribute.setup) then
-						attribute.setup(attrib[key])
+					if (attribute.Setup) then
+						attribute.Setup(attrib[key])
 					end
 				end
 			end
@@ -60,20 +60,20 @@ do
 			hook.Run("OnCharAttribUpdated", client, self, key, value)
 		end
 
-		function charMeta:setAttrib(key, value)
+		function charMeta:SetAttrib(key, value)
 			local attribute = nut.attribs.list[key]
 
 			if (attribute) then
-				local attrib = self:getAttribs()
-				local client = self:getPlayer()
+				local attrib = self:GetAttribs()
+				local client = self:GetPlayer()
 
 				attrib[key] = value
 
 				if (IsValid(client)) then
-					netstream.Start(client, "attrib", self:getID(), key, attrib[key])
+					netstream.Start(client, "attrib", self:GetID(), key, attrib[key])
 
-					if (attribute.setup) then
-						attribute.setup(attrib[key])
+					if (attribute.Setup) then
+						attribute.Setup(attrib[key])
 					end
 				end
 			end
@@ -81,50 +81,50 @@ do
 			hook.Run("OnCharAttribUpdated", client, self, key, value)
 		end
 
-		function charMeta:addBoost(boostID, attribID, boostAmount)
-			local boosts = self:getVar("boosts", {})
+		function charMeta:AddBoost(boostID, attribID, boostAmount)
+			local boosts = self:GetVar("boosts", {})
 
 			boosts[attribID] = boosts[attribID] or {}
 			boosts[attribID][boostID] = boostAmount
 
-			hook.Run("OnCharAttribBoosted", self:getPlayer(), self, attribID, boostID, boostAmount)
+			hook.Run("OnCharAttribBoosted", self:GetPlayer(), self, attribID, boostID, boostAmount)
 
-			return self:setVar("boosts", boosts, nil, self:getPlayer())
+			return self:SetVar("boosts", boosts, nil, self:GetPlayer())
 		end
 		
-		function charMeta:removeBoost(boostID, attribID)
-			local boosts = self:getVar("boosts", {})
+		function charMeta:RemoveBoost(boostID, attribID)
+			local boosts = self:GetVar("boosts", {})
 
 			boosts[attribID] = boosts[attribID] or {}
 			boosts[attribID][boostID] = nil
 
-			hook.Run("OnCharAttribBoosted", self:getPlayer(), self, attribID, boostID, true)
+			hook.Run("OnCharAttribBoosted", self:GetPlayer(), self, attribID, boostID, true)
 
-			return self:setVar("boosts", boosts, nil, self:getPlayer())
+			return self:SetVar("boosts", boosts, nil, self:GetPlayer())
 		end
 	else
 		netstream.Hook("attrib", function(id, key, value)
 			local character = nut.char.loaded[id]
 
 			if (character) then
-				character:getAttribs()[key] = value
+				character:GetAttribs()[key] = value
 			end
 		end)
 	end
 
-	function charMeta:getBoost(attribID)
-		local boosts = self:getBoosts()
+	function charMeta:GetBoost(attribID)
+		local boosts = self:GetBoosts()
 
 		return boosts[attribID]
 	end
 
-	function charMeta:getBoosts()
-		return self:getVar("boosts", {})
+	function charMeta:GetBoosts()
+		return self:GetVar("boosts", {})
 	end
 
-	function charMeta:getAttrib(key, default)
-		local att = self:getAttribs()[key] or default
-		local boosts = self:getBoosts()[key]
+	function charMeta:GetAttrib(key, default)
+		local att = self:GetAttribs()[key] or default
+		local boosts = self:GetBoosts()[key]
 
 		if (boosts) then
 			for k, v in pairs(boosts) do

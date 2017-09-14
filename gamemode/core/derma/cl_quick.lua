@@ -19,7 +19,7 @@ local PANEL = {}
 		self.title:SetTextColor(Color(250, 250, 250))
 		self.title:SetExpensiveShadow(1, Color(0, 0, 0, 175))
 		self.title.Paint = function(this, w, h)
-			surface.SetDrawColor(nut.config.get("color"))
+			surface.SetDrawColor(nut.config.Get("color"))
 			surface.DrawRect(0, 0, w, h)
 		end
 
@@ -133,7 +133,7 @@ local PANEL = {}
 			x, y = w - 8, h * 0.5
 
 			if (this.checked) then
-				color = nut.config.get("color")
+				color = nut.config.Get("color")
 			else
 				color = color_dark
 			end
@@ -145,14 +145,14 @@ local PANEL = {}
 		return button
 	end
 
-	function PANEL:setIcon(char)
+	function PANEL:SetIcon(char)
 		self.icon = char
 	end
 
 	function PANEL:Paint(w, h)
-		nut.util.drawBlur(self)
+		nut.util.DrawBlur(self)
 
-		surface.SetDrawColor(nut.config.get("color"))
+		surface.SetDrawColor(nut.config.Get("color"))
 		surface.DrawRect(0, 0, w, 36)
 
 		surface.SetDrawColor(255, 255, 255, 5)

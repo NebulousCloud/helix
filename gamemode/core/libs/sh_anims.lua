@@ -289,7 +289,7 @@ nut.anim.fastZombie = {
 
 local translations = {}
 
-function nut.anim.setModelClass(model, class)
+function nut.anim.SetModelClass(model, class)
 	if (!nut.anim[class]) then
 		error("'"..tostring(class).."' is not a valid animation class!")
 	end
@@ -301,7 +301,7 @@ end
 local stringLower = string.lower
 local stringFind = string.find
 
-function nut.anim.getModelClass(model)
+function nut.anim.GetModelClass(model)
 	model = stringLower(model)
 	local class = translations[model]
 
@@ -318,19 +318,19 @@ function nut.anim.getModelClass(model)
 	return class
 end
 
-nut.anim.setModelClass("models/police.mdl", "metrocop")
-nut.anim.setModelClass("models/combine_super_soldier.mdl", "overwatch")
-nut.anim.setModelClass("models/combine_soldier_prisonGuard.mdl", "overwatch")
-nut.anim.setModelClass("models/combine_soldier.mdl", "overwatch")
-nut.anim.setModelClass("models/vortigaunt.mdl", "vort")
-nut.anim.setModelClass("models/vortigaunt_blue.mdl", "vort")
-nut.anim.setModelClass("models/vortigaunt_doctor.mdl", "vort")
-nut.anim.setModelClass("models/vortigaunt_slave.mdl", "vort")
+nut.anim.SetModelClass("models/police.mdl", "metrocop")
+nut.anim.SetModelClass("models/combine_super_soldier.mdl", "overwatch")
+nut.anim.SetModelClass("models/combine_soldier_prisonGuard.mdl", "overwatch")
+nut.anim.SetModelClass("models/combine_soldier.mdl", "overwatch")
+nut.anim.SetModelClass("models/vortigaunt.mdl", "vort")
+nut.anim.SetModelClass("models/vortigaunt_blue.mdl", "vort")
+nut.anim.SetModelClass("models/vortigaunt_doctor.mdl", "vort")
+nut.anim.SetModelClass("models/vortigaunt_slave.mdl", "vort")
 
 do
 	local playerMeta = FindMetaTable("Player")
 
-	function playerMeta:forceSequence(sequence, callback, time, noFreeze)
+	function playerMeta:ForceSequence(sequence, callback, time, noFreeze)
 		hook.Run("OnPlayerEnterSequence", self, sequence, callback, time, noFreeze)
 
 		if (!sequence) then
@@ -352,7 +352,7 @@ do
 			if (time > 0) then
 				timer.Create("nutSeq"..self:EntIndex(), time, 1, function()
 					if (IsValid(self)) then
-						self:leaveSequence()
+						self:LeaveSequence()
 					end
 				end)
 			end
@@ -365,7 +365,7 @@ do
 		return false
 	end
 
-	function playerMeta:leaveSequence()
+	function playerMeta:LeaveSequence()
 		hook.Run("OnPlayerLeaveSequence", self)
 
 		netstream.Start(nil, "seqSet", self)

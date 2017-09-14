@@ -27,11 +27,11 @@ if (SERVER) then
 
 	function ENT:Use(activator)
 		if (self.client and self.charID) then
-			local char = activator:getChar()
+			local char = activator:GetChar()
 			
 			if (char) then
-				if (self.charID != char:getID() and self.client == activator) then
-					activator:notifyLocalized("logged")
+				if (self.charID != char:GetID() and self.client == activator) then
+					activator:NotifyLocalized("logged")
 					
 					return false
 				end
@@ -48,20 +48,20 @@ else
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
 	local drawText = nut.util.drawText
-	local configGet = nut.config.get
+	local configGet = nut.config.Get
 
-	function ENT:onDrawEntityInfo(alpha)
+	function ENT:OnDrawEntityInfo(alpha)
 		local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
 		local x, y = position.x, position.y
 
-		drawText(nut.currency.get(self.getAmount(self)), x, y, colorAlpha(configGet("color"), alpha), 1, 1, nil, alpha * 0.65)
+		drawText(nut.currency.Get(self.GetAmount(self)), x, y, colorAlpha(configGet("color"), alpha), 1, 1, nil, alpha * 0.65)
 	end
 end
 
-function ENT:setAmount(amount)
-	self:setNetVar("amount", amount)
+function ENT:SetAmount(amount)
+	self:SetNetVar("amount", amount)
 end
 
-function ENT:getAmount(amount)
-	return self:getNetVar("amount", 0)
+function ENT:GetAmount(amount)
+	return self:GetNetVar("amount", 0)
 end

@@ -1,6 +1,6 @@
 local PANEL = {}
-	local gradient = nut.util.getMaterial("vgui/gradient-u")
-	local gradient2 = nut.util.getMaterial("vgui/gradient-d")
+	local gradient = nut.util.GetMaterial("vgui/gradient-u")
+	local gradient2 = nut.util.GetMaterial("vgui/gradient-d")
 
 	function PANEL:Init()
 		self:SetTall(20)
@@ -56,7 +56,7 @@ local PANEL = {}
 			local value = self.deltaValue / self.max
 
 			if (value > 0) then
-				local color = nut.config.get("color")
+				local color = nut.config.Get("color")
 				local boostedValue = self.boostValue or 0
 				local add = 0
 
@@ -144,27 +144,27 @@ local PANEL = {}
 	function PANEL:onChanged(difference)
 	end
 
-	function PANEL:getValue()
+	function PANEL:GetValue()
 		return self.value
 	end
 
-	function PANEL:setValue(value)
+	function PANEL:SetValue(value)
 		self.value = value
 	end
 
-	function PANEL:setBoost(value)
+	function PANEL:SetBoost(value)
 		self.boostValue = value
 	end
 
-	function PANEL:setMax(max)
+	function PANEL:SetMax(max)
 		self.max = max
 	end
 
-	function PANEL:setText(text)
+	function PANEL:SetText(text)
 		self.label:SetText(text)
 	end
 
-	function PANEL:setReadOnly()
+	function PANEL:SetReadOnly()
 		self.sub:Remove()
 		self.add:Remove()
 	end

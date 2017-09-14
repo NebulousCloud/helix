@@ -4,7 +4,7 @@ nut.command.list = nut.command.list or {}
 local COMMAND_PREFIX = "/"
 
 -- Adds a new command to the list of commands.
-function nut.command.add(command, data)
+function nut.command.Add(command, data)
 	-- For showing users the arguments of the command.
 	data.syntax = data.syntax or "[none]"
 
@@ -81,7 +81,7 @@ function nut.command.add(command, data)
 end
 
 -- Returns whether or not a player is allowed to run a certain command.
-function nut.command.hasAccess(client, command)
+function nut.command.HasAccess(client, command)
 	command = nut.command.list[command]
 
 	if (command) then
@@ -96,7 +96,7 @@ function nut.command.hasAccess(client, command)
 end
 
 -- Gets a table of arguments from a string.
-function nut.command.extractArgs(text)
+function nut.command.ExtractArgs(text)
 	local skip = 0
 	local arguments = {}
 	local curString = ""
@@ -137,18 +137,18 @@ end
 
 if (SERVER) then
 	-- Finds a player or gives an error notification.
-	function nut.command.findPlayer(client, name)
-		local target = type(name) == "string" and nut.util.findPlayer(name) or NULL
+	function nut.command.FindPlayer(client, name)
+		local target = type(name) == "string" and nut.util.FindPlayer(name) or NULL
 
 		if (IsValid(target)) then
 			return target
 		else
-			client:notifyLocalized("plyNoExist")
+			client:NotifyLocalized("plyNoExist")
 		end
 	end
 
 	-- Forces a player to run a command.
-	function nut.command.run(client, command, arguments)
+	function nut.command.Run(client, command, arguments)
 		local command = nut.command.list[command]
 
 		if (command) then
@@ -161,9 +161,9 @@ if (SERVER) then
 				-- Normal player here.
 				if (IsValid(client)) then
 					if (result:sub(1, 1) == "@") then
-						client:notifyLocalized(result:sub(2), unpack(results, 2))
+						client:NotifyLocalized(result:sub(2), unpack(results, 2))
 					else
-						client:notify(result)
+						client:Notify(result)
 					end
 				else
 					-- Show the message in server console since we're running from RCON.
@@ -174,7 +174,7 @@ if (SERVER) then
 	end
 
 	-- Add a function to parse a regular chat string.
-	function nut.command.parse(client, text, realCommand, arguments)
+	function nut.command.Parse(client, text, realCommand, arguments)
 		if (realCommand or text:utf8sub(1, 1) == COMMAND_PREFIX) then
 			-- See if the string contains a command.
 
@@ -194,18 +194,18 @@ if (SERVER) then
 			if (command) then
 				-- Get the arguments like a console command.
 				if (!arguments) then
-					arguments = nut.command.extractArgs(text:sub(#match + 3))
+					arguments = nut.command.ExtractArgs(text:sub(#match + 3))
 				end
 
 				-- Runs the actual command.
-				nut.command.run(client, match, arguments)
+				nut.command.Run(client, match, arguments)
 
 				if (!realCommand) then
-					nut.log.add(client, "command", text)
+					nut.log.Add(client, "command", text)
 				end
 			else
 				if (IsValid(client)) then
-					client:notifyLocalized("cmdNoExist")
+					client:NotifyLocalized("cmdNoExist")
 				else
 					print("Sorry, that command does not exist.")
 				end
@@ -219,9 +219,9 @@ if (SERVER) then
 
 	concommand.Add("nut", function(client, _, arguments)
 		local command = arguments[1]
-		table.remove(arguments, 1)
+		table.Remove(arguments, 1)
 
-		nut.command.parse(client, nil, command or "", arguments)
+		nut.command.Parse(client, nil, command or "", arguments)
 	end)
 
 	netstream.Hook("cmd", function(client, command, arguments)
@@ -234,12 +234,12 @@ if (SERVER) then
 				end
 			end
 
-			nut.command.parse(client, nil, command, arguments2)
+			nut.command.Parse(client, nil, command, arguments2)
 			client.nutNextCmd = CurTime() + 0.2
 		end
 	end)
 else
-	function nut.command.send(command, ...)
+	function nut.command.Send(command, ...)
 		netstream.Start("cmd", command, {...})
 	end
 end

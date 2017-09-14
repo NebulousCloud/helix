@@ -135,15 +135,15 @@ function SWEP:PrimaryAttack()
 		return
 	end
 
-	local staminaUse = nut.config.get("punchStamina")
+	local staminaUse = nut.config.Get("punchStamina")
 
 	if (staminaUse > 0) then
-		local value = self.Owner:getLocalVar("stm", 0) - staminaUse
+		local value = self.Owner:GetLocalVar("stm", 0) - staminaUse
 
 		if (value < 0) then
 			return
 		elseif (SERVER) then
-			self.Owner:setLocalVar("stm", value)
+			self.Owner:SetLocalVar("stm", value)
 		end
 	end
 
@@ -252,7 +252,7 @@ function SWEP:SecondaryAttack()
 	local entity = trace.Entity
 	
 	if (SERVER and IsValid(entity)) then
-		if (entity:isDoor()) then
+		if (entity:IsDoor()) then
 			if (hook.Run("PlayerCanKnock", self.Owner, entity) == false) then
 				return
 			end

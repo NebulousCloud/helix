@@ -20,7 +20,7 @@ if (SERVER) then
 			physObj:Wake()
 		end
 		
-		self:setNetVar("delTime", CurTime() + 120)
+		self:SetNetVar("delTime", CurTime() + 120)
 		
 		timer.Simple(120, function()
 			if (IsValid(self)) then
@@ -30,17 +30,17 @@ if (SERVER) then
 	end
 
 	function ENT:Use(activator)
-		if (activator:getChar() and activator:getChar():getID() == self:getNetVar("owner", 0) and hook.Run("PlayerCanOpenShipment", activator, self) != false) then
+		if (activator:GetChar() and activator:GetChar():GetID() == self:GetNetVar("owner", 0) and hook.Run("PlayerCanOpenShipment", activator, self) != false) then
 			activator.nutShipment = self
 			netstream.Start(activator, "openShp", self, self.items)
 		end
 	end
 
-	function ENT:setItems(items)
+	function ENT:SetItems(items)
 		self.items = items
 	end
 
-	function ENT:getItemCount()
+	function ENT:GetItemCount()
 		local count = 0
 
 		for k, v in pairs(self.items) do
@@ -109,15 +109,15 @@ else
 		pos = pos + self:GetForward()*1
 		pos = pos + self:GetRight()*3
 		
-		local delTime = math.max(math.ceil(self:getNetVar("delTime", 0) - CurTime()), 0)
+		local delTime = math.max(math.ceil(self:GetNetVar("delTime", 0) - CurTime()), 0)
 		
 		local func = function() 
 			surface.SetMaterial(tempMat)
 			surface.SetDrawColor(0, 0, 0, 200)
 			surface.DrawTexturedRect(-size/2, -size/2 - 10, size, size)
 	
-			nut.util.drawText("k", 0, 0, color_white, 1, 4, "nutIconsBig")
-			nut.util.drawText(delTime, 0, -10, color_white, 1, 5, "nutBigFont")
+			nut.util.DrawText("k", 0, 0, color_white, 1, 4, "nutIconsBig")
+			nut.util.DrawText(delTime, 0, -10, color_white, 1, 5, "nutBigFont")
 		end
 		
 		cam.Start3D2D(pos, ang, .15)
@@ -132,15 +132,15 @@ else
 		cam.End3D2D()
 	end
 	
-	function ENT:onDrawEntityInfo(alpha)
+	function ENT:OnDrawEntityInfo(alpha)
 		local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
 		local x, y = position.x, position.y
-		local owner = nut.char.loaded[self.getNetVar(self, "owner", 0)]
+		local owner = nut.char.loaded[self.GetNetVar(self, "owner", 0)]
 
-		drawText(L"shipment", x, y, colorAlpha(nut.config.get("color"), alpha), 1, 1, nil, alpha * 0.65)
+		drawText(L"shipment", x, y, colorAlpha(nut.config.Get("color"), alpha), 1, 1, nil, alpha * 0.65)
 
 		if (owner) then
-			drawText(L("shipmentDesc", owner.getName(owner)), x, y + 16, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+			drawText(L("shipmentDesc", owner.GetName(owner)), x, y + 16, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
 		end
 	end
 end

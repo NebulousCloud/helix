@@ -32,7 +32,7 @@ PLAYER_HOLDTYPE_TRANSLATOR["knife"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["duel"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["bugbait"] = "normal"
 
-local getModelClass = nut.anim.getModelClass
+local getModelClass = nut.anim.GetModelClass
 local IsValid = IsValid
 local string = string
 local type = type
@@ -45,7 +45,7 @@ function GM:TranslateActivity(client, act)
 	local class = getModelClass(model) or "player"
 	local weapon = client.GetActiveWeapon(client)
 	if (class == "player") then
-		if (!nut.config.get("wepAlwaysRaised") and IsValid(weapon) and !client.isWepRaised(client) and client.OnGround(client)) then
+		if (!nut.config.Get("wepAlwaysRaised") and IsValid(weapon) and !client.IsWepRaised(client) and client.OnGround(client)) then
 			if (string.find(model, "zombie")) then
 				local tree = nut.anim.zombie
 
@@ -60,7 +60,7 @@ function GM:TranslateActivity(client, act)
 
 			local holdType = IsValid(weapon) and (weapon.HoldType or weapon.GetHoldType(weapon)) or "normal"
 
-			if (!nut.config.get("wepAlwaysRaised") and IsValid(weapon) and !client.isWepRaised(client) and client:OnGround()) then
+			if (!nut.config.Get("wepAlwaysRaised") and IsValid(weapon) and !client.IsWepRaised(client) and client:OnGround()) then
 				holdType = PLAYER_HOLDTYPE_TRANSLATOR[holdType] or "passive"
 			end
 
@@ -87,7 +87,7 @@ function GM:TranslateActivity(client, act)
 
 		if (client.InVehicle(client)) then
 			local vehicle = client.GetVehicle(client)
-			local class = vehicle:isChair() and "chair" or vehicle:GetClass()
+			local class = vehicle:IsChair() and "chair" or vehicle:GetClass()
 
 			if (tree.vehicle and tree.vehicle[class]) then
 				local act = tree.vehicle[class][1]
@@ -123,7 +123,7 @@ function GM:TranslateActivity(client, act)
 			end
 
 			if (tree[subClass] and tree[subClass][act]) then
-				local act2 = tree[subClass][act][client.isWepRaised(client) and 2 or 1]
+				local act2 = tree[subClass][act][client.IsWepRaised(client) and 2 or 1]
 
 				if (type(act2) == "string") then
 					client.CalcSeqOverride = client.LookupSequence(client, act2)
@@ -142,7 +142,7 @@ end
 function GM:CanPlayerUseBusiness(client, uniqueID)
 	local itemTable = nut.item.list[uniqueID]
 
-	if (!client:getChar()) then
+	if (!client:GetChar()) then
 		return false
 	end
 
@@ -175,13 +175,13 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 
 		if (type(itemTable.classes) == "table") then
 			for k, v in pairs(itemTable.classes) do
-				if (client:getChar():getClass() == v) then
+				if (client:GetChar():GetClass() == v) then
 					allowed = true
 
 					break
 				end
 			end
-		elseif (client:getChar():getClass() == itemTable.classes) then
+		elseif (client:GetChar():GetClass() == itemTable.classes) then
 			allowed = true
 		end
 
@@ -191,7 +191,7 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 	end
 
 	if (itemTable.flag) then
-		if (!client:getChar():hasFlags(itemTable.flag)) then
+		if (!client:GetChar():HasFlags(itemTable.flag)) then
 			return false
 		end
 	end
@@ -201,7 +201,7 @@ end
 
 function GM:DoAnimationEvent(client, event, data)
 	local model = client:GetModel():lower()
-	local class = nut.anim.getModelClass(model)
+	local class = nut.anim.GetModelClass(model)
 
 	if (class == "player") then
 		return self.BaseClass:DoAnimationEvent(client, event, data)
@@ -273,7 +273,7 @@ local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2
 function GM:StartCommand(client, command)
 	local weapon = client:GetActiveWeapon()
 
-	if (!client:isWepRaised()) then
+	if (!client:IsWepRaised()) then
 		if (IsValid(weapon) and weapon.FireWhenLowered) then
 			return
 		end
@@ -291,7 +291,7 @@ function GM:OnCharVarChanged(char, varName, oldVar, newVar)
 end
 
 function GM:CanPlayerThrowPunch(client)
-	if (!client:isWepRaised()) then
+	if (!client:IsWepRaised()) then
 		return false
 	end
 
@@ -307,7 +307,7 @@ function GM:GetDefaultCharName(client, faction)
 end
 
 function GM:CanPlayerUseChar(client, char)
-	local banned = char:getData("banned")
+	local banned = char:GetData("banned")
 
 	if (banned) then
 		if (type(banned) == "number" and banned < os.time()) then
@@ -376,10 +376,10 @@ function GM:CanTool(client, trace, tool)
 end
 
 function GM:Move(client, moveData)
-	local char = client:getChar()
+	local char = client:GetChar()
 
 	if (char) then
-		if (client:getNetVar("actAng")) then
+		if (client:GetNetVar("actAng")) then
 			moveData:SetForwardSpeed(0)
 			moveData:SetSideSpeed(0)
 		end
@@ -387,7 +387,7 @@ function GM:Move(client, moveData)
 		if (client:GetMoveType() == MOVETYPE_WALK and moveData:KeyDown(IN_WALK)) then
 			local mf, ms = 0, 0
 			local speed = client:GetWalkSpeed()
-			local ratio = nut.config.get("walkRatio")
+			local ratio = nut.config.Get("walkRatio")
 
 			if (moveData:KeyDown(IN_FORWARD)) then
 				mf = ratio
@@ -415,16 +415,16 @@ function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 			end
 		end
 
-		local inventory = nut.item.inventories[itemObject:getData("id")]
+		local inventory = nut.item.inventories[itemObject:GetData("id")]
 
 		if (inventory) then
-			for k, v in pairs(inventory:getItems()) do
-				if (v:getData("equip") == true) then
-					local owner = itemObject:getOwner()
+			for k, v in pairs(inventory:GetItems()) do
+				if (v:GetData("equip") == true) then
+					local owner = itemObject:GetOwner()
 					
 					if (owner and IsValid(owner)) then
 						if (SERVER) then
-							owner:notifyLocalized("equippedBag")
+							owner:NotifyLocalized("equippedBag")
 						end
 					end
 

@@ -9,8 +9,8 @@ function PANEL:Init()
 
 	local noticeBar = self:Add("nutNoticeBar")
 	noticeBar:Dock(TOP)
-	noticeBar:setType(4)
-	noticeBar:setText(L("areaManagerTip"))
+	noticeBar:SetType(4)
+	noticeBar:SetText(L("areaManagerTip"))
 
 	self.list = self:Add("PanelList")
 	self.list:Dock(FILL)
@@ -19,10 +19,10 @@ function PANEL:Init()
 	self.list:SetPadding(5)
 	self.list:EnableVerticalScrollbar()
 
-	self:loadBusinesses()
+	self:LoadBusinesses()
 end
 
-function PANEL:loadBusinesses()
+function PANEL:LoadBusinesses()
 	for class, data in pairs(PLUGIN.areaTable) do
 		local panel = self.list:Add("DButton")
 		panel:SetText(data.name)

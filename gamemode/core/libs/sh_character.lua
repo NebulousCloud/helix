@@ -3,19 +3,19 @@ nut.char.loaded = nut.char.loaded or {}
 nut.char.vars = nut.char.vars or {}
 nut.char.cache = nut.char.cache or {}
 
-nut.util.include("nutscript/gamemode/core/meta/sh_character.lua")
+nut.util.Include("nutscript/gamemode/core/meta/sh_character.lua")
 
 if (SERVER) then
-	function nut.char.create(data, callback)
+	function nut.char.Create(data, callback)
 		local timeStamp = math.floor(os.time())
 
-		data.money = data.money or nut.config.get("defMoney", 0)
+		data.money = data.money or nut.config.Get("defMoney", 0)
 
-		nut.db.insertTable({
+		nut.db.InsertTable({
 			_name = data.name or "",
 			_desc = data.desc or "",
 			_model = data.model or "models/error.mdl",
-			_schema = SCHEMA and SCHEMA.folder or "nutscript",
+			_schema = Schema and Schema.folder or "nutscript",
 			_createTime = timeStamp,
 			_lastJoinTime = timeStamp,
 			_steamID = data.steamID,
@@ -33,12 +33,12 @@ if (SERVER) then
 					end
 				end
 
-				local w, h = nut.config.get("invW"), nut.config.get("invH")
-				local character = nut.char.new(data, charID, client, data.steamID)
-				local inventory = nut.item.createInv(w, h, invID)
+				local w, h = nut.config.Get("invW"), nut.config.Get("invH")
+				local character = nut.char.New(data, charID, client, data.steamID)
+				local inventory = nut.item.CreateInv(w, h, invID)
 
 				character.vars.inv = {inventory}
-				inventory:setOwner(charID)
+				inventory:SetOwner(charID)
 
 				nut.char.loaded[charID] = character
 				table.insert(nut.char.cache[data.steamID], charID)
@@ -50,7 +50,7 @@ if (SERVER) then
 		end)
 	end
 
-	function nut.char.restore(client, callback, noCache, id)
+	function nut.char.Restore(client, callback, noCache, id)
 		local steamID64 = client:SteamID64()
 		local cache = nut.char.cache[steamID64]
 
@@ -71,7 +71,7 @@ if (SERVER) then
 		end
 
 		local fields = "_id, _name, _desc, _model, _attribs, _data, _money, _faction"
-		local condition = "_schema = '"..nut.db.escape(SCHEMA.folder).."' AND _steamID = "..steamID64
+		local condition = "_schema = '"..nut.db.escape(Schema.folder).."' AND _steamID = "..steamID64
 
 		if (id) then
 			condition = condition.." AND _id = "..id
@@ -104,7 +104,7 @@ if (SERVER) then
 
 					characters[#characters + 1] = id
 
-					local character = nut.char.new(data, id, client)
+					local character = nut.char.New(data, id, client)
 						hook.Run("CharacterRestored", character)
 						character.vars.inv = {
 							[1] = -1,
@@ -117,7 +117,7 @@ if (SERVER) then
 										v._invType = nil
 									end
 
-									local w, h = nut.config.get("invW"), nut.config.get("invH")
+									local w, h = nut.config.Get("invW"), nut.config.Get("invH")
 
 									local invType 
 									if (v._invType) then
@@ -128,7 +128,7 @@ if (SERVER) then
 										end
 									end
 
-									nut.item.restoreInv(tonumber(v._invID), w, h, function(inventory)
+									nut.item.RestoreInv(tonumber(v._invID), w, h, function(inventory)
 										if (v._invType) then
 											inventory.vars.isBag = v._invType
 											table.insert(character.vars.inv, inventory)
@@ -136,16 +136,16 @@ if (SERVER) then
 											character.vars.inv[1] = inventory
 										end
 
-										inventory:setOwner(id)
+										inventory:SetOwner(id)
 									end, true)
 								end
 							else
-								nut.db.insertTable({
+								nut.db.InsertTable({
 									_charID = id
 								}, function(_, invID)
-									local w, h = nut.config.get("invW"), nut.config.get("invH")
-									local inventory = nut.item.createInv(w, h, invID)
-									inventory:setOwner(id)
+									local w, h = nut.config.Get("invW"), nut.config.Get("invH")
+									local inventory = nut.item.CreateInv(w, h, invID)
+									inventory:SetOwner(id)
 
 									character.vars.inv = {
 										inventory
@@ -167,9 +167,9 @@ if (SERVER) then
 		end)
 	end
 
-	function nut.char.loadChar(callback, noCache, id)
+	function nut.char.LoadChar(callback, noCache, id)
 		local fields = "_id, _name, _desc, _model, _attribs, _data, _money, _faction"
-		local condition = "_schema = '"..nut.db.escape(SCHEMA.folder)
+		local condition = "_schema = '"..nut.db.escape(Schema.folder)
 
 		if (id) then
 			condition = condition.."' AND _id = "..id
@@ -202,7 +202,7 @@ if (SERVER) then
 						end
 					end
 
-					local character = nut.char.new(data, id)
+					local character = nut.char.New(data, id)
 						hook.Run("CharacterRestored", character)
 						character.vars.inv = {
 							[1] = -1,
@@ -215,7 +215,7 @@ if (SERVER) then
 										v._invType = nil
 									end
 
-									local w, h = nut.config.get("invW"), nut.config.get("invH")
+									local w, h = nut.config.Get("invW"), nut.config.Get("invH")
 
 									local invType 
 									if (v._invType) then
@@ -226,7 +226,7 @@ if (SERVER) then
 										end
 									end
 
-									nut.item.restoreInv(tonumber(v._invID), w, h, function(inventory)
+									nut.item.RestoreInv(tonumber(v._invID), w, h, function(inventory)
 										if (v._invType) then
 											inventory.vars.isBag = v._invType
 											table.insert(character.vars.inv, inventory)
@@ -234,16 +234,16 @@ if (SERVER) then
 											character.vars.inv[1] = inventory
 										end
 
-										inventory:setOwner(id)
+										inventory:SetOwner(id)
 									end, true)
 								end
 							else
-								nut.db.insertTable({
+								nut.db.InsertTable({
 									_charID = id
 								}, function(_, invID)
-									local w, h = nut.config.get("invW"), nut.config.get("invH")
-									local inventory = nut.item.createInv(w, h, invID)
-									inventory:setOwner(id)
+									local w, h = nut.config.Get("invW"), nut.config.Get("invH")
+									local inventory = nut.item.CreateInv(w, h, invID)
+									inventory:SetOwner(id)
 
 									character.vars.inv = {
 										inventory
@@ -264,7 +264,7 @@ if (SERVER) then
 	end
 end
 
-function nut.char.new(data, id, client, steamID)
+function nut.char.New(data, id, client, steamID)
 	if (data.name) then
 		data.name = data.name:gsub("#", "#​")
 	end
@@ -290,7 +290,7 @@ function nut.char.new(data, id, client, steamID)
 end
 
 nut.char.varHooks = nut.char.varHooks or {}
-function nut.char.hookVar(varName, hookName, func)
+function nut.char.HookVar(varName, hookName, func)
 	nut.char.varHooks[varName] = nut.char.varHooks[varName] or {}
 
 	nut.char.varHooks[varName][hookName] = func
@@ -298,7 +298,7 @@ end
 
 -- Registration of default variables go here.
 do
-	nut.char.registerVar("name", {
+	nut.char.RegisterVar("name", {
 		field = "_name",
 		default = "John Doe",
 		index = 1,
@@ -324,14 +324,14 @@ do
 		end
 	})
 
-	nut.char.registerVar("desc", {
+	nut.char.RegisterVar("desc", {
 		field = "_desc",
 		default = "",
 		index = 2,
 		onValidate = function(value, data)
 			if (noDesc) then return true end
 
-			local minLength = nut.config.get("minDescLen", 16)
+			local minLength = nut.config.Get("minDescLen", 16)
 
 			if (!value or #value:gsub("%s", "") < minLength) then
 				return false, "descMinLen", minLength
@@ -339,15 +339,15 @@ do
 		end
 	})
 
-	local gradient = nut.util.getMaterial("vgui/gradient-d")
+	local gradient = nut.util.GetMaterial("vgui/gradient-d")
 
-	nut.char.registerVar("model", {
+	nut.char.RegisterVar("model", {
 		field = "_model",
 		default = "models/error.mdl",
 		onSet = function(character, value)
-			local client = character:getPlayer()
+			local client = character:GetPlayer()
 
-			if (IsValid(client) and client:getChar() == character) then
+			if (IsValid(client) and client:GetChar() == character) then
 				client:SetModel(value)
 			end
 
@@ -379,7 +379,7 @@ do
 					end
 					icon.PaintOver = function(this, w, h)
 						if (panel.payload.model == k) then
-							local color = nut.config.get("color", color_white)
+							local color = nut.config.Get("color", color_white)
 
 							surface.SetDrawColor(color.r, color.g, color.b, 200)
 
@@ -434,15 +434,15 @@ do
 		end
 	})
 
-	nut.char.registerVar("class", {
+	nut.char.RegisterVar("class", {
 		noDisplay = true,
 	})
 
-	nut.char.registerVar("faction", {
+	nut.char.RegisterVar("faction", {
 		field = "_faction",
 		default = "Citizen",
 		onSet = function(character, value)
-			local client = character:getPlayer()
+			local client = character:GetPlayer()
 
 			if (IsValid(client)) then
 				client:SetTeam(value)
@@ -456,7 +456,7 @@ do
 		noDisplay = true,
 		onValidate = function(value, data, client)
 			if (value) then
-				if (client:hasWhitelist(value)) then
+				if (client:HasWhitelist(value)) then
 					return true
 				end
 			end
@@ -468,7 +468,7 @@ do
 		end
 	})
 
-	nut.char.registerVar("attribs", {
+	nut.char.RegisterVar("attribs", {
 		field = "_attribs",
 		default = {},
 		isLocal = true,
@@ -480,7 +480,7 @@ do
 
 			local y2 = 0
 			local total = 0
-			local maximum = hook.Run("GetStartAttribPoints", LocalPlayer(), panel.payload) or nut.config.get("maxAttribs", 30)
+			local maximum = hook.Run("GetStartAttribPoints", LocalPlayer(), panel.payload) or nut.config.Get("maxAttribs", 30)
 
 			panel.payload.attribs = {}
 
@@ -488,10 +488,10 @@ do
 				panel.payload.attribs[k] = 0
 
 				local bar = container:Add("nutAttribBar")
-				bar:setMax(maximum)
+				bar:SetMax(maximum)
 				bar:Dock(TOP)
 				bar:DockMargin(2, 2, 2, 2)
-				bar:setText(L(v.name))
+				bar:SetText(L(v.name))
 				bar.onChanged = function(this, difference)
 					if ((total + difference) > maximum) then
 						return false
@@ -502,7 +502,7 @@ do
 				end
 
 				if (v.noStartBonus) then
-					bar:setReadOnly()
+					bar:SetReadOnly()
 				end
 
 				y2 = y2 + bar:GetTall() + 4
@@ -520,7 +520,7 @@ do
 						count = count + v
 					end
 
-					if (count > (hook.Run("GetStartAttribPoints", client, count) or nut.config.get("maxAttribs", 30))) then
+					if (count > (hook.Run("GetStartAttribPoints", client, count) or nut.config.Get("maxAttribs", 30))) then
 						return false, "unknownError"
 					end
 				else
@@ -531,26 +531,26 @@ do
 		shouldDisplay = function(panel) return table.Count(nut.attribs.list) > 0 end
 	})
 
-	nut.char.registerVar("money", {
+	nut.char.RegisterVar("money", {
 		field = "_money",
 		default = 0,
 		isLocal = true,
 		noDisplay = true
 	})
 
-	nut.char.registerVar("data", {
+	nut.char.RegisterVar("data", {
 		default = {},
 		isLocal = true,
 		noDisplay = true,
 		field = "_data",
 		onSet = function(character, key, value, noReplication, receiver)
-			local data = character:getData()
-			local client = character:getPlayer()
+			local data = character:GetData()
+			local client = character:GetPlayer()
 
 			data[key] = value
 
 			if (!noReplication and IsValid(client)) then
-				netstream.Start(receiver or client, "charData", character:getID(), key, value)
+				netstream.Start(receiver or client, "charData", character:GetID(), key, value)
 			end
 
 			character.vars.data = data
@@ -572,22 +572,22 @@ do
 		end
 	})
 
-	nut.char.registerVar("var", {
+	nut.char.RegisterVar("var", {
 		default = {},
 		noDisplay = true,
 		onSet = function(character, key, value, noReplication, receiver)
-			local data = character:getVar()
-			local client = character:getPlayer()
+			local data = character:GetVar()
+			local client = character:GetPlayer()
 
 			data[key] = value
 
 			if (!noReplication and IsValid(client)) then
 				local id
 
-				if (client:getChar() and client:getChar():getID() == character:getID()) then
-					id = client:getChar():getID()
+				if (client:GetChar() and client:GetChar():GetID() == character:GetID()) then
+					id = client:GetChar():GetID()
 				else
-					id = character:getID()
+					id = character:GetID()
 				end
 
 				netstream.Start(receiver or client, "charVar", key, value, id)
@@ -618,23 +618,23 @@ end
 do
 	if (SERVER) then
 		netstream.Hook("charChoose", function(client, id)
-			if (client:getChar() and client:getChar():getID() == id) then
+			if (client:GetChar() and client:GetChar():GetID() == id) then
 				netstream.Start(client, "charLoaded")
 				
-				return client:notifyLocalized("usingChar")
+				return client:NotifyLocalized("usingChar")
 			end
 
 			local character = nut.char.loaded[id]
 
-			if (character and character:getPlayer() == client) then
+			if (character and character:GetPlayer() == client) then
 				local status, result = hook.Run("CanPlayerUseChar", client, character)
 
 				if (status == false) then
 					if (result) then
 						if (result:sub(1, 1) == "@") then
-							client:notifyLocalized(result:sub(2))
+							client:NotifyLocalized(result:sub(2))
 						else
-							client:notify(result)
+							client:Notify(result)
 						end
 					end
 
@@ -643,14 +643,14 @@ do
 					return
 				end
 
-				local currentChar = client:getChar()
+				local currentChar = client:GetChar()
 
 				if (currentChar) then
-					currentChar:save()
+					currentChar:Save()
 				end
 
 				hook.Run("PrePlayerLoadedChar", client, character, currentChar)
-				character:setup()
+				character:Setup()
 				client:Spawn()
 
 				hook.Run("PlayerLoadedChar", client, character, currentChar)
@@ -662,7 +662,7 @@ do
 		netstream.Hook("charCreate", function(client, data)
 			local newData = {}
 			
-			local maxChars = hook.Run("GetMaxPlayerCharacter", client) or nut.config.get("maxChars", 5)
+			local maxChars = hook.Run("GetMaxPlayerCharacter", client) or nut.config.Get("maxChars", 5)
 			local charList = client.nutCharList
 			local charCount = table.Count(charList)
 
@@ -702,12 +702,12 @@ do
 				hook.Run("AdjustCreationData", client, data, newData)
 			data = table.Merge(data, newData)
 
-			nut.char.create(data, function(id)
+			nut.char.Create(data, function(id)
 				if (IsValid(client)) then
-					nut.char.loaded[id]:sync(client)
+					nut.char.loaded[id]:Sync(client)
 
 					netstream.Start(client, "charAuthed", client.nutCharList)
-					MsgN("Created character '"..id.."' for "..client:steamName()..".")
+					MsgN("Created character '"..id.."' for "..client:SteamName()..".")
 					hook.Run("OnCharCreated", client, nut.char.loaded[id])
 				end
 			end)
@@ -717,12 +717,12 @@ do
 		netstream.Hook("charDel", function(client, id)
 			local character = nut.char.loaded[id]
 			local steamID = client:SteamID64()
-			local isCurrentChar = client:getChar() and client:getChar():getID() == id
+			local isCurrentChar = client:GetChar() and client:GetChar():GetID() == id
 
 			if (character and character.steamID == steamID) then
 				for k, v in ipairs(client.nutCharList or {}) do
 					if (v == id) then
-						table.remove(client.nutCharList, k)
+						table.Remove(client.nutCharList, k)
 					end
 				end
 
@@ -745,18 +745,18 @@ do
 				hook.Run("OnCharDelete", client, id, isCurrentChar)
 				
 				if (isCurrentChar) then
-					client:setNetVar("char", nil)
+					client:SetNetVar("char", nil)
 					client:Spawn()
 				end
 			end
 		end)
 	else
 		netstream.Hook("charInfo", function(data, id, client)
-			nut.char.loaded[id] = nut.char.new(data, id, client == nil and LocalPlayer() or client)
+			nut.char.loaded[id] = nut.char.New(data, id, client == nil and LocalPlayer() or client)
 		end)
 
 		netstream.Hook("charSet", function(key, value, id)
-			id = id or (LocalPlayer():getChar() and LocalPlayer():getChar().id)
+			id = id or (LocalPlayer():GetChar() and LocalPlayer():GetChar().id)
 			
 			local character = nut.char.loaded[id]
 
@@ -766,13 +766,13 @@ do
 		end)
 
 		netstream.Hook("charVar", function(key, value, id)
-			id = id or (LocalPlayer():getChar() and LocalPlayer():getChar().id)
+			id = id or (LocalPlayer():GetChar() and LocalPlayer():GetChar().id)
 
 			local character = nut.char.loaded[id]
 
 			if (character) then
-				local oldVar = character:getVar()[key]
-				character:getVar()[key] = value
+				local oldVar = character:GetVar()[key]
+				character:GetVar()[key] = value
 
 				hook.Run("OnCharVarChanged", character, key, oldVar, value)
 			end
@@ -792,21 +792,21 @@ do
 
 			if (character) then
 				character.vars.data = character.vars.data or {}
-				character:getData()[key] = value
+				character:GetData()[key] = value
 			end
 		end)
 
 		netstream.Hook("charDel", function(id)
-			local isCurrentChar = LocalPlayer():getChar() and LocalPlayer():getChar():getID() == id
+			local isCurrentChar = LocalPlayer():GetChar() and LocalPlayer():GetChar():GetID() == id
 
 			nut.char.loaded[id] = nil
 
 			for k, v in ipairs(nut.characters) do
 				if (v == id) then
-					table.remove(nut.characters, k)
+					table.Remove(nut.characters, k)
 
 					if (IsValid(nut.gui.char) and nut.gui.char.setupCharList) then
-						nut.gui.char:setupCharList()
+						nut.gui.char:SetupCharList()
 					end
 				end
 			end
@@ -831,17 +831,18 @@ end
 -- Additions to the player metatable here.
 do
 	local playerMeta = FindMetaTable("Player")
-	playerMeta.steamName = playerMeta.steamName or playerMeta.Name
-	playerMeta.SteamName = playerMeta.steamName
+	playerMeta.SteamName = playerMeta.SteamName or playerMeta.Name
 
-	function playerMeta:getChar()
-		return nut.char.loaded[self.getNetVar(self, "char")]
+	function playerMeta:GetCharacter()
+		return nut.char.loaded[self.GetNetVar(self, "char")]
 	end
 
+	playerMeta.GetChar = playerMeta.GetCharacter
+
 	function playerMeta:Name()
-		local character = self.getChar(self)
+		local character = self:GetCharacter()
 		
-		return character and character.getName(character) or self.steamName(self)
+		return character and character:Name() or self:SteamName()
 	end
 
 	playerMeta.Nick = playerMeta.Name

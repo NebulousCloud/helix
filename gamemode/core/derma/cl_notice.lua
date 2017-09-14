@@ -1,5 +1,5 @@
 local PANEL = {}
-	local gradient = nut.util.getMaterial("vgui/gradient-d")
+	local gradient = nut.util.GetMaterial("vgui/gradient-d")
 
 	function PANEL:Init()
 		self:SetSize(256, 36)
@@ -11,7 +11,7 @@ local PANEL = {}
 	end
 
 	function PANEL:Paint(w, h)
-		nut.util.drawBlur(self, 10)
+		nut.util.DrawBlur(self, 10)
 
 		surface.SetDrawColor(230, 230, 230, 10)
 		surface.DrawRect(0, 0, w, h)
@@ -19,7 +19,7 @@ local PANEL = {}
 		if (self.start) then
 			local w2 = math.TimeFraction(self.start, self.endTime, CurTime()) * w
 
-			surface.SetDrawColor(nut.config.get("color"))
+			surface.SetDrawColor(nut.config.Get("color"))
 			surface.DrawRect(w2, 0, w - w2, h)
 		end
 

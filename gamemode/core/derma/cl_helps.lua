@@ -140,7 +140,7 @@ hook.Add("BuildHelpMenu", "nutBasicHelp", function(tabs)
 		for k, v in SortedPairs(nut.flag.list) do
 			local icon
 
-			if (LocalPlayer():getChar():hasFlags(k)) then
+			if (LocalPlayer():GetChar():HasFlags(k)) then
 				icon = [[<img src="asset://garrysmod/materials/icon16/tick.png" />]]
 			else
 				icon = [[<img src="asset://garrysmod/materials/icon16/cross.png" />]]

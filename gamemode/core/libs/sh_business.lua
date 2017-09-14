@@ -1,6 +1,6 @@
 if (SERVER) then
 	netstream.Hook("bizBuy", function(client, items)
-		local char = client:getChar()
+		local char = client:GetChar()
 
 		if (!char) then
 			return
@@ -32,18 +32,18 @@ if (SERVER) then
 			return
 		end
 
-		if (char:hasMoney(cost)) then
-			char:takeMoney(cost)
+		if (char:HasMoney(cost)) then
+			char:TakeMoney(cost)
 
 			local entity = ents.Create("nut_shipment")
-			entity:SetPos(client:getItemDropPos())
+			entity:SetPos(client:GetItemDropPos())
 			entity:Spawn()
-			entity:setItems(items)
-			entity:setNetVar("owner", char:getID())
+			entity:SetItems(items)
+			entity:SetNetVar("owner", char:GetID())
 
-			local shipments = char:getVar("charEnts") or {}
+			local shipments = char:GetVar("charEnts") or {}
 			table.insert(shipments, entity)
-			char:setVar("charEnts", shipments, true)
+			char:SetVar("charEnts", shipments, true)
 
 			netstream.Start(client, "bizResp")
 			hook.Run("OnCreateShipment", client, entity)
@@ -69,12 +69,12 @@ if (SERVER) then
 				end
 
 				if (drop) then
-					nut.item.spawn(uniqueID, entity:GetPos() + Vector(0, 0, 16))
+					nut.item.Spawn(uniqueID, entity:GetPos() + Vector(0, 0, 16))
 				else
-					local status, fault = client:getChar():getInv():add(uniqueID)
+					local status, fault = client:GetChar():GetInv():Add(uniqueID)
 
 					if (!status) then
-						return client:notifyLocalized("noFit")
+						return client:NotifyLocalized("noFit")
 					end
 				end
 					
@@ -82,7 +82,7 @@ if (SERVER) then
 
 				entity.items[uniqueID] = entity.items[uniqueID] - 1
 
-				if (entity:getItemCount() < 1) then
+				if (entity:GetItemCount() < 1) then
 					entity:GibBreakServer(Vector(0, 0, 0.5))
 					entity:Remove()
 				end
@@ -92,7 +92,7 @@ if (SERVER) then
 else
 	netstream.Hook("openShp", function(entity, items)
 		nut.gui.shipment = vgui.Create("nutShipment")
-		nut.gui.shipment:setItems(entity, items)
+		nut.gui.shipment:SetItems(entity, items)
 	end)
 
 	netstream.Hook("updtShp", function(entity, items)

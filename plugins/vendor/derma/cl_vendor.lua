@@ -20,7 +20,7 @@ local PANEL = {}
 		self.ourName = header:Add("DLabel")
 		self.ourName:Dock(RIGHT)
 		self.ourName:SetWide(self:GetWide() * 0.5 - 7)
-		self.ourName:SetText(L"you".." ("..nut.currency.get(LocalPlayer():getChar():getMoney())..")")
+		self.ourName:SetText(L"you".." ("..nut.currency.Get(LocalPlayer():GetChar():GetMoney())..")")
 		self.ourName:SetTextInset(0, 0)
 		self.ourName:SetTextColor(color_white)
 		self.ourName:SetFont("nutMediumFont")
@@ -90,17 +90,17 @@ local PANEL = {}
 		if ((!listID or listID == "selling") and !IsValid(self.sellingList[uniqueID])) then
 			if (data and data[VENDOR_MODE] and data[VENDOR_MODE] != VENDOR_BUYONLY) then
 				local item = self.sellingItems:Add("nutVendorItem")
-				item:setup(uniqueID)
+				item:Setup(uniqueID)
 
 				self.sellingList[uniqueID] = item
 				self.sellingItems:InvalidateLayout()
 			end
 		end
 
-		if ((!listID or listID == "buying") and !IsValid(self.buyingList[uniqueID]) and LocalPlayer():getChar():getInv():hasItem(uniqueID)) then
+		if ((!listID or listID == "buying") and !IsValid(self.buyingList[uniqueID]) and LocalPlayer():GetChar():GetInv():HasItem(uniqueID)) then
 			if (data and data[VENDOR_MODE] and data[VENDOR_MODE] != VENDOR_SELLONLY) then
 				local item = self.buyingItems:Add("nutVendorItem")
-				item:setup(uniqueID)
+				item:Setup(uniqueID)
 				item.isLocal = true
 
 				self.buyingList[uniqueID] = item
@@ -125,16 +125,16 @@ local PANEL = {}
 		end
 	end
 
-	function PANEL:setup(entity)
+	function PANEL:Setup(entity)
 		self.entity = entity
-		self:SetTitle(entity:getNetVar("name", ""))
-		self.vendorName:SetText(entity:getNetVar("name", "")..(entity.money and " ("..entity.money..")" or ""))
+		self:SetTitle(entity:GetNetVar("name", ""))
+		self.vendorName:SetText(entity:GetNetVar("name", "")..(entity.money and " ("..entity.money..")" or ""))
 
 		for k, v in SortedPairs(entity.items) do
 			self:addItem(k, "selling")
 		end
 
-		for k, v in SortedPairs(LocalPlayer():getChar():getInv():getItems()) do
+		for k, v in SortedPairs(LocalPlayer():GetChar():GetInv():GetItems()) do
 			self:addItem(v.uniqueID, "buying")
 		end
 	end
@@ -157,21 +157,21 @@ local PANEL = {}
 		end
 
 		if ((self.nextUpdate or 0) < CurTime()) then
-			self:SetTitle(self.entity:getNetVar("name"))
-			self.vendorName:SetText(entity:getNetVar("name", "")..(entity.money and " ("..nut.currency.get(entity.money)..")" or ""))
-			self.ourName:SetText(L"you".." ("..nut.currency.get(LocalPlayer():getChar():getMoney())..")")
+			self:SetTitle(self.entity:GetNetVar("name"))
+			self.vendorName:SetText(entity:GetNetVar("name", "")..(entity.money and " ("..nut.currency.Get(entity.money)..")" or ""))
+			self.ourName:SetText(L"you".." ("..nut.currency.Get(LocalPlayer():GetChar():GetMoney())..")")
 
 			self.nextUpdate = CurTime() + 0.25
 		end
 	end
 
 	function PANEL:onItemSelected(panel)
-		local price = self.entity:getPrice(panel.item, panel.isLocal)
+		local price = self.entity:GetPrice(panel.item, panel.isLocal)
 
 		if (panel.isLocal) then
-			self.vendorBuy:SetText(L"sell".." ("..nut.currency.get(price)..")")
+			self.vendorBuy:SetText(L"sell".." ("..nut.currency.Get(price)..")")
 		else
-			self.vendorSell:SetText(L"purchase".." ("..nut.currency.get(price)..")")
+			self.vendorSell:SetText(L"purchase".." ("..nut.currency.Get(price)..")")
 		end
 	end
 vgui.Register("nutVendor", PANEL, "DFrame")
@@ -210,14 +210,14 @@ PANEL = {}
 		end
 	end
 
-	function PANEL:setCallback(callback)
+	function PANEL:SetCallback(callback)
 		self.click.DoClick = function(this)
 			callback()
 			self.selected = true
 		end
 	end
 
-	function PANEL:setup(uniqueID)
+	function PANEL:Setup(uniqueID)
 		local item = nut.item.list[uniqueID]
 
 		if (item) then
@@ -235,7 +235,7 @@ PANEL = {}
 
 			if (entity) then
 				if (self.isLocal) then
-					local count = LocalPlayer():getChar():getInv():getItemCount(self.item)
+					local count = LocalPlayer():GetChar():GetInv():GetItemCount(self.item)
 
 					if (count == 0) then
 						self:Remove()
@@ -254,7 +254,7 @@ PANEL = {}
 
 	function PANEL:Paint(w, h)
 		if (nut.gui.vendor.activeBuy == self or nut.gui.vendor.activeSell == self) then
-			surface.SetDrawColor(nut.config.get("color"))
+			surface.SetDrawColor(nut.config.Get("color"))
 		else
 			surface.SetDrawColor(0, 0, 0, 100)
 		end

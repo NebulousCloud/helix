@@ -3,7 +3,7 @@ PLUGIN.name = "New Fancy Third Person"
 PLUGIN.author = "Black Tea"
 PLUGIN.desc = "Third Person plugin."
 
-nut.config.add("thirdperson", false, "Allow Thirdperson in the server.", nil, {
+nut.config.Add("thirdperson", false, "Allow Thirdperson in the server.", nil, {
 	category = "server"
 })
 
@@ -62,7 +62,7 @@ if (CLIENT) then
 	vgui.Register("nutTPConfig", PANEL, "DFrame")
 
 	local function isAllowed()
-		return nut.config.get("thirdperson")
+		return nut.config.Get("thirdperson")
 	end
 
 	function PLUGIN:SetupQuickMenu(menu)
@@ -99,15 +99,15 @@ if (CLIENT) then
 	local playerMeta = FindMetaTable("Player")
 
 	function playerMeta:CanOverrideView()
-		local entity = Entity(self:getLocalVar("ragdoll", 0))
+		local entity = Entity(self:GetLocalVar("ragdoll", 0))
 		local ragdoll = self:GetRagdollEntity()
 		if ((nut.gui.char and !nut.gui.char:IsVisible()) and
 			NUT_CVAR_THIRDPERSON:GetBool() and
 			!IsValid(self:GetVehicle()) and
 			isAllowed() and 
 			IsValid(self) and
-			self:getChar() and
-			!self:getNetVar("actAng") and
+			self:GetChar() and
+			!self:GetNetVar("actAng") and
 			!IsValid(entity) and
 			LocalPlayer():Alive()
 			) then
@@ -146,7 +146,7 @@ if (CLIENT) then
 				traceData2.endpos = aimOrigin + curAng:Forward() * 65535
 				traceData2.filter = client
 
-			if ((NUT_CVAR_TP_CLASSIC:GetBool() or owner:isWepRaised() or 
+			if ((NUT_CVAR_TP_CLASSIC:GetBool() or owner:IsWepRaised() or 
 				(owner:KeyDown(bit.bor(IN_FORWARD, IN_BACK, IN_MOVELEFT, IN_MOVERIGHT)) and owner:GetVelocity():Length() >= 10)) ) then
 				client:SetEyeAngles((util.TraceLine(traceData2).HitPos - client:GetShootPos()):Angle())
 			end

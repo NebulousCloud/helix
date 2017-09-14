@@ -31,12 +31,12 @@ if (SERVER) then
 		local data = {}
 			for k, v in ipairs(ents.FindByClass("nut_vendor")) do
 				data[#data + 1] = {
-					name = v:getNetVar("name"),
-					desc = v:getNetVar("desc"),
+					name = v:GetNetVar("name"),
+					desc = v:GetNetVar("desc"),
 					pos = v:GetPos(),
 					angles = v:GetAngles(),
 					model = v:GetModel(),
-					bubble = v:getNetVar("noBubble"),
+					bubble = v:GetNetVar("noBubble"),
 					items = v.items,
 					factions = v.factions,
 					classes = v.classes,
@@ -44,19 +44,19 @@ if (SERVER) then
 					scale = v.scale
 				}
 			end
-		self:setData(data)
+		self:SetData(data)
 	end
 
 	function PLUGIN:LoadData()
-		for k, v in ipairs(self:getData() or {}) do
+		for k, v in ipairs(self:GetData() or {}) do
 			local entity = ents.Create("nut_vendor")
 			entity:SetPos(v.pos)
 			entity:SetAngles(v.angles)
 			entity:Spawn()
 			entity:SetModel(v.model)
-			entity:setNetVar("noBubble", v.bubble)
-			entity:setNetVar("name", v.name)
-			entity:setNetVar("desc", v.desc)
+			entity:SetNetVar("noBubble", v.bubble)
+			entity:SetNetVar("name", v.name)
+			entity:SetNetVar("desc", v.desc)
 
 			entity.items = v.items or {}
 			entity.factions = v.factions or {}
@@ -68,14 +68,14 @@ if (SERVER) then
 
 	function PLUGIN:CanVendorSellItem(client, vendor, itemID)
 		local tradeData = vendor.items[itemID]
-		local char = client:getChar()
+		local char = client:GetChar()
 
 		if (!tradeData or !char) then
 			print("Not Valid Item or Client Char.")
 			return false
 		end
 
-		if (!char:hasMoney(tradeData[1] or 0)) then
+		if (!char:HasMoney(tradeData[1] or 0)) then
 			print("Insufficient Fund.")
 			return false
 		end
@@ -92,7 +92,7 @@ if (SERVER) then
 		if (IsValid(entity)) then
 			for k, v in ipairs(entity.receivers) do
 				if (v == client) then
-					table.remove(entity.receivers, k)
+					table.Remove(entity.receivers, k)
 
 					break
 				end
@@ -113,11 +113,11 @@ if (SERVER) then
 			local feedback = true
 
 			if (key == "name") then
-				entity:setNetVar("name", data)
+				entity:SetNetVar("name", data)
 			elseif (key == "desc") then
-				entity:setNetVar("desc", data)
+				entity:SetNetVar("desc", data)
 			elseif (key == "bubble") then
-				entity:setNetVar("noBubble", data)
+				entity:SetNetVar("noBubble", data)
 			elseif (key == "mode") then
 				local uniqueID = data[1]
 
@@ -206,17 +206,17 @@ if (SERVER) then
 				data = {uniqueID, entity.classes[uniqueID]}
 			elseif (key == "model") then
 				entity:SetModel(data)
-				entity:setAnim()
+				entity:SetAnim()
 			elseif (key == "useMoney") then
 				if (entity.money) then
-					entity:setMoney()
+					entity:SetMoney()
 				else
-					entity:setMoney(0)
+					entity:SetMoney(0)
 				end
 			elseif (key == "money") then
 				data = math.Round(math.abs(tonumber(data) or 0))
 
-				entity:setMoney(data)
+				entity:SetMoney(data)
 				feedback = false
 			elseif (key == "scale") then
 				data = tonumber(data) or 0.5
@@ -256,20 +256,20 @@ if (SERVER) then
 		end
 
 		if (entity.items[uniqueID] and hook.Run("CanPlayerTradeWithVendor", client, entity, uniqueID, isSellingToVendor) != false) then
-			local price = entity:getPrice(uniqueID, isSellingToVendor)
+			local price = entity:GetPrice(uniqueID, isSellingToVendor)
 
 			if (isSellingToVendor) then
 				local found = false
 				local name
 				
-				if (!entity:hasMoney(price)) then
-					return client:notifyLocalized("vendorNoMoney")
+				if (!entity:HasMoney(price)) then
+					return client:NotifyLocalized("vendorNoMoney")
 				end
 
 				local invOkay = true
-				for k, v in pairs(client:getChar():getInv():getItems()) do
-					if (v.uniqueID == uniqueID and v:getID() != 0) then
-						invOkay = v:remove()
+				for k, v in pairs(client:GetChar():GetInv():GetItems()) do
+					if (v.uniqueID == uniqueID and v:GetID() != 0) then
+						invOkay = v:Remove()
 						found = true
 						name = L(v.name, client)
 
@@ -282,48 +282,48 @@ if (SERVER) then
 				end
 				
 				if (!invOkay) then
-					client:getChar():getInv():sync(client, true)
-					return client:notifyLocalized("tellAdmin", "trd!iid")
+					client:GetChar():GetInv():Sync(client, true)
+					return client:NotifyLocalized("tellAdmin", "trd!iid")
 				end
 
-				client:getChar():giveMoney(price)
-				client:notifyLocalized("businessSell", name, nut.currency.get(price))
-				entity:takeMoney(price)
-				entity:addStock(uniqueID)
+				client:GetChar():GiveMoney(price)
+				client:NotifyLocalized("businessSell", name, nut.currency.Get(price))
+				entity:TakeMoney(price)
+				entity:AddStock(uniqueID)
 
 				PLUGIN:SaveData()
 				hook.Run("OnCharTradeVendor", client, entity, uniqueID, isSellingToVendor)
 			else
-				local stock = entity:getStock(uniqueID)
+				local stock = entity:GetStock(uniqueID)
 
 				if (stock and stock < 1) then
-					return client:notifyLocalized("vendorNoStock")
+					return client:NotifyLocalized("vendorNoStock")
 				end
 
-				if (!client:getChar():hasMoney(price)) then
-					return client:notifyLocalized("canNotAfford")
+				if (!client:GetChar():HasMoney(price)) then
+					return client:NotifyLocalized("canNotAfford")
 				end
 
 				local name = L(nut.item.list[uniqueID].name, client)
 			
-				client:getChar():takeMoney(price)
-				client:notifyLocalized("businessPurchase", name, nut.currency.get(price))
+				client:GetChar():TakeMoney(price)
+				client:NotifyLocalized("businessPurchase", name, nut.currency.Get(price))
 				
-				entity:giveMoney(price)
+				entity:GiveMoney(price)
 
-				if (!client:getChar():getInv():add(uniqueID)) then
-					nut.item.spawn(uniqueID, client:getItemDropPos())
+				if (!client:GetChar():GetInv():Add(uniqueID)) then
+					nut.item.Spawn(uniqueID, client:GetItemDropPos())
 				else
 					netstream.Start(client, "vendorAdd", uniqueID)
 				end
 
-				entity:takeStock(uniqueID)
+				entity:TakeStock(uniqueID)
 
 				PLUGIN:SaveData()
 				hook.Run("OnCharTradeVendor", client, entity, uniqueID, isSellingToVendor)
 			end
 		else
-			client:notifyLocalized("vendorNoTrade")
+			client:NotifyLocalized("vendorNoTrade")
 		end
 	end)
 else
@@ -347,7 +347,7 @@ else
 		entity.scale = scale
 
 		nut.gui.vendor = vgui.Create("nutVendor")
-		nut.gui.vendor:setup(entity)
+		nut.gui.vendor:Setup(entity)
 
 		if (LocalPlayer():IsAdmin() and messages) then
 			nut.gui.vendorEditor = vgui.Create("nutVendorEditor")
@@ -427,9 +427,9 @@ else
 		end
 
 		if (key == "name") then
-			editor.name:SetText(entity:getNetVar("name"))
+			editor.name:SetText(entity:GetNetVar("name"))
 		elseif (key == "desc") then
-			editor.desc:SetText(entity:getNetVar("desc"))
+			editor.desc:SetText(entity:GetNetVar("desc"))
 		elseif (key == "bubble") then
 			editor.bubble.noSend = true
 			editor.bubble:SetValue(data and 1 or 0)
@@ -440,11 +440,11 @@ else
 				editor.lines[data[1]]:SetValue(2, L(VENDOR_TEXT[data[2]]))
 			end
 		elseif (key == "price") then
-			editor.lines[data]:SetValue(3, entity:getPrice(data))
+			editor.lines[data]:SetValue(3, entity:GetPrice(data))
 		elseif (key == "stockDisable") then
 			editor.lines[data]:SetValue(4, "-")
 		elseif (key == "stockMax" or key == "stock") then
-			local current, max = entity:getStock(data)
+			local current, max = entity:GetStock(data)
 
 			editor.lines[data]:SetValue(4, current.."/"..max)
 		elseif (key == "faction") then
@@ -522,7 +522,7 @@ else
 		local editor = nut.gui.vendorEditor
 
 		if (IsValid(editor)) then
-			local _, max = entity:getStock(uniqueID)
+			local _, max = entity:GetStock(uniqueID)
 
 			editor.lines[uniqueID]:SetValue(4, amount.."/"..max)
 		end

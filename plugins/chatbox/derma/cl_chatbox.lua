@@ -41,19 +41,19 @@ local PANEL = {}
 					local arguments = self.arguments or {}
 					local command = string.PatternSafe(arguments[1] or ""):lower()
 
-					nut.util.drawBlur(this)
+					nut.util.DrawBlur(this)
 
 					surface.SetDrawColor(0, 0, 0, 200)
 					surface.DrawRect(0, 0, w, h)
 
 					local i = 0
-					local color = nut.config.get("color")
+					local color = nut.config.Get("color")
 
 					for k, v in SortedPairs(nut.command.list) do
 						local k2 = "/"..k
 
 						if (k2:match(command)) then
-							local x, y = nut.util.drawText(k2.."  ", 4, i * 20, color)
+							local x, y = nut.util.DrawText(k2.."  ", 4, i * 20, color)
 
 							if (k == command and v.syntax) then
 								local i2 = 0
@@ -66,7 +66,7 @@ local PANEL = {}
 										color = COLOR_ACTIVE
 									end
 
-									x = x + nut.util.drawText(argument.."  ", x, i * 20, color)
+									x = x + nut.util.DrawText(argument.."  ", x, i * 20, color)
 								end
 							end
 
@@ -102,7 +102,7 @@ local PANEL = {}
 
 	function PANEL:Paint(w, h)
 		if (self.active) then
-			nut.util.drawBlur(self, 10)
+			nut.util.DrawBlur(self, 10)
 
 			surface.SetDrawColor(250, 250, 250, 2)
 			surface.DrawRect(0, 0, w, h)
@@ -114,7 +114,7 @@ local PANEL = {}
 
 	local TEXT_COLOR = Color(255, 255, 255, 200)
 
-	function PANEL:setActive(state)
+	function PANEL:SetActive(state)
 		self.active = state
 
 		if (state) then
@@ -162,7 +162,7 @@ local PANEL = {}
 				surface.SetDrawColor(0, 0, 0, 200)
 				surface.DrawOutlinedRect(0, 0, w, h)
 
-				this:DrawTextEntryText(TEXT_COLOR, nut.config.get("color"), TEXT_COLOR)
+				this:DrawTextEntryText(TEXT_COLOR, nut.config.Get("color"), TEXT_COLOR)
 			end
 			self.text.OnTextChanged = function(this)
 				local text = this:GetText()
@@ -170,7 +170,7 @@ local PANEL = {}
 				hook.Run("ChatTextChanged", text)
 
 				if (text:sub(1, 1) == "/") then
-					self.arguments = nut.command.extractArgs(text:sub(2))
+					self.arguments = nut.command.ExtractArgs(text:sub(2))
 				end
 			end
 
@@ -203,7 +203,7 @@ local PANEL = {}
 		else
 			local alpha = 120 + math.cos(RealTime() * 5) * 10
 
-			surface.SetDrawColor(ColorAlpha(nut.config.get("color"), alpha))
+			surface.SetDrawColor(ColorAlpha(nut.config.Get("color"), alpha))
 		end
 
 		surface.DrawRect(0, 0, w, h)
@@ -244,7 +244,7 @@ local PANEL = {}
 				end
 			end
 
-			self:setFilter(filter, this.active)
+			self:SetFilter(filter, this.active)
 			RunConsoleCommand("nut_chatfilter", filters)
 		end
 
@@ -253,7 +253,7 @@ local PANEL = {}
 		end
 	end
 
-	function PANEL:addText(...)
+	function PANEL:AddText(...)
 		local text = "<font=nutChatFont>"
 
 		if (CHAT_CLASS) then
@@ -287,7 +287,7 @@ local PANEL = {}
 
 		local panel = self.scroll:Add("nutMarkupPanel")
 		panel:SetWide(self:GetWide() - 8)
-		panel:setMarkup(text, OnDrawText)
+		panel:SetMarkup(text, OnDrawText)
 		panel.start = CurTime() + 15
 		panel.finish = panel.start + 20
 		panel.Think = function(this)
@@ -317,7 +317,7 @@ local PANEL = {}
 		return panel:IsVisible()
 	end
 
-	function PANEL:setFilter(filter, state)
+	function PANEL:SetFilter(filter, state)
 		if (state) then
 			for k, v in ipairs(self.list) do
 				if (v.filter == filter) then

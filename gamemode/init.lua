@@ -20,10 +20,10 @@ include("shared.lua")
 timer.Simple(0, function()
 	hook.Run("SetupDatabase")
 	
-    nut.db.connect(function()
+    nut.db.Connect(function()
         -- Create the SQL tables if they do not exist.
-        nut.db.loadTables()
-        nut.log.loadTables()
+        nut.db.LoadTables()
+        nut.log.LoadTables()
         
         MsgC(Color(0, 255, 0), "NutScript has connected to the database.\n")
         MsgC(Color(0, 255, 0), "Database Type: " .. nut.db.module .. ".\n")

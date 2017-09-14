@@ -21,16 +21,16 @@ if (SERVER) then
 		end
 	end
 
-	function ENT:setInventory(inventory)
+	function ENT:SetInventory(inventory)
 		if (inventory) then
-			self:setNetVar("id", inventory:getID())
+			self:SetNetVar("id", inventory:GetID())
 			
-			inventory.onAuthorizeTransfer = function(inventory, client, oldInventory, item)
+			inventory.OnAuthorizeTransfer = function(inventory, client, oldInventory, item)
 				if (IsValid(client) and IsValid(self) and self.receivers[client]) then
 					return true
 				end
 			end
-			inventory.getReceiver = function(inventory)
+			inventory.GetReceiver = function(inventory)
 				local receivers = {}
 
 				for k, v in pairs(self.receivers) do
@@ -41,14 +41,14 @@ if (SERVER) then
 
 				return #receivers > 0 and receivers or nil
 			end
-			inventory.onCanTransfer = function(inventory, client, oldX, oldY, x, y, newInvID)
+			inventory.OnCanTransfer = function(inventory, client, oldX, oldY, x, y, newInvID)
 				return hook.Run("StorageCanTransfer", inventory, client, oldX, oldY, x, y, newInvID)
 			end
 		end
 	end
 
 	function ENT:OnRemove()
-		local index = self:getNetVar("id")
+		local index = self:GetNetVar("id")
 
 		if (!nut.shuttingDown and !self.nutIsSafe and nut.entityDataLoaded and index) then
 			local item = nut.item.inventories[index]
@@ -66,33 +66,33 @@ if (SERVER) then
 
 	local OPEN_TIME = .7
 	function ENT:OpenInv(activator)
-		local inventory = self:getInv()
+		local inventory = self:GetInv()
 		local def = PLUGIN.definitions[self:GetModel():lower()]
 
 		if (def.onOpen) then
 			def.onOpen(self, activator)
 		end
 
-		activator:setAction("Opening...", OPEN_TIME, function()
+		activator:SetAction("Opening...", OPEN_TIME, function()
 			if (activator:GetPos():Distance(self:GetPos()) <= 100) then
 				self.receivers[activator] = true
 				activator.nutBagEntity = self
 				
-				inventory:sync(activator)
-				netstream.Start(activator, "invOpen", self, inventory:getID())
+				inventory:Sync(activator)
+				netstream.Start(activator, "invOpen", self, inventory:GetID())
 				self:EmitSound(def.opensound or "items/ammocrate_open.wav")
 			end
 		end)
 	end
 
 	function ENT:Use(activator)
-		local inventory = self:getInv()
+		local inventory = self:GetInv()
 
 		if (inventory and (activator.nutNextOpen or 0) < CurTime()) then
-			if (activator:getChar()) then
+			if (activator:GetChar()) then
 				local def = PLUGIN.definitions[self:GetModel():lower()]
 
-				if (self:getNetVar("locked")) then
+				if (self:GetNetVar("locked")) then
 					self:EmitSound(def.locksound or "doors/default_locked.wav")
 					if (!self.keypad) then
 						netstream.Start(activator, "invLock", self)
@@ -113,15 +113,15 @@ else
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
 	local drawText = nut.util.drawText
-	local configGet = nut.config.get
+	local configGet = nut.config.Get
 
-	function ENT:onDrawEntityInfo(alpha)
-		local locked = self.getNetVar(self, "locked", false)
+	function ENT:OnDrawEntityInfo(alpha)
+		local locked = self.GetNetVar(self, "locked", false)
 		local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
 		local x, y = position.x, position.y
 
 		y = y - 20
-		local tx, ty = nut.util.drawText(locked and "P" or "Q", x, y, colorAlpha(locked and COLOR_LOCKED or COLOR_UNLOCKED, alpha), 1, 1, "nutIconsMedium", alpha * 0.65)
+		local tx, ty = nut.util.DrawText(locked and "P" or "Q", x, y, colorAlpha(locked and COLOR_LOCKED or COLOR_UNLOCKED, alpha), 1, 1, "nutIconsMedium", alpha * 0.65)
 		y = y + ty*.9
 
 		local def = PLUGIN.definitions[self.GetModel(self):lower()]
@@ -133,6 +133,6 @@ else
 	end
 end
 
-function ENT:getInv()
-	return nut.item.inventories[self:getNetVar("id", 0)]
+function ENT:GetInv()
+	return nut.item.inventories[self:GetNetVar("id", 0)]
 end

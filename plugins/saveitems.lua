@@ -17,7 +17,7 @@ PLUGIN.desc = "Saves items that were dropped."
 -- as title says.
 
 function PLUGIN:LoadData()
-	local items = self:getData()
+	local items = self:GetData()
 
 	if (items) then
 		local idRange = {}
@@ -50,9 +50,9 @@ function PLUGIN:LoadData()
 
 							if (itemTable and itemID) then
 								local position = positions[itemID]
-								local item = nut.item.new(uniqueID, itemID)
+								local item = nut.item.New(uniqueID, itemID)
 								item.data = data or {}
-								item:spawn(position).nutItemID = itemID
+								item:Spawn(position).nutItemID = itemID
 
 								item.invID = 0
 								table.insert(loadedItems, item)
@@ -76,5 +76,5 @@ function PLUGIN:SaveData()
 		end
 	end
 
-	self:setData(items)
+	self:SetData(items)
 end

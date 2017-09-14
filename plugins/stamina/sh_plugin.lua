@@ -4,7 +4,7 @@ PLUGIN.desc = "Adds a stamina system to limit running."
 
 if (SERVER) then
 	function PLUGIN:PostPlayerLoadout(client)
-		client:setLocalVar("stm", 100)
+		client:SetLocalVar("stm", 100)
 
 		local uniqueID = "nutStam"..client:SteamID()
 		local offset = 0
@@ -14,19 +14,19 @@ if (SERVER) then
 
 		timer.Create(uniqueID, 0.25, 0, function()
 			if (IsValid(client)) then
-				local character = client:getChar()
+				local character = client:GetChar()
 
 				if (client:GetMoveType() != MOVETYPE_NOCLIP and character) then
 					velocity = client:GetVelocity()
 					length2D = velocity:Length2D()
-					runSpeed = nut.config.get("runSpeed") + character:getAttrib("stm", 0)
+					runSpeed = nut.config.Get("runSpeed") + character:GetAttrib("stm", 0)
 
 					if (client:WaterLevel() > 1) then
 						runSpeed = runSpeed * 0.775
 					end
 
 					if (client:KeyDown(IN_SPEED) and length2D >= (runSpeed - 10)) then
-						offset = -2 + (character:getAttrib("end", 0) / 60)
+						offset = -2 + (character:GetAttrib("end", 0) / 60)
 					elseif (offset > 0.5) then
 						offset = 1
 					else
@@ -37,23 +37,23 @@ if (SERVER) then
 						offset = offset + 1
 					end
 
-					local current = client:getLocalVar("stm", 0)
+					local current = client:GetLocalVar("stm", 0)
 					local value = math.Clamp(current + offset, 0, 100)
 
 					if (current != value) then
-						client:setLocalVar("stm", value)
+						client:SetLocalVar("stm", value)
 
-						if (value == 0 and !client:getNetVar("brth", false)) then
-							client:SetRunSpeed(nut.config.get("walkSpeed"))
-							client:setNetVar("brth", true)
+						if (value == 0 and !client:GetNetVar("brth", false)) then
+							client:SetRunSpeed(nut.config.Get("walkSpeed"))
+							client:SetNetVar("brth", true)
 
-							--character:updateAttrib("end", 0.1)
-							--character:updateAttrib("stm", 0.01)
+							--character:UpdateAttrib("end", 0.1)
+							--character:UpdateAttrib("stm", 0.01)
 
 							hook.Run("PlayerStaminaLost", client)
-						elseif (value >= 50 and client:getNetVar("brth", false)) then
+						elseif (value >= 50 and client:GetNetVar("brth", false)) then
 							client:SetRunSpeed(runSpeed)
-							client:setNetVar("brth", nil)
+							client:SetNetVar("brth", nil)
 						end
 					end
 				end
@@ -65,14 +65,14 @@ if (SERVER) then
 
 	local playerMeta = FindMetaTable("Player")
 
-	function playerMeta:restoreStamina(amount)
-		local current = self:getLocalVar("stm", 0)
+	function playerMeta:RestoreStamina(amount)
+		local current = self:GetLocalVar("stm", 0)
 		local value = math.Clamp(current + amount, 0, 100)
 
-		self:setLocalVar("stm", value)
+		self:SetLocalVar("stm", value)
 	end
 else
-	nut.bar.add(function()
-		return LocalPlayer():getLocalVar("stm", 0) / 100
+	nut.bar.Add(function()
+		return LocalPlayer():GetLocalVar("stm", 0) / 100
 	end, Color(200, 200, 40), nil, "stm")
 end

@@ -5,7 +5,7 @@ nut.bar.actionText = ""
 nut.bar.actionStart = 0
 nut.bar.actionEnd = 0
 
-function nut.bar.get(identifier)
+function nut.bar.Get(identifier)
 	for i = 1, #nut.bar.list do
 		local bar = nut.bar.list[i]
 		
@@ -15,12 +15,12 @@ function nut.bar.get(identifier)
 	end
 end
 
-function nut.bar.add(getValue, color, priority, identifier)
+function nut.bar.Add(getValue, color, priority, identifier)
 	if (identifier) then
-		local oldBar = nut.bar.get(identifier)
+		local oldBar = nut.bar.Get(identifier)
 		
 		if (oldBar) then
-			table.remove(nut.bar.list, oldBar.priority)
+			table.Remove(nut.bar.list, oldBar.priority)
 		end
 	end
 
@@ -40,12 +40,12 @@ function nut.bar.add(getValue, color, priority, identifier)
 end
 
 local color_dark = Color(0, 0, 0, 225)
-local gradient = nut.util.getMaterial("vgui/gradient-u")
-local gradient2 = nut.util.getMaterial("vgui/gradient-d")
+local gradient = nut.util.GetMaterial("vgui/gradient-u")
+local gradient2 = nut.util.GetMaterial("vgui/gradient-d")
 local surface = surface
 
-function nut.bar.draw(x, y, w, h, value, color)
-	nut.util.drawBlurAt(x, y, w, h)
+function nut.bar.Draw(x, y, w, h, value, color)
+	nut.util.DrawBlurAt(x, y, w, h)
 
 	surface.SetDrawColor(255, 255, 255, 15)
 	surface.DrawRect(x, y, w, h)
@@ -64,7 +64,7 @@ end
 local TEXT_COLOR = Color(240, 240, 240)
 local SHADOW_COLOR = Color(20, 20, 20)
 
-function nut.bar.drawAction()
+function nut.bar.DrawAction()
 	local start, finish = nut.bar.actionStart, nut.bar.actionEnd
 	local curTime = CurTime()
 	local scrW, scrH = ScrW(), ScrH()
@@ -77,7 +77,7 @@ function nut.bar.drawAction()
 			local w, h = scrW * 0.35, 28
 			local x, y = (scrW * 0.5) - (w * 0.5), (scrH * 0.725) - (h * 0.5)
 
-			nut.util.drawBlurAt(x, y, w, h)
+			nut.util.DrawBlurAt(x, y, w, h)
 
 			surface.SetDrawColor(35, 35, 35, 100)
 			surface.DrawRect(x, y, w, h)
@@ -85,7 +85,7 @@ function nut.bar.drawAction()
 			surface.SetDrawColor(0, 0, 0, 120)
 			surface.DrawOutlinedRect(x, y, w, h)
 
-			surface.SetDrawColor(nut.config.get("color"))
+			surface.SetDrawColor(nut.config.Get("color"))
 			surface.DrawRect(x + 4, y + 4, (w * fraction) - 8, h - 8)
 
 			surface.SetDrawColor(200, 200, 200, 20)
@@ -102,7 +102,7 @@ local Approach = math.Approach
 
 BAR_HEIGHT = 10
 
-function nut.bar.drawAll()
+function nut.bar.DrawAll()
 	if (hook.Run("ShouldHideBars")) then
 		return
 	end
@@ -128,21 +128,21 @@ function nut.bar.drawAll()
 			end
 			
 			if (bar.lifeTime >= curTime or bar.visible or hook.Run("ShouldBarDraw", bar)) then
-				nut.bar.draw(x, y, w, h, value, bar.color, bar)
+				nut.bar.Draw(x, y, w, h, value, bar.color, bar)
 				y = y + h + 2
 			end
 		end
 	end
 
-	nut.bar.drawAction()
+	nut.bar.DrawAction()
 end
 
 do
-	nut.bar.add(function()
+	nut.bar.Add(function()
 		return LocalPlayer():Health() / LocalPlayer():GetMaxHealth()
 	end, Color(200, 50, 40), nil, "health")
 
-	nut.bar.add(function()
+	nut.bar.Add(function()
 		return math.min(LocalPlayer():Armor() / 100, 1)
 	end, Color(30, 70, 180), nil, "armor")
 end

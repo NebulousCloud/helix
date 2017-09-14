@@ -14,7 +14,7 @@ local PANEL = {}
 
 		nut.gui.score = self
 
-		self:SetSize(ScrW() * nut.config.get("sbWidth"), ScrH() * nut.config.get("sbHeight"))
+		self:SetSize(ScrW() * nut.config.Get("sbWidth"), ScrH() * nut.config.Get("sbHeight"))
 		self:Center()
 
 		self.title = self:Add("DLabel")
@@ -81,7 +81,7 @@ local PANEL = {}
 
 	function PANEL:Think()
 		if ((self.nextUpdate or 0) < CurTime()) then
-			self.title:SetText(nut.config.get("sbTitle"))
+			self.title:SetText(nut.config.Get("sbTitle"))
 
 			local visible, amount
 
@@ -107,7 +107,7 @@ local PANEL = {}
 	end
 
 	function PANEL:addPlayer(client, parent)
-		if (!client:getChar() or !IsValid(parent)) then
+		if (!client:GetChar() or !IsValid(parent)) then
 			return
 		end
 
@@ -115,7 +115,7 @@ local PANEL = {}
 		slot:Dock(TOP)
 		slot:SetTall(64)
 		slot:DockMargin(0, 0, 0, 1)
-		slot.character = client:getChar()
+		slot.character = client:GetChar()
 
 		client.nutScoreSlot = slot
 
@@ -137,7 +137,7 @@ local PANEL = {}
 
 			RegisterDermaMenuForClose(menu)
 		end
-		slot.model:SetToolTip(L("sbOptions", client:steamName()))
+		slot.model:SetToolTip(L("sbOptions", client:SteamName()))
 
 		timer.Simple(0, function()
 			if (!IsValid(slot)) then
@@ -186,7 +186,7 @@ local PANEL = {}
 		slot.desc:DockMargin(65, 0, 48, 0)
 		slot.desc:SetWrap(true)
 		slot.desc:SetContentAlignment(7)
-		slot.desc:SetText(hook.Run("GetDisplayedDescription", client) or (client:getChar() and client:getChar():getDesc()) or "")
+		slot.desc:SetText(hook.Run("GetDisplayedDescription", client) or (client:GetChar() and client:GetChar():GetDesc()) or "")
 		slot.desc:SetTextColor(color_white)
 		slot.desc:SetExpensiveShadow(1, Color(0, 0, 0, 100))
 		slot.desc:SetFont("nutSmallFont")
@@ -194,7 +194,7 @@ local PANEL = {}
 		local oldTeam = client:Team()
 
 		function slot:update()
-			if (!IsValid(client) or !client:getChar() or !self.character or self.character != client:getChar() or oldTeam != client:Team()) then
+			if (!IsValid(client) or !client:GetChar() or !self.character or self.character != client:GetChar() or oldTeam != client:Team()) then
 				self:Remove()
 
 				local i = 0
@@ -213,9 +213,9 @@ local PANEL = {}
 			local name = overrideName or client:Name()
 			local model = client:GetModel()
 			local skin = client:GetSkin()
-			local desc = hook.Run("ShouldAllowScoreboardOverride", client, "desc") and hook.Run("GetDisplayedDescription", client) or (client:getChar() and client:getChar():getDesc()) or ""
+			local desc = hook.Run("ShouldAllowScoreboardOverride", client, "desc") and hook.Run("GetDisplayedDescription", client) or (client:GetChar() and client:GetChar():GetDesc()) or ""
 
-			self.model:setHidden(overrideName)
+			self.model:SetHidden(overrideName)
 
 			if (self.lastName != name) then
 				self.name:SetText(name)
@@ -235,7 +235,7 @@ local PANEL = {}
 
 			if (self.lastModel != model or self.lastSkin != skin) then
 				self.model:SetModel(client:GetModel(), client:GetSkin())
-				self.model:SetToolTip(L("sbOptions", client:steamName()))
+				self.model:SetToolTip(L("sbOptions", client:SteamName()))
 				
 				self.lastModel = model
 				self.lastSkin = skin
@@ -275,7 +275,7 @@ local PANEL = {}
 	end
 
 	function PANEL:Paint(w, h)
-		nut.util.drawBlur(self, 10)
+		nut.util.DrawBlur(self, 10)
 
 		surface.SetDrawColor(30, 30, 30, 100)
 		surface.DrawRect(0, 0, w, h)
