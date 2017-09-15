@@ -40,10 +40,6 @@ if (SERVER) then
 		local arg = {...}
 		return (Format("%s purchased the door", client:Name()))
 	end)
-	nut.log.AddType("buydoor", function(client, ...)
-		local arg = {...}
-		return (Format("%s purchased the door", client:Name()))
-	end)
 
 	local L = Format
 

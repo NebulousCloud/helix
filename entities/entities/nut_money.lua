@@ -62,6 +62,6 @@ function ENT:SetAmount(amount)
 	self:SetNetVar("amount", amount)
 end
 
-function ENT:GetAmount(amount)
+function ENT:GetAmount()
 	return self:GetNetVar("amount", 0)
 end
