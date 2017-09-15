@@ -98,7 +98,7 @@ modules.tmysql4 = {
 			end
 		else
 			ThrowConnectionFault(fault)
-		end	
+		end
 	end
 }
 
@@ -295,7 +295,7 @@ function nut.db.WipeTables()
 	local function callback()
 		MsgC(Color(255, 0, 0), "[Nutscript] ALL NUTSCRIPT DATA HAS BEEN WIPED\n")
 	end
-	
+
 	if (nut.db.object) then
 		local queries = string.Explode(";", DROP_QUERY)
 
@@ -319,9 +319,9 @@ concommand.Add("nut_recreatedb", function(client, cmd, arguments)
 			MsgC(Color(255, 0, 0), "[Nutscript] TO CONFIRM DATABASE RESET, RUN 'nut_recreatedb' AGAIN in 3 SECONDS.\n")
 		else
 			resetCalled = 0
-			
+
 			MsgC(Color(255, 0, 0), "[Nutscript] DATABASE WIPE IN PROGRESS.\n")
-			
+
 			hook.Run("OnWipeTables")
 			nut.db.WipeTables()
 		end

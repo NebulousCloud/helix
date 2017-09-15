@@ -19,15 +19,15 @@ include("shared.lua")
 -- Connect to the database using SQLite, mysqloo, or tmysql4.
 timer.Simple(0, function()
 	hook.Run("SetupDatabase")
-	
-    nut.db.Connect(function()
-        -- Create the SQL tables if they do not exist.
-        nut.db.LoadTables()
-        nut.log.LoadTables()
-        
-        MsgC(Color(0, 255, 0), "NutScript has connected to the database.\n")
-        MsgC(Color(0, 255, 0), "Database Type: " .. nut.db.module .. ".\n")
-    end)
+
+	nut.db.Connect(function()
+		-- Create the SQL tables if they do not exist.
+		nut.db.LoadTables()
+		nut.log.LoadTables()
+
+		MsgC(Color(0, 255, 0), "NutScript has connected to the database.\n")
+		MsgC(Color(0, 255, 0), "Database Type: " .. nut.db.module .. ".\n")
+	end)
 end)
 
 -- Resources that are required for players to download are here.
@@ -35,10 +35,10 @@ resource.AddFile("materials/nutscript/gui/vignette.png")
 resource.AddFile("resource/fonts/fontello.ttf")
 
 concommand.Add("nut_setowner", function(client, command, arguments)
-    if (!IsValid(client)) then
-        MsgC(Color(255, 0, 0), "** 'nut_setowner' has been deprecated in NutScript 1.1\n")
-        MsgC(Color(255, 0, 0), "** Instead, please install an admin mod and use that instead.\n")
-    end
+	if (!IsValid(client)) then
+		MsgC(Color(255, 0, 0), "** 'nut_setowner' has been deprecated in NutScript 1.1\n")
+		MsgC(Color(255, 0, 0), "** Instead, please install an admin mod and use that instead.\n")
+	end
 end)
 
 cvars.AddChangeCallback( "sbox_persist", function( name, old, new )
@@ -49,7 +49,7 @@ cvars.AddChangeCallback( "sbox_persist", function( name, old, new )
 
 		--game.CleanUpMap() -- Maybe this should be moved to PersistenceLoad?
 		--seriously you just did this for 2 years? fuck off
-		
+
 		if ( new == "" ) then return end
 
 		hook.Run( "PersistenceLoad", new )

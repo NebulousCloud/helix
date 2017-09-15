@@ -165,7 +165,7 @@ local PANEL = {}
 		end
 	end
 
-	function PANEL:onItemSelected(panel)
+	function PANEL:OnItemSelected(panel)
 		local price = self.entity:GetPrice(panel.item, panel.isLocal)
 
 		if (panel.isLocal) then
@@ -206,7 +206,7 @@ PANEL = {}
 				nut.gui.vendor.activeSell = self
 			end
 
-			nut.gui.vendor:onItemSelected(self)
+			nut.gui.vendor:OnItemSelected(self)
 		end
 	end
 

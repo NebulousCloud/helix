@@ -136,12 +136,12 @@ local PANEL = {}
 		
 		self.nextPress = CurTime() + 0.2
 		
-		if (self:onChanged(self.pressing) != false) then
+		if (self:OnChanged(self.pressing) != false) then
 			self.value = math.Clamp(self.value + self.pressing, 0, self.max)
 		end
 	end
 
-	function PANEL:onChanged(difference)
+	function PANEL:OnChanged(difference)
 	end
 
 	function PANEL:GetValue()

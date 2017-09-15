@@ -7,7 +7,7 @@ do
 			if (key == true) then
 				return self.nutData
 			end
-			
+
 			local data = self.nutData and self.nutData[key]
 
 			if (data == nil) then
@@ -40,7 +40,7 @@ do
 end
 
 -- Whitelist networking information here.
-do	
+do
 	function playerMeta:HasWhitelist(faction)
 		local data = nut.faction.indices[faction]
 
@@ -59,7 +59,7 @@ do
 
 	function playerMeta:GetItems()
 		local char = self:GetChar()
-		
+
 		if (char) then
 			local inv = char:GetInv()
 

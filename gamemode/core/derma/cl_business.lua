@@ -361,10 +361,10 @@ PANEL = {}
 
 		self:SetFocusTopLevel(true)
 		self.itemData = {}
-		self:onQuantityChanged()
+		self:OnQuantityChanged()
 	end
 
-	function PANEL:onQuantityChanged()
+	function PANEL:OnQuantityChanged()
 		local price = 0
 		local money = LocalPlayer():GetChar():GetMoney()
 		local valid = 0
@@ -424,7 +424,7 @@ PANEL = {}
 
 					if (value) then
 						items[k] = math.Clamp(math.Round(value), 0, 10)
-						self:onQuantityChanged()
+						self:OnQuantityChanged()
 					else
 						this:SetValue(1)
 					end
@@ -434,7 +434,7 @@ PANEL = {}
 			end
 		end
 
-		self:onQuantityChanged()
+		self:OnQuantityChanged()
 	end
 
 	function PANEL:Think()

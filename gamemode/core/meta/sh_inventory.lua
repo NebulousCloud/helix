@@ -363,10 +363,10 @@ if (SERVER) then
 		if (item) then
 			if (type(receiver) == "table") then
 				for k, v in pairs(receiver) do
-					item:Call("onSendData", v)
+					item:Call("OnSendData", v)
 				end
 			elseif (IsValid(receiver)) then
-				item:Call("onSendData", receiver)
+				item:Call("OnSendData", receiver)
 			end
 		end
 	end
@@ -495,7 +495,7 @@ if (SERVER) then
 		netstream.Start(receiver, "inv", slots, self:GetID(), self.w, self.h, (receiver == nil or fullUpdate) and self.owner or nil, self.vars or {})
 
 		for k, v in pairs(self:GetItems()) do
-			v:Call("onSendData", receiver)
+			v:Call("OnSendData", receiver)
 		end
 	end
 end

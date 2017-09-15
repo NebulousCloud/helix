@@ -7,10 +7,10 @@ nut.net.globals = nut.net.globals or {}
 -- Check if there is an attempt to send a function. Can't send those.
 local function CheckBadType(name, object)
 	local objectType = type(object)
-	
+
 	if (objectType == "function") then
 		ErrorNoHalt("Net var '"..name.."' contains a bad object type!")
-		
+
 		return true
 	elseif (objectType == "table") then
 		for k, v in pairs(object) do
@@ -55,7 +55,7 @@ end
 
 function entityMeta:SetNetVar(key, value, receiver)
 	if (CheckBadType(key, value)) then return end
-		
+
 	nut.net[self] = nut.net[self] or {}
 
 	if (nut.net[self][key] != value) then
@@ -75,7 +75,7 @@ end
 
 function playerMeta:SetLocalVar(key, value)
 	if (CheckBadType(key, value)) then return end
-	
+
 	nut.net[self] = nut.net[self] or {}
 	nut.net[self][key] = value
 

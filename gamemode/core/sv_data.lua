@@ -18,7 +18,7 @@ function nut.data.Set(key, value, global, ignoreMap)
 	file.CreateDir(path)
 	-- Write the data using pON encoding.
 	file.Write(path..key..".txt", pon.encode({value}))
-	
+
 	-- Cache the data value here.
 	nut.data.stored[key] = value
 

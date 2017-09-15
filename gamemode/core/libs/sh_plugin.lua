@@ -40,7 +40,7 @@ function nut.plugin.Load(uniqueID, path, isSingleFile, variable)
 
 		hook.Run("DoPluginIncludes", path, PLUGIN)
 	end
-	
+
 	nut.util.Include(isSingleFile and path or path.."/sh_"..variable:lower()..".lua", "shared")
 	PLUGIN.loading = false
 
@@ -85,7 +85,7 @@ function nut.plugin.GetHook(pluginName, hookName)
 
 	if (h) then
 		local p = nut.plugin.list[pluginName]
-		
+
 		if (p) then
 			return h[p]
 		end
@@ -408,19 +408,19 @@ do
 
 		if (cache) then
 			for k, v in pairs(cache) do
-				local result = {v(k, ...)}
+				local a, b, c, d, e, f = v(k, ...)
 
-				if (#result > 0) then
-					return unpack(result)
+				if (a != nil) then
+					return a, b, c, d, e, f
 				end
 			end
 		end
 
 		if (Schema and Schema[name]) then
-			local result = {Schema[name](Schema, ...)}
+			local a, b, c, d, e, f = Schema[name](Schema, ...)
 
-			if (#result > 0) then
-				return unpack(result)
+			if (a != nil) then
+				return a, b, c, d, e, f
 			end
 		end
 

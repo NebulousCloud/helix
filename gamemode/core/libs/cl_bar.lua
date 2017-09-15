@@ -106,27 +106,27 @@ function nut.bar.DrawAll()
 	if (hook.Run("ShouldHideBars")) then
 		return
 	end
-	
+
 	local w, h = surface.ScreenWidth() * 0.35, BAR_HEIGHT
 	local x, y = 4, 4
 	local deltas = nut.bar.delta
 	local frameTime = FrameTime()
 	local curTime = CurTime()
 	local updateValue = frameTime * 0.6
-	
+
 	for i = 1, #nut.bar.list do
 		local bar = nut.bar.list[i]
-		
+
 		if (bar) then
 			local realValue = bar.getValue()
 			local value = Approach(deltas[i] or 0, realValue, updateValue)
-			
+
 			deltas[i] = value
-			
+
 			if (deltas[i] != realValue) then
 				bar.lifeTime = curTime + 5
 			end
-			
+
 			if (bar.lifeTime >= curTime or bar.visible or hook.Run("ShouldBarDraw", bar)) then
 				nut.bar.Draw(x, y, w, h, value, bar.color, bar)
 				y = y + h + 2

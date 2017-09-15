@@ -242,7 +242,7 @@ PANEL = {}
 		return (!IsValid(self.slots[x][y].item) or self.slots[x][y].item == this)
 	end
 	
-	function PANEL:onTransfer(oldX, oldY, x, y, oldInventory, noSend)
+	function PANEL:OnTransfer(oldX, oldY, x, y, oldInventory, noSend)
 		local inventory = nut.item.inventories[oldInventory.invID]
 		local inventory2 = nut.item.inventories[self.invID]
 		local item
@@ -339,7 +339,7 @@ PANEL = {}
 				local oldX, oldY = this.gridX, this.gridY
 				local oldParent = this:GetParent()
 
-				if (inventory:onTransfer(oldX, oldY, data.x2, data.y2, oldParent, noSend) == false) then
+				if (inventory:OnTransfer(oldX, oldY, data.x2, data.y2, oldParent, noSend) == false) then
 					return
 				end
 

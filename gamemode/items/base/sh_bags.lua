@@ -59,7 +59,7 @@ function ITEM:GetInv()
 end
 
 -- Called when the item first appears for a client.
-function ITEM:onSendData()
+function ITEM:OnSendData()
 	local index = self:GetData("id")
 
 	if (index) then

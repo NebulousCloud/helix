@@ -200,7 +200,7 @@ function SWEP:PrimaryAttack()
 	end)
 end
 
-function SWEP:onCanCarry(entity)
+function SWEP:OnCanCarry(entity)
 	local physicsObject = entity:GetPhysicsObject()
 
 	if (!IsValid(physicsObject)) then
@@ -218,7 +218,7 @@ function SWEP:onCanCarry(entity)
 	return true
 end
 
-function SWEP:doPickup(entity)
+function SWEP:DoPickup(entity)
 	if (entity:IsPlayerHolding()) then
 		return
 	end
@@ -264,11 +264,11 @@ function SWEP:SecondaryAttack()
 			self:DoPunchAnimation()
 			self:SetNextSecondaryFire(CurTime() + 0.4)
 			self:SetNextPrimaryFire(CurTime() + 1)
-		elseif (!entity:IsPlayer() and !entity:IsNPC() and self:onCanCarry(entity)) then
+		elseif (!entity:IsPlayer() and !entity:IsNPC() and self:OnCanCarry(entity)) then
 			local physObj = entity:GetPhysicsObject()
 			physObj:Wake()
 
-			self:doPickup(entity)
+			self:DoPickup(entity)
 		elseif (IsValid(self.heldEntity) and !self.heldEntity:IsPlayerHolding()) then
 			self.heldEntity = nil
 		end
