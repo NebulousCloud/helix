@@ -30,7 +30,7 @@ function GM:PlayerInitialSpawn(client)
 	nut.config.Send(client)
 	nut.date.Send(client)
 
-	client:LoadNutData(function(data)
+	client:LoadData(function(data)
 		if (!IsValid(client)) then return end
 
 		local address = nut.util.GetAddress()
@@ -480,7 +480,7 @@ function GM:PlayerDeathThink(client)
 end
 
 function GM:PlayerDisconnected(client)
-	client:SaveNutData()
+	client:SaveData()
 
 	local character = client:GetChar()
 
@@ -535,7 +535,7 @@ function GM:ShutDown()
 	hook.Run("SaveData")
 
 	for k, v in ipairs(player.GetAll()) do
-		v:SaveNutData()
+		v:SaveData()
 
 		if (v:GetChar()) then
 			v:GetChar():Save()

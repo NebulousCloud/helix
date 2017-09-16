@@ -2,7 +2,7 @@ local playerMeta = FindMetaTable("Player")
 
 -- Player data (outside of characters) handling.
 do
-	function playerMeta:LoadNutData(callback)
+	function playerMeta:LoadData(callback)
 		local name = self:SteamName()
 		local steamID64 = self:SteamID64()
 		local timeStamp = math.floor(os.time())
@@ -38,7 +38,7 @@ do
 		end)
 	end
 
-	function playerMeta:SaveNutData()
+	function playerMeta:SaveData()
 		local name = self:Name()
 		local steamID64 = self:SteamID64()
 
@@ -74,7 +74,7 @@ do
 			whitelists[Schema.folder][data.uniqueID] = whitelisted and true or nil
 
 			self:SetData("whitelists", whitelists)
-			self:SaveNutData()
+			self:SaveData()
 
 			return true
 		end
