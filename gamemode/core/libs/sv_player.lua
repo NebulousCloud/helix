@@ -49,7 +49,7 @@ do
 		}, nil, "players", "_steamID = "..steamID64)
 	end
 
-	function playerMeta:SetNutData(key, value, noNetworking)
+	function playerMeta:SetData(key, value, noNetworking)
 		self.nutData = self.nutData or {}
 		self.nutData[key] = value
 
@@ -69,11 +69,11 @@ do
 		local data = nut.faction.indices[faction]
 
 		if (data) then
-			local whitelists = self:GetNutData("whitelists", {})
+			local whitelists = self:GetData("whitelists", {})
 			whitelists[Schema.folder] = whitelists[Schema.folder] or {}
 			whitelists[Schema.folder][data.uniqueID] = whitelisted and true or nil
 
-			self:SetNutData("whitelists", whitelists)
+			self:SetData("whitelists", whitelists)
 			self:SaveNutData()
 
 			return true

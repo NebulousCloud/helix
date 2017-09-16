@@ -3,7 +3,7 @@ local playerMeta = FindMetaTable("Player")
 -- nutData information for the player.
 do
 	if (SERVER) then
-		function playerMeta:GetNutData(key, default)
+		function playerMeta:GetData(key, default)
 			if (key == true) then
 				return self.nutData
 			end
@@ -17,7 +17,7 @@ do
 			end
 		end
 	else
-		function playerMeta:GetNutData(key, default)
+		function playerMeta:GetData(key, default)
 			local data = nut.localData and nut.localData[key]
 
 			if (data == nil) then
@@ -49,7 +49,7 @@ do
 				return true
 			end
 
-			local nutData = self:GetNutData("whitelists", {})
+			local nutData = self:GetData("whitelists", {})
 
 			return nutData[Schema.folder] and nutData[Schema.folder][data.uniqueID] == true or false
 		end

@@ -34,8 +34,8 @@ function GM:PlayerInitialSpawn(client)
 		if (!IsValid(client)) then return end
 
 		local address = nut.util.GetAddress()
-		local noCache = client:GetNutData("lastIP", address) != address
-		client:SetNutData("lastIP", address)
+		local noCache = client:GetData("lastIP", address) != address
+		client:SetData("lastIP", address)
 
 		netstream.Start(client, "nutDataSync", data, client.nutPlayTime)
 
@@ -58,7 +58,7 @@ function GM:PlayerInitialSpawn(client)
 				netstream.Start(client, "charMenu", charList)
 			client.nutLoaded = true
 
-			client:SetNutData("intro", true)
+			client:SetData("intro", true)
 		end, noCache)
 	end)
 

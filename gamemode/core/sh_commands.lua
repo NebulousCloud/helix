@@ -12,7 +12,7 @@ nut.command.Add("pm", {
 		local target = nut.command.FindPlayer(client, arguments[1])
 
 		if (IsValid(target)) then
-			local voiceMail = target:GetNutData("vm")
+			local voiceMail = target:GetData("vm")
 
 			if (voiceMail and voiceMail:find("%S")) then
 				return target:Name()..": "..voiceMail
@@ -46,11 +46,11 @@ nut.command.Add("setvoicemail", {
 		local message = table.concat(arguments, " ")
 
 		if (message:find("%S")) then
-			client:SetNutData("vm", message:sub(1, 240))
+			client:SetData("vm", message:sub(1, 240))
 
 			return "@vmSet"
 		else
-			client:SetNutData("vm")
+			client:SetData("vm")
 
 			return "@vmRem"
 		end
