@@ -174,12 +174,17 @@ function nut.plugin.LoadEntities(path)
 end
 
 function nut.plugin.Initialize()
+	nut.plugin.LoadFromDir("nutscript/plugins")
+
 	nut.plugin.Load("schema", engine.ActiveGamemode().."/schema")
 	hook.Run("InitializedSchema")
 
 	nut.plugin.LoadFromDir(engine.ActiveGamemode().."/plugins")
-	nut.plugin.LoadFromDir("nutscript/plugins")
 	hook.Run("InitializedPlugins")
+end
+
+function nut.plugin.Get(identifier)
+	return nut.plugin.list[identifier]
 end
 
 function nut.plugin.LoadFromDir(directory)
