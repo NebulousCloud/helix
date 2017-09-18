@@ -842,7 +842,7 @@ do
 	function playerMeta:Name()
 		local character = self:GetCharacter()
 		
-		return character and character:Name() or self:SteamName()
+		return character and character:GetName() or self:SteamName()
 	end
 
 	playerMeta.Nick = playerMeta.Name
