@@ -37,8 +37,8 @@ nut.config.Add("chatRange", 280, "The maximum distance a person's IC chat messag
 	data = {min = 10, max = 5000},
 	category = "chat"
 })
-nut.config.Add("chatColor", Color(255, 239, 150), "The default color for IC chat.", nil, {category = "chat"})
-nut.config.Add("chatListenColor", Color(168, 240, 170), "The color for IC chat if you are looking at the speaker.", nil, {category = "chat"})
+nut.config.Add("chatColor", Color(255, 255, 150), "The default color for IC chat.", nil, {category = "chat"})
+nut.config.Add("chatListenColor", Color(175, 255, 150), "The color for IC chat if you are looking at the speaker.", nil, {category = "chat"})
 nut.config.Add("oocDelay", 10, "The delay before a player can use OOC chat again in seconds.", nil, {
 	data = {min = 0, max = 10000},
 	category = "chat"
