@@ -1,3 +1,6 @@
+
+DEFINE_BASECLASS("EditablePanel")
+
 local PANEL = {}
 	local gradient = nut.util.GetMaterial("vgui/gradient-u")
 	local gradient2 = nut.util.GetMaterial("vgui/gradient-d")
@@ -183,7 +186,7 @@ local PANEL = {}
 		
 		if (!self.closing) then
 			self:AlphaTo(0, 0.25, 0, function()
-				self:Remove()
+				BaseClass.Remove(self)
 			end)
 			self.closing = true
 		end

@@ -1,44 +1,46 @@
+
+DEFINE_BASECLASS("DModelPanel")
+
 local PANEL = {}
 	local MODEL_ANGLE = Angle(0, 45, 0)
 
 	function PANEL:Init()
 		self.brightness = 1
-
 		self:SetCursor("none")
-		self.OldSetModel = self.SetModel
-		self.SetModel = function(self, model)
-			self:OldSetModel(model)
+	end
 
-			local entity = self.Entity
+	function PANEL:SetModel(model)
+		BaseClass.SetModel(self, model)
 
-			if (IsValid(entity)) then
-				local sequence = entity:SelectWeightedSequence(ACT_IDLE)
+		local entity = self.Entity
 
-				if (sequence <= 0) then
-					sequence = entity:LookupSequence("idle_unarmed")
-				end
+		if (IsValid(entity)) then
+			local sequence = entity:SelectWeightedSequence(ACT_IDLE)
 
-				if (sequence > 0) then
-					entity:ResetSequence(sequence)
-				else
-					local found = false
-
-					for k, v in ipairs(entity:GetSequenceList()) do
-						if ((v:lower():find("idle") or v:lower():find("fly")) and v != "idlenoise") then
-							entity:ResetSequence(v)
-							found = true
-
-							break
-						end
-					end
-
-					if (!found) then
-						entity:ResetSequence(4)
-					end
-				end
-
-				entity:SetIK(false)
+			if (sequence <= 0) then
+				sequence = entity:LookupSequence("idle_unarmed")
 			end
+
+			if (sequence > 0) then
+				entity:ResetSequence(sequence)
+			else
+				local found = false
+
+				for k, v in ipairs(entity:GetSequenceList()) do
+					if ((v:lower():find("idle") or v:lower():find("fly")) and v != "idlenoise") then
+						entity:ResetSequence(v)
+						found = true
+
+						break
+					end
+				end
+
+				if (!found) then
+					entity:ResetSequence(4)
+				end
+			end
+
+			entity:SetIK(false)
 		end
 	end
 

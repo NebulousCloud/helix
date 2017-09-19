@@ -1,29 +1,30 @@
+
+DEFINE_BASECLASS("DButton")
+
 local PANEL = {}
 	function PANEL:Init()
 		self:SetFont("nutMenuButtonFont")
 		self:SetExpensiveShadow(2, Color(0, 0, 0, 200))
 		self:SetTextColor(color_white)
 		self:SetDrawBackground(false)
+	end
 
-		self.OldSetTextColor = self.SetTextColor
-		self.SetTextColor = function(this, color)
-			this:OldSetTextColor(color)
-			this:SetFGColor(color)
+	function PANEL:SetText(text, noTranslation)
+		surface.SetFont("nutMenuButtonFont")
+
+		BaseClass.SetText(self, noTranslation and text:upper() or L(text):upper())
+
+		if (!noTranslation) then
+			self:SetToolTip(L(text.."Tip"))
 		end
 
-		self.OldSetText = self.SetText
-		self.SetText = function(this, text, noTranslation)
-			surface.SetFont("nutMenuButtonFont")
+		local w, h = surface.GetTextSize(self:GetText())
+		self:SetSize(w + 64, h + 32)
+	end
 
-			this:OldSetText(noTranslation and text:upper() or L(text):upper())
-
-			if (!noTranslation) then
-				this:SetToolTip(L(text.."Tip"))
-			end
-
-			local w, h = surface.GetTextSize(this:GetText())
-			this:SetSize(w + 64, h + 32)
-		end
+	function PANEL:SetTextColor(color)
+		BaseClass.SetTextColor(self, color)
+		self:SetFGColor(color)
 	end
 
 	function PANEL:OnCursorEntered()
