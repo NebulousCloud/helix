@@ -430,7 +430,7 @@ nut.command.Add("arearemove", {
 		local areaData = nut.area.GetArea(areaID)
 
 		if (areaData) then
-			table.Remove(PLUGIN.areaTable, areaID)
+			table.remove(PLUGIN.areaTable, areaID)
 			PLUGIN:SaveAreas()
 
 			return "@areaRemoved", areaData.name

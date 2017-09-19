@@ -260,7 +260,7 @@ nut.command.Add("charsetname", {
 			end, target:Name())
 		end
 
-		table.Remove(arguments, 1)
+		table.remove(arguments, 1)
 
 		local targetName = table.concat(arguments, " ")
 

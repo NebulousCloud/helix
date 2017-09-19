@@ -20,7 +20,7 @@ function nut.bar.Add(getValue, color, priority, identifier)
 		local oldBar = nut.bar.Get(identifier)
 		
 		if (oldBar) then
-			table.Remove(nut.bar.list, oldBar.priority)
+			table.remove(nut.bar.list, oldBar.priority)
 		end
 	end
 

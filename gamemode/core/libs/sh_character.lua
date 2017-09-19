@@ -722,7 +722,7 @@ do
 			if (character and character.steamID == steamID) then
 				for k, v in ipairs(client.nutCharList or {}) do
 					if (v == id) then
-						table.Remove(client.nutCharList, k)
+						table.remove(client.nutCharList, k)
 					end
 				end
 
@@ -803,7 +803,7 @@ do
 
 			for k, v in ipairs(nut.characters) do
 				if (v == id) then
-					table.Remove(nut.characters, k)
+					table.remove(nut.characters, k)
 
 					if (IsValid(nut.gui.char) and nut.gui.char.setupCharList) then
 						nut.gui.char:SetupCharList()

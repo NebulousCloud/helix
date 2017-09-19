@@ -64,7 +64,7 @@ function nut.menu.DrawAll()
 				position = v.entPos:ToScreen()
 			-- The attached entity is gone, remove the menu.
 			else
-				table.Remove(nut.menu.list, k)
+				table.remove(nut.menu.list, k)
 
 				if (v.OnRemove) then
 					v:OnRemove()
@@ -99,7 +99,7 @@ function nut.menu.DrawAll()
 			-- If it has completely faded away, remove it.
 			if (v.alpha == 0) then
 				-- Remove the menu from being drawn.
-				table.Remove(nut.menu.list, k)
+				table.remove(nut.menu.list, k)
 
 				if (v.OnRemove) then
 					v:OnRemove()
@@ -169,7 +169,7 @@ function nut.menu.GetActiveMenu()
 				position = (v.entPos or entity:LocalToWorld(v.position)):ToScreen()
 			-- The attached entity is gone, remove the menu.
 			else
-				table.Remove(nut.menu.list, k)
+				table.remove(nut.menu.list, k)
 
 				continue
 			end
@@ -211,7 +211,7 @@ end
 
 -- Handles whenever a button has been pressed.
 function nut.menu.OnButtonPressed(menu, callback)
-	table.Remove(nut.menu.list, menu)
+	table.remove(nut.menu.list, menu)
 
 	if (callback) then
 		callback()

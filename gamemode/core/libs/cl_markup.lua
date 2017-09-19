@@ -91,9 +91,9 @@ local function ExtractParams(p1,p2,p3)
 		local tag = string.utf8sub(p1, 2)
 		
 		if (tag == "color" or tag == "colour") then
-			table.Remove(colour_stack)			
+			table.remove(colour_stack)			
 		elseif (tag == "font" or tag == "face") then
-			table.Remove(font_stack)
+			table.remove(font_stack)
 		end
 
 	else

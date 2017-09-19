@@ -70,7 +70,7 @@ else
 						end)
 
 						-- Remove the notice from the list and move other notices.
-						table.Remove(nut.notices, k)
+						table.remove(nut.notices, k)
 						OrganizeNotices()
 
 						break

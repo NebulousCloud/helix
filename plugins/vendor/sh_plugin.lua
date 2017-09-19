@@ -92,7 +92,7 @@ if (SERVER) then
 		if (IsValid(entity)) then
 			for k, v in ipairs(entity.receivers) do
 				if (v == client) then
-					table.Remove(entity.receivers, k)
+					table.remove(entity.receivers, k)
 
 					break
 				end

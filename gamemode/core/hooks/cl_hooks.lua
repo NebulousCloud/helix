@@ -650,7 +650,7 @@ end
 function GM:ItemShowEntityMenu(entity)
 	for k, v in ipairs(nut.menu.list) do
 		if (v.entity == entity) then
-			table.Remove(nut.menu.list, k)
+			table.remove(nut.menu.list, k)
 		end
 	end
 

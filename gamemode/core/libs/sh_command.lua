@@ -219,7 +219,7 @@ if (SERVER) then
 
 	concommand.Add("nut", function(client, _, arguments)
 		local command = arguments[1]
-		table.Remove(arguments, 1)
+		table.remove(arguments, 1)
 
 		nut.command.Parse(client, nil, command or "", arguments)
 	end)

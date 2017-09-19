@@ -115,7 +115,7 @@ if (CLIENT) then
 
 		for k, v in ipairs(PLUGIN.ordered) do
 			if (v[1] == key) then
-				table.Remove(PLUGIN.ordered, k)
+				table.remove(PLUGIN.ordered, k)
 
 				break
 			end
