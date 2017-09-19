@@ -88,12 +88,12 @@ local PANEL = {}
 
 		timer.Simple(5, function()
 			if (IsValid(self)) then
-				self:addContinue()
+				self:AddContinue()
 			end
 		end)
 	end
 
-	function PANEL:addContinue()
+	function PANEL:AddContinue()
 		self.info = self:Add("DLabel")
 		self.info:Dock(BOTTOM)
 		self.info:SetTall(36)
@@ -125,7 +125,7 @@ local PANEL = {}
 			self.sound = nil
 
 			if (IsValid(nut.gui.char)) then
-				nut.gui.char:playMusic()
+				nut.gui.char:PlayMusic()
 			end
 		end
 	end

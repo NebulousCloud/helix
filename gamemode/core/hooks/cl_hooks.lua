@@ -723,7 +723,7 @@ end
 
 function GM:SetupQuickMenu(menu)
 	-- Performance
-	menu:addCheck(L"cheapBlur", function(panel, state)
+	menu:AddCheck(L"cheapBlur", function(panel, state)
 		if (state) then
 			RunConsoleCommand("nut_cheapblur", "1")
 		else
@@ -732,7 +732,7 @@ function GM:SetupQuickMenu(menu)
 	end, NUT_CVAR_CHEAP:GetBool())
 
 	-- Language settings
-	menu:addSpacer()
+	menu:AddSpacer()
 
 	local current
 
@@ -747,7 +747,7 @@ function GM:SetupQuickMenu(menu)
 			name = name2
 		end
 
-		local button = menu:addCheck(name, function(panel)
+		local button = menu:AddCheck(name, function(panel)
 			panel.checked = true
 			
 			if (IsValid(current)) then
@@ -768,9 +768,9 @@ function GM:SetupQuickMenu(menu)
 	end
 
 	-- Appearance
-	menu:addSpacer()
+	menu:AddSpacer()
 
-	menu:addCheck(L"altLower", function(panel, state)
+	menu:AddCheck(L"altLower", function(panel, state)
 		if (state) then
 			RunConsoleCommand("nut_usealtlower", "1")
 		else

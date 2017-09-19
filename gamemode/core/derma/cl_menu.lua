@@ -62,7 +62,7 @@ local PANEL = {}
 				end
 			end
 
-			local tab = self:addTab(L(name), callback, name)
+			local tab = self:AddTab(L(name), callback, name)
 			self.tabList[name] = tab
 		end
 		
@@ -118,10 +118,10 @@ local PANEL = {}
 		surface.DrawRect(0, 78, w, 8)
 	end
 
-	function PANEL:addTab(name, callback, uniqueID)
+	function PANEL:AddTab(name, callback, uniqueID)
 		name = L(name)
 
-		local function paintTab(tab, w, h)
+		local function PaintTab(tab, w, h)
 			if (self.activeTab == tab) then
 				surface.SetDrawColor(ColorAlpha(nut.config.Get("color"), 200))
 				surface.DrawRect(0, h - 8, w, 8)
@@ -143,7 +143,7 @@ local PANEL = {}
 			tab:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 			tab:SizeToContentsX()
 			tab:SetWide(w + 32)
-			tab.Paint = paintTab
+			tab.Paint = PaintTab
 			tab.DoClick = function(this)
 				if (IsValid(nut.gui.info)) then
 					nut.gui.info:Remove()

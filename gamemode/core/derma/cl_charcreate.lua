@@ -18,7 +18,7 @@ local PANEL = {}
 		self.lastY = self.notice:GetTall() + 8
 	end
 
-	function PANEL:addLabel(text)
+	function PANEL:AddLabel(text)
 		local label = self:Add("DLabel")
 		label:SetPos(0, self.lastY)
 		label:SetFont("nutMenuButtonFont")
@@ -32,7 +32,7 @@ local PANEL = {}
 		return label
 	end
 
-	function PANEL:addTextBox()
+	function PANEL:AddTextBox()
 		local textBox = self:Add("DTextEntry")
 		textBox:SetFont("nutMenuButtonLightFont")
 		textBox:SetWide(self:GetWide())
@@ -56,7 +56,7 @@ local PANEL = {}
 					end
 				end
 
-				self:addLabel(k)
+				self:AddLabel(k)
 
 				if (v.OnDisplay) then
 					local panel = v.OnDisplay(self, self.lastY)
@@ -69,7 +69,7 @@ local PANEL = {}
 						end
 					end
 				elseif (type(v.default) == "string") then
-					local textBox = self:addTextBox()
+					local textBox = self:AddTextBox()
 					textBox.OnTextChanged = function(this)
 						self.payload[k] = this:GetText()
 					end

@@ -12,7 +12,7 @@ local PANEL = {}
 		self.add:SetImage("icon16/add.png")
 		self.add.OnMousePressed = function()
 			self.pressing = 1
-			self:doChange()
+			self:DoChange()
 			self.add:SetAlpha(150)
 		end
 		self.add.OnMouseReleased = function()
@@ -30,7 +30,7 @@ local PANEL = {}
 		self.sub:SetImage("icon16/delete.png")
 		self.sub.OnMousePressed = function()
 			self.pressing = -1
-			self:doChange()
+			self:DoChange()
 			self.sub:SetAlpha(150)
 		end
 		self.sub.OnMouseReleased = function()
@@ -122,14 +122,14 @@ local PANEL = {}
 	function PANEL:Think()
 		if (self.pressing) then
 			if ((self.nextPress or 0) < CurTime()) then
-				self:doChange()
+				self:DoChange()
 			end
 		end
 
 		self.deltaValue = math.Approach(self.deltaValue, self.value, FrameTime() * 15)
 	end
 
-	function PANEL:doChange()
+	function PANEL:DoChange()
 		if ((self.value == 0 and self.pressing == -1) or (self.value == self.max and self.pressing == 1)) then
 			return
 		end

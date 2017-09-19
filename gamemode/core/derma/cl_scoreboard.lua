@@ -56,7 +56,7 @@ local PANEL = {}
 						if (IsValid(v2.nutPlayerSlot)) then
 							v2.nutPlayerSlot:SetParent(this)
 						else
-							self:addPlayer(v2, this)
+							self:AddPlayer(v2, this)
 						end
 					end
 				end
@@ -98,7 +98,7 @@ local PANEL = {}
 
 			for k, v in pairs(self.slots) do
 				if (IsValid(v)) then
-					v:update()
+					v:Update()
 				end
 			end
 
@@ -106,7 +106,7 @@ local PANEL = {}
 		end
 	end
 
-	function PANEL:addPlayer(client, parent)
+	function PANEL:AddPlayer(client, parent)
 		if (!client:GetChar() or !IsValid(parent)) then
 			return
 		end
@@ -193,7 +193,7 @@ local PANEL = {}
 
 		local oldTeam = client:Team()
 
-		function slot:update()
+		function slot:Update()
 			if (!IsValid(client) or !client:GetChar() or !self.character or self.character != client:GetChar() or oldTeam != client:Team()) then
 				self:Remove()
 

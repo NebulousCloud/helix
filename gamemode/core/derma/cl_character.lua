@@ -14,7 +14,7 @@ local PANEL = {}
 				vgui.Create("nutIntro", self)
 			end)
 		else
-			self:playMusic()
+			self:PlayMusic()
 		end
 
 		if (IsValid(nut.gui.char) or (LocalPlayer().GetChar and LocalPlayer():GetChar())) then
@@ -514,7 +514,7 @@ local PANEL = {}
 		end
 	end
 	
-	function PANEL:playMusic()
+	function PANEL:PlayMusic()
 		if (nut.menuMusic) then
 			nut.menuMusic:Stop()
 			nut.menuMusic = nil

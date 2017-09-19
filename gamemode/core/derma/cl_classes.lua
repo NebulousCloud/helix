@@ -3,7 +3,7 @@ local PANEL = {}
     function PANEL:Init()
         self:SetTall(64)
         
-        local function assignClick(panel)   
+        local function AssignClick(panel)   
             panel.OnMousePressed = function()
                 self.pressing = -1
                 self:OnClick()
@@ -40,7 +40,7 @@ local PANEL = {}
             end
             */
         end
-        assignClick(self.icon) 
+        AssignClick(self.icon) 
 
         self.limit = self:Add("DLabel")
         self.limit:Dock(RIGHT)
@@ -50,7 +50,7 @@ local PANEL = {}
         self.limit:SetContentAlignment(5)
         self.limit:SetFont("nutMediumFont")
         self.limit:SetWide(64)
-        assignClick(self.limit) 
+        AssignClick(self.limit) 
 
         self.label = self:Add("DLabel")
         self.label:Dock(FILL)
@@ -59,7 +59,7 @@ local PANEL = {}
         self.label:SetExpensiveShadow(1, Color(0, 0, 60))
         self.label:SetContentAlignment(5)
         self.label:SetFont("nutMediumFont")
-        assignClick(self.label) 
+        AssignClick(self.label) 
     end
 
     function PANEL:OnClick()

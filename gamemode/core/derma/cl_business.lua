@@ -44,7 +44,7 @@ function PANEL:SetItem(itemTable)
 	self.icon.DoClick = function(this)
 		if (!IsValid(nut.gui.checkout) and (this.nextClick or 0) < CurTime()) then
 			local parent = nut.gui.business
-			parent:buyItem(itemTable.uniqueID)
+			parent:BuyItem(itemTable.uniqueID)
 
 			surface.PlaySound("buttons/button14.wav")
 			this.nextClick = CurTime() + 0.5
@@ -201,7 +201,7 @@ function PANEL:GetCartCount()
 	return count
 end
 
-function PANEL:buyItem(uniqueID)
+function PANEL:BuyItem(uniqueID)
 	self.cart[uniqueID] = (self.cart[uniqueID] or 0) + 1
 	self.checkout:SetText(L("checkout", self:GetCartCount()))
 end

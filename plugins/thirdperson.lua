@@ -67,7 +67,7 @@ if (CLIENT) then
 
 	function PLUGIN:SetupQuickMenu(menu)
 		if (isAllowed()) then
-			local button = menu:addCheck(L"thirdpersonToggle", function(panel, state)
+			local button = menu:AddCheck(L"thirdpersonToggle", function(panel, state)
 				if (state) then
 					RunConsoleCommand("nut_tp_enabled", "1")
 				else
@@ -84,7 +84,7 @@ if (CLIENT) then
 				nut.gui.tpconfig = vgui.Create("nutTPConfig")
 			end
 
-			local button = menu:addCheck(L"thirdpersonClassic", function(panel, state)
+			local button = menu:AddCheck(L"thirdpersonClassic", function(panel, state)
 				if (state) then
 					RunConsoleCommand("nut_tp_classic", "1")
 				else
@@ -92,7 +92,7 @@ if (CLIENT) then
 				end
 			end, NUT_CVAR_TP_CLASSIC:GetBool())
 
-			menu:addSpacer()
+			menu:AddSpacer()
 		end
 	end
 

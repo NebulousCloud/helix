@@ -66,7 +66,7 @@ local PANEL = {}
 		hook.Run("SetupQuickMenu", self)
 	end
 
-	local function paintButton(button, w, h)
+	local function PaintButton(button, w, h)
 		local alpha = 0
 
 		if (button.Depressed or button.m_bSelected) then
@@ -79,7 +79,7 @@ local PANEL = {}
 		surface.DrawRect(0, 0, w, h)
 	end
 
-	function PANEL:addButton(text, callback)
+	function PANEL:AddButton(text, callback)
 		local button = self.scroll:Add("DButton")
 		button:SetText(text)
 		button:SetTall(36)
@@ -90,7 +90,7 @@ local PANEL = {}
 		button:SetContentAlignment(4)
 		button:SetTextInset(8, 0)
 		button:SetTextColor(color_white)
-		button.Paint = paintButton
+		button.Paint = PaintButton
 
 		if (callback) then
 			button.DoClick = callback
@@ -101,7 +101,7 @@ local PANEL = {}
 		return button
 	end
 
-	function PANEL:addSpacer()
+	function PANEL:AddSpacer()
 		local panel = self.scroll:Add("DPanel")
 		panel:SetTall(1)
 		panel:Dock(TOP)
@@ -118,11 +118,11 @@ local PANEL = {}
 
 	local color_dark = Color(255, 255, 255, 5)
 
-	function PANEL:addCheck(text, callback, checked)
+	function PANEL:AddCheck(text, callback, checked)
 		local x, y
 		local color
 
-		local button = self:addButton(text, function(panel)
+		local button = self:AddButton(text, function(panel)
 			panel.checked = !panel.checked
 
 			if (callback) then
