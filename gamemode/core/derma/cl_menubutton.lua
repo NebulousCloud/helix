@@ -4,24 +4,26 @@ local PANEL = {}
 		self:SetExpensiveShadow(2, Color(0, 0, 0, 200))
 		self:SetTextColor(color_white)
 		self:SetDrawBackground(false)
+
 		self.OldSetTextColor = self.SetTextColor
 		self.SetTextColor = function(this, color)
 			this:OldSetTextColor(color)
 			this:SetFGColor(color)
 		end
-	end
 
-	function PANEL:SetText(text, noTranslation)
-		surface.SetFont("nutMenuButtonFont")
+		self.OldSetText = self.SetText
+		self.SetText = function(this, text, noTranslation)
+			surface.SetFont("nutMenuButtonFont")
 
-		self:SetText(noTranslation and text:upper() or L(text):upper())
+			this:OldSetText(noTranslation and text:upper() or L(text):upper())
 
-		if (!noTranslation) then
-			self:SetToolTip(L(text.."Tip"))
+			if (!noTranslation) then
+				this:SetToolTip(L(text.."Tip"))
+			end
+
+			local w, h = surface.GetTextSize(this:GetText())
+			this:SetSize(w + 64, h + 32)
 		end
-
-		local w, h = surface.GetTextSize(self:GetText())
-		self:SetSize(w + 64, h + 32)
 	end
 
 	function PANEL:OnCursorEntered()
