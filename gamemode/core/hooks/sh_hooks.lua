@@ -265,7 +265,7 @@ function GM:CalcMainActivity(client, velocity)
 	local seqIdeal, seqOverride = self.BaseClass.CalcMainActivity(self.BaseClass, client, velocity)
 	--client.CalcSeqOverride is being -1 after this line.
 
-	if (client:GetSequence() != client.CalcSeqOverride) then
+	if (client.nutForceSeq and client:GetSequence() != client.nutForceSeq) then
 		client:SetCycle(0)
 	end
 
