@@ -260,10 +260,14 @@ function GM:CalcMainActivity(client, velocity)
 	local normalized = normalizeAngle(yaw - eyeAngles[2])
 
 	client.SetPoseParameter(client, "move_yaw", normalized)
-	
+
 	local oldSeqOverride = client.CalcSeqOverride
 	local seqIdeal, seqOverride = self.BaseClass.CalcMainActivity(self.BaseClass, client, velocity)
 	--client.CalcSeqOverride is being -1 after this line.
+
+	if (client:GetSequence() != client.CalcSeqOverride) then
+		client:SetCycle(0)
+	end
 
 	return seqIdeal, client.nutForceSeq or oldSeqOverride or client.CalcSeqOverride
 end
