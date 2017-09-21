@@ -1,4 +1,4 @@
-local NUT_CVAR_LOWER2 = CreateClientConVar("nut_usealtlower", "0", true)
+local NUT_CVAR_LOWER2 = CreateClientConVar("nut_usealtlower", "1", true)
 
 function GM:ForceDermaSkin()
 	return "nutscript"
