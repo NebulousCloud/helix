@@ -12,6 +12,7 @@ if (SERVER) then
 		self:SetModel("models/props_junk/watermelon01.mdl")
 		self:SetSolid(SOLID_VPHYSICS)
 		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetUseType(SIMPLE_USE)
 		self.health = 50
 
 		local physObj = self:GetPhysicsObject()
@@ -22,6 +23,12 @@ if (SERVER) then
 		end
 		
 		hook.Run("OnItemSpawned", self)
+	end
+
+	function ENT:Use(activator, caller)
+		if (IsValid(caller) and caller:IsPlayer() and caller:GetChar() and self.nutItemID) then
+			nut.item.PerformInventoryAction(caller, "take", self)
+		end
 	end
 
 	function ENT:SetHealth(amount)

@@ -623,17 +623,6 @@ function GM:PlayerBindPress(client, bind, pressed)
 
 		if (menu and nut.menu.OnButtonPressed(menu, callback)) then
 			return true
-		elseif (bind:find("use") and pressed) then
-			local data = {}
-				data.start = client:GetShootPos()
-				data.endpos = data.start + client:GetAimVector()*96
-				data.filter = client
-			local trace = util.TraceLine(data)
-			local entity = trace.Entity
-
-			if (IsValid(entity) and entity:GetClass() == "nut_item") then
-				hook.Run("ItemShowEntityMenu", entity)
-			end
 		end
 	elseif (bind:find("jump")) then
 		nut.command.Send("chargetup")

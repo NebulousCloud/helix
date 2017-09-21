@@ -572,74 +572,7 @@ do
 			end) 
 		end
 
-		netstream.Hook("invMv", function(client, oldX, oldY, x, y, invID, newInvID)
-			oldX, oldY, x, y, invID = tonumber(oldX), tonumber(oldY), tonumber(x), tonumber(y), tonumber(invID)
-			if (!oldX or !oldY or !x or !y or !invID) then return end
-
-			local character = client:GetChar()
-
-			if (character) then
-				local inventory = nut.item.inventories[invID]
-
-				if (!inventory or inventory == nil) then
-					inventory:Sync(client)
-				end
-
-				if ((!inventory.owner or (inventory.owner and inventory.owner == character:GetID())) or (inventory.OnCheckAccess and inventory:OnCheckAccess(client))) then
-					local item = inventory:GetItemAt(oldX, oldY)
-
-					if (item) then
-						if (newInvID and invID != newInvID) then
-							local inventory2 = nut.item.inventories[newInvID]
-
-							if (inventory2) then
-								item:Transfer(newInvID, x, y, client)
-							end
-
-							return
-						end
-
-						if (inventory:CanItemFit(x, y, item.width, item.height, item)) then
-							item.gridX = x
-							item.gridY = y
-
-							for x2 = 0, item.width - 1 do
-								for y2 = 0, item.height - 1 do
-									local oldX = inventory.slots[oldX + x2]
-
-									if (oldX) then
-										oldX[oldY + y2] = nil
-									end
-								end
-							end
-
-							for x2 = 0, item.width - 1 do
-								for y2 = 0, item.height - 1 do
-									inventory.slots[x + x2] = inventory.slots[x + x2] or {}
-									inventory.slots[x + x2][y + y2] = item
-								end
-							end
-
-							local receiver = inventory:GetReceiver()
-
-							if (receiver and type(receiver) == "table") then
-								for k, v in ipairs(receiver) do
-									if (v != client) then
-										netstream.Start(v, "invMv", invID, item:GetID(), x, y)
-									end
-								end
-							end
-
-							if (!inventory.noSave) then
-								nut.db.query("UPDATE nut_items SET _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
-							end
-						end
-					end
-				end
-			end
-		end)
-
-		netstream.Hook("invAct", function(client, action, item, invID, data)
+		function nut.item.PerformInventoryAction(client, action, item, invID, data)
 			local character = client:GetChar()
 
 			if (!character) then
@@ -730,6 +663,77 @@ do
 				item.entity = nil
 				item.player = nil
 			end
+		end
+
+		netstream.Hook("invMv", function(client, oldX, oldY, x, y, invID, newInvID)
+			oldX, oldY, x, y, invID = tonumber(oldX), tonumber(oldY), tonumber(x), tonumber(y), tonumber(invID)
+			if (!oldX or !oldY or !x or !y or !invID) then return end
+
+			local character = client:GetChar()
+
+			if (character) then
+				local inventory = nut.item.inventories[invID]
+
+				if (!inventory or inventory == nil) then
+					inventory:Sync(client)
+				end
+
+				if ((!inventory.owner or (inventory.owner and inventory.owner == character:GetID())) or (inventory.OnCheckAccess and inventory:OnCheckAccess(client))) then
+					local item = inventory:GetItemAt(oldX, oldY)
+
+					if (item) then
+						if (newInvID and invID != newInvID) then
+							local inventory2 = nut.item.inventories[newInvID]
+
+							if (inventory2) then
+								item:Transfer(newInvID, x, y, client)
+							end
+
+							return
+						end
+
+						if (inventory:CanItemFit(x, y, item.width, item.height, item)) then
+							item.gridX = x
+							item.gridY = y
+
+							for x2 = 0, item.width - 1 do
+								for y2 = 0, item.height - 1 do
+									local oldX = inventory.slots[oldX + x2]
+
+									if (oldX) then
+										oldX[oldY + y2] = nil
+									end
+								end
+							end
+
+							for x2 = 0, item.width - 1 do
+								for y2 = 0, item.height - 1 do
+									inventory.slots[x + x2] = inventory.slots[x + x2] or {}
+									inventory.slots[x + x2][y + y2] = item
+								end
+							end
+
+							local receiver = inventory:GetReceiver()
+
+							if (receiver and type(receiver) == "table") then
+								for k, v in ipairs(receiver) do
+									if (v != client) then
+										netstream.Start(v, "invMv", invID, item:GetID(), x, y)
+									end
+								end
+							end
+
+							if (!inventory.noSave) then
+								nut.db.query("UPDATE nut_items SET _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
+							end
+						end
+					end
+				end
+			end
+		end)
+
+		netstream.Hook("invAct", function(client, action, item, invID, data)
+			nut.item.PerformInventoryAction(client, action, item, invID, data)
 		end)
 	end
 
