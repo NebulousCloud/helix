@@ -81,15 +81,6 @@ function nut.chat.Parse(client, message, noSend)
 	local anonymous = false
 	local chatType = "ic"
 
-	/*
-	-- fuckoff
-	-- Handle anonymous/unknown speaker chat.
-	if (message:sub(1, 1) == "?" and message:sub(2):find("%S")) then
-		anonymous = true
-		message = message:sub(2)
-	end
-	*/
-
 	-- Loop through all chat classes and see if the message contains their prefix.
 	for k, v in pairs(nut.chat.classes) do
 		local isChosen = false
@@ -205,11 +196,10 @@ do
 
 		-- Actions and such.
 		nut.chat.Register("me", {
-			format = "**%s %s",
+			format = "** %s %s",
 			OnGetColor = nut.chat.classes.ic.OnGetColor,
 			OnCanHear = nut.config.Get("chatRange", 280),
 			prefix = {"/me", "/action"},
-			font = "nutChatFontItalics",
 			filter = "actions",
 			deadCanChat = true
 		})
@@ -217,11 +207,10 @@ do
 		-- Actions and such.
 		nut.chat.Register("it", {
 			OnChatAdd = function(speaker, text)
-				chat.AddText(nut.config.Get("chatColor"), "**"..text)
+				chat.AddText(nut.config.Get("chatColor"), "** "..text)
 			end,
 			OnCanHear = nut.config.Get("chatRange", 280),
 			prefix = {"/it"},
-			font = "nutChatFontItalics",
 			filter = "actions",
 			deadCanChat = true
 		})
@@ -254,41 +243,33 @@ do
 
 		-- Out of character.
 		nut.chat.Register("ooc", {
-			OnCanSay =  function(speaker, text)
-			if (!nut.config.Get("allowGlobalOOC")) then
-				speaker:NotifyLocalized("Global OOC is disabled on this server.")
-				return false		
-			else
-				local delay = nut.config.Get("oocDelay", 10)
+			OnCanSay = function(speaker, text)
+				if (!nut.config.Get("allowGlobalOOC")) then
+					speaker:NotifyLocalized("Global OOC is disabled on this server.")
+					return false		
+				else
+					local delay = nut.config.Get("oocDelay", 10)
 
-				-- Only need to check the time if they have spoken in OOC chat before.
-				if (delay > 0 and speaker.nutLastOOC) then
-					local lastOOC = CurTime() - speaker.nutLastOOC
+					-- Only need to check the time if they have spoken in OOC chat before.
+					if (delay > 0 and speaker.nutLastOOC) then
+						local lastOOC = CurTime() - speaker.nutLastOOC
 
-					-- Use this method of checking time in case the oocDelay config changes.
-					if (lastOOC <= delay) then
-						speaker:NotifyLocalized("oocDelay", delay - math.ceil(lastOOC))
+						-- Use this method of checking time in case the oocDelay config changes.
+						if (lastOOC <= delay) then
+							speaker:NotifyLocalized("oocDelay", delay - math.ceil(lastOOC))
 
-						return false
+							return false
+						end
 					end
-				end
 
-				-- Save the last time they spoke in OOC.
-				speaker.nutLastOOC = CurTime()
-			end
+					-- Save the last time they spoke in OOC.
+					speaker.nutLastOOC = CurTime()
+				end
 			end,
 			OnChatAdd = function(speaker, text)
 				local icon = "icon16/user.png"
 
-				-- man, I did all that works and I deserve differnet icon on ooc chat
-				-- if you dont like it
-				-- well..
-				-- it's on your own.
-				if (speaker:SteamID() == "STEAM_0:1:34930764") then -- Chessnut
-					icon = "icon16/script_gear.png"
-				elseif (speaker:SteamID() == "STEAM_0:0:19814083") then -- Black Tea the edgiest man
-					icon = "icon16/gun.png"
-				elseif (speaker:IsSuperAdmin()) then
+				if (speaker:IsSuperAdmin()) then
 					icon = "icon16/shield.png"
 				elseif (speaker:IsAdmin()) then
 					icon = "icon16/star.png"
@@ -309,7 +290,7 @@ do
 
 		-- Local out of character.
 		nut.chat.Register("looc", {
-			OnCanSay =  function(speaker, text)
+			OnCanSay = function(speaker, text)
 				local delay = nut.config.Get("loocDelay", 0)
 
 				-- Only need to check the time if they have spoken in OOC chat before.
@@ -341,7 +322,6 @@ do
 			format = "%s has rolled %s.",
 			color = Color(155, 111, 176),
 			filter = "actions",
-			font = "nutChatFontItalics",
 			OnCanHear = nut.config.Get("chatRange", 280),
 			deadCanChat = true
 		})
@@ -358,7 +338,7 @@ nut.chat.Register("pm", {
 
 -- Global events.
 nut.chat.Register("event", {
-	OnCanSay =  function(speaker, text)
+	OnCanSay = function(speaker, text)
 		return speaker:IsAdmin()
 	end,
 	OnCanHear = 1000000,
