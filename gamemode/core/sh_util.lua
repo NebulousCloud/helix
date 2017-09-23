@@ -314,6 +314,40 @@ if (CLIENT) then
 	end)
 end
 
+-- Vector extension, courtesy of code_gs
+do
+	local R = debug.getregistry()
+	local VECTOR = R.Vector
+	local CrossProduct = VECTOR.Cross
+
+	function VECTOR:Right(vUp)
+		if (self[1] == 0 and self[2] == 0) then return Vector(0, -1, 0) end
+
+		if (vUp == nil) then
+			vUp = vector_up
+		end
+
+		local vRet = CrossProduct(self, vUp)
+		vRet:Normalize()
+
+		return vRet
+	end
+
+	function VECTOR:Up(vUp)
+		if (self[1] == 0 and self[2] == 0) then return Vector(-self[3], 0, 0) end
+
+		if (vUp == nil) then
+			vUp = vector_up
+		end
+
+		local vRet = CrossProduct(self, vUp)
+		vRet = CrossProduct(vRet, self)
+		vRet:Normalize()
+
+		return vRet
+	end
+end
+
 -- Utility entity extensions.
 do
 	local entityMeta = FindMetaTable("Entity")
@@ -501,6 +535,172 @@ do
 		end)
 
 		return dummy
+	end
+
+	FCAP_IMPULSE_USE = 0x00000010
+	FCAP_CONTINUOUS_USE = 0x00000020
+	FCAP_ONOFF_USE = 0x00000040
+	FCAP_DIRECTIONAL_USE = 0x00000080
+	FCAP_USE_ONGROUND = 0x00000100
+	FCAP_USE_IN_RADIUS = 0x00000200
+
+	function nut.util.IsUseableEntity(pEntity, requiredCaps)
+		if (IsValid(pEntity)) then
+			local caps = pEntity:ObjectCaps()
+
+			if (bit.band(caps, bit.bor(FCAP_IMPULSE_USE, FCAP_CONTINUOUS_USE, FCAP_ONOFF_USE, FCAP_DIRECTIONAL_USE))) then
+				if (bit.band(caps, requiredCaps) == requiredCaps) then
+					return true
+				end
+			end
+		end
+	end
+
+	do
+		local function IntervalDistance(x, x0, x1)
+			// swap so x0 < x1
+			if (x0 > x1) then
+				local tmp = x0
+
+				x0 = x1
+				x1 = tmp
+			end
+
+			if (x < x0) then
+				return x0-x
+			elseif (x > x1) then
+				return x - x1
+			end
+
+			return 0
+		end
+
+		local NUM_TANGENTS = 8
+		local tangents = {0, 1, 0.57735026919, 0.3639702342, 0.267949192431, 0.1763269807, -0.1763269807, -0.267949192431}
+
+		function nut.util.FindUseEntity(player, origin, forward)
+			local tr
+			local up = forward:Up()
+			// Search for objects in a sphere (tests for entities that are not solid, yet still useable)
+			local searchCenter = origin
+
+			// NOTE: Some debris objects are useable too, so hit those as well
+			// A button, etc. can be made out of clip brushes, make sure it's +useable via a traceline, too.
+			local useableContents = bit.bor(MASK_SOLID, CONTENTS_DEBRIS, CONTENTS_PLAYERCLIP)
+
+			// UNDONE: Might be faster to just fold this range into the sphere query
+			local pObject = NULL
+
+			local nearestDist = 1e37
+			// try the hit entity if there is one, or the ground entity if there isn't.
+			local pNearest = NULL
+
+			for i = 1, NUM_TANGENTS do
+				if (i == 0) then
+					tr = util.TraceLine({
+						start = searchCenter,
+						endpos = searchCenter + forward * 1024,
+						mask = useableContents,
+						filter = player
+					})
+
+					tr.EndPos = searchCenter + forward * 1024
+				else
+					local down = forward - tangents[i] * up
+					down:Normalize()
+
+					tr = util.TraceHull({
+						start = searchCenter,
+						endpos = searchCenter + down * 72,
+						mins = -Vector(16,16,16),
+						maxs = Vector(16,16,16),
+						mask = useableContents,
+						filter = player
+					})
+
+					tr.EndPos = searchCenter + down * 72
+				end
+
+				pObject = tr.Entity
+
+				local bUsable = nut.util.IsUseableEntity(pObject, 0)
+
+				while (IsValid(pObject) and !bUsable and pObject:GetMoveParent()) do
+					pObject = pObject:GetMoveParent()
+					bUsable = IsUseableEntity(pObject, 0)
+				end
+
+				if (bUsable) then
+					local delta = tr.EndPos - tr.StartPos
+					local centerZ = origin.z - player:WorldSpaceCenter().z
+					delta.z = IntervalDistance(tr.EndPos.z, centerZ - player:OBBMins().z, centerZ + player:OBBMaxs().z)
+					local dist = delta:Length()
+
+					if ( dist < 80 ) then
+						pNearest = pObject
+
+						// if this is directly under the cursor just return it now
+						if ( i == 0 ) then
+							return pObject
+						end
+					end
+				end
+			end
+
+			// check ground entity first
+			// if you've got a useable ground entity, then shrink the cone of this search to 45 degrees
+			// otherwise, search out in a 90 degree cone (hemisphere)
+			if (IsValid(player:GetGroundEntity()) and nut.util.IsUseableEntity(player:GetGroundEntity(), FCAP_USE_ONGROUND)) then
+				pNearest = player:GetGroundEntity()
+			end
+
+			if (IsValid(pNearest)) then
+				// estimate nearest object by distance from the view vector
+				local point = pNearest:NearestPoint(searchCenter)
+				nearestDist = util.DistanceToLine(searchCenter, forward, point)
+			end
+
+			for k, v in pairs(ents.FindInSphere( searchCenter, 80 )) do
+				if (!nut.util.IsUseableEntity(v, FCAP_USE_IN_RADIUS)) then
+					continue
+				end
+
+				// see if it's more roughly in front of the player than previous guess
+				local point = v:NearestPoint(searchCenter)
+
+				local dir = point - searchCenter
+				dir:Normalize()
+				local dot = DotProduct(dir, forward)
+
+				// Need to be looking at the object more or less
+				if (dot < 0.8) then
+					continue
+				end
+
+				local dist = util.DistanceToLine(searchCenter, forward, point)
+
+				if (dist < nearestDist) then
+					// Since this has purely been a radius search to this point, we now
+					// make sure the object isn't behind glass or a grate.
+					local trCheckOccluded = {}
+
+					util.TraceLine({
+						start = searchCenter,
+						endpos = point,
+						mask = useableContents,
+						filter = player,
+						output = trCheckOccluded
+					})
+
+					if (trCheckOccluded.fraction == 1.0 or trCheckOccluded.Entity == v) then
+						pNearest = v
+						nearestDist = dist
+					end
+				end
+			end
+
+			return pNearest
+		end
 	end
 end
 
