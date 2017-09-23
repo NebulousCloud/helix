@@ -30,6 +30,7 @@ SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = 0
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = ""
+SWEP.Secondary.Delay = 0.5
 
 SWEP.ViewModel = Model("models/weapons/c_arms_cstrike.mdl")
 SWEP.WorldModel = ""
@@ -41,6 +42,26 @@ SWEP.LowerAngles2 = Angle(0, 5, -22)
 SWEP.FireWhenLowered = true
 SWEP.HoldType = "fist"
 
+SWEP.HoldDistance = 64
+SWEP.MaxHoldDistance = 72 -- how far away the held object is allowed to travel before forcefully dropping
+SWEP.MaxHoldStress = 4000 -- how much stress the held object can undergo before forcefully dropping
+SWEP.AllowedHoldableClasses = {
+	["nut_item"] = true,
+	["prop_physics"] = true,
+	-- TODO
+	--["prop_ragdoll"] = true
+}
+
+ACT_VM_FISTS_DRAW = 3
+ACT_VM_FISTS_HOLSTER = 2
+
+function SWEP:Initialize()
+	self:SetHoldType(self.HoldType)
+	self.LastHand = 0
+	self.MaxHoldDistance = self.MaxHoldDistance ^ 2
+	self.HeldObjectAngle = angle_zero
+end
+
 function SWEP:PreDrawViewModel(viewModel, weapon, client)
 	local hands = player_manager.TranslatePlayerHands(player_manager.TranslateToPlayerModelName(client:GetModel()))
 
@@ -50,9 +71,6 @@ function SWEP:PreDrawViewModel(viewModel, weapon, client)
 		viewModel:SetBodyGroups(hands.body)
 	end
 end
-
-ACT_VM_FISTS_DRAW = 3
-ACT_VM_FISTS_HOLSTER = 2
 
 function SWEP:Deploy()
 	if (!IsValid(self.Owner)) then
@@ -66,7 +84,24 @@ function SWEP:Deploy()
 		viewModel:ResetSequence(ACT_VM_FISTS_DRAW)
 	end
 
+	self:DropObject()
 	return true
+end
+
+function SWEP:Precache()
+	util.PrecacheSound("npc/vort/claw_swing1.wav")
+	util.PrecacheSound("npc/vort/claw_swing2.wav")
+	util.PrecacheSound("physics/plastic/plastic_box_impact_hard1.wav")	
+	util.PrecacheSound("physics/plastic/plastic_box_impact_hard2.wav")	
+	util.PrecacheSound("physics/plastic/plastic_box_impact_hard3.wav")	
+	util.PrecacheSound("physics/plastic/plastic_box_impact_hard4.wav")
+	util.PrecacheSound("physics/wood/wood_crate_impact_hard2.wav")
+	util.PrecacheSound("physics/wood/wood_crate_impact_hard3.wav")
+end
+
+function SWEP:OnReloaded()
+	self.MaxHoldDistance = self.MaxHoldDistance ^ 2
+	self:DropObject()
 end
 
 function SWEP:Holster()
@@ -85,31 +120,129 @@ function SWEP:Holster()
 end
 
 function SWEP:Think()
-	if (CLIENT) then
-		if (self.Owner) then
-			local viewModel = self.Owner:GetViewModel()
+	if (!IsValid(self.Owner)) then
+		return
+	end
 
-			if (IsValid(viewModel)) then
-				viewModel:SetPlaybackRate(1)
+	if (CLIENT) then
+		local viewModel = self.Owner:GetViewModel()
+
+		if (IsValid(viewModel)) then
+			viewModel:SetPlaybackRate(1)
+		end
+	else
+		if (self:IsHoldingObject()) then
+			local physics = self.HeldEntity:GetPhysicsObject()
+			local targetLocation = (self.Owner:GetShootPos() + self.Owner:GetForward() * self.HoldDistance) - self.HeldEntity:OBBCenter()
+
+			if (physics:GetPos():DistToSqr(targetLocation) > self.MaxHoldDistance) then
+				self:DropObject()
+			else
+				physics:UpdateShadow(targetLocation, self.HeldObjectAngle, FrameTime())
+
+				if (physics:GetStress() > self.MaxHoldStress) then
+					self:DropObject()
+				end
 			end
 		end
 	end
 end
 
-function SWEP:Precache()
-	util.PrecacheSound("npc/vort/claw_swing1.wav")
-	util.PrecacheSound("npc/vort/claw_swing2.wav")
-	util.PrecacheSound("physics/plastic/plastic_box_impact_hard1.wav")	
-	util.PrecacheSound("physics/plastic/plastic_box_impact_hard2.wav")	
-	util.PrecacheSound("physics/plastic/plastic_box_impact_hard3.wav")	
-	util.PrecacheSound("physics/plastic/plastic_box_impact_hard4.wav")
-	util.PrecacheSound("physics/wood/wood_crate_impact_hard2.wav")
-	util.PrecacheSound("physics/wood/wood_crate_impact_hard3.wav")
+function SWEP:CanHoldObject(entity)
+	local physics = entity:GetPhysicsObject()
+
+	return (IsValid(physics) and
+		(physics:GetMass() <= nut.config.Get("maxHoldWeight", 100) and physics:IsMoveable()) and
+		!self:IsHoldingObject() and
+		!IsValid(entity.nutHeldOwner) and
+		self.AllowedHoldableClasses[entity:GetClass()])
 end
 
-function SWEP:Initialize()
-	self:SetHoldType(self.HoldType)
-	self.LastHand = 0
+function SWEP:IsHoldingObject()
+	return (IsValid(self.HeldEntity) and
+		IsValid(self.HeldEntity.nutHeldOwner) and 
+		self.HeldEntity.nutHeldOwner == self.Owner)
+end
+
+function SWEP:PickupObject(entity)
+	if (self:IsHoldingObject() or
+		!IsValid(entity) or
+		!IsValid(entity:GetPhysicsObject())) then
+		return
+	end
+
+	local physics = entity:GetPhysicsObject()
+	physics:Wake()
+
+	entity.nutHeldOwner = self.Owner
+	entity.nutCollisionGroup = entity:GetCollisionGroup()
+
+	-- TODO: we might need to make a separate grabber entity instead of modifying the entity's physobj
+	entity:StartMotionController()
+	entity:MakePhysicsObjectAShadow(true, false)
+	entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+
+	self.HeldObjectAngle = entity:GetAngles()
+	self.HeldEntity = entity
+end
+
+function SWEP:DropObject(bThrow)
+	if (!IsValid(self.HeldEntity) or self.HeldEntity.nutHeldOwner != self.Owner) then
+		return
+	end
+
+	self.HeldEntity:StopMotionController()
+	self.HeldEntity:PhysicsInit(SOLID_VPHYSICS)
+	self.HeldEntity:SetCollisionGroup(self.HeldEntity.nutCollisionGroup)
+
+	local physics = self.HeldEntity:GetPhysicsObject()
+	physics:Wake()
+	
+	if (bThrow) then
+		physics:SetVelocityInstantaneous(self.Owner:GetAimVector() * nut.config.Get("throwForce", 256));
+	else
+		physics:SetVelocityInstantaneous(vector_origin)
+	end
+
+	self.HeldEntity.nutHeldOwner = nil
+	self.HeldEntity.nutCollisionGroup = nil
+	self.HeldEntity = nil
+end
+
+function SWEP:PlayPickupSound(surfaceProperty)
+	local result = "Flesh.ImpactSoft"
+
+	if (surfaceProperty != nil) then
+		local surfaceName = util.GetSurfacePropName(surfaceProperty)
+		local soundName = surfaceName:gsub("^metal$", "SolidMetal") .. ".ImpactSoft"
+
+		if (sound.GetProperties(soundName)) then
+			result = soundName
+		end
+	end
+
+	self.Owner:EmitSound(result, 75, 100, 40)
+end
+
+function SWEP:Holster()
+	if (!IsFirstTimePredicted() or CLIENT) then
+		return
+	end
+
+	self:DropObject()
+	return true
+end
+
+function SWEP:OnRemove()
+	if (SERVER) then
+		self:DropObject()
+	end
+end
+
+function SWEP:OwnerChanged()
+	if (SERVER) then
+		self:DropObject()
+	end
 end
 
 function SWEP:DoPunchAnimation()
@@ -126,6 +259,11 @@ end
 
 function SWEP:PrimaryAttack()
 	if (!IsFirstTimePredicted()) then
+		return
+	end
+
+	if (SERVER and self:IsHoldingObject()) then
+		self:DropObject(true)
 		return
 	end
 
@@ -200,45 +338,6 @@ function SWEP:PrimaryAttack()
 	end)
 end
 
-function SWEP:OnCanCarry(entity)
-	local physicsObject = entity:GetPhysicsObject()
-
-	if (!IsValid(physicsObject)) then
-		return false
-	end
-
-	if (physicsObject:GetMass() > 100 or !physicsObject:IsMoveable()) then
-		return false
-	end
-
-	if (IsValid(entity.carrier) or IsValid(self.heldEntity)) then
-		return false
-	end
-
-	return true
-end
-
-function SWEP:DoPickup(entity)
-	if (entity:IsPlayerHolding()) then
-		return
-	end
-
-	self.heldEntity = entity
-
-	timer.Simple(0.2, function()
-		if (!IsValid(entity) or entity:IsPlayerHolding() or self.heldEntity != entity) then
-			self.heldEntity = nil
-
-			return
-		end
-
-		self.Owner:PickupObject(entity)
-		self.Owner:EmitSound("physics/body/body_medium_impact_soft"..math.random(1, 3)..".wav", 75)
-	end)
-
-	self:SetNextSecondaryFire(CurTime() + 1)
-end
-
 function SWEP:SecondaryAttack()
 	if (!IsFirstTimePredicted()) then
 		return
@@ -264,13 +363,20 @@ function SWEP:SecondaryAttack()
 			self:DoPunchAnimation()
 			self:SetNextSecondaryFire(CurTime() + 0.4)
 			self:SetNextPrimaryFire(CurTime() + 1)
-		elseif (!entity:IsPlayer() and !entity:IsNPC() and self:OnCanCarry(entity)) then
-			local physObj = entity:GetPhysicsObject()
-			physObj:Wake()
-
-			self:DoPickup(entity)
-		elseif (IsValid(self.heldEntity) and !self.heldEntity:IsPlayerHolding()) then
-			self.heldEntity = nil
+		elseif (!entity:IsPlayer() and !entity:IsNPC() and self:CanHoldObject(entity)) then
+			self:PickupObject(entity)
+			self:PlayPickupSound(trace.SurfaceProps)
+			self:SetNextSecondaryFire(CurTime() + self.Secondary.Delay)
 		end
+	end
+end
+
+function SWEP:Reload()
+	if (!IsFirstTimePredicted()) then
+		return
+	end
+
+	if (SERVER and IsValid(self.HeldEntity)) then
+		self:DropObject()
 	end
 end

@@ -147,3 +147,11 @@ end, {
 nut.config.Add("wepAlwaysRaised", false, "Whether or not weapons are always raised.", nil, {
 	category = "server"
 })
+nut.config.Add("maxHoldWeight", 100, "The maximum weight that a player can carry in their hands", nil, {
+	data = {min = 1, max = 500},
+	category = "interaction"
+})
+nut.config.Add("throwForce", 256, "How hard a player can throw the item that they're holding", nil, {
+	data = {min = 1, max = 1000},
+	category = "interaction"
+})
