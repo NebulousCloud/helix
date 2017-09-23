@@ -7,7 +7,7 @@ ITEM.height = 1
 ITEM.outfitCategory = "model"
 ITEM.pacData = {}
 
-/*
+--[[
 -- This will change a player's skin after changing the model. Keep in mind it starts at 0.
 ITEM.newSkin = 1
 -- This will change a certain part of the model.
@@ -25,7 +25,7 @@ ITEM.bodyGroups = {
 	["blade"] = 1,
 	["bladeblur"] = 1
 }
-*/
+]]--
 
 -- Inventory drawing
 if (CLIENT) then

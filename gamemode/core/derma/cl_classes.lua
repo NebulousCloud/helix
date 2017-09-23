@@ -22,7 +22,7 @@ local PANEL = {}
         self.icon:InvalidateLayout(true)
         self.icon:Dock(LEFT)
         self.icon.PaintOver = function(this, w, h)
-            /*
+            --[[
             if (panel.payload.model == k) then
                 local color = nut.config.Get("color", color_white)
 
@@ -38,7 +38,7 @@ local PANEL = {}
                 surface.SetMaterial(gradient)
                 surface.DrawTexturedRect(0, 0, w, h)
             end
-            */
+            ]]--
         end
         AssignClick(self.icon) 
 

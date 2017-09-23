@@ -558,7 +558,7 @@ do
 
 	do
 		local function IntervalDistance(x, x0, x1)
-			// swap so x0 < x1
+			-- swap so x0 < x1
 			if (x0 > x1) then
 				local tmp = x0
 
@@ -581,18 +581,18 @@ do
 		function nut.util.FindUseEntity(player, origin, forward)
 			local tr
 			local up = forward:Up()
-			// Search for objects in a sphere (tests for entities that are not solid, yet still useable)
+			-- Search for objects in a sphere (tests for entities that are not solid, yet still useable)
 			local searchCenter = origin
 
-			// NOTE: Some debris objects are useable too, so hit those as well
-			// A button, etc. can be made out of clip brushes, make sure it's +useable via a traceline, too.
+			-- NOTE: Some debris objects are useable too, so hit those as well
+			-- A button, etc. can be made out of clip brushes, make sure it's +useable via a traceline, too.
 			local useableContents = bit.bor(MASK_SOLID, CONTENTS_DEBRIS, CONTENTS_PLAYERCLIP)
 
-			// UNDONE: Might be faster to just fold this range into the sphere query
+			-- UNDONE: Might be faster to just fold this range into the sphere query
 			local pObject = NULL
 
 			local nearestDist = 1e37
-			// try the hit entity if there is one, or the ground entity if there isn't.
+			-- try the hit entity if there is one, or the ground entity if there isn't.
 			local pNearest = NULL
 
 			for i = 1, NUM_TANGENTS do
@@ -639,7 +639,7 @@ do
 					if ( dist < 80 ) then
 						pNearest = pObject
 
-						// if this is directly under the cursor just return it now
+						-- if this is directly under the cursor just return it now
 						if ( i == 0 ) then
 							return pObject
 						end
@@ -647,15 +647,15 @@ do
 				end
 			end
 
-			// check ground entity first
-			// if you've got a useable ground entity, then shrink the cone of this search to 45 degrees
-			// otherwise, search out in a 90 degree cone (hemisphere)
+			-- check ground entity first
+			-- if you've got a useable ground entity, then shrink the cone of this search to 45 degrees
+			-- otherwise, search out in a 90 degree cone (hemisphere)
 			if (IsValid(player:GetGroundEntity()) and nut.util.IsUseableEntity(player:GetGroundEntity(), FCAP_USE_ONGROUND)) then
 				pNearest = player:GetGroundEntity()
 			end
 
 			if (IsValid(pNearest)) then
-				// estimate nearest object by distance from the view vector
+				-- estimate nearest object by distance from the view vector
 				local point = pNearest:NearestPoint(searchCenter)
 				nearestDist = util.DistanceToLine(searchCenter, forward, point)
 			end
@@ -665,14 +665,14 @@ do
 					continue
 				end
 
-				// see if it's more roughly in front of the player than previous guess
+				-- see if it's more roughly in front of the player than previous guess
 				local point = v:NearestPoint(searchCenter)
 
 				local dir = point - searchCenter
 				dir:Normalize()
 				local dot = DotProduct(dir, forward)
 
-				// Need to be looking at the object more or less
+				-- Need to be looking at the object more or less
 				if (dot < 0.8) then
 					continue
 				end
@@ -680,8 +680,8 @@ do
 				local dist = util.DistanceToLine(searchCenter, forward, point)
 
 				if (dist < nearestDist) then
-					// Since this has purely been a radius search to this point, we now
-					// make sure the object isn't behind glass or a grate.
+					-- Since this has purely been a radius search to this point, we now
+					-- make sure the object isn't behind glass or a grate.
 					local trCheckOccluded = {}
 
 					util.TraceLine({

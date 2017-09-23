@@ -483,7 +483,7 @@ PANEL = {}
 
 												itemTable.player = nil
 											else
-												/*
+												--[[
 													-- Drag and drop bag transfer requires half-recode of Inventory GUI.
 													-- It will be there. But it will take some time.
 
@@ -505,7 +505,7 @@ PANEL = {}
 															end
 														end
 													end
-												*/
+												]]--
 											end
 										end
 									end

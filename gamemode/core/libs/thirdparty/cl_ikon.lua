@@ -1,4 +1,4 @@
-/*
+--[[
 	BLACK TEA ICON LIBRARY FOR NUTSCRIPT 1.1
 
 	The MIT License (MIT)
@@ -36,20 +36,20 @@
 	MUST -
 			Include Copyright
 			Include License
-*/
+]]--
 
-/*
+--[[
 	Default Tables.
-*/
+]]--
 
 ikon = ikon or {}
 ikon.dev = false
 ikon.maxSize = 8 -- 8x8 (512^2) is max icon size. eitherwise, fuck off.
 
-/*
+--[[
 	Initialize hooks and RT Screens.
 	returns nothing
-*/
+]]--
 local schemaName = schemaName or (Schema and Schema.folder)
 
 local List = {}
@@ -60,10 +60,10 @@ function ikon:init()
 		hook.Remove("HUDPaint", "ikon_dev2")
 	end	
 
-	/*
+	--[[
 		Being good at gmod is knowing all of stinky hacks
 										- Black Tea (2017)
-	*/
+	]]--
 	OLD_HALOADD = OLD_HALOADD or halo.Add
 	function halo.Add(...)
 		-- shut the fuck up
@@ -93,9 +93,9 @@ hook.Add("InitializedSchema", "updatePath", function()
 	ikon:init()
 end)
 
-/*
+--[[
 	IKON Library Essential Material/Texture Declare
-*/
+]]--
 
 local TEXTURE_FLAGS_CLAMP_S = 0x0004
 local TEXTURE_FLAGS_CLAMP_T = 0x0008
@@ -118,10 +118,10 @@ local mat_outline = CreateMaterial("nsIconRenderedTemp","UnlitGeneric",{
 	["$translucent"] = 1
 })
 
-/*
+--[[
 	Developer hook.
 	returns nothing.
-*/
+]]--
 
 -- Okay, sovietUnion wasn't pretty good name for the variation.
 local lightPositions = {
@@ -175,9 +175,9 @@ function ikon:renderHook()
 					render.SetStencilFailOperation(STENCILOPERATION_REPLACE)
 				end
 				
-				/*
+				--[[
 					Add more effects on the Models!
-				*/
+				]]--
 				if (ikon.info and ikon.info.drawHook) then
 					ikon.info.drawHook(ikon.renderEntity)
 				end
@@ -213,10 +213,10 @@ function ikon:renderHook()
 					render.SetBlend(1)
 					render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_NOTEQUAL)
 					
-					/*
+					--[[
 						Thanks for Noiwex
 						NxServ.eu
-					*/
+					]]--
 					cam.Start2D()
 						surface.SetMaterial( mat_outline )
 						surface.DrawTexturedRectUV( -2,0, w, h, 0, 0, w/ikon.max, h/ikon.max)
@@ -246,10 +246,10 @@ function ikon:showResult()
 	surface.DrawTexturedRect(x, 0, w, h)
 end
 
-/*
+--[[
 	Renders the Icon with given arguments.
 	returns nothing
-*/
+]]--
 ikon.requestList = ikon.requestList or {}
 
 IKON_BUSY = 1
@@ -318,10 +318,10 @@ function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
 	return true
 end
 
-/*
+--[[
 	Gets rendered icon with given unique name.
 	returns IMaterial
-*/
+]]--
 ikon.cache = ikon.cache or {}
 function ikon:GetIcon(name)
 	if (ikon.cache[name]) then

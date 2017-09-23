@@ -33,29 +33,29 @@ if (CLIENT) then
 
 		local cfg = self.list:Add("DNumSlider")
 		cfg:Dock(TOP)
-		cfg:SetText("Height") // Set the text above the slider
-		cfg:SetMin(0)				 // Set the minimum number you can slide to
-		cfg:SetMax(30)				// Set the maximum number you can slide to
-		cfg:SetDecimals(0)			 // Decimal places - zero for whole number
-		cfg:SetConVar("nut_tp_vertical") // Changes the ConVar when you slide
+		cfg:SetText("Height") -- Set the text above the slider
+		cfg:SetMin(0)				 -- Set the minimum number you can slide to
+		cfg:SetMax(30)				-- Set the maximum number you can slide to
+		cfg:SetDecimals(0)			 -- Decimal places - zero for whole number
+		cfg:SetConVar("nut_tp_vertical") -- Changes the ConVar when you slide
 		cfg:DockMargin(10, 0, 0, 5)
 
 		local cfg = self.list:Add("DNumSlider")
 		cfg:Dock(TOP)
-		cfg:SetText("Horizontal") // Set the text above the slider
-		cfg:SetMin(-30)				 // Set the minimum number you can slide to
-		cfg:SetMax(30)				// Set the maximum number you can slide to
-		cfg:SetDecimals(0)			 // Decimal places - zero for whole number
-		cfg:SetConVar("nut_tp_horizontal") // Changes the ConVar when you slide
+		cfg:SetText("Horizontal") -- Set the text above the slider
+		cfg:SetMin(-30)				 -- Set the minimum number you can slide to
+		cfg:SetMax(30)				-- Set the maximum number you can slide to
+		cfg:SetDecimals(0)			 -- Decimal places - zero for whole number
+		cfg:SetConVar("nut_tp_horizontal") -- Changes the ConVar when you slide
 		cfg:DockMargin(10, 0, 0, 5)
 
 		local cfg = self.list:Add("DNumSlider")
 		cfg:Dock(TOP)
-		cfg:SetText("Distance") // Set the text above the slider
-		cfg:SetMin(0)				 // Set the minimum number you can slide to
-		cfg:SetMax(100)				// Set the maximum number you can slide to
-		cfg:SetDecimals(0)			 // Decimal places - zero for whole number
-		cfg:SetConVar("nut_tp_distance") // Changes the ConVar when you slide
+		cfg:SetText("Distance") -- Set the text above the slider
+		cfg:SetMin(0)				 -- Set the minimum number you can slide to
+		cfg:SetMax(100)				-- Set the maximum number you can slide to
+		cfg:SetDecimals(0)			 -- Decimal places - zero for whole number
+		cfg:SetConVar("nut_tp_distance") -- Changes the ConVar when you slide
 		cfg:DockMargin(10, 0, 0, 5)
 
 	end

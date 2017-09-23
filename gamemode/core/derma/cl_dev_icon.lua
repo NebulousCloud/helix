@@ -22,9 +22,9 @@ local bTxt = {
 local PANEL = {}
 local iconSize = 64
 
-/*
+--[[
 	3D ICON PREVIEW WINDOW
-*/
+]]--
 function PANEL:Init()
 	self:SetPos(50, 50)
 	self:ShowCloseButton(false)
@@ -53,9 +53,9 @@ function PANEL:AdjustSize(x, y)
 end
 vgui.Register("iconPreview", PANEL, "DFrame")
 
-/*
+--[[
 	RENDER ICON PREVIEW
-*/
+]]--
 PANEL = {}
 AccessorFunc( PANEL, "m_strModel", 		"Model" )
 AccessorFunc( PANEL, "m_pOrigin", 		"Origin" )
@@ -98,9 +98,9 @@ function PANEL:AdjustSize(x, y)
 end
 vgui.Register("iconRenderPreview", PANEL, "DFrame")
 
-/*
+--[[
 	EDITOR FUNCTION
-*/
+]]--
 local function action(self)
 		local p1 = self.prev
 		local p = self.prev2

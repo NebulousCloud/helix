@@ -2,8 +2,8 @@ ITEM.name = "Ammo Base"
 ITEM.model = "models/Items/BoxSRounds.mdl"
 ITEM.width = 1
 ITEM.height = 1
-ITEM.ammo = "pistol" // type of the ammo
-ITEM.ammoAmount = 30 // amount of the ammo
+ITEM.ammo = "pistol" -- type of the ammo
+ITEM.ammoAmount = 30 -- amount of the ammo
 ITEM.desc = "A Box that contains %s of Pistol Ammo"
 ITEM.category = "Ammunition"
 
@@ -17,7 +17,7 @@ if (CLIENT) then
 	end
 end
 
-// On player uneqipped the item, Removes a weapon from the player and keep the ammo in the item.
+-- On player uneqipped the item, Removes a weapon from the player and keep the ammo in the item.
 ITEM.functions.use = { -- sorry, for name order.
 	name = "Load",
 	tip = "useTip",

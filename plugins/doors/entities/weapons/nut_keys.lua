@@ -194,11 +194,11 @@ function SWEP:SecondaryAttack()
 	local entity = util.TraceLine(data).Entity
 
 
-	/*
+	--[[
 		Unlocks the entity if the contiditon fits:
 			1. The entity is door and client has access to the door.
 			2. The entity is vehicle and the "owner" variable is same as client's character ID.
-	*/
+	]]--
 	if (IsValid(entity) and
 		(
 			(entity:IsDoor() and entity:CheckDoorAccess(self.Owner)) or
