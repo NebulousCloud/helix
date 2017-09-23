@@ -68,7 +68,7 @@ function ikon:init()
 	function halo.Add(...)
 		-- shut the fuck up
 		if (ikon.rendering != true) then
-			OLD_HALOAdd(...)
+			OLD_HALOADD(...)
 		end
 	end
 
