@@ -62,7 +62,7 @@ function nut.plugin.Load(uniqueID, path, isSingleFile, variable)
 
 	if (uniqueID != "schema") then
 		PLUGIN.name = PLUGIN.name or "Unknown"
-		PLUGIN.desc = PLUGIN.desc or "No description available."
+		PLUGIN.description = PLUGIN.description or "No description available."
 
 		for k, v in pairs(PLUGIN) do
 			if (type(v) == "function") then

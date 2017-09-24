@@ -1,6 +1,6 @@
 PLUGIN.name = "Basic Prop Protection"
 PLUGIN.author = "Chessnut"
-PLUGIN.desc = "Adds a simple prop protection system."
+PLUGIN.description = "Adds a simple prop protection system."
 
 local PROP_BLACKLIST = {
 	["models/props_combine/combinetrain02b.mdl"] = true,

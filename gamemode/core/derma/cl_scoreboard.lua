@@ -181,15 +181,15 @@ local PANEL = {}
 		slot.ping:SetTextInset(16, 0)
 		slot.ping:SetExpensiveShadow(1, color_black)
 
-		slot.desc = slot:Add("DLabel")
-		slot.desc:Dock(FILL)
-		slot.desc:DockMargin(65, 0, 48, 0)
-		slot.desc:SetWrap(true)
-		slot.desc:SetContentAlignment(7)
-		slot.desc:SetText(hook.Run("GetDisplayedDescription", client) or (client:GetChar() and client:GetChar():GetDescription()) or "")
-		slot.desc:SetTextColor(color_white)
-		slot.desc:SetExpensiveShadow(1, Color(0, 0, 0, 100))
-		slot.desc:SetFont("nutSmallFont")
+		slot.description = slot:Add("DLabel")
+		slot.description:Dock(FILL)
+		slot.description:DockMargin(65, 0, 48, 0)
+		slot.description:SetWrap(true)
+		slot.description:SetContentAlignment(7)
+		slot.description:SetText(hook.Run("GetDisplayedDescription", client) or (client:GetChar() and client:GetChar():GetDescription()) or "")
+		slot.description:SetTextColor(color_white)
+		slot.description:SetExpensiveShadow(1, Color(0, 0, 0, 100))
+		slot.description:SetFont("nutSmallFont")
 
 		local oldTeam = client:Team()
 
@@ -225,7 +225,7 @@ local PANEL = {}
 			local entity = self.model.Entity
 
 			if (self.lastDesc != desc) then
-				self.desc:SetText(desc)
+				self.description:SetText(desc)
 				self.lastDesc = desc
 			end
 

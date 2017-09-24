@@ -1,6 +1,6 @@
 PLUGIN.name = "Strength"
 PLUGIN.author = "Chessnut"
-PLUGIN.desc = "Adds a strength attribute."
+PLUGIN.description = "Adds a strength attribute."
 
 if (SERVER) then
 	function PLUGIN:PlayerGetFistDamage(client, damage, context)

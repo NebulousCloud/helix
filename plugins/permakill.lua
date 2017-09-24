@@ -1,6 +1,6 @@
 PLUGIN.name = "Permakill"
 PLUGIN.author = "Thadah Denyse"
-PLUGIN.desc = "Adds permanent death in the server options."
+PLUGIN.description = "Adds permanent death in the server options."
 
 nut.config.Add("pkActive", false, "Whether or not permakill is activated on the server.", nil, {
 	category = "Permakill"

@@ -1,5 +1,5 @@
 ITEM.name = "Skull Mask"
-ITEM.desc = "It's a skull mask."
+ITEM.description = "It's a skull mask."
 ITEM.model = "models/Gibs/HGIBS.mdl"
 ITEM.width = 1
 ITEM.height = 1

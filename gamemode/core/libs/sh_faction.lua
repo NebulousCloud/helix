@@ -43,9 +43,9 @@ function nut.faction.LoadFromDir(directory)
 				ErrorNoHalt("Faction '"..niceName.."' is missing a name. You need to add a FACTION.name = \"Name\"\n")
 			end
 
-			if (!FACTION.desc) then
-				FACTION.desc = "noDesc"
-				ErrorNoHalt("Faction '"..niceName.."' is missing a description. You need to add a FACTION.desc = \"Description\"\n")
+			if (!FACTION.description) then
+				FACTION.description = "noDesc"
+				ErrorNoHalt("Faction '"..niceName.."' is missing a description. You need to add a FACTION.description = \"Description\"\n")
 			end
 
 			if (!FACTION.color) then

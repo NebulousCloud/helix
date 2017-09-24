@@ -122,7 +122,7 @@ hook.Add("BuildHelpMenu", "nutBasicHelp", function(tabs)
 					<span style="font-size: smaller;">
 					<b>%s</b>: %s<br />
 					<b>%s</b>: %s
-			]]):format(v.name or "Unknown", L"desc", v.desc or L"noDesc", L"author", v.author)
+			]]):format(v.name or "Unknown", L"desc", v.description or L"noDesc", L"author", v.author)
 
 			if (v.version) then
 				body = body.."<br /><b>"..L"version".."</b>: "..v.version
@@ -152,7 +152,7 @@ hook.Add("BuildHelpMenu", "nutBasicHelp", function(tabs)
 					<td><b>%s</b></td>
 					<td>%s</td>
 				</tr>
-			]], icon, k, v.desc)
+			]], icon, k, v.description)
 		end
 
 		return body.."</table>"

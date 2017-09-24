@@ -17,11 +17,11 @@ local PANEL = {}
 			end
 		end
 
-		self.desc = self:Add("DTextEntry")
-		self.desc:Dock(TOP)
-		self.desc:DockMargin(0, 4, 0, 0)
-		self.desc:SetText(entity:GetNetVar("desc", ""))
-		self.desc.OnEnter = function(this)
+		self.description = self:Add("DTextEntry")
+		self.description:Dock(TOP)
+		self.description:DockMargin(0, 4, 0, 0)
+		self.description:SetText(entity:GetNetVar("desc", ""))
+		self.description.OnEnter = function(this)
 			if (entity:GetNetVar("desc") != this:GetText()) then
 				self:updateVendor("desc", this:GetText())
 			end

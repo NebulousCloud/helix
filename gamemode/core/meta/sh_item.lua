@@ -1,7 +1,7 @@
 local ITEM = nut.meta.item or {}
 ITEM.__index = ITEM
 ITEM.name = "Undefined"
-ITEM.desc = ITEM.desc or "An item that is undefined."
+ITEM.description = ITEM.description or "An item that is undefined."
 ITEM.id = ITEM.id or 0
 ITEM.uniqueID = "undefined"
 
@@ -22,9 +22,9 @@ function ITEM:GetName()
 end
 
 function ITEM:GetDescription()
-	if (!self.desc) then return "ERROR" end
+	if (!self.description) then return "ERROR" end
 	
-	return L(self.desc or "noDesc")
+	return L(self.description or "noDesc")
 end
 
 -- Dev Buddy. You don't have to print the item data with PrintData();

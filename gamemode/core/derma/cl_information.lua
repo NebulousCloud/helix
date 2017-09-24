@@ -38,11 +38,11 @@ local PANEL = {}
 				self.name:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 			end
 
-			if (!suppress or !suppress.desc) then
-				self.desc = self.info:Add("DTextEntry")
-				self.desc:Dock(TOP)
-				self.desc:SetFont("nutMediumLightFont")
-				self.desc:SetTall(28)
+			if (!suppress or !suppress.description) then
+				self.description = self.info:Add("DTextEntry")
+				self.description:Dock(TOP)
+				self.description:SetFont("nutMediumLightFont")
+				self.description:SetTall(28)
 			end
 
 			if (!suppress or !suppress.time) then
@@ -107,9 +107,9 @@ local PANEL = {}
 
 	function PANEL:Setup()
 		local char = LocalPlayer():GetChar()
-		if (self.desc) then
-			self.desc:SetText(char:GetDescription())
-			self.desc.OnEnter = function(this, w, h)
+		if (self.description) then
+			self.description:SetText(char:GetDescription())
+			self.description.OnEnter = function(this, w, h)
 				nut.command.Send("chardesc", this:GetText())
 			end
 		end

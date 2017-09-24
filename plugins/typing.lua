@@ -1,5 +1,5 @@
 PLUGIN.name = "Typing Indicator"
-PLUGIN.desc = "Shows some text when someone types."
+PLUGIN.description = "Shows some text when someone types."
 PLUGIN.author = "Chessnut"
 
 if (CLIENT) then

@@ -3,7 +3,7 @@
 
 PLUGIN.name = "PAC3 Integration"
 PLUGIN.author = "Black Tea"
-PLUGIN.desc = "More Upgraded, More well organized PAC3 Integration made by Black Tea"
+PLUGIN.description = "More Upgraded, More well organized PAC3 Integration made by Black Tea"
 
 if (!pace) then return end
 

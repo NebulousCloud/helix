@@ -92,7 +92,7 @@ local PANEL = {}
 		end
 
 		if (!self.anchorMode) then
-			if (IsValid(self.info) and self.info.desc:IsEditing()) then
+			if (IsValid(self.info) and self.info.description:IsEditing()) then
 				return
 			end
 

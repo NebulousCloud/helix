@@ -13,7 +13,7 @@ if (SERVER) then
 
 		nut.db.InsertTable({
 			_name = data.name or "",
-			_desc = data.desc or "",
+			_description = data.description or "",
 			_model = data.model or "models/error.mdl",
 			_schema = Schema and Schema.folder or "nutscript",
 			_createTime = timeStamp,
@@ -70,7 +70,7 @@ if (SERVER) then
 			return
 		end
 
-		local fields = "_id, _name, _desc, _model, _attribs, _data, _money, _faction"
+		local fields = "_id, _name, _description, _model, _attribs, _data, _money, _faction"
 		local condition = "_schema = '"..nut.db.escape(Schema.folder).."' AND _steamID = "..steamID64
 
 		if (id) then
@@ -168,7 +168,7 @@ if (SERVER) then
 	end
 
 	function nut.char.LoadChar(callback, noCache, id)
-		local fields = "_id, _name, _desc, _model, _attribs, _data, _money, _faction"
+		local fields = "_id, _name, _description, _model, _attribs, _data, _money, _faction"
 		local condition = "_schema = '"..nut.db.escape(Schema.folder)
 
 		if (id) then
@@ -269,8 +269,8 @@ function nut.char.New(data, id, client, steamID)
 		data.name = data.name:gsub("#", "#​")
 	end
 
-	if (data.desc) then
-		data.desc = data.desc:gsub("#", "#​")
+	if (data.description) then
+		data.description = data.description:gsub("#", "#​")
 	end
 	
 	local character = setmetatable({vars = {}}, nut.meta.character)

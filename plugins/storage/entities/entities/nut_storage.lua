@@ -128,7 +128,7 @@ else
 		local tx, ty = drawText("Storage", x, y, colorAlpha(configGet("color"), alpha), 1, 1, nil, alpha * 0.65)
 		if (def) then
 			y = y + ty + 1
-			drawText(def.desc, x, y, colorAlpha(color_white, alpha), 1, 1, nil, alpha * 0.65)
+			drawText(def.description, x, y, colorAlpha(color_white, alpha), 1, 1, nil, alpha * 0.65)
 		end
 	end
 end

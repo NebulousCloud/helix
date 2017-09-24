@@ -244,7 +244,7 @@ if (CLIENT) then
 						local row = properties:CreateRow(category, k)
 						row:Setup(form, v.data and v.data.data or {})
 						row:SetValue(value)
-						row:SetToolTip(v.desc)
+						row:SetToolTip(v.description)
 						row.DataChanged = function(this, value)
 							timer.Create("nutCfgSend"..k, delay, 1, function()
 								if (IsValid(row)) then

@@ -1,6 +1,6 @@
 PLUGIN.name = "Chatbox"
 PLUGIN.author = "Chessnut"
-PLUGIN.desc = "Adds a chatbox that replaces the default one."
+PLUGIN.description = "Adds a chatbox that replaces the default one."
 
 if (CLIENT) then
 	NUT_CVAR_CHATFILTER = CreateClientConVar("nut_chatfilter", "", true, false)

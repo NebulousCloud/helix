@@ -1,7 +1,7 @@
 local PLUGIN = PLUGIN
 PLUGIN.name = "New Fancy Third Person"
 PLUGIN.author = "Black Tea"
-PLUGIN.desc = "Third Person plugin."
+PLUGIN.description = "Third Person plugin."
 
 nut.config.Add("thirdperson", false, "Allow Thirdperson in the server.", nil, {
 	category = "server"

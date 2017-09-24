@@ -1,7 +1,7 @@
 local PLUGIN = PLUGIN
 PLUGIN.name = "Area"
 PLUGIN.author = "Black Tea"
-PLUGIN.desc = "Allows you to set area."
+PLUGIN.description = "Allows you to set area."
 PLUGIN.areaTable = PLUGIN.areaTable or {}
 nut.area = nut.area or {}
 ALWAYS_RAISED["nut_areahelper"] = true

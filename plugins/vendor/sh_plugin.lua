@@ -4,7 +4,7 @@ VENDOR_BOTH = 3
 
 PLUGIN.name = "Vendors"
 PLUGIN.author = "Chessnut"
-PLUGIN.desc = "Adds NPC vendors that can sell things."
+PLUGIN.description = "Adds NPC vendors that can sell things."
 
 -- Keys for vendor messages.
 VENDOR_WELCOME = 1
@@ -56,7 +56,7 @@ if (SERVER) then
 			entity:SetModel(v.model)
 			entity:SetNetVar("noBubble", v.bubble)
 			entity:SetNetVar("name", v.name)
-			entity:SetNetVar("desc", v.desc)
+			entity:SetNetVar("desc", v.description)
 
 			entity.items = v.items or {}
 			entity.factions = v.factions or {}
@@ -429,7 +429,7 @@ else
 		if (key == "name") then
 			editor.name:SetText(entity:GetNetVar("name"))
 		elseif (key == "desc") then
-			editor.desc:SetText(entity:GetNetVar("desc"))
+			editor.description:SetText(entity:GetNetVar("desc"))
 		elseif (key == "bubble") then
 			editor.bubble.noSend = true
 			editor.bubble:SetValue(data and 1 or 0)

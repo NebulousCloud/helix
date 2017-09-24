@@ -1,2 +1,2 @@
 ATTRIBUTE.name = "Strength"
-ATTRIBUTE.desc = "A measure of how strong you are."
+ATTRIBUTE.description = "A measure of how strong you are."

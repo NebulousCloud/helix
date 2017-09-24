@@ -633,7 +633,7 @@ nut.command.Add("chardesc", {
 			end, client:GetChar():GetDescription())
 		end
 
-		local info = nut.char.vars.desc
+		local info = nut.char.vars.description
 		local result, fault, count = info.OnValidate(arguments)
 
 		if (result == false) then

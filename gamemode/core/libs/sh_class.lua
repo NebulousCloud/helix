@@ -27,7 +27,7 @@ function nut.class.LoadFromDir(directory)
 		CLASS = {index = index, uniqueID = niceName}
 			-- Define some default variables.
 			CLASS.name = "Unknown"
-			CLASS.desc = "No description available."
+			CLASS.description = "No description available."
 			CLASS.limit = 0
 
 			-- For future use with plugins.

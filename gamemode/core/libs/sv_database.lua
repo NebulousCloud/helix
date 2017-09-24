@@ -202,7 +202,7 @@ local MYSQL_CREATE_TABLES = [[
 CREATE TABLE IF NOT EXISTS `nut_characters` (
 	`_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
 	`_name` varchar(70) NOT NULL,
-	`_desc` text NOT NULL,
+	`_description` text NOT NULL,
 	`_model` varchar(160) NOT NULL,
 	`_attribs` varchar(500) DEFAULT NULL,
 	`_schema` varchar(24) NOT NULL,
@@ -247,7 +247,7 @@ local SQLITE_CREATE_TABLES = [[
 CREATE TABLE IF NOT EXISTS `nut_characters` (
 	`_id` INTEGER PRIMARY KEY,
 	`_name` TEXT,
-	`_desc` TEXT,
+	`_description` TEXT,
 	`_model` TEXT,
 	`_attribs` TEXT,
 	`_schema` TEXT,

@@ -1,6 +1,6 @@
 PLUGIN.name = "Save Items"
 PLUGIN.author = "Chessnut"
-PLUGIN.desc = "Saves items that were dropped."
+PLUGIN.description = "Saves items that were dropped."
 
 --[[
 	function PLUGIN:OnSavedItemLoaded(items)

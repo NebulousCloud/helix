@@ -1,6 +1,6 @@
 PLUGIN.name = "Acts"
 PLUGIN.author = "Chessnut"
-PLUGIN.desc = "Adds acts that can be performed."
+PLUGIN.description = "Adds acts that can be performed."
 PLUGIN.acts = PLUGIN.acts or {}
 
 nut.util.Include("sh_setup.lua")

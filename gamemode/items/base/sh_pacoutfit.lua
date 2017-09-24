@@ -1,5 +1,5 @@
 ITEM.name = "PAC Outfit"
-ITEM.desc = "A PAC Outfit Base."
+ITEM.description = "A PAC Outfit Base."
 ITEM.category = "Outfit"
 ITEM.model = "models/Gibs/HGIBS.mdl"
 ITEM.width = 1

@@ -15,7 +15,7 @@ function nut.attribs.LoadFromDir(directory)
 			nut.util.Include(directory.."/"..v)
 
 			ATTRIBUTE.name = ATTRIBUTE.name or "Unknown"
-			ATTRIBUTE.desc = ATTRIBUTE.desc or "No description availalble."
+			ATTRIBUTE.description = ATTRIBUTE.description or "No description availalble."
 
 			nut.attribs.list[niceName] = ATTRIBUTE
 		ATTRIBUTE = nil

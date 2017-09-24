@@ -1,6 +1,6 @@
 PLUGIN.name = "Crosshair"
 PLUGIN.author = "Black Tea"
-PLUGIN.desc = "A Crosshair."
+PLUGIN.description = "A Crosshair."
 
 if (CLIENT) then
 	local function drawdot( pos, size, col )

@@ -1,7 +1,7 @@
 local PLUGIN = PLUGIN
 
 PLUGIN.name = "Spawns"
-PLUGIN.desc = "Spawn points for factions and classes."
+PLUGIN.description = "Spawn points for factions and classes."
 PLUGIN.author = "Chessnut"
 PLUGIN.spawns = PLUGIN.spawns or {}
 

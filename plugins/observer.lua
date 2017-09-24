@@ -1,6 +1,6 @@
 PLUGIN.name = "Observer"
 PLUGIN.author = "Chessnut"
-PLUGIN.desc = "Adds on to the no-clip mode to prevent instrusion."
+PLUGIN.description = "Adds on to the no-clip mode to prevent instrusion."
 
 if (CLIENT) then
 	-- Create a setting to see if the player will teleport back after noclipping.

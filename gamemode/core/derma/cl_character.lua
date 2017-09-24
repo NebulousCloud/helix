@@ -59,7 +59,7 @@ local PANEL = {}
 		self.subTitle:MoveBelow(self.title, 0)
 		self.subTitle:SetSize(ScrW(), 64)
 		self.subTitle:SetFont("nutSubTitleFont")
-		self.subTitle:SetText(L2("schemaDesc") or Schema.desc or L"noDesc")
+		self.subTitle:SetText(L2("schemaDesc") or Schema.description or L"noDesc")
 		self.subTitle:SizeToContentsY()
 		self.subTitle:SetTextColor(color_white)
 		self.subTitle:SetAlpha(0)

@@ -1,6 +1,6 @@
 PLUGIN.name = "Stamina"
 PLUGIN.author = "Chessnut"
-PLUGIN.desc = "Adds a stamina system to limit running."
+PLUGIN.description = "Adds a stamina system to limit running."
 
 if (SERVER) then
 	function PLUGIN:PostPlayerLoadout(client)

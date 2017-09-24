@@ -1,6 +1,6 @@
 PLUGIN.name = "Spawn Saver"
 PLUGIN.author = "Chessnut"
-PLUGIN.desc = "Saves the position of a character."
+PLUGIN.description = "Saves the position of a character."
 
 -- Called right before the character has its information save.
 function PLUGIN:CharacterPreSave(character)

@@ -1,6 +1,6 @@
 PLUGIN.name = "3D Panels"
 PLUGIN.author = "Chessnut"
-PLUGIN.desc = "Adds web panels that can be placed on the map."
+PLUGIN.description = "Adds web panels that can be placed on the map."
 
 -- List of available panel dislays.
 PLUGIN.list = PLUGIN.list or {}

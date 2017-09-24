@@ -141,7 +141,7 @@ function nut.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 
 	if (uniqueID) then
 		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({}, meta)
-			ITEM.desc = "noDesc"
+			ITEM.description = "noDesc"
 			ITEM.uniqueID = uniqueID
 			ITEM.base = baseID
 			ITEM.isBase = isBaseItem

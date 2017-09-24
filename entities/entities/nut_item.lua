@@ -143,8 +143,8 @@ else
 			local x, y = position.x, position.y
 			local description = itemTable.GetDescription(itemTable)
 
-			if (description != self.desc) then
-				self.desc = description
+			if (description != self.description) then
+				self.description = description
 				self.markup = nut.markup.parse("<font=nutItemDescFont>" .. description .. "</font>", ScrW() * 0.7)
 			end
 			

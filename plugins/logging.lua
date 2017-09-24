@@ -1,6 +1,6 @@
 PLUGIN.name = "Logging"
 PLUGIN.author = "Black Tea"
-PLUGIN.desc = "You can modfiy the logging text/lists on this plugin."
+PLUGIN.description = "You can modfiy the logging text/lists on this plugin."
  
 if (SERVER) then
 	nut.log.AddType("chat", function(client, ...)

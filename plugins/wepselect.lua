@@ -1,6 +1,6 @@
 PLUGIN.name = "Weapon Select"
 PLUGIN.author = "Chessnut"
-PLUGIN.desc = "A replacement for the default weapon selection."
+PLUGIN.description = "A replacement for the default weapon selection."
 
 if (SERVER) then
 	concommand.Add("nut_selectweapon", function(client, command, arguments)

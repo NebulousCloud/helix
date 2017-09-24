@@ -1,6 +1,6 @@
 PLUGIN.name = "Storage"
 PLUGIN.author = "Chessnut"
-PLUGIN.desc = "Provides the ability to store items."
+PLUGIN.description = "Provides the ability to store items."
 
 PLUGIN.definitions = PLUGIN.definitions or {}
 STORAGE_DEFINITIONS = PLUGIN.definitions

@@ -1,6 +1,6 @@
 PLUGIN.name = "3D Text"
 PLUGIN.author = "Chessnut"
-PLUGIN.desc = "Adds text that can be placed on the map."
+PLUGIN.description = "Adds text that can be placed on the map."
 
 -- List of available text dislays.
 PLUGIN.list = PLUGIN.list or {}

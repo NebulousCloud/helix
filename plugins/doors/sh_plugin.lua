@@ -4,7 +4,7 @@ end
 
 PLUGIN.name = "Doors"
 PLUGIN.author = "Chessnut"
-PLUGIN.desc = "A simple door system."
+PLUGIN.description = "A simple door system."
 
 DOOR_OWNER = 3
 DOOR_TENANT = 2

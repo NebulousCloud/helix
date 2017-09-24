@@ -1,6 +1,6 @@
 PLUGIN.name = "Recognition"
 PLUGIN.author = "Chessnut"
-PLUGIN.desc = "Adds the ability to recognize people."
+PLUGIN.description = "Adds the ability to recognize people."
 
 do
 	local character = nut.meta.character
@@ -90,7 +90,7 @@ if (CLIENT) then
 						description = description:utf8sub(1, 37).."..."
 					end
 
-					return "["..description.."]"
+					return "["..descriptionription.."]"
 				elseif (!chatType) then
 					return L"unknown"
 				end

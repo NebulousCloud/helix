@@ -4,11 +4,11 @@ ITEM.width = 1
 ITEM.height = 1
 ITEM.ammo = "pistol" -- type of the ammo
 ITEM.ammoAmount = 30 -- amount of the ammo
-ITEM.desc = "A Box that contains %s of Pistol Ammo"
+ITEM.description = "A Box that contains %s of Pistol Ammo"
 ITEM.category = "Ammunition"
 
 function ITEM:GetDescription()
-	return Format(self.desc, self.ammoAmount)
+	return Format(self.description, self.ammoAmount)
 end
 
 if (CLIENT) then
