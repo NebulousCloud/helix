@@ -36,7 +36,7 @@ else
 			self.deltaIndex = Lerp(frameTime * 12, self.deltaIndex, self.index) --math.Approach(self.deltaIndex, self.index, fTime() * 12)
 
 			local index = self.deltaIndex
-			
+
 			for k, v in ipairs(weapons) do
 				if (!weapons[self.index]) then
 					self.index = total
@@ -82,13 +82,6 @@ else
 		end
 	end
 
-	local weaponInfo = {
-		"Author",
-		"Contact",
-		"Purpose",
-		"Instructions"
-	}
-
 	function PLUGIN:OnIndexChanged()
 		self.alpha = 1
 		self.fadeTime = CurTime() + 5
@@ -98,14 +91,13 @@ else
 		self.markup = nil
 
 		if (IsValid(weapon)) then
+			local instructions = weapon.Instructions
 			local text = ""
 
-			for k, v in ipairs(weaponInfo) do
-				if (weapon[v] and weapon[v]:find("%S")) then
-					local color = nut.config.Get("color")
+			if (instructions != nil and instructions:find("%S")) then
+				local color = nut.config.Get("color")
 
-					text = text.."<font=nutItemBoldFont><color="..color.r..","..color.g..","..color.b..">"..L(v).."</font></color>\n"..weapon[v].."\n"
-				end
+				text = text.."<font=nutItemBoldFont><color="..color.r..","..color.g..","..color.b..">"..L("Instructions").."</font></color>\n"..instructions.."\n"
 			end
 
 			if (text != "") then
@@ -145,13 +137,13 @@ else
 				self:OnIndexChanged()
 
 				return true
-			elseif (bind:find("slot")) then
+			elseif (bind:find("slot") and pressed) then
 				self.index = math.Clamp(tonumber(bind:match("slot(%d)")) or 1, 1, #LocalPlayer():GetWeapons())
 				self:OnIndexChanged()
 
 				return true
 			elseif (bind:find("attack") and pressed and self.alpha > 0) then
-				LocalPlayer():EmitSound(hook.Run("WeaponSelectSound", LocalPlayer():GetWeapons()[self.index]) or "buttons/button16.wav")
+				LocalPlayer():EmitSound(hook.Run("WeaponSelectSound", LocalPlayer():GetWeapons()[self.index]) or "HL2Player.Use")
 
 				RunConsoleCommand("nut_selectweapon", self.index)
 				self.alpha = 0
