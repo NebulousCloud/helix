@@ -324,8 +324,8 @@ do
 		end
 	})
 
-	nut.char.RegisterVar("desc", {
-		field = "_desc",
+	nut.char.RegisterVar("description", {
+		field = "_description",
 		default = "",
 		index = 2,
 		OnValidate = function(value, data)

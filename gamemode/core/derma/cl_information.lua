@@ -108,7 +108,7 @@ local PANEL = {}
 	function PANEL:Setup()
 		local char = LocalPlayer():GetChar()
 		if (self.desc) then
-			self.desc:SetText(char:GetDesc())
+			self.desc:SetText(char:GetDescription())
 			self.desc.OnEnter = function(this, w, h)
 				nut.command.Send("chardesc", this:GetText())
 			end

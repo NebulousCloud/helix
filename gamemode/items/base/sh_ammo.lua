@@ -7,7 +7,7 @@ ITEM.ammoAmount = 30 -- amount of the ammo
 ITEM.desc = "A Box that contains %s of Pistol Ammo"
 ITEM.category = "Ammunition"
 
-function ITEM:GetDesc()
+function ITEM:GetDescription()
 	return Format(self.desc, self.ammoAmount)
 end
 

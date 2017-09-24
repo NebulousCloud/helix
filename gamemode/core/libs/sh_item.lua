@@ -449,7 +449,7 @@ do
 					if (icon) then
 						icon:SetToolTip(
 							Format(nut.config.itemFormat,
-							item.GetName and item:GetName() or L(item.name), item:GetDesc() or "")
+							item.GetName and item:GetName() or L(item.name), item:GetDescription() or "")
 						)
 					end
 				end
@@ -487,7 +487,7 @@ do
 						if (IsValid(icon)) then
 							icon:SetToolTip(
 								Format(nut.config.itemFormat,
-								item.GetName and item:GetName() or L(item.name), item:GetDesc() or "")
+								item.GetName and item:GetName() or L(item.name), item:GetDescription() or "")
 							)
 							icon.itemID = item.id
 							

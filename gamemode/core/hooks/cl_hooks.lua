@@ -584,7 +584,7 @@ function GM:DrawEntityInfo(entity, alpha, position)
 			charInfo = {}
 			charInfo[1] = {hookRun("GetDisplayedName", entity) or character.GetName(character), teamGetColor(entity.Team(entity))}
 
-			local description = character.GetDesc(character)
+			local description = character.GetDescription(character)
 
 			if (description != entity.nutDescCache) then
 				entity.nutDescCache = description

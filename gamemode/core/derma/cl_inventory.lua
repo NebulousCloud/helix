@@ -125,7 +125,7 @@ PANEL = {}
 							else
 								icon:SetToolTip(
 									Format(nut.config.itemFormat,
-									item.GetName and item:GetName() or L(item.name), item:GetDesc() or "")
+									item.GetName and item:GetName() or L(item.name), item:GetDescription() or "")
 								)
 							end
 							icon.itemID = item.id

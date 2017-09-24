@@ -84,7 +84,7 @@ if (CLIENT) then
 
 			if (ourCharacter and character and !ourCharacter:DoesRecognize(character) and !hook.Run("IsPlayerRecognized", client)) then
 				if (chatType and hook.Run("IsRecognizedChatType", chatType)) then
-					local description = character:GetDesc()
+					local description = character:GetDescription()
 
 					if (#description > 40) then
 						description = description:utf8sub(1, 37).."..."

@@ -630,7 +630,7 @@ nut.command.Add("chardesc", {
 		if (!arguments:find("%S")) then
 			return client:RequestString("@chgDesc", "@chgDescDesc", function(text)
 				nut.command.Run(client, "chardesc", {text})
-			end, client:GetChar():GetDesc())
+			end, client:GetChar():GetDescription())
 		end
 
 		local info = nut.char.vars.desc

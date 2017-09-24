@@ -141,7 +141,7 @@ else
 
 			local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
 			local x, y = position.x, position.y
-			local description = itemTable.GetDesc(itemTable)
+			local description = itemTable.GetDescription(itemTable)
 
 			if (description != self.desc) then
 				self.desc = description

@@ -38,7 +38,7 @@ function PANEL:SetItem(itemTable)
 	self.icon:SetModel(itemTable.model, itemTable.skin or 0)
 	self.icon:SetToolTip(
 		Format(nut.config.itemFormat,
-		itemTable.GetName and itemTable:GetName() or L(itemTable.name), itemTable:GetDesc() or "")
+		itemTable.GetName and itemTable:GetName() or L(itemTable.name), itemTable:GetDescription() or "")
 	)
 	self.icon.itemID = true
 	self.icon.DoClick = function(this)

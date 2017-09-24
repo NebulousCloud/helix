@@ -21,7 +21,7 @@ function ITEM:GetName()
 	return (CLIENT and L(self.name) or self.name)
 end
 
-function ITEM:GetDesc()
+function ITEM:GetDescription()
 	if (!self.desc) then return "ERROR" end
 	
 	return L(self.desc or "noDesc")

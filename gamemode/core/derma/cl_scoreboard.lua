@@ -186,7 +186,7 @@ local PANEL = {}
 		slot.desc:DockMargin(65, 0, 48, 0)
 		slot.desc:SetWrap(true)
 		slot.desc:SetContentAlignment(7)
-		slot.desc:SetText(hook.Run("GetDisplayedDescription", client) or (client:GetChar() and client:GetChar():GetDesc()) or "")
+		slot.desc:SetText(hook.Run("GetDisplayedDescription", client) or (client:GetChar() and client:GetChar():GetDescription()) or "")
 		slot.desc:SetTextColor(color_white)
 		slot.desc:SetExpensiveShadow(1, Color(0, 0, 0, 100))
 		slot.desc:SetFont("nutSmallFont")
@@ -213,7 +213,7 @@ local PANEL = {}
 			local name = overrideName or client:Name()
 			local model = client:GetModel()
 			local skin = client:GetSkin()
-			local desc = hook.Run("ShouldAllowScoreboardOverride", client, "desc") and hook.Run("GetDisplayedDescription", client) or (client:GetChar() and client:GetChar():GetDesc()) or ""
+			local desc = hook.Run("ShouldAllowScoreboardOverride", client, "desc") and hook.Run("GetDisplayedDescription", client) or (client:GetChar() and client:GetChar():GetDescription()) or ""
 
 			self.model:SetHidden(overrideName)
 
