@@ -354,7 +354,9 @@ do
 
 	-- Checks if an entity is a door by comparing its class.
 	function entityMeta:IsDoor()
-		return self:GetClass():find("door")
+		local class = self:GetClass()
+
+		return (class and class:find("door") or false)
 	end
 
 	-- Make a cache of chairs on start.

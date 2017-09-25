@@ -558,7 +558,7 @@ end
 
 local colorAlpha = ColorAlpha
 local teamGetColor = team.GetColor
-local drawText = nut.util.drawText
+local drawText = nut.util.DrawText
 
 function GM:DrawCharInfo(client, character, info)
 	local injText, injColor = hookRun("GetInjuredText", client)
@@ -930,6 +930,6 @@ function GM:HUDDrawPickupHistory()
 	return false
 end
 
-function GM:HUDDrawTarGetID()
+function GM:HUDDrawTargetID()
 	return false
 end
