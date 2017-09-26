@@ -114,7 +114,7 @@ if (SERVER) then
 				end
 			end
 
-			hook.Run("CharacterLoaded", self:GetID())
+			hook.Run("CharacterLoaded", nut.char.loaded[self:GetID()])
 
 			-- Close the character menu.
 			netstream.Start(client, "charLoaded")

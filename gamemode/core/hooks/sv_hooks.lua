@@ -228,23 +228,19 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 	hook.Run("PlayerLoadout", client)
 end
 
-function GM:CharacterLoaded(id)
-	local character = nut.char.loaded[id]
+function GM:CharacterLoaded(character)
+	local client = character:GetPlayer()
 
-	if (character) then
-		local client = character:GetPlayer()
+	if (IsValid(client)) then
+		local uniqueID = "nutSaveChar"..client:SteamID()
 
-		if (IsValid(client)) then
-			local uniqueID = "nutSaveChar"..client:SteamID()
-
-			timer.Create(uniqueID, nut.config.Get("saveInterval"), 0, function()
-				if (IsValid(client) and client:GetChar()) then
-					client:GetChar():Save()
-				else
-					timer.Remove(uniqueID)
-				end
-			end)
-		end
+		timer.Create(uniqueID, nut.config.Get("saveInterval"), 0, function()
+			if (IsValid(client) and client:GetChar()) then
+				client:GetChar():Save()
+			else
+				timer.Remove(uniqueID)
+			end
+		end)
 	end
 end
 

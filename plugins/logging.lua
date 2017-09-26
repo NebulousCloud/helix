@@ -43,12 +43,9 @@ if (SERVER) then
 
 	local L = Format
 
-	function PLUGIN:CharacterLoaded(id)
-		local character = nut.char.loaded[id]
+	function PLUGIN:CharacterLoaded(character)
 		local client = character:GetPlayer()
-
-		--nut.log.Add(client:SteamName().." ("..client:SteamID()..") loaded character #"..id.." ("..character:GetName()..")")
-		nut.log.Add(client, "charLoad", id, character:GetName())
+		nut.log.Add(client, "charLoad", character:GetID(), character:GetName())
 	end
 
 	function PLUGIN:OnCharDelete(client, id)
