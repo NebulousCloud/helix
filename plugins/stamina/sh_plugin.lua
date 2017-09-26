@@ -54,6 +54,8 @@ if (SERVER) then
 						elseif (value >= 50 and client:GetNetVar("brth", false)) then
 							client:SetRunSpeed(runSpeed)
 							client:SetNetVar("brth", nil)
+
+							hook.Run("PlayerStaminaGained", client)
 						end
 					end
 				end
