@@ -4,6 +4,7 @@ nut.bar.delta = nut.bar.delta or {}
 nut.bar.actionText = ""
 nut.bar.actionStart = 0
 nut.bar.actionEnd = 0
+nut.bar.totalHeight = 0
 
 function nut.bar.Get(identifier)
 	for i = 1, #nut.bar.list do
@@ -94,6 +95,8 @@ function nut.bar.DrawAction()
 
 			draw.SimpleText(nut.bar.actionText, "nutMediumFont", x + 2, y - 22, SHADOW_COLOR)
 			draw.SimpleText(nut.bar.actionText, "nutMediumFont", x, y - 24, TEXT_COLOR)
+
+			nut.bar.totalHeight = nut.bar.totalHeight + y
 		end
 	end
 end
@@ -103,12 +106,14 @@ local Approach = math.Approach
 BAR_HEIGHT = 10
 
 function nut.bar.DrawAll()
+	nut.bar.totalHeight = 4
+
 	if (hook.Run("ShouldHideBars")) then
 		return
 	end
 
 	local w, h = surface.ScreenWidth() * 0.35, BAR_HEIGHT
-	local x, y = 4, 4
+	local x = 4
 	local deltas = nut.bar.delta
 	local frameTime = FrameTime()
 	local curTime = CurTime()
@@ -128,8 +133,8 @@ function nut.bar.DrawAll()
 			end
 
 			if (bar.lifeTime >= curTime or bar.visible or hook.Run("ShouldBarDraw", bar)) then
-				nut.bar.Draw(x, y, w, h, value, bar.color, bar)
-				y = y + h + 2
+				nut.bar.Draw(x, nut.bar.totalHeight, w, h, value, bar.color, bar)
+				nut.bar.totalHeight = nut.bar.totalHeight + h + 2
 			end
 		end
 	end
