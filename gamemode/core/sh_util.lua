@@ -122,6 +122,32 @@ function nut.util.StringMatches(a, b)
 	return false
 end
 
+-- Returns a string that has the items in the format string replaced with the input.
+-- You can also pass in a table with regular indices to replace them in order
+-- Example: nut.util.FormatStringNamed("Hello, my name is {name}.", {name = "Bobby"})
+function nut.util.FormatStringNamed(format, ...)
+	local arguments = {...}
+	local bArray = false -- Whether or not the input has numerical indices or named ones
+	local input
+
+	-- If the first argument is a table, we can assumed it's going to specify which
+	-- keys to fill out. Otherwise we'll fill in specified arguments in order.
+	if (type(arguments[1]) == "table") then
+		input = arguments[1]
+	else
+		input = arguments
+		bArray = true
+	end
+
+	local i = 0
+	local result = format:gsub("{(%w-)}", function(word)
+		i = i + 1
+		return tostring((bArray and input[i] or input[word]) or word)
+	end)
+
+	return result
+end
+
 local ADJUST_SOUND = SoundDuration("npc/metropolice/pain1.wav") > 0 and "" or "../../hl2/sound/"
 
 -- Emits sounds one after the other from an entity.
