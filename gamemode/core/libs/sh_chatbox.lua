@@ -73,7 +73,7 @@ function nut.chat.Register(chatType, data)
 	data.filter = data.filter or "ic"
 
 	-- Add the chat type to the list of classes.
-	nut.chat.classes[chatType] = data
+	nut.chat.classes[string.lower(chatType)] = data
 end
 
 -- Identifies which chat mode should be used.

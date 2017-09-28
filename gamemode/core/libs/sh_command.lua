@@ -77,7 +77,7 @@ function nut.command.Add(command, data)
 		end
 	end
 
-	nut.command.list[command] = data
+	nut.command.list[string.lower(command)] = data
 end
 
 -- Returns whether or not a player is allowed to run a certain command.
