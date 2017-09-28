@@ -17,7 +17,7 @@ function nut.chat.Register(chatType, data)
 		end
 	elseif (type(data.OnCanHear) == "number") then
 		-- Use the value as a range and create a function to compare distances.
-		local range = data.OnCanHear ^ 2
+		local range = data.OnCanHear * data.OnCanHear
 
 		data.OnCanHear = function(speaker, listener)
 			-- Length2DSqr is faster than Length2D, so just check the squares.

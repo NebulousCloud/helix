@@ -372,7 +372,7 @@ if (SERVER) then
 	end
 
 	function META:Add(uniqueID, quantity, data, x, y, noReplication)
-	quantity = quantity or 1
+		quantity = quantity or 1
 
 		if (quantity > 0) then
 			if (type(uniqueID) != "number" and quantity > 1) then

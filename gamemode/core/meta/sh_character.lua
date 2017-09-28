@@ -245,6 +245,24 @@ function nut.char.RegisterVar(key, data)
 		end
 	end
 
+	local alias = data.alias
+
+	if (alias) then
+		if (type(alias) == "table") then
+			for k, v in ipairs(alias) do
+				local aliasName = v:sub(1, 1):upper()..v:sub(2)
+
+				CHAR["Get"..aliasName] = CHAR["Get"..upperName]
+				CHAR["Set"..aliasName] = CHAR["Set"..upperName]
+			end
+		elseif (type(alias) == "string") then
+			local aliasName = alias:sub(1, 1):upper()..alias:sub(2)
+
+			CHAR["Get"..aliasName] = CHAR["Get"..upperName]
+			CHAR["Set"..aliasName] = CHAR["Set"..upperName]
+		end
+	end
+
 	-- Add the variable default to the character object.
 	CHAR.vars[key] = data.default
 end

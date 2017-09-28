@@ -758,5 +758,6 @@ nut.char.RegisterVar("inv", {
 		end
 
 		return character.vars.inv and character.vars.inv[index or 1]
-	end
+	end,
+	alias = "inventory"
 })
