@@ -95,8 +95,6 @@ function nut.bar.DrawAction()
 
 			draw.SimpleText(nut.bar.actionText, "nutMediumFont", x + 2, y - 22, SHADOW_COLOR)
 			draw.SimpleText(nut.bar.actionText, "nutMediumFont", x, y - 24, TEXT_COLOR)
-
-			nut.bar.totalHeight = nut.bar.totalHeight + y
 		end
 	end
 end
