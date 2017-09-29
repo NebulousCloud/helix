@@ -86,8 +86,8 @@ else
 	end
 
 	-- Receives a notification from the server.
-	netstream.Hook("notify", nut.util.notify)
+	netstream.Hook("notify", nut.util.Notify)
 
 	-- Receives a notification from the server.
-	netstream.Hook("notifyL", nut.util.notifyLocalized)
+	netstream.Hook("notifyL", nut.util.NotifyLocalized)
 end
