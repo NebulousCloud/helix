@@ -13,16 +13,16 @@ if (SERVER) then
 	end)
 	nut.log.AddType("charLoad", function(client, ...)
 		local arg = {...}
-		return (Format("%s loaded the character #%s(%s)", client:Name(), arg[1], arg[2]))
+		return (Format("%s loaded the character '%s'", client:Name(), arg[1]))
 	end)
 	nut.log.AddType("charDelete", function(client, ...)
 		local arg = {...}
-		return (Format("%s(%s) deleted character (%s)", client:SteamName(), client:SteamID(), arg[1]))
+		return (Format("%s (%s) deleted character '%s'", client:SteamName(), client:SteamID(), arg[1]))
 	end)
 	nut.log.AddType("itemUse", function(client, ...)
 		local arg = {...}
 		local item = arg[2]
-		return (Format("%s tried '%s' to item '%s'(#%s)", client:Name(), arg[1], item.name, item.id))
+		return (Format("%s tried '%s' to item '%s' (#%s)", client:Name(), arg[1], item.name, item.id))
 	end)
 	nut.log.AddType("shipment", function(client, ...)
 		local arg = {...}
@@ -45,11 +45,11 @@ if (SERVER) then
 
 	function PLUGIN:CharacterLoaded(character)
 		local client = character:GetPlayer()
-		nut.log.Add(client, "charLoad", character:GetID(), character:GetName())
+		nut.log.Add(client, "charLoad", character:GetName())
 	end
 
-	function PLUGIN:OnCharDelete(client, id)
-		nut.log.Add(client, "charDelete", id)
+	function PLUGIN:PreCharDelete(client, character)
+		nut.log.Add(client, "charDelete", character:GetName())
 	end
 	
 	function PLUGIN:OnTakeShipmentItem(client, itemClass, amount)
