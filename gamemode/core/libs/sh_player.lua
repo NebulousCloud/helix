@@ -69,14 +69,6 @@ do
 		end
 	end
 
-	function playerMeta:GetClass()
-		local char = self:GetChar()
-
-		if (char) then
-			return char:GetClass()
-		end
-	end
-
 	function playerMeta:GetClassData()
 		local char = self:GetChar()
 
