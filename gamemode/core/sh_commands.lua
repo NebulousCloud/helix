@@ -1,13 +1,14 @@
+
 nut.command.Add("roll", {
 	syntax = "[number maximum]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		nut.chat.Send(client, "roll", math.random(0, math.min(tonumber(arguments[1]) or 100, 100)))
 	end
 })
 
 nut.command.Add("pm", {
 	syntax = "<string target> <string message>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local message = table.concat(arguments, " ", 2)
 		local target = nut.command.FindPlayer(client, arguments[1])
 
@@ -30,7 +31,7 @@ nut.command.Add("pm", {
 
 nut.command.Add("reply", {
 	syntax = "<string message>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local target = client.nutLastPM
 
 		if (IsValid(target) and (client.nutNextPM or 0) < CurTime()) then
@@ -42,7 +43,7 @@ nut.command.Add("reply", {
 
 nut.command.Add("setvoicemail", {
 	syntax = "[string message]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local message = table.concat(arguments, " ")
 
 		if (message:find("%S")) then
@@ -60,7 +61,7 @@ nut.command.Add("setvoicemail", {
 nut.command.Add("flaggive", {
 	adminOnly = true,
 	syntax = "<string name> [string flags]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local target = nut.command.FindPlayer(client, arguments[1])
 
 		if (IsValid(target) and target:GetChar()) then
@@ -91,7 +92,7 @@ nut.command.Add("flaggive", {
 nut.command.Add("flagtake", {
 	adminOnly = true,
 	syntax = "<string name> [string flags]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local target = nut.command.FindPlayer(client, arguments[1])
 
 		if (IsValid(target) and target:GetChar()) then
@@ -111,7 +112,7 @@ nut.command.Add("flagtake", {
 })
 
 nut.command.Add("toggleraise", {
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		if ((client.nutNextToggle or 0) < CurTime()) then
 			client:ToggleWepRaised()
 			client.nutNextToggle = CurTime() + 0.5
@@ -122,7 +123,7 @@ nut.command.Add("toggleraise", {
 nut.command.Add("charsetmodel", {
 	adminOnly = true,
 	syntax = "<string name> <string model>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		if (!arguments[2]) then
 			return L("invalidArg", client, 2)
 		end
@@ -141,7 +142,7 @@ nut.command.Add("charsetmodel", {
 nut.command.Add("charsetskin", {
 	adminOnly = true,
 	syntax = "<string name> [number skin]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local skin = tonumber(arguments[2])
 		local target = nut.command.FindPlayer(client, arguments[1])
 
@@ -157,7 +158,7 @@ nut.command.Add("charsetskin", {
 nut.command.Add("charsetbodygroup", {
 	adminOnly = true,
 	syntax = "<string name> <string bodyGroup> [number value]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local value = tonumber(arguments[3])
 		local target = nut.command.FindPlayer(client, arguments[1])
 
@@ -185,7 +186,7 @@ nut.command.Add("charsetbodygroup", {
 nut.command.Add("charsetattrib", {
 	adminOnly = true,
 	syntax = "<string charname> <string attribname> <number level>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local attribName = arguments[2]
 		if (!attribName) then
 			return L("invalidArg", client, 2)
@@ -218,7 +219,7 @@ nut.command.Add("charsetattrib", {
 nut.command.Add("charaddattrib", {
 	adminOnly = true,
 	syntax = "<string charname> <string attribname> <number level>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local attribName = arguments[2]
 		if (!attribName) then
 			return L("invalidArg", client, 2)
@@ -251,7 +252,7 @@ nut.command.Add("charaddattrib", {
 nut.command.Add("charsetname", {
 	adminOnly = true,
 	syntax = "<string name> [string newName]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local target = nut.command.FindPlayer(client, arguments[1])
 
 		if (IsValid(target) and !arguments[2]) then
@@ -275,7 +276,7 @@ nut.command.Add("charsetname", {
 nut.command.Add("chargiveitem", {
 	adminOnly = true,
 	syntax = "<string name> <string item>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		if (!arguments[2]) then
 			return L("invalidArg", client, 2)
 		end
@@ -314,7 +315,7 @@ nut.command.Add("chargiveitem", {
 nut.command.Add("charkick", {
 	adminOnly = true,
 	syntax = "<string name>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local target = nut.command.FindPlayer(client, arguments[1])
 
 		if (IsValid(target)) then
@@ -333,7 +334,7 @@ nut.command.Add("charkick", {
 nut.command.Add("charban", {
 	syntax = "<string name>",
 	adminOnly = true,
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local target = nut.command.FindPlayer(client, arguments[1])
 
 		if (IsValid(target)) then
@@ -352,7 +353,7 @@ nut.command.Add("charban", {
 nut.command.Add("charunban", {
 	syntax = "<string name>",
 	adminOnly = true,
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		if ((client.nutNextSearch or 0) >= CurTime()) then
 			return L("charSearching", client)
 		end
@@ -396,7 +397,7 @@ nut.command.Add("charunban", {
 
 nut.command.Add("givemoney", {
 	syntax = "<number amount>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local number = tonumber(arguments[1])
 		number = number or 0
 		local amount = math.floor(number)
@@ -430,7 +431,7 @@ nut.command.Add("givemoney", {
 nut.command.Add("charsetmoney", {
 	adminOnly = true,
 	syntax = "<string target> <number amount>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local amount = tonumber(arguments[2])
 
 		if (!amount or !isnumber(amount) or amount < 0) then
@@ -453,7 +454,7 @@ nut.command.Add("charsetmoney", {
 
 nut.command.Add("dropmoney", {
 	syntax = "<number amount>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local amount = tonumber(arguments[1])
 
 		if (!amount or !isnumber(amount) or amount < 1) then
@@ -476,7 +477,7 @@ nut.command.Add("dropmoney", {
 nut.command.Add("plywhitelist", {
 	adminOnly = true,
 	syntax = "<string name> <string faction>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local target = nut.command.FindPlayer(client, arguments[1])
 		local name = table.concat(arguments, " ", 2)
 
@@ -507,7 +508,7 @@ nut.command.Add("plywhitelist", {
 })
 
 nut.command.Add("chargetup", {
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local entity = client.nutRagdoll
 
 		if (IsValid(entity) and entity.nutGrace and entity.nutGrace < CurTime() and entity:GetVelocity():Length2D() < 8 and !entity.nutWakingUp) then
@@ -527,7 +528,7 @@ nut.command.Add("chargetup", {
 nut.command.Add("plyunwhitelist", {
 	adminOnly = true,
 	syntax = "<string name> <string faction>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local target = nut.command.FindPlayer(client, arguments[1])
 		local name = table.concat(arguments, " ", 2)
 
@@ -559,7 +560,7 @@ nut.command.Add("plyunwhitelist", {
 
 nut.command.Add("fallover", {
 	syntax = "[number time]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local time = tonumber(arguments[1])
 
 		if (!isnumber(time)) then
@@ -580,7 +581,7 @@ nut.command.Add("fallover", {
 
 nut.command.Add("beclass", {
 	syntax = "<string class>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local class = table.concat(arguments, " ")
 		local char = client:GetChar()
 
@@ -624,7 +625,7 @@ nut.command.Add("beclass", {
 
 nut.command.Add("chardesc", {
 	syntax = "<string desc>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		arguments = table.concat(arguments, " ")
 
 		if (!arguments:find("%S")) then
@@ -649,7 +650,7 @@ nut.command.Add("chardesc", {
 nut.command.Add("plytransfer", {
 	adminOnly = true,
 	syntax = "<string name> <string faction>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local target = nut.command.FindPlayer(client, arguments[1])
 		local name = table.concat(arguments, " ", 2)
 

@@ -1,6 +1,6 @@
 local PLUGIN = PLUGIN
 nut.command.Add("doorsell", {
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		-- Get the entity 96 units infront of the player.
 		local data = {}
 			data.start = client:GetShootPos()
@@ -42,7 +42,7 @@ nut.command.Add("doorsell", {
 })
 
 nut.command.Add("doorbuy", {
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		-- Get the entity 96 units infront of the player.
 		local data = {}
 			data.start = client:GetShootPos()
@@ -96,7 +96,7 @@ nut.command.Add("doorbuy", {
 nut.command.Add("doorsetunownable", {
 	adminOnly = true,
 	syntax = "[string name]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
 		local name = table.concat(arguments, " ")
@@ -134,7 +134,7 @@ nut.command.Add("doorsetunownable", {
 nut.command.Add("doorsetownable", {
 	adminOnly = true,
 	syntax = "[string name]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
 		local name = table.concat(arguments, " ")
@@ -172,7 +172,7 @@ nut.command.Add("doorsetownable", {
 nut.command.Add("doorsetfaction", {
 	adminOnly = true,
 	syntax = "[string faction]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
 
@@ -231,7 +231,7 @@ nut.command.Add("doorsetfaction", {
 nut.command.Add("doorsetdisabled", {
 	adminOnly = true,
 	syntax = "<bool disabled>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
 
@@ -260,7 +260,7 @@ nut.command.Add("doorsetdisabled", {
 
 nut.command.Add("doorsettitle", {
 	syntax = "<string title>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		-- Get the door infront of the player.
 		local data = {}
 			data.start = client:GetShootPos()
@@ -309,7 +309,7 @@ nut.command.Add("doorsettitle", {
 
 nut.command.Add("doorsetparent", {
 	adminOnly = true,
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
 
@@ -326,7 +326,7 @@ nut.command.Add("doorsetparent", {
 
 nut.command.Add("doorsetchild", {
 	adminOnly = true,
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
 
@@ -363,7 +363,7 @@ nut.command.Add("doorsetchild", {
 
 nut.command.Add("doorremovechild", {
 	adminOnly = true,
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
 
@@ -401,7 +401,7 @@ nut.command.Add("doorremovechild", {
 nut.command.Add("doorsethidden", {
 	adminOnly = true,
 	syntax = "<bool hidden>",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
 
@@ -430,7 +430,7 @@ nut.command.Add("doorsethidden", {
 nut.command.Add("doorsetclass", {
 	adminOnly = true,
 	syntax = "[string faction]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
 

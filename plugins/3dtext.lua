@@ -158,7 +158,7 @@ end
 nut.command.Add("textadd", {
 	adminOnly = true,
 	syntax = "<string text> [number scale]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		-- Get the position and angles of the text.
 		local trace = client:GetEyeTrace()
 		local position = trace.HitPos
@@ -177,7 +177,7 @@ nut.command.Add("textadd", {
 nut.command.Add("textremove", {
 	adminOnly = true,
 	syntax = "[number radius]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		-- Get the origin to remove text.
 		local trace = client:GetEyeTrace()
 		local position = trace.HitPos + trace.HitNormal*2

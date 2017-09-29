@@ -165,7 +165,7 @@ local PLUGIN = PLUGIN
 nut.command.Add("mapsceneadd", {
 	adminOnly = true,
 	syntax = "[bool isPair]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local position, angles = client:EyePos(), client:EyeAngles()
 
 		-- This scene is in a pair for moving scenes.
@@ -189,7 +189,7 @@ nut.command.Add("mapsceneadd", {
 nut.command.Add("mapsceneremove", {
 	adminOnly = true,
 	syntax = "[number radius]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local radius = tonumber(arguments[1]) or 280
 		local position = client:GetPos()
 		local i = 0

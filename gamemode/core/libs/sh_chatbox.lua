@@ -11,7 +11,7 @@ end
 function nut.chat.Register(chatType, data)
 	if (!data.OnCanHear) then
 		-- Have a substitute if the canHear property is not found.
-		data.OnCanHear = function(speaker, listener)
+		function data:OnCanHear(speaker, listener)
 			-- The speaker will be heard by everyone.
 			return true
 		end
@@ -19,7 +19,7 @@ function nut.chat.Register(chatType, data)
 		-- Use the value as a range and create a function to compare distances.
 		local range = data.OnCanHear * data.OnCanHear
 
-		data.OnCanHear = function(speaker, listener)
+		function data:OnCanHear(speaker, listener)
 			-- Length2DSqr is faster than Length2D, so just check the squares.
 			return (speaker:GetPos() - listener:GetPos()):LengthSqr() <= range
 		end
@@ -27,8 +27,8 @@ function nut.chat.Register(chatType, data)
 
 	-- Allow players to use this chat type by default.
 	if (!data.OnCanSay) then
-		data.OnCanSay = function(speaker, text)
-			if (!data.deadCanChat and !speaker:Alive()) then
+		function data:OnCanSay(speaker, text)
+			if (!self.deadCanChat and !speaker:Alive()) then
 				speaker:NotifyLocalized("noPerm")
 
 				return false
@@ -44,17 +44,17 @@ function nut.chat.Register(chatType, data)
 	if (!data.OnChatAdd) then
 		data.format = data.format or "%s: \"%s\""
 
-		data.OnChatAdd = function(speaker, text, anonymous)
-			local color = data.color
+		function data:OnChatAdd(speaker, text, anonymous)
+			local color = self.color
 			local name = anonymous and L"someone" or hook.Run("GetDisplayedName", speaker, chatType) or (IsValid(speaker) and speaker:Name() or "Console")
 
-			if (data.OnGetColor) then
-				color = data.OnGetColor(speaker, text)
+			if (self.OnGetColor) then
+				color = self:OnGetColor(speaker, text)
 			end
 
 			local translated = L2(chatType.."Format", name, text)
 
-			chat.AddText(color, translated or string.format(data.format, name, text))
+			chat.AddText(color, translated or string.format(self.format, name, text))
 		end
 	end
 
@@ -141,12 +141,12 @@ if (SERVER) then
 	function nut.chat.Send(speaker, chatType, text, anonymous, receivers)
 		local class = nut.chat.classes[chatType]
 
-		if (class and class.OnCanSay(speaker, text) != false) then
+		if (class and class:OnCanSay(speaker, text) != false) then
 			if (class.OnCanHear and !receivers) then
 				receivers = {}
 
 				for k, v in ipairs(player.GetAll()) do
-					if (v:GetChar() and class.OnCanHear(speaker, v) != false) then
+					if (v:GetChar() and class:OnCanHear(speaker, v) != false) then
 						receivers[#receivers + 1] = v
 					end
 				end
@@ -168,7 +168,7 @@ else
 
 			if (class) then
 				CHAT_CLASS = class
-					class.OnChatAdd(client, text, anonymous)
+					class:OnChatAdd(client, text, anonymous)
 				CHAT_CLASS = nil
 			end
 		end
@@ -182,7 +182,7 @@ do
 		-- The default in-character chat.
 		nut.chat.Register("ic", {
 			format = "%s says \"%s\"",
-			OnGetColor = function(speaker, text)
+			OnGetColor = function(self, speaker, text)
 				-- If you are looking at the speaker, make it greener to easier identify who is talking.
 				if (LocalPlayer():GetEyeTrace().Entity == speaker) then
 					return nut.config.Get("chatListenColor")
@@ -206,7 +206,7 @@ do
 
 		-- Actions and such.
 		nut.chat.Register("it", {
-			OnChatAdd = function(speaker, text)
+			OnChatAdd = function(self, speaker, text)
 				chat.AddText(nut.config.Get("chatColor"), "** "..text)
 			end,
 			OnCanHear = nut.config.Get("chatRange", 280),
@@ -218,8 +218,8 @@ do
 		-- Whisper chat.
 		nut.chat.Register("w", {
 			format = "%s whispers \"%s\"",
-			OnGetColor = function(speaker, text)
-				local color = nut.chat.classes.ic.OnGetColor(speaker, text)
+			OnGetColor = function(self, speaker, text)
+				local color = nut.chat.classes.ic:OnGetColor(speaker, text)
 
 				-- Make the whisper chat slightly darker than IC chat.
 				return Color(color.r - 35, color.g - 35, color.b - 35)
@@ -231,8 +231,8 @@ do
 		-- Yelling out loud.
 		nut.chat.Register("y", {
 			format = "%s yells \"%s\"",
-			OnGetColor = function(speaker, text)
-				local color = nut.chat.classes.ic.OnGetColor(speaker, text)
+			OnGetColor = function(self, speaker, text)
+				local color = nut.chat.classes.ic:OnGetColor(speaker, text)
 
 				-- Make the yell chat slightly brighter than IC chat.
 				return Color(color.r + 35, color.g + 35, color.b + 35)
@@ -243,7 +243,7 @@ do
 
 		-- Out of character.
 		nut.chat.Register("ooc", {
-			OnCanSay = function(speaker, text)
+			OnCanSay = function(self, speaker, text)
 				if (!nut.config.Get("allowGlobalOOC")) then
 					speaker:NotifyLocalized("Global OOC is disabled on this server.")
 					return false		
@@ -266,7 +266,7 @@ do
 					speaker.nutLastOOC = CurTime()
 				end
 			end,
-			OnChatAdd = function(speaker, text)
+			OnChatAdd = function(self, speaker, text)
 				local icon = "icon16/user.png"
 
 				if (speaker:IsSuperAdmin()) then
@@ -290,7 +290,7 @@ do
 
 		-- Local out of character.
 		nut.chat.Register("looc", {
-			OnCanSay = function(speaker, text)
+			OnCanSay = function(self, speaker, text)
 				local delay = nut.config.Get("loocDelay", 0)
 
 				-- Only need to check the time if they have spoken in OOC chat before.
@@ -308,7 +308,7 @@ do
 				-- Save the last time they spoke in OOC.
 				speaker.nutLastLOOC = CurTime()
 			end,
-			OnChatAdd = function(speaker, text)
+			OnChatAdd = function(self, speaker, text)
 				chat.AddText(Color(255, 50, 50), "[LOOC] ", nut.config.Get("chatColor"), speaker:Name()..": "..text)
 			end,
 			OnCanHear = nut.config.Get("chatRange", 280),
@@ -338,11 +338,11 @@ nut.chat.Register("pm", {
 
 -- Global events.
 nut.chat.Register("event", {
-	OnCanSay = function(speaker, text)
+	OnCanSay = function(self, speaker, text)
 		return speaker:IsAdmin()
 	end,
 	OnCanHear = 1000000,
-	OnChatAdd = function(speaker, text)
+	OnChatAdd = function(self, speaker, text)
 		chat.AddText(Color(255, 150, 0), text)
 	end,
 	prefix = {"/event"}

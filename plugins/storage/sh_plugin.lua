@@ -206,7 +206,7 @@ end
 nut.command.Add("storagelock", {
 	adminOnly = true,
 	syntax = "[string password]",
-	OnRun = function(client, arguments)
+	OnRun = function(self, client, arguments)
 		local trace = client:GetEyeTraceNoCursor()
 		local ent = trace.Entity
 

@@ -17,21 +17,21 @@ function nut.command.Add(command, data)
 	if (!data.OnCheckAccess) then
 		-- Check if the command is for basic admins only.
 		if (data.adminOnly) then
-			data.OnCheckAccess = function(client)
+			function data:OnCheckAccess(client)
 				return client:IsAdmin()
 			end
 		-- Or if it is only for super administrators.
 		elseif (data.superAdminOnly) then
-			data.OnCheckAccess = function(client)
+			function data:OnCheckAccess(client)
 				return client:IsSuperAdmin()
 			end
 		-- Or if we specify a usergroup allowed to use this.
 		elseif (data.group) then
 			-- The group property can be a table of usergroups.
 			if (type(data.group) == "table") then
-				data.OnCheckAccess = function(client)
+				function data:OnCheckAccess(client)
 					-- Check if the client's group is allowed.
-					for k, v in ipairs(data.group) do
+					for k, v in ipairs(self.group) do
 						if (client:IsUserGroup(v)) then
 							return true
 						end
@@ -41,9 +41,9 @@ function nut.command.Add(command, data)
 				end
 			-- Otherwise it is most likely a string.
 			else
-				data.OnCheckAccess = function(client)
-					return client:IsUserGroup(data.group)
-				end		
+				function data:OnCheckAccess(client)
+					return client:IsUserGroup(self.group)
+				end
 			end
 		end
 	end
@@ -53,13 +53,13 @@ function nut.command.Add(command, data)
 	-- Only overwrite the OnRun to check for access if there is anything to check.
 	if (OnCheckAccess) then
 		local OnRun = data.OnRun
-
 		data._OnRun = data.OnRun -- for refactoring purpose.
-		data.OnRun = function(client, arguments)
-			if (!OnCheckAccess(client)) then
+
+		function data:OnRun(client, arguments)
+			if (!self:OnCheckAccess(client)) then
 				return "@noPerm"
 			else
-				return OnRun(client, arguments)
+				return OnRun(self, client, arguments)
 			end
 		end
 	end
@@ -153,7 +153,7 @@ if (SERVER) then
 
 		if (command) then
 			-- Run the command's callback and get the return.
-			local results = {command.OnRun(client, arguments or {})}
+			local results = {command:OnRun(client, arguments or {})}
 			local result = results[1]
 			
 			-- If a string is returned, it is a notification.

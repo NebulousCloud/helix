@@ -21,7 +21,7 @@ for k, v in pairs(PLUGIN.acts) do
 			data.syntax = "[number type]"
 		end
 
-		data.OnRun = function(client, arguments)
+		data.OnRun = function(self, client, arguments)
 			if (client.nutSeqUntimed) then
 				client:SetNetVar("actAng")
 				client:LeaveSequence()
