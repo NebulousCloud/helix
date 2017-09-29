@@ -12,7 +12,7 @@ end
 
 local toScreen = FindMetaTable("Vector").ToScreen
 local colorAlpha = ColorAlpha
-local drawText = nut.util.drawText
+local drawText = nut.util.DrawText
 local configGet = nut.config.Get
 local teamGetColor = team.GetColor
 
@@ -36,7 +36,7 @@ function PLUGIN:DrawEntityInfo(entity, alpha)
 		if (class) then
 			classData = nut.class.list[class]
 			
-			if (classData) then
+			if (classData and classData.color) then
 				color = classData.color
 			else
 				color = configGet("color")
