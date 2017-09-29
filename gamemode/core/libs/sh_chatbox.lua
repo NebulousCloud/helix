@@ -58,7 +58,7 @@ function nut.chat.Register(chatType, data)
 		end
 	end
 
-	if (CLIENT) then
+	if (CLIENT and data.prefix) then
 		if (type(data.prefix) == "table") then
 			for k, v in ipairs(data.prefix) do
 				if (v:sub(1, 1) == "/") then
