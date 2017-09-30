@@ -684,3 +684,39 @@ nut.command.Add("plytransfer", {
 		end
 	end
 })
+
+nut.command.Add("charsetclass", {
+	adminOnly = true,
+	syntax = "<string name> <string class>",
+	OnRun = function(self, client, arguments)
+		if (!arguments[2]) then
+			return L("invalidArg", client, 2)
+		end
+
+		local target = nut.command.FindPlayer(client, arguments[1])
+
+		if (IsValid(target) and target:GetChar()) then
+			local class = table.concat(arguments, " ", 2)
+			local classTable = nil
+
+			for k, v in ipairs(nut.class.list) do
+				if (nut.util.StringMatches(v.uniqueID, class) or nut.util.StringMatches(v.name, name)) then
+					classTable = v
+				end
+			end
+
+			if (classTable) then
+				local oldClass = target:GetChar():GetClass()
+
+				if (target:Team() == classTable.faction) then
+					target:GetChar():SetClass(classTable.index)
+					hook.Run("OnPlayerJoinClass", client, classTable.index, oldClass)
+				else
+					client:NotifyLocalized("invalidClassFaction")
+				end
+			else
+				client:NotifyLocalized("invalidClass")
+			end
+		end
+	end
+})

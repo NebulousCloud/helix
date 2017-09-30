@@ -104,8 +104,6 @@ LANGUAGE = {
 	cChangeGroups = "%s changed %s's \"%s\" bodygroup to %s.",
 	cChangeFaction = "%s has transfered %s to the %s faction.",
 	playerCharBelonging = "This object is your other character's belonging.",
-	business = "Business",
-	invalidFaction = "You have provided an invalid faction.",
 	spawnAdd = "You have added a spawn for the %s.",
 	spawnDeleted = "You have removed %s spawn point(s).",
 	someone = "Someone",
@@ -198,7 +196,7 @@ LANGUAGE = {
 	vmSet = "You have set your voicemail.",
 	vmRem = "You have removed your voicemail.",
 	altLower = "Hide hands when lowered?",
-    noPerm = "You are not allowed to do this.",
+	noPerm = "You are not allowed to do this.",
 	youreDead = "You are Dead",
 	injMajor = "Seems critically injured.",
 	injLittle = "Seems injured",
@@ -238,4 +236,7 @@ LANGUAGE = {
 	moneyLeft = "Your Money: ",
 	currentMoney = "Money Left: ",
 	checkout = "Checkout",
+
+	invalidClass = "That is not a valid class!",
+	invalidClassFaction = "That is not a valid class for that faction!"
 }
