@@ -294,7 +294,7 @@ else
 	local TEXT_OFFSET = Vector(0, 0, 20)
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
-	local drawText = nut.util.drawText
+	local drawText = nut.util.DrawText
 	local configGet = nut.config.Get
 
 	ENT.DrawEntityInfo = true
