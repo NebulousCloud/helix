@@ -6,6 +6,7 @@ local COMMAND_PREFIX = "/"
 -- Adds a new command to the list of commands.
 function nut.command.Add(command, data)
 	-- For showing users the arguments of the command.
+	data.name = string.gsub(command, "%s", "")
 	data.syntax = data.syntax or "[none]"
 
 	-- Why bother adding a command if it doesn't do anything.

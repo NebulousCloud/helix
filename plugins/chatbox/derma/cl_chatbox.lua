@@ -31,7 +31,7 @@ local PANEL = {}
 		self.scroll:SetPos(4, 30)
 		self.scroll:SetSize(w - 8, h - 70)
 		self.scroll:GetVBar():SetWide(0)
-		self.scroll.PaintOver = function(this, w, h)
+		self.scroll.PaintOver = function(panel, w, h)
 			local entry = self.text
 
 			if (self.active and IsValid(entry)) then
@@ -41,7 +41,7 @@ local PANEL = {}
 					local arguments = self.arguments or {}
 					local command = string.PatternSafe(arguments[1] or ""):lower()
 
-					nut.util.DrawBlur(this)
+					nut.util.DrawBlur(panel)
 
 					surface.SetDrawColor(0, 0, 0, 200)
 					surface.DrawRect(0, 0, w, h)
@@ -53,7 +53,7 @@ local PANEL = {}
 						local k2 = "/"..k
 
 						if (k2:match(command)) then
-							local x, y = nut.util.DrawText(k2.."  ", 4, i * 20, color)
+							local x, y = nut.util.DrawText("/"..v.name.."  ", 4, i * 20, color)
 
 							if (k == command and v.syntax) then
 								local i2 = 0
