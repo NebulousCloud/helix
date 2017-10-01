@@ -20,7 +20,7 @@ end
 -- Fixing the PAC3's default stuffs to fit on Nutscript.
 if (CLIENT) then
 	-- fixpac command. you can fix the PAC3 errors with this.
-	nut.command.Add("fixpac", {
+	nut.command.Add("FixPAC", {
 		OnRun = function(self, client, arguments)
 			RunConsoleCommand("pac_restart")
 		end,

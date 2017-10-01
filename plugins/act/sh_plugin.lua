@@ -1,3 +1,4 @@
+
 PLUGIN.name = "Acts"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds acts that can be performed."
@@ -68,7 +69,7 @@ for k, v in pairs(PLUGIN.acts) do
 				end
 			end
 		end
-	nut.command.Add("act"..k, data)
+	nut.command.Add("Act"..k, data)
 end
 
 function PLUGIN:UpdateAnimation(client, moveData)

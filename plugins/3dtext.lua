@@ -155,7 +155,7 @@ else
 	end
 end
 
-nut.command.Add("textadd", {
+nut.command.Add("TextAdd", {
 	adminOnly = true,
 	syntax = "<string text> [number scale]",
 	OnRun = function(self, client, arguments)
@@ -174,7 +174,7 @@ nut.command.Add("textadd", {
 	end
 })
 
-nut.command.Add("textremove", {
+nut.command.Add("TextRemove", {
 	adminOnly = true,
 	syntax = "[number radius]",
 	OnRun = function(self, client, arguments)

@@ -203,7 +203,7 @@ else
 	end)
 end
 
-nut.command.Add("storagelock", {
+nut.command.Add("StorageSetPassword", {
 	adminOnly = true,
 	syntax = "[string password]",
 	OnRun = function(self, client, arguments)

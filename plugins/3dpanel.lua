@@ -141,7 +141,7 @@ else
 	end
 end
 
-nut.command.Add("paneladd", {
+nut.command.Add("PanelAdd", {
 	adminOnly = true,
 	syntax = "<string url> [number w] [number h] [number scale]",
 	OnRun = function(self, client, arguments)
@@ -164,7 +164,7 @@ nut.command.Add("paneladd", {
 	end
 })
 
-nut.command.Add("panelremove", {
+nut.command.Add("PanelRemove", {
 	adminOnly = true,
 	syntax = "[number radius]",
 	OnRun = function(self, client, arguments)

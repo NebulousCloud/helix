@@ -1,5 +1,5 @@
 local PLUGIN = PLUGIN
-nut.command.Add("doorsell", {
+nut.command.Add("DoorSell", {
 	OnRun = function(self, client, arguments)
 		-- Get the entity 96 units infront of the player.
 		local data = {}
@@ -41,7 +41,7 @@ nut.command.Add("doorsell", {
 	end
 })
 
-nut.command.Add("doorbuy", {
+nut.command.Add("DoorBuy", {
 	OnRun = function(self, client, arguments)
 		-- Get the entity 96 units infront of the player.
 		local data = {}
@@ -93,7 +93,7 @@ nut.command.Add("doorbuy", {
 	end
 })
 
-nut.command.Add("doorsetunownable", {
+nut.command.Add("DoorSetUnownable", {
 	adminOnly = true,
 	syntax = "[string name]",
 	OnRun = function(self, client, arguments)
@@ -131,7 +131,7 @@ nut.command.Add("doorsetunownable", {
 	end
 })
 
-nut.command.Add("doorsetownable", {
+nut.command.Add("DoorSetOwnable", {
 	adminOnly = true,
 	syntax = "[string name]",
 	OnRun = function(self, client, arguments)
@@ -169,7 +169,7 @@ nut.command.Add("doorsetownable", {
 	end
 })
 
-nut.command.Add("doorsetfaction", {
+nut.command.Add("DoorSetFaction", {
 	adminOnly = true,
 	syntax = "[string faction]",
 	OnRun = function(self, client, arguments)
@@ -228,7 +228,7 @@ nut.command.Add("doorsetfaction", {
 	end
 })
 
-nut.command.Add("doorsetdisabled", {
+nut.command.Add("DoorSetDisabled", {
 	adminOnly = true,
 	syntax = "<bool disabled>",
 	OnRun = function(self, client, arguments)
@@ -258,7 +258,7 @@ nut.command.Add("doorsetdisabled", {
 	end
 })
 
-nut.command.Add("doorsettitle", {
+nut.command.Add("DoorSetTitle", {
 	syntax = "<string title>",
 	OnRun = function(self, client, arguments)
 		-- Get the door infront of the player.
@@ -307,7 +307,7 @@ nut.command.Add("doorsettitle", {
 	end
 })
 
-nut.command.Add("doorsetparent", {
+nut.command.Add("DoorSetParent", {
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
@@ -324,7 +324,7 @@ nut.command.Add("doorsetparent", {
 	end
 })
 
-nut.command.Add("doorsetchild", {
+nut.command.Add("DoorSetChild", {
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
@@ -361,7 +361,7 @@ nut.command.Add("doorsetchild", {
 	end
 })
 
-nut.command.Add("doorremovechild", {
+nut.command.Add("DoorRemoveChild", {
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
@@ -398,7 +398,7 @@ nut.command.Add("doorremovechild", {
 	end
 })
 
-nut.command.Add("doorsethidden", {
+nut.command.Add("DoorSetHidden", {
 	adminOnly = true,
 	syntax = "<bool hidden>",
 	OnRun = function(self, client, arguments)
@@ -427,7 +427,7 @@ nut.command.Add("doorsethidden", {
 	end
 })
 
-nut.command.Add("doorsetclass", {
+nut.command.Add("DoorSetClass", {
 	adminOnly = true,
 	syntax = "[string faction]",
 	OnRun = function(self, client, arguments)

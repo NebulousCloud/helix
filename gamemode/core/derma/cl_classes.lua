@@ -63,7 +63,7 @@ local PANEL = {}
     end
 
     function PANEL:OnClick()
-        nut.command.Send("beclass", self.class)
+        nut.command.Send("BecomeClass", self.class)
     end
 
     function PANEL:SetNumber(number)
