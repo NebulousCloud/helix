@@ -66,7 +66,7 @@ else
 
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
-	local drawText = nut.util.drawText
+	local drawText = nut.util.DrawText
 	
 	local cir = {}
 	local cir2= setmetatable({},{__index=function(self,key)

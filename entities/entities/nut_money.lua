@@ -47,7 +47,7 @@ else
 
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
-	local drawText = nut.util.drawText
+	local drawText = nut.util.DrawText
 	local configGet = nut.config.Get
 
 	function ENT:OnDrawEntityInfo(alpha)

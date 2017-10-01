@@ -641,7 +641,7 @@ nut.command.Add("chardesc", {
 			return "@"..fault, count
 		end
 
-		client:GetChar():SetDesc(arguments)
+		client:GetChar():SetDescription(arguments)
 
 		return "@descChanged"
 	end

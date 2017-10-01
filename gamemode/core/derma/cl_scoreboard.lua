@@ -213,7 +213,7 @@ local PANEL = {}
 			local name = overrideName or client:Name()
 			local model = client:GetModel()
 			local skin = client:GetSkin()
-			local desc = hook.Run("ShouldAllowScoreboardOverride", client, "desc") and hook.Run("GetDisplayedDescription", client) or (client:GetChar() and client:GetChar():GetDescription()) or ""
+			local desc = hook.Run("ShouldAllowScoreboardOverride", client, "description") and hook.Run("GetDisplayedDescription", client) or (client:GetChar() and client:GetChar():GetDescription()) or ""
 
 			self.model:SetHidden(overrideName)
 

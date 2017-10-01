@@ -2,9 +2,9 @@ nut.flag = nut.flag or {}
 nut.flag.list = nut.flag.list or {}
 
 -- Adds a flag that does something when set.
-function nut.flag.Add(flag, desc, callback)
+function nut.flag.Add(flag, description, callback)
 	-- Add the flag to a list, storing the description and callback (if there is one).
-	nut.flag.list[flag] = {desc = desc, callback = callback}
+	nut.flag.list[flag] = {description = description, callback = callback}
 end
 
 if (SERVER) then
