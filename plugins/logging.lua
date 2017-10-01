@@ -19,16 +19,16 @@ if (SERVER) then
 		local arg = {...}
 		return (Format("%s (%s) deleted character '%s'", client:SteamName(), client:SteamID(), arg[1]))
 	end)
-	nut.log.AddType("itemUse", function(client, ...)
+	nut.log.AddType("itemAction", function(client, ...)
 		local arg = {...}
 		local item = arg[2]
-		return (Format("%s tried '%s' to item '%s' (#%s)", client:Name(), arg[1], item.name, item.id))
+		return (Format("%s ran '%s' on item '%s' (#%s)", client:Name(), arg[1], item.name, item.id))
 	end)
-	nut.log.AddType("shipment", function(client, ...)
+	nut.log.AddType("shipmentTake", function(client, ...)
 		local arg = {...}
 		return (Format("%s took '%s' from the shipment", client:Name(), arg[1]))
 	end)
-	nut.log.AddType("shipmentO", function(client, ...)
+	nut.log.AddType("shipmentOrder", function(client, ...)
 		local arg = {...}
 		return (Format("%s ordered a shipment", client:Name()))
 	end)
@@ -54,11 +54,11 @@ if (SERVER) then
 	
 	function PLUGIN:OnTakeShipmentItem(client, itemClass, amount)
 		local itemTable = nut.item.list[itemClass]
-		nut.log.Add(client, "shipment", itemTable.name)
+		nut.log.Add(client, "shipmentTake", itemTable.name)
 	end
 
 	function PLUGIN:OnCreateShipment(client, shipmentEntity)
-		nut.log.Add(client, "shipmentO")
+		nut.log.Add(client, "shipmentOrder")
 	end
 
 	function PLUGIN:OnCharTradeVendor(client, vendor, x, y, invID, price, isSell)
@@ -88,6 +88,6 @@ if (SERVER) then
 			return
 		end
 
-		nut.log.Add(client, "itemUse", action, item)
+		nut.log.Add(client, "itemAction", action, item)
 	end
 end
