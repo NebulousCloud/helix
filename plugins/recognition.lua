@@ -90,7 +90,7 @@ if (CLIENT) then
 						description = description:utf8sub(1, 37).."..."
 					end
 
-					return "["..descriptionription.."]"
+					return "["..description.."]"
 				elseif (!chatType) then
 					return L"unknown"
 				end
