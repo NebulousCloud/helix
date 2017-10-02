@@ -636,7 +636,7 @@ vgui.Register("nutInventory", PANEL, "DFrame")
 
 hook.Add("CreateMenuButtons", "nutInventory", function(tabs)
 	if (hook.Run("CanPlayerViewInventory") != false) then
-		tabs["inv"] = function(panel)		
+		tabs["inv"] = function(panel)
 			nut.gui.inv1 = panel:Add("nutInventory")
 			nut.gui.inv1.childPanels = {}
 

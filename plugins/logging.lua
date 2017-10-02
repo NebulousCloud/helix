@@ -13,7 +13,7 @@ if (SERVER) then
 	end)
 	nut.log.AddType("charLoad", function(client, ...)
 		local arg = {...}
-		return (Format("%s loaded the character '%s'", client:Name(), arg[1]))
+		return (Format("%s loaded the character '%s'", client:SteamName(), arg[1]))
 	end)
 	nut.log.AddType("charDelete", function(client, ...)
 		local arg = {...}
