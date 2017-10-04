@@ -1,6 +1,6 @@
 function GM:PlayerInitialSpawn(client)
 	client.nutJoinTime = RealTime()
-	
+
 	if (client:IsBot()) then
 		local botID = os.time()
 		local index = math.random(1, table.Count(nut.faction.indices))
@@ -23,6 +23,8 @@ function GM:PlayerInitialSpawn(client)
 
 		character:Setup()
 		client:Spawn()
+		
+		nut.chat.Send(nil, "connect", client:SteamName())
 
 		return
 	end
@@ -60,6 +62,8 @@ function GM:PlayerInitialSpawn(client)
 
 			client:SetData("intro", true)
 		end, noCache)
+
+		nut.chat.Send(nil, "connect", client:SteamName())
 	end)
 
 	client:SetNoDraw(true)
@@ -486,7 +490,8 @@ function GM:PlayerDisconnected(client)
 		end
 
 		hook.Run("OnCharDisconnect", client, character)
-		character:Save()
+			character:Save()
+		nut.chat.Send(nil, "disconnect", client:SteamName())
 	end
 end
 

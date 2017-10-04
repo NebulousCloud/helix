@@ -348,5 +348,31 @@ nut.chat.Register("event", {
 	prefix = {"/event"}
 })
 
+nut.chat.Register("connect", {
+	OnCanSay = function(self, speaker, text)
+		return !IsValid(speaker)
+	end,
+	OnChatAdd = function(self, speaker, text)
+		local icon = nut.util.GetMaterial("icon16/user_add.png")
+
+		chat.AddText(icon, Color(150, 150, 200), L("playerConnected", nil, text))
+	end,
+	noSpaceAfter = true,
+	filter = "ooc"
+})
+
+nut.chat.Register("disconnect", {
+	OnCanSay = function(self, speaker, text)
+		return !IsValid(speaker)
+	end,
+	OnChatAdd = function(self, speaker, text)
+		local icon = nut.util.GetMaterial("icon16/user_delete.png")
+
+		chat.AddText(icon, Color(200, 150, 200), L("playerDisconnected", nil, text))
+	end,
+	noSpaceAfter = true,
+	filter = "ooc"
+})
+
 -- Why does ULX even have a /me command?
 hook.Remove("PlayerSay", "ULXMeCheck")
