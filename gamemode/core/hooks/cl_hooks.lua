@@ -531,7 +531,7 @@ end
 
 function GM:ShouldDrawEntityInfo(entity)
 	if (entity:IsPlayer() or IsValid(entity:GetNetVar("player"))) then
-		if (entity == LocalPlayer() and !LocalPlayer():ShouldDrawLocalPlayer()) then
+		if ((entity == LocalPlayer() or entity:GetNetVar("player") == LocalPlayer()) and !LocalPlayer():ShouldDrawLocalPlayer()) then
 			return false
 		end
 
