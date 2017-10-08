@@ -694,8 +694,9 @@ nut.command.Add("CharSetClass", {
 		end
 
 		local target = nut.command.FindPlayer(client, arguments[1])
+		local targetCharacter = target:GetCharacter()
 
-		if (IsValid(target) and target:GetChar()) then
+		if (IsValid(target) and targetCharacter) then
 			local class = table.concat(arguments, " ", 2)
 			local classTable = nil
 
@@ -706,11 +707,18 @@ nut.command.Add("CharSetClass", {
 			end
 
 			if (classTable) then
-				local oldClass = target:GetChar():GetClass()
+				local oldClass = targetCharacter:GetClass()
 
 				if (target:Team() == classTable.faction) then
-					target:GetChar():SetClass(classTable.index)
+					targetCharacter:SetClass(classTable.index)
 					hook.Run("OnPlayerJoinClass", client, classTable.index, oldClass)
+
+					target:NotifyLocalized("becomeClass", L(classTable.name, target))
+
+					-- only send second notification if the character isn't setting their own class
+					if (client != target) then
+						client:NotifyLocalized("setClass", targetCharacter:GetName(), L(classTable.name, target))
+					end
 				else
 					client:NotifyLocalized("invalidClassFaction")
 				end
