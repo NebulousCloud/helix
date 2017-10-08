@@ -530,8 +530,10 @@ function GM:PostDrawHUD()
 end
 
 function GM:ShouldDrawEntityInfo(entity)
-	if (entity:IsPlayer() or IsValid(entity:GetNetVar("player"))) then
-		if (entity == LocalPlayer() and !LocalPlayer():ShouldDrawLocalPlayer()) then
+	local entityPlayer = entity:GetNetVar("player")
+
+	if (entity:IsPlayer() or IsValid(entityPlayer)) then
+		if ((entity == LocalPlayer() and !LocalPlayer():ShouldDrawLocalPlayer()) or LocalPlayer() == entityPlayer) then
 			return false
 		end
 
