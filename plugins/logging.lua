@@ -19,6 +19,10 @@ if (SERVER) then
 	nut.log.AddType("disconnect", function(client, ...)
 		return L("%s has disconnected.", client:SteamName())
 	end)
+	nut.log.AddType("charCreate", function(client, ...)
+		local arg = {...}
+		return L("%s created the character '%s'", client:SteamName(), arg[1])
+	end)
 	nut.log.AddType("charLoad", function(client, ...)
 		local arg = {...}
 		return L("%s loaded the character '%s'", client:SteamName(), arg[1])
@@ -53,6 +57,10 @@ if (SERVER) then
 
 	function PLUGIN:PlayerDisconnected(client)
 		nut.log.Add(client, "disconnect")
+	end
+
+	function PLUGIN:OnCharCreated(client, character)
+		nut.log.Add(client, "charCreate", character:GetName())
 	end
 
 	function PLUGIN:CharacterLoaded(character)
