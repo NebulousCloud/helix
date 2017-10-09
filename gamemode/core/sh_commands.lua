@@ -560,11 +560,7 @@ nut.command.Add("PlyUnwhitelist", {
 nut.command.Add("CharFallOver", {
 	syntax = "[number time]",
 	OnRun = function(self, client, arguments)
-		local time = tonumber(arguments[1])
-
-		if (!isnumber(time)) then
-			time = 5
-		end
+		local time = tonumber(arguments[1]) or 0
 
 		if (time > 0) then
 			time = math.Clamp(time, 1, 60)
