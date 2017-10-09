@@ -305,8 +305,7 @@ nut.command.Add("CharGiveItem", {
 					client:NotifyLocalized("itemCreated")
 				end
 			else
-				target:Notify(tostring(succ))
-				target:Notify(tostring(err))
+				target:NotifyLocalized(tostring(err))
 			end
 		end
 	end
