@@ -98,6 +98,7 @@ local PANEL = {}
 			local label = parent:Add("nutMenuButton")
 			label:SetPos(x, y)
 			label:SetText(text, noTranslation)
+			label:SetContentAlignment(4)
 			label:SetAlpha(0)
 			label:AlphaTo(255, 0.3, (fadeSpeed * 6) + 0.15 * i, function()
 				if (isLast) then
@@ -420,6 +421,7 @@ local PANEL = {}
 									local label = self.charList:Add("nutMenuButton")
 									label:SetText(character:GetName(), true)
 									label:Dock(TOP)
+									label:SetContentAlignment(4)
 									label:DockMargin(0, 0, 0, 4)
 									label.DoClick = function(this)
 										if (IsValid(lastButton)) then
