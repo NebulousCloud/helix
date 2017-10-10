@@ -386,6 +386,7 @@ function GM:Move(client, moveData)
 		if (client:GetNetVar("actAng")) then
 			moveData:SetForwardSpeed(0)
 			moveData:SetSideSpeed(0)
+			moveData:SetVelocity(Vector(0, 0, 0))
 		end
 
 		if (client:GetMoveType() == MOVETYPE_WALK and moveData:KeyDown(IN_WALK)) then
