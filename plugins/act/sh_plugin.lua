@@ -64,6 +64,11 @@ for k, v in pairs(PLUGIN.acts) do
 					client.nutSeqUntimed = info.untimed
 					client.nutNextAct = CurTime() + (info.untimed and 4 or duration) + 1
 					client:SetNetVar("actAng", client:GetAngles())
+
+					if (info.offset) then
+						client.nutOldPosition = client:GetPos()
+						client:SetPos(client:GetPos() + info.offset(client))
+					end
 				else
 					return "@modelNoSeq"
 				end
@@ -82,6 +87,11 @@ end
 
 function PLUGIN:OnPlayerLeaveSequence(client)
 	client:SetNetVar("actAng")
+	
+	if (client.nutOldPosition) then
+		client:SetPos(client.nutOldPosition)
+		client.nutOldPosition = nil
+	end
 end
 
 function PLUGIN:PlayerDeath(client)
@@ -114,8 +124,11 @@ function PLUGIN:CalcView(client, origin, angles, fov)
 		local view = {}
 			local data = {}
 				data.start = client:GetPos() + PLAYER_OFFSET
-				data.endpos = data.start - client:EyeAngles():Forward()*72
-			view.origin = util.TraceLine(data).HitPos + GROUND_PADDING
+				data.endpos = data.start - client:EyeAngles():Forward() * 72
+				data.mins = Vector(-10, -10, -10)
+				data.maxs = Vector(10, 10, 10)
+				data.filter = client
+			view.origin = util.TraceHull(data).HitPos + GROUND_PADDING
 			view.angles = client:EyeAngles()
 		return view
 	end

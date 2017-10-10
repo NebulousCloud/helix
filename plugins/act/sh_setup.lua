@@ -2,7 +2,7 @@
 local function facingWall(client)
 	local data = {}
 	data.start = client:GetPos()
-	data.endpos = data.start + client:GetAimVector()*54
+	data.endpos = data.start + client:GetForward() * 20
 	data.filter = client
 
 	if (!util.TraceLine(data).HitWorld) then
@@ -13,7 +13,7 @@ end
 local function facingWallBack(client)
 	local data = {}
 	data.start = client:GetPos()
-	data.endpos = data.start - client:GetAimVector()*54
+	data.endpos = data.start - client:GetForward() * 20
 	data.filter = client
 
 	if (!util.TraceLine(data).HitWorld) then
@@ -33,7 +33,9 @@ PLUGIN.acts["Injured"] = {
 	["citizen_female"] = {sequence = "d1_town05_wounded_idle_1", untimed = true}
 }
 PLUGIN.acts["Arrest"] = {
-	["citizen_male"] = {sequence = "apcarrestidle", untimed = true, onCheck = facingWall}
+	["citizen_male"] = {sequence = "apcarrestidle", untimed = true, onCheck = facingWall, offset = function(client)
+		return -client:GetForward() * 23
+	end}
 }
 PLUGIN.acts["Cheer"] = {
 	["citizen_male"] = {sequence = {"cheer1", "cheer2", "wave_smg1"}},
