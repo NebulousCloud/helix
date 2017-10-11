@@ -411,7 +411,7 @@ function GM:HUDPaintBackground()
 	local frameTime = FrameTime()
 	local scrW, scrH = surface.ScreenWidth(), surface.ScreenHeight()
 
-	if (hasVignetteMaterial) then
+	if (hasVignetteMaterial and nut.config.get("vignette")) then
 		vignetteAlphaDelta = mathApproach(vignetteAlphaDelta, vignetteAlphaGoal, frameTime * 30)
 
 		surface.SetDrawColor(0, 0, 0, 175 + vignetteAlphaDelta)
