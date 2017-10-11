@@ -104,7 +104,7 @@ nut.config.Add("logo", "http://nutscript.rocks/nutscript.png", "The icon shown o
 nut.config.Add("logoURL", "http://nutscript.net/", "The URL opened when the icon is clicked.", nil, {
 	category = "appearance"
 })
-nut.config.add("vignette", true, "Whether or not the vignette is shown.", nil, {
+nut.config.Add("vignette", true, "Whether or not the vignette is shown.", nil, {
 	category = "appearance"
 })
 nut.config.Add("sbRecog", false, "Whether or not recognition is used in the scoreboard.", nil, {
