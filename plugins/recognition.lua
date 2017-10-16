@@ -28,10 +28,10 @@ do
 			id = id:GetID()
 		end
 
-		return hook.Run("IsCharRecognised", self, id) != false
+		return hook.Run("IsCharRecognized", self, id) != false
 	end
 
-	function PLUGIN:IsCharRecognised(char, id)
+	function PLUGIN:IsCharRecognized(char, id)
 		local other = nut.char.loaded[id]
 
 		if (other) then
