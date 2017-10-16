@@ -441,3 +441,9 @@ function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 end
 
 function GM:ShowHelp() end
+
+function GM:PostGamemodeLoaded()
+	baseclass.Set("nut_character", nut.meta.character)
+	baseclass.Set("nut_inventory", nut.meta.inventory)
+	baseclass.Set("nut_item", nut.meta.item)
+end
