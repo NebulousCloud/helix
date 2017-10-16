@@ -55,8 +55,8 @@ do
 		return self:GetMoney() >= amount
 	end
 
-	function character:GiveMoney(amount, kek)
-		if (!kek) then
+	function character:GiveMoney(amount, noLog)
+		if (!noLog) then
 			nut.log.Add(self:GetPlayer(), "money", amount)
 		end
 		
