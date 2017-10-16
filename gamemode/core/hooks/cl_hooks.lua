@@ -1,3 +1,4 @@
+
 local NUT_CVAR_LOWER2 = CreateClientConVar("nut_usealtlower", "1", true)
 
 function GM:ForceDermaSkin()
@@ -5,23 +6,12 @@ function GM:ForceDermaSkin()
 end
 
 function GM:ScoreboardShow()
-	if (IsValid(nut.gui.score)) then
-		nut.gui.score:SetVisible(true)
-	else
-		vgui.Create("nutScoreboard")
+	if (LocalPlayer():GetChar()) then
+		vgui.Create("nutMenu")
 	end
-
-	gui.EnableScreenClicker(true)
 end
 
-function GM:ScoreboardHide()
-	if (IsValid(nut.gui.score)) then
-		nut.gui.score:SetVisible(false)
-		CloseDermaMenus()
-	end
-
-	gui.EnableScreenClicker(false)
-end
+function GM:ScoreboardHide() end
 
 function GM:LoadFonts(font, genericFont)
 	surface.CreateFont("nut3D2DFont", {
@@ -612,13 +602,23 @@ end
 function GM:PlayerBindPress(client, bind, pressed)
 	bind = bind:lower()
 	
-	if (bind:find("gm_showhelp") and pressed) then
-		if (IsValid(nut.gui.menu)) then
-			nut.gui.menu:Remove()
-		elseif (LocalPlayer():GetChar()) then
-			vgui.Create("nutMenu")
-		end
+	if (bind:find("gm_showhelp")) then
+		if (pressed) then
+			if (IsValid(nut.gui.score)) then
+				nut.gui.score:SetVisible(true)
+				gui.EnableScreenClicker(true)
+			else
+				vgui.Create("nutScoreboard")
+			end
+		else
+			if (IsValid(nut.gui.score)) then
+			 	nut.gui.score:SetVisible(false)
+			 	CloseDermaMenus()
+		 	end
 
+		 	gui.EnableScreenClicker(false)
+	 	end
+		
 		return true
 	elseif ((bind:find("use") or bind:find("attack")) and pressed) then
 		local menu, callback = nut.menu.GetActiveMenu()

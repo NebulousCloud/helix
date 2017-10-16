@@ -79,14 +79,15 @@ local PANEL = {}
 	function PANEL:OnKeyCodePressed(key)
 		self.noAnchor = CurTime() + .5
 
-		if (key == KEY_F1) then
+		if (key == KEY_TAB) then
 			self:Remove()
 		end
 	end
 
 	function PANEL:Think()
-		local key = input.IsKeyDown(KEY_F1)
-		if (key and (self.noAnchor or CurTime()+.4) < CurTime() and self.anchorMode == true) then
+		local key = input.IsKeyDown(KEY_TAB)
+
+		if (key and (self.noAnchor or CurTime() + .4) < CurTime() and self.anchorMode == true) then
 			self.anchorMode = false
 			surface.PlaySound("buttons/lightswitch2.wav")
 		end
