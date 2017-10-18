@@ -40,12 +40,14 @@ function nut.bar.Add(getValue, color, priority, identifier)
 	return priority
 end
 
-local color_dark = Color(0, 0, 0, 225)
 local gradient = nut.util.GetMaterial("vgui/gradient-u")
 local gradient2 = nut.util.GetMaterial("vgui/gradient-d")
 local surface = surface
 
-function nut.bar.Draw(x, y, w, h, value, color)
+local TEXT_COLOR = Color(240, 240, 240)
+local SHADOW_COLOR = Color(20, 20, 20)
+
+function nut.bar.Draw(x, y, w, h, value, color, text)
 	nut.util.DrawBlurAt(x, y, w, h)
 
 	surface.SetDrawColor(255, 255, 255, 15)
@@ -60,10 +62,14 @@ function nut.bar.Draw(x, y, w, h, value, color)
 	surface.SetDrawColor(255, 255, 255, 8)
 	surface.SetMaterial(gradient)
 	surface.DrawTexturedRect(x, y, w, h)
-end	
 
-local TEXT_COLOR = Color(240, 240, 240)
-local SHADOW_COLOR = Color(20, 20, 20)
+	if (text ~= nil) then
+		x, y = x + (w * 0.5), y + (h * 0.5)
+
+		draw.SimpleText(text, "nutSmallFont", x + 2, y + 2, SHADOW_COLOR, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(text, "nutSmallFont", x, y, TEXT_COLOR, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	end
+end
 
 function nut.bar.DrawAction()
 	local start, finish = nut.bar.actionStart, nut.bar.actionEnd
@@ -131,7 +137,7 @@ function nut.bar.DrawAll()
 			end
 
 			if (bar.lifeTime >= curTime or bar.visible or hook.Run("ShouldBarDraw", bar)) then
-				nut.bar.Draw(x, nut.bar.totalHeight, w, h, value, bar.color, bar)
+				nut.bar.Draw(x, nut.bar.totalHeight, w, h, value, bar.color, bar.text)
 				nut.bar.totalHeight = nut.bar.totalHeight + h + 2
 			end
 		end
