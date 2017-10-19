@@ -9,7 +9,7 @@ local PANEL = {}
 			nut.gui.loading:Remove()
 		end
 
-		if (!nut.localData.intro) then
+		if (nut.config.Get("intro", true) and !nut.localData.intro) then
 			timer.Simple(0.1, function()
 				vgui.Create("nutIntro", self)
 			end)
