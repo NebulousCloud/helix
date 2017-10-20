@@ -40,12 +40,15 @@ function nut.bar.Add(getValue, color, priority, identifier)
 	return priority
 end
 
-local color_dark = Color(0, 0, 0, 225)
-local gradient = nut.util.GetMaterial("vgui/gradient-u")
-local gradient2 = nut.util.GetMaterial("vgui/gradient-d")
+local gradientU = nut.util.GetMaterial("vgui/gradient-u")
+local gradientD = nut.util.GetMaterial("vgui/gradient-d")
 local surface = surface
+local draw = draw
 
-function nut.bar.Draw(x, y, w, h, value, color)
+local TEXT_COLOR = Color(240, 240, 240)
+local SHADOW_COLOR = Color(20, 20, 20)
+
+function nut.bar.Draw(x, y, w, h, value, color, text)
 	nut.util.DrawBlurAt(x, y, w, h)
 
 	surface.SetDrawColor(255, 255, 255, 15)
@@ -58,12 +61,16 @@ function nut.bar.Draw(x, y, w, h, value, color)
 	surface.DrawRect(x, y, w, h)
 
 	surface.SetDrawColor(255, 255, 255, 8)
-	surface.SetMaterial(gradient)
+	surface.SetMaterial(gradientU)
 	surface.DrawTexturedRect(x, y, w, h)
-end	
 
-local TEXT_COLOR = Color(240, 240, 240)
-local SHADOW_COLOR = Color(20, 20, 20)
+	if (isstring(text)) then
+		x, y = x + (w * 0.5), y + (h * 0.5)
+
+		draw.SimpleText(text, "nutSmallFont", x + 2, y + 2, SHADOW_COLOR, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(text, "nutSmallFont", x, y, TEXT_COLOR, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	end
+end
 
 function nut.bar.DrawAction()
 	local start, finish = nut.bar.actionStart, nut.bar.actionEnd
@@ -90,7 +97,7 @@ function nut.bar.DrawAction()
 			surface.DrawRect(x + 4, y + 4, (w * fraction) - 8, h - 8)
 
 			surface.SetDrawColor(200, 200, 200, 20)
-			surface.SetMaterial(gradient2)
+			surface.SetMaterial(gradientD)
 			surface.DrawTexturedRect(x + 4, y + 4, (w * fraction) - 8, h - 8)
 
 			draw.SimpleText(nut.bar.actionText, "nutMediumFont", x + 2, y - 22, SHADOW_COLOR)
@@ -131,7 +138,7 @@ function nut.bar.DrawAll()
 			end
 
 			if (bar.lifeTime >= curTime or bar.visible or hook.Run("ShouldBarDraw", bar)) then
-				nut.bar.Draw(x, nut.bar.totalHeight, w, h, value, bar.color, bar)
+				nut.bar.Draw(x, nut.bar.totalHeight, w, h, value, bar.color, bar.text)
 				nut.bar.totalHeight = nut.bar.totalHeight + h + 2
 			end
 		end

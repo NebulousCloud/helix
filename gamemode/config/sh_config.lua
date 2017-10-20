@@ -95,6 +95,9 @@ nut.config.Add("punchStamina", 10, "How much stamina punches use up.", nil, {
 	data = {min = 0, max = 100},
 	category = "characters"
 })
+nut.config.Add("intro", true, "Whether or not the NutScript intro is enabled for new players.", nil, {
+	category = "appearance"
+})
 nut.config.Add("music", "music/hl2_song2.mp3", "The default music played in the character menu.", nil, {
 	category = "appearance"
 })
@@ -140,7 +143,7 @@ end, {
 	category = "visual",
 	data = {min = 0.3, max = 1}
 })
-nut.config.Add("sbTitle", GetConVarString("hostname"), "The title of the scoreboard", function(oldValue, newValue)
+nut.config.Add("sbTitle", GetHostName(), "The title of the scoreboard", function(oldValue, newValue)
 	if (CLIENT and IsValid(nut.gui.score)) then
 		nut.gui.score:Remove()
 	end

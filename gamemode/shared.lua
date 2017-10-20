@@ -93,12 +93,7 @@ function GM:OnReloaded()
 		for index, faction in ipairs(nut.faction.indices) do
 			for k, v in ipairs(team.GetPlayers(index)) do
 				if (faction.pay and faction.pay > 0) then
-					timer.Adjust("nutSalary"..v:UniqueID(), faction.payTime or 300, 0, function()
-						local pay = hook.Run("GetSalaryAmount", v, faction) or faction.pay
-
-						v:GetChar():GiveMoney(pay)
-						v:NotifyLocalized("salary", nut.currency.Get(pay))
-					end)
+					timer.Adjust("nutSalary"..v:UniqueID(), faction.payTime or 300, 0)
 				else
 					timer.Remove("nutSalary"..v:UniqueID())
 				end

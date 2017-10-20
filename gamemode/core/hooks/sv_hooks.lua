@@ -217,10 +217,12 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 
 	if (faction and faction.pay and faction.pay > 0) then
 		timer.Create("nutSalary"..client:UniqueID(), faction.payTime or 300, 0, function()
-			local pay = hook.Run("GetSalaryAmount", client, faction) or faction.pay
+			if (hook.Run("CanPlayerEarnSalary", client, faction) != false) then
+				local pay = hook.Run("GetSalaryAmount", client, faction) or faction.pay
 
-			character:GiveMoney(pay)
-			client:NotifyLocalized("salary", nut.currency.Get(pay))
+				character:GiveMoney(pay)
+				client:NotifyLocalized("salary", nut.currency.Get(pay))
+			end
 		end)
 	end
 
