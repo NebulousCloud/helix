@@ -1015,6 +1015,44 @@ do
 			}, self).StartSolid
 		end
 
+		-- Creates a ragdoll entity of the given player that will be synced with clients
+		function playerMeta:CreateServerRagdoll(bDontSetPlayer)
+			local entity = ents.Create("prop_ragdoll")
+			entity:SetPos(self:GetPos())
+			entity:SetAngles(self:EyeAngles())
+			entity:SetModel(self:GetModel())
+			entity:SetSkin(self:GetSkin())
+			entity:Spawn()
+			
+			if (!bDontSetPlayer) then
+				entity:SetNetVar("player", self)
+			end
+
+			entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+			entity:Activate()
+
+			local velocity = self:GetVelocity()
+
+			for i = 0, entity:GetPhysicsObjectCount() - 1 do
+				local physObj = entity:GetPhysicsObjectNum(i)
+
+				if (IsValid(physObj)) then
+					physObj:SetVelocity(velocity)
+
+					local index = entity:TranslatePhysBoneToBone(i)
+
+					if (index) then
+						local position, angles = self:GetBonePosition(index)
+
+						physObj:SetPos(position)
+						physObj:SetAngles(angles)
+					end
+				end
+			end
+
+			return entity
+		end
+
 		function playerMeta:SetRagdolled(state, time, getUpGrace)
 			getUpGrace = getUpGrace or time or 5
 
@@ -1023,15 +1061,8 @@ do
 					self.nutRagdoll:Remove()
 				end
 
-				local entity = ents.Create("prop_ragdoll")
-				entity:SetPos(self:GetPos())
-				entity:SetAngles(self:EyeAngles())
-				entity:SetModel(self:GetModel())
-				entity:SetSkin(self:GetSkin())
-				entity:Spawn()
-				entity:SetNetVar("player", self)
-				entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
-				entity:Activate()
+				local entity = self:CreateServerRagdoll()
+
 				entity:CallOnRemove("fixer", function()
 					if (IsValid(self)) then
 						self:SetLocalVar("blur", nil)
@@ -1081,25 +1112,6 @@ do
 						end
 					end
 				end)
-
-				local velocity = self:GetVelocity()
-
-				for i = 0, entity:GetPhysicsObjectCount() - 1 do
-					local physObj = entity:GetPhysicsObjectNum(i)
-
-					if (IsValid(physObj)) then
-						physObj:SetVelocity(velocity)
-
-						local index = entity:TranslatePhysBoneToBone(i)
-
-						if (index) then
-							local position, angles = self:GetBonePosition(index)
-
-							physObj:SetPos(position)
-							physObj:SetAngles(angles)
-						end
-					end
-				end
 
 				self:SetLocalVar("blur", 25)
 				self.nutRagdoll = entity
