@@ -49,13 +49,15 @@ local TEXT_COLOR = Color(240, 240, 240)
 local SHADOW_COLOR = Color(20, 20, 20)
 
 function nut.bar.Draw(x, y, w, h, value, color, text)
+	local origX, origY = x, y
+	
 	nut.util.DrawBlurAt(x, y, w, h)
 
 	surface.SetDrawColor(255, 255, 255, 15)
 	surface.DrawRect(x, y, w, h)
 	surface.DrawOutlinedRect(x, y, w, h)
 
-	x, y, w, h = x + 2, y + 2, (w - 4) * math.min(value, 1), h - 4
+	x, y, w, h = origX + 2, origY + 2, (w - 4) * math.min(value, 1), h - 4
 
 	surface.SetDrawColor(color.r, color.g, color.b, 250)
 	surface.DrawRect(x, y, w, h)
@@ -65,7 +67,7 @@ function nut.bar.Draw(x, y, w, h, value, color, text)
 	surface.DrawTexturedRect(x, y, w, h)
 
 	if (isstring(text)) then
-		x, y = x + (w * 0.5), y + (h * 0.5)
+		x, y = origX + (w * 0.5), origY + (h * 0.5)
 
 		draw.SimpleText(text, "nutSmallFont", x + 2, y + 2, SHADOW_COLOR, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		draw.SimpleText(text, "nutSmallFont", x, y, TEXT_COLOR, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
