@@ -408,6 +408,22 @@ local deathSounds = {
 	Sound("vo/npc/male01/pain09.wav")
 }
 
+function GM:DoPlayerDeath(client, attacker, damageinfo)
+	client:AddDeaths(1)
+
+	if (hook.Run("ShouldSpawnClientRagdoll", client) != false) then
+		client:CreateRagdoll()
+	end
+
+	if (IsValid(attacker) and attacker:IsPlayer()) then
+		if (client == attacker) then
+			attacker:AddFrags(-1)
+		else
+			attacker:AddFrags(1)
+		end
+	end
+end
+
 function GM:PlayerDeath(client, inflictor, attacker)
 	if (client:GetChar()) then
 		if (IsValid(client.nutRagdoll)) then
