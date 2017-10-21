@@ -235,6 +235,7 @@ LANGUAGE = {
 	mapRestarting = "The map will restart in %d seconds!",
 	chooseTip = "Choose this character to play with.",
 	deleteTip = "Delete this character.",
+	storageInUse = "Someone else is using this!",
 
 	moneyLeft = "Your Money: ",
 	currentMoney = "Money Left: ",
