@@ -13,7 +13,9 @@ nut.storage = nut.storage or {}
 	nut.storage.Open(client, inventory, {
 		name = "Filing Cabinet", 		-- defaults to "Storage"
 		entity = ents.GetByIndex(3), 	-- this is required
-		bMultipleUsers = true 			-- defaults to false
+		bMultipleUsers = true, 			-- defaults to false
+		searchText = "Rummaging...",	-- defaults to "@storageSearching"
+		searchTime = 4					-- defaults to 0
 	})
 ]]--
 
@@ -54,6 +56,8 @@ if (SERVER) then
 		info.name = info.name or "Storage"
 		info.entity = assert(IsValid(info.entity), "expected valid entity in info table") and info.entity
 		info.bMultipleUsers = info.bMultipleUsers == nil and false or info.bMultipleUsers
+		info.searchTime = tonumber(info.searchTime) or 0
+		info.searchText = info.searchText or "@storageSearching"
 		info.receivers = info.receivers or {}
 
 		-- store old copies of inventory methods so we can restore them after we're done
@@ -81,6 +85,47 @@ if (SERVER) then
 		inventory.storageInfo = nil
 	end
 
+	-- Syncs a storage to the client.
+	function nut.storage.Sync(client, inventory)
+		inventory:Sync(client)
+		netstream.Start(client, "StorageOpen", inventory.storageInfo)
+	end
+
+	-- Adds a receiver to a given inventory with a valid storage context
+	-- If bDontSync is true, the inventory will not be synced to the client and the
+	-- storage panel will not show up.
+	function nut.storage.AddReceiver(client, inventory, bDontSync)
+		if (inventory.storageInfo and !inventory.storageInfo.receivers[client]) then
+			inventory.storageInfo.receivers[client] = true
+			client.nutOpenStorage = inventory
+
+			if (!bDontSync) then
+				nut.storage.Sync(client, inventory)
+			end
+
+			return true
+		end
+
+		return false
+	end
+
+	-- Removes a storage receiver and removes the context if there are no more receivers.
+	-- If bDontRemove is true, the storage context will not be removed if not in use.
+	function nut.storage.RemoveReceiver(client, inventory, bDontRemove)
+		if (inventory.storageInfo) then
+			inventory.storageInfo.receivers[client] = nil
+
+			if (!bDontRemove and !nut.storage.InUse(inventory)) then
+				nut.storage.RemoveContext(inventory)
+			end
+
+			client.nutOpenStorage = nil
+			return true
+		end
+
+		return false
+	end
+
 	-- Makes a player open an inventory that they can interact with.
 	-- This takes care of making a storage context if one doesn't exist, and adds the player
 	-- to the list of people that can view this inventory.
@@ -94,19 +139,32 @@ if (SERVER) then
 			nut.storage.CreateContext(inventory, info)
 		end
 
+		local storageInfo = inventory.storageInfo
+
 		-- add the client to the list of receivers if we're allowed to have multiple users
 		-- or if nobody else is occupying this inventory, otherwise nag the player
-		if (inventory.storageInfo.bMultipleUsers or !nut.storage.InUse(inventory)) then
-			inventory.storageInfo.receivers[client] = true
+		if (storageInfo.bMultipleUsers or !nut.storage.InUse(inventory)) then
+			nut.storage.AddReceiver(client, inventory, true)
 		else
 			client:NotifyLocalized("storageInUse")
 			return
 		end
 
-		client.nutOpenStorage = inventory
-
-		inventory:Sync(client)
-		netstream.Start(client, "StorageOpen", info)
+		if (storageInfo.searchTime > 0) then
+			client:SetAction(storageInfo.searchText, storageInfo.searchTime)
+			client:DoStaredAction(storageInfo.entity, function()
+				if (IsValid(client) and IsValid(storageInfo.entity) and inventory.storageInfo) then
+					nut.storage.Sync(client, inventory)
+				end
+			end, storageInfo.searchTime, function()
+				if (IsValid(client)) then
+					nut.storage.RemoveReceiver(client, inventory)
+					client:SetAction()
+				end
+			end)
+		else
+			nut.storage.Sync(client, inventory)
+		end
 	end
 
 	-- Forcefully makes clients close this inventory if they have it open and
@@ -125,21 +183,7 @@ if (SERVER) then
 		local inventory = client.nutOpenStorage
 
 		if (inventory) then
-			local info = inventory.storageInfo
-			
-			if (info.receivers[client]) then
-				info.receivers[client] = nil
-
-				if (info.bMultipleUsers) then
-					if (!nut.storage.InUse(inventory)) then
-						nut.storage.RemoveContext(inventory)
-					end
-				else
-					nut.storage.RemoveContext(inventory)
-				end
-			end
-
-			client.nutOpenStorage = nil
+			nut.storage.RemoveReceiver(client, inventory)
 		end
 	end)
 else

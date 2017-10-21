@@ -236,6 +236,7 @@ LANGUAGE = {
 	chooseTip = "Choose this character to play with.",
 	deleteTip = "Delete this character.",
 	storageInUse = "Someone else is using this!",
+	storageSearching = "Searching storage...",
 
 	moneyLeft = "Your Money: ",
 	currentMoney = "Money Left: ",
