@@ -360,7 +360,7 @@ paintedEntitiesCache = {}
 function GM:CalcView(client, origin, angles, fov)
 	local view = self.BaseClass:CalcView(client, origin, angles, fov) or {}
 	local entity = Entity(client:GetLocalVar("ragdoll", 0))
-	local ragdoll = client:GetRagdollEntity()
+	local ragdoll = client:GetRagdollEntity() or entity
 
 	if ((!client:ShouldDrawLocalPlayer() and IsValid(entity) and entity:IsRagdoll()) or 
 		(!LocalPlayer():Alive() and IsValid(ragdoll))) then
