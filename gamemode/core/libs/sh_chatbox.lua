@@ -44,7 +44,7 @@ function nut.chat.Register(chatType, data)
 	if (!data.OnChatAdd) then
 		data.format = data.format or "%s: \"%s\""
 
-		function data:OnChatAdd(speaker, text, anonymous)
+		function data:OnChatAdd(speaker, text, anonymous, info)
 			local color = self.color
 			local name = anonymous and L"someone" or hook.Run("GetDisplayedName", speaker, chatType) or (IsValid(speaker) and speaker:Name() or "Console")
 
@@ -163,12 +163,20 @@ else
 	-- Call OnChatAdd for the appropriate chatType.
 	netstream.Hook("cMsg", function(client, chatType, text, anonymous)
 		if (IsValid(client)) then
-			local class = nut.chat.classes[chatType]
-			text = hook.Run("OnChatReceived", client, chatType, text, anonymous) or text
+			local info = {
+				chatType = chatType,
+				text = text,
+				anonymous = anonymous,
+				data = {}
+			}
+
+			hook.Run("OnChatReceived", client, info)
+
+			local class = nut.chat.classes[info.chatType or chatType]
 
 			if (class) then
 				CHAT_CLASS = class
-					class:OnChatAdd(client, text, anonymous)
+					class:OnChatAdd(client, info.text or text, info.anonymous or anonymous, info.data or {})
 				CHAT_CLASS = nil
 			end
 		end
