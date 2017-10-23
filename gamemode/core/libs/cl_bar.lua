@@ -6,6 +6,8 @@ nut.bar.actionStart = 0
 nut.bar.actionEnd = 0
 nut.bar.totalHeight = 0
 
+NUT_CVAR_SHOWBARS = CreateClientConVar("nut_alwaysshowbars", "0", true)
+
 function nut.bar.Get(identifier)
 	for i = 1, #nut.bar.list do
 		local bar = nut.bar.list[i]
@@ -139,7 +141,7 @@ function nut.bar.DrawAll()
 				bar.lifeTime = curTime + 5
 			end
 
-			if (bar.lifeTime >= curTime or bar.visible or hook.Run("ShouldBarDraw", bar)) then
+			if (bar.lifeTime >= curTime or bar.visible or NUT_CVAR_SHOWBARS:GetBool() or hook.Run("ShouldBarDraw", bar)) then
 				nut.bar.Draw(x, nut.bar.totalHeight, w, h, value, bar.color, bar.text)
 				nut.bar.totalHeight = nut.bar.totalHeight + h + 2
 			end

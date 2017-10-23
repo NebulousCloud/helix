@@ -761,6 +761,14 @@ function GM:SetupQuickMenu(menu)
 	-- Appearance
 	menu:AddSpacer()
 
+	menu:AddCheck(L("alwaysShowBars"), function(panel, state)
+		if (state) then
+			RunConsoleCommand("nut_alwaysshowbars", "1")
+		else
+			RunConsoleCommand("nut_alwaysshowbars", "0")
+		end
+	end, NUT_CVAR_SHOWBARS:GetBool())
+
 	menu:AddCheck(L"altLower", function(panel, state)
 		if (state) then
 			RunConsoleCommand("nut_usealtlower", "1")
