@@ -69,11 +69,11 @@ if (CLIENT) then
 	end
 else
 	nut.log.AddType("observerEnter", function(client, ...)
-		return L("%s is now in observer.", client:Name())
+		return string.format("%s is now in observer.", client:Name())
 	end)
 
 	nut.log.AddType("observerExit", function(client, ...)
-		return L("%s is no longer in observer.", client:Name())
+		return string.format("%s is no longer in observer.", client:Name())
 	end)
 
 	function PLUGIN:PlayerNoClip(client, state)
