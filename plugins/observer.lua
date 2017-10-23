@@ -68,6 +68,14 @@ if (CLIENT) then
 		end
 	end
 else
+	nut.log.AddType("observerEnter", function(client, ...)
+		return L("%s is now in observer.", client:Name())
+	end)
+
+	nut.log.AddType("observerExit", function(client, ...)
+		return L("%s is no longer in observer.", client:Name())
+	end)
+
 	function PLUGIN:PlayerNoClip(client, state)
 		-- Observer mode is reserved for administrators.
 		if (client:IsAdmin()) then
@@ -115,6 +123,14 @@ else
 				client:SetNoTarget(false)
 				hook.Run("OnPlayerObserve", client, state)
 			end
+		end
+	end
+
+	function PLUGIN:OnPlayerObserve(client, state)
+		if (state) then
+			nut.log.Add(client, "observerEnter")
+		else
+			nut.log.Add(client, "observerExit")
 		end
 	end
 end
