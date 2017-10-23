@@ -179,7 +179,7 @@ if (SERVER) then
 		if (realCommand or text:utf8sub(1, 1) == COMMAND_PREFIX) then
 			-- See if the string contains a command.
 
-			local match = realCommand or text:lower():match(COMMAND_PREFIX.."([_%w]+)")
+			local match = realCommand:lower() or text:lower():match(COMMAND_PREFIX.."([_%w]+)")
 
 			-- is it unicode text?
 			-- i hate unicode.
