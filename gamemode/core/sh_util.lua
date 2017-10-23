@@ -1214,6 +1214,12 @@ if (system.IsLinux()) then
 		return path, gamedir
 	end
 
+	local function f_IsWAV(f)
+		f:Seek(8)
+
+		return f:Read(4) == "WAVE"
+	end
+
 	-- WAV functions
 	local function f_SampleDepth(f)
 		f:Seek(34)
