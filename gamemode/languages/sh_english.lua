@@ -237,6 +237,7 @@ LANGUAGE = {
 	deleteTip = "Delete this character.",
 	storageInUse = "Someone else is using this!",
 	storageSearching = "Searching storage...",
+	alwaysShowBars = "Always show info bars?",
 
 	moneyLeft = "Your Money: ",
 	currentMoney = "Money Left: ",
