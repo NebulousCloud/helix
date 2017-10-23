@@ -148,45 +148,6 @@ function nut.util.FormatStringNamed(format, ...)
 	return result
 end
 
-local ADJUST_SOUND = SoundDuration("npc/metropolice/pain1.wav") > 0 and "" or "../../hl2/sound/"
-
--- Emits sounds one after the other from an entity.
-function nut.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
-	-- Let there be a delay before any sound is played.
-	delay = delay or 0
-	spacing = spacing or 0.1
-
-	-- Loop through all of the sounds.
-	for k, v in ipairs(sounds) do
-		local postSet, preSet = 0, 0
-
-		-- Determine if this sound has special time offsets.
-		if (type(v) == "table") then
-			postSet, preSet = v[2] or 0, v[3] or 0
-			v = v[1]
-		end
-
-		-- Get the length of the sound.
-		local length = SoundDuration(ADJUST_SOUND..v)
-		-- If the sound has a pause before it is played, add it here.
-		delay = delay + preSet
-
-		-- Have the sound play in the future.
-		timer.Simple(delay, function()
-			-- Check if the entity still exists and play the sound.
-			if (IsValid(entity)) then
-				entity:EmitSound(v, volume, pitch)
-			end
-		end)
-
-		-- Add the delay for the next sound.
-		delay = delay + length + postSet + spacing
-	end
-
-	-- Return how long it took for the whole thing.
-	return delay
-end
-
 function nut.util.GridVector(vec, gridSize)
 	if (gridSize <= 0) then
 		gridSize = 1
@@ -1023,7 +984,7 @@ do
 			entity:SetModel(self:GetModel())
 			entity:SetSkin(self:GetSkin())
 			entity:Spawn()
-			
+
 			if (!bDontSetPlayer) then
 				entity:SetNetVar("player", self)
 			end
@@ -1233,4 +1194,129 @@ do
 
 		return time
 	end
+end
+
+--[[
+	Credit to TFA for figuring this mess out.
+	Original: https://steamcommunity.com/sharedfiles/filedetails/?id=903541818
+]]
+
+if (system.IsLinux()) then
+	local cache = {}
+
+	-- Helper Functions
+	local function GetSoundPath(path, gamedir)
+		if (!gamedir) then
+			path = "sound/" .. path
+			gamedir = "GAME"
+		end
+
+		return path, gamedir
+	end
+
+	-- WAV functions
+	local function f_SampleDepth(f)
+		f:Seek(34)
+		local bytes = {}
+
+		for i = 1, 2 do
+			bytes[i] = f:ReadByte(1)
+		end
+
+		local num = bit.lshift(bytes[2], 8) + bit.lshift(bytes[1], 0)
+
+		return num
+	end
+
+	local function f_SampleRate(f)
+		f:Seek(24)
+		local bytes = {}
+
+		for i = 1, 4 do
+			bytes[i] = f:ReadByte(1)
+		end
+
+		local num = bit.lshift(bytes[4], 24) + bit.lshift(bytes[3], 16) + bit.lshift(bytes[2], 8) + bit.lshift(bytes[1], 0)
+
+		return num
+	end
+
+	local function f_Channels(f)
+		f:Seek(22)
+		local bytes = {}
+
+		for i = 1, 2 do
+			bytes[i] = f:ReadByte(1)
+		end
+
+		local num = bit.lshift(bytes[2], 8) + bit.lshift(bytes[1], 0)
+
+		return num
+	end
+
+	local function f_Duration(f)
+		return (f:Size() - 44) / (f_SampleDepth(f) / 8 * f_SampleRate(f) * f_Channels(f))
+	end
+
+	nutSoundDuration = nutSoundDuration or SoundDuration
+
+	function SoundDuration(str)
+		local path, gamedir = GetSoundPath(str)
+		local f = file.Open(path, "rb", gamedir)
+
+		if (!f) then return 0 end --Return nil on invalid files
+
+		local ret
+
+		if (cache[str]) then
+			ret = cache[str]
+		elseif (f_IsWAV(f)) then
+			ret = f_Duration(f)
+		else
+			ret = nutSoundDuration(str)
+		end
+
+		f:Close()
+
+		return ret
+	end
+end
+
+local ADJUST_SOUND = SoundDuration("npc/metropolice/pain1.wav") > 0 and "" or "../../hl2/sound/"
+
+-- Emits sounds one after the other from an entity.
+function nut.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
+	-- Let there be a delay before any sound is played.
+	delay = delay or 0
+	spacing = spacing or 0.1
+
+	-- Loop through all of the sounds.
+	for k, v in ipairs(sounds) do
+		local postSet, preSet = 0, 0
+
+		-- Determine if this sound has special time offsets.
+		if (type(v) == "table") then
+			postSet, preSet = v[2] or 0, v[3] or 0
+			v = v[1]
+		end
+
+		-- Get the length of the sound.
+		local length = SoundDuration(ADJUST_SOUND..v)
+		-- If the sound has a pause before it is played, add it here.
+		delay = delay + preSet
+
+		-- Have the sound play in the future.
+		timer.Simple(delay, function()
+			-- Check if the entity still exists and play the sound.
+			if (IsValid(entity)) then
+				entity:EmitSound(v, volume, pitch)
+			end
+		end)
+
+		-- Add the delay for the next sound.
+		delay = delay + length + postSet + spacing
+	end
+
+	-- Return how long it took for the whole thing.
+	return delay
 end
