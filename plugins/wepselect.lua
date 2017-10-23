@@ -118,7 +118,7 @@ else
 			bind = bind:lower()
 
 			if (bind:find("invprev") and pressed) then
-				self.index = self.index - 1
+				self.index = self.index + 1
 
 				if (self.index < 1) then
 					self.index = #client:GetWeapons()
@@ -128,7 +128,7 @@ else
 
 				return true
 			elseif (bind:find("invnext") and pressed) then
-				self.index = self.index + 1
+				self.index = self.index - 1
 
 				if (self.index > #client:GetWeapons()) then
 					self.index = 1
