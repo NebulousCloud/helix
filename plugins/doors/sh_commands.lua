@@ -12,7 +12,6 @@ nut.command.Add("DoorSell", {
 		-- Check if the entity is a valid door.
 		if (IsValid(entity) and entity:IsDoor() and !entity:GetNetVar("disabled")) then
 			-- Check if the player owners the door.
-			print(client, entity:GetDTEntity(0))
 			if (client == entity:GetDTEntity(0)) then
 				-- Get the price that the door is sold for.
 				local price = math.Round(entity:GetNetVar("price", nut.config.Get("doorCost")) * nut.config.Get("doorSellRatio"))

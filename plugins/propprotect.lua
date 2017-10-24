@@ -45,21 +45,15 @@ local PROP_BLACKLIST = {
 }
 
 if (SERVER) then
-	local function getLogName(entity)
-		local class = entity:GetClass():lower()
+	nut.log.AddType("spawnProp", function(client, ...)
+		local arg = {...}
+		return string.format("%s has spawned '%s'.", client:Name(), arg[1])
+	end)
 
-		if (class:find("prop")) then
-			local propType = class:sub(6)
-
-			if (propType == "physics") then
-				propType = "prop"
-			end
-
-			class = propType.." ("..entity:GetModel()..")"
-		end
-
-		return class
-	end
+	nut.log.AddType("spawnEntity", function(client, ...)
+		local arg = {...}
+		return string.format("%s has spawned a '%s'.", client:Name(), arg[1])
+	end)
 
 	function PLUGIN:PlayerSpawnObject(client, model, skin)
 		if ((client.nutNextSpawn or 0) < CurTime()) then
@@ -81,8 +75,6 @@ if (SERVER) then
 
 	function PLUGIN:CanProperty(client, property, entity)
 		if (entity:GetCreator() == client and (property == "remover" or property == "collision")) then
-			--nut.log.Add(client, property, getLogName(entity))
-
 			return true
 		end
 	end
@@ -97,11 +89,12 @@ if (SERVER) then
 
 	function PLUGIN:PlayerSpawnedEntity(client, entity)
 		entity:SetCreator(client)
-		--nut.log.Add(client, getLogName(entity))
 	end
 
 	function PLUGIN:PlayerSpawnedProp(client, model, entity)
 		hook.Run("PlayerSpawnedEntity", client, entity)
+
+		nut.log.Add(client, "spawnProp", model)
 	end
 
 	PLUGIN.PlayerSpawnedEffect = PLUGIN.PlayerSpawnedProp
@@ -109,6 +102,8 @@ if (SERVER) then
 
 	function PLUGIN:PlayerSpawnedNPC(client, entity)
 		hook.Run("PlayerSpawnedEntity", client, entity)
+
+		nut.log.Add(client, "spawnEntity", entity)
 	end
 
 	PLUGIN.PlayerSpawnedSENT = PLUGIN.PlayerSpawnedNPC
