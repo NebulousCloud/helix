@@ -106,6 +106,7 @@ if (SERVER) then
 		nut.log.Add(client, "spawnEntity", entity)
 	end
 
+	PLUGIN.PlayerSpawnedSWEP = PLUGIN.PlayerSpawnedNPC
 	PLUGIN.PlayerSpawnedSENT = PLUGIN.PlayerSpawnedNPC
 	PLUGIN.PlayerSpawnedVehicle = PLUGIN.PlayerSpawnedNPC
 end
