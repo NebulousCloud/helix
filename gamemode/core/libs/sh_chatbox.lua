@@ -1,8 +1,6 @@
 nut.chat = nut.chat or {}
 nut.chat.classes = nut.char.classes or {}
 
-local DUMMY_COMMAND = {syntax = "<string text>", OnRun = function() end}
-
 if (!nut.command) then
 	include("sh_command.lua")
 end
@@ -59,14 +57,16 @@ function nut.chat.Register(chatType, data)
 	end
 
 	if (CLIENT and data.prefix) then
+		local dummy = {syntax = "<string text>", OnRun = function() end}
+
 		if (type(data.prefix) == "table") then
 			for k, v in ipairs(data.prefix) do
 				if (v:sub(1, 1) == "/") then
-					nut.command.Add(v:sub(2), DUMMY_COMMAND)
+					nut.command.Add(v:sub(2), dummy)
 				end
 			end
 		else
-			nut.command.Add(chatType, DUMMY_COMMAND)
+			nut.command.Add(chatType, dummy)
 		end
 	end
 
@@ -90,6 +90,8 @@ function nut.chat.Parse(client, message, noSend)
 		-- Check through all prefixes if the chat type has more than one.
 		if (type(v.prefix) == "table") then
 			for _, prefix in ipairs(v.prefix) do
+				prefix = prefix:lower()
+
 				-- Checking if the start of the message has the prefix.
 				if (message:sub(1, #prefix + (noSpaceAfter and 0 or 1)):lower() == prefix..(noSpaceAfter and "" or " "):lower()) then
 					isChosen = true
@@ -100,6 +102,8 @@ function nut.chat.Parse(client, message, noSend)
 			end
 		-- Otherwise the prefix itself is checked.
 		elseif (type(v.prefix) == "string") then
+			local prefix = v.prefix:lower()
+
 			isChosen = message:sub(1, #v.prefix + (noSpaceAfter and 1 or 0)):lower() == v.prefix..(noSpaceAfter and "" or " "):lower()
 			chosenPrefix = v.prefix..(v.noSpaceAfter and "" or " ")
 		end
@@ -207,7 +211,7 @@ do
 			format = "** %s %s",
 			OnGetColor = nut.chat.classes.ic.OnGetColor,
 			OnCanHear = nut.config.Get("chatRange", 280),
-			prefix = {"/me", "/action"},
+			prefix = {"/Me", "/Action"},
 			filter = "actions",
 			deadCanChat = true
 		})
@@ -218,7 +222,7 @@ do
 				chat.AddText(nut.config.Get("chatColor"), "** "..text)
 			end,
 			OnCanHear = nut.config.Get("chatRange", 280),
-			prefix = {"/it"},
+			prefix = {"/It"},
 			filter = "actions",
 			deadCanChat = true
 		})
@@ -233,7 +237,7 @@ do
 				return Color(color.r - 35, color.g - 35, color.b - 35)
 			end,
 			OnCanHear = nut.config.Get("chatRange", 280) * 0.25,
-			prefix = {"/w", "/whisper"}
+			prefix = {"/W", "/Whisper"}
 		})
 
 		-- Yelling out loud.
@@ -246,7 +250,7 @@ do
 				return Color(color.r + 35, color.g + 35, color.b + 35)
 			end,
 			OnCanHear = nut.config.Get("chatRange", 280) * 2,
-			prefix = {"/y", "/yell"}
+			prefix = {"/Y", "/Yell"}
 		})
 
 		-- Out of character.
@@ -291,7 +295,7 @@ do
 
 				chat.AddText(icon, Color(255, 50, 50), " [OOC] ", speaker, color_white, ": "..text)
 			end,
-			prefix = {"//", "/ooc"},
+			prefix = {"//", "/OOC"},
 			noSpaceAfter = true,
 			filter = "ooc"
 		})
@@ -320,7 +324,7 @@ do
 				chat.AddText(Color(255, 50, 50), "[LOOC] ", nut.config.Get("chatColor"), speaker:Name()..": "..text)
 			end,
 			OnCanHear = nut.config.Get("chatRange", 280),
-			prefix = {".//", "[[", "/looc"},
+			prefix = {".//", "[[", "/LOOC"},
 			noSpaceAfter = true,
 			filter = "ooc"
 		})
@@ -353,7 +357,7 @@ nut.chat.Register("event", {
 	OnChatAdd = function(self, speaker, text)
 		chat.AddText(Color(255, 150, 0), text)
 	end,
-	prefix = {"/event"}
+	prefix = {"/Event"}
 })
 
 nut.chat.Register("connect", {
