@@ -50,6 +50,10 @@ if (SERVER) then
 	nut.log.AddType("buydoor", function(client, ...)
 		return L("%s purchased the door", client:Name())
 	end)
+	nut.log.AddType("playerHurt", function(client, ...)
+		local arg = {...}
+		return L("%s has taken %d damage from %s.", client:Name(), arg[1], arg[2])
+	end)
 
 	function PLUGIN:PlayerInitialSpawn(client)
 		nut.log.Add(client, "connect")

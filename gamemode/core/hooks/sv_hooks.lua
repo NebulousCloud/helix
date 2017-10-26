@@ -464,13 +464,13 @@ local drownSounds = {
 
 function GM:GetPlayerPainSound(client)
 	if (client:WaterLevel() >= 3) then
-		return table.Random(drownSounds)
+		return drownSounds[math.random(1, #drownSounds)]
 	end
 end
 
 function GM:PlayerHurt(client, attacker, health, damage)
 	if ((client.nutNextPain or 0) < CurTime()) then
-		local painSound = hook.Run("GetPlayerPainSound", client) or table.Random(painSounds)
+		local painSound = hook.Run("GetPlayerPainSound", client) or painSounds[math.random(1, #painSounds)]
 
 		if (client:IsFemale() and !painSound:find("female")) then
 			painSound = painSound:gsub("male", "female")
@@ -479,6 +479,8 @@ function GM:PlayerHurt(client, attacker, health, damage)
 		client:EmitSound(painSound)
 		client.nutNextPain = CurTime() + 0.33
 	end
+
+	nut.log.Add(client, "playerHurt", damage, attacker:GetName())
 end
 
 function GM:PlayerDeathThink(client)
