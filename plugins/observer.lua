@@ -16,16 +16,16 @@ if (CLIENT) then
 			sx, sy = surface.ScreenWidth(), surface.ScreenHeight()
 
 			for k, v in ipairs(player.GetAll()) do
-				if (v == client) then continue end
+				if (v == client or !v:GetCharacter()) then continue end
 
 				scrPos = v:GetPos():ToScreen()
-				marginx, marginy = sy*.1, sy*.1
+				marginx, marginy = sy * .1, sy * .1
 				x, y = math.Clamp(scrPos.x, marginx, sx - marginx), math.Clamp(scrPos.y, marginy, sy - marginy)
 				teamColor = team.GetColor(v:Team())
 				distance = client:GetPos():Distance(v:GetPos())
-				factor = 1 - math.Clamp(distance/dimDistance, 0, 1)
-				size = math.max(10, 32*factor)
-				alpha = math.Clamp(255*factor, 80, 255)
+				factor = 1 - math.Clamp(distance / dimDistance, 0, 1)
+				size = math.max(10, 32 * factor)
+				alpha = math.Clamp(255 * factor, 80, 255)
 
 				surface.SetDrawColor(teamColor.r, teamColor.g, teamColor.b, alpha)
 				surface.DrawLine(sx * 0.5, sy * 0.5, x, y)
