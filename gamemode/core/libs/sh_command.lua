@@ -158,7 +158,7 @@ if (SERVER) then
 			local result = results[1]
 			
 			-- If a string is returned, it is a notification.
-			if (type(result) == "string") then
+			if (isstring(result)) then
 				-- Normal player here.
 				if (IsValid(client)) then
 					if (result:sub(1, 1) == "@") then
@@ -201,9 +201,7 @@ if (SERVER) then
 				-- Runs the actual command.
 				nut.command.Run(client, match, arguments)
 
-				if (!realCommand) then
-					nut.log.Add(client, "command", text)
-				end
+				nut.log.Add(client, "command", text)
 			else
 				if (IsValid(client)) then
 					client:NotifyLocalized("cmdNoExist")
@@ -230,7 +228,7 @@ if (SERVER) then
 			local arguments2 = {}
 
 			for k, v in ipairs(arguments) do
-				if (type(v) == "string" or type(v) == "number") then
+				if (isstring(v) or isnumber(v)) then
 					arguments2[#arguments2 + 1] = tostring(v)
 				end
 			end

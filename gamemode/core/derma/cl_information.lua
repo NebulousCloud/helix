@@ -110,7 +110,7 @@ local PANEL = {}
 		if (self.description) then
 			self.description:SetText(char:GetDescription())
 			self.description.OnEnter = function(this, w, h)
-				nut.command.Send("chardesc", this:GetText())
+				nut.command.Send("CharDesc", this:GetText())
 			end
 		end
 
