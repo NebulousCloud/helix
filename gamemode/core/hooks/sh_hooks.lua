@@ -442,6 +442,11 @@ end
 
 function GM:ShowHelp() end
 
+function GM:PreGamemodeLoaded()
+	hook.Remove("PostDrawEffects", "RenderWidgets")
+	hook.Remove("PlayerTick", "TickWidgets")
+end
+
 function GM:PostGamemodeLoaded()
 	baseclass.Set("nut_character", nut.meta.character)
 	baseclass.Set("nut_inventory", nut.meta.inventory)
