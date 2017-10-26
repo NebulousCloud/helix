@@ -64,6 +64,14 @@ if (SERVER) then
 		inventory.oldOnAuthorizeTransfer = inventory.OnAuthorizeTransfer
 		inventory.oldGetReceiver = inventory.GetReceiver
 		inventory.storageInfo = info
+
+		if (info.entity:IsPlayer()) then
+			inventory.oldCheckAccess = inventory.CheckAccess
+
+			function inventory:OnCheckAccess(client)
+				return self.storageInfo.receivers[client] == true
+			end
+		end
 		
 		function inventory:OnAuthorizeTransfer(inventoryClient, oldInventory, item)
 			return IsValid(inventoryClient) and IsValid(self.storageInfo.entity) and self.storageInfo.receivers[inventoryClient] != nil
@@ -82,6 +90,13 @@ if (SERVER) then
 		inventory.OnAuthorizeTransfer = inventory.oldOnAuthorizeTransfer
 		inventory.GetReceiver = inventory.oldGetReceiver
 
+		if (inventory.oldCheckAccess) then
+			inventory.CheckAccess = inventory.oldCheckAccess
+			inventory.oldCheckAccess = nil
+		end
+
+		inventory.oldOnAuthorizeTransfer = nil
+		inventory.oldGetReceiver = nil
 		inventory.storageInfo = nil
 	end
 
@@ -95,8 +110,30 @@ if (SERVER) then
 	-- If bDontSync is true, the inventory will not be synced to the client and the
 	-- storage panel will not show up.
 	function nut.storage.AddReceiver(client, inventory, bDontSync)
-		if (inventory.storageInfo and !inventory.storageInfo.receivers[client]) then
-			inventory.storageInfo.receivers[client] = true
+		local info = inventory.storageInfo
+
+		if (info and !info.receivers[client]) then
+			if (info.entity:IsPlayer()) then
+				if (client:GetCharacter() and client:GetCharacter():GetInventory()) then
+					local receiverInventory = client:GetCharacter():GetInventory()
+
+					-- do not override OnAuthorizeTransfer if the client's inventory
+					-- is currently interacting with something
+					if (receiverInventory.oldOnAuthorizeTransfer) then
+						return false
+					end
+
+					function receiverInventory:OnAuthorizeTransfer(inventoryClient, oldInventory, item)
+						if (oldInventory == inventory) then
+							return true
+						end
+
+						receiverInventory:oldOnAuthorizeTransfer(inventoryClient, oldInventory, item)
+					end
+				end
+			end
+
+			info.receivers[client] = true
 			client.nutOpenStorage = inventory
 
 			if (!bDontSync) then
@@ -113,6 +150,16 @@ if (SERVER) then
 	-- If bDontRemove is true, the storage context will not be removed if not in use.
 	function nut.storage.RemoveReceiver(client, inventory, bDontRemove)
 		if (inventory.storageInfo) then
+			-- restore old OnAuthorizeTransfer callback if it exists
+			if (client:GetCharacter() and client:GetCharacter():GetInventory()) then
+				local clientInventory = client:GetCharacter():GetInventory()
+
+				if (clientInventory.oldOnAuthorizeTransfer) then
+					clientInventory.OnAuthorizeTransfer = clientInventory.oldOnAuthorizeTransfer
+					clientInventory.oldOnAuthorizeTransfer = nil
+				end
+			end
+
 			inventory.storageInfo.receivers[client] = nil
 
 			if (!bDontRemove and !nut.storage.InUse(inventory)) then
