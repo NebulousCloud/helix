@@ -62,6 +62,14 @@ nut.config.Add("invH", 4, "How many slots in a column there is in a default inve
 	data = {min = 0, max = 20},
 	category = "characters"
 })
+nut.config.Add("minNameLen", 4, "The minimum number of characters in a name.", nil, {
+	data = {min = 4, max = 64},
+	category = "characters"
+})
+nut.config.Add("maxNameLen", 32, "The maximum number of characters in a name.", nil, {
+	data = {min = 16, max = 128},
+	category = "characters"
+})
 nut.config.Add("minDescLen", 16, "The minimum number of characters in a description.", nil, {
 	data = {min = 0, max = 300},
 	category = "characters"

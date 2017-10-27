@@ -303,8 +303,15 @@ do
 		default = "John Doe",
 		index = 1,
 		OnValidate = function(value, data, client)
-			if (!value or !value:find("%S")) then
+			local minLength = nut.config.Get("minNameLen", 4)
+			local maxLength = nut.config.Get("maxNameLen", 32)
+
+			if (!value or #value:gsub("%s", "") < minLength) then
+				return false, "nameMinLen", minLength
+			elseif (!value:find("%S")) then
 				return false, "invalid", "name"
+			elseif (#value:gsub("%s", "") > maxLength) then
+				return false, "nameMaxLen", maxLength
 			end
 
 			return hook.Run("GetDefaultCharName", client, data.faction) or value:sub(1, 70)
@@ -335,6 +342,8 @@ do
 
 			if (!value or #value:gsub("%s", "") < minLength) then
 				return false, "descMinLen", minLength
+			elseif (!value:find("%s+") or !value:find("%S")) then
+				return false, "invalid", "description"
 			end
 		end
 	})
