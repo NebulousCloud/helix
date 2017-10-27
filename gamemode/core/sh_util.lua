@@ -266,6 +266,27 @@ if (CLIENT) then
 
 		for i = 1, #exploded do
 			local word = exploded[i]
+			local wordWidth = surface.GetTextSize(word)
+
+			if (wordWidth > width) then
+				if (#lines ~= 0 and line ~= "") then
+					lines[#lines + 1] = line
+					line = ""
+				end
+
+				for i2 = 1, string.len(word) do
+					local currentCharacter = string.sub(word, i2, i2)
+					local newWidth = surface.GetTextSize(line..currentCharacter)
+
+					if (newWidth > width) then
+						lines[#lines + 1] = line
+						line = ""
+					end
+
+					line = line..currentCharacter
+				end
+			end
+
 			line = line.." "..word
 			w = surface.GetTextSize(line)
 
@@ -279,7 +300,7 @@ if (CLIENT) then
 			end
 		end
 
-		if (line != "") then
+		if (line ~= "") then
 			lines[#lines + 1] = line
 		end
 
