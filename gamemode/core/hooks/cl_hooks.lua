@@ -579,7 +579,7 @@ function GM:DrawEntityInfo(entity, alpha, position)
 			local description = character.GetDescription(character)
 
 			if (description != entity.nutDescCache) then
-				entity.nutDescCache = description
+				entity.nutDescCache = string.len(description) > 128 and string.format("%s...", string.sub(description, 1, 125)) or description
 				entity.nutDescLines = nut.util.WrapText(description, ScrW() * 0.7, "nutSmallFont")
 			end
 
