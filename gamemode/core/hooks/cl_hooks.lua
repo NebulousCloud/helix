@@ -627,7 +627,7 @@ function GM:PlayerBindPress(client, bind, pressed)
 			return true
 		end
 	elseif (bind:find("jump")) then
-		if (IsValid(client.nutRagdoll)) then
+		if (client:GetLocalVar("ragdoll", 0)) then
 			nut.command.Send("CharGetUp")
 		end
 	elseif (bind:find("speed") and client:KeyDown(IN_WALK) and pressed) then
