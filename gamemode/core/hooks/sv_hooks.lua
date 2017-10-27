@@ -444,6 +444,8 @@ function GM:PlayerDeath(client, inflictor, attacker)
 		end
 
 		client:EmitSound(deathSound)
+
+		nut.log.Add(client, "playerDeath", attacker:GetName() ~= "" and attacker:GetName() or attacker:GetClass()) 
 	end
 end
 
@@ -480,7 +482,7 @@ function GM:PlayerHurt(client, attacker, health, damage)
 		client.nutNextPain = CurTime() + 0.33
 	end
 
-	nut.log.Add(client, "playerHurt", damage, attacker:GetName())
+	nut.log.Add(client, "playerHurt", damage, attacker:GetName() ~= "" and attacker:GetName() or attacker:GetClass())
 end
 
 function GM:PlayerDeathThink(client)
