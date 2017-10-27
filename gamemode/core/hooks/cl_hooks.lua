@@ -627,7 +627,9 @@ function GM:PlayerBindPress(client, bind, pressed)
 			return true
 		end
 	elseif (bind:find("jump")) then
-		nut.command.Send("chargetup")
+		if (IsValid(client.nutRagdoll)) then
+			nut.command.Send("CharGetUp")
+		end
 	elseif (bind:find("speed") and client:KeyDown(IN_WALK) and pressed) then
 		if (LocalPlayer():Crouching()) then
 			RunConsoleCommand("-duck")
