@@ -200,8 +200,8 @@ if (SERVER) then
 
 				-- Runs the actual command.
 				nut.command.Run(client, match, arguments)
-
-				nut.log.Add(client, "command", text)
+				
+				nut.log.Add(client, "command", COMMAND_PREFIX..match, table.concat(arguments, " "))
 			else
 				if (IsValid(client)) then
 					client:NotifyLocalized("cmdNoExist")

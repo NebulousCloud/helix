@@ -11,7 +11,12 @@ if (SERVER) then
 	end)
 	nut.log.AddType("command", function(client, ...)
 		local arg = {...}
-		return L("%s used command '%s'", client:Name(), arg[1])
+
+		if (#arg[2] > 0) then
+			return L("%s used command '%s %s'.", client:Name(), arg[1], arg[2])
+		else
+			return L("%s used command '%s'.", client:Name(), arg[1])
+		end
 	end)
 	nut.log.AddType("cfgSet", function(client, ...)
 		local arg = {...}
