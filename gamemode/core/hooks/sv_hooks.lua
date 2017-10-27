@@ -437,7 +437,7 @@ function GM:PlayerDeath(client, inflictor, attacker)
 		client:SetNetVar("deathStartTime", CurTime())
 		client:SetNetVar("deathTime", CurTime() + nut.config.Get("spawnTime", 5))
 
-		local deathSound = hook.Run("GetPlayerDeathSound", client) or table.Random(deathSounds)
+		local deathSound = hook.Run("GetPlayerDeathSound", client) or deathSounds[math.random(1, #deathSounds)]
 
 		if (client:IsFemale() and !deathSound:find("female")) then
 			deathSound = deathSound:gsub("male", "female")

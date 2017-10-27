@@ -13,6 +13,10 @@ if (SERVER) then
 		local arg = {...}
 		return L("%s used command '%s'", client:Name(), arg[1])
 	end)
+	nut.log.AddType("cfgSet", function(client, ...)
+		local arg = {...}
+		return L("%s set %s to '%s'.", client:Name(), arg[1], arg[2])
+	end)
 	nut.log.AddType("connect", function(client, ...)
 		return L("%s has connected.", client:SteamName())
 	end)

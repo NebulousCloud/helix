@@ -139,6 +139,7 @@ if (SERVER) then
 			end
 
 			nut.util.NotifyLocalized("cfgSet", nil, client:Name(), key, tostring(value), v)
+			nut.log.Add(client, "cfgSet", key, value)
 		end
 	end)
 else
