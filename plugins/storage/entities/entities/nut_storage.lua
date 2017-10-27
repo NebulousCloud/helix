@@ -74,7 +74,7 @@ if (SERVER) then
 		end
 
 		activator:SetAction("Opening...", OPEN_TIME, function()
-			if (activator:GetPos():Distance(self:GetPos()) <= 100) then
+			if (activator:GetPos():DistToSqr(self:GetPos()) <= 10000) then
 				self.receivers[activator] = true
 				activator.nutBagEntity = self
 				
@@ -94,6 +94,7 @@ if (SERVER) then
 
 				if (self:GetNetVar("locked")) then
 					self:EmitSound(def.locksound or "doors/default_locked.wav")
+					
 					if (!self.keypad) then
 						netstream.Start(activator, "invLock", self)
 					end

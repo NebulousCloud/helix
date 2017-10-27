@@ -85,6 +85,8 @@ nut.command.Add("CharGiveFlag", {
 			target:GetChar():GiveFlags(flags)
 
 			nut.util.NotifyLocalized("flagGive", nil, client:Name(), target:Name(), flags)
+		else
+			return "@charNoExist"
 		end
 	end
 })
@@ -107,6 +109,8 @@ nut.command.Add("CharTakeFlag", {
 			target:GetChar():TakeFlags(flags)
 
 			nut.util.NotifyLocalized("flagTake", nil, client:Name(), flags, target:Name())
+		else
+			return "@charNoExist"
 		end
 	end
 })
@@ -135,6 +139,8 @@ nut.command.Add("CharSetModel", {
 			target:SetupHands()
 
 			nut.util.NotifyLocalized("cChangeModel", nil, client:Name(), target:Name(), arguments[2])
+		else
+			return "@charNoExist"
 		end
 	end
 })
@@ -212,6 +218,8 @@ nut.command.Add("CharSetAttribute", {
 					end
 				end
 			end
+		else
+			return "@charNoExist"
 		end
 	end
 })
@@ -245,6 +253,8 @@ nut.command.Add("CharAddAttribute", {
 					end
 				end
 			end
+		else
+			return "@charNoExist"
 		end
 	end
 })
@@ -269,6 +279,8 @@ nut.command.Add("CharSetName", {
 			nut.util.NotifyLocalized("cChangeName", client:Name(), target:Name(), targetName)
 
 			target:GetChar():SetName(targetName:gsub("#", "#​"))
+		else
+			return "@charNoExist"
 		end
 	end
 })
@@ -307,6 +319,8 @@ nut.command.Add("CharGiveItem", {
 			else
 				target:NotifyLocalized(tostring(err))
 			end
+		else
+			return "@charNoExist"
 		end
 	end
 })
@@ -326,6 +340,8 @@ nut.command.Add("CharKick", {
 
 				char:Kick()
 			end
+		else
+			return "@charNoExist"
 		end
 	end
 })
@@ -345,6 +361,8 @@ nut.command.Add("CharBan", {
 				char:SetData("banned", true)
 				char:Kick()
 			end
+		else
+			return "@charNoExist"
 		end
 	end
 })
@@ -447,6 +465,8 @@ nut.command.Add("CharSetMoney", {
 				char:SetMoney(amount)
 				client:NotifyLocalized("setMoney", target:Name(), nut.currency.Get(amount))
 			end
+		else
+			return "@charNoExist"
 		end
 	end
 })
@@ -720,6 +740,8 @@ nut.command.Add("CharSetClass", {
 			else
 				client:NotifyLocalized("invalidClass")
 			end
+		else
+			return "@charNoExist"
 		end
 	end
 })

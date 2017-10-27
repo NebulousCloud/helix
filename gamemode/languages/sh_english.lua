@@ -53,6 +53,7 @@ LANGUAGE = {
 	notAllowed = "Sorry, you are not allowed to do this.",
 	itemNoExist = "Sorry, the item that you requested does not exist.",
 	cmdNoExist = "Sorry, that command does not exist.",
+	charNoExist = "Sorry, a matching character could not be found.",
 	plyNoExist = "Sorry, a matching player could not be found.",
 	cfgSet = "%s has set \"%s\" to %s.",
 	drop = "Drop",
