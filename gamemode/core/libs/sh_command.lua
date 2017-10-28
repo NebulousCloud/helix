@@ -171,6 +171,10 @@ if (SERVER) then
 					print(result)
 				end
 			end
+
+			if (IsValid(client)) then
+				nut.log.Add(client, "command", COMMAND_PREFIX..command.name, table.concat(arguments, " "))
+			end
 		end
 	end
 
@@ -190,7 +194,9 @@ if (SERVER) then
 				match = post[1]:utf8sub(2, len)
 			end
 
-			local command = nut.command.list[match:lower()]
+			match = match:lower()
+
+			local command = nut.command.list[match]
 			-- We have a valid, registered command.
 			if (command) then
 				-- Get the arguments like a console command.
@@ -200,8 +206,6 @@ if (SERVER) then
 
 				-- Runs the actual command.
 				nut.command.Run(client, match, arguments)
-				
-				nut.log.Add(client, "command", COMMAND_PREFIX..match, table.concat(arguments, " "))
 			else
 				if (IsValid(client)) then
 					client:NotifyLocalized("cmdNoExist")
