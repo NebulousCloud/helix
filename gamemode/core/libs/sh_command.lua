@@ -173,7 +173,7 @@ if (SERVER) then
 			end
 
 			if (IsValid(client)) then
-				nut.log.Add(client, "command", COMMAND_PREFIX..command.name, table.concat(arguments, " "))
+				nut.log.Add(client, "command", COMMAND_PREFIX..command.name, arguments and table.concat(arguments, " "))
 			end
 		end
 	end
