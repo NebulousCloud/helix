@@ -132,7 +132,7 @@ function PANEL:Init()
 	self.checkout:SetText(L("checkout", 0))
 	self.checkout.DoClick = function()
 		if (!IsValid(nut.gui.checkout) and self:GetCartCount() > 0) then
-			self:Add("nutBusinessCheckout"):SetCart(self.cart)
+			vgui.Create("nutBusinessCheckout"):SetCart(self.cart)
 		end
 	end
 
@@ -236,6 +236,8 @@ end
 
 vgui.Register("nutBusiness", PANEL, "EditablePanel")
 
+DEFINE_BASECLASS("DFrame")
+
 PANEL = {}
 	function PANEL:Init()
 		if (IsValid(nut.gui.checkout)) then
@@ -245,10 +247,11 @@ PANEL = {}
 		nut.gui.checkout = self
 
 		self:SetTitle(L("checkout", 0))
-		self:SetSize(280, 400)
+		self:SetSize(ScrW() / 4 > 200 and ScrW() / 4 or ScrW() / 2, ScrH() / 2 > 300 and ScrH() / 2 or ScrH())
 		self:MakePopup()
 		self:Center()
 		self:SetBackgroundBlur(true)
+		self:SetSizable(true)
 
 		self.items = self:Add("DScrollPanel")
 		self.items:Dock(FILL)
@@ -406,10 +409,12 @@ PANEL = {}
 
 				slot.name = slot:Add("DLabel")
 				slot.name:SetPos(40, 2)
-				slot.name:SetSize(180, 32)
 				slot.name:SetFont("nutChatFont")
 				slot.name:SetText(L(itemTable.GetName and itemTable:GetName() or L(itemTable.name)).." ("..(itemTable.price and nut.currency.Get(itemTable.price) or L"free":upper())..")")
 				slot.name:SetTextColor(color_white)
+				slot.name:SizeToContents()
+				slot.name:DockMargin(40, 0, 0, 0)
+				slot.name:Dock(FILL)
 
 				slot.quantity = slot:Add("DTextEntry")
 				slot.quantity:SetSize(32, 32)
@@ -440,14 +445,16 @@ PANEL = {}
 	function PANEL:Think()
 		if (!self:HasFocus()) then
 			self:MakePopup()
-		end	
+		end
+
+		BaseClass.Think(self)
 	end
 vgui.Register("nutBusinessCheckout", PANEL, "DFrame")
 
 hook.Add("CreateMenuButtons", "nutBusiness", function(tabs)
 	if (hook.Run("BuildBusinessMenu", panel) != false) then
 		tabs["business"] = function(panel)
-				panel:Add("nutBusiness")
+			panel:Add("nutBusiness")
 		end
 	end
 end)
