@@ -7,31 +7,67 @@ if (CLIENT) then
 	NUT_CVAR_OBSTPBACK = CreateClientConVar("nut_obstpback", 0, true, true)
 	NUT_CVAR_ADMINESP = CreateClientConVar("nut_obsesp", 1, true, true)
 
-	local client, sx, sy, scrPos, marginx, marginy, x, y, teamColor, distance, factor, size, alpha
 	local dimDistance = 1024
+	local aimLength = 128
+	local barHeight = 2
+
 	function PLUGIN:HUDPaint()
 		client = LocalPlayer()
 		
 		if (client:IsAdmin() and client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle() and NUT_CVAR_ADMINESP:GetBool()) then
-			sx, sy = surface.ScreenWidth(), surface.ScreenHeight()
+			scrW, scrH = ScrW(), ScrH()
 
 			for k, v in ipairs(player.GetAll()) do
 				if (v == client or !v:GetCharacter()) then continue end
 
-				scrPos = v:GetPos():ToScreen()
-				marginx, marginy = sy * .1, sy * .1
-				x, y = math.Clamp(scrPos.x, marginx, sx - marginx), math.Clamp(scrPos.y, marginy, sy - marginy)
-				teamColor = team.GetColor(v:Team())
-				distance = client:GetPos():Distance(v:GetPos())
-				factor = 1 - math.Clamp(distance / dimDistance, 0, 1)
-				size = math.max(10, 32 * factor)
-				alpha = math.Clamp(255 * factor, 80, 255)
+				local screenPosition = v:GetPos():ToScreen()
+				local aimPosition = (v:GetPos() + v:GetForward() * aimLength):ToScreen()
+
+				local marginX, marginY = scrH * .1, scrH * .1
+				local x, y = math.Clamp(screenPosition.x, marginX, scrW - marginX), math.Clamp(screenPosition.y, marginY, scrH - marginY)
+				local aimX, aimY = math.Clamp(aimPosition.x, marginX, scrW - marginX), math.Clamp(aimPosition.y, marginY, scrH - marginY)
+
+				local teamColor = team.GetColor(v:Team())
+				local distance = client:GetPos():Distance(v:GetPos())
+				local factor = 1 - math.Clamp(distance / dimDistance, 0, 1)
+				local size = math.max(10, 32 * factor)
+				local alpha = math.max(255 * factor, 80)
+				local aimAlpha = (1 - factor * 1.5) * 80
 
 				surface.SetDrawColor(teamColor.r, teamColor.g, teamColor.b, alpha)
-				surface.DrawLine(sx * 0.5, sy * 0.5, x, y)
-				surface.DrawRect(x - size/2, y - size/2, size, size)
+				surface.SetFont("nutGenericFont")
 
-				nut.util.DrawText(v:Name(), x, y - size, ColorAlpha(teamColor, alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, nil, alpha)
+				local text = v:Name()
+				local textWidth, textHeight = surface.GetTextSize(text)
+				local barWidth = math.Clamp((v:Health() / v:GetMaxHealth()) * textWidth, 0, textWidth)
+
+				surface.DrawRect(x - size / 2, y - size / 2, size, size)
+				
+
+				-- we can assume that if we're using cheap blur, we'd want to save some fps here
+				if ((NUT_CVAR_CHEAP and !NUT_CVAR_CHEAP:GetBool())) then
+					local data = {}
+					data.start = client:EyePos()
+					data.endpos = v:EyePos()
+					data.filter = {client, v}
+
+					if (util.TraceLine(data).Hit) then
+						aimAlpha = alpha
+					else
+						aimAlpha = (1 - factor * 4) * 80
+					end
+				end
+
+				if (aimPosition.visible) then
+					surface.SetDrawColor(teamColor.r * 1.2, teamColor.g * 1.2, teamColor.b * 1.2, aimAlpha)
+					surface.DrawLine(x, y, aimX, aimY)
+					surface.DrawLine(x, y + 1, aimX, aimY + 1)
+				end
+
+				surface.SetDrawColor(teamColor.r * 1.6, teamColor.g * 1.6, teamColor.b * 1.6, alpha)
+				surface.DrawRect(x - barWidth / 2, y - size - textHeight / 2, barWidth, barHeight)
+
+				nut.util.DrawText(text, x, y - size, ColorAlpha(teamColor, alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, nil, alpha)
 			end
 		end
 	end
