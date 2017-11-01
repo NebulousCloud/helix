@@ -101,6 +101,10 @@ local PANEL = {}
 				self:Remove()
 			end
 		end
+
+		if (gui.IsGameUIVisible()) then
+			self:Remove()
+		end
 	end
 
 	local color_bright = Color(240, 240, 240, 180)
