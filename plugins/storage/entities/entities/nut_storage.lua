@@ -73,7 +73,9 @@ if (SERVER) then
 			def.OnOpen(self, activator)
 		end
 
-		activator:SetAction("Opening...", OPEN_TIME, function()
+		activator:SetAction("Opening...", OPEN_TIME)
+
+		activator:DoStaredAction(self, function()
 			if (activator:GetPos():DistToSqr(self:GetPos()) <= 10000) then
 				self.receivers[activator] = true
 				activator.nutBagEntity = self
@@ -82,6 +84,8 @@ if (SERVER) then
 				netstream.Start(activator, "invOpen", self, inventory:GetID())
 				self:EmitSound(def.opensound or "items/ammocrate_open.wav")
 			end
+		end, OPEN_TIME, function()
+			activator:SetAction()
 		end)
 	end
 
