@@ -65,7 +65,7 @@ if (SERVER) then
 	end)
 	nut.log.AddType("playerDeath", function(client, ...)
 		local arg = {...}
-		return L("%s has killed %s.", client:Name(), arg[1])
+		return L("%s has killed %s.", arg[1], client:Name())
 	end)
 
 	function PLUGIN:PlayerInitialSpawn(client)
