@@ -34,7 +34,7 @@ if (SERVER) then
 					end
 
 					if (client:Crouching()) then
-						offset = offset + 1
+						offset = offset + 0.25
 					end
 
 					local current = client:GetLocalVar("stm", 0)
