@@ -25,6 +25,8 @@ local PANEL = {}
 		self.tabs:DockMargin(4, 4, 4, 4)
 		self.tabs:SetVisible(false)
 
+		self.autocompleteIndex = 0
+		self.potentialCommands = {}
 		self.arguments = {}
 
 		self.scroll = self:Add("DScrollPanel")
@@ -52,7 +54,7 @@ local PANEL = {}
 					for k, v in ipairs(self.potentialCommands) do
 						local x, y = nut.util.DrawText("/" .. v.name .. "  ", 4, i * 20, color)
 
-						if ((command == v.uniqueID) and v.syntax) then
+						if ((command == v.uniqueID or (self.autocompleteIndex > 0 and k == self.autocompleteIndex)) and v.syntax) then
 							local i2 = 0
 
 							for argument in v.syntax:gmatch("([%[<][%w_]+[%s][%w_]+[%]>])") do
@@ -127,6 +129,7 @@ local PANEL = {}
 			nut.chat.history = nut.chat.history or {}
 
 			self.text = self.entry:Add("DTextEntry")
+			self.text.baseClass = baseclass.Get("DTextEntry")
 			self.text:Dock(FILL)
 			self.text.History = nut.chat.history
 			self.text:SetHistoryEnabled(true)
@@ -165,11 +168,37 @@ local PANEL = {}
 
 				hook.Run("ChatTextChanged", text)
 
-				if (text:sub(1, 1) == "/") then
+				if (text:sub(1, 1) == "/" and !this.autocompleted) then
 					local command = tostring(text:match("(/(%w+))") or "/")
 
 					self.potentialCommands = nut.command.FindAll(command, true, true, true)
 					self.arguments = nut.command.ExtractArgs(text:sub(2))
+					self.autocompleteIndex = 0
+				end
+
+				this.autocompleted = nil
+			end
+			self.text.OnKeyCodeTyped = function(this, code)
+				if (code == KEY_TAB) then
+					if (#self.potentialCommands > 0) then
+						self.autocompleteIndex = (self.autocompleteIndex + 1) > #self.potentialCommands and 1 or (self.autocompleteIndex + 1)
+
+						local command = self.potentialCommands[self.autocompleteIndex]
+						
+						if (command) then
+							local text = string.format("/%s ", command.uniqueID)
+
+							this:SetText(text)
+							this:SetCaretPos(text:len())
+
+							this.autocompleted = true
+						end
+					end
+
+					this:RequestFocus()
+					return true
+				else
+					this.baseClass.OnKeyCodeTyped(this, code)
 				end
 			end
 
