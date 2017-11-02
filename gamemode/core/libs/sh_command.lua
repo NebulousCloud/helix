@@ -5,9 +5,11 @@ local COMMAND_PREFIX = "/"
 
 -- Adds a new command to the list of commands.
 function nut.command.Add(command, data)
-	-- For showing users the arguments of the command.
 	data.name = string.gsub(command, "%s", "")
 	data.syntax = data.syntax or "[none]"
+
+	command = command:lower()
+	data.uniqueID = command
 
 	-- Why bother adding a command if it doesn't do anything.
 	if (!data.OnRun) then
@@ -78,7 +80,7 @@ function nut.command.Add(command, data)
 		end
 	end
 
-	nut.command.list[string.lower(command)] = data
+	nut.command.list[command] = data
 end
 
 -- Returns whether or not a player is allowed to run a certain command.
@@ -134,6 +136,59 @@ function nut.command.ExtractArgs(text)
 	end
 
 	return arguments
+end
+
+-- Returns an array of potential commands by unique id.
+-- When bSorted is true, the commands will be sorted by name. When bReorganize is true,
+-- it will move any exact match to the top of the array. When bRemoveDupes is true, it
+-- will remove any commands that have the same NAME.
+function nut.command.FindAll(identifier, bSorted, bReorganize, bRemoveDupes)
+	local result = {}
+	local iterator = bSorted and SortedPairs or pairs
+	local fullMatch
+
+	identifier = identifier:lower()
+
+	if (identifier == "/") then
+		-- we don't simply copy because we need numeric indices
+		for k, v in iterator(nut.command.list) do
+			result[#result + 1] = v
+		end
+		
+		return result
+	elseif (identifier:sub(1, 1) == "/") then
+		identifier = identifier:sub(2)
+	end
+
+	for k, v in iterator(nut.command.list) do
+		if (k:match(identifier)) then
+			local index = #result + 1
+			result[index] = v
+
+			if (k == identifier) then
+				fullMatch = index
+			end
+		end
+	end
+
+	if (bRemoveDupes) then
+		local commandNames = {}
+
+		-- using pairs intead of ipairs because we might remove from array
+		for k, v in pairs(result) do
+			if (commandNames[v.name]) then
+				table.remove(result, k)
+			end
+
+			commandNames[v.name] = true
+		end
+	end
+
+	if (bReorganize and fullMatch and fullMatch != 1) then
+		result[1], result[fullMatch] = result[fullMatch], result[1]
+	end
+	
+	return result
 end
 
 if (SERVER) then

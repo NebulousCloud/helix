@@ -49,29 +49,25 @@ local PANEL = {}
 					local i = 0
 					local color = nut.config.Get("color")
 
-					for k, v in SortedPairs(nut.command.list) do
-						local k2 = "/"..k
+					for k, v in ipairs(self.potentialCommands) do
+						local x, y = nut.util.DrawText("/" .. v.name .. "  ", 4, i * 20, color)
 
-						if (k2:match(command)) then
-							local x, y = nut.util.DrawText("/"..v.name.."  ", 4, i * 20, color)
+						if ((command == v.uniqueID) and v.syntax) then
+							local i2 = 0
 
-							if (k == command and v.syntax) then
-								local i2 = 0
+							for argument in v.syntax:gmatch("([%[<][%w_]+[%s][%w_]+[%]>])") do
+								i2 = i2 + 1
+								local color = COLOR_FADED
 
-								for argument in v.syntax:gmatch("([%[<][%w_]+[%s][%w_]+[%]>])") do
-									i2 = i2 + 1
-									local color = COLOR_FADED
-
-									if (i2 == (#arguments - 1)) then
-										color = COLOR_ACTIVE
-									end
-
-									x = x + nut.util.DrawText(argument.."  ", x, i * 20, color)
+								if (i2 == (#arguments - 1)) then
+									color = COLOR_ACTIVE
 								end
-							end
 
-							i = i + 1
+								x = x + nut.util.DrawText(argument .. "  ", x, i * 20, color)
+							end
 						end
+
+						i = i + 1
 					end
 				end
 			end
@@ -94,7 +90,7 @@ local PANEL = {}
 
 		for k, v in SortedPairsByMemberValue(nut.chat.classes, "filter") do
 			if (!buttons[v.filter]) then
-				self:addFilterButton(v.filter)
+				self:AddFilterButton(v.filter)
 				buttons[v.filter] = true
 			end
 		end
@@ -170,6 +166,9 @@ local PANEL = {}
 				hook.Run("ChatTextChanged", text)
 
 				if (text:sub(1, 1) == "/") then
+					local command = tostring(text:match("(/(%w+))") or "/")
+
+					self.potentialCommands = nut.command.FindAll(command, true, true, true)
 					self.arguments = nut.command.ExtractArgs(text:sub(2))
 				end
 			end
@@ -212,7 +211,7 @@ local PANEL = {}
 		surface.DrawOutlinedRect(0, 0, w, h)
 	end
 
-	function PANEL:addFilterButton(filter)
+	function PANEL:AddFilterButton(filter)
 		local name = L(filter)
 
 		local tab = self.tabs:Add("DButton")
@@ -362,3 +361,7 @@ local PANEL = {}
 		end
 	end
 vgui.Register("nutChatBox", PANEL, "DPanel")
+
+if (IsValid(nut.gui.chat)) then
+	RunConsoleCommand("fixchatplz")
+end

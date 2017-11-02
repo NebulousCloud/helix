@@ -57,12 +57,10 @@ function nut.chat.Register(chatType, data)
 	end
 
 	if (CLIENT and data.prefix) then
-		local dummy = {syntax = "<string text>", OnRun = function() end}
-
 		if (type(data.prefix) == "table") then
 			for k, v in ipairs(data.prefix) do
 				if (v:sub(1, 1) == "/") then
-					nut.command.Add(v:sub(2), dummy)
+					nut.command.Add(v:sub(2), {syntax = "<string text>", OnRun = function() end})
 				end
 			end
 		else
