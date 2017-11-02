@@ -7,74 +7,76 @@ PLUGIN.acts = PLUGIN.acts or {}
 nut.util.Include("sh_setup.lua")
 
 for k, v in pairs(PLUGIN.acts) do
-	local data = {}
-		local multiple = false
+	local COMMAND = {}
+	local multiple = false
 
-		for k2, v2 in pairs(v) do
-			if (type(v2.sequence) == "table" and #v2.sequence > 1) then
-				multiple = true
+	for k2, v2 in pairs(v) do
+		if (type(v2.sequence) == "table" and #v2.sequence > 1) then
+			multiple = true
 
-				break
-			end
+			break
+		end
+	end
+
+	if (multiple) then
+		COMMAND.syntax = "[number type]"
+	end
+
+	function COMMAND:OnRun(client, arguments)
+		if (client.nutSeqUntimed) then
+			client:SetNetVar("actAng")
+			client:LeaveSequence()
+			client.nutSeqUntimed = nil
+
+			return
 		end
 
-		if (multiple) then
-			data.syntax = "[number type]"
+		if (!client:Alive() or
+			client:SetLocalVar("ragdoll") or
+			client:WaterLevel() > 0) then
+			return
 		end
 
-		data.OnRun = function(self, client, arguments)
-			if (client.nutSeqUntimed) then
-				client:SetNetVar("actAng")
-				client:LeaveSequence()
-				client.nutSeqUntimed = nil
+		if ((client.nutNextAct or 0) < CurTime()) then
+			local class = nut.anim.GetModelClass(client:GetModel())
+			local info = v[class]
 
-				return
-			end
+			if (info) then
+				if (info.onCheck) then
+					local result = info.onCheck(client)
 
-			if (!client:Alive() or
-				client:SetLocalVar("ragdoll")) then
-				return
-			end
-
-			if ((client.nutNextAct or 0) < CurTime()) then
-				local class = nut.anim.GetModelClass(client:GetModel())
-				local info = v[class]
-
-				if (info) then
-					if (info.onCheck) then
-						local result = info.onCheck(client)
-
-						if (result) then
-							return result
-						end
+					if (result) then
+						return result
 					end
-
-					local sequence
-
-					if (type(info.sequence) == "table") then
-						local index = math.Clamp(math.floor(tonumber(arguments[1]) or 1), 1, #info.sequence)
-
-						sequence = info.sequence[index]
-					else
-						sequence = info.sequence
-					end
-
-					local duration = client:ForceSequence(sequence, nil, info.untimed and 0 or nil)
-
-					client.nutSeqUntimed = info.untimed
-					client.nutNextAct = CurTime() + (info.untimed and 4 or duration) + 1
-					client:SetNetVar("actAng", client:GetAngles())
-
-					if (info.offset) then
-						client.nutOldPosition = client:GetPos()
-						client:SetPos(client:GetPos() + info.offset(client))
-					end
-				else
-					return "@modelNoSeq"
 				end
+
+				local sequence
+
+				if (type(info.sequence) == "table") then
+					local index = math.Clamp(math.floor(tonumber(arguments[1]) or 1), 1, #info.sequence)
+
+					sequence = info.sequence[index]
+				else
+					sequence = info.sequence
+				end
+
+				local duration = client:ForceSequence(sequence, nil, info.untimed and 0 or nil)
+
+				client.nutSeqUntimed = info.untimed
+				client.nutNextAct = CurTime() + (info.untimed and 4 or duration) + 1
+				client:SetNetVar("actAng", client:GetAngles())
+
+				if (info.offset) then
+					client.nutOldPosition = client:GetPos()
+					client:SetPos(client:GetPos() + info.offset(client))
+				end
+			else
+				return "@modelNoSeq"
 			end
 		end
-	nut.command.Add("Act"..k, data)
+	end
+
+	nut.command.Add("Act"..k, COMMAND)
 end
 
 function PLUGIN:UpdateAnimation(client, moveData)
