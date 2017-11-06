@@ -104,6 +104,14 @@ function PLUGIN:PlayerDeath(client)
 	end
 end
 
+function PLUGIN:PlayerSpawn(client)
+	if (client.nutSeqUntimed) then
+		client:SetNetVar("actAng")
+		client:LeaveSequence()
+		client.nutSeqUntimed = nil
+	end
+end
+
 function PLUGIN:OnCharFallover(client)
 	if (client.nutSeqUntimed) then
 		client:SetNetVar("actAng")
