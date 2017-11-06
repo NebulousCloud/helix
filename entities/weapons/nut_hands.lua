@@ -133,7 +133,7 @@ function SWEP:Think()
 		end
 	else
 		if (self:IsHoldingObject()) then
-			local physics = self.physicsIndex > -1 and self.heldEntity:GetPhysicsObjectNum(self.physicsIndex) or self.heldEntity:GetPhysicsObject()
+			local physics = self:GetHeldPhysicsObject()
 			local targetLocation = (self.Owner:GetShootPos() + self.Owner:GetForward() * self.holdDistance) - self.heldEntity:OBBCenter()
 
 			if (!IsValid(physics)) then
@@ -164,6 +164,12 @@ function SWEP:Think()
 			end
 		end
 	end
+end
+
+function SWEP:GetHeldPhysicsObject()
+	return (IsValid(self.heldEntity) and (
+		self.physicsIndex > -1 and self.heldEntity:GetPhysicsObjectNum(self.physicsIndex) or self.heldEntity:GetPhysicsObject()
+	) or nil)
 end
 
 function SWEP:CanHoldObject(entity)
@@ -218,14 +224,13 @@ function SWEP:DropObject(bThrow)
 	self.heldEntity:StopMotionController()
 	self.heldEntity:SetCollisionGroup(self.heldEntity.nutCollisionGroup)
 
-	local physics = self.heldEntity:GetPhysicsObject()
+	local physics = self:GetHeldPhysicsObject()
 	physics:EnableGravity(true)
 	physics:Wake()
+	physics:SetVelocityInstantaneous(vector_origin)
 	
 	if (bThrow) then
-		physics:SetVelocityInstantaneous(self.Owner:GetAimVector() * nut.config.Get("throwForce", 256));
-	else
-		physics:SetVelocityInstantaneous(vector_origin)
+		physics:ApplyForceCenter(self.Owner:GetAimVector() * nut.config.Get("throwForce", 732))
 	end
 
 	self.heldEntity.nutHeldOwner = nil
