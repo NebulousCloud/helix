@@ -58,6 +58,7 @@ function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
 
 	self.lastHand = 0
+	self.physicsIndex = -1
 	self.maxHoldDistanceSquared = self.maxHoldDistance ^ 2
 	self.heldObjectAngle = angle_zero
 end
@@ -132,8 +133,13 @@ function SWEP:Think()
 		end
 	else
 		if (self:IsHoldingObject()) then
-			local physics = self.heldEntity:GetPhysicsObject()
+			local physics = self.physicsIndex > -1 and self.heldEntity:GetPhysicsObjectNum(self.physicsIndex) or self.heldEntity:GetPhysicsObject()
 			local targetLocation = (self.Owner:GetShootPos() + self.Owner:GetForward() * self.holdDistance) - self.heldEntity:OBBCenter()
+
+			if (!IsValid(physics)) then
+				self:DropObject()
+				return
+			end
 
 			if (physics:GetPos():DistToSqr(targetLocation) > self.maxHoldDistanceSquared) then
 				self:DropObject()
@@ -193,6 +199,15 @@ function SWEP:PickupObject(entity)
 
 	self.heldObjectAngle = entity:GetAngles()
 	self.heldEntity = entity
+
+	local trace = self.Owner:GetEyeTrace()
+
+	if (IsValid(trace.Entity) and trace.Entity:IsRagdoll()) then
+		if (isnumber(trace.PhysicsBone)) then
+			-- we're assuming that the physics bone corresponds to the correct physics object
+			self.physicsIndex = trace.PhysicsBone
+		end
+	end
 end
 
 function SWEP:DropObject(bThrow)
@@ -216,6 +231,7 @@ function SWEP:DropObject(bThrow)
 	self.heldEntity.nutHeldOwner = nil
 	self.heldEntity.nutCollisionGroup = nil
 	self.heldEntity = nil
+	self.physicsIndex = -1
 end
 
 function SWEP:PlayPickupSound(surfaceProperty)
