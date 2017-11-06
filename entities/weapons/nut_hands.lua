@@ -42,14 +42,13 @@ SWEP.LowerAngles2 = Angle(0, 5, -22)
 SWEP.FireWhenLowered = true
 SWEP.HoldType = "fist"
 
-SWEP.HoldDistance = 64
-SWEP.MaxHoldDistance = 72 -- how far away the held object is allowed to travel before forcefully dropping
-SWEP.MaxHoldStress = 4000 -- how much stress the held object can undergo before forcefully dropping
-SWEP.AllowedHoldableClasses = {
+SWEP.holdDistance = 64
+SWEP.maxHoldDistance = 96 -- how far away the held object is allowed to travel before forcefully dropping
+SWEP.maxHoldStress = 4000 -- how much stress the held object can undergo before forcefully dropping
+SWEP.allowedHoldableClasses = {
 	["nut_item"] = true,
 	["prop_physics"] = true,
-	-- TODO
-	--["prop_ragdoll"] = true
+	["prop_ragdoll"] = true
 }
 
 ACT_VM_FISTS_DRAW = 3
@@ -57,9 +56,10 @@ ACT_VM_FISTS_HOLSTER = 2
 
 function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
-	self.LastHand = 0
-	self.MaxHoldDistance = self.MaxHoldDistance ^ 2
-	self.HeldObjectAngle = angle_zero
+
+	self.lastHand = 0
+	self.maxHoldDistanceSquared = self.maxHoldDistance ^ 2
+	self.heldObjectAngle = angle_zero
 end
 
 function SWEP:PreDrawViewModel(viewModel, weapon, client)
@@ -100,7 +100,7 @@ function SWEP:Precache()
 end
 
 function SWEP:OnReloaded()
-	self.MaxHoldDistance = self.MaxHoldDistance ^ 2
+	self.maxHoldDistanceSquared = self.maxHoldDistance ^ 2
 	self:DropObject()
 end
 
@@ -132,15 +132,27 @@ function SWEP:Think()
 		end
 	else
 		if (self:IsHoldingObject()) then
-			local physics = self.HeldEntity:GetPhysicsObject()
-			local targetLocation = (self.Owner:GetShootPos() + self.Owner:GetForward() * self.HoldDistance) - self.HeldEntity:OBBCenter()
+			local physics = self.heldEntity:GetPhysicsObject()
+			local targetLocation = (self.Owner:GetShootPos() + self.Owner:GetForward() * self.holdDistance) - self.heldEntity:OBBCenter()
 
-			if (physics:GetPos():DistToSqr(targetLocation) > self.MaxHoldDistance) then
+			if (physics:GetPos():DistToSqr(targetLocation) > self.maxHoldDistanceSquared) then
 				self:DropObject()
 			else
-				physics:UpdateShadow(targetLocation, self.HeldObjectAngle, FrameTime())
+				physics:Wake()
+				physics:ComputeShadowControl({
+					secondstoarrive = 0.01,
+					pos = targetLocation,
+					angle = self.heldObjectAngle,
+					maxangular = 256,
+					maxangulardamp = 10000,
+					maxspeed = 256,
+					maxspeeddamp = 10000,
+					dampfactor = 0.8,
+					teleportdistance = self.maxHoldDistance * 0.75,
+					deltatime = FrameTime()
+				})
 
-				if (physics:GetStress() > self.MaxHoldStress) then
+				if (physics:GetStress() > self.maxHoldStress) then
 					self:DropObject()
 				end
 			end
@@ -155,13 +167,13 @@ function SWEP:CanHoldObject(entity)
 		(physics:GetMass() <= nut.config.Get("maxHoldWeight", 100) and physics:IsMoveable()) and
 		!self:IsHoldingObject() and
 		!IsValid(entity.nutHeldOwner) and
-		self.AllowedHoldableClasses[entity:GetClass()])
+		self.allowedHoldableClasses[entity:GetClass()])
 end
 
 function SWEP:IsHoldingObject()
-	return (IsValid(self.HeldEntity) and
-		IsValid(self.HeldEntity.nutHeldOwner) and 
-		self.HeldEntity.nutHeldOwner == self.Owner)
+	return (IsValid(self.heldEntity) and
+		IsValid(self.heldEntity.nutHeldOwner) and 
+		self.heldEntity.nutHeldOwner == self.Owner)
 end
 
 function SWEP:PickupObject(entity)
@@ -172,30 +184,27 @@ function SWEP:PickupObject(entity)
 	end
 
 	local physics = entity:GetPhysicsObject()
-	physics:Wake()
+	physics:EnableGravity(false)
 
 	entity.nutHeldOwner = self.Owner
 	entity.nutCollisionGroup = entity:GetCollisionGroup()
-
-	-- TODO: we might need to make a separate grabber entity instead of modifying the entity's physobj
 	entity:StartMotionController()
-	entity:MakePhysicsObjectAShadow(true, false)
 	entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 
-	self.HeldObjectAngle = entity:GetAngles()
-	self.HeldEntity = entity
+	self.heldObjectAngle = entity:GetAngles()
+	self.heldEntity = entity
 end
 
 function SWEP:DropObject(bThrow)
-	if (!IsValid(self.HeldEntity) or self.HeldEntity.nutHeldOwner != self.Owner) then
+	if (!IsValid(self.heldEntity) or self.heldEntity.nutHeldOwner != self.Owner) then
 		return
 	end
 
-	self.HeldEntity:StopMotionController()
-	self.HeldEntity:PhysicsInit(SOLID_VPHYSICS)
-	self.HeldEntity:SetCollisionGroup(self.HeldEntity.nutCollisionGroup)
+	self.heldEntity:StopMotionController()
+	self.heldEntity:SetCollisionGroup(self.heldEntity.nutCollisionGroup)
 
-	local physics = self.HeldEntity:GetPhysicsObject()
+	local physics = self.heldEntity:GetPhysicsObject()
+	physics:EnableGravity(true)
 	physics:Wake()
 	
 	if (bThrow) then
@@ -204,9 +213,9 @@ function SWEP:DropObject(bThrow)
 		physics:SetVelocityInstantaneous(vector_origin)
 	end
 
-	self.HeldEntity.nutHeldOwner = nil
-	self.HeldEntity.nutCollisionGroup = nil
-	self.HeldEntity = nil
+	self.heldEntity.nutHeldOwner = nil
+	self.heldEntity.nutCollisionGroup = nil
+	self.heldEntity = nil
 end
 
 function SWEP:PlayPickupSound(surfaceProperty)
@@ -246,9 +255,9 @@ function SWEP:OwnerChanged()
 end
 
 function SWEP:DoPunchAnimation()
-	self.LastHand = math.abs(1 - self.LastHand)
+	self.lastHand = math.abs(1 - self.lastHand)
 
-	local sequence = 4 + self.LastHand
+	local sequence = 4 + self.lastHand
 	local viewModel = self.Owner:GetViewModel()
 
 	if (IsValid(viewModel)) then
@@ -294,7 +303,7 @@ function SWEP:PrimaryAttack()
 	self:DoPunchAnimation()
 
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
-	self.Owner:ViewPunch(Angle(self.LastHand + 2, self.LastHand + 5, 0.125))
+	self.Owner:ViewPunch(Angle(self.lastHand + 2, self.lastHand + 5, 0.125))
 
 	timer.Simple(0.055, function()
 		if (IsValid(self) and IsValid(self.Owner)) then
@@ -376,7 +385,7 @@ function SWEP:Reload()
 		return
 	end
 
-	if (SERVER and IsValid(self.HeldEntity)) then
+	if (SERVER and IsValid(self.heldEntity)) then
 		self:DropObject()
 	end
 end
