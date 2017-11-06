@@ -108,7 +108,7 @@ ITEM.functions.Equip = {
 			client:StripWeapon(item.class)
 		end
 
-		local weapon = client:Give(item.class)
+		local weapon = client:Give(item.class, true)
 
 		if (IsValid(weapon)) then
 			client.carryWeapons[item.weaponCategory] = weapon
