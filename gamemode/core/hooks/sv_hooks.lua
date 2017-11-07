@@ -115,6 +115,25 @@ end
 function GM:KeyRelease(client, key)
 	if (key == IN_RELOAD) then
 		timer.Remove("nutToggleRaise"..client:SteamID())
+	elseif (key == IN_ATTACK) then
+		-- hack for engine grenades
+		local weapon = client:GetActiveWeapon()
+
+		if (IsValid(weapon)) then
+			local ammoName = game.GetAmmoName(weapon:GetPrimaryAmmoType())
+
+			if (ammoName and ammoName:lower() == "grenade") then
+				timer.Simple(FrameTime() * 4, function()
+					if (client:GetAmmoCount(ammoName) == 0) then
+						if (weapon.nutItem and weapon.nutItem.Unequip) then
+							weapon.nutItem:Unequip(client, false, true)
+						end
+
+						client:StripWeapon(weapon:GetClass())
+					end
+				end)
+			end
+		end
 	end
 end
 
