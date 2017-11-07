@@ -49,12 +49,18 @@ local PANEL = {}
 					surface.DrawRect(0, 0, w, h)
 
 					local i = 0
-					local color = nut.config.Get("color")
 
 					for k, v in ipairs(self.potentialCommands) do
+						local color = nut.config.Get("color")
+						local bSelectedCommand = command == v.uniqueID or (self.autocompleteIndex > 0 and k == self.autocompleteIndex)
+
+						if (bSelectedCommand) then
+							color = Color(color.r + 35, color.g + 35, color.b + 35, 255)
+						end
+
 						local x, y = nut.util.DrawText("/" .. v.name .. "  ", 4, i * 20, color)
 
-						if ((command == v.uniqueID or (self.autocompleteIndex > 0 and k == self.autocompleteIndex)) and v.syntax) then
+						if (bSelectedCommand and v.syntax) then
 							local i2 = 0
 
 							for argument in v.syntax:gmatch("([%[<][%w_]+[%s][%w_]+[%]>])") do
