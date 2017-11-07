@@ -288,8 +288,10 @@ PANEL = {}
 			self.buy:Remove()
 			self:ShowCloseButton(false)
 
-			nut.gui.business.cart = {}
-			nut.gui.business.checkout:SetText(L("checkout", 0))
+			if (IsValid(nut.gui.business)) then
+				nut.gui.business.cart = {}
+				nut.gui.business.checkout:SetText(L("checkout", 0))
+			end
 
 			self.text = self:Add("DLabel")
 			self.text:Dock(FILL)
