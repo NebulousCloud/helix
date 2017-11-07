@@ -476,6 +476,7 @@ function GM:HUDPaintBackground()
 
 		if (IsValid(weapon) and weapon.DrawAmmo != false) then
 			local clip = weapon.Clip1(weapon)
+			local clipMax = weapon:GetMaxClip1()
 			local count = localPlayer.GetAmmoCount(localPlayer, weapon.GetPrimaryAmmoType(weapon))
 			local secondary = localPlayer.GetAmmoCount(localPlayer, weapon.GetSecondaryAmmoType(weapon))
 			local x, y = scrW - 80, scrH - 80
@@ -501,7 +502,7 @@ function GM:HUDPaintBackground()
 				surface.SetDrawColor(255, 255, 255, 3)
 				surface.DrawOutlinedRect(x, y, 128, 64)
 
-				nut.util.DrawText(clip == -1 and count or clip.."/"..count, x + 64, y + 32, nil, 1, 1, "nutBigFont")
+				nut.util.DrawText((clip == -1 or clipMax == -1) and count or clip.."/"..count, x + 64, y + 32, nil, 1, 1, "nutBigFont")
 			end
 		end
 	end

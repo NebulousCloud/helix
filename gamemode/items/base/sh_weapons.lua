@@ -110,7 +110,7 @@ function ITEM:Equip(client)
 		-- assume that a weapon with -1 clip1 and clip2 would be a throwable (i.e hl2 grenade)
 		-- TODO: figure out if this interferes with any other weapons
 		if (weapon:GetMaxClip1() == -1 and weapon:GetMaxClip2() == -1 and client:GetAmmoCount(ammoType) == 0) then
-			client:GiveAmmo(1, ammoType, true)
+			client:SetAmmo(1, ammoType)
 		end
 
 		self:SetData("equip", true)
