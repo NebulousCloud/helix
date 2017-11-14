@@ -265,6 +265,7 @@ nut.command.Add("CharSetName", {
 	OnRun = function(self, client, arguments)
 		local target = nut.command.FindPlayer(client, arguments[1])
 
+		-- display string request if no name was specified
 		if (IsValid(target) and !arguments[2]) then
 			return client:RequestString("@chgName", "@chgNameDesc", function(text)
 				nut.command.Run(client, "charsetname", {target:Name(), text})
@@ -276,7 +277,7 @@ nut.command.Add("CharSetName", {
 		local targetName = table.concat(arguments, " ")
 
 		if (IsValid(target) and target:GetChar()) then
-			nut.util.NotifyLocalized("cChangeName", client:Name(), target:Name(), targetName)
+			nut.util.NotifyLocalized("cChangeName", nil, client:Name(), target:Name(), targetName)
 
 			target:GetChar():SetName(targetName:gsub("#", "#​"))
 		else
@@ -356,7 +357,7 @@ nut.command.Add("CharBan", {
 			local char = target:GetChar()
 
 			if (char) then
-				nut.util.NotifyLocalized("charBan", client:Name(), target:Name())
+				nut.util.NotifyLocalized("charBan", nil, client:Name(), target:Name())
 				
 				char:SetData("banned", true)
 				char:Kick()
@@ -690,9 +691,7 @@ nut.command.Add("PlyTransfer", {
 					faction:OnTransfered(target)
 				end
 
-				for k, v in ipairs(player.GetAll()) do
-					nut.util.NotifyLocalized("cChangeFaction", v, client:Name(), target:Name(), L(faction.name, v))
-				end
+				nut.util.NotifyLocalized("cChangeFaction", nil, client:Name(), target:Name(), L(faction.name, v))
 			else
 				return "@invalidFaction"
 			end

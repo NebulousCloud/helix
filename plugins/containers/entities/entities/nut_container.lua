@@ -51,7 +51,6 @@ if (SERVER) then
 			nut.storage.Open(activator, inventory, {
 				name = definition.name,
 				entity = self,
-				searchText = "@searching",
 				searchTime = nut.config.Get("containerOpenTime", 0.7)
 			})
 		end
