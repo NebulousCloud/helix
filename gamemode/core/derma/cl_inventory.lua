@@ -1,3 +1,4 @@
+
 -- The queue for the rendered icons.
 renderdIcons = renderdIcons or {}
 
@@ -68,16 +69,21 @@ end
 vgui.Register("nutItemIcon", PANEL, "SpawnIcon")
 
 PANEL = {}
+	DEFINE_BASECLASS("DFrame")
+	AccessorFunc(PANEL, "iconSize", "IconSize", FORCE_NUMBER)
+
 	function PANEL:Init()
+		self:SetIconSize(64)
 		self:MakePopup()
 		self:Center()
 		self:ShowCloseButton(false)
 		self:SetDraggable(true)
+		self:SetSizable(true)
 		self:SetTitle(L"inv")
 
 		self.panels = {}
 	end
-		
+
 	function PANEL:OnRemove()
 		if (self.childPanels) then
 			for k, v in ipairs(self.childPanels) do
@@ -88,7 +94,7 @@ PANEL = {}
 		end
 	end
 
-	function PANEL:viewOnly()
+	function PANEL:ViewOnly()
 		self.viewOnly = true
 
 		for id, icon in pairs(self.panels) do
@@ -99,13 +105,15 @@ PANEL = {}
 	end
 
 	function PANEL:SetInventory(inventory)
+		local iconSize = self.iconSize
+
 		if (inventory.slots) then
 			if (IsValid(nut.gui.inv1) and nut.gui.inv1.childPanels and inventory != LocalPlayer():GetChar():GetInv()) then
 				table.insert(nut.gui.inv1.childPanels, self)
 			end
 
 			self.invID = inventory:GetID()
-			self:SetSize(64, 64)
+			self:SetSize(iconSize, iconSize)
 			self:SetGridSize(inventory:GetSize())
 
 			for x, items in pairs(inventory.slots) do
@@ -115,7 +123,7 @@ PANEL = {}
 					local item = nut.item.instances[data.id]
 
 					if (item and !IsValid(self.panels[item.id])) then
-						local icon = self:addIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height, item.skin or 0)
+						local icon = self:AddIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height, item.skin or 0)
 
 						if (IsValid(icon)) then
 							local newTooltip = hook.Run("OverrideItemTooltip", self, data, item)
@@ -141,14 +149,34 @@ PANEL = {}
 	end
 
 	function PANEL:SetGridSize(w, h)
+		local iconSize = self.iconSize
+		local newWidth = w * iconSize + 8
+		local newHeight = h * iconSize + 31
+
 		self.gridW = w
 		self.gridH = h
-		
-		self:SetSize(w * 64 + 8, h * 64 + 31)
-		self:buildSlots()
+
+		self:SetSize(newWidth, newHeight)
+		self:SetMinWidth(newWidth)
+		self:SetMinHeight(newHeight)
+		self:BuildSlots()
+	end
+
+	function PANEL:PerformLayout(width, height)
+		BaseClass.PerformLayout(self, width, height)
+
+		if (self.Sizing and self.gridW and self.gridH) then
+			local newWidth = (width - 8) / self.gridW
+			local newHeight = (height - 31) / self.gridH
+
+			self:SetIconSize((newWidth + newHeight) / 2)
+			self:RebuildItems()
+		end
 	end
 	
-	function PANEL:buildSlots()
+	function PANEL:BuildSlots()
+		local iconSize = self.iconSize
+
 		self.slots = self.slots or {}
 		
 		local function PaintSlot(slot, w, h)
@@ -175,22 +203,41 @@ PANEL = {}
 				slot:SetZPos(-999)
 				slot.gridX = x
 				slot.gridY = y
-				slot:SetPos((x - 1) * 64 + 4, (y - 1) * 64 + 27)
-				slot:SetSize(64, 64)
+				slot:SetPos((x - 1) * iconSize + 4, (y - 1) * iconSize + 27)
+				slot:SetSize(iconSize, iconSize)
 				slot.Paint = PaintSlot
 				
 				self.slots[x][y] = slot	
 			end
 		end
 	end
+
+	function PANEL:RebuildItems()
+		local iconSize = self.iconSize
+		
+		for x = 1, self.gridW do
+			for y = 1, self.gridH do
+				local slot = self.slots[x][y]
+
+				slot:SetPos((x - 1) * iconSize + 4, (y - 1) * iconSize + 27)
+				slot:SetSize(iconSize, iconSize)
+			end
+		end
+
+		for k, v in pairs(self.panels) do
+			v:SetPos(self.slots[v.gridX][v.gridY]:GetPos())
+			v:SetSize(v.gridW * iconSize, v.gridH * iconSize)
+		end
+	end
 	
 	local activePanels = {}
 	function PANEL:PaintOver(w, h)
+		local iconSize = self.iconSize
 		local item = nut.item.held
 		
 		if (IsValid(item)) then
 			local mouseX, mouseY = self:LocalCursorPos()
-			local dropX, dropY = math.ceil((mouseX - 4 - (item.gridW - 1) * 32) / 64), math.ceil((mouseY - 27 - (item.gridH - 1) * 32) / 64)
+			local dropX, dropY = math.ceil((mouseX - 4 - (item.gridW - 1) * 32) / iconSize), math.ceil((mouseY - 27 - (item.gridH - 1) * 32) / iconSize)
 
 			if ((mouseX < -w*0.05 or mouseX > w*1.05) or (mouseY < h*0.05 or mouseY > h*1.05)) then
 				activePanels[self] = nil
@@ -209,12 +256,12 @@ PANEL = {}
 					
 					-- Is Drag and Drop icon is in the Frame?
 					if (self.slots[x2] and IsValid(self.slots[x2][y2])) then
-						local bool = self:isEmpty(x2, y2, item)
+						local bool = self:IsEmpty(x2, y2, item)
 						
 						surface.SetDrawColor(0, 0, 255, 10)
 
 						if (x == 0 and y == 0) then
-							item.dropPos[self] = {x = (x2 - 1)*64 + 4, y = (y2 - 1)*64 + 27, x2 = x2, y2 = y2}
+							item.dropPos[self] = {x = (x2 - 1) * iconSize + 4, y = (y2 - 1) * iconSize + 27, x2 = x2, y2 = y2}
 						end
 							
 						if (bool) then
@@ -227,7 +274,7 @@ PANEL = {}
 							end
 						end
 					
-						surface.DrawRect((x2 - 1)*64 + 4, (y2 - 1)*64 + 27, 64, 64)
+						surface.DrawRect((x2 - 1) * iconSize + 4, (y2 - 1) * iconSize + 27, iconSize, iconSize)
 					else
 						if (item.dropPos) then
 							item.dropPos[self] = nil
@@ -238,7 +285,7 @@ PANEL = {}
 		end
 	end
 	
-	function PANEL:isEmpty(x, y, this)
+	function PANEL:IsEmpty(x, y, this)
 		return (!IsValid(self.slots[x][y].item) or self.slots[x][y].item == this)
 	end
 	
@@ -281,13 +328,15 @@ PANEL = {}
 		end
 	end
 
-	function PANEL:addIcon(model, x, y, w, h, skin)
+	function PANEL:AddIcon(model, x, y, w, h, skin)
+		local iconSize = self.iconSize
+
 		w = w or 1
 		h = h or 1
 		
 		if (self.slots[x] and self.slots[x][y]) then
 			local panel = self:Add("nutItemIcon")
-			panel:SetSize(w * 64, h * 64)
+			panel:SetSize(w * iconSize, h * iconSize)
 			panel:SetZPos(999)
 			panel:InvalidateLayout(true)
 			panel:SetModel(model, skin)
@@ -343,8 +392,8 @@ PANEL = {}
 					return
 				end
 
-				data.x = data.x or (data.x2 - 1)*64 + 4
-				data.y = data.y or (data.y2 - 1)*64 + 27
+				data.x = data.x or (data.x2 - 1) * iconSize + 4
+				data.y = data.y or (data.y2 - 1) * iconSize + 27
 
 				this.gridX = data.x2
 				this.gridY = data.y2
