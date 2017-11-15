@@ -72,7 +72,7 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:ShouldAllowScoreboardOverride(client)
-		if (nut.config.Get("sbRecog")) then
+		if (nut.config.Get("scoreboardRecognition")) then
 			return true
 		end
 	end

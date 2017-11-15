@@ -118,7 +118,7 @@ nut.config.Add("logoURL", "http://nutscript.net/", "The URL opened when the icon
 nut.config.Add("vignette", true, "Whether or not the vignette is shown.", nil, {
 	category = "appearance"
 })
-nut.config.Add("sbRecog", false, "Whether or not recognition is used in the scoreboard.", nil, {
+nut.config.Add("scoreboardRecognition", false, "Whether or not recognition is used in the scoreboard.", nil, {
 	category = "characters"
 })
 nut.config.Add("defMoney", 0, "The amount of money that players start with.", nil, {
@@ -132,31 +132,6 @@ nut.config.Add("voiceDistance", 600.0, "How far can the voice be heard.", nil, {
 	form = "Float",
 	category = "server",
 	data = {min = 0, max = 5000}
-})
-nut.config.Add("sbWidth", 0.325, "Scoreboard's width within percent of screen width.", function(oldValue, newValue)
-	if (CLIENT and IsValid(nut.gui.score)) then
-		nut.gui.score:Remove()
-	end
-end, {
-	form = "Float",
-	category = "visual",
-	data = {min = 0.2, max = 1}
-})
-nut.config.Add("sbHeight", 0.825, "Scoreboard's height within percent of screen height.", function(oldValue, newValue)
-	if (CLIENT and IsValid(nut.gui.score)) then
-		nut.gui.score:Remove()
-	end
-end, {
-	form = "Float",
-	category = "visual",
-	data = {min = 0.3, max = 1}
-})
-nut.config.Add("sbTitle", GetHostName(), "The title of the scoreboard", function(oldValue, newValue)
-	if (CLIENT and IsValid(nut.gui.score)) then
-		nut.gui.score:Remove()
-	end
-end, {
-	category = "visual"
 })
 nut.config.Add("wepAlwaysRaised", false, "Whether or not weapons are always raised.", nil, {
 	category = "server"

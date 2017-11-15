@@ -1,9 +1,11 @@
 local PANEL = {}
 	local paintFunctions = {}
+	
 	paintFunctions[0] = function(this, w, h)
 		surface.SetDrawColor(0, 0, 0, 50)
 		surface.DrawRect(0, 0, w, h)
 	end
+
 	paintFunctions[1] = function(this, w, h)
 	end
 
@@ -13,23 +15,7 @@ local PANEL = {}
 		end
 
 		nut.gui.score = self
-
-		self:SetSize(ScrW() * nut.config.Get("sbWidth"), ScrH() * nut.config.Get("sbHeight"))
-		self:Center()
-
-		self.title = self:Add("DLabel")
-		self.title:SetText(GetHostName())
-		self.title:SetFont("nutBigFont")
-		self.title:SetContentAlignment(5)
-		self.title:SetTextColor(color_white)
-		self.title:SetExpensiveShadow(1, color_black)
-		self.title:Dock(TOP)
-		self.title:SizeToContentsY()
-		self.title:SetTall(self.title:GetTall() + 16)
-		self.title.Paint = function(this, w, h)
-			surface.SetDrawColor(0, 0, 0, 150)
-			surface.DrawRect(0, 0, w, h)
-		end
+		self:Dock(FILL)
 
 		self.scroll = self:Add("DScrollPanel")
 		self.scroll:Dock(FILL)
@@ -81,8 +67,6 @@ local PANEL = {}
 
 	function PANEL:Think()
 		if ((self.nextUpdate or 0) < CurTime()) then
-			self.title:SetText(nut.config.Get("sbTitle"))
-
 			local visible, amount
 
 			for k, v in ipairs(self.teams) do
@@ -285,8 +269,8 @@ local PANEL = {}
 	end
 vgui.Register("nutScoreboard", PANEL, "EditablePanel")
 
-concommand.Add("dev_reloadsb", function()
-	if (IsValid(nut.gui.score)) then
-		nut.gui.score:Remove()
+hook.Add("CreateMenuButtons", "nutScoreboard", function(tabs)
+	tabs["scoreboard"] = function(panel)
+		panel:Add("nutScoreboard")
 	end
 end)

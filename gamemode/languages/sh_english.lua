@@ -242,6 +242,7 @@ LANGUAGE = {
 	containerPasswordWrite = "Enter the password.",
 	wrongPassword = "You've entered an incorrect password.",
 	alwaysShowBars = "Always show info bars?",
+	scoreboard = "Scoreboard",
 
 	moneyLeft = "Your Money: ",
 	currentMoney = "Money Left: ",

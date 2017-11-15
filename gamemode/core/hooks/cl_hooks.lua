@@ -604,25 +604,7 @@ end
 function GM:PlayerBindPress(client, bind, pressed)
 	bind = bind:lower()
 	
-	if (bind:find("gm_showhelp")) then
-		if (pressed) then
-			if (IsValid(nut.gui.score)) then
-				nut.gui.score:SetVisible(true)
-				gui.EnableScreenClicker(true)
-			else
-				vgui.Create("nutScoreboard")
-			end
-		else
-			if (IsValid(nut.gui.score)) then
-			 	nut.gui.score:SetVisible(false)
-			 	CloseDermaMenus()
-		 	end
-
-		 	gui.EnableScreenClicker(false)
-	 	end
-		
-		return true
-	elseif ((bind:find("use") or bind:find("attack")) and pressed) then
+	if ((bind:find("use") or bind:find("attack")) and pressed) then
 		local menu, callback = nut.menu.GetActiveMenu()
 
 		if (menu and nut.menu.OnButtonPressed(menu, callback)) then
