@@ -68,12 +68,8 @@ local PANEL = {}
 		
 		self.noAnchor = CurTime() + .4
 		self.anchorMode = true
+		self:SetActiveTab("you")
 		self:MakePopup()
-
-		self.info = vgui.Create("nutCharInfo", self)
-		self.info:Setup()
-		self.info:SetAlpha(0)
-		self.info:AlphaTo(255, 0.5)
 	end
 
 	function PANEL:OnKeyCodePressed(key)
@@ -156,6 +152,7 @@ local PANEL = {}
 				
 				self.panel:Clear()
 
+				self.title:SetVisible(true)
 				self.title:SetText(this:GetText())
 				self.title:SizeToContentsY()
 				self.title:AlphaTo(255, 0.5)
@@ -166,7 +163,7 @@ local PANEL = {}
 				lastMenuTab = uniqueID
 
 				if (callback) then
-					callback(self.panel, this)
+					callback(self.panel, this, self)
 				end
 			end
 		self.tabs:AddPanel(tab)

@@ -1,141 +1,214 @@
+
 local PANEL = {}
-	function PANEL:Init()
-		if (IsValid(nut.gui.info)) then
-			nut.gui.info:Remove()
+
+AccessorFunc(PANEL, "titleBackground", "TitleBackground") -- set to nil to default to config color
+
+function PANEL:Init()
+	self.titleBar = vgui.Create("Panel", self)
+	self.titleBar:Dock(TOP)
+
+	self.title = vgui.Create("DLabel", self.titleBar)
+	self.title:SetText("Title")
+	self.title:SetColor(color_white)
+	self.title:SetExpensiveShadow(1, color_black)
+	self.title:SetContentAlignment(4)
+	self.title:SizeToContents()
+	self.title:DockMargin(4, 0, 0, 0)
+	self.title:Dock(LEFT)
+
+	self.subTitle = vgui.Create("DLabel", self.titleBar)
+	self.subTitle:SetText("Subtitle")
+	self.subTitle:SetColor(color_white)
+	self.subTitle:SetExpensiveShadow(1, color_black)
+	self.subTitle:SetContentAlignment(4)
+	self.subTitle:SizeToContents()
+	self.subTitle:DockMargin(0, 0, 4, 0)
+	self.subTitle:Dock(RIGHT)
+
+	self.canvas = vgui.Create("Panel", self)
+	self.canvas:DockMargin(4, 4, 4, 4)
+	self.canvas:Dock(FILL)
+
+	self:SetFont("nutMediumFont")
+	self:SetTitle("Info")
+	self:SetSubtitle("")
+	self:SetTitleBackground(nil)
+end
+
+function PANEL:SizeToContents()
+	self.canvas:InvalidateLayout(true)
+	self:InvalidateLayout(true)
+
+	self.canvas:SizeToChildren(true, true)
+	self:SizeToChildren(true, true)
+end
+
+function PANEL:Add(name)
+	return self.canvas:Add(name)
+end
+
+function PANEL:SetTitle(text)
+	self.title:SetText(text)
+	self.title:SizeToContents()
+end
+
+function PANEL:SetSubtitle(text)
+	self.subTitle:SetText(text)
+	self.subTitle:SizeToContents()
+end
+
+function PANEL:SetFont(font)
+	self.title:SetFont(font)
+	self.subTitle:SetFont(font)
+end
+
+function PANEL:GetTitle()
+	return self.title:GetText()
+end
+
+function PANEL:Paint(width, height)
+	local titleBackground = self.titleBackground
+
+	if (!IsColor(titleBackground)) then
+		titleBackground = nut.config.Get("color")
+	end
+
+	-- background
+	nut.util.DrawBlur(self, 10)
+
+	surface.SetDrawColor(30, 30, 30, 100)
+	surface.DrawRect(0, 0, width, height)
+
+	-- title bar
+	surface.SetDrawColor(titleBackground)
+	surface.DrawRect(0, 0, width, self.title:GetTall())
+
+	-- outline
+	surface.SetDrawColor(0, 0, 0, 150)
+	surface.DrawOutlinedRect(0, 0, width, height)
+end
+
+vgui.Register("nutInfoPanel", PANEL, "EditablePanel")
+
+PANEL = {}
+function PANEL:Init()
+	if (IsValid(nut.gui.info)) then
+		nut.gui.info:Remove()
+	end
+
+	nut.gui.info = self
+
+	self:Dock(FILL)
+	self:Center()
+
+	local suppress = hook.Run("CanCreateCharInfo", self)
+
+	if (!suppress or (suppress and !suppress.all)) then
+		if (!suppress or !suppress.model) then
+			self.model = self:Add("nutModelPanel")
+			self.model:SetWide(ScrW() * 0.25)
+			self.model:Dock(LEFT)
+			self.model:SetFOV(50)
+			self.model.enableHook = true
+			self.model.copyLocalSequence = true
 		end
 
-		nut.gui.info = self
+		if (!suppress or !suppress.info) then
+			self.info = self:Add("DPanel")
+			self.info:SetWide(ScrW() * 0.4)
+			self.info:Dock(RIGHT)
+			self.info:SetDrawBackground(false)
+			self.info:DockMargin(0, ScrH() * 0.15, 0, 0)
+		end
 
-		self:SetSize(ScrW() * 0.6, ScrH() * 0.7)
-		self:Center()
+		if (!suppress or !suppress.time) then
+			self.time = self.info:Add("DLabel")
+			self.time:SetFont("nutMediumFont")
+			self.time:SetTall(28)
+			self.time:SetContentAlignment(5)
+			self.time:Dock(TOP)
+			self.time:SetTextColor(color_white)
+			self.time:SetExpensiveShadow(1, Color(0, 0, 0, 150))
+			self.time:DockMargin(0, 0, 0, 16)
+		end
 
-		local suppress = hook.Run("CanCreateCharInfo", self)
-
-		if (!suppress or (suppress and !suppress.all)) then
-			if (!suppress or !suppress.model) then
-				self.model = self:Add("nutModelPanel")
-				self.model:SetWide(ScrW() * 0.25)
-				self.model:Dock(LEFT)
-				self.model:SetFOV(50)
-				self.model.enableHook = true
-				self.model.copyLocalSequence = true
-			end
-
-			if (!suppress or !suppress.info) then
-				self.info = self:Add("DPanel")
-				self.info:SetWide(ScrW() * 0.4)
-				self.info:Dock(RIGHT)
-				self.info:SetDrawBackground(false)
-				self.info:DockMargin(150, ScrH() * 0.2, 0, 0)
-			end
-
-			if (!suppress or !suppress.name) then
-				self.name = self.info:Add("DLabel")
-				self.name:SetFont("nutHugeFont")
-				self.name:SetTall(60)
-				self.name:Dock(TOP)
-				self.name:SetTextColor(color_white)
-				self.name:SetExpensiveShadow(1, Color(0, 0, 0, 150))
-			end
+		if (!suppress or !suppress.basicInfo) then
+			self.basicInfo = self.info:Add("nutInfoPanel")
+			self.basicInfo:SetTitle(L("you"))
+			self.basicInfo:Dock(TOP)
 
 			if (!suppress or !suppress.description) then
-				self.description = self.info:Add("DTextEntry")
+				self.description = self.basicInfo:Add("DLabel")
+				self.description:SetFont("nutMediumFont")
+				self.description:SetTextColor(color_white)
+				self.description:SetExpensiveShadow(1, Color(0, 0, 0, 150))
+				self.description:SetWide(self.info:GetWide())
+				self.description:SetContentAlignment(5)
 				self.description:Dock(TOP)
-				self.description:SetFont("nutMediumLightFont")
-				self.description:SetTall(28)
-			end
-
-			if (!suppress or !suppress.time) then
-				self.time = self.info:Add("DLabel")
-				self.time:SetFont("nutMediumFont")
-				self.time:SetTall(28)
-				self.time:Dock(TOP)
-				self.time:SetTextColor(color_white)
-				self.time:SetExpensiveShadow(1, Color(0, 0, 0, 150))
+				self.description:SetMouseInputEnabled(true)
+				self.description:SetCursor("hand")
+				self.description.DoClick = function(this)
+					RunConsoleCommand("nut", "CharDesc")
+				end
 			end
 
 			if (!suppress or !suppress.money) then
-				self.money = self.info:Add("DLabel")
-				self.money:Dock(TOP)
+				self.money = self.basicInfo:Add("DLabel")
 				self.money:SetFont("nutMediumFont")
 				self.money:SetTextColor(color_white)
 				self.money:SetExpensiveShadow(1, Color(0, 0, 0, 150))
-				self.money:DockMargin(0, 10, 0, 0)
-			end
-
-			if (!suppress or !suppress.faction) then
-				self.faction = self.info:Add("DLabel")
-				self.faction:Dock(TOP)
-				self.faction:SetFont("nutMediumFont")
-				self.faction:SetTextColor(color_white)
-				self.faction:SetExpensiveShadow(1, Color(0, 0, 0, 150))
-				self.faction:DockMargin(0, 10, 0, 0)
+				self.money:DockMargin(0, 8, 0, 0)
+				self.money:Dock(TOP)
 			end
 
 			if (!suppress or !suppress.class) then
 				local class = nut.class.list[LocalPlayer():GetChar():GetClass()]
 				
 				if (class) then
-					self.class = self.info:Add("DLabel")
+					self.class = self.basicInfo:Add("DLabel")
 					self.class:Dock(TOP)
 					self.class:SetFont("nutMediumFont")
 					self.class:SetTextColor(color_white)
 					self.class:SetExpensiveShadow(1, Color(0, 0, 0, 150))
-					self.class:DockMargin(0, 10, 0, 0)
 				end
 			end
-
-			hook.Run("CreateCharInfoText", self)
-
-			if (!suppress or !suppress.attrib) then
-				self.attribName = self.info:Add("DLabel")
-				self.attribName:Dock(TOP)
-				self.attribName:SetFont("nutMediumFont")
-				self.attribName:SetTextColor(color_white)
-				self.attribName:SetExpensiveShadow(1, Color(0, 0, 0, 150))
-				self.attribName:DockMargin(0, 10, 0, 0)
-				self.attribName:SetText(L"attribs")
-
-				self.attribs = self.info:Add("DScrollPanel")
-				self.attribs:Dock(FILL)
-				self.attribs:DockMargin(0, 10, 0, 0)
-			end
 		end
 
-		hook.Run("CreateCharInfo", self)
+		hook.Run("CreateCharInfoText", self)
+
+		if (!suppress or !suppress.attrib) then
+			self.attribInfo = self.info:Add("nutInfoPanel")
+			self.attribInfo:SetTitle(L"attribs")
+			self.attribInfo:DockMargin(0, 16, 0, 0)
+			self.attribInfo:Dock(TOP)
+		end
 	end
 
-	function PANEL:Setup()
-		local char = LocalPlayer():GetChar()
+	hook.Run("CreateCharInfo", self)
+end
+
+function PANEL:Setup()
+	local char = LocalPlayer():GetChar()
+	local factionName = team.GetName(LocalPlayer():Team())
+
+	if (self.basicInfo) then
 		if (self.description) then
 			self.description:SetText(char:GetDescription())
-			self.description.OnEnter = function(this, w, h)
-				nut.command.Send("CharDesc", this:GetText())
-			end
-		end
-
-		if (self.name) then
-			self.name:SetText(LocalPlayer():Name())
-			self.name.Think = function(this)
-				this:SetText(LocalPlayer():Name())
-			end
+			self.description:SizeToContents()
 		end
 
 		if (self.money) then
-			self.money:SetText(L("charMoney", nut.currency.Get(char:GetMoney())))
-		end
-
-		if (self.faction) then
-			self.faction:SetText(L("charFaction", L(team.GetName(LocalPlayer():Team()))))
+			self.money:SetText(L("charMoney", char:GetMoney()))
+			self.money:SizeToContents()
 		end
 
 		if (self.time) then
-			local format = "%A, %d %B %Y %X"
+			local format = "%A, %B %d, %Y. %X"
 			
-			self.time:SetText(L("curTime", os.date(format, nut.date.Get())))
+			self.time:SetText(os.date(format, nut.date.Get()))
 			self.time.Think = function(this)
 				if ((this.nextTime or 0) < CurTime()) then
-					this:SetText(L("curTime", os.date(format, nut.date.Get())))
+					this:SetText(os.date(format, nut.date.Get()))
 					this.nextTime = CurTime() + 0.5
 				end
 			end
@@ -143,9 +216,15 @@ local PANEL = {}
 
 		if (self.class) then
 			local class = nut.class.list[char:GetClass()]
-			if (class) then
+
+			-- don't show class label if the class is the same name as the faction
+			if (class and class.name != factionName) then
 				self.class:SetText(L("charClass", L(class.name)))
+			else
+				self.class:SetVisible(false)
 			end
+
+			self.class:SizeToContents()
 		end
 		
 		if (self.model) then
@@ -165,42 +244,57 @@ local PANEL = {}
 			end
 		end
 
-		if (self.attribs) then
-			local boost = char:GetBoosts()
+		self.basicInfo:SetTitle(LocalPlayer():GetName())
+		self.basicInfo:SetSubtitle(team.GetName(LocalPlayer():Team()))
+		self.basicInfo:SetTitleBackground(team.GetColor(LocalPlayer():Team()))
+		self.basicInfo:SizeToContents()
+	end
 
-			for k, v in SortedPairsByMemberValue(nut.attribs.list, "name") do
-				local attribBoost = 0
-				if (boost[k]) then
-					for _, bValue in pairs(boost[k]) do
-						attribBoost = attribBoost + bValue
-					end
+	if (self.attribInfo) then
+		local boost = char:GetBoosts()
+
+		for k, v in SortedPairsByMemberValue(nut.attribs.list, "name") do
+			local attribBoost = 0
+			if (boost[k]) then
+				for _, bValue in pairs(boost[k]) do
+					attribBoost = attribBoost + bValue
 				end
+			end
 
-				local bar = self.attribs:Add("nutAttribBar")
-				bar:Dock(TOP)
-				bar:DockMargin(0, 0, 0, 3)
+			local bar = self.attribInfo:Add("nutAttribBar")
+			bar:Dock(TOP)
+			bar:DockMargin(0, 0, 0, 3)
 
-				local attribValue = char:GetAttrib(k, 0)
-				if (attribBoost) then
-					bar:SetValue(attribValue - attribBoost or 0)
-				else
-					bar:SetValue(attribValue)
-				end
+			local attribValue = char:GetAttrib(k, 0)
+			if (attribBoost) then
+				bar:SetValue(attribValue - attribBoost or 0)
+			else
+				bar:SetValue(attribValue)
+			end
 
-				local maximum = v.maxValue or nut.config.Get("maxAttribs", 30)
-				bar:SetMax(maximum)
-				bar:SetReadOnly()
-				bar:SetText(Format("%s [%.1f/%.1f] (%.1f", L(v.name), attribValue, maximum, attribValue/maximum*100) .. "%)")
+			local maximum = v.maxValue or nut.config.Get("maxAttribs", 30)
+			bar:SetMax(maximum)
+			bar:SetReadOnly()
+			bar:SetText(Format("%s [%.1f/%.1f] (%.1f", L(v.name), attribValue, maximum, attribValue/maximum*100) .. "%)")
 
-				if (attribBoost) then
-					bar:SetBoost(attribBoost)
-				end
+			if (attribBoost) then
+				bar:SetBoost(attribBoost)
 			end
 		end
 
-		hook.Run("OnCharInfoSetup", self)
+		self.attribInfo:SizeToContents()
 	end
 
-	function PANEL:Paint(w, h)
-	end
+	hook.Run("OnCharInfoSetup", self)
+end
+
 vgui.Register("nutCharInfo", PANEL, "EditablePanel")
+
+hook.Add("CreateMenuButtons", "nutCharInfo", function(tabs)
+	tabs["you"] = function(panel, button, menu)
+		menu.title:SetVisible(false)
+
+		local info = panel:Add("nutCharInfo")
+		info:Setup()
+	end
+end)
