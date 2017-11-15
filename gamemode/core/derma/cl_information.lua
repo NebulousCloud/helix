@@ -26,7 +26,7 @@ function PANEL:Init()
 	self.subTitle:Dock(RIGHT)
 
 	self.canvas = vgui.Create("Panel", self)
-	self.canvas:DockMargin(4, 4, 4, 4)
+	self.canvas:DockMargin(4, 4, 4, 0)
 	self.canvas:Dock(FILL)
 
 	self:SetFont("nutMediumFont")
@@ -41,6 +41,9 @@ function PANEL:SizeToContents()
 
 	self.canvas:SizeToChildren(true, true)
 	self:SizeToChildren(true, true)
+
+	-- dock padding
+	self:SetSize(self:GetWide(), self:GetTall() + 4)
 end
 
 function PANEL:Add(name)
