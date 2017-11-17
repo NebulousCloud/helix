@@ -18,18 +18,27 @@ function nut.currency.Get(amount)
 end
 
 function nut.currency.Spawn(pos, amount, angle)
-	if (!pos) then
-		print("[Nutscript] Can't create currency entity: Invalid Position")
-	elseif (!amount or amount < 0) then
+	if (!amount or amount < 0) then
 		print("[Nutscript] Can't create currency entity: Invalid Amount of money")
+		return
 	end
 
 	local money = ents.Create("nut_money")
+	money:Spawn()
+
+	if (IsValid(pos) and pos:IsPlayer()) then
+		pos = pos:GetItemDropPos(money)
+	elseif (!isvector(pos)) then
+		print("[Nutscript] Can't create currency entity: Invalid Position")
+
+		money:Remove()
+		return
+	end
+
 	money:SetPos(pos)
 	-- double check for negative.
 	money:SetNetVar("amount", math.Round(math.abs(amount)))
 	money:SetAngles(angle or Angle(0, 0, 0))
-	money:Spawn()
 	money:Activate()
 
 	return money

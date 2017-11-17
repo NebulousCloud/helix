@@ -785,17 +785,30 @@ do
 	end
 
 	-- Returns a good position in front of the player for an entity.
-	function playerMeta:GetItemDropPos()
-		-- Start a trace.
+	function playerMeta:GetItemDropPos(entity)
 		local data = {}
-			data.start = self:GetShootPos()
-			data.endpos = self:GetShootPos() + self:GetAimVector()*86
-			data.filter = self
-		local trace = util.TraceLine(data)
+		local trace
+
+		data.start = self:GetShootPos()
+		data.endpos = self:GetShootPos() + self:GetAimVector() * 86
+		data.filter = self
+
+		if (IsValid(entity)) then
+			-- use a hull trace if there's a valid entity to avoid collisions
+			local mins, maxs = entity:GetRotatedAABB(entity:OBBMins(), entity:OBBMaxs())
+
+			data.mins = mins
+			data.maxs = maxs
+			data.filter = {entity, self}
+			trace = util.TraceHull(data)
+		else
+			-- trace along the normal for a few units so we can attempt to avoid a collision
+			trace = util.TraceLine(data)
+
 			data.start = trace.HitPos
-			data.endpos = data.start + trace.HitNormal*46
-			data.filter = {}
-		trace = util.TraceLine(data)
+			data.endpos = data.start + trace.HitNormal * 48
+			trace = util.TraceLine(data)
+		end
 
 		return trace.HitPos
 	end

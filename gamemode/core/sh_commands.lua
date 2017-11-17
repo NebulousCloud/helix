@@ -488,7 +488,7 @@ nut.command.Add("DropMoney", {
 		end
 
 		client:GetChar():TakeMoney(amount)
-		local money = nut.currency.Spawn(client:GetItemDropPos(), amount)
+		local money = nut.currency.Spawn(client, amount)
 		money.client = client
 		money.charID = client:GetChar():GetID()
 	end

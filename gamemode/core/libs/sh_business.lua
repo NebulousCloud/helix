@@ -36,8 +36,8 @@ if (SERVER) then
 			char:TakeMoney(cost)
 
 			local entity = ents.Create("nut_shipment")
-			entity:SetPos(client:GetItemDropPos())
 			entity:Spawn()
+			entity:SetPos(client:GetItemDropPos(entity))
 			entity:SetItems(items)
 			entity:SetNetVar("owner", char:GetID())
 

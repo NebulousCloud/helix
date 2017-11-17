@@ -252,20 +252,21 @@ if (SERVER) then
 		if (nut.item.instances[self.id]) then
 			local client
 
+			-- Spawn the actual item entity.
+			local entity = ents.Create("nut_item")
+			entity:Spawn()
+			entity:SetAngles(angles or Angle(0, 0, 0))
+			-- Make the item represent this item.
+			entity:SetItem(self.id)
+
 			-- If the first argument is a player, then we will find a position to drop
 			-- the item based off their aim.
 			if (type(position) == "Player") then
 				client = position
-				position = position:GetItemDropPos()
+				position = position:GetItemDropPos(entity)
 			end
 
-			-- Spawn the actual item entity.
-			local entity = ents.Create("nut_item")
-			entity:Spawn()
 			entity:SetPos(position)
-			entity:SetAngles(angles or Angle(0, 0, 0))
-			-- Make the item represent this item.
-			entity:SetItem(self.id)
 
 			if (IsValid(client)) then
 				entity.nutSteamID = client:SteamID()
