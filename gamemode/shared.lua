@@ -125,3 +125,13 @@ if (SERVER and game.IsDedicated()) then
 		end
 	end)
 end
+
+-- add entries for c_viewmodels that aren't set by default
+player_manager.AddValidModel("group02male01", "models/humans/group02/male_01.mdl")
+player_manager.AddValidHands("group02male01", "models/weapons/c_arms_citizen.mdl", 1, "0000000")
+player_manager.AddValidModel("group02male03", "models/humans/group02/male_03.mdl")
+player_manager.AddValidHands("group02male03", "models/weapons/c_arms_citizen.mdl", 1, "0000000")
+player_manager.AddValidModel("group01female07", "models/player/group01/female_07.mdl")
+player_manager.AddValidHands("group01female07", "models/weapons/c_arms_citizen.mdl", 1, "0000000")
+player_manager.AddValidModel("group02female03", "models/player/group01/female_03.mdl")
+player_manager.AddValidHands("group02female03", "models/weapons/c_arms_citizen.mdl", 1, "0000000")

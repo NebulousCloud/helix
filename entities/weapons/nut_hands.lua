@@ -32,7 +32,7 @@ SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = ""
 SWEP.Secondary.Delay = 0.5
 
-SWEP.ViewModel = Model("models/weapons/c_arms_cstrike.mdl")
+SWEP.ViewModel = Model("models/weapons/c_arms_citizen.mdl")
 SWEP.WorldModel = ""
 
 SWEP.UseHands = false
