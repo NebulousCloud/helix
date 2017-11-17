@@ -164,13 +164,16 @@ function nut.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 				tip = "takeTip",
 				icon = "icon16/box.png",
 				OnRun = function(item)
-					local status, result = item.player:GetChar():GetInv():Add(item.id)
+					local client = item.player
+					local status, result = client:GetChar():GetInv():Add(item.id)
 
 					if (!status) then
-						item.player:Notify(result)
+						client:NotifyLocalized(result)
 
 						return false
 					else
+						client:EmitSound("npc/zombie/foot_slide" .. math.random(1, 3) .. ".wav", 75, math.random(90, 120), 1)
+
 						if (item.data) then -- I don't like it but, meh...
 							for k, v in pairs(item.data) do
 								item:SetData(k, v)

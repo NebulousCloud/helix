@@ -136,11 +136,16 @@ nut.config.Add("voiceDistance", 600.0, "How far can the voice be heard.", nil, {
 nut.config.Add("wepAlwaysRaised", false, "Whether or not weapons are always raised.", nil, {
 	category = "server"
 })
-nut.config.Add("maxHoldWeight", 100, "The maximum weight that a player can carry in their hands", nil, {
+nut.config.Add("maxHoldWeight", 100, "The maximum weight that a player can carry in their hands.", nil, {
 	data = {min = 1, max = 500},
 	category = "interaction"
 })
-nut.config.Add("throwForce", 732, "How hard a player can throw the item that they're holding", nil, {
+nut.config.Add("throwForce", 732, "How hard a player can throw the item that they're holding.", nil, {
 	data = {min = 0, max = 8192},
+	category = "interaction"
+})
+nut.config.Add("itemPickupTime", 0.5, "How long it takes to pick up and put an item in your inventory.", nil, {
+	form = "Float",
+	data = {min = 0, max = 5},
 	category = "interaction"
 })

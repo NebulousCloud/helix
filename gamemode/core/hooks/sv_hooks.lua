@@ -114,7 +114,9 @@ end
 
 function GM:KeyRelease(client, key)
 	if (key == IN_RELOAD) then
-		timer.Remove("nutToggleRaise"..client:SteamID())
+		timer.Remove("nutToggleRaise" .. client:SteamID())
+	elseif (key == IN_USE) then
+		timer.Remove("nutItemUse" .. client:SteamID())
 	elseif (key == IN_ATTACK) then
 		-- hack for engine grenades
 		local weapon = client:GetActiveWeapon()

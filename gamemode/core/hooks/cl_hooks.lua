@@ -396,7 +396,7 @@ function GM:HUDPaintBackground()
 	if (!localPlayer.GetChar(localPlayer)) then
 		return
 	end
-	
+
 	local realTime = RealTime()
 	local frameTime = FrameTime()
 	local scrW, scrH = surface.ScreenWidth(), surface.ScreenHeight()
@@ -601,10 +601,31 @@ function GM:DrawEntityInfo(entity, alpha, position)
 	end
 end
 
+function GM:KeyRelease(client, key)
+	if (key == IN_USE) then
+		timer.Remove("nutItemUse")
+
+		client.nutItemToTake = nil
+		client.nutItemStartTime = nil
+	end
+end
+
 function GM:PlayerBindPress(client, bind, pressed)
 	bind = bind:lower()
 	
-	if ((bind:find("use") or bind:find("attack")) and pressed) then
+	if (bind:find("use") and pressed) then
+		local entity = client:GetEyeTrace().Entity
+
+		if (IsValid(entity) and entity:GetClass() == "nut_item") then
+			client.nutItemToTake = entity
+			client.nutItemStartTime = SysTime()
+
+			timer.Create("nutItemUse", nut.config.Get("itemPickupTime", 0.5), 1, function()
+				client.nutItemToTake = nil
+				client.nutItemStartTime = nil
+			end)
+		end
+	elseif (bind:find("attack") and pressed) then
 		local menu, callback = nut.menu.GetActiveMenu()
 
 		if (menu and nut.menu.OnButtonPressed(menu, callback)) then
