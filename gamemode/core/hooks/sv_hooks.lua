@@ -285,6 +285,10 @@ function GM:PlayerSay(client, message)
 	return ""
 end
 
+function GM:CanAutoFormatMessage(client, chatType, message)
+	return chatType == "ic" or chatType == "w" or chatType == "y"
+end
+
 function GM:PlayerSpawn(client)
 	client:SetNoDraw(false)
 	client:UnLock()

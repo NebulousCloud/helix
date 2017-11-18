@@ -32,6 +32,9 @@ nut.config.Add("maxAttribs", 30, "The total maximum amount of attribute points a
 	data = {min = 1, max = 250},
 	category = "characters"
 })
+nut.config.Add("chatAutoFormat", true, "Whether or not to automatically capitalize and punctuate in-character text.", nil, {
+	category = "Chat"
+})
 nut.config.Add("chatRange", 280, "The maximum distance a person's IC chat message goes to.", nil, {
 	form = "Float",
 	data = {min = 10, max = 5000},

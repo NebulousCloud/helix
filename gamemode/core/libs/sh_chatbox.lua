@@ -158,6 +158,17 @@ if (SERVER) then
 				end
 			end
 
+			-- Format the message if needed before we run the hook.
+			if (nut.config.Get("chatAutoFormat") and hook.Run("CanAutoFormatMessage", speaker, chatType, text)) then
+				local last = text:sub(-text:len())
+
+				if (last != "." or last != "?" or last != "!") then
+					text = text .. "."
+				end
+
+				text = text:sub(1, 1):upper() .. text:sub(2)
+			end
+
 			netstream.Start(receivers, "cMsg", speaker, chatType, hook.Run("PlayerMessageSend", speaker, chatType, text, anonymous, receivers) or text, anonymous or false)
 		end
 	end
