@@ -739,6 +739,22 @@ function GM:SetupQuickMenu(menu)
 		end
 	end, NUT_CVAR_CHATNOTICE:GetBool())
 
+	menu:AddCheck(L"chatShowTimestamps", function(panel, state)
+		if (state) then
+			RunConsoleCommand("nut_showtimestamps", "1")
+		else
+			RunConsoleCommand("nut_showtimestamps", "0")
+		end
+	end, NUT_CVAR_SHOWTIMESTAMPS:GetBool())
+
+	menu:AddCheck(L"chatTimestamp24hour", function(panel, state)
+		if (state) then
+			RunConsoleCommand("nut_timestamp24hour", "1")
+		else
+			RunConsoleCommand("nut_timestamp24hour", "0")
+		end
+	end, NUT_CVAR_TIMESTAMP24HOUR:GetBool())
+
 	-- Language settings
 	menu:AddSpacer()
 

@@ -1,3 +1,7 @@
+
+NUT_CVAR_SHOWTIMESTAMPS = CreateClientConVar("nut_showtimestamps", 0, true)
+NUT_CVAR_TIMESTAMP24HOUR = CreateClientConVar("nut_timestamp24hour", 0, true)
+
 local PANEL = {}
 	local gradient = Material("vgui/gradient-d")
 	local gradient2 = Material("vgui/gradient-u")
@@ -290,10 +294,22 @@ local PANEL = {}
 	function PANEL:AddText(...)
 		local text = "<font=nutChatFont>"
 
-		if (CHAT_CLASS) then
-			text = "<font="..(CHAT_CLASS.font or "nutChatFont")..">"
+		if (NUT_CVAR_SHOWTIMESTAMPS:GetBool()) then
+			text = text .. "<color=150,150,150>("
+
+			if (NUT_CVAR_TIMESTAMP24HOUR:GetBool()) then
+				text = text .. os.date("%H:%M")
+			else
+				text = text .. os.date("%I:%M %p")
+			end
+
+			text = text .. ") "
 		end
-		
+
+		if (CHAT_CLASS) then
+			text = text .. "<font="..(CHAT_CLASS.font or "nutChatFont")..">"
+		end
+
 		for k, v in ipairs({...}) do
 			if (type(v) == "IMaterial") then
 				local ttx = tostring(v):match("%[[a-z0-9/_]+%]")
