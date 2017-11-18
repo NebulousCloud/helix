@@ -153,6 +153,7 @@ function nut.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 				icon = "icon16/world.png",
 				OnRun = function(item)
 					item:Transfer()
+					item.player:EmitSound("npc/zombie/foot_slide" .. math.random(1, 3) .. ".wav", 75, math.random(90, 120), 1)
 
 					return false
 				end,
