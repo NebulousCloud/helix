@@ -98,11 +98,11 @@ function nut.bar.DrawAction()
 			surface.DrawOutlinedRect(x, y, w, h)
 
 			surface.SetDrawColor(nut.config.Get("color"))
-			surface.DrawRect(x + 4, y + 4, (w * fraction) - 8, h - 8)
+			surface.DrawRect(x + 4, y + 4, math.max(w * fraction, 8) - 8, h - 8)
 
 			surface.SetDrawColor(200, 200, 200, 20)
 			surface.SetMaterial(gradientD)
-			surface.DrawTexturedRect(x + 4, y + 4, (w * fraction) - 8, h - 8)
+			surface.DrawTexturedRect(x + 4, y + 4, math.max(w * fraction, 8) - 8, h - 8)
 
 			draw.SimpleText(nut.bar.actionText, "nutMediumFont", x + 2, y - 22, SHADOW_COLOR)
 			draw.SimpleText(nut.bar.actionText, "nutMediumFont", x, y - 24, TEXT_COLOR)
@@ -153,7 +153,7 @@ end
 
 do
 	nut.bar.Add(function()
-		return LocalPlayer():Health() / LocalPlayer():GetMaxHealth()
+		return math.max(LocalPlayer():Health() / LocalPlayer():GetMaxHealth(), 0)
 	end, Color(200, 50, 40), nil, "health")
 
 	nut.bar.Add(function()

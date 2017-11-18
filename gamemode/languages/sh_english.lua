@@ -243,6 +243,7 @@ LANGUAGE = {
 	wrongPassword = "You've entered an incorrect password.",
 	alwaysShowBars = "Always show info bars?",
 	scoreboard = "Scoreboard",
+	respawning = "Respawning...",
 
 	moneyLeft = "Your Money: ",
 	currentMoney = "Money Left: ",

@@ -512,12 +512,12 @@ function GM:HUDPaintBackground()
 	end
 
 	nut.menu.DrawAll()
-	nut.bar.DrawAll()
 	nut.hud.DrawAll(false)
 end
 
 function GM:PostDrawHUD()
 	nut.hud.DrawAll(true)
+	nut.bar.DrawAll()
 end
 
 function GM:ShouldDrawEntityInfo(entity)

@@ -295,6 +295,7 @@ function GM:PlayerSpawn(client)
 	client:SetNotSolid(false)
 	client:SetRagdolled(false)
 	client:SetAction()
+	client:SetDSP(1)
 
 	hook.Run("PlayerLoadout", client)
 end
@@ -450,6 +451,9 @@ function GM:DoPlayerDeath(client, attacker, damageinfo)
 			attacker:AddFrags(1)
 		end
 	end
+
+	client:SetAction("@respawning", nut.config.Get("spawnTime", 5))
+	client:SetDSP(31)
 end
 
 function GM:PlayerDeath(client, inflictor, attacker)

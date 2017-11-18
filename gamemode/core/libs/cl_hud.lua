@@ -34,7 +34,7 @@ function nut.hud.DrawDeath()
 
 	surface.SetDrawColor(0, 0, 0, ceil((aprg^.5) * 255))
 	surface.DrawRect(-1, -1, w+2, h+2)
-	local tx, ty = nut.util.DrawText(L"youreDead", w/2, h/2, ColorAlpha(color_white, aprg2 * 255), 1, 1, "nutDynFontMedium", aprg2 * 255)
+	local tx, ty = nut.util.DrawText(string.upper(L"youreDead"), w/2, h/2, ColorAlpha(color_white, aprg2 * 255), 1, 1, "nutDynFontMedium", aprg2 * 255)
 end
 
 function nut.hud.DrawItemPickup()
