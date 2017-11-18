@@ -1,3 +1,4 @@
+
 if (SERVER) then
 	-- Sends a notification to a specified recipient.
 	function nut.util.Notify(message, recipient)
@@ -23,11 +24,18 @@ if (SERVER) then
 		end
 	end
 else
+	NUT_CVAR_CHATNOTICE = CreateClientConVar("nut_chatnotice", 0, true)
+
 	-- List of notice panels.
 	nut.notices = nut.notices or {}
 
 	-- Create a notification panel.
 	function nut.util.Notify(message)
+		if (NUT_CVAR_CHATNOTICE:GetBool()) then
+			nut.chat.Send(LocalPlayer(), "notice", message)
+			return
+		end
+
 		local notice = vgui.Create("nutNotice")
 		local i = table.insert(nut.notices, notice)
 		local scrW = ScrW()

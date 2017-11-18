@@ -175,6 +175,16 @@ if (SERVER) then
 		end
 	end
 else
+	function nut.chat.Send(speaker, chatType, text, anonymous, data)
+		local class = nut.chat.classes[chatType]
+
+		if (class) then
+			CHAT_CLASS = class
+				class:OnChatAdd(speaker, text, anonymous, data)
+			CHAT_CLASS = nil
+		end
+	end
+
 	-- Call OnChatAdd for the appropriate chatType.
 	netstream.Hook("cMsg", function(client, chatType, text, anonymous)
 		if (IsValid(client)) then
@@ -186,14 +196,9 @@ else
 			}
 
 			hook.Run("OnChatReceived", client, info)
-
-			local class = nut.chat.classes[info.chatType or chatType]
-
-			if (class) then
-				CHAT_CLASS = class
-					class:OnChatAdd(client, info.text or text, info.anonymous or anonymous, info.data or {})
-				CHAT_CLASS = nil
-			end
+			nut.chat.Send(client, info.chatType or chatType, info.text or text, info.anonymous or anonymous, info.data or {})
+		else
+			nut.chat.Send(nil, chatType, text, anonymous, {})
 		end
 	end)
 end
@@ -304,7 +309,7 @@ do
 
 				icon = Material(hook.Run("GetPlayerIcon", speaker) or icon)
 
-				chat.AddText(icon, Color(255, 50, 50), " [OOC] ", speaker, color_white, ": "..text)
+				chat.AddText(icon, Color(255, 50, 50), "[OOC] ", speaker, color_white, ": "..text)
 			end,
 			prefix = {"//", "/OOC"},
 			noSpaceAfter = true,
@@ -378,7 +383,7 @@ nut.chat.Register("connect", {
 	OnChatAdd = function(self, speaker, text)
 		local icon = nut.util.GetMaterial("icon16/user_add.png")
 
-		chat.AddText(icon, Color(150, 150, 200), L("playerConnected", nil, text))
+		chat.AddText(icon, Color(150, 150, 200), L("playerConnected", text))
 	end,
 	noSpaceAfter = true,
 	filter = "ooc"
@@ -391,7 +396,19 @@ nut.chat.Register("disconnect", {
 	OnChatAdd = function(self, speaker, text)
 		local icon = nut.util.GetMaterial("icon16/user_delete.png")
 
-		chat.AddText(icon, Color(200, 150, 200), L("playerDisconnected", nil, text))
+		chat.AddText(icon, Color(200, 150, 200), L("playerDisconnected", text))
+	end,
+	noSpaceAfter = true,
+	filter = "ooc"
+})
+
+nut.chat.Register("notice", {
+	OnCanSay = function(self, speaker, text)
+		return false
+	end,
+	OnChatAdd = function(self, speaker, text)
+		local icon = nut.util.GetMaterial("icon16/comment.png")
+		chat.AddText(icon, Color(175, 200, 255), text)
 	end,
 	noSpaceAfter = true,
 	filter = "ooc"

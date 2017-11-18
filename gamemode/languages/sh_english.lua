@@ -45,6 +45,7 @@ LANGUAGE = {
 	settings = "Settings",
 	config = "Config",
 	chat = "Chat",
+	chatNotice = "Show notices in chat?",
 	appearance = "Appearance",
 	misc = "Miscellaneous",
 	oocDelay = "You must wait %s more second(s) before using OOC again.",

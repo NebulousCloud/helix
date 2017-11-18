@@ -731,6 +731,14 @@ function GM:SetupQuickMenu(menu)
 		end
 	end, NUT_CVAR_CHEAP:GetBool())
 
+	menu:AddCheck(L"chatNotice", function(panel, state)
+		if (state) then
+			RunConsoleCommand("nut_chatnotice", "1")
+		else
+			RunConsoleCommand("nut_chatnotice", "0")
+		end
+	end, NUT_CVAR_CHATNOTICE:GetBool())
+
 	-- Language settings
 	menu:AddSpacer()
 
