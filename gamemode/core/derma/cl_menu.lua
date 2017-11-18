@@ -68,8 +68,13 @@ local PANEL = {}
 		
 		self.noAnchor = CurTime() + .4
 		self.anchorMode = true
-		self:SetActiveTab("you")
 		self:MakePopup()
+
+		if (self.tabList[nut.gui.lastMenuTab]) then
+			self:SetActiveTab(nut.gui.lastMenuTab)
+		else
+			self:SetActiveTab("you")
+		end
 	end
 
 	function PANEL:OnKeyCodePressed(key)
@@ -160,7 +165,10 @@ local PANEL = {}
 
 				self.panel:AlphaTo(255, 0.5, 0.1)
 				self.activeTab = this
-				lastMenuTab = uniqueID
+				
+				if (uniqueID != "Characters") then
+					nut.gui.lastMenuTab = uniqueID
+				end
 
 				if (callback) then
 					callback(self.panel, this, self)
@@ -198,3 +206,5 @@ vgui.Register("nutMenu", PANEL, "EditablePanel")
 if (IsValid(nut.gui.menu)) then
 	vgui.Create("nutMenu")
 end
+
+nut.gui.lastMenuTab = nil
