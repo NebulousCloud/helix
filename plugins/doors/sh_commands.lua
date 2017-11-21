@@ -1,5 +1,6 @@
 local PLUGIN = PLUGIN
 nut.command.Add("DoorSell", {
+	description = "@cmdDoorSell",
 	OnRun = function(self, client, arguments)
 		-- Get the entity 96 units infront of the player.
 		local data = {}
@@ -41,6 +42,7 @@ nut.command.Add("DoorSell", {
 })
 
 nut.command.Add("DoorBuy", {
+	description = "@cmdDoorBuy",
 	OnRun = function(self, client, arguments)
 		-- Get the entity 96 units infront of the player.
 		local data = {}
@@ -93,6 +95,7 @@ nut.command.Add("DoorBuy", {
 })
 
 nut.command.Add("DoorSetUnownable", {
+	description = "@cmdDoorSetUnownable",
 	adminOnly = true,
 	syntax = "[string name]",
 	OnRun = function(self, client, arguments)
@@ -131,6 +134,7 @@ nut.command.Add("DoorSetUnownable", {
 })
 
 nut.command.Add("DoorSetOwnable", {
+	description = "@cmdDoorSetOwnable",
 	adminOnly = true,
 	syntax = "[string name]",
 	OnRun = function(self, client, arguments)
@@ -169,6 +173,7 @@ nut.command.Add("DoorSetOwnable", {
 })
 
 nut.command.Add("DoorSetFaction", {
+	description = "@cmdDoorSetFaction",
 	adminOnly = true,
 	syntax = "[string faction]",
 	OnRun = function(self, client, arguments)
@@ -228,6 +233,7 @@ nut.command.Add("DoorSetFaction", {
 })
 
 nut.command.Add("DoorSetDisabled", {
+	description = "@cmdDoorSetDisabled",
 	adminOnly = true,
 	syntax = "<bool disabled>",
 	OnRun = function(self, client, arguments)
@@ -258,6 +264,7 @@ nut.command.Add("DoorSetDisabled", {
 })
 
 nut.command.Add("DoorSetTitle", {
+	description = "@cmdDoorSetTitle",
 	syntax = "<string title>",
 	OnRun = function(self, client, arguments)
 		-- Get the door infront of the player.
@@ -307,6 +314,7 @@ nut.command.Add("DoorSetTitle", {
 })
 
 nut.command.Add("DoorSetParent", {
+	description = "@cmdDoorSetParent",
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
@@ -324,6 +332,7 @@ nut.command.Add("DoorSetParent", {
 })
 
 nut.command.Add("DoorSetChild", {
+	description = "@cmdDoorSetChild",
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
@@ -361,6 +370,7 @@ nut.command.Add("DoorSetChild", {
 })
 
 nut.command.Add("DoorRemoveChild", {
+	description = "@cmdDoorRemoveChild",
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
@@ -398,6 +408,7 @@ nut.command.Add("DoorRemoveChild", {
 })
 
 nut.command.Add("DoorSetHidden", {
+	description = "@cmdDoorSetHidden",
 	adminOnly = true,
 	syntax = "<bool hidden>",
 	OnRun = function(self, client, arguments)
@@ -427,6 +438,7 @@ nut.command.Add("DoorSetHidden", {
 })
 
 nut.command.Add("DoorSetClass", {
+	description = "@cmdDoorSetClass",
 	adminOnly = true,
 	syntax = "[string faction]",
 	OnRun = function(self, client, arguments)

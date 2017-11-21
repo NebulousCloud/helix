@@ -1,5 +1,6 @@
 
 nut.command.Add("Roll", {
+	description = "@cmdRoll",
 	syntax = "[number maximum]",
 	OnRun = function(self, client, arguments)
 		nut.chat.Send(client, "roll", math.random(0, math.min(tonumber(arguments[1]) or 100, 100)))
@@ -7,6 +8,7 @@ nut.command.Add("Roll", {
 })
 
 nut.command.Add("PM", {
+	description = "@cmdPM",
 	syntax = "<string target> <string message>",
 	OnRun = function(self, client, arguments)
 		local message = table.concat(arguments, " ", 2)
@@ -30,6 +32,7 @@ nut.command.Add("PM", {
 })
 
 nut.command.Add("Reply", {
+	description = "@cmdReply",
 	syntax = "<string message>",
 	OnRun = function(self, client, arguments)
 		local target = client.nutLastPM
@@ -42,6 +45,7 @@ nut.command.Add("Reply", {
 })
 
 nut.command.Add("SetVoicemail", {
+	description = "@cmdSetVoicemail",
 	syntax = "[string message]",
 	OnRun = function(self, client, arguments)
 		local message = table.concat(arguments, " ")
@@ -59,6 +63,7 @@ nut.command.Add("SetVoicemail", {
 })
 
 nut.command.Add("CharGiveFlag", {
+	description = "@cmdCharGiveFlag",
 	adminOnly = true,
 	syntax = "<string name> [string flags]",
 	OnRun = function(self, client, arguments)
@@ -77,7 +82,7 @@ nut.command.Add("CharGiveFlag", {
 					end
 				end
 
-				return client:RequestString("@flagGiveTitle", "@flagGiveDesc", function(text)
+				return client:RequestString("@flagGiveTitle", "@cmdFlagGive", function(text)
 					nut.command.Run(client, "flaggive", {target:Name(), text})
 				end, available)
 			end
@@ -92,6 +97,7 @@ nut.command.Add("CharGiveFlag", {
 })
 
 nut.command.Add("CharTakeFlag", {
+	description = "@cmdCharTakeFlag",
 	adminOnly = true,
 	syntax = "<string name> [string flags]",
 	OnRun = function(self, client, arguments)
@@ -101,7 +107,7 @@ nut.command.Add("CharTakeFlag", {
 			local flags = arguments[2]
 
 			if (!flags) then
-				return client:RequestString("@flagTakeTitle", "@flagTakeDesc", function(text)
+				return client:RequestString("@flagTakeTitle", "@cmdCharTakeFlag", function(text)
 					nut.command.Run(client, "flagtake", {target:Name(), text})
 				end, target:GetChar():GetFlags())
 			end
@@ -116,6 +122,7 @@ nut.command.Add("CharTakeFlag", {
 })
 
 nut.command.Add("ToggleRaise", {
+	description = "@cmdToggleRaise",
 	OnRun = function(self, client, arguments)
 		if ((client.nutNextToggle or 0) < CurTime()) then
 			client:ToggleWepRaised()
@@ -125,6 +132,7 @@ nut.command.Add("ToggleRaise", {
 })
 
 nut.command.Add("CharSetModel", {
+	description = "@cmdCharSetModel",
 	adminOnly = true,
 	syntax = "<string name> <string model>",
 	OnRun = function(self, client, arguments)
@@ -146,6 +154,7 @@ nut.command.Add("CharSetModel", {
 })
 
 nut.command.Add("CharSetSkin", {
+	description = "@cmdCharSetSkin",
 	adminOnly = true,
 	syntax = "<string name> [number skin]",
 	OnRun = function(self, client, arguments)
@@ -162,6 +171,7 @@ nut.command.Add("CharSetSkin", {
 })
 
 nut.command.Add("CharSetBodygroup", {
+	description = "@cmdCharSetBodygroup",
 	adminOnly = true,
 	syntax = "<string name> <string bodyGroup> [number value]",
 	OnRun = function(self, client, arguments)
@@ -190,6 +200,7 @@ nut.command.Add("CharSetBodygroup", {
 })
 
 nut.command.Add("CharSetAttribute", {
+	description = "@cmdCharSetAttribute",
 	adminOnly = true,
 	syntax = "<string charname> <string attribname> <number level>",
 	OnRun = function(self, client, arguments)
@@ -225,6 +236,7 @@ nut.command.Add("CharSetAttribute", {
 })
 
 nut.command.Add("CharAddAttribute", {
+	description = "@cmdCharAddAttribute",
 	adminOnly = true,
 	syntax = "<string charname> <string attribname> <number level>",
 	OnRun = function(self, client, arguments)
@@ -260,6 +272,7 @@ nut.command.Add("CharAddAttribute", {
 })
 
 nut.command.Add("CharSetName", {
+	description = "@cmdCharSetName",
 	adminOnly = true,
 	syntax = "<string name> [string newName]",
 	OnRun = function(self, client, arguments)
@@ -287,6 +300,7 @@ nut.command.Add("CharSetName", {
 })
 
 nut.command.Add("CharGiveItem", {
+	description = "@cmdCharGiveItem",
 	adminOnly = true,
 	syntax = "<string name> <string item>",
 	OnRun = function(self, client, arguments)
@@ -327,6 +341,7 @@ nut.command.Add("CharGiveItem", {
 })
 
 nut.command.Add("CharKick", {
+	description = "@cmdCharKick",
 	adminOnly = true,
 	syntax = "<string name>",
 	OnRun = function(self, client, arguments)
@@ -348,6 +363,7 @@ nut.command.Add("CharKick", {
 })
 
 nut.command.Add("CharBan", {
+	description = "@cmdCharBan",
 	syntax = "<string name>",
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
@@ -369,6 +385,7 @@ nut.command.Add("CharBan", {
 })
 
 nut.command.Add("CharUnban", {
+	description = "@cmdCharUnban",
 	syntax = "<string name>",
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
@@ -414,6 +431,7 @@ nut.command.Add("CharUnban", {
 })
 
 nut.command.Add("GiveMoney", {
+	description = "@cmdGiveMoney",
 	syntax = "<number amount>",
 	OnRun = function(self, client, arguments)
 		local number = tonumber(arguments[1])
@@ -447,6 +465,7 @@ nut.command.Add("GiveMoney", {
 })
 
 nut.command.Add("CharSetMoney", {
+	description = "@cmdCharSetMoney",
 	adminOnly = true,
 	syntax = "<string target> <number amount>",
 	OnRun = function(self, client, arguments)
@@ -473,6 +492,7 @@ nut.command.Add("CharSetMoney", {
 })
 
 nut.command.Add("DropMoney", {
+	description = "@cmdDropMoney",
 	syntax = "<number amount>",
 	OnRun = function(self, client, arguments)
 		local amount = tonumber(arguments[1])
@@ -495,6 +515,7 @@ nut.command.Add("DropMoney", {
 })
 
 nut.command.Add("PlyWhitelist", {
+	description = "@cmdPlyWhitelist",
 	adminOnly = true,
 	syntax = "<string name> <string faction>",
 	OnRun = function(self, client, arguments)
@@ -528,6 +549,7 @@ nut.command.Add("PlyWhitelist", {
 })
 
 nut.command.Add("CharGetUp", {
+	description = "@cmdCharGetUp",
 	OnRun = function(self, client, arguments)
 		local entity = client.nutRagdoll
 
@@ -546,6 +568,7 @@ nut.command.Add("CharGetUp", {
 })
 
 nut.command.Add("PlyUnwhitelist", {
+	description = "@cmdPlyUnwhitelist",
 	adminOnly = true,
 	syntax = "<string name> <string faction>",
 	OnRun = function(self, client, arguments)
@@ -579,6 +602,7 @@ nut.command.Add("PlyUnwhitelist", {
 })
 
 nut.command.Add("CharFallOver", {
+	description = "@cmdCharFallOver",
 	syntax = "[number time]",
 	OnRun = function(self, client, arguments)
 		local time = tonumber(arguments[1]) or 0
@@ -596,6 +620,7 @@ nut.command.Add("CharFallOver", {
 })
 
 nut.command.Add("BecomeClass", {
+	description = "@cmdBecomeClass",
 	syntax = "<string class>",
 	OnRun = function(self, client, arguments)
 		local class = table.concat(arguments, " ")
@@ -640,6 +665,7 @@ nut.command.Add("BecomeClass", {
 })
 
 nut.command.Add("CharDesc", {
+	description = "@cmdCharDesc",
 	syntax = "<string desc>",
 	OnRun = function(self, client, arguments)
 		arguments = table.concat(arguments, " ")
@@ -664,6 +690,7 @@ nut.command.Add("CharDesc", {
 })
 
 nut.command.Add("PlyTransfer", {
+	description = "@cmdPlyTransfer",
 	adminOnly = true,
 	syntax = "<string name> <string faction>",
 	OnRun = function(self, client, arguments)
@@ -700,6 +727,7 @@ nut.command.Add("PlyTransfer", {
 })
 
 nut.command.Add("CharSetClass", {
+	description = "@cmdCharSetClass",
 	adminOnly = true,
 	syntax = "<string name> <string class>",
 	OnRun = function(self, client, arguments)
@@ -746,6 +774,7 @@ nut.command.Add("CharSetClass", {
 })
 
 nut.command.Add("MapRestart", {
+	description = "@cmdMapRestart",
 	adminOnly = true,
 	syntax = "[number delay]",
 	OnRun = function(self, client, arguments)

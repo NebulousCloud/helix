@@ -382,6 +382,7 @@ else
 end
 
 nut.command.Add("AreaAdd", {
+	description = "@cmdAreaAdd",
 	adminOnly = true,
 	syntax = "<string name>",
 	OnRun = function(self, client, arguments)
@@ -419,6 +420,7 @@ nut.command.Add("AreaAdd", {
 })
 
 nut.command.Add("AreaRemove", {
+	description = "@cmdAreaRemove",
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
 		local areaID = client:GetArea()
@@ -439,6 +441,7 @@ nut.command.Add("AreaRemove", {
 })
 
 nut.command.Add("AreaChange", {
+	description = "@cmdAreaChange",
 	adminOnly = true,
 	syntax = "<string name>",
 	OnRun = function(self, client, arguments)
@@ -461,6 +464,7 @@ nut.command.Add("AreaChange", {
 })
 
 nut.command.Add("AreaManager", {
+	description = "@cmdAreaManager",
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
 		if (client:Alive()) then

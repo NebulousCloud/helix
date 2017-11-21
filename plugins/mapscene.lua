@@ -163,6 +163,7 @@ end
 local PLUGIN = PLUGIN
 
 nut.command.Add("MapSceneAdd", {
+	description = "@cmdMapSceneAdd",
 	adminOnly = true,
 	syntax = "[bool isPair]",
 	OnRun = function(self, client, arguments)
@@ -187,6 +188,7 @@ nut.command.Add("MapSceneAdd", {
 })
 
 nut.command.Add("MapSceneRemove", {
+	description = "@cmdMapSceneRemove",
 	adminOnly = true,
 	syntax = "[number radius]",
 	OnRun = function(self, client, arguments)

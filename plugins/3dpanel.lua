@@ -142,6 +142,7 @@ else
 end
 
 nut.command.Add("PanelAdd", {
+	description = "@cmdPanelAdd",
 	adminOnly = true,
 	syntax = "<string url> [number w] [number h] [number scale]",
 	OnRun = function(self, client, arguments)
@@ -165,6 +166,7 @@ nut.command.Add("PanelAdd", {
 })
 
 nut.command.Add("PanelRemove", {
+	description = "@cmdPanelRemove",
 	adminOnly = true,
 	syntax = "[number radius]",
 	OnRun = function(self, client, arguments)

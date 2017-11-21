@@ -7,7 +7,9 @@ PLUGIN.acts = PLUGIN.acts or {}
 nut.util.Include("sh_setup.lua")
 
 for k, v in pairs(PLUGIN.acts) do
-	local COMMAND = {}
+	local COMMAND = {
+		description = "@cmdAct"
+	}
 	local multiple = false
 
 	for k2, v2 in pairs(v) do
@@ -20,6 +22,10 @@ for k, v in pairs(PLUGIN.acts) do
 
 	if (multiple) then
 		COMMAND.syntax = "[number type]"
+	end
+
+	function COMMAND:GetDescription()
+		return L("cmdAct", k)
 	end
 
 	function COMMAND:OnRun(client, arguments)

@@ -21,6 +21,7 @@ end
 if (CLIENT) then
 	-- fixpac command. you can fix the PAC3 errors with this.
 	nut.command.Add("FixPAC", {
+		description = "@cmdFixPAC",
 		OnRun = function(self, client, arguments)
 			RunConsoleCommand("pac_restart")
 		end,

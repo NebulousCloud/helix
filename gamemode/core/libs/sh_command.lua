@@ -6,6 +6,7 @@ local COMMAND_PREFIX = "/"
 -- Adds a new command to the list of commands.
 function nut.command.Add(command, data)
 	data.name = string.gsub(command, "%s", "")
+	data.description = data.description or ""
 	data.syntax = data.syntax or "[none]"
 
 	command = command:lower()
@@ -14,6 +15,22 @@ function nut.command.Add(command, data)
 	-- Why bother adding a command if it doesn't do anything.
 	if (!data.OnRun) then
 		return ErrorNoHalt("Command '"..command.."' does not have a callback, not adding!\n")
+	end
+
+	-- Add a function to get the description that can be overridden.
+	if (!data.GetDescription) then
+		-- Check if the description is using a language string.
+		if (data.description:sub(1, 1) == "@") then
+			print("adding localized description for ", data.name)
+			function data:GetDescription()
+				return L(self.description:sub(2))
+			end
+		else
+			-- Otherwise just return the raw description.
+			function data:GetDescription()
+				return self.description
+			end
+		end
 	end
 
 	-- Store the old OnRun because we're able to change it.

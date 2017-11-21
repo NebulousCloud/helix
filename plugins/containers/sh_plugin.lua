@@ -147,6 +147,7 @@ else
 end
 
 nut.command.Add("ContainerSetPassword", {
+	description = "@cmdContainerSetPassword",
 	adminOnly = true,
 	syntax = "[string password]",
 	OnRun = function(self, client, arguments)

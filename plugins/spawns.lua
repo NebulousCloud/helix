@@ -48,6 +48,7 @@ function PLUGIN:SaveSpawns()
 end
 
 nut.command.Add("SpawnAdd", {
+	description = "@cmdSpawnAdd",
 	adminOnly = true,
 	syntax = "<string faction> [string class]",
 	OnRun = function(self, client, arguments)
@@ -116,6 +117,7 @@ nut.command.Add("SpawnAdd", {
 })
 
 nut.command.Add("SpawnRemove", {
+	description = "@cmdSpawnRemove",
 	adminOnly = true,
 	syntax = "[number radius]",
 	OnRun = function(self, client, arguments)

@@ -52,17 +52,25 @@ local PANEL = {}
 					surface.SetDrawColor(0, 0, 0, 200)
 					surface.DrawRect(0, 0, w, h)
 
-					local i = 0
+					local currentY = 0
 
 					for k, v in ipairs(self.potentialCommands) do
 						local color = nut.config.Get("color")
 						local bSelectedCommand = command == v.uniqueID or (self.autocompleteIndex > 0 and k == self.autocompleteIndex)
 
 						if (bSelectedCommand) then
+							local description = v:GetDescription()
+
+							if (description != "") then
+								local width, height = nut.util.DrawText(description, 4, currentY, COLOR_ACTIVE)
+
+								currentY = currentY + height + 1
+							end
+
 							color = Color(color.r + 35, color.g + 35, color.b + 35, 255)
 						end
 
-						local x, y = nut.util.DrawText("/" .. v.name .. "  ", 4, i * 20, color)
+						local x, height = nut.util.DrawText("/" .. v.name .. "  ", 4, currentY, color)
 
 						if (bSelectedCommand and v.syntax) then
 							local i2 = 0
@@ -75,11 +83,13 @@ local PANEL = {}
 									color = COLOR_ACTIVE
 								end
 
-								x = x + nut.util.DrawText(argument .. "  ", x, i * 20, color)
+								local width, height = nut.util.DrawText(argument .. "  ", x, currentY, color)
+
+								x = x + width
 							end
 						end
 
-						i = i + 1
+						currentY = currentY + height + 1
 					end
 				end
 			end
