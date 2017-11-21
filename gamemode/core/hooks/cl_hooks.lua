@@ -614,7 +614,11 @@ function GM:PlayerBindPress(client, bind, pressed)
 	bind = bind:lower()
 	
 	if (bind:find("use") and pressed) then
-		local entity = client:GetEyeTrace().Entity
+		local data = {}
+			data.start = client:GetShootPos()
+			data.endpos = data.start + client:GetAimVector() * 96
+			data.filter = client
+		local entity = util.TraceLine(data).Entity
 
 		if (IsValid(entity) and entity:GetClass() == "nut_item") then
 			client.nutItemToTake = entity
