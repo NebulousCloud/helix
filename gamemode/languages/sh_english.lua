@@ -309,4 +309,9 @@ LANGUAGE = {
 	cmdDoorRemoveChild = "Removes the child from a pair of doors.",
 	cmdDoorSetHidden = "Hides the description of the door you are looking at, but still allows it to be ownable.",
 	cmdDoorSetClass = "Makes the door you are looking at owned by the specified class.",
+	cmdMe = "Perform a physical action.",
+	cmdIt = "Make something around you perform an action.",
+	cmdW = "Whisper something to the people near you.",
+	cmdY = "Yell something to the people around you.",
+	cmdEvent = "Make something perform an action that everyone can see."
 }

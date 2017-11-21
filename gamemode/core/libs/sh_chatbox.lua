@@ -60,7 +60,11 @@ function nut.chat.Register(chatType, data)
 		if (type(data.prefix) == "table") then
 			for k, v in ipairs(data.prefix) do
 				if (v:sub(1, 1) == "/") then
-					nut.command.Add(v:sub(2), {syntax = "<string text>", OnRun = function() end})
+					nut.command.Add(v:sub(2), {
+						description = data.description,
+						syntax = "<string text>",
+						OnRun = function() end
+					})
 				end
 			end
 		else
@@ -228,6 +232,7 @@ do
 			OnGetColor = nut.chat.classes.ic.OnGetColor,
 			OnCanHear = nut.config.Get("chatRange", 280),
 			prefix = {"/Me", "/Action"},
+			description = "@cmdMe",
 			filter = "actions",
 			deadCanChat = true
 		})
@@ -239,6 +244,7 @@ do
 			end,
 			OnCanHear = nut.config.Get("chatRange", 280),
 			prefix = {"/It"},
+			description = "@cmdIt",
 			filter = "actions",
 			deadCanChat = true
 		})
@@ -253,7 +259,8 @@ do
 				return Color(color.r - 35, color.g - 35, color.b - 35)
 			end,
 			OnCanHear = nut.config.Get("chatRange", 280) * 0.25,
-			prefix = {"/W", "/Whisper"}
+			prefix = {"/W", "/Whisper"},
+			description = "@cmdW"
 		})
 
 		-- Yelling out loud.
@@ -266,7 +273,8 @@ do
 				return Color(color.r + 35, color.g + 35, color.b + 35)
 			end,
 			OnCanHear = nut.config.Get("chatRange", 280) * 2,
-			prefix = {"/Y", "/Yell"}
+			prefix = {"/Y", "/Yell"},
+			description = "@cmdY"
 		})
 
 		-- Out of character.
@@ -373,7 +381,8 @@ nut.chat.Register("event", {
 	OnChatAdd = function(self, speaker, text)
 		chat.AddText(Color(255, 150, 0), text)
 	end,
-	prefix = {"/Event"}
+	prefix = {"/Event"},
+	description = "@cmdEvent"
 })
 
 nut.chat.Register("connect", {
