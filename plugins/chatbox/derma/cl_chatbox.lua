@@ -56,7 +56,7 @@ local PANEL = {}
 
 					for k, v in ipairs(self.potentialCommands) do
 						local color = nut.config.Get("color")
-						local bSelectedCommand = command == v.uniqueID or (self.autocompleteIndex > 0 and k == self.autocompleteIndex)
+						local bSelectedCommand = (self.autocompleteIndex == 0 and command == v.uniqueID) or (self.autocompleteIndex > 0 and k == self.autocompleteIndex)
 
 						if (bSelectedCommand) then
 							local description = v:GetDescription()
@@ -193,7 +193,14 @@ local PANEL = {}
 
 					self.potentialCommands = nut.command.FindAll(command, true, true, true)
 					self.arguments = nut.command.ExtractArgs(text:sub(2))
-					self.autocompleteIndex = 0
+
+					-- if the first suggested command is equal to the currently typed one,
+					-- offset the index so you don't have to hit tab twice to go past the first command
+					if (#self.potentialCommands > 0 and self.potentialCommands[1].uniqueID == command:sub(2):lower()) then
+						self.autocompleteIndex = 1
+					else
+						self.autocompleteIndex = 0
+					end
 				end
 
 				this.autocompleted = nil
