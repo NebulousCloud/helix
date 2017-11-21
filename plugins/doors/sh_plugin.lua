@@ -1,6 +1,3 @@
-if (engine.ActiveGamemode() == "dayz") then
-	return
-end
 
 PLUGIN.name = "Doors"
 PLUGIN.author = "Chessnut"
