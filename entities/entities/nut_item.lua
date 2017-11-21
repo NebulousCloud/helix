@@ -5,6 +5,7 @@ ENT.Type = "anim"
 ENT.PrintName = "Item"
 ENT.Category = "NutScript"
 ENT.Spawnable = false
+ENT.ShowPlayerInteraction = true
 ENT.RenderGroup = RENDERGROUP_BOTH
 
 if (SERVER) then
@@ -27,20 +28,9 @@ if (SERVER) then
 
 	function ENT:Use(activator, caller)
 		if (IsValid(caller) and caller:IsPlayer() and caller:GetChar() and self.nutItemID) then
-			local pickupTime = nut.config.Get("itemPickupTime", 0.5)
-
-			if (pickupTime > 0) then
-				caller.nutItemToTake = self
-
-				timer.Create("nutItemUse" .. caller:SteamID(), pickupTime, 1, function()
-					if (IsValid(caller) and IsValid(self) and IsValid(caller.nutItemToTake) and caller:GetEyeTrace().Entity == caller.nutItemToTake) then
-						caller.nutItemToTake = nil
-						nut.item.PerformInventoryAction(caller, "take", self)
-					end
-				end)
-			else
-				nut.item.PerformInventoryAction(caller, "take", self)
-			end
+			caller:PerformInteraction(nut.config.Get("itemPickupTime", 0.5), self, function(client)
+				nut.item.PerformInventoryAction(client, "take", self)
+			end)
 		end
 	end
 

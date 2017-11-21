@@ -951,6 +951,32 @@ do
 			end
 		end
 
+		-- Performs a delayed action that requires the user to hold use on an entity.
+		-- The callback will be ran right away if the time is zero.
+		function playerMeta:PerformInteraction(time, entity, callback)
+			if (time > 0) then
+				self.nutInteractionTarget = entity
+				self.nutInteractionCharacter = self:GetCharacter():GetID()
+
+				timer.Create("nutCharacterInteraction" .. self:SteamID(), time, 1, function()
+					if (IsValid(self) and IsValid(entity) and IsValid(self.nutInteractionTarget) and
+						self.nutInteractionCharacter == self:GetCharacter():GetID()) then
+						local data = {}
+							data.start = self:GetShootPos()
+							data.endpos = data.start + self:GetAimVector() * 96
+							data.filter = self
+						local traceEntity = util.TraceLine(data).Entity
+
+						if (IsValid(traceEntity) and traceEntity == self.nutInteractionTarget) then
+							callback(self)
+						end
+					end
+				end)
+			else
+				callback(self)
+			end
+		end
+
 		-- Performs a delayed action on a player.
 		function playerMeta:SetAction(text, time, callback, startTime, finishTime)
 			if (time and time <= 0) then

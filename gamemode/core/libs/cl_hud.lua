@@ -45,16 +45,16 @@ function nut.hud.DrawItemPickup()
 	end
 
 	local client = LocalPlayer()
-	local entity = client.nutItemToTake
-	local startTime = client.nutItemStartTime
+	local entity = client.nutInteractionTarget
+	local startTime = client.nutInteractionStartTime
 
 	if (IsValid(entity) and startTime) then
 		local sysTime = SysTime()
 		local endTime = startTime + pickupTime
 
 		if (sysTime >= endTime or client:GetEyeTrace().Entity != entity) then
-			client.nutItemToTake = nil
-			client.nutItemStartTime = nil
+			client.nutInteractionTarget = nil
+			client.nutInteractionStartTime = nil
 
 			return
 		end

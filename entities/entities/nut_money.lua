@@ -4,6 +4,7 @@ ENT.Type = "anim"
 ENT.PrintName = "Money"
 ENT.Category = "NutScript"
 ENT.Spawnable = false
+ENT.ShowPlayerInteraction = true
 
 if (SERVER) then
 	function ENT:Initialize()
@@ -38,9 +39,11 @@ if (SERVER) then
 			end
 		end
 		
-		if (hook.Run("OnPickupMoney", activator, self) != false) then
-			self:Remove()
-		end
+		activator:PerformInteraction(nut.config.Get("itemPickupTime", 0.5), self, function(client)
+			if (hook.Run("OnPickupMoney", client, self) != false) then
+				self:Remove()
+			end
+		end)
 	end
 else
 	ENT.DrawEntityInfo = true

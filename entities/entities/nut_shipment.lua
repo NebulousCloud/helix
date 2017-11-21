@@ -4,6 +4,7 @@ ENT.Type = "anim"
 ENT.PrintName = "Shipment"
 ENT.Category = "NutScript"
 ENT.Spawnable = false
+ENT.ShowPlayerInteraction = true
 
 if (SERVER) then
 	function ENT:Initialize()
@@ -30,10 +31,12 @@ if (SERVER) then
 	end
 
 	function ENT:Use(activator)
-		if (activator:GetChar() and activator:GetChar():GetID() == self:GetNetVar("owner", 0) and hook.Run("PlayerCanOpenShipment", activator, self) != false) then
-			activator.nutShipment = self
-			netstream.Start(activator, "openShp", self, self.items)
-		end
+		activator:PerformInteraction(nut.config.Get("itemPickupTime", 0.5), self, function(client)
+			if (client:GetChar() and client:GetChar():GetID() == self:GetNetVar("owner", 0) and hook.Run("PlayerCanOpenShipment", client, self) != false) then
+				client.nutShipment = self
+				netstream.Start(client, "openShp", self, self.items)
+			end
+		end)
 	end
 
 	function ENT:SetItems(items)
