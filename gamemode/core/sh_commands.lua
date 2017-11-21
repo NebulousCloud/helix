@@ -82,7 +82,7 @@ nut.command.Add("CharGiveFlag", {
 					end
 				end
 
-				return client:RequestString("@flagGiveTitle", "@cmdFlagGive", function(text)
+				return client:RequestString("@flagGiveTitle", "@cmdCharGiveFlag", function(text)
 					nut.command.Run(client, "flaggive", {target:Name(), text})
 				end, available)
 			end
