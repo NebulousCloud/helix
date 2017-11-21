@@ -195,6 +195,19 @@ function ITEM:OnSave()
 	end
 end
 
+function ITEM:OnRemoved()
+	local inventory = nut.item.inventories[self.invID]
+	local receiver = inventory.GetReceiver and inventory:GetReciever()
+
+	if (IsValid(receiver) and receiver:IsPlayer()) then
+		local weapon = receiver:GetWeapon(self.class)
+
+		if (IsValid(weapon)) then
+			weapon:Remove()
+		end
+	end
+end
+
 HOLSTER_DRAWINFO = {}
 
 -- Called after the item is registered into the item tables.
