@@ -21,7 +21,6 @@ function nut.command.Add(command, data)
 	if (!data.GetDescription) then
 		-- Check if the description is using a language string.
 		if (data.description:sub(1, 1) == "@") then
-			print("adding localized description for ", data.name)
 			function data:GetDescription()
 				return L(self.description:sub(2))
 			end
