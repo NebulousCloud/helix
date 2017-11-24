@@ -33,11 +33,11 @@ function PLUGIN:LoadData()
 
 			if (hook.Run("ShouldDeleteSavedItems") == true) then
 				-- don't spawn saved item and just delete them.
-				nut.db.query("DELETE FROM nut_items WHERE _itemID IN " .. range)
+				ix.db.query("DELETE FROM ix_items WHERE _itemID IN " .. range)
 				print("Server Deleted Server Items (does not includes Logical Items)")
 				print(range)
 			else
-				nut.db.query("SELECT _itemID, _uniqueID, _data FROM nut_items WHERE _itemID IN "..range, function(data)
+				ix.db.query("SELECT _itemID, _uniqueID, _data FROM ix_items WHERE _itemID IN "..range, function(data)
 					if (data) then
 						local loadedItems = {}
 
@@ -45,14 +45,14 @@ function PLUGIN:LoadData()
 							local itemID = tonumber(v._itemID)
 							local data = util.JSONToTable(v._data or "[]")
 							local uniqueID = v._uniqueID
-							local itemTable = nut.item.list[uniqueID]
+							local itemTable = ix.item.list[uniqueID]
 							local position = positions[itemID]
 
 							if (itemTable and itemID) then
 								local position = positions[itemID]
-								local item = nut.item.New(uniqueID, itemID)
+								local item = ix.item.New(uniqueID, itemID)
 								item.data = data or {}
-								item:Spawn(position).nutItemID = itemID
+								item:Spawn(position).ixItemID = itemID
 
 								item.invID = 0
 								table.insert(loadedItems, item)
@@ -70,9 +70,9 @@ end
 function PLUGIN:SaveData()
 	local items = {}
 
-	for k, v in ipairs(ents.FindByClass("nut_item")) do
-		if (v.nutItemID and !v.temp) then
-			items[#items + 1] = {v.nutItemID, v:GetPos()}
+	for k, v in ipairs(ents.FindByClass("ix_item")) do
+		if (v.ixItemID and !v.temp) then
+			items[#items + 1] = {v.ixItemID, v:GetPos()}
 		end
 	end
 

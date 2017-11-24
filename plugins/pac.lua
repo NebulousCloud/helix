@@ -7,20 +7,20 @@ PLUGIN.description = "More Upgraded, More well organized PAC3 Integration made b
 
 if (!pace) then return end
 
-nut.pac = nut.pac or {}
-nut.pac.list = nut.pac.list or {}
+ix.pac = ix.pac or {}
+ix.pac.list = ix.pac.list or {}
 
 local meta = FindMetaTable("Player")
 
 -- this stores pac3 part information to plugin's table'
-function nut.pac.registerPart(id, outfit)
-	nut.pac.list[id] = outfit
+function ix.pac.registerPart(id, outfit)
+	ix.pac.list[id] = outfit
 end
 
--- Fixing the PAC3's default stuffs to fit on Nutscript.
+-- Fixing the PAC3's default stuffs to fit on Helix.
 if (CLIENT) then
 	-- fixpac command. you can fix the PAC3 errors with this.
-	nut.command.Add("FixPAC", {
+	ix.command.Add("FixPAC", {
 		description = "@cmdFixPAC",
 		OnRun = function(self, client, arguments)
 			RunConsoleCommand("pac_restart")
@@ -141,8 +141,8 @@ else
 				local parts = client:GetParts()
 
 				for pacKey, pacValue in pairs(parts) do
-					if (nut.pac.list[pacKey]) then
-						v:AttachPACPart(nut.pac.list[pacKey])
+					if (ix.pac.list[pacKey]) then
+						v:AttachPACPart(ix.pac.list[pacKey])
 					end
 				end
 			end
@@ -156,12 +156,12 @@ else
 			pac.SetupENT(wearer)
 		end
 		
-		local itemTable = nut.item.list[outfitID]
-		local newPac = nut.pac.list[outfitID]
+		local itemTable = ix.item.list[outfitID]
+		local newPac = ix.pac.list[outfitID]
 
-		if (nut.pac.list[outfitID]) then
+		if (ix.pac.list[outfitID]) then
 			if (itemTable and itemTable.pacAdjust) then
-				newPac = table.Copy(nut.pac.list[outfitID])
+				newPac = table.Copy(ix.pac.list[outfitID])
 				newPac = itemTable:pacAdjust(newPac, wearer)
 			end
 
@@ -188,9 +188,9 @@ else
 			pac.SetupENT(wearer)
 		end
 
-		if (nut.pac.list[outfitID]) then
+		if (ix.pac.list[outfitID]) then
 			if (wearer.RemovePACPart) then
-				wearer:RemovePACPart(nut.pac.list[outfitID])
+				wearer:RemovePACPart(ix.pac.list[outfitID])
 			else
 				pac.SetupENT(wearer)
 			end
@@ -199,7 +199,7 @@ else
 
 	netstream.Hook("partReset", function(wearer, outfitList)
 		for k, v in pairs(outfitList) do
-			wearer:RemovePACPart(nut.pac.list[k])
+			wearer:RemovePACPart(ix.pac.list[k])
 		end
 	end)
 
@@ -271,8 +271,8 @@ else
 
 				-- Wear current player's PAC3 Outfits on the ModelPanel's Clientside Model Entity.
 				for k, v in pairs(parts) do
-					if (nut.pac.list[k]) then
-						ent:AttachPACPart(nut.pac.list[k])
+					if (ix.pac.list[k]) then
+						ent:AttachPACPart(ix.pac.list[k])
 					end
 				end
 				
@@ -283,7 +283,7 @@ else
 		end
 	end
 
-	function PLUGIN:DrawNutModelView(panel, ent)
+	function PLUGIN:DrawHelixModelView(panel, ent)
 		if (LocalPlayer():GetChar()) then
 			if (pac) then
 				pac.RenderOverride(ent, "opaque")
@@ -294,11 +294,11 @@ else
 end
 
 function PLUGIN:InitializedPlugins()
-	local items = nut.item.list
+	local items = ix.item.list
 
 	for k, v in pairs(items) do
 		if (v.pacData) then
-			nut.pac.list[v.uniqueID] = v.pacData
+			ix.pac.list[v.uniqueID] = v.pacData
 		end
 	end
 end

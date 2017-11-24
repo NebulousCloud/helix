@@ -33,7 +33,7 @@ local PANEL = {}
 	end
 
 	function PANEL:SetDoor(door, access, door2)
-		door.nutPanel = self
+		door.ixPanel = self
 
 		self.accessData = access
 		self.door = door
@@ -52,7 +52,7 @@ local PANEL = {}
 			self.sell:DockMargin(0, 5, 0, 0)
 			self.sell.DoClick = function(this)
 				self:Remove()
-				nut.command.Send("doorsell")
+				ix.command.Send("doorsell")
 			end
 		end
 
@@ -68,7 +68,7 @@ local PANEL = {}
 				end
 			end
 			self.name.OnEnter = function(this)
-				nut.command.Send("doorsettitle", this:GetText())
+				ix.command.Send("doorsettitle", this:GetText())
 			end
 		end
 	end
@@ -88,4 +88,4 @@ local PANEL = {}
 			self:Remove()
 		end
 	end
-vgui.Register("nutDoorMenu", PANEL, "DFrame")
+vgui.Register("ixDoorMenu", PANEL, "DFrame")

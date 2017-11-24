@@ -494,7 +494,7 @@ function PANEL:OnRemove()
 end
 vgui.Register("iconEditor", PANEL, "DFrame")
 
-concommand.Add("nut_dev_icon", function()
+concommand.Add("ix_dev_icon", function()
 	if (LocalPlayer():IsAdmin()) then
 		vgui.Create("iconEditor")
 	end

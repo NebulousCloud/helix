@@ -1,15 +1,15 @@
-nut.flag = nut.flag or {}
-nut.flag.list = nut.flag.list or {}
+ix.flag = ix.flag or {}
+ix.flag.list = ix.flag.list or {}
 
 -- Adds a flag that does something when set.
-function nut.flag.Add(flag, description, callback)
+function ix.flag.Add(flag, description, callback)
 	-- Add the flag to a list, storing the description and callback (if there is one).
-	nut.flag.list[flag] = {description = description, callback = callback}
+	ix.flag.list[flag] = {description = description, callback = callback}
 end
 
 if (SERVER) then
 	-- Called to apply flags when a player has spawned.
-	function nut.flag.OnSpawn(client)
+	function ix.flag.OnSpawn(client)
 		-- Check if they have a valid character.
 		if (client:GetChar()) then
 			-- Get all of the character's flags.
@@ -18,7 +18,7 @@ if (SERVER) then
 			for i = 1, #flags do
 				-- Get each individual flag.
 				local flag = flags:sub(i, i)
-				local info = nut.flag.list[flag]
+				local info = ix.flag.list[flag]
 
 				-- Check if the flag has a callback.
 				if (info and info.callback) then
@@ -32,7 +32,7 @@ end
 
 do
 	-- Extend the character metatable to allow flag giving/taking.
-	local character = nut.meta.character
+	local character = ix.meta.character
 
 	-- Flags can only be set server-side.
 	if (SERVER) then
@@ -48,7 +48,7 @@ do
 			-- Get the individual flags within the flag string.
 			for i = 1, #flags do
 				local flag = flags:sub(i, i)
-				local info = nut.flag.list[flag]
+				local info = ix.flag.list[flag]
 
 				if (info) then
 					if (!character:HasFlags(flag)) then
@@ -76,7 +76,7 @@ do
 			-- Get the individual flags within the flag string.
 			for i = 1, #flags do
 				local flag = flags:sub(i, i)
-				local info = nut.flag.list[flag]
+				local info = ix.flag.list[flag]
 
 				-- Call the callback if the flag has been registered.
 				if (info and info.callback) then
@@ -111,7 +111,7 @@ do
 end
 
 do
-	nut.flag.Add("p", "Access to the physgun.", function(client, isGiven)
+	ix.flag.Add("p", "Access to the physgun.", function(client, isGiven)
 		if (isGiven) then
 			client:Give("weapon_physgun")
 			client:SelectWeapon("weapon_physgun")
@@ -120,7 +120,7 @@ do
 		end
 	end)
 
-	nut.flag.Add("t", "Access to the toolgun", function(client, isGiven)
+	ix.flag.Add("t", "Access to the toolgun", function(client, isGiven)
 		if (isGiven) then
 			client:Give("gmod_tool")
 			client:SelectWeapon("gmod_tool")
@@ -129,9 +129,9 @@ do
 		end
 	end)
 
-	nut.flag.Add("c", "Access to spawn chairs.")
-	nut.flag.Add("C", "Access to spawn vehicles.")
-	nut.flag.Add("r", "Access to spawn ragdolls.")
-	nut.flag.Add("e", "Access to spawn props.")
-	nut.flag.Add("n", "Access to spawn NPCs.")
+	ix.flag.Add("c", "Access to spawn chairs.")
+	ix.flag.Add("C", "Access to spawn vehicles.")
+	ix.flag.Add("r", "Access to spawn ragdolls.")
+	ix.flag.Add("e", "Access to spawn props.")
+	ix.flag.Add("n", "Access to spawn NPCs.")
 end

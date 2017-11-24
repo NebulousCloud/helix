@@ -24,7 +24,7 @@ local PANEL = {}
         self.icon.PaintOver = function(this, w, h)
             --[[
             if (panel.payload.model == k) then
-                local color = nut.config.Get("color", color_white)
+                local color = ix.config.Get("color", color_white)
 
                 surface.SetDrawColor(color.r, color.g, color.b, 200)
 
@@ -48,7 +48,7 @@ local PANEL = {}
         self.limit:SetCursor("hand")
         self.limit:SetExpensiveShadow(1, Color(0, 0, 60))
         self.limit:SetContentAlignment(5)
-        self.limit:SetFont("nutMediumFont")
+        self.limit:SetFont("ixMediumFont")
         self.limit:SetWide(64)
         AssignClick(self.limit) 
 
@@ -58,12 +58,12 @@ local PANEL = {}
         self.label:SetCursor("hand")
         self.label:SetExpensiveShadow(1, Color(0, 0, 60))
         self.label:SetContentAlignment(5)
-        self.label:SetFont("nutMediumFont")
+        self.label:SetFont("ixMediumFont")
         AssignClick(self.label) 
     end
 
     function PANEL:OnClick()
-        nut.command.Send("BecomeClass", self.class)
+        ix.command.Send("BecomeClass", self.class)
     end
 
     function PANEL:SetNumber(number)
@@ -99,13 +99,13 @@ local PANEL = {}
         self.data = data 
         self.class = data.index
 
-        self:SetNumber(#nut.class.GetPlayers(data.index))
+        self:SetNumber(#ix.class.GetPlayers(data.index))
     end
-vgui.Register("nutClassPanel", PANEL, "DPanel")
+vgui.Register("ixClassPanel", PANEL, "DPanel")
 
 PANEL = {}
     function PANEL:Init()
-        nut.gui.classes = self
+        ix.gui.classes = self
 
         self:SetSize(self:GetParent():GetSize())
 
@@ -122,12 +122,12 @@ PANEL = {}
     function PANEL:LoadClasses()
         self.list:Clear()
         
-        for k, v in ipairs(nut.class.list) do
-            local no, why = nut.class.CanBe(LocalPlayer(), k)
+        for k, v in ipairs(ix.class.list) do
+            local no, why = ix.class.CanBe(LocalPlayer(), k)
             local itsFull = ("class is full" == why)
 
             if (no or itsFull) then
-                local panel = vgui.Create("nutClassPanel", self.list)
+                local panel = vgui.Create("ixClassPanel", self.list)
                 panel:SetClass(v)
                 table.insert(self.classPanels, panel)
 
@@ -135,19 +135,19 @@ PANEL = {}
             end
         end
     end
-vgui.Register("nutClasses", PANEL, "EditablePanel")
+vgui.Register("ixClasses", PANEL, "EditablePanel")
 
-hook.Add("CreateMenuButtons", "nutClasses", function(tabs)
-    local cnt = table.Count(nut.class.list)
+hook.Add("CreateMenuButtons", "ixClasses", function(tabs)
+    local cnt = table.Count(ix.class.list)
 
     if (cnt <= 1) then return end
     
-    for k, v in ipairs(nut.class.list) do
-        if (!nut.class.CanBe(LocalPlayer(), k)) then
+    for k, v in ipairs(ix.class.list) do
+        if (!ix.class.CanBe(LocalPlayer(), k)) then
             continue
         else
             tabs["classes"] = function(panel)
-                panel:Add("nutClasses")
+                panel:Add("ixClasses")
             end
 
             return
@@ -156,14 +156,14 @@ hook.Add("CreateMenuButtons", "nutClasses", function(tabs)
 end)
 
 netstream.Hook("classUpdate", function(joinedClient)
-    if (nut.gui.classes and nut.gui.classes:IsVisible()) then
+    if (ix.gui.classes and ix.gui.classes:IsVisible()) then
         if (joinedClient == LocalPlayer()) then
-            nut.gui.classes:LoadClasses()
+            ix.gui.classes:LoadClasses()
         else
-            for k, v in ipairs(nut.gui.classes.classPanels) do
+            for k, v in ipairs(ix.gui.classes.classPanels) do
                 local data = v.data
 
-                v:SetNumber(#nut.class.GetPlayers(data.index))
+                v:SetNumber(#ix.class.GetPlayers(data.index))
             end
         end
     end

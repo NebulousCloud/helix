@@ -1,5 +1,5 @@
 local PLUGIN = PLUGIN
-nut.command.Add("DoorSell", {
+ix.command.Add("DoorSell", {
 	description = "@cmdDoorSell",
 	OnRun = function(self, client, arguments)
 		-- Get the entity 96 units infront of the player.
@@ -15,7 +15,7 @@ nut.command.Add("DoorSell", {
 			-- Check if the player owners the door.
 			if (client == entity:GetDTEntity(0)) then
 				-- Get the price that the door is sold for.
-				local price = math.Round(entity:GetNetVar("price", nut.config.Get("doorCost")) * nut.config.Get("doorSellRatio"))
+				local price = math.Round(entity:GetNetVar("price", ix.config.Get("doorCost")) * ix.config.Get("doorSellRatio"))
 
 				-- Remove old door information.
 				entity:RemoveDoorAccessData()
@@ -27,9 +27,9 @@ nut.command.Add("DoorSell", {
 
 				-- Take their money and notify them.
 				client:GetChar():GiveMoney(price)
-				client:NotifyLocalized("dSold", nut.currency.Get(price))
+				client:NotifyLocalized("dSold", ix.currency.Get(price))
 				hook.Run("OnPlayerPurchaseDoor", client, entity, false, PLUGIN.CallOnDoorChildren) -- i fucking hate this life
-				nut.log.Add(client, "selldoor")
+				ix.log.Add(client, "selldoor")
 			else
 				-- Otherwise tell them they can not.
 				client:NotifyLocalized("notOwner")
@@ -41,7 +41,7 @@ nut.command.Add("DoorSell", {
 	end
 })
 
-nut.command.Add("DoorBuy", {
+ix.command.Add("DoorBuy", {
 	description = "@cmdDoorBuy",
 	OnRun = function(self, client, arguments)
 		-- Get the entity 96 units infront of the player.
@@ -63,13 +63,13 @@ nut.command.Add("DoorBuy", {
 				return false
 			end
 			-- Get the price that the door is bought for.
-			local price = entity:GetNetVar("price", nut.config.Get("doorCost"))
+			local price = entity:GetNetVar("price", ix.config.Get("doorCost"))
 
 			-- Check if the player can actually afford it.
 			if (client:GetChar():HasMoney(price)) then
 				-- Set the door to be owned by this player.
 				entity:SetDTEntity(0, client)
-				entity.nutAccess = {
+				entity.ixAccess = {
 					[client] = DOOR_OWNER
 				}
 				
@@ -79,10 +79,10 @@ nut.command.Add("DoorBuy", {
 
 				-- Take their money and notify them.
 				client:GetChar():TakeMoney(price)
-				client:NotifyLocalized("dPurchased", nut.currency.Get(price))
+				client:NotifyLocalized("dPurchased", ix.currency.Get(price))
 
 				hook.Run("OnPlayerPurchaseDoor", client, entity, true, PLUGIN.CallOnDoorChildren) -- i fucking hate this life
-				nut.log.Add(client, "buydoor")
+				ix.log.Add(client, "buydoor")
 			else
 				-- Otherwise tell them they can not.
 				client:NotifyLocalized("canNotAfford")
@@ -94,7 +94,7 @@ nut.command.Add("DoorBuy", {
 	end
 })
 
-nut.command.Add("DoorSetUnownable", {
+ix.command.Add("DoorSetUnownable", {
 	description = "@cmdDoorSetUnownable",
 	adminOnly = true,
 	syntax = "[string name]",
@@ -133,7 +133,7 @@ nut.command.Add("DoorSetUnownable", {
 	end
 })
 
-nut.command.Add("DoorSetOwnable", {
+ix.command.Add("DoorSetOwnable", {
 	description = "@cmdDoorSetOwnable",
 	adminOnly = true,
 	syntax = "[string name]",
@@ -172,7 +172,7 @@ nut.command.Add("DoorSetOwnable", {
 	end
 })
 
-nut.command.Add("DoorSetFaction", {
+ix.command.Add("DoorSetFaction", {
 	description = "@cmdDoorSetFaction",
 	adminOnly = true,
 	syntax = "[string faction]",
@@ -190,8 +190,8 @@ nut.command.Add("DoorSetFaction", {
 				local name = table.concat(arguments, " ")
 
 				-- Loop through each faction, checking the uniqueID and name.
-				for k, v in pairs(nut.faction.teams) do
-					if (nut.util.StringMatches(k, name) or nut.util.StringMatches(L(v.name, client), name)) then
+				for k, v in pairs(ix.faction.teams) do
+					if (ix.util.StringMatches(k, name) or ix.util.StringMatches(L(v.name, client), name)) then
 						-- This faction matches the provided string.
 						faction = v
 
@@ -203,11 +203,11 @@ nut.command.Add("DoorSetFaction", {
 
 			-- Check if a faction was found.
 			if (faction) then
-				entity.nutFactionID = faction.uniqueID
+				entity.ixFactionID = faction.uniqueID
 				entity:SetNetVar("faction", faction.index)
 
 				PLUGIN:CallOnDoorChildren(entity, function()
-					entity.nutFactionID = faction.uniqueID
+					entity.ixFactionID = faction.uniqueID
 					entity:SetNetVar("faction", faction.index)
 				end)
 
@@ -232,7 +232,7 @@ nut.command.Add("DoorSetFaction", {
 	end
 })
 
-nut.command.Add("DoorSetDisabled", {
+ix.command.Add("DoorSetDisabled", {
 	description = "@cmdDoorSetDisabled",
 	adminOnly = true,
 	syntax = "<bool disabled>",
@@ -263,7 +263,7 @@ nut.command.Add("DoorSetDisabled", {
 	end
 })
 
-nut.command.Add("DoorSetTitle", {
+ix.command.Add("DoorSetTitle", {
 	description = "@cmdDoorSetTitle",
 	syntax = "<string title>",
 	OnRun = function(self, client, arguments)
@@ -313,7 +313,7 @@ nut.command.Add("DoorSetTitle", {
 	end
 })
 
-nut.command.Add("DoorSetParent", {
+ix.command.Add("DoorSetParent", {
 	description = "@cmdDoorSetParent",
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
@@ -322,7 +322,7 @@ nut.command.Add("DoorSetParent", {
 
 		-- Validate it is a door.
 		if (IsValid(entity) and entity:IsDoor() and !entity:GetNetVar("disabled")) then
-			client.nutDoorParent = entity
+			client.ixDoorParent = entity
 			client:NotifyLocalized("dSetParentDoor")
 		else
 			-- Tell the player the door isn't valid.
@@ -331,7 +331,7 @@ nut.command.Add("DoorSetParent", {
 	end
 })
 
-nut.command.Add("DoorSetChild", {
+ix.command.Add("DoorSetChild", {
 	description = "@cmdDoorSetChild",
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
@@ -340,18 +340,18 @@ nut.command.Add("DoorSetChild", {
 
 		-- Validate it is a door.
 		if (IsValid(entity) and entity:IsDoor() and !entity:GetNetVar("disabled")) then
-			if (client.nutDoorParent == entity) then
+			if (client.ixDoorParent == entity) then
 				return client:NotifyLocalized("dCanNotSetAsChild")
 			end
 
 			-- Check if the player has set a door as a parent.
-			if (IsValid(client.nutDoorParent)) then
+			if (IsValid(client.ixDoorParent)) then
 				-- Add the door to the parent's list of children.
-				client.nutDoorParent.nutChildren = client.nutDoorParent.nutChildren or {}
-				client.nutDoorParent.nutChildren[entity:MapCreationID()] = true
+				client.ixDoorParent.ixChildren = client.ixDoorParent.ixChildren or {}
+				client.ixDoorParent.ixChildren[entity:MapCreationID()] = true
 
 				-- Set the door's parent to the parent.
-				entity.nutParent = client.nutDoorParent
+				entity.ixParent = client.ixDoorParent
 
 				client:NotifyLocalized("dAddChildDoor")
 
@@ -369,7 +369,7 @@ nut.command.Add("DoorSetChild", {
 	end
 })
 
-nut.command.Add("DoorRemoveChild", {
+ix.command.Add("DoorRemoveChild", {
 	description = "@cmdDoorRemoveChild",
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
@@ -378,22 +378,22 @@ nut.command.Add("DoorRemoveChild", {
 
 		-- Validate it is a door.
 		if (IsValid(entity) and entity:IsDoor() and !entity:GetNetVar("disabled")) then
-			if (client.nutDoorParent == entity) then
+			if (client.ixDoorParent == entity) then
 				PLUGIN:CallOnDoorChildren(entity, function(child)
-					child.nutParent = nil
+					child.ixParent = nil
 				end)
 
-				entity.nutChildren = nil
+				entity.ixChildren = nil
 
 				return client:NotifyLocalized("dRemoveChildren")
 			end
 
 			-- Check if the player has set a door as a parent.
-			if (IsValid(entity.nutParent) and entity.nutParent.nutChildren) then
+			if (IsValid(entity.ixParent) and entity.ixParent.ixChildren) then
 				-- Remove the door from the list of children.
-				entity.nutParent.nutChildren[entity:MapCreationID()] = nil
+				entity.ixParent.ixChildren[entity:MapCreationID()] = nil
 				-- Remove the variable for the parent.
-				entity.nutParent = nil
+				entity.ixParent = nil
 
 				client:NotifyLocalized("dRemoveChildDoor")
 
@@ -407,7 +407,7 @@ nut.command.Add("DoorRemoveChild", {
 	end
 })
 
-nut.command.Add("DoorSetHidden", {
+ix.command.Add("DoorSetHidden", {
 	description = "@cmdDoorSetHidden",
 	adminOnly = true,
 	syntax = "<bool hidden>",
@@ -437,7 +437,7 @@ nut.command.Add("DoorSetHidden", {
 	end
 })
 
-nut.command.Add("DoorSetClass", {
+ix.command.Add("DoorSetClass", {
 	description = "@cmdDoorSetClass",
 	adminOnly = true,
 	syntax = "[string faction]",
@@ -452,8 +452,8 @@ nut.command.Add("DoorSetClass", {
 			if (arguments[1]) then
 				local name = table.concat(arguments, " ")
 
-				for k, v in pairs(nut.class.list) do
-					if (nut.util.StringMatches(v.name, name) or nut.util.StringMatches(L(v.name, client), name)) then
+				for k, v in pairs(ix.class.list) do
+					if (ix.util.StringMatches(v.name, name) or ix.util.StringMatches(L(v.name, client), name)) then
 						class, classData = k, v
 
 						break
@@ -463,11 +463,11 @@ nut.command.Add("DoorSetClass", {
 
 			-- Check if a faction was found.
 			if (class) then
-				entity.nutClassID = class
+				entity.ixClassID = class
 				entity:SetNetVar("class", class)
 
 				PLUGIN:CallOnDoorChildren(entity, function()
-					entity.nutClassID = class
+					entity.ixClassID = class
 					entity:SetNetVar("class", class)
 				end)
 

@@ -1,6 +1,6 @@
-nut.faction = nut.faction or {}
-nut.faction.teams = nut.faction.teams or {}
-nut.faction.indices = nut.faction.indices or {}
+ix.faction = ix.faction or {}
+ix.faction.teams = ix.faction.teams or {}
+ix.faction.indices = ix.faction.indices or {}
 
 local CITIZEN_MODELS = {
 	"models/humans/group01/male_01.mdl",
@@ -27,16 +27,16 @@ local CITIZEN_MODELS = {
 	"models/humans/group01/female_04.mdl"
 }
 
-function nut.faction.LoadFromDir(directory)
+function ix.faction.LoadFromDir(directory)
 	for k, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
 		local niceName = v:sub(4, -5)
 
-		FACTION = nut.faction.teams[niceName] or {index = table.Count(nut.faction.teams) + 1, isDefault = true}
+		FACTION = ix.faction.teams[niceName] or {index = table.Count(ix.faction.teams) + 1, isDefault = true}
 			if (PLUGIN) then
 				FACTION.plugin = PLUGIN.uniqueID
 			end
 
-			nut.util.Include(directory.."/"..v, "shared")
+			ix.util.Include(directory.."/"..v, "shared")
 
 			if (!FACTION.name) then
 				FACTION.name = "Unknown"
@@ -66,18 +66,18 @@ function nut.faction.LoadFromDir(directory)
 				end
 			end
 
-			nut.faction.indices[FACTION.index] = FACTION
-			nut.faction.teams[niceName] = FACTION
+			ix.faction.indices[FACTION.index] = FACTION
+			ix.faction.teams[niceName] = FACTION
 		FACTION = nil
 	end
 end
 
-function nut.faction.Get(identifier)
-	return nut.faction.indices[identifier] or nut.faction.teams[identifier]
+function ix.faction.Get(identifier)
+	return ix.faction.indices[identifier] or ix.faction.teams[identifier]
 end
 
-function nut.faction.GetIndex(uniqueID)
-	for k, v in ipairs(nut.faction.indices) do
+function ix.faction.GetIndex(uniqueID)
+	for k, v in ipairs(ix.faction.indices) do
 		if (v.uniqueID == uniqueID) then
 			return k
 		end
@@ -85,17 +85,17 @@ function nut.faction.GetIndex(uniqueID)
 end
 
 if (CLIENT) then
-	function nut.faction.HasWhitelist(faction)
-		local data = nut.faction.indices[faction]
+	function ix.faction.HasWhitelist(faction)
+		local data = ix.faction.indices[faction]
 
 		if (data) then
 			if (data.isDefault) then
 				return true
 			end
 
-			local nutData = nut.localData and nut.localData.whitelists or {}
+			local ixData = ix.localData and ix.localData.whitelists or {}
 
-			return nutData[Schema.folder] and nutData[Schema.folder][data.uniqueID] == true or false
+			return ixData[Schema.folder] and ixData[Schema.folder][data.uniqueID] == true or false
 		end
 
 		return false

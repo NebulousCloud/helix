@@ -1,5 +1,5 @@
 -- Create the character metatable.
-local CHAR = nut.meta.character or {}
+local CHAR = ix.meta.character or {}
 CHAR.__index = CHAR
 CHAR.id = CHAR.id or 0
 CHAR.vars = CHAR.vars or {}
@@ -31,7 +31,7 @@ if (SERVER) then
 		local data = {}
 
 		-- Save all the character variables.
-		for k, v in pairs(nut.char.vars) do
+		for k, v in pairs(ix.char.vars) do
 			if (v.field and self.vars[k] != nil) then
 				data[v.field] = self.vars[k]
 			end
@@ -42,7 +42,7 @@ if (SERVER) then
 
 		if (shouldSave != false) then
 			-- Run a query to save the character to the database.
-			nut.db.UpdateTable(data, function()
+			ix.db.UpdateTable(data, function()
 				if (callback) then
 					callback()
 				end
@@ -64,7 +64,7 @@ if (SERVER) then
 			local data = {}
 
 			for k, v in pairs(self.vars) do
-				if (nut.char.vars[k] != nil and !nut.char.vars[k].noNetworking) then
+				if (ix.char.vars[k] != nil and !ix.char.vars[k].noNetworking) then
 					data[k] = v
 				end
 			end
@@ -74,7 +74,7 @@ if (SERVER) then
 		else
 			local data = {}
 
-			for k, v in pairs(nut.char.vars) do
+			for k, v in pairs(ix.char.vars) do
 				if (!v.noNetworking and !v.isLocal) then
 					data[k] = self.vars[k]
 				end
@@ -114,7 +114,7 @@ if (SERVER) then
 				end
 			end
 
-			hook.Run("CharacterLoaded", nut.char.loaded[self:GetID()])
+			hook.Run("CharacterLoaded", ix.char.loaded[self:GetID()])
 
 			-- Close the character menu.
 			netstream.Start(client, "charLoaded")
@@ -178,10 +178,10 @@ function CHAR:GetPlayer()
 end
 
 -- Sets up a new character variable.
-function nut.char.RegisterVar(key, data)
+function ix.char.RegisterVar(key, data)
 	-- Store information for the variable.
-	nut.char.vars[key] = data
-	data.index = data.index or table.Count(nut.char.vars)
+	ix.char.vars[key] = data
+	data.index = data.index or table.Count(ix.char.vars)
 
 	-- Convert the name of the variable to be capitalized.
 	local upperName = key:sub(1, 1):upper()..key:sub(2)
@@ -238,7 +238,7 @@ function nut.char.RegisterVar(key, data)
 			end
 
 			if (default == nil) then
-				return nut.char.vars[key] and nut.char.vars[key].default or nil
+				return ix.char.vars[key] and ix.char.vars[key].default or nil
 			end
 
 			return default
@@ -267,5 +267,5 @@ function nut.char.RegisterVar(key, data)
 	CHAR.vars[key] = data.default
 end
 
--- Allows access to the character metatable using nut.meta.character
-nut.meta.character = CHAR
+-- Allows access to the character metatable using ix.meta.character
+ix.meta.character = CHAR

@@ -18,7 +18,7 @@ local PANEL = {}
 		self.itemPanels = {}
 
 		for k, v in SortedPairs(items) do
-			local itemTable = nut.item.list[k]
+			local itemTable = ix.item.list[k]
 
 			if (itemTable) then
 				local item = self.list:Add("DPanel")
@@ -43,7 +43,7 @@ local PANEL = {}
 				item.name = item:Add("DLabel")
 				item.name:SetPos(38, 0)
 				item.name:SetSize(200, 36)
-				item.name:SetFont("nutSmallFont")
+				item.name:SetFont("ixSmallFont")
 				item.name:SetText(L(itemTable.name))
 				item.name:SetContentAlignment(4)
 				item.name:SetTextColor(color_white)
@@ -95,4 +95,4 @@ local PANEL = {}
 			self:Remove()
 		end
 	end
-vgui.Register("nutShipment", PANEL, "DFrame")
+vgui.Register("ixShipment", PANEL, "DFrame")

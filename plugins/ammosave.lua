@@ -2,38 +2,38 @@ PLUGIN.name = "Ammo Saver"
 PLUGIN.author = "Black Tea"
 PLUGIN.description = "Saves the ammo of a character."
 PLUGIN.ammoList = {}
-nut.ammo = nut.ammo or {}
+ix.ammo = ix.ammo or {}
 
 
-function nut.ammo.register(name)
+function ix.ammo.register(name)
 	table.insert(PLUGIN.ammoList, name)
 end
 
 -- Register Default HL2 Ammunition.
-nut.ammo.register("ar2")
-nut.ammo.register("pistol")
-nut.ammo.register("357")
-nut.ammo.register("smg1")
-nut.ammo.register("xbowbolt")
-nut.ammo.register("buckshot")
-nut.ammo.register("rpg_round")
-nut.ammo.register("smg1_grenade")
-nut.ammo.register("grenade")
-nut.ammo.register("ar2altfire")
-nut.ammo.register("slam")
+ix.ammo.register("ar2")
+ix.ammo.register("pistol")
+ix.ammo.register("357")
+ix.ammo.register("smg1")
+ix.ammo.register("xbowbolt")
+ix.ammo.register("buckshot")
+ix.ammo.register("rpg_round")
+ix.ammo.register("smg1_grenade")
+ix.ammo.register("grenade")
+ix.ammo.register("ar2altfire")
+ix.ammo.register("slam")
 
 -- Register Cut HL2 Ammunition.
-nut.ammo.register("alyxgun")
-nut.ammo.register("sniperround")
-nut.ammo.register("sniperpenetratedround")
-nut.ammo.register("thumper")
-nut.ammo.register("gravity")
-nut.ammo.register("battery")
-nut.ammo.register("gaussenergy")
-nut.ammo.register("combinecannon")
-nut.ammo.register("airboatgun")
-nut.ammo.register("striderminigun")
-nut.ammo.register("helicoptergun")
+ix.ammo.register("alyxgun")
+ix.ammo.register("sniperround")
+ix.ammo.register("sniperpenetratedround")
+ix.ammo.register("thumper")
+ix.ammo.register("gravity")
+ix.ammo.register("battery")
+ix.ammo.register("gaussenergy")
+ix.ammo.register("combinecannon")
+ix.ammo.register("airboatgun")
+ix.ammo.register("striderminigun")
+ix.ammo.register("helicoptergun")
 
 -- Called right before the character has its information save.
 function PLUGIN:CharacterPreSave(character)

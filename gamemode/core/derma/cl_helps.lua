@@ -1,7 +1,7 @@
 if (CLIENT) then
 	local HELP_DEFAULT
 
-	hook.Add("CreateMenuButtons", "nutHelpMenu", function(tabs)		
+	hook.Add("CreateMenuButtons", "ixHelpMenu", function(tabs)		
 		HELP_DEFAULT = [[
 			<div id="parent"><div id="child">
 				<center>
@@ -77,14 +77,14 @@ if (CLIENT) then
 	end)
 end
 
-hook.Add("BuildHelpMenu", "nutBasicHelp", function(tabs)
+hook.Add("BuildHelpMenu", "ixBasicHelp", function(tabs)
 	tabs["commands"] = function(node)
 		local body = ""
 
-		for k, v in SortedPairs(nut.command.list) do
+		for k, v in SortedPairs(ix.command.list) do
 			local allowed = false
 
-			if (v.adminOnly and !LocalPlayer():IsAdmin()or v.superAdminOnly and !LocalPlayer():IsSuperAdmin()) then
+			if (v.adminOnly and !LocalPlayer():IsAdmin() or v.superAdminOnly and !LocalPlayer():IsSuperAdmin()) then
 				continue
 			end
 
@@ -115,7 +115,7 @@ hook.Add("BuildHelpMenu", "nutBasicHelp", function(tabs)
 	tabs["plugins"] = function(node)
 		local body = ""
 
-		for k, v in SortedPairsByMemberValue(nut.plugin.list, "name") do
+		for k, v in SortedPairsByMemberValue(ix.plugin.list, "name") do
 			body = (body..[[
 				<p>
 					<span style="font-size: 22;"><b>%s</b><br /></span>
@@ -137,7 +137,7 @@ hook.Add("BuildHelpMenu", "nutBasicHelp", function(tabs)
 	tabs["flags"] = function(node)
 		local body = [[<table border="0" cellspacing="8px">]]
 
-		for k, v in SortedPairs(nut.flag.list) do
+		for k, v in SortedPairs(ix.flag.list) do
 			local icon
 
 			if (LocalPlayer():GetChar():HasFlags(k)) then

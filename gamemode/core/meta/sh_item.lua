@@ -1,4 +1,4 @@
-local ITEM = nut.meta.item or {}
+local ITEM = ix.meta.item or {}
 ITEM.__index = ITEM
 ITEM.name = "Undefined"
 ITEM.description = ITEM.description or "An item that is undefined."
@@ -65,7 +65,7 @@ function ITEM:Call(method, client, entity, ...)
 end
 
 function ITEM:GetOwner()
-	local inventory = nut.item.inventories[self.invID]
+	local inventory = ix.item.inventories[self.invID]
 
 	if (inventory) then
 		return (inventory.GetReceiver and inventory:GetReceiver())
@@ -106,8 +106,8 @@ function ITEM:SetData(key, value, receivers, noSave, noCheckEntity)
 	end
 
 	if (!noSave) then
-		if (nut.db) then
-			nut.db.UpdateTable({_data = self.data}, nil, "items", "_itemID = "..self:GetID())
+		if (ix.db) then
+			ix.db.UpdateTable({_data = self.data}, nil, "items", "_itemID = "..self:GetID())
 		end
 	end	
 end
@@ -157,7 +157,7 @@ function ITEM:PostHook(name, func)
 end
 
 function ITEM:Remove()
-	local inv = nut.item.inventories[self.invID]
+	local inv = ix.item.inventories[self.invID]
 	local x2, y2
 
 	if (self.invID > 0 and inv) then
@@ -197,10 +197,10 @@ function ITEM:Remove()
 			return false
 		end
 	else
-		local inv = nut.item.inventories[self.invID]
+		local inv = ix.item.inventories[self.invID]
 
 		if (inv) then
-			nut.item.inventories[self.invID][self.id] = nil
+			ix.item.inventories[self.invID][self.id] = nil
 		end
 	end
 
@@ -222,14 +222,14 @@ function ITEM:Remove()
 		end
 
 		if (!noDelete) then
-			local item = nut.item.instances[self.id]
+			local item = ix.item.instances[self.id]
 
 			if (item and item.OnRemoved) then
 				item:OnRemoved()
 			end
 			
-			nut.db.query("DELETE FROM nut_items WHERE _itemID = "..self.id)
-			nut.item.instances[self.id] = nil
+			ix.db.query("DELETE FROM ix_items WHERE _itemID = "..self.id)
+			ix.item.instances[self.id] = nil
 		end
 	end
 
@@ -240,8 +240,8 @@ if (SERVER) then
 	function ITEM:GetEntity()
 		local id = self:GetID()
 
-		for k, v in ipairs(ents.FindByClass("nut_item")) do
-			if (v.nutItemID == id) then
+		for k, v in ipairs(ents.FindByClass("ix_item")) do
+			if (v.ixItemID == id) then
 				return v
 			end
 		end
@@ -249,11 +249,11 @@ if (SERVER) then
 	-- Spawn an item entity based off the item table.
 	function ITEM:Spawn(position, angles)
 		-- Check if the item has been created before.
-		if (nut.item.instances[self.id]) then
+		if (ix.item.instances[self.id]) then
 			local client
 
 			-- Spawn the actual item entity.
-			local entity = ents.Create("nut_item")
+			local entity = ents.Create("ix_item")
 			entity:Spawn()
 			entity:SetAngles(angles or Angle(0, 0, 0))
 			-- Make the item represent this item.
@@ -269,8 +269,8 @@ if (SERVER) then
 			entity:SetPos(position)
 
 			if (IsValid(client)) then
-				entity.nutSteamID = client:SteamID()
-				entity.nutCharID = client:GetChar():GetID()
+				entity.ixSteamID = client:SteamID()
+				entity.ixCharID = client:GetChar():GetID()
 			end
 
 			-- Return the newly created entity.
@@ -286,8 +286,8 @@ if (SERVER) then
 			return false, "same inv"
 		end
 		
-		local inventory = nut.item.inventories[invID]
-		local curInv = nut.item.inventories[self.invID or 0]
+		local inventory = ix.item.inventories[invID]
+		local curInv = ix.item.inventories[self.invID or 0]
 
 		if (hook.Run("CanItemBeTransfered", self, curInv, inventory) == false) then
 			return false, "notAllowed"
@@ -339,7 +339,7 @@ if (SERVER) then
 
 						return true
 					elseif (self.invID > 0 and prevID == 0) then
-						local inventory = nut.item.inventories[0]
+						local inventory = ix.item.inventories[0]
 						inventory[self.id] = nil
 
 						if (self.OnTransfered) then
@@ -356,12 +356,12 @@ if (SERVER) then
 				self.invID = 0
 
 				curInv:Remove(self.id, false, true)
-				nut.db.query("UPDATE nut_items SET _invID = 0 WHERE _itemID = "..self.id)
+				ix.db.query("UPDATE ix_items SET _invID = 0 WHERE _itemID = "..self.id)
 
 				if (isLogical != true) then
 					return self:Spawn(client)	
 				else
-					local inventory = nut.item.inventories[0]
+					local inventory = ix.item.inventories[0]
 					inventory[self:GetID()] = self
 
 					if (self.OnTransfered) then
@@ -380,4 +380,4 @@ if (SERVER) then
 	end
 end
 
-nut.meta.item = ITEM
+ix.meta.item = ITEM

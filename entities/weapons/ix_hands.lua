@@ -46,7 +46,7 @@ SWEP.holdDistance = 64
 SWEP.maxHoldDistance = 96 -- how far away the held object is allowed to travel before forcefully dropping
 SWEP.maxHoldStress = 4000 -- how much stress the held object can undergo before forcefully dropping
 SWEP.allowedHoldableClasses = {
-	["nut_item"] = true,
+	["ix_item"] = true,
 	["prop_physics"] = true,
 	["prop_ragdoll"] = true
 }
@@ -176,16 +176,16 @@ function SWEP:CanHoldObject(entity)
 	local physics = entity:GetPhysicsObject()
 
 	return (IsValid(physics) and
-		(physics:GetMass() <= nut.config.Get("maxHoldWeight", 100) and physics:IsMoveable()) and
+		(physics:GetMass() <= ix.config.Get("maxHoldWeight", 100) and physics:IsMoveable()) and
 		!self:IsHoldingObject() and
-		!IsValid(entity.nutHeldOwner) and
+		!IsValid(entity.ixHeldOwner) and
 		self.allowedHoldableClasses[entity:GetClass()])
 end
 
 function SWEP:IsHoldingObject()
 	return (IsValid(self.heldEntity) and
-		IsValid(self.heldEntity.nutHeldOwner) and 
-		self.heldEntity.nutHeldOwner == self.Owner)
+		IsValid(self.heldEntity.ixHeldOwner) and 
+		self.heldEntity.ixHeldOwner == self.Owner)
 end
 
 function SWEP:PickupObject(entity)
@@ -198,8 +198,8 @@ function SWEP:PickupObject(entity)
 	local physics = entity:GetPhysicsObject()
 	physics:EnableGravity(false)
 
-	entity.nutHeldOwner = self.Owner
-	entity.nutCollisionGroup = entity:GetCollisionGroup()
+	entity.ixHeldOwner = self.Owner
+	entity.ixCollisionGroup = entity:GetCollisionGroup()
 	entity:StartMotionController()
 	entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 
@@ -217,12 +217,12 @@ function SWEP:PickupObject(entity)
 end
 
 function SWEP:DropObject(bThrow)
-	if (!IsValid(self.heldEntity) or self.heldEntity.nutHeldOwner != self.Owner) then
+	if (!IsValid(self.heldEntity) or self.heldEntity.ixHeldOwner != self.Owner) then
 		return
 	end
 
 	self.heldEntity:StopMotionController()
-	self.heldEntity:SetCollisionGroup(self.heldEntity.nutCollisionGroup)
+	self.heldEntity:SetCollisionGroup(self.heldEntity.ixCollisionGroup)
 
 	local physics = self:GetHeldPhysicsObject()
 	physics:EnableGravity(true)
@@ -230,11 +230,11 @@ function SWEP:DropObject(bThrow)
 	physics:SetVelocityInstantaneous(vector_origin)
 	
 	if (bThrow) then
-		physics:ApplyForceCenter(self.Owner:GetAimVector() * nut.config.Get("throwForce", 732))
+		physics:ApplyForceCenter(self.Owner:GetAimVector() * ix.config.Get("throwForce", 732))
 	end
 
-	self.heldEntity.nutHeldOwner = nil
-	self.heldEntity.nutCollisionGroup = nil
+	self.heldEntity.ixHeldOwner = nil
+	self.heldEntity.ixCollisionGroup = nil
 	self.heldEntity = nil
 	self.physicsIndex = -1
 end
@@ -303,7 +303,7 @@ function SWEP:PrimaryAttack()
 		return
 	end
 
-	local staminaUse = nut.config.Get("punchStamina")
+	local staminaUse = ix.config.Get("punchStamina")
 
 	if (staminaUse > 0) then
 		local value = self.Owner:GetLocalVar("stm", 0) - staminaUse

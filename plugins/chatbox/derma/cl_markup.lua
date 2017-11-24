@@ -4,7 +4,7 @@ local PANEL = {}
 	end
 
 	function PANEL:SetMarkup(text, onDrawText)
-		local object = nut.markup.parse(text, self:GetWide())
+		local object = ix.markup.parse(text, self:GetWide())
 		object.onDrawText = onDrawText
 
 		self:SetTall(object:GetHeight())
@@ -12,4 +12,4 @@ local PANEL = {}
 			object:draw(0, 0)
 		end
 	end
-vgui.Register("nutMarkupPanel", PANEL, "DPanel")
+vgui.Register("ixMarkupPanel", PANEL, "DPanel")

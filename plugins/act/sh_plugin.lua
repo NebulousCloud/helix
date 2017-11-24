@@ -4,7 +4,7 @@ PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds acts that can be performed."
 PLUGIN.acts = PLUGIN.acts or {}
 
-nut.util.Include("sh_setup.lua")
+ix.util.Include("sh_setup.lua")
 
 for k, v in pairs(PLUGIN.acts) do
 	local COMMAND = {
@@ -29,10 +29,10 @@ for k, v in pairs(PLUGIN.acts) do
 	end
 
 	function COMMAND:OnRun(client, arguments)
-		if (client.nutSeqUntimed) then
+		if (client.ixSeqUntimed) then
 			client:SetNetVar("actAng")
 			client:LeaveSequence()
-			client.nutSeqUntimed = nil
+			client.ixSeqUntimed = nil
 
 			return
 		end
@@ -43,8 +43,8 @@ for k, v in pairs(PLUGIN.acts) do
 			return
 		end
 
-		if ((client.nutNextAct or 0) < CurTime()) then
-			local class = nut.anim.GetModelClass(client:GetModel())
+		if ((client.ixNextAct or 0) < CurTime()) then
+			local class = ix.anim.GetModelClass(client:GetModel())
 			local info = v[class]
 
 			if (info) then
@@ -68,12 +68,12 @@ for k, v in pairs(PLUGIN.acts) do
 
 				local duration = client:ForceSequence(sequence, nil, info.untimed and 0 or nil)
 
-				client.nutSeqUntimed = info.untimed
-				client.nutNextAct = CurTime() + (info.untimed and 4 or duration) + 1
+				client.ixSeqUntimed = info.untimed
+				client.ixNextAct = CurTime() + (info.untimed and 4 or duration) + 1
 				client:SetNetVar("actAng", client:GetAngles())
 
 				if (info.offset) then
-					client.nutOldPosition = client:GetPos()
+					client.ixOldPosition = client:GetPos()
 					client:SetPos(client:GetPos() + info.offset(client))
 				end
 			else
@@ -82,7 +82,7 @@ for k, v in pairs(PLUGIN.acts) do
 		end
 	end
 
-	nut.command.Add("Act"..k, COMMAND)
+	ix.command.Add("Act"..k, COMMAND)
 end
 
 function PLUGIN:UpdateAnimation(client, moveData)
@@ -96,33 +96,33 @@ end
 function PLUGIN:OnPlayerLeaveSequence(client)
 	client:SetNetVar("actAng")
 	
-	if (client.nutOldPosition) then
-		client:SetPos(client.nutOldPosition)
-		client.nutOldPosition = nil
+	if (client.ixOldPosition) then
+		client:SetPos(client.ixOldPosition)
+		client.ixOldPosition = nil
 	end
 end
 
 function PLUGIN:PlayerDeath(client)
-	if (client.nutSeqUntimed) then
+	if (client.ixSeqUntimed) then
 		client:SetNetVar("actAng")
 		client:LeaveSequence()
-		client.nutSeqUntimed = nil
+		client.ixSeqUntimed = nil
 	end
 end
 
 function PLUGIN:PlayerSpawn(client)
-	if (client.nutSeqUntimed) then
+	if (client.ixSeqUntimed) then
 		client:SetNetVar("actAng")
 		client:LeaveSequence()
-		client.nutSeqUntimed = nil
+		client.ixSeqUntimed = nil
 	end
 end
 
 function PLUGIN:OnCharFallover(client)
-	if (client.nutSeqUntimed) then
+	if (client.ixSeqUntimed) then
 		client:SetNetVar("actAng")
 		client:LeaveSequence()
-		client.nutSeqUntimed = nil
+		client.ixSeqUntimed = nil
 	end
 end
 
@@ -155,7 +155,7 @@ function PLUGIN:PlayerBindPress(client, bind, pressed)
 		bind = bind:lower()
 
 		if (bind:find("+jump") and pressed) then
-			nut.command.Send("actsit")
+			ix.command.Send("actsit")
 
 			return true
 		end

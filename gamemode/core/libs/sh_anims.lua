@@ -1,5 +1,5 @@
-nut.anim = nut.anim or {}
-nut.anim.citizen_male = {
+ix.anim = ix.anim or {}
+ix.anim.citizen_male = {
 	normal = {
 		[ACT_MP_STAND_IDLE] = {ACT_IDLE, ACT_IDLE_ANGRY_SMG1},
 		[ACT_MP_CROUCH_IDLE] = {ACT_COVER_LOW, ACT_COVER_LOW},
@@ -58,7 +58,7 @@ nut.anim.citizen_male = {
 	},
 }
 
-nut.anim.citizen_female = {
+ix.anim.citizen_female = {
 	normal = {
 		[ACT_MP_STAND_IDLE] = {ACT_IDLE, ACT_IDLE_MANNEDGUN},
 		[ACT_MP_CROUCH_IDLE] = {ACT_COVER_LOW, ACT_COVER_LOW},
@@ -109,9 +109,9 @@ nut.anim.citizen_female = {
 		attack = ACT_MELEE_ATTACK_SWING
 	},
 	glide = ACT_GLIDE,
-	vehicle = nut.anim.citizen_male.vehicle
+	vehicle = ix.anim.citizen_male.vehicle
 }
-nut.anim.metrocop = {
+ix.anim.metrocop = {
 	normal = {
 		[ACT_MP_STAND_IDLE] = {ACT_IDLE, ACT_IDLE_ANGRY_SMG1},
 		[ACT_MP_CROUCH_IDLE] = {ACT_COVER_PISTOL_LOW, ACT_COVER_SMG1_LOW},
@@ -166,7 +166,7 @@ nut.anim.metrocop = {
 		["prop_vehicle_prisoner_pod"] = {ACT_IDLE, Vector(-4, -0.5, 0)}
 	}
 }
-nut.anim.overwatch = {
+ix.anim.overwatch = {
 	normal = {
 		[ACT_MP_STAND_IDLE] = {"idle_unarmed", ACT_IDLE_ANGRY},
 		[ACT_MP_CROUCH_IDLE] = {ACT_CROUCHIDLE, ACT_CROUCHIDLE},
@@ -212,7 +212,7 @@ nut.anim.overwatch = {
 	},
 	glide = ACT_GLIDE
 }
-nut.anim.vort = {
+ix.anim.vort = {
 	normal = {
 		[ACT_MP_STAND_IDLE] = {ACT_IDLE, "actionidle"},
 		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
@@ -257,7 +257,7 @@ nut.anim.vort = {
 	},
 	glide = ACT_GLIDE
 }
-nut.anim.player = {
+ix.anim.player = {
 	normal = {
 		[ACT_MP_STAND_IDLE] = ACT_HL2MP_IDLE,
 		[ACT_MP_CROUCH_IDLE] = ACT_HL2MP_IDLE_CROUCH,
@@ -271,14 +271,14 @@ nut.anim.player = {
 		[ACT_MP_RUN] = ACT_HL2MP_RUN_PASSIVE
 	}
 }
-nut.anim.zombie = {
+ix.anim.zombie = {
 	[ACT_MP_STAND_IDLE] = ACT_HL2MP_IDLE_ZOMBIE,
 	[ACT_MP_CROUCH_IDLE] = ACT_HL2MP_IDLE_CROUCH_ZOMBIE,
 	[ACT_MP_CROUCHWALK] = ACT_HL2MP_WALK_CROUCH_ZOMBIE_01,
 	[ACT_MP_WALK] = ACT_HL2MP_WALK_ZOMBIE_02,
 	[ACT_MP_RUN] = ACT_HL2MP_RUN_ZOMBIE
 }
-nut.anim.fastZombie = {
+ix.anim.fastZombie = {
 	[ACT_MP_STAND_IDLE] = ACT_HL2MP_WALK_ZOMBIE,
 	[ACT_MP_CROUCH_IDLE] = ACT_HL2MP_IDLE_CROUCH_ZOMBIE,
 	[ACT_MP_CROUCHWALK] = ACT_HL2MP_WALK_CROUCH_ZOMBIE_05,
@@ -289,8 +289,8 @@ nut.anim.fastZombie = {
 
 local translations = {}
 
-function nut.anim.SetModelClass(model, class)
-	if (!nut.anim[class]) then
+function ix.anim.SetModelClass(model, class)
+	if (!ix.anim[class]) then
 		error("'"..tostring(class).."' is not a valid animation class!")
 	end
 	
@@ -301,7 +301,7 @@ end
 local stringLower = string.lower
 local stringFind = string.find
 
-function nut.anim.GetModelClass(model)
+function ix.anim.GetModelClass(model)
 	model = stringLower(model)
 	local class = translations[model]
 
@@ -318,14 +318,14 @@ function nut.anim.GetModelClass(model)
 	return class
 end
 
-nut.anim.SetModelClass("models/police.mdl", "metrocop")
-nut.anim.SetModelClass("models/combine_super_soldier.mdl", "overwatch")
-nut.anim.SetModelClass("models/combine_soldier_prisonGuard.mdl", "overwatch")
-nut.anim.SetModelClass("models/combine_soldier.mdl", "overwatch")
-nut.anim.SetModelClass("models/vortigaunt.mdl", "vort")
-nut.anim.SetModelClass("models/vortigaunt_blue.mdl", "vort")
-nut.anim.SetModelClass("models/vortigaunt_doctor.mdl", "vort")
-nut.anim.SetModelClass("models/vortigaunt_slave.mdl", "vort")
+ix.anim.SetModelClass("models/police.mdl", "metrocop")
+ix.anim.SetModelClass("models/combine_super_soldier.mdl", "overwatch")
+ix.anim.SetModelClass("models/combine_soldier_prisonGuard.mdl", "overwatch")
+ix.anim.SetModelClass("models/combine_soldier.mdl", "overwatch")
+ix.anim.SetModelClass("models/vortigaunt.mdl", "vort")
+ix.anim.SetModelClass("models/vortigaunt_blue.mdl", "vort")
+ix.anim.SetModelClass("models/vortigaunt_doctor.mdl", "vort")
+ix.anim.SetModelClass("models/vortigaunt_slave.mdl", "vort")
 
 do
 	local playerMeta = FindMetaTable("Player")
@@ -342,15 +342,15 @@ do
 		if (sequence and sequence > 0) then
 			time = time or self:SequenceDuration(sequence)
 
-			self.nutSeqCallback = callback
-			self.nutForceSeq = sequence
+			self.ixSeqCallback = callback
+			self.ixForceSeq = sequence
 
 			if (!noFreeze) then
 				self:SetMoveType(MOVETYPE_NONE)
 			end
 
 			if (time > 0) then
-				timer.Create("nutSeq"..self:EntIndex(), time, 1, function()
+				timer.Create("ixSeq"..self:EntIndex(), time, 1, function()
 					if (IsValid(self)) then
 						self:LeaveSequence()
 					end
@@ -371,10 +371,10 @@ do
 		netstream.Start(nil, "seqSet", self)
 
 		self:SetMoveType(MOVETYPE_WALK)
-		self.nutForceSeq = nil
+		self.ixForceSeq = nil
 
-		if (self.nutSeqCallback) then
-			self:nutSeqCallback()
+		if (self.ixSeqCallback) then
+			self:ixSeqCallback()
 		end
 	end
 
@@ -382,14 +382,14 @@ do
 		netstream.Hook("seqSet", function(entity, sequence)
 			if (IsValid(entity)) then
 				if (!sequence) then
-					entity.nutForceSeq = nil
+					entity.ixForceSeq = nil
 
 					return
 				end
 
 				entity:SetCycle(0)
 				entity:SetPlaybackRate(1)
-				entity.nutForceSeq = sequence
+				entity.ixForceSeq = sequence
 			end
 		end)
 	end

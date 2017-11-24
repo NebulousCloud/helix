@@ -45,19 +45,19 @@ local PROP_BLACKLIST = {
 }
 
 if (SERVER) then
-	nut.log.AddType("spawnProp", function(client, ...)
+	ix.log.AddType("spawnProp", function(client, ...)
 		local arg = {...}
 		return string.format("%s has spawned '%s'.", client:Name(), arg[1])
 	end)
 
-	nut.log.AddType("spawnEntity", function(client, ...)
+	ix.log.AddType("spawnEntity", function(client, ...)
 		local arg = {...}
 		return string.format("%s has spawned a '%s'.", client:Name(), arg[1])
 	end)
 
 	function PLUGIN:PlayerSpawnObject(client, model, skin)
-		if ((client.nutNextSpawn or 0) < CurTime()) then
-			client.nutNextSpawn = CurTime() + 0.75
+		if ((client.ixNextSpawn or 0) < CurTime()) then
+			client.ixNextSpawn = CurTime() + 0.75
 		else
 			return false
 		end
@@ -94,7 +94,7 @@ if (SERVER) then
 	function PLUGIN:PlayerSpawnedProp(client, model, entity)
 		hook.Run("PlayerSpawnedEntity", client, entity)
 
-		nut.log.Add(client, "spawnProp", model)
+		ix.log.Add(client, "spawnProp", model)
 	end
 
 	PLUGIN.PlayerSpawnedEffect = PLUGIN.PlayerSpawnedProp
@@ -103,7 +103,7 @@ if (SERVER) then
 	function PLUGIN:PlayerSpawnedNPC(client, entity)
 		hook.Run("PlayerSpawnedEntity", client, entity)
 
-		nut.log.Add(client, "spawnEntity", entity)
+		ix.log.Add(client, "spawnEntity", entity)
 	end
 
 	PLUGIN.PlayerSpawnedSWEP = PLUGIN.PlayerSpawnedNPC

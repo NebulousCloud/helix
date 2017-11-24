@@ -14,7 +14,7 @@ if (CLIENT) then
 	function PLUGIN:CalcView(client, origin, angles, fov)
 		local scenes = self.scenes
 
-		if (IsValid(nut.gui.char) and table.Count(scenes) > 0) then
+		if (IsValid(ix.gui.char) and table.Count(scenes) > 0) then
 			local key = self.index
 			local value = scenes[self.index]
 
@@ -94,7 +94,7 @@ if (CLIENT) then
 	function PLUGIN:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos, eyeAngles)
 		local scenes = self.scenes
 
-		if (IsValid(nut.gui.char)) then
+		if (IsValid(ix.gui.char)) then
 			return HIDE_WEAPON, HIDE_ANGLE
 		end		
 	end
@@ -162,7 +162,7 @@ end
 
 local PLUGIN = PLUGIN
 
-nut.command.Add("MapSceneAdd", {
+ix.command.Add("MapSceneAdd", {
 	description = "@cmdMapSceneAdd",
 	adminOnly = true,
 	syntax = "[bool isPair]",
@@ -170,14 +170,14 @@ nut.command.Add("MapSceneAdd", {
 		local position, angles = client:EyePos(), client:EyeAngles()
 
 		-- This scene is in a pair for moving scenes.
-		if (util.tobool(arguments[1]) and !client.nutScnPair) then
-			client.nutScnPair = {position, angles}
+		if (util.tobool(arguments[1]) and !client.ixScnPair) then
+			client.ixScnPair = {position, angles}
 
 			return L("mapRepeat", client)
 		else
-			if (client.nutScnPair) then
-				PLUGIN:AddScene(client.nutScnPair[1], client.nutScnPair[2], position, angles)
-				client.nutScnPair = nil
+			if (client.ixScnPair) then
+				PLUGIN:AddScene(client.ixScnPair[1], client.ixScnPair[2], position, angles)
+				client.ixScnPair = nil
 			else
 				PLUGIN:AddScene(position, angles)
 			end
@@ -187,7 +187,7 @@ nut.command.Add("MapSceneAdd", {
 	end
 })
 
-nut.command.Add("MapSceneRemove", {
+ix.command.Add("MapSceneRemove", {
 	description = "@cmdMapSceneRemove",
 	adminOnly = true,
 	syntax = "[number radius]",

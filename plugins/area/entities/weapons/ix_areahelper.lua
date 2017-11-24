@@ -8,7 +8,7 @@ if( CLIENT ) then
 end
 SWEP.HoldType = "fists"
 
-SWEP.Category = "Nutscript"
+SWEP.Category = "Helix"
 SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= true
 
@@ -125,11 +125,11 @@ if CLIENT then
 	function SWEP:DrawHUD()
 		local w, h = ScrW(), ScrH()
 		local cury = h/4*3
-		local tx, ty = draw.SimpleText("Left Click: Set Area Point", "nutMediumFont", w/2, cury, color_white, 1, 1)
+		local tx, ty = draw.SimpleText("Left Click: Set Area Point", "ixMediumFont", w/2, cury, color_white, 1, 1)
 		cury = cury + ty
-		local tx, ty = draw.SimpleText("Right Click: Reset Area Point", "nutMediumFont", w/2, cury, color_white, 1, 1)
+		local tx, ty = draw.SimpleText("Right Click: Reset Area Point", "ixMediumFont", w/2, cury, color_white, 1, 1)
 		cury = cury + ty
-		local tx, ty = draw.SimpleText("Reload: Register Area", "nutMediumFont", w/2, cury, color_white, 1, 1)
+		local tx, ty = draw.SimpleText("Reload: Register Area", "ixMediumFont", w/2, cury, color_white, 1, 1)
 
 		local trace = LocalPlayer():GetEyeTraceNoCursor()
 		local pos = trace.HitPos

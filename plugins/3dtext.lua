@@ -79,7 +79,7 @@ else
 		-- Check if we are adding or deleting the text.
 		if (position) then
 			-- Generate a markup object to draw fancy stuff for the text.
-			local object = nut.markup.parse("<font=nut3D2DFont>"..text:gsub("\\n", "\n"))
+			local object = ix.markup.parse("<font=ix3D2DFont>"..text:gsub("\\n", "\n"))
 			-- We want to draw a shadow on the text object.
 			object.onDrawText = function(text, font, x, y, color, alignX, alignY, alpha)
 				surface.SetTextPos(x+1, y+1)
@@ -110,7 +110,7 @@ else
 		-- Loop through the list of texts.
 		for k, v in pairs(PLUGIN.list) do
 			-- Generate markup object since it hasn't been done already.
-			local object = nut.markup.parse("<font=nut3D2DFont>"..v[3]:gsub("\\n", "\n"))
+			local object = ix.markup.parse("<font=ix3D2DFont>"..v[3]:gsub("\\n", "\n"))
 			-- Same thing with adding a shadow.
 			object.onDrawText = function(text, font, x, y, color, alignX, alignY, alpha)
 				draw.TextShadow({
@@ -155,7 +155,7 @@ else
 	end
 end
 
-nut.command.Add("TextAdd", {
+ix.command.Add("TextAdd", {
 	description = "@cmdTextAdd",
 	adminOnly = true,
 	syntax = "<string text> [number scale]",
@@ -175,7 +175,7 @@ nut.command.Add("TextAdd", {
 	end
 })
 
-nut.command.Add("TextRemove", {
+ix.command.Add("TextRemove", {
 	description = "@cmdTextRemove",
 	adminOnly = true,
 	syntax = "[number radius]",

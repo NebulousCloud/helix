@@ -1,4 +1,4 @@
-local META = nut.meta.inventory or {}
+local META = ix.meta.inventory or {}
 META.__index = META
 META.slots = META.slots or {}
 META.w = META.w or 4
@@ -96,7 +96,7 @@ function META:SetOwner(owner, fullUpdate)
 			end
 		end
 		
-		nut.db.query("UPDATE nut_inventories SET _charID = "..owner.." WHERE _invID = "..self:GetID())
+		ix.db.query("UPDATE ix_inventories SET _charID = "..owner.." WHERE _invID = "..self:GetID())
 	end
 
 	self.owner = owner
@@ -152,7 +152,7 @@ function META:FindEmptySlot(w, h, onlyMain)
 		
 		if (#bags > 0) then
 			for _, invID in ipairs(bags) do
-				local bagInv = nut.item.inventories[invID]
+				local bagInv = ix.item.inventories[invID]
 
 				if (bagInv) then
 					local x, y = bagInv:FindEmptySlot(w, h)
@@ -200,14 +200,14 @@ function META:Remove(id, noReplication, noDelete)
 		end
 
 		if (!noDelete) then
-			local item = nut.item.instances[id]
+			local item = ix.item.instances[id]
 
 			if (item and item.OnRemoved) then
 				item:OnRemoved()
 			end
 			
-			nut.db.query("DELETE FROM nut_items WHERE _itemID = "..id)
-			nut.item.instances[id] = nil
+			ix.db.query("DELETE FROM ix_items WHERE _itemID = "..id)
+			ix.item.instances[id] = nil
 		end
 	end
 
@@ -278,7 +278,7 @@ function META:GetItems(onlyMain)
 				v2.data = v2.data or {}
 				local isBag = v2.data.id
 				if (isBag and isBag != self:GetID() and onlyMain != true) then
-					local bagInv = nut.item.inventories[isBag]
+					local bagInv = ix.item.inventories[isBag]
 
 					if (bagInv) then
 						local bagItems = bagInv:GetItems()
@@ -387,7 +387,7 @@ if (SERVER) then
 			local bagInv
 
 			if (type(uniqueID) == "number") then
-				local item = nut.item.instances[uniqueID]
+				local item = ix.item.instances[uniqueID]
 
 				if (item) then
 					if (!x and !y) then
@@ -398,7 +398,7 @@ if (SERVER) then
 						targetInv = bagInv
 					end
 
-					if (hook.Run("CanItemBeTransfered", item, nut.item.inventories[0], targetInv) == false) then
+					if (hook.Run("CanItemBeTransfered", item, ix.item.inventories[0], targetInv) == false) then
 						return false, "notAllowed"
 					end
 
@@ -422,7 +422,7 @@ if (SERVER) then
 						end
 
 						if (!self.noSave) then
-							nut.db.query("UPDATE nut_items SET _invID = "..targetInv:GetID()..", _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
+							ix.db.query("UPDATE ix_items SET _invID = "..targetInv:GetID()..", _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
 						end
 
 						return x, y, targetInv:GetID()
@@ -433,7 +433,7 @@ if (SERVER) then
 					return false, "invalidIndex"
 				end
 			else
-				local itemTable = nut.item.list[uniqueID]
+				local itemTable = ix.item.list[uniqueID]
 
 				if (!itemTable) then
 					return false, "invalidItem"
@@ -447,7 +447,7 @@ if (SERVER) then
 					targetInv = bagInv
 				end
 
-				if (hook.Run("CanItemBeTransfered", itemTable, nut.item.inventories[0], targetInv) == false) then
+				if (hook.Run("CanItemBeTransfered", itemTable, ix.item.inventories[0], targetInv) == false) then
 					return false, "notAllowed"
 				end
 
@@ -455,7 +455,7 @@ if (SERVER) then
 					targetInv.slots[x] = targetInv.slots[x] or {}
 					targetInv.slots[x][y] = true
 
-					nut.item.Instance(targetInv:GetID(), uniqueID, data, x, y, function(item)
+					ix.item.Instance(targetInv:GetID(), uniqueID, data, x, y, function(item)
 						item.gridX = x
 						item.gridY = y
 
@@ -500,4 +500,4 @@ if (SERVER) then
 	end
 end
 
-nut.meta.inventory = META
+ix.meta.inventory = META

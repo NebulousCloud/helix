@@ -19,16 +19,16 @@ local variables = {
 function PLUGIN:CallOnDoorChildren(entity, callback)
 	local parent
 
-	if (entity.nutChildren) then
+	if (entity.ixChildren) then
 		parent = entity
-	elseif (entity.nutParent) then
-		parent = entity.nutParent
+	elseif (entity.ixParent) then
+		parent = entity.ixParent
 	end
 
 	if (IsValid(parent)) then
 		callback(parent)
 		
-		for k, v in pairs(parent.nutChildren) do
+		for k, v in pairs(parent.ixChildren) do
 			local child = ents.GetMapCreatedEntity(k)
 
 			if (IsValid(child)) then
@@ -39,7 +39,7 @@ function PLUGIN:CallOnDoorChildren(entity, callback)
 end
 
 function PLUGIN:CopyParentDoor(child)
-	local parent = child.nutParent
+	local parent = child.ixParent
 
 	if (IsValid(parent)) then
 		for k, v in ipairs(variables) do
@@ -71,19 +71,19 @@ function PLUGIN:LoadData()
 			-- Loop through all of our door variables.
 			for k2, v2 in pairs(v) do
 				if (k2 == "children") then
-					entity.nutChildren = v2
+					entity.ixChildren = v2
 
 					for index, _ in pairs(v2) do
 						local door = ents.GetMapCreatedEntity(index)
 
 						if (IsValid(door)) then
-							door.nutParent = entity
+							door.ixParent = entity
 						end
 					end
 				elseif (k2 == "faction") then
-					for k3, v3 in pairs(nut.faction.teams) do
+					for k3, v3 in pairs(ix.faction.teams) do
 						if (k3 == v2) then
-							entity.nutFactionID = k3
+							entity.ixFactionID = k3
 							entity:SetNetVar("faction", v3.index)
 
 							break
@@ -125,16 +125,16 @@ function PLUGIN:SaveDoorData()
 				end
 			end
 
-			if (v.nutChildren) then
-				doorData.children = v.nutChildren
+			if (v.ixChildren) then
+				doorData.children = v.ixChildren
 			end
 
-			if (v.nutClassID) then
-				doorData.class = v.nutClassID
+			if (v.ixClassID) then
+				doorData.class = v.ixClassID
 			end
 
-			if (v.nutFactionID) then
-				doorData.faction = v.nutFactionID
+			if (v.ixFactionID) then
+				doorData.faction = v.ixFactionID
 			end
 
 			-- Add the door to the door information.
@@ -164,9 +164,9 @@ function PLUGIN:CanPlayerAccessDoor(client, door, access)
 	local class = door:GetNetVar("class")
 
 	-- If the door has a faction set which the client is a member of, allow access.
-	local classData = nut.class.list[class]
+	local classData = ix.class.list[class]
 	local charClass = client:GetChar():GetClass()
-	local classData2 = nut.class.list[charClass]
+	local classData2 = ix.class.list[charClass]
 
 	if (class and classData and classData2) then
 		if (classData.team) then
@@ -184,7 +184,7 @@ function PLUGIN:CanPlayerAccessDoor(client, door, access)
 end
 
 function PLUGIN:PostPlayerLoadout(client)
-	client:Give("nut_keys")
+	client:Give("ix_keys")
 end
 
 function PLUGIN:ShowTeam(client)
@@ -199,13 +199,13 @@ function PLUGIN:ShowTeam(client)
 		if (entity:CheckDoorAccess(client, DOOR_TENANT)) then
 			local door = entity
 
-			if (IsValid(door.nutParent)) then
-				door = door.nutParent
+			if (IsValid(door.ixParent)) then
+				door = door.ixParent
 			end
 
-			netstream.Start(client, "doorMenu", door, door.nutAccess, entity)
+			netstream.Start(client, "doorMenu", door, door.ixAccess, entity)
 		elseif (!IsValid(entity:GetDTEntity(0))) then
-			nut.command.Run(client, "doorbuy")
+			ix.command.Run(client, "doorbuy")
 		else
 			client:NotifyLocalized("notAllowed")
 		end
@@ -227,18 +227,18 @@ function PLUGIN:PlayerDisconnected(client)
 end
 
 netstream.Hook("doorPerm", function(client, door, target, access)
-	if (IsValid(target) and target:GetChar() and door.nutAccess and door:GetDTEntity(0) == client and target != client) then
+	if (IsValid(target) and target:GetChar() and door.ixAccess and door:GetDTEntity(0) == client and target != client) then
 		access = math.Clamp(access or 0, DOOR_NONE, DOOR_TENANT)
 
-		if (access == door.nutAccess[target]) then
+		if (access == door.ixAccess[target]) then
 			return
 		end
 
-		door.nutAccess[target] = access
+		door.ixAccess[target] = access
 
 		local recipient = {}
 
-		for k, v in pairs(door.nutAccess) do
+		for k, v in pairs(door.ixAccess) do
 			if (v > DOOR_GUEST) then
 				recipient[#recipient + 1] = k
 			end

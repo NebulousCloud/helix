@@ -1,12 +1,12 @@
-nut.chat = nut.chat or {}
-nut.chat.classes = nut.char.classes or {}
+ix.chat = ix.chat or {}
+ix.chat.classes = ix.char.classes or {}
 
-if (!nut.command) then
+if (!ix.command) then
 	include("sh_command.lua")
 end
 
 -- Registers a new chat type with the information provided.
-function nut.chat.Register(chatType, data)
+function ix.chat.Register(chatType, data)
 	if (!data.OnCanHear) then
 		-- Have a substitute if the canHear property is not found.
 		function data:OnCanHear(speaker, listener)
@@ -60,7 +60,7 @@ function nut.chat.Register(chatType, data)
 		if (type(data.prefix) == "table") then
 			for k, v in ipairs(data.prefix) do
 				if (v:sub(1, 1) == "/") then
-					nut.command.Add(v:sub(2), {
+					ix.command.Add(v:sub(2), {
 						description = data.description,
 						syntax = "<string text>",
 						OnRun = function() end
@@ -68,23 +68,23 @@ function nut.chat.Register(chatType, data)
 				end
 			end
 		else
-			nut.command.Add(chatType, dummy)
+			ix.command.Add(chatType, dummy)
 		end
 	end
 
 	data.filter = data.filter or "ic"
 
 	-- Add the chat type to the list of classes.
-	nut.chat.classes[string.lower(chatType)] = data
+	ix.chat.classes[string.lower(chatType)] = data
 end
 
 -- Identifies which chat mode should be used.
-function nut.chat.Parse(client, message, noSend)
+function ix.chat.Parse(client, message, noSend)
 	local anonymous = false
 	local chatType = "ic"
 
 	-- Loop through all chat classes and see if the message contains their prefix.
-	for k, v in pairs(nut.chat.classes) do
+	for k, v in pairs(ix.chat.classes) do
 		local isChosen = false
 		local chosenPrefix = ""
 		local noSpaceAfter = v.noSpaceAfter
@@ -119,7 +119,7 @@ function nut.chat.Parse(client, message, noSend)
 			-- Remove the prefix from the chat type so it does not show in the message.
 			message = message:sub(#chosenPrefix + 1)
 
-			if (nut.chat.classes[k].noSpaceAfter and message:sub(1, 1):match("%s")) then
+			if (ix.chat.classes[k].noSpaceAfter and message:sub(1, 1):match("%s")) then
 				message = message:sub(2)
 			end
 
@@ -134,7 +134,7 @@ function nut.chat.Parse(client, message, noSend)
 	-- Only send if needed.
 	if (SERVER and !noSend) then
 		-- Send the correct chat type out so other player see the message.
-		nut.chat.Send(client, chatType, hook.Run("PlayerMessageSend", client, chatType, message, anonymous) or message, anonymous)
+		ix.chat.Send(client, chatType, hook.Run("PlayerMessageSend", client, chatType, message, anonymous) or message, anonymous)
 	end
 
 	-- Return the chosen chat type and the message that was sent if needed for some reason.
@@ -144,8 +144,8 @@ end
 
 if (SERVER) then
 	-- Send a chat message using the specified chat type.
-	function nut.chat.Send(speaker, chatType, text, anonymous, receivers)
-		local class = nut.chat.classes[chatType]
+	function ix.chat.Send(speaker, chatType, text, anonymous, receivers)
+		local class = ix.chat.classes[chatType]
 
 		if (class and class:OnCanSay(speaker, text) != false) then
 			if (class.OnCanHear and !receivers) then
@@ -165,7 +165,7 @@ if (SERVER) then
 			-- Format the message if needed before we run the hook.
 			local rawText = text
 
-			if (nut.config.Get("chatAutoFormat") and hook.Run("CanAutoFormatMessage", speaker, chatType, text)) then
+			if (ix.config.Get("chatAutoFormat") and hook.Run("CanAutoFormatMessage", speaker, chatType, text)) then
 				local last = text:sub(-1)
 
 				if (last != "." and last != "?" and last != "!") then
@@ -179,8 +179,8 @@ if (SERVER) then
 		end
 	end
 else
-	function nut.chat.Send(speaker, chatType, text, anonymous, data)
-		local class = nut.chat.classes[chatType]
+	function ix.chat.Send(speaker, chatType, text, anonymous, data)
+		local class = ix.chat.classes[chatType]
 
 		if (class) then
 			CHAT_CLASS = class
@@ -200,9 +200,9 @@ else
 			}
 
 			hook.Run("OnChatReceived", client, info)
-			nut.chat.Send(client, info.chatType or chatType, info.text or text, info.anonymous or anonymous, info.data or {})
+			ix.chat.Send(client, info.chatType or chatType, info.text or text, info.anonymous or anonymous, info.data or {})
 		else
-			nut.chat.Send(nil, chatType, text, anonymous, {})
+			ix.chat.Send(nil, chatType, text, anonymous, {})
 		end
 	end)
 end
@@ -210,27 +210,27 @@ end
 -- Add the default chat types here.
 do
 	-- Load the chat types after the configs so we can access changed configs.
-	hook.Add("InitializedConfig", "nutChatTypes", function()
+	hook.Add("InitializedConfig", "ixChatTypes", function()
 		-- The default in-character chat.
-		nut.chat.Register("ic", {
+		ix.chat.Register("ic", {
 			format = "%s says \"%s\"",
 			OnGetColor = function(self, speaker, text)
 				-- If you are looking at the speaker, make it greener to easier identify who is talking.
 				if (LocalPlayer():GetEyeTrace().Entity == speaker) then
-					return nut.config.Get("chatListenColor")
+					return ix.config.Get("chatListenColor")
 				end
 
 				-- Otherwise, use the normal chat color.
-				return nut.config.Get("chatColor")
+				return ix.config.Get("chatColor")
 			end,
-			OnCanHear = nut.config.Get("chatRange", 280)
+			OnCanHear = ix.config.Get("chatRange", 280)
 		})
 
 		-- Actions and such.
-		nut.chat.Register("me", {
+		ix.chat.Register("me", {
 			format = "** %s %s",
-			OnGetColor = nut.chat.classes.ic.OnGetColor,
-			OnCanHear = nut.config.Get("chatRange", 280),
+			OnGetColor = ix.chat.classes.ic.OnGetColor,
+			OnCanHear = ix.config.Get("chatRange", 280),
 			prefix = {"/Me", "/Action"},
 			description = "@cmdMe",
 			filter = "actions",
@@ -238,11 +238,11 @@ do
 		})
 
 		-- Actions and such.
-		nut.chat.Register("it", {
+		ix.chat.Register("it", {
 			OnChatAdd = function(self, speaker, text)
-				chat.AddText(nut.config.Get("chatColor"), "** "..text)
+				chat.AddText(ix.config.Get("chatColor"), "** "..text)
 			end,
-			OnCanHear = nut.config.Get("chatRange", 280),
+			OnCanHear = ix.config.Get("chatRange", 280),
 			prefix = {"/It"},
 			description = "@cmdIt",
 			filter = "actions",
@@ -250,45 +250,45 @@ do
 		})
 
 		-- Whisper chat.
-		nut.chat.Register("w", {
+		ix.chat.Register("w", {
 			format = "%s whispers \"%s\"",
 			OnGetColor = function(self, speaker, text)
-				local color = nut.chat.classes.ic:OnGetColor(speaker, text)
+				local color = ix.chat.classes.ic:OnGetColor(speaker, text)
 
 				-- Make the whisper chat slightly darker than IC chat.
 				return Color(color.r - 35, color.g - 35, color.b - 35)
 			end,
-			OnCanHear = nut.config.Get("chatRange", 280) * 0.25,
+			OnCanHear = ix.config.Get("chatRange", 280) * 0.25,
 			prefix = {"/W", "/Whisper"},
 			description = "@cmdW"
 		})
 
 		-- Yelling out loud.
-		nut.chat.Register("y", {
+		ix.chat.Register("y", {
 			format = "%s yells \"%s\"",
 			OnGetColor = function(self, speaker, text)
-				local color = nut.chat.classes.ic:OnGetColor(speaker, text)
+				local color = ix.chat.classes.ic:OnGetColor(speaker, text)
 
 				-- Make the yell chat slightly brighter than IC chat.
 				return Color(color.r + 35, color.g + 35, color.b + 35)
 			end,
-			OnCanHear = nut.config.Get("chatRange", 280) * 2,
+			OnCanHear = ix.config.Get("chatRange", 280) * 2,
 			prefix = {"/Y", "/Yell"},
 			description = "@cmdY"
 		})
 
 		-- Out of character.
-		nut.chat.Register("ooc", {
+		ix.chat.Register("ooc", {
 			OnCanSay = function(self, speaker, text)
-				if (!nut.config.Get("allowGlobalOOC")) then
+				if (!ix.config.Get("allowGlobalOOC")) then
 					speaker:NotifyLocalized("Global OOC is disabled on this server.")
 					return false		
 				else
-					local delay = nut.config.Get("oocDelay", 10)
+					local delay = ix.config.Get("oocDelay", 10)
 
 					-- Only need to check the time if they have spoken in OOC chat before.
-					if (delay > 0 and speaker.nutLastOOC) then
-						local lastOOC = CurTime() - speaker.nutLastOOC
+					if (delay > 0 and speaker.ixLastOOC) then
+						local lastOOC = CurTime() - speaker.ixLastOOC
 
 						-- Use this method of checking time in case the oocDelay config changes.
 						if (lastOOC <= delay) then
@@ -299,7 +299,7 @@ do
 					end
 
 					-- Save the last time they spoke in OOC.
-					speaker.nutLastOOC = CurTime()
+					speaker.ixLastOOC = CurTime()
 				end
 			end,
 			OnChatAdd = function(self, speaker, text)
@@ -325,13 +325,13 @@ do
 		})
 
 		-- Local out of character.
-		nut.chat.Register("looc", {
+		ix.chat.Register("looc", {
 			OnCanSay = function(self, speaker, text)
-				local delay = nut.config.Get("loocDelay", 0)
+				local delay = ix.config.Get("loocDelay", 0)
 
 				-- Only need to check the time if they have spoken in OOC chat before.
-				if (delay > 0 and speaker.nutLastLOOC) then
-					local lastLOOC = CurTime() - speaker.nutLastLOOC
+				if (delay > 0 and speaker.ixLastLOOC) then
+					local lastLOOC = CurTime() - speaker.ixLastLOOC
 
 					-- Use this method of checking time in case the oocDelay config changes.
 					if (lastLOOC <= delay) then
@@ -342,30 +342,30 @@ do
 				end
 
 				-- Save the last time they spoke in OOC.
-				speaker.nutLastLOOC = CurTime()
+				speaker.ixLastLOOC = CurTime()
 			end,
 			OnChatAdd = function(self, speaker, text)
-				chat.AddText(Color(255, 50, 50), "[LOOC] ", nut.config.Get("chatColor"), speaker:Name()..": "..text)
+				chat.AddText(Color(255, 50, 50), "[LOOC] ", ix.config.Get("chatColor"), speaker:Name()..": "..text)
 			end,
-			OnCanHear = nut.config.Get("chatRange", 280),
+			OnCanHear = ix.config.Get("chatRange", 280),
 			prefix = {".//", "[[", "/LOOC"},
 			noSpaceAfter = true,
 			filter = "ooc"
 		})
 
 		-- Roll information in chat.
-		nut.chat.Register("roll", {
+		ix.chat.Register("roll", {
 			format = "%s has rolled %s.",
 			color = Color(155, 111, 176),
 			filter = "actions",
-			OnCanHear = nut.config.Get("chatRange", 280),
+			OnCanHear = ix.config.Get("chatRange", 280),
 			deadCanChat = true
 		})
 	end)
 end
 
 -- Private messages between players.
-nut.chat.Register("pm", {
+ix.chat.Register("pm", {
 	format = "[PM] %s: %s",
 	color = Color(249, 211, 89),
 	filter = "pm",
@@ -373,7 +373,7 @@ nut.chat.Register("pm", {
 })
 
 -- Global events.
-nut.chat.Register("event", {
+ix.chat.Register("event", {
 	OnCanSay = function(self, speaker, text)
 		return speaker:IsAdmin()
 	end,
@@ -385,12 +385,12 @@ nut.chat.Register("event", {
 	description = "@cmdEvent"
 })
 
-nut.chat.Register("connect", {
+ix.chat.Register("connect", {
 	OnCanSay = function(self, speaker, text)
 		return !IsValid(speaker)
 	end,
 	OnChatAdd = function(self, speaker, text)
-		local icon = nut.util.GetMaterial("icon16/user_add.png")
+		local icon = ix.util.GetMaterial("icon16/user_add.png")
 
 		chat.AddText(icon, Color(150, 150, 200), L("playerConnected", text))
 	end,
@@ -398,12 +398,12 @@ nut.chat.Register("connect", {
 	filter = "ooc"
 })
 
-nut.chat.Register("disconnect", {
+ix.chat.Register("disconnect", {
 	OnCanSay = function(self, speaker, text)
 		return !IsValid(speaker)
 	end,
 	OnChatAdd = function(self, speaker, text)
-		local icon = nut.util.GetMaterial("icon16/user_delete.png")
+		local icon = ix.util.GetMaterial("icon16/user_delete.png")
 
 		chat.AddText(icon, Color(200, 150, 200), L("playerDisconnected", text))
 	end,
@@ -411,12 +411,12 @@ nut.chat.Register("disconnect", {
 	filter = "ooc"
 })
 
-nut.chat.Register("notice", {
+ix.chat.Register("notice", {
 	OnCanSay = function(self, speaker, text)
 		return false
 	end,
 	OnChatAdd = function(self, speaker, text)
-		local icon = nut.util.GetMaterial("icon16/comment.png")
+		local icon = ix.util.GetMaterial("icon16/comment.png")
 		chat.AddText(icon, Color(175, 200, 255), text)
 	end,
 	noSpaceAfter = true,

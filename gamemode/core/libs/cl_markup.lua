@@ -10,7 +10,7 @@ local Material = Material
 local tonumber = tonumber
 local file = file
 
-module("nut.markup")
+module("ix.markup")
 
 --[[---------------------------------------------------------
     Name: Constants used for text alignment.

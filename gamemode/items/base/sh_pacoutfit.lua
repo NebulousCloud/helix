@@ -110,7 +110,7 @@ ITEM.functions.Equip = {
 
 		for k, v in pairs(items) do
 			if (v.id != item.id) then
-				local itemTable = nut.item.instances[v.id]
+				local itemTable = ix.item.instances[v.id]
 
 				if (itemTable.pacData and v.outfitCategory == item.outfitCategory and itemTable:GetData("equip")) then
 					item.player:Notify("You're already equipping this kind of outfit")
@@ -145,7 +145,7 @@ function ITEM:OnCanBeTransfered(oldInventory, newInventory)
 end
 
 function ITEM:OnRemoved()
-	local inventory = nut.item.inventories[self.invID]
+	local inventory = ix.item.inventories[self.invID]
 	local receiver = inventory.GetReceiver and inventory:GetReceiver()
 
 	if (IsValid(receiver) and receiver:IsPlayer()) then

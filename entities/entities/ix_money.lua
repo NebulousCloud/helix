@@ -2,7 +2,7 @@ AddCSLuaFile()
 
 ENT.Type = "anim"
 ENT.PrintName = "Money"
-ENT.Category = "NutScript"
+ENT.Category = "Helix"
 ENT.Spawnable = false
 ENT.ShowPlayerInteraction = true
 
@@ -39,7 +39,7 @@ if (SERVER) then
 			end
 		end
 		
-		activator:PerformInteraction(nut.config.Get("itemPickupTime", 0.5), self, function(client)
+		activator:PerformInteraction(ix.config.Get("itemPickupTime", 0.5), self, function(client)
 			if (hook.Run("OnPickupMoney", client, self) != false) then
 				self:Remove()
 			end
@@ -50,14 +50,14 @@ else
 
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
-	local drawText = nut.util.DrawText
-	local configGet = nut.config.Get
+	local drawText = ix.util.DrawText
+	local configGet = ix.config.Get
 
 	function ENT:OnDrawEntityInfo(alpha)
 		local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
 		local x, y = position.x, position.y
 
-		drawText(nut.currency.Get(self.GetAmount(self)), x, y, colorAlpha(configGet("color"), alpha), 1, 1, nil, alpha * 0.65)
+		drawText(ix.currency.Get(self.GetAmount(self)), x, y, colorAlpha(configGet("color"), alpha), 1, 1, nil, alpha * 0.65)
 	end
 end
 

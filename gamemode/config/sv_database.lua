@@ -1,5 +1,5 @@
 --[[
-	Welcome to the NutScript database configuration.
+	Welcome to the Helix database configuration.
 	Here, you can change what method of data storage you would prefer.
 
 	The following methods are available:
@@ -32,21 +32,21 @@
 	  	- Is not as instant as SQLite (but the delay should be barely noticable)
 
   	The following configurations are ONLY needed if you are going to be using an
-  	external database for your NutScript installation.
+  	external database for your Helix installation.
 --]]
 
 
 function GM:SetupDatabase()
 	-- Which method of storage: sqlite, tmysql4, mysqloo
-	nut.db.module = "sqlite"
+	ix.db.module = "sqlite"
 	-- The hostname for the MySQL server.
-	nut.db.hostname = "127.0.0.1"
+	ix.db.hostname = "127.0.0.1"
 	-- The username to login to the database.
-	nut.db.username = "root"
+	ix.db.username = "root"
 	-- The password that is associated with the username.
-	nut.db.password = ""
+	ix.db.password = ""
 	-- The database that the user should login to.
-	nut.db.database = "nutscript"
+	ix.db.database = "helix"
 	-- The port for the database, you shouldn't need to change this.
-	nut.db.port = 3306
+	ix.db.port = 3306
 end

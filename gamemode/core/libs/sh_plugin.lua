@@ -1,10 +1,10 @@
-nut.plugin = nut.plugin or {}
-nut.plugin.list = nut.plugin.list or {}
-nut.plugin.unloaded = nut.plugin.unloaded or {}
+ix.plugin = ix.plugin or {}
+ix.plugin.list = ix.plugin.list or {}
+ix.plugin.unloaded = ix.plugin.unloaded or {}
 
 HOOKS_CACHE = {}
 
-function nut.plugin.Load(uniqueID, path, isSingleFile, variable)
+function ix.plugin.Load(uniqueID, path, isSingleFile, variable)
 	if (hook.Run("PluginShouldLoad", uniqueID) == false) then return end
 
 	variable = variable or "PLUGIN"
@@ -20,28 +20,28 @@ function nut.plugin.Load(uniqueID, path, isSingleFile, variable)
 
 		variable = "Schema"
 		PLUGIN.folder = engine.ActiveGamemode()
-	elseif (nut.plugin.list[uniqueID]) then
-		PLUGIN = nut.plugin.list[uniqueID]
+	elseif (ix.plugin.list[uniqueID]) then
+		PLUGIN = ix.plugin.list[uniqueID]
 	end
 
 	_G[variable] = PLUGIN
 	PLUGIN.loading = true
 
 	if (!isSingleFile) then
-		nut.lang.LoadFromDir(path.."/languages")
-		nut.util.IncludeDir(path.."/libs", true)
-		nut.attribs.LoadFromDir(path.."/attributes")
-		nut.faction.LoadFromDir(path.."/factions")
-		nut.class.LoadFromDir(path.."/classes")
-		nut.item.LoadFromDir(path.."/items")
-		nut.plugin.LoadFromDir(path.."/plugins")
-		nut.util.IncludeDir(path.."/derma", true)
-		nut.plugin.LoadEntities(path.."/entities")
+		ix.lang.LoadFromDir(path.."/languages")
+		ix.util.IncludeDir(path.."/libs", true)
+		ix.attribs.LoadFromDir(path.."/attributes")
+		ix.faction.LoadFromDir(path.."/factions")
+		ix.class.LoadFromDir(path.."/classes")
+		ix.item.LoadFromDir(path.."/items")
+		ix.plugin.LoadFromDir(path.."/plugins")
+		ix.util.IncludeDir(path.."/derma", true)
+		ix.plugin.LoadEntities(path.."/entities")
 
 		hook.Run("DoPluginIncludes", path, PLUGIN)
 	end
 
-	nut.util.Include(isSingleFile and path or path.."/sh_"..variable:lower()..".lua", "shared")
+	ix.util.Include(isSingleFile and path or path.."/sh_"..variable:lower()..".lua", "shared")
 	PLUGIN.loading = false
 
 	local uniqueID2 = uniqueID
@@ -51,11 +51,11 @@ function nut.plugin.Load(uniqueID, path, isSingleFile, variable)
 	end
 
 	function PLUGIN:SetData(value, global, ignoreMap)
-		nut.data.Set(uniqueID2, value, global, ignoreMap)
+		ix.data.Set(uniqueID2, value, global, ignoreMap)
 	end
 
 	function PLUGIN:GetData(default, global, ignoreMap, refresh)
-		return nut.data.Get(uniqueID2, default, global, ignoreMap, refresh) or {}
+		return ix.data.Get(uniqueID2, default, global, ignoreMap, refresh) or {}
 	end
 
 	hook.Run("PluginLoaded", uniqueID, PLUGIN)
@@ -71,7 +71,7 @@ function nut.plugin.Load(uniqueID, path, isSingleFile, variable)
 			end
 		end
 
-		nut.plugin.list[uniqueID] = PLUGIN
+		ix.plugin.list[uniqueID] = PLUGIN
 		_G[variable] = nil
 	end
 
@@ -80,11 +80,11 @@ function nut.plugin.Load(uniqueID, path, isSingleFile, variable)
 	end
 end
 
-function nut.plugin.GetHook(pluginName, hookName)
+function ix.plugin.GetHook(pluginName, hookName)
 	local h = HOOKS_CACHE[hookName]
 
 	if (h) then
-		local p = nut.plugin.list[pluginName]
+		local p = ix.plugin.list[pluginName]
 
 		if (p) then
 			return h[p]
@@ -94,20 +94,20 @@ function nut.plugin.GetHook(pluginName, hookName)
 	return
 end
 
-function nut.plugin.LoadEntities(path)
+function ix.plugin.LoadEntities(path)
 	local files, folders
 
 	local function IncludeFiles(path2, clientOnly)
 		if (SERVER and file.Exists(path2.."init.lua", "LUA") or CLIENT) then
-			nut.util.Include(path2.."init.lua", clientOnly and "client" or "server")
+			ix.util.Include(path2.."init.lua", clientOnly and "client" or "server")
 
 			if (file.Exists(path2.."cl_init.lua", "LUA")) then
-				nut.util.Include(path2.."cl_init.lua", "client")
+				ix.util.Include(path2.."cl_init.lua", "client")
 			end
 
 			return true
 		elseif (file.Exists(path2.."shared.lua", "LUA")) then
-			nut.util.Include(path2.."shared.lua")
+			ix.util.Include(path2.."shared.lua")
 
 			return true
 		end
@@ -142,7 +142,7 @@ function nut.plugin.LoadEntities(path)
 
 			_G[variable] = table.Copy(default)
 				_G[variable].ClassName = niceName
-				nut.util.Include(path.."/"..folder.."/"..v, clientOnly and "client" or "shared")
+				ix.util.Include(path.."/"..folder.."/"..v, clientOnly and "client" or "shared")
 
 				if (clientOnly) then
 					if (CLIENT) then
@@ -173,43 +173,43 @@ function nut.plugin.LoadEntities(path)
 	HandleEntityInclusion("effects", "EFFECT", effects and effects.Register, nil, true)
 end
 
-function nut.plugin.Initialize()
-	nut.plugin.LoadFromDir("nutscript/plugins")
+function ix.plugin.Initialize()
+	ix.plugin.LoadFromDir("helix/plugins")
 
-	nut.plugin.Load("schema", engine.ActiveGamemode().."/schema")
+	ix.plugin.Load("schema", engine.ActiveGamemode().."/schema")
 	hook.Run("InitializedSchema")
 
-	nut.plugin.LoadFromDir(engine.ActiveGamemode().."/plugins")
+	ix.plugin.LoadFromDir(engine.ActiveGamemode().."/plugins")
 	hook.Run("InitializedPlugins")
 end
 
-function nut.plugin.Get(identifier)
-	return nut.plugin.list[identifier]
+function ix.plugin.Get(identifier)
+	return ix.plugin.list[identifier]
 end
 
-function nut.plugin.LoadFromDir(directory)
+function ix.plugin.LoadFromDir(directory)
 	local files, folders = file.Find(directory.."/*", "LUA")
 
 	for k, v in ipairs(folders) do
-		nut.plugin.Load(v, directory.."/"..v)
+		ix.plugin.Load(v, directory.."/"..v)
 	end
 
 	for k, v in ipairs(files) do
-		nut.plugin.Load(string.StripExtension(v), directory.."/"..v, true)
+		ix.plugin.Load(string.StripExtension(v), directory.."/"..v, true)
 	end
 end
 
-function nut.plugin.SetUnloaded(uniqueID, state, noSave)
-	local plugin = nut.plugin.list[uniqueID]
+function ix.plugin.SetUnloaded(uniqueID, state, noSave)
+	local plugin = ix.plugin.list[uniqueID]
 
 	if (state) then
 		if (plugin.OnLoaded) then
 			plugin:OnLoaded()
 		end
 
-		if (nut.plugin.unloaded[uniqueID]) then
-			nut.plugin.list[uniqueID] = nut.plugin.unloaded[uniqueID]
-			nut.plugin.unloaded[uniqueID] = nil
+		if (ix.plugin.unloaded[uniqueID]) then
+			ix.plugin.list[uniqueID] = ix.plugin.unloaded[uniqueID]
+			ix.plugin.unloaded[uniqueID] = nil
 		else
 			return false
 		end
@@ -218,8 +218,8 @@ function nut.plugin.SetUnloaded(uniqueID, state, noSave)
 			plugin:OnUnload()
 		end
 
-		nut.plugin.unloaded[uniqueID] = nut.plugin.list[uniqueID]
-		nut.plugin.list[uniqueID] = nil
+		ix.plugin.unloaded[uniqueID] = ix.plugin.list[uniqueID]
+		ix.plugin.list[uniqueID] = nil
 	else
 		return false
 	end
@@ -231,9 +231,9 @@ function nut.plugin.SetUnloaded(uniqueID, state, noSave)
 			status = true
 		end
 
-		local unloaded = nut.data.Get("unloaded", {}, true, true)
+		local unloaded = ix.data.Get("unloaded", {}, true, true)
 			unloaded[uniqueID] = status
-		nut.data.Set("unloaded", unloaded, true, true)
+		ix.data.Set("unloaded", unloaded, true, true)
 	end
 
 	hook.Run("PluginUnloaded", uniqueID)
@@ -242,14 +242,14 @@ function nut.plugin.SetUnloaded(uniqueID, state, noSave)
 end
 
 if (SERVER) then
-	nut.plugin.repos = nut.plugin.repos or {}
-	nut.plugin.files = nut.plugin.files or {}
+	ix.plugin.repos = ix.plugin.repos or {}
+	ix.plugin.files = ix.plugin.files or {}
 	
 	local function ThrowFault(fault)
 		MsgN(fault)
 	end
 
-	function nut.plugin.LoadRepo(url, name, callback, faultCallback)
+	function ix.plugin.LoadRepo(url, name, callback, faultCallback)
 		name = name or url
 
 		local curPlugin = ""
@@ -300,14 +300,14 @@ if (SERVER) then
 				end
 			end
 
-			file.CreateDir("nutscript/plugins")
-			file.CreateDir("nutscript/plugins/"..cache.data.id)
+			file.CreateDir("helix/plugins")
+			file.CreateDir("helix/plugins/"..cache.data.id)
 
 			if (callback) then
 				callback(cache)
 			end
 
-			nut.plugin.repos[name] = cache
+			ix.plugin.repos[name] = cache
 		end, function(fault)
 			if (faultCallback) then
 				faultCallback(fault)
@@ -317,13 +317,13 @@ if (SERVER) then
 		end)
 	end
 
-	function nut.plugin.Download(repo, plugin, callback)
-		local plugins = nut.plugin.repos[repo]
+	function ix.plugin.Download(repo, plugin, callback)
+		local plugins = ix.plugin.repos[repo]
 
 		if (plugins) then
 			if (plugins.files[plugin]) then
 				local files = plugins.files[plugin]
-				local baseDir = "nutscript/plugins/"..plugins.data.id.."/"..plugin.."/"
+				local baseDir = "helix/plugins/"..plugins.data.id.."/"..plugin.."/"
 
 				-- Re-create the old file.Write behavior.
 				local function WriteFile(name, contents)
@@ -347,7 +347,7 @@ if (SERVER) then
 				end
 
 				MsgN("* Downloading plugin '"..plugin.."' from '"..repo.."'")
-				nut.plugin.files[repo.."/"..plugin] = {}
+				ix.plugin.files[repo.."/"..plugin] = {}
 
 				local function DownloadFile(i)
 					MsgN("\t* Downloading... "..(math.Round(i / #files, 2) * 100).."%")
@@ -356,7 +356,7 @@ if (SERVER) then
 
 					http.Fetch(url, function(body)
 						WriteFile(files[i], body)
-						nut.plugin.files[repo.."/"..plugin][files[i]] = body
+						ix.plugin.files[repo.."/"..plugin][files[i]] = body
 
 						if (i < #files) then
 							DownloadFile(i + 1)
@@ -381,22 +381,22 @@ if (SERVER) then
 		end
 	end
 
-	function nut.plugin.LoadFromLocal(repo, plugin)
+	function ix.plugin.LoadFromLocal(repo, plugin)
 
 	end
 
-	concommand.Add("nut_cloudloadrepo", function(client, _, arguments)
+	concommand.Add("ix_cloudloadrepo", function(client, _, arguments)
 		local url = arguments[1]
 		local name = arguments[2] or "default"
 
 		if (!IsValid(client)) then
-			nut.plugin.LoadRepo(url, name)
+			ix.plugin.LoadRepo(url, name)
 		end
 	end)
 
-	concommand.Add("nut_cloudget", function(client, _, arguments)
+	concommand.Add("ix_cloudget", function(client, _, arguments)
 		if (!IsValid(client)) then
-			local status, result = nut.plugin.Download(arguments[2] or "default", arguments[1])
+			local status, result = ix.plugin.Download(arguments[2] or "default", arguments[1])
 
 			if (status == false) then
 				MsgN("* ERROR: "..result)
@@ -406,7 +406,7 @@ if (SERVER) then
 end
 
 do
-	hook.NutCall = hook.NutCall or hook.Call
+	hook.ixCall = hook.ixCall or hook.Call
 
 	function hook.Call(name, gm, ...)
 		local cache = HOOKS_CACHE[name]
@@ -429,6 +429,6 @@ do
 			end
 		end
 
-		return hook.NutCall(name, gm, ...)
+		return hook.ixCall(name, gm, ...)
 	end
 end

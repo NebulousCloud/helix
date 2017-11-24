@@ -3,14 +3,14 @@ PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds a chatbox that replaces the default one."
 
 if (CLIENT) then
-	NUT_CVAR_CHATFILTER = CreateClientConVar("nut_chatfilter", "", true, false)
+	IX_CVAR_CHATFILTER = CreateClientConVar("ix_chatfilter", "", true, false)
 
 	function PLUGIN:CreateChat()
 		if (IsValid(self.panel)) then
 			return
 		end
 
-		self.panel = vgui.Create("nutChatBox")
+		self.panel = vgui.Create("ixChatBox")
 	end
 
 	function PLUGIN:InitPostEntity()
@@ -33,7 +33,7 @@ if (CLIENT) then
 		end
 	end
 
-	chat.nutAddText = chat.nutAddText or chat.AddText
+	chat.ixAddText = chat.ixAddText or chat.AddText
 
 	local PLUGIN = PLUGIN
 
@@ -45,7 +45,7 @@ if (CLIENT) then
 		end
 
 		if (show) then
-			chat.nutAddText(...)
+			chat.ixAddText(...)
 			chat.PlaySound()
 		end
 	end
@@ -65,9 +65,9 @@ if (CLIENT) then
 	end)
 else
 	netstream.Hook("msg", function(client, text)
-		if ((client.nutNextChat or 0) < CurTime() and text:find("%S")) then
+		if ((client.ixNextChat or 0) < CurTime() and text:find("%S")) then
 			hook.Run("PlayerSay", client, text)
-			client.nutNextChat = CurTime() + math.max(#text / 250, 0.4)
+			client.ixNextChat = CurTime() + math.max(#text / 250, 0.4)
 		end
 	end)
 end

@@ -1,16 +1,16 @@
-nut.item = nut.item or {}
-nut.item.list = nut.item.list or {}
-nut.item.base = nut.item.base or {}
-nut.item.instances = nut.item.instances or {}
-nut.item.inventories = nut.item.inventories or {
+ix.item = ix.item or {}
+ix.item.list = ix.item.list or {}
+ix.item.base = ix.item.base or {}
+ix.item.instances = ix.item.instances or {}
+ix.item.inventories = ix.item.inventories or {
 	[0] = {}
 }
-nut.item.inventoryTypes = nut.item.inventoryTypes or {}
+ix.item.inventoryTypes = ix.item.inventoryTypes or {}
 
-nut.util.Include("nutscript/gamemode/core/meta/sh_item.lua")
+ix.util.Include("helix/gamemode/core/meta/sh_item.lua")
 
 -- Declare some supports for logic inventory
-local zeroInv = nut.item.inventories[0]
+local zeroInv = ix.item.inventories[0]
 function zeroInv:GetID()
 	return 0
 end
@@ -29,13 +29,13 @@ function zeroInv:Add(uniqueID, quantity, data)
 				return
 			end
 
-			local itemTable = nut.item.list[uniqueID]
+			local itemTable = ix.item.list[uniqueID]
 
 			if (!itemTable) then
 				return false, "invalidItem"
 			end
 
-			nut.item.Instance(0, uniqueID, data, x, y, function(item)
+			ix.item.Instance(0, uniqueID, data, x, y, function(item)
 				self[item:GetID()] = item
 			end)
 
@@ -46,16 +46,16 @@ function zeroInv:Add(uniqueID, quantity, data)
 	end
 end
 
-function nut.item.Instance(index, uniqueID, itemData, x, y, callback)
-	if (!uniqueID or nut.item.list[uniqueID]) then
-		nut.db.InsertTable({
+function ix.item.Instance(index, uniqueID, itemData, x, y, callback)
+	if (!uniqueID or ix.item.list[uniqueID]) then
+		ix.db.InsertTable({
 			_invID = index,
 			_uniqueID = uniqueID,
 			_data = itemData,
 			_x = x,
 			_y = y
 		}, function(data, itemID)
-			local item = nut.item.New(uniqueID, itemID)
+			local item = ix.item.New(uniqueID, itemID)
 
 			if (item) then
 				item.data = itemData or {}				
@@ -71,28 +71,28 @@ function nut.item.Instance(index, uniqueID, itemData, x, y, callback)
 			end
 		end, "items")
 	else
-		ErrorNoHalt("[NutScript] Attempt to give an invalid item! ("..(uniqueID or "nil")..")\n")
+		ErrorNoHalt("[Helix] Attempt to give an invalid item! ("..(uniqueID or "nil")..")\n")
 	end
 end
 
-function nut.item.RegisterInv(invType, w, h, isBag)
-	nut.item.inventoryTypes[invType] = {w = w, h = h}
+function ix.item.RegisterInv(invType, w, h, isBag)
+	ix.item.inventoryTypes[invType] = {w = w, h = h}
 	
 	if (isBag) then
-		nut.item.inventoryTypes[invType].isBag = invType
+		ix.item.inventoryTypes[invType].isBag = invType
 	end
 	
-	return nut.item.inventoryTypes[invType]
+	return ix.item.inventoryTypes[invType]
 end
 
-function nut.item.NewInv(owner, invType, callback)
-	local invData = nut.item.inventoryTypes[invType] or {w = 1, h = 1}
+function ix.item.NewInv(owner, invType, callback)
+	local invData = ix.item.inventoryTypes[invType] or {w = 1, h = 1}
 
-	nut.db.InsertTable({
+	ix.db.InsertTable({
 		_invType = invType,
 		_charID = owner
 	}, function(data, invID)
-		local inventory = nut.item.CreateInv(invData.w, invData.h, invID)
+		local inventory = ix.item.CreateInv(invData.w, invData.h, invID)
 		
 		if (invType) then
 			inventory.vars.isBag = invType
@@ -115,32 +115,32 @@ function nut.item.NewInv(owner, invType, callback)
 	end, "inventories")
 end
 
-function nut.item.Get(identifier)
-	return nut.item.base[identifier] or nut.item.list[identifier]
+function ix.item.Get(identifier)
+	return ix.item.base[identifier] or ix.item.list[identifier]
 end
 
-function nut.item.GetInv(invID)
-	return nut.item.inventories[invID]
+function ix.item.GetInv(invID)
+	return ix.item.inventories[invID]
 end
 
-function nut.item.Load(path, baseID, isBaseItem)
+function ix.item.Load(path, baseID, isBaseItem)
 	local uniqueID = path:match("sh_([_%w]+)%.lua")
 
 	if (uniqueID) then
 		uniqueID = (isBaseItem and "base_" or "")..uniqueID
-		nut.item.Register(uniqueID, baseID, isBaseItem, path)
+		ix.item.Register(uniqueID, baseID, isBaseItem, path)
 	else
 		if (!path:find(".txt")) then
-			ErrorNoHalt("[NutScript] Item at '"..path.."' follows invalid naming convention!\n")
+			ErrorNoHalt("[Helix] Item at '"..path.."' follows invalid naming convention!\n")
 		end
 	end
 end
 
-function nut.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
-	local meta = nut.meta.item
+function ix.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
+	local meta = ix.meta.item
 
 	if (uniqueID) then
-		ITEM = (isBaseItem and nut.item.base or nut.item.list)[uniqueID] or setmetatable({}, meta)
+		ITEM = (isBaseItem and ix.item.base or ix.item.list)[uniqueID] or setmetatable({}, meta)
 			ITEM.description = "noDesc"
 			ITEM.uniqueID = uniqueID
 			ITEM.base = baseID
@@ -190,7 +190,7 @@ function nut.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 			local oldBase = ITEM.base
 
 			if (ITEM.base) then
-				local baseTable = nut.item.base[ITEM.base]
+				local baseTable = ix.item.base[ITEM.base]
 
 				if (baseTable) then
 					for k, v in pairs(baseTable) do
@@ -204,7 +204,7 @@ function nut.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 					local mergeTable = table.Copy(baseTable)
 					ITEM = table.Merge(mergeTable, ITEM)
 				else
-					ErrorNoHalt("[NutScript] Item '"..ITEM.uniqueID.."' has a non-existent base! ("..ITEM.base..")\n")
+					ErrorNoHalt("[Helix] Item '"..ITEM.uniqueID.."' has a non-existent base! ("..ITEM.base..")\n")
 				end
 			end
 
@@ -213,11 +213,11 @@ function nut.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 			end
 
 			if (!luaGenerated and path) then
-				nut.util.Include(path)
+				ix.util.Include(path)
 			end
 
 			if (ITEM.base and oldBase != ITEM.base) then
-				local baseTable = nut.item.base[ITEM.base]
+				local baseTable = ix.item.base[ITEM.base]
 
 				if (baseTable) then
 					for k, v in pairs(baseTable) do
@@ -231,7 +231,7 @@ function nut.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 					local mergeTable = table.Copy(baseTable)
 					ITEM = table.Merge(mergeTable, ITEM)
 				else
-					ErrorNoHalt("[NutScript] Item '"..ITEM.uniqueID.."' has a non-existent base! ("..ITEM.base..")\n")
+					ErrorNoHalt("[Helix] Item '"..ITEM.uniqueID.."' has a non-existent base! ("..ITEM.base..")\n")
 				end
 			end
 
@@ -243,25 +243,25 @@ function nut.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 				ITEM:OnRegistered()
 			end
 
-			(isBaseItem and nut.item.base or nut.item.list)[ITEM.uniqueID] = ITEM
+			(isBaseItem and ix.item.base or ix.item.list)[ITEM.uniqueID] = ITEM
 		if (luaGenerated) then
 			return ITEM
 		else
 			ITEM = nil
 		end
 	else
-		ErrorNoHalt("[NutScript] You tried to register an item without uniqueID!\n")
+		ErrorNoHalt("[Helix] You tried to register an item without uniqueID!\n")
 	end
 end
 
 
-function nut.item.LoadFromDir(directory)
+function ix.item.LoadFromDir(directory)
 	local files, folders
 
 	files = file.Find(directory.."/base/*.lua", "LUA")
 
 	for k, v in ipairs(files) do
-		nut.item.Load(directory.."/base/"..v, nil, true)
+		ix.item.Load(directory.."/base/"..v, nil, true)
 	end
 
 	files, folders = file.Find(directory.."/*", "LUA")
@@ -272,53 +272,53 @@ function nut.item.LoadFromDir(directory)
 		end
 		
 		for k2, v2 in ipairs(file.Find(directory.."/"..v.."/*.lua", "LUA")) do
-			nut.item.Load(directory.."/"..v .. "/".. v2, "base_"..v)
+			ix.item.Load(directory.."/"..v .. "/".. v2, "base_"..v)
 		end
 	end
 
 	for k, v in ipairs(files) do
-		nut.item.Load(directory.."/"..v)
+		ix.item.Load(directory.."/"..v)
 	end
 end
 
-function nut.item.New(uniqueID, id)
-	if (nut.item.instances[id] and nut.item.instances[id].uniqueID == uniqueID) then
-		return nut.item.instances[id]
+function ix.item.New(uniqueID, id)
+	if (ix.item.instances[id] and ix.item.instances[id].uniqueID == uniqueID) then
+		return ix.item.instances[id]
 	end
 
-	local stockItem = nut.item.list[uniqueID]
+	local stockItem = ix.item.list[uniqueID]
 
 	if (stockItem) then
 		local item = setmetatable({}, {__index = stockItem})
 		item.id = id
 		item.data = {}
 
-		nut.item.instances[id] = item
+		ix.item.instances[id] = item
 
 		return item
 	else
-		ErrorNoHalt("[NutScript] Attempt to index unknown item '"..uniqueID.."'\n")
+		ErrorNoHalt("[Helix] Attempt to index unknown item '"..uniqueID.."'\n")
 	end
 end
 
 do
-	nut.util.Include("nutscript/gamemode/core/meta/sh_inventory.lua")
+	ix.util.Include("helix/gamemode/core/meta/sh_inventory.lua")
 
-	function nut.item.CreateInv(w, h, id)
-		local inventory = setmetatable({w = w, h = h, id = id, slots = {}, vars = {}}, nut.meta.inventory)
-			nut.item.inventories[id] = inventory
+	function ix.item.CreateInv(w, h, id)
+		local inventory = setmetatable({w = w, h = h, id = id, slots = {}, vars = {}}, ix.meta.inventory)
+			ix.item.inventories[id] = inventory
 			
 		return inventory
 	end
 
-	function nut.item.RestoreInv(invID, w, h, callback)
+	function ix.item.RestoreInv(invID, w, h, callback)
 		if (type(invID) != "number" or invID < 0) then
 			error("Attempt to restore inventory with an invalid ID!")
 		end
 		
-		local inventory = nut.item.CreateInv(w, h, invID)
+		local inventory = ix.item.CreateInv(w, h, invID)
 
-		nut.db.query("SELECT _itemID, _uniqueID, _data, _x, _y FROM nut_items WHERE _invID = "..invID, function(data)
+		ix.db.query("SELECT _itemID, _uniqueID, _data, _x, _y FROM ix_items WHERE _invID = "..invID, function(data)
 			local badItemsUniqueID = {}
 			
 			if (data) then
@@ -332,7 +332,7 @@ do
 
 					if (x and y and itemID) then
 						if (x <= w and x > 0 and y <= h and y > 0) then
-							local item2 = nut.item.New(item._uniqueID, itemID)
+							local item2 = ix.item.New(item._uniqueID, itemID)
 
 							if (item2) then
 								item2.data = {}
@@ -368,7 +368,7 @@ do
 				inventory.slots = slots
 
 				if (table.Count(badItems) > 0) then
-					nut.db.query("DELETE FROM nut_items WHERE _itemID IN ("..table.concat(badItems, ", ")..")")
+					ix.db.query("DELETE FROM ix_items WHERE _itemID IN ("..table.concat(badItems, ", ")..")")
 				end
 			end
 
@@ -380,8 +380,8 @@ do
 
 	if (CLIENT) then
 		netstream.Hook("item", function(uniqueID, id, data, invID)
-			local stockItem = nut.item.list[uniqueID]
-			local item = nut.item.New(uniqueID, id)
+			local stockItem = ix.item.list[uniqueID]
+			local item = ix.item.New(uniqueID, id)
 
 			item.data = {}
 			if (data) then
@@ -395,13 +395,13 @@ do
 			local character
 
 			if (owner) then
-				character = nut.char.loaded[owner]
+				character = ix.char.loaded[owner]
 			else
 				character = LocalPlayer():GetChar()
 			end
 
 			if (character) then
-				local inventory = nut.item.CreateInv(w, h, id)
+				local inventory = ix.item.CreateInv(w, h, id)
 				inventory:SetOwner(character:GetID())
 				inventory.slots = {}
 				inventory.vars = vars
@@ -413,7 +413,7 @@ do
 
 					inventory.slots[x] = inventory.slots[x] or {}
 
-					local item = nut.item.New(v[3], v[4])
+					local item = ix.item.New(v[3], v[4])
 
 					item.data = {}
 					if (v[5]) then
@@ -439,20 +439,20 @@ do
 		end)
 
 		netstream.Hook("invData", function(id, key, value)
-			local item = nut.item.instances[id]
+			local item = ix.item.instances[id]
 
 			if (item) then
 				item.data = item.data or {}
 				item.data[key] = value
 
-				local panel = item.invID and nut.gui["inv"..item.invID] or nut.gui.inv1
+				local panel = item.invID and ix.gui["inv"..item.invID] or ix.gui.inv1
 
 				if (panel and panel.panels) then
 					local icon = panel.panels[id]
 
 					if (icon) then
 						icon:SetToolTip(
-							Format(nut.config.itemFormat,
+							Format(ix.config.itemFormat,
 							item.GetName and item:GetName() or L(item.name), item:GetDescription() or "")
 						)
 					end
@@ -464,14 +464,14 @@ do
 			local character = LocalPlayer():GetChar()
 
 			if (owner) then
-				character = nut.char.loaded[owner]
+				character = ix.char.loaded[owner]
 			end
 
 			if (character) then
-				local inventory = nut.item.inventories[invID]
+				local inventory = ix.item.inventories[invID]
 
 				if (inventory) then
-					local item = uniqueID and id and nut.item.New(uniqueID, id) or nil
+					local item = uniqueID and id and ix.item.New(uniqueID, id) or nil
 					item.invID = invID
 
 					item.data = {}
@@ -483,14 +483,14 @@ do
 					inventory.slots[x] = inventory.slots[x] or {}
 					inventory.slots[x][y] = item
 
-					local panel = nut.gui["inv"..invID] or nut.gui.inv1
+					local panel = ix.gui["inv"..invID] or ix.gui.inv1
 
 					if (IsValid(panel)) then
 						local icon = panel:AddIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
 
 						if (IsValid(icon)) then
 							icon:SetToolTip(
-								Format(nut.config.itemFormat,
+								Format(ix.config.itemFormat,
 								item.GetName and item:GetName() or L(item.name), item:GetDescription() or "")
 							)
 							icon.itemID = item.id
@@ -503,8 +503,8 @@ do
 		end)
 		
 		netstream.Hook("invMv", function(invID, itemID, x, y)
-			local inventory = nut.item.inventories[invID]
-			local panel = nut.gui["inv"..invID]
+			local inventory = ix.item.inventories[invID]
+			local panel = ix.gui["inv"..invID]
 
 			if (inventory and IsValid(panel)) then
 				local icon = panel.panels[itemID]
@@ -519,16 +519,16 @@ do
 			local character = LocalPlayer():GetChar()
 
 			if (owner) then
-				character = nut.char.loaded[owner]
+				character = ix.char.loaded[owner]
 			end
 
 			if (character) then
-				local inventory = nut.item.inventories[invID]
+				local inventory = ix.item.inventories[invID]
 
 				if (inventory) then
 					inventory:Remove(id)
 
-					local panel = nut.gui["inv"..invID] or nut.gui.inv1
+					local panel = ix.gui["inv"..invID] or ix.gui.inv1
 
 					if (IsValid(panel)) then
 						local icon = panel.panels[id]
@@ -547,7 +547,7 @@ do
 			end			
 		end)
 	else
-		function nut.item.LoadItemByID(itemIndex, recipientFilter)
+		function ix.item.LoadItemByID(itemIndex, recipientFilter)
 			local range
 			if (type(itemIndex) == "table") then
 				range = "("..table.concat(itemIndex, ", ")..")"
@@ -557,16 +557,16 @@ do
 				return
 			end
 
-			nut.db.query("SELECT _itemID, _uniqueID, _data FROM nut_items WHERE _itemID IN "..range, function(data)
+			ix.db.query("SELECT _itemID, _uniqueID, _data FROM ix_items WHERE _itemID IN "..range, function(data)
 				if (data) then
 					for k, v in ipairs(data) do
 						local itemID = tonumber(v._itemID)
 						local data = util.JSONToTable(v._data or "[]")
 						local uniqueID = v._uniqueID
-						local itemTable = nut.item.list[uniqueID]
+						local itemTable = ix.item.list[uniqueID]
 
 						if (itemTable and itemID) then
-							local item = nut.item.New(uniqueID, itemID)
+							local item = ix.item.New(uniqueID, itemID)
 
 							item.data = data or {}
 							item.invID = 0
@@ -576,14 +576,14 @@ do
 			end) 
 		end
 
-		function nut.item.PerformInventoryAction(client, action, item, invID, data)
+		function ix.item.PerformInventoryAction(client, action, item, invID, data)
 			local character = client:GetChar()
 
 			if (!character) then
 				return
 			end
 
-			local inventory = nut.item.inventories[invID]
+			local inventory = ix.item.inventories[invID]
 
 			if (type(item) != "Entity") then
 				if (!inventory or !inventory.owner or inventory.owner != character:GetID()) then
@@ -598,8 +598,8 @@ do
 			if (type(item) == "Entity") then
 				if (IsValid(item)) then
 					local entity = item
-					local itemID = item.nutItemID
-					item = nut.item.instances[itemID]
+					local itemID = item.ixItemID
+					item = ix.item.instances[itemID]
 
 					if (!item) then
 						return
@@ -611,7 +611,7 @@ do
 					return
 				end
 			elseif (type(item) == "number") then
-				item = nut.item.instances[item]
+				item = ix.item.instances[item]
 
 				if (!item) then
 					return
@@ -657,7 +657,7 @@ do
 
 				if (result != false) then
 					if (IsValid(entity)) then
-						entity.nutIsSafe = true
+						entity.ixIsSafe = true
 						entity:Remove()
 					else
 						item:Remove()
@@ -676,7 +676,7 @@ do
 			local character = client:GetChar()
 
 			if (character) then
-				local inventory = nut.item.inventories[invID]
+				local inventory = ix.item.inventories[invID]
 
 				if (!inventory or inventory == nil) then
 					inventory:Sync(client)
@@ -687,7 +687,7 @@ do
 
 					if (item) then
 						if (newInvID and invID != newInvID) then
-							local inventory2 = nut.item.inventories[newInvID]
+							local inventory2 = ix.item.inventories[newInvID]
 
 							if (inventory2) then
 								item:Transfer(newInvID, x, y, client)
@@ -728,7 +728,7 @@ do
 							end
 
 							if (!inventory.noSave) then
-								nut.db.query("UPDATE nut_items SET _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
+								ix.db.query("UPDATE ix_items SET _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
 							end
 						end
 					end
@@ -737,13 +737,13 @@ do
 		end)
 
 		netstream.Hook("invAct", function(client, action, item, invID, data)
-			nut.item.PerformInventoryAction(client, action, item, invID, data)
+			ix.item.PerformInventoryAction(client, action, item, invID, data)
 		end)
 	end
 
 	-- Instances and spawns a given item type.
-	function nut.item.Spawn(uniqueID, position, callback, angles, data)
-		nut.item.Instance(0, uniqueID, data or {}, 1, 1, function(item)
+	function ix.item.Spawn(uniqueID, position, callback, angles, data)
+		ix.item.Instance(0, uniqueID, data or {}, 1, 1, function(item)
 			local entity = item:Spawn(position, angles)
 
 			if (callback) then
@@ -753,7 +753,7 @@ do
 	end
 end
 
-nut.char.RegisterVar("inv", {
+ix.char.RegisterVar("inv", {
 	noNetworking = true,
 	noDisplay = true,
 	OnGet = function(character, index)

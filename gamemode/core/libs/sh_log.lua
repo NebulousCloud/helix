@@ -5,8 +5,8 @@ FLAG_DANGER = 3
 FLAG_SERVER = 4
 FLAG_DEV = 5
 
-nut.log = nut.log or {}
-nut.log.color = {
+ix.log = ix.log or {}
+ix.log.color = {
 	[FLAG_NORMAL] = Color(200, 200, 200),
 	[FLAG_SUCCESS] = Color(50, 200, 50),
 	[FLAG_WARNING] = Color(255, 255, 0),
@@ -20,24 +20,24 @@ local consoleColor = Color(50, 200, 50)
 -- SUGG: Do I have to get Seperated Database? For ChatLog, For EventLog.
 
 if (SERVER) then
-	if (!nut.db) then
+	if (!ix.db) then
 		include("sv_database.lua")
 	end
 
-	function nut.log.LoadTables()
-		file.CreateDir("nutscript/logs")
+	function ix.log.LoadTables()
+		file.CreateDir("helix/logs")
 	end
 
-	function nut.log.ResetTables()
+	function ix.log.ResetTables()
 	end
 
-	nut.log.types = nut.log.types or {}
-	function nut.log.AddType(logType, func)
-		nut.log.types[logType] = func
+	ix.log.types = ix.log.types or {}
+	function ix.log.AddType(logType, func)
+		ix.log.types[logType] = func
 	end
 
-	function nut.log.GetString(client, logType, ...)
-		local text = nut.log.types[logType]
+	function ix.log.GetString(client, logType, ...)
+		local text = ix.log.types[logType]
 		
 		if (text) then
 			if (isfunction(text)) then
@@ -50,40 +50,40 @@ if (SERVER) then
 		return text
 	end
 
-	function nut.log.AddRaw(logString)		
-		nut.log.Send(nut.util.GetAdmins(), logString)
+	function ix.log.AddRaw(logString)		
+		ix.log.Send(ix.util.GetAdmins(), logString)
 		
 		Msg("[LOG] ", logString .. "\n")
 		
 		if (!noSave) then
-			file.Append("nutscript/logs/"..os.date("%x"):gsub("/", "-")..".txt", "["..os.date("%X").."]\t"..logString.."\r\n")
+			file.Append("helix/logs/"..os.date("%x"):gsub("/", "-")..".txt", "["..os.date("%X").."]\t"..logString.."\r\n")
 		end
 	end
 
-	function nut.log.Add(client, logType, ...)
-		local logString = nut.log.GetString(client, logType, ...)
+	function ix.log.Add(client, logType, ...)
+		local logString = ix.log.GetString(client, logType, ...)
 		if (logString == -1) then return end
 
-		nut.log.Send(nut.util.GetAdmins(), logString)
+		ix.log.Send(ix.util.GetAdmins(), logString)
 		
 		Msg("[LOG] ", logString .. "\n")
 		
 		if (!noSave) then
-			file.Append("nutscript/logs/"..os.date("%x"):gsub("/", "-")..".txt", "["..os.date("%X").."]\t"..logString.."\r\n")
+			file.Append("helix/logs/"..os.date("%x"):gsub("/", "-")..".txt", "["..os.date("%X").."]\t"..logString.."\r\n")
 		end
 	end
 
-	function nut.log.Open(client)
+	function ix.log.Open(client)
 		local logData = {}
 
-		netstream.Hook(client, "nutLogView", logData)
+		netstream.Hook(client, "ixLogView", logData)
 	end
 
-	function nut.log.Send(client, logString, flag)
-		netstream.Start(client, "nutLogStream", logString, flag)
+	function ix.log.Send(client, logString, flag)
+		netstream.Start(client, "ixLogStream", logString, flag)
 	end
 else
-	netstream.Hook("nutLogStream", function(logString, flag)
+	netstream.Hook("ixLogStream", function(logString, flag)
 		MsgC(consoleColor, "[SERVER] ", color_white, logString .. "\n")
 	end)
 end

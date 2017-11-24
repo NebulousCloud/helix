@@ -1,76 +1,76 @@
 
-local NUT_CVAR_LOWER2 = CreateClientConVar("nut_usealtlower", "1", true)
+local IX_CVAR_LOWER2 = CreateClientConVar("ix_usealtlower", "1", true)
 
 function GM:ForceDermaSkin()
-	return "nutscript"
+	return "helix"
 end
 
 function GM:ScoreboardShow()
 	if (LocalPlayer():GetChar()) then
-		vgui.Create("nutMenu")
+		vgui.Create("ixMenu")
 	end
 end
 
 function GM:ScoreboardHide() end
 
 function GM:LoadFonts(font, genericFont)
-	surface.CreateFont("nut3D2DFont", {
+	surface.CreateFont("ix3D2DFont", {
 		font = font,
 		size = 2048,
 		extended = true,
 		weight = 1000
 	})
 
-	surface.CreateFont("nutTitleFont", {
+	surface.CreateFont("ixTitleFont", {
 		font = font,
 		size = ScreenScale(30),
 		extended = true,
 		weight = 1000
 	})
 
-	surface.CreateFont("nutSubTitleFont", {
+	surface.CreateFont("ixSubTitleFont", {
 		font = font,
 		size = ScreenScale(18),
 		extended = true,
 		weight = 500
 	})
 
-	surface.CreateFont("nutMenuButtonFont", {
+	surface.CreateFont("ixMenuButtonFont", {
 		font = font,
 		size = ScreenScale(14),
 		extended = true,
 		weight = 1000
 	})
 
-	surface.CreateFont("nutMenuButtonLightFont", {
+	surface.CreateFont("ixMenuButtonLightFont", {
 		font = font,
 		size = ScreenScale(14),
 		extended = true,
 		weight = 200
 	})
 
-	surface.CreateFont("nutToolTipText", {
+	surface.CreateFont("ixToolTipText", {
 		font = font,
 		size = 20,
 		extended = true,
 		weight = 500
 	})
 
-	surface.CreateFont("nutDynFontSmall", {
+	surface.CreateFont("ixDynFontSmall", {
 		font = font,
 		size = ScreenScale(22),
 		extended = true,
 		weight = 1000
 	})
 
-	surface.CreateFont("nutDynFontMedium", {
+	surface.CreateFont("ixDynFontMedium", {
 		font = font,
 		size = ScreenScale(28),
 		extended = true,
 		weight = 1000
 	})
 
-	surface.CreateFont("nutDynFontBig", {
+	surface.CreateFont("ixDynFontBig", {
 		font = font,
 		size = ScreenScale(48),
 		extended = true,
@@ -80,56 +80,56 @@ function GM:LoadFonts(font, genericFont)
 	-- The more readable font.
 	font = genericFont
 	
-	surface.CreateFont("nutCleanTitleFont", {
+	surface.CreateFont("ixCleanTitleFont", {
 		font = font,
 		size = 200,
 		extended = true,
 		weight = 1000
 	})
 
-	surface.CreateFont("nutHugeFont", {
+	surface.CreateFont("ixHugeFont", {
 		font = font,
 		size = 72,
 		extended = true,
 		weight = 1000
 	})
 
-	surface.CreateFont("nutBigFont", {
+	surface.CreateFont("ixBigFont", {
 		font = font,
 		size = 36,
 		extended = true,
 		weight = 1000
 	})
 
-	surface.CreateFont("nutMediumFont", {
+	surface.CreateFont("ixMediumFont", {
 		font = font,
 		size = 25,
 		extended = true,
 		weight = 1000
 	})
 
-	surface.CreateFont("nutMediumLightFont", {
+	surface.CreateFont("ixMediumLightFont", {
 		font = font,
 		size = 25,
 		extended = true,
 		weight = 200
 	})
 
-	surface.CreateFont("nutGenericFont", {
+	surface.CreateFont("ixGenericFont", {
 		font = font,
 		size = 20,
 		extended = true,
 		weight = 1000
 	})
 
-	surface.CreateFont("nutChatFont", {
+	surface.CreateFont("ixChatFont", {
 		font = font,
 		size = math.max(ScreenScale(7), 17),
 		extended = true,
 		weight = 200
 	})
 
-	surface.CreateFont("nutChatFontItalics", {
+	surface.CreateFont("ixChatFontItalics", {
 		font = font,
 		size = math.max(ScreenScale(7), 17),
 		extended = true,
@@ -137,14 +137,14 @@ function GM:LoadFonts(font, genericFont)
 		italic = true
 	})
 
-	surface.CreateFont("nutSmallFont", {
+	surface.CreateFont("ixSmallFont", {
 		font = font,
 		size = math.max(ScreenScale(6), 17),
 		extended = true,
 		weight = 500
 	})
 
-	surface.CreateFont("nutItemDescFont", {
+	surface.CreateFont("ixItemDescFont", {
 		font = font,
 		size = math.max(ScreenScale(6), 17),
 		extended = true,
@@ -152,14 +152,14 @@ function GM:LoadFonts(font, genericFont)
 		weight = 500
 	})
 
-	surface.CreateFont("nutSmallBoldFont", {
+	surface.CreateFont("ixSmallBoldFont", {
 		font = font,
 		size = math.max(ScreenScale(8), 20),
 		extended = true,
 		weight = 800
 	})
 
-	surface.CreateFont("nutItemBoldFont", {
+	surface.CreateFont("ixItemBoldFont", {
 		font = font,
 		shadow = true,
 		size = math.max(ScreenScale(8), 20),
@@ -171,49 +171,49 @@ function GM:LoadFonts(font, genericFont)
 	-- Introduction fancy font.
 	font = "Cambria"
 
-	surface.CreateFont("nutIntroTitleFont", {
+	surface.CreateFont("ixIntroTitleFont", {
 		font = font,
 		size = 200,
 		extended = true,
 		weight = 1000
 	})
 
-	surface.CreateFont("nutIntroBigFont", {
+	surface.CreateFont("ixIntroBigFont", {
 		font = font,
 		size = 48,
 		extended = true,
 		weight = 1000
 	})
 
-	surface.CreateFont("nutIntroMediumFont", {
+	surface.CreateFont("ixIntroMediumFont", {
 		font = font,
 		size = 28,
 		extended = true,
 		weight = 1000
 	})
 
-	surface.CreateFont("nutIntroSmallFont", {
+	surface.CreateFont("ixIntroSmallFont", {
 		font = font,
 		size = 22,
 		extended = true,
 		weight = 1000
 	})
 
-	surface.CreateFont("nutIconsSmall", {
+	surface.CreateFont("ixIconsSmall", {
 		font = "fontello",
 		size = 22,
 		extended = true,
 		weight = 500
 	})
 
-	surface.CreateFont("nutIconsMedium", {
+	surface.CreateFont("ixIconsMedium", {
 		font = "fontello",
 		extended = true,
 		size = 28,
 		weight = 500
 	})
 
-	surface.CreateFont("nutIconsBig", {
+	surface.CreateFont("ixIconsBig", {
 		font = "fontello",
 		extended = true,
 		size = 48,
@@ -235,10 +235,10 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 		value = 100
 	end
 
-	local fraction = (client.nutRaisedFrac or 0) / 100
+	local fraction = (client.ixRaisedFrac or 0) / 100
 	local rotation = weapon.LowerAngles or LOWERED_ANGLES
 	
-	if (NUT_CVAR_LOWER2:GetBool() and weapon.LowerAngles2) then
+	if (IX_CVAR_LOWER2:GetBool() and weapon.LowerAngles2) then
 		rotation = weapon.LowerAngles2
 	end
 	
@@ -246,7 +246,7 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 	eyeAngles:RotateAroundAxis(eyeAngles:Forward(), rotation.y * fraction)
 	eyeAngles:RotateAroundAxis(eyeAngles:Right(), rotation.r * fraction)
 
-	client.nutRaisedFrac = Lerp(FrameTime() * 2, client.nutRaisedFrac or 0, value)
+	client.ixRaisedFrac = Lerp(FrameTime() * 2, client.ixRaisedFrac or 0, value)
 
 	viewModel:SetAngles(eyeAngles)
 
@@ -270,8 +270,8 @@ end
 function GM:LoadIntro()
 	-- If skip intro is on
 	if (true) then 
-		if (IsValid(nut.gui.char)) then
-			vgui.Create("nutCharMenu")
+		if (IsValid(ix.gui.char)) then
+			vgui.Create("ixCharMenu")
 		end
 	else
 
@@ -279,9 +279,9 @@ function GM:LoadIntro()
 end
 
 function GM:InitializedConfig()
-	hook.Run("LoadFonts", nut.config.Get("font"), nut.config.Get("genericFont"))
+	hook.Run("LoadFonts", ix.config.Get("font"), ix.config.Get("genericFont"))
 	
-	if (!nut.config.loaded and !IsValid(nut.gui.loading)) then
+	if (!ix.config.loaded and !IsValid(ix.gui.loading)) then
 		local loader = vgui.Create("EditablePanel")
 		loader:ParentToHUD()
 		loader:Dock(FILL)
@@ -293,12 +293,12 @@ function GM:InitializedConfig()
 		local label = loader:Add("DLabel")
 		label:Dock(FILL)
 		label:SetText(L"loading")
-		label:SetFont("nutTitleFont")
+		label:SetFont("ixTitleFont")
 		label:SetContentAlignment(5)
 		label:SetTextColor(color_white)
 
 		timer.Simple(5, function()
-			if (IsValid(nut.gui.loading)) then
+			if (IsValid(ix.gui.loading)) then
 				local fault = GetNetVar("dbError")
 
 				if (fault) then
@@ -307,7 +307,7 @@ function GM:InitializedConfig()
 					local label = loader:Add("DLabel")
 					label:DockMargin(0, 64, 0, 0)
 					label:Dock(TOP)
-					label:SetFont("nutSubTitleFont")
+					label:SetFont("ixSubTitleFont")
 					label:SetText(fault)
 					label:SetContentAlignment(5)
 					label:SizeToContentsY()
@@ -316,25 +316,25 @@ function GM:InitializedConfig()
 			end
 		end)
 
-		nut.gui.loading = loader
-		nut.config.loaded = true
+		ix.gui.loading = loader
+		ix.config.loaded = true
 
 		hook.Run("LoadIntro")
 	end
 end
 
 function GM:InitPostEntity()
-	nut.joinTime = RealTime() - 0.9716
+	ix.joinTime = RealTime() - 0.9716
 end
 
-local vignette = nut.util.GetMaterial("nutscript/gui/vignette.png")
+local vignette = ix.util.GetMaterial("helix/gui/vignette.png")
 local vignetteAlphaGoal = 0
 local vignetteAlphaDelta = 0
 local blurGoal = 0
 local blurDelta = 0
 local hasVignetteMaterial = vignette != "___error"
 
-timer.Create("nutVignetteChecker", 1, 0, function()
+timer.Create("ixVignetteChecker", 1, 0, function()
 	local client = LocalPlayer()
 
 	if (IsValid(client)) then
@@ -401,7 +401,7 @@ function GM:HUDPaintBackground()
 	local frameTime = FrameTime()
 	local scrW, scrH = surface.ScreenWidth(), surface.ScreenHeight()
 
-	if (hasVignetteMaterial and nut.config.Get("vignette")) then
+	if (hasVignetteMaterial and ix.config.Get("vignette")) then
 		vignetteAlphaDelta = mathApproach(vignetteAlphaDelta, vignetteAlphaGoal, frameTime * 30)
 
 		surface.SetDrawColor(0, 0, 0, 175 + vignetteAlphaDelta)
@@ -429,7 +429,7 @@ function GM:HUDPaintBackground()
 	for entity, drawing in pairs(paintedEntitiesCache) do
 		if (IsValid(entity)) then
 			local goal = drawing and 255 or 0
-			local alpha = mathApproach(entity.nutAlpha or 0, goal, frameTime * 1000)
+			local alpha = mathApproach(entity.ixAlpha or 0, goal, frameTime * 1000)
 
 			if (lastEntity != entity) then
 				paintedEntitiesCache[entity] = false
@@ -449,7 +449,7 @@ function GM:HUDPaintBackground()
 				end
 			end
 
-			entity.nutAlpha = alpha
+			entity.ixAlpha = alpha
 
 			if (alpha == 0 and goal == 0) then
 				paintedEntitiesCache[entity] = nil
@@ -466,7 +466,7 @@ function GM:HUDPaintBackground()
 	end
 
 	if (blurDelta > 0 and !localPlayer.ShouldDrawLocalPlayer(localPlayer)) then
-		nut.util.DrawBlurAt(0, 0, scrW, scrH, blurDelta)
+		ix.util.DrawBlurAt(0, 0, scrW, scrH, blurDelta)
 	end
 
 	self.BaseClass.PaintWorldTips(self.BaseClass)
@@ -482,42 +482,42 @@ function GM:HUDPaintBackground()
 			local x, y = scrW - 80, scrH - 80
 
 			if (secondary > 0) then
-				nut.util.DrawBlurAt(x, y, 64, 64)
+				ix.util.DrawBlurAt(x, y, 64, 64)
 
 				surface.SetDrawColor(255, 255, 255, 5)
 				surface.DrawRect(x, y, 64, 64)
 				surface.SetDrawColor(255, 255, 255, 3)
 				surface.DrawOutlinedRect(x, y, 64, 64)
 
-				nut.util.DrawText(secondary, x + 32, y + 32, nil, 1, 1, "nutBigFont")
+				ix.util.DrawText(secondary, x + 32, y + 32, nil, 1, 1, "ixBigFont")
 			end
 
 			if (weapon.GetClass(weapon) != "weapon_slam" and clip > 0 or count > 0) then
 				x = x - (secondary > 0 and 144 or 64)
 
-				nut.util.DrawBlurAt(x, y, 128, 64)
+				ix.util.DrawBlurAt(x, y, 128, 64)
 
 				surface.SetDrawColor(255, 255, 255, 5)
 				surface.DrawRect(x, y, 128, 64)
 				surface.SetDrawColor(255, 255, 255, 3)
 				surface.DrawOutlinedRect(x, y, 128, 64)
 
-				nut.util.DrawText((clip == -1 or clipMax == -1) and count or clip.."/"..count, x + 64, y + 32, nil, 1, 1, "nutBigFont")
+				ix.util.DrawText((clip == -1 or clipMax == -1) and count or clip.."/"..count, x + 64, y + 32, nil, 1, 1, "ixBigFont")
 			end
 		end
 	end
 	
 	if (localPlayer.GetLocalVar(localPlayer, "restricted") and !localPlayer.GetLocalVar(localPlayer, "restrictNoMsg")) then
-		nut.util.DrawText(L"restricted", scrW * 0.5, scrH * 0.33, nil, 1, 1, "nutBigFont")
+		ix.util.DrawText(L"restricted", scrW * 0.5, scrH * 0.33, nil, 1, 1, "ixBigFont")
 	end
 
-	nut.menu.DrawAll()
-	nut.hud.DrawAll(false)
+	ix.menu.DrawAll()
+	ix.hud.DrawAll(false)
 end
 
 function GM:PostDrawHUD()
-	nut.hud.DrawAll(true)
-	nut.bar.DrawAll()
+	ix.hud.DrawAll(true)
+	ix.bar.DrawAll()
 end
 
 function GM:ShouldDrawEntityInfo(entity)
@@ -551,7 +551,7 @@ end
 
 local colorAlpha = ColorAlpha
 local teamGetColor = team.GetColor
-local drawText = nut.util.DrawText
+local drawText = ix.util.DrawText
 
 function GM:DrawCharInfo(client, character, info)
 	local injText, injColor = hookRun("GetInjuredText", client)
@@ -579,14 +579,14 @@ function GM:DrawEntityInfo(entity, alpha, position)
 
 			local description = character.GetDescription(character)
 
-			if (description != entity.nutDescCache) then
-				entity.nutDescCache = description
-				entity.nutDescTrim = string.len(description) > 128 and string.format("%s...", string.sub(description, 1, 125)) or description
-				entity.nutDescLines = nut.util.WrapText(entity.nutDescTrim, ScrW() * 0.7, "nutSmallFont")
+			if (description != entity.ixDescCache) then
+				entity.ixDescCache = description
+				entity.ixDescTrim = string.len(description) > 128 and string.format("%s...", string.sub(description, 1, 125)) or description
+				entity.ixDescLines = ix.util.WrapText(entity.ixDescTrim, ScrW() * 0.7, "ixSmallFont")
 			end
 
-			for i = 1, #entity.nutDescLines do
-				charInfo[#charInfo + 1] = {entity.nutDescLines[i]}
+			for i = 1, #entity.ixDescLines do
+				charInfo[#charInfo + 1] = {entity.ixDescLines[i]}
 			end
 
 			hookRun("DrawCharInfo", entity, character, charInfo)
@@ -594,7 +594,7 @@ function GM:DrawEntityInfo(entity, alpha, position)
 			for i = 1, #charInfo do
 				local info = charInfo[i]
 				
-				_, ty = drawText(info[1], x, y, colorAlpha(info[2] or color_white, alpha), 1, 1, "nutSmallFont")
+				_, ty = drawText(info[1], x, y, colorAlpha(info[2] or color_white, alpha), 1, 1, "ixSmallFont")
 				y = y + ty
 			end
 		end
@@ -603,10 +603,10 @@ end
 
 function GM:KeyRelease(client, key)
 	if (key == IN_USE) then
-		timer.Remove("nutItemUse")
+		timer.Remove("ixItemUse")
 
-		client.nutInteractionTarget = nil
-		client.nutInteractionStartTime = nil
+		client.ixInteractionTarget = nil
+		client.ixInteractionStartTime = nil
 	end
 end
 
@@ -614,7 +614,7 @@ function GM:PlayerBindPress(client, bind, pressed)
 	bind = bind:lower()
 	
 	if (bind:find("use") and pressed) then
-		local pickupTime = nut.config.Get("itemPickupTime", 0.5)
+		local pickupTime = ix.config.Get("itemPickupTime", 0.5)
 
 		if (pickupTime > 0) then
 			local data = {}
@@ -624,26 +624,26 @@ function GM:PlayerBindPress(client, bind, pressed)
 			local entity = util.TraceLine(data).Entity
 
 			if (IsValid(entity) and (entity.ShowPlayerInteraction)) then
-				client.nutInteractionTarget = entity
-				client.nutInteractionStartTime = SysTime()
+				client.ixInteractionTarget = entity
+				client.ixInteractionStartTime = SysTime()
 
-				timer.Create("nutItemUse", pickupTime, 1, function()
-					client.nutInteractionTarget = nil
-					client.nutInteractionStartTime = nil
+				timer.Create("ixItemUse", pickupTime, 1, function()
+					client.ixInteractionTarget = nil
+					client.ixInteractionStartTime = nil
 				end)
 			end
 		end
 	elseif (bind:find("attack") and pressed) then
-		local menu, callback = nut.menu.GetActiveMenu()
+		local menu, callback = ix.menu.GetActiveMenu()
 
-		if (menu and nut.menu.OnButtonPressed(menu, callback)) then
+		if (menu and ix.menu.OnButtonPressed(menu, callback)) then
 			return true
 		end
 	elseif (bind:find("jump")) then
 		local entity = Entity(client:GetLocalVar("ragdoll", 0))
 
 		if (IsValid(entity)) then
-			nut.command.Send("CharGetUp")
+			ix.command.Send("CharGetUp")
 		end
 	elseif (bind:find("speed") and client:KeyDown(IN_WALK) and pressed) then
 		if (LocalPlayer():Crouching()) then
@@ -656,9 +656,9 @@ end
 
 -- Called when use has been pressed on an item.
 function GM:ItemShowEntityMenu(entity)
-	for k, v in ipairs(nut.menu.list) do
+	for k, v in ipairs(ix.menu.list) do
 		if (v.entity == entity) then
-			table.remove(nut.menu.list, k)
+			table.remove(ix.menu.list, k)
 		end
 	end
 
@@ -666,7 +666,7 @@ function GM:ItemShowEntityMenu(entity)
 	local itemTable = entity:GetItemTable()
 
 	if (!itemTable) then
-		nut.util.NotifyLocalized("tellAdmin", "wid!xt_cl")
+		ix.util.NotifyLocalized("tellAdmin", "wid!xt_cl")
 		return false
 	end
 
@@ -706,7 +706,7 @@ function GM:ItemShowEntityMenu(entity)
 	end
 
 	if (table.Count(options) > 0) then
-		entity.nutMenuIndex = nut.menu.Add(options, entity)
+		entity.ixMenuIndex = ix.menu.Add(options, entity)
 	end
 
 	itemTable.player = nil
@@ -733,45 +733,45 @@ function GM:SetupQuickMenu(menu)
 	-- Performance
 	menu:AddCheck(L"cheapBlur", function(panel, state)
 		if (state) then
-			RunConsoleCommand("nut_cheapblur", "1")
+			RunConsoleCommand("ix_cheapblur", "1")
 		else
-			RunConsoleCommand("nut_cheapblur", "0")
+			RunConsoleCommand("ix_cheapblur", "0")
 		end
-	end, NUT_CVAR_CHEAP:GetBool())
+	end, IX_CVAR_CHEAP:GetBool())
 
 	menu:AddCheck(L"chatNotice", function(panel, state)
 		if (state) then
-			RunConsoleCommand("nut_chatnotice", "1")
+			RunConsoleCommand("ix_chatnotice", "1")
 		else
-			RunConsoleCommand("nut_chatnotice", "0")
+			RunConsoleCommand("ix_chatnotice", "0")
 		end
-	end, NUT_CVAR_CHATNOTICE:GetBool())
+	end, IX_CVAR_CHATNOTICE:GetBool())
 
 	menu:AddCheck(L"chatShowTimestamps", function(panel, state)
 		if (state) then
-			RunConsoleCommand("nut_showtimestamps", "1")
+			RunConsoleCommand("ix_showtimestamps", "1")
 		else
-			RunConsoleCommand("nut_showtimestamps", "0")
+			RunConsoleCommand("ix_showtimestamps", "0")
 		end
-	end, NUT_CVAR_SHOWTIMESTAMPS:GetBool())
+	end, IX_CVAR_SHOWTIMESTAMPS:GetBool())
 
 	menu:AddCheck(L"chatTimestamp24hour", function(panel, state)
 		if (state) then
-			RunConsoleCommand("nut_timestamp24hour", "1")
+			RunConsoleCommand("ix_timestamp24hour", "1")
 		else
-			RunConsoleCommand("nut_timestamp24hour", "0")
+			RunConsoleCommand("ix_timestamp24hour", "0")
 		end
-	end, NUT_CVAR_TIMESTAMP24HOUR:GetBool())
+	end, IX_CVAR_TIMESTAMP24HOUR:GetBool())
 
 	-- Language settings
 	menu:AddSpacer()
 
 	local current
 
-	for k, v in SortedPairs(nut.lang.stored) do
-		local name = nut.lang.names[k]
+	for k, v in SortedPairs(ix.lang.stored) do
+		local name = ix.lang.names[k]
 		local name2 = k:sub(1, 1):upper()..k:sub(2)
-		local enabled = NUT_CVAR_LANG:GetString():match(k)
+		local enabled = IX_CVAR_LANG:GetString():match(k)
 
 		if (name) then
 			name = name.." ("..name2..")"
@@ -791,7 +791,7 @@ function GM:SetupQuickMenu(menu)
 			end
 
 			current = panel
-			RunConsoleCommand("nut_language", k)
+			RunConsoleCommand("ix_language", k)
 		end, enabled)
 
 		if (enabled and !IsValid(current)) then
@@ -804,23 +804,23 @@ function GM:SetupQuickMenu(menu)
 
 	menu:AddCheck(L("alwaysShowBars"), function(panel, state)
 		if (state) then
-			RunConsoleCommand("nut_alwaysshowbars", "1")
+			RunConsoleCommand("ix_alwaysshowbars", "1")
 		else
-			RunConsoleCommand("nut_alwaysshowbars", "0")
+			RunConsoleCommand("ix_alwaysshowbars", "0")
 		end
-	end, NUT_CVAR_SHOWBARS:GetBool())
+	end, IX_CVAR_SHOWBARS:GetBool())
 
 	menu:AddCheck(L"altLower", function(panel, state)
 		if (state) then
-			RunConsoleCommand("nut_usealtlower", "1")
+			RunConsoleCommand("ix_usealtlower", "1")
 		else
-			RunConsoleCommand("nut_usealtlower", "0")
+			RunConsoleCommand("ix_usealtlower", "0")
 		end
-	end, NUT_CVAR_LOWER2:GetBool())
+	end, IX_CVAR_LOWER2:GetBool())
 end
 
 function GM:ShouldDrawLocalPlayer(client)
-	if (IsValid(nut.gui.char) and nut.gui.char:IsVisible()) then
+	if (IsValid(ix.gui.char) and ix.gui.char:IsVisible()) then
 		return false
 	end
 end
@@ -846,8 +846,8 @@ function GM:OnCharInfoSetup(infoPanel)
 
 				local act = ACT_MP_STAND_IDLE
 				local model = ent:GetModel():lower()
-				local class = nut.anim.GetModelClass(model)
-				local tree = nut.anim[class]
+				local class = ix.anim.GetModelClass(model)
+				local tree = ix.anim[class]
 
 				if (tree) then
 					local subClass = weapon.HoldType or weapon:GetHoldType()
@@ -886,7 +886,7 @@ function GM:ShowPlayerOptions(client, options)
 	end}
 end
 
-function GM:DrawNutModelView(panel, ent)
+function GM:DrawHelixModelView(panel, ent)
 	if (ent.weapon and IsValid(ent.weapon)) then
 		ent.weapon:DrawModel()
 	end
@@ -966,7 +966,7 @@ end
 
 function GM:ScreenResolutionChanged(oldW, oldH)
 	RunConsoleCommand("fixchatplz")
-	hook.Run("LoadFonts", nut.config.Get("font"), nut.config.Get("genericFont"))
+	hook.Run("LoadFonts", ix.config.Get("font"), ix.config.Get("genericFont"))
 end
 
 function GM:DrawDeathNotice()

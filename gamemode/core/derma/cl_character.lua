@@ -5,24 +5,24 @@ local PANEL = {}
 	function PANEL:Init()
 		local fadeSpeed = 1
 
-		if (IsValid(nut.gui.loading)) then
-			nut.gui.loading:Remove()
+		if (IsValid(ix.gui.loading)) then
+			ix.gui.loading:Remove()
 		end
 
-		if (nut.config.Get("intro", true) and !nut.localData.intro) then
+		if (ix.config.Get("intro", true) and !ix.localData.intro) then
 			timer.Simple(0.1, function()
-				vgui.Create("nutIntro", self)
+				vgui.Create("ixIntro", self)
 			end)
 		else
 			self:PlayMusic()
 		end
 
-		if (IsValid(nut.gui.char) or (LocalPlayer().GetChar and LocalPlayer():GetChar())) then
-			nut.gui.char:Remove()
+		if (IsValid(ix.gui.char) or (LocalPlayer().GetChar and LocalPlayer():GetChar())) then
+			ix.gui.char:Remove()
 			fadeSpeed = 0
 		end
 
-		nut.gui.char = self
+		ix.gui.char = self
 
 		self:Dock(FILL)
 		self:MakePopup()
@@ -41,7 +41,7 @@ local PANEL = {}
 		self.title:SetContentAlignment(5)
 		self.title:SetPos(0, 64)
 		self.title:SetSize(ScrW(), 64)
-		self.title:SetFont("nutTitleFont")
+		self.title:SetFont("ixTitleFont")
 		self.title:SetText(L2("schemaName") or Schema.name or L"unknown")
 		self.title:SizeToContentsY()
 		self.title:SetTextColor(color_white)
@@ -58,7 +58,7 @@ local PANEL = {}
 		self.subTitle:SetContentAlignment(5)
 		self.subTitle:MoveBelow(self.title, 0)
 		self.subTitle:SetSize(ScrW(), 64)
-		self.subTitle:SetFont("nutSubTitleFont")
+		self.subTitle:SetFont("ixSubTitleFont")
 		self.subTitle:SetText(L2("schemaDesc") or Schema.description or L"noDesc")
 		self.subTitle:SizeToContentsY()
 		self.subTitle:SetTextColor(color_white)
@@ -72,16 +72,16 @@ local PANEL = {}
 		self.icon:SetHTML([[
 			<html>
 				<body style="margin: 0; padding: 0; overflow: hidden;">
-					<img src="]]..nut.config.Get("logo", "http://nutscript.rocks/nutscript.png")..[[" width="86" height="86" />
+					<img src="]]..ix.config.Get("logo", "https://static.miraheze.org/nutscriptwiki/2/26/Nutscript.png")..[[" width="86" height="86" />
 				</body>
 			</html>
 		]])
-		self.icon:SetToolTip(nut.config.Get("logoURL", "http://nutscript.rocks"))
+		self.icon:SetToolTip(ix.config.Get("logoURL", "https://nutscript.net"))
 	
 		self.icon.click = self.icon:Add("DButton")
 		self.icon.click:Dock(FILL)
 		self.icon.click.DoClick = function(this)
-			gui.OpenURL(nut.config.Get("logoURL", "http://nutscript.rocks"))
+			gui.OpenURL(ix.config.Get("logoURL", "https://nutscript.net"))
 		end
 		self.icon.click:SetAlpha(0)
 		self.icon:SetAlpha(150)
@@ -90,12 +90,12 @@ local PANEL = {}
 		local i = 1
 
 		self.buttons = {}
-		surface.SetFont("nutMenuButtonFont")
+		surface.SetFont("ixMenuButtonFont")
 
 		local function AddMenuLabel(text, callback, isLast, noTranslation, parent)
 			parent = parent or self
 
-			local label = parent:Add("nutMenuButton")
+			local label = parent:Add("ixMenuButton")
 			label:SetPos(x, y)
 			label:SetText(text, noTranslation)
 			label:SetContentAlignment(4)
@@ -173,31 +173,31 @@ local PANEL = {}
 		function CreateMainButtons()
 			local count = 0
 
-			for k, v in pairs(nut.faction.teams) do
-				if (nut.faction.HasWhitelist(v.index)) then
+			for k, v in pairs(ix.faction.teams) do
+				if (ix.faction.HasWhitelist(v.index)) then
 					count = count + 1
 				end
 			end
 
-			local maxChars = hook.Run("GetMaxPlayerCharacter", LocalPlayer()) or nut.config.Get("maxChars", 5)
-			if (count > 0 and #nut.characters < maxChars and hook.Run("ShouldMenuButtonShow", "create") != false) then
+			local maxChars = hook.Run("GetMaxPlayerCharacter", LocalPlayer()) or ix.config.Get("maxChars", 5)
+			if (count > 0 and #ix.characters < maxChars and hook.Run("ShouldMenuButtonShow", "create") != false) then
 				AddMenuLabel("create", function()
 					ClearAllButtons(function()
 						CreateReturnButton()
 
 						local fadedIn = false
 
-						for k, v in SortedPairs(nut.faction.teams) do
-							if (nut.faction.HasWhitelist(v.index)) then
+						for k, v in SortedPairs(ix.faction.teams) do
+							if (ix.faction.HasWhitelist(v.index)) then
 								AddMenuLabel(L(v.name), function()
 									if (!self.creation or self.creation.faction != v.index) then
-										self.creation = self:Add("nutCharCreate")
+										self.creation = self:Add("ixCharCreate")
 										self.creation:SetAlpha(fadedIn and 255 or 0)
 										self.creation:SetUp(v.index)
 										self.creation:AlphaTo(255, 0.5, 0)
 										self.fadePanels[#self.fadePanels + 1] = self.creation
 	
-										self.finish = self:Add("nutMenuButton")
+										self.finish = self:Add("ixMenuButton")
 										self.finish:SetPos(ScrW() * 0.3 - 32, ScrH() * 0.3 + 16)
 										self.finish:SetText("finish")
 										self.finish:MoveBelow(self.creation, 4)
@@ -205,7 +205,7 @@ local PANEL = {}
 											if (!self.creation.creating) then
 												local payload = {}
 
-												for k, v in SortedPairsByMemberValue(nut.char.vars, "index") do
+												for k, v in SortedPairsByMemberValue(ix.char.vars, "index") do
 													local value = self.creation.payload[k]
 
 													if (!v.noDisplay or v.OnValidate) then
@@ -230,7 +230,7 @@ local PANEL = {}
 												self.finish:AlphaTo(0, 0.5, 0)
 
 												netstream.Hook("charAuthed", function(fault, ...)
-													timer.Remove("nutCharTimeout")
+													timer.Remove("ixCharTimeout")
 
 													if (type(fault) == "string") then
 														self.creation.notice:SetType(1)
@@ -242,7 +242,7 @@ local PANEL = {}
 													end
 
 													if (type(fault) == "table") then
-														nut.characters = fault
+														ix.characters = fault
 													end
 
 													for k, v in pairs(self.fadePanels) do
@@ -257,7 +257,7 @@ local PANEL = {}
 													ClearAllButtons(CreateMainButtons)												
 												end)
 	
-												timer.Create("nutCharTimeout", 20, 1, function()
+												timer.Create("ixCharTimeout", 20, 1, function()
 													if (IsValid(self.creation) and self.creation.creating) then
 														self.creation.notice:SetType(1)
 														self.creation.notice:SetText(L"unknownError")
@@ -281,7 +281,7 @@ local PANEL = {}
 				end)
 			end
 
-			if (#nut.characters > 0 and hook.Run("ShouldMenuButtonShow", "load") != false) then
+			if (#ix.characters > 0 and hook.Run("ShouldMenuButtonShow", "load") != false) then
 				AddMenuLabel("load", function()
 					ClearAllButtons(function()
 						CreateReturnButton()
@@ -297,7 +297,7 @@ local PANEL = {}
 
 						self.fadePanels[#self.fadePanels + 1] = self.charList
 
-						self.model = self:Add("nutModelPanel")
+						self.model = self:Add("ixModelPanel")
 						self.model:SetPos(ScrW() * 0.35, ScrH() * 0.2 + 16)
 						self.model:MoveBelow(self.subTitle, 64)
 						self.model:SetSize(ScrW() * 0.3, ScrH() * 0.7)
@@ -317,7 +317,7 @@ local PANEL = {}
 						end
 						self.fadePanels[#self.fadePanels + 1] = self.model
 
-						self.choose = self.model:Add("nutMenuButton")
+						self.choose = self.model:Add("ixMenuButton")
 						self.choose:SetWide(self.model:GetWide() * 0.45)
 						self.choose:SetText("choose")
 						self.choose:Dock(LEFT)
@@ -328,13 +328,13 @@ local PANEL = {}
 								return
 							end
 
-							local status, result = hook.Run("CanPlayerUseChar", client, nut.char.loaded[id])
+							local status, result = hook.Run("CanPlayerUseChar", client, ix.char.loaded[id])
 
 							if (status == false) then
 								if (result:sub(1, 1) == "@") then
-									nut.util.NotifyLocalized(result:sub(2))
+									ix.util.NotifyLocalized(result:sub(2))
 								else
-									nut.util.Notify(result)
+									ix.util.Notify(result)
 								end
 
 								return
@@ -364,7 +364,7 @@ local PANEL = {}
 										end
 
 										if (curChar != id) then
-											hook.Run("CharacterLoaded", nut.char.loaded[id])
+											hook.Run("CharacterLoaded", ix.char.loaded[id])
 										end
 									end)
 
@@ -373,13 +373,13 @@ local PANEL = {}
 							end
 						end
 
-						self.delete = self.model:Add("nutMenuButton")
+						self.delete = self.model:Add("ixMenuButton")
 						self.delete:SetWide(self.model:GetWide() * 0.45)
 						self.delete:SetText("delete")
 						self.delete:Dock(RIGHT)
 						self.delete.DoClick = function()
 							local menu = DermaMenu()
-								local confirm = menu:AddSubMenu(L("delConfirm", nut.char.loaded[id]:GetName()))
+								local confirm = menu:AddSubMenu(L("delConfirm", ix.char.loaded[id]:GetName()))
 								confirm:AddOption(L"no"):SetImage("icon16/cross.png")
 								confirm:AddOption(L"yes", function()
 									netstream.Start("charDel", id)
@@ -414,11 +414,11 @@ local PANEL = {}
 							self.charList:Clear()
 							self.charList:AlphaTo(255, 0.5, 0.5)
 
-							for k, v in ipairs(nut.characters) do
-								local character = nut.char.loaded[v]
+							for k, v in ipairs(ix.characters) do
+								local character = ix.char.loaded[v]
 
 								if (character) then
-									local label = self.charList:Add("nutMenuButton")
+									local label = self.charList:Add("ixMenuButton")
 									label:SetText(character:GetName(), true)
 									label:Dock(TOP)
 									label:SetContentAlignment(4)
@@ -430,13 +430,13 @@ local PANEL = {}
 										end
 
 										lastButton = this
-										this.color = nut.config.Get("color")
+										this.color = ix.config.Get("color")
 										SetupCharacter(character)
 									end
 
 									if (first) then
 										SetupCharacter(character)
-										label.color = nut.config.Get("color")
+										label.color = ix.config.Get("color")
 										lastButton = label
 										first = nil
 									end
@@ -454,7 +454,7 @@ local PANEL = {}
 						SetupCharList()
 
 						function self:SetupCharList()
-							if (#nut.characters == 0) then
+							if (#ix.characters == 0) then
 								if (IsValid(self.creation) and self.creation.creating) then
 									return
 								end
@@ -499,7 +499,7 @@ local PANEL = {}
 						self:AlphaTo(0, 0.5, 0, function()
 							self:Remove()
 							if (OPENNEXT) then
-								vgui.Create("nutCharMenu")
+								vgui.Create("ixCharMenu")
 							end
 						end)
 					end
@@ -517,22 +517,22 @@ local PANEL = {}
 	end
 	
 	function PANEL:PlayMusic()
-		if (nut.menuMusic) then
-			nut.menuMusic:Stop()
-			nut.menuMusic = nil
+		if (ix.menuMusic) then
+			ix.menuMusic:Stop()
+			ix.menuMusic = nil
 		end
 
-		timer.Remove("nutMusicFader")
+		timer.Remove("ixMusicFader")
 
-		local source = nut.config.Get("music", ""):lower()
+		local source = ix.config.Get("music", ""):lower()
 
 		if (source:find("%S")) then
 			local function callback(music, errorID, fault)
 				if (music) then
 					music:SetVolume(0.5)
 
-					nut.menuMusic = music
-					nut.menuMusic:Play()
+					ix.menuMusic = music
+					ix.menuMusic:Play()
 				else
 					MsgC(Color(255, 50, 50), errorID.." ")
 					MsgC(color_white, fault.."\n")
@@ -558,23 +558,23 @@ local PANEL = {}
 	end
 
 	function PANEL:OnRemove()
-		if (nut.menuMusic) then
+		if (ix.menuMusic) then
 			local fraction = 1
 			local start, finish = RealTime(), RealTime() + 10
 
-			timer.Create("nutMusicFader", 0.1, 0, function()
-				if (nut.menuMusic) then
+			timer.Create("ixMusicFader", 0.1, 0, function()
+				if (ix.menuMusic) then
 					fraction = 1 - math.TimeFraction(start, finish, RealTime())
-					nut.menuMusic:SetVolume(fraction * 0.5)
+					ix.menuMusic:SetVolume(fraction * 0.5)
 
 					if (fraction <= 0) then
-						nut.menuMusic:Stop()
-						nut.menuMusic = nil
+						ix.menuMusic:Stop()
+						ix.menuMusic = nil
 
-						timer.Remove("nutMusicFader")
+						timer.Remove("ixMusicFader")
 					end
 				else
-					timer.Remove("nutMusicFader")
+					timer.Remove("ixMusicFader")
 				end
 			end)
 		end
@@ -585,11 +585,11 @@ local PANEL = {}
 		surface.SetTexture(gradient)
 		surface.DrawTexturedRect(0, 0, w, h)
 	end
-vgui.Register("nutCharMenu", PANEL, "EditablePanel")
+vgui.Register("ixCharMenu", PANEL, "EditablePanel")
 
-hook.Add("CreateMenuButtons", "nutCharButton", function(tabs)
+hook.Add("CreateMenuButtons", "ixCharButton", function(tabs)
 	tabs["Characters"] = function(panel)
-		nut.gui.menu:Remove()
-		vgui.Create("nutCharMenu")
+		ix.gui.menu:Remove()
+		vgui.Create("ixCharMenu")
 	end
 end)

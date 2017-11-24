@@ -3,7 +3,7 @@ PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds the ability to recognize people."
 
 do
-	local character = nut.meta.character
+	local character = ix.meta.character
 
 	if (SERVER) then
 		function character:Recognize(id)
@@ -32,10 +32,10 @@ do
 	end
 
 	function PLUGIN:IsCharRecognized(char, id)
-		local other = nut.char.loaded[id]
+		local other = ix.char.loaded[id]
 
 		if (other) then
-			local faction = nut.faction.indices[other:GetFaction()]
+			local faction = ix.faction.indices[other:GetFaction()]
 
 			if (faction and faction.isGloballyRecognized) then
 				return
@@ -72,7 +72,7 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:ShouldAllowScoreboardOverride(client)
-		if (nut.config.Get("scoreboardRecognition")) then
+		if (ix.config.Get("scoreboardRecognition")) then
 			return true
 		end
 	end
@@ -137,7 +137,7 @@ else
 		if (level < 2) then
 			local entity = client:GetEyeTraceNoCursor().Entity
 
-			if (IsValid(entity) and entity:IsPlayer() and entity:GetChar() and nut.chat.classes.ic:OnCanHear(client, entity)) then
+			if (IsValid(entity) and entity:IsPlayer() and entity:GetChar() and ix.chat.classes.ic:OnCanHear(client, entity)) then
 				targets[1] = entity
 			end
 		else
@@ -149,7 +149,7 @@ else
 				class = "y"
 			end
 
-			class = nut.chat.classes[class]
+			class = ix.chat.classes[class]
 
 			for k, v in ipairs(player.GetAll()) do
 				if (client != v and v:GetChar() and class:OnCanHear(client, v)) then

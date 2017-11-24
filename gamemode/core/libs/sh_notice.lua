@@ -1,12 +1,12 @@
 
 if (SERVER) then
 	-- Sends a notification to a specified recipient.
-	function nut.util.Notify(message, recipient)
+	function ix.util.Notify(message, recipient)
 		netstream.Start(recipient, "notify", message)
 	end
 
 	-- Sends a translated notification.
-	function nut.util.NotifyLocalized(message, recipient, ...)
+	function ix.util.NotifyLocalized(message, recipient, ...)
 		netstream.Start(recipient, "notifyL", message, ...)
 	end
 
@@ -15,29 +15,29 @@ if (SERVER) then
 
 		-- Utility function to notify a player.
 		function playerMeta:Notify(message)
-			nut.util.Notify(message, self)
+			ix.util.Notify(message, self)
 		end
 
 		-- Utility function to notify a localized message to a player.
 		function playerMeta:NotifyLocalized(message, ...)
-			nut.util.NotifyLocalized(message, self, ...)
+			ix.util.NotifyLocalized(message, self, ...)
 		end
 	end
 else
-	NUT_CVAR_CHATNOTICE = CreateClientConVar("nut_chatnotice", 0, true)
+	IX_CVAR_CHATNOTICE = CreateClientConVar("ix_chatnotice", 0, true)
 
 	-- List of notice panels.
-	nut.notices = nut.notices or {}
+	ix.notices = ix.notices or {}
 
 	-- Create a notification panel.
-	function nut.util.Notify(message)
-		if (NUT_CVAR_CHATNOTICE:GetBool()) then
-			nut.chat.Send(LocalPlayer(), "notice", message)
+	function ix.util.Notify(message)
+		if (IX_CVAR_CHATNOTICE:GetBool()) then
+			ix.chat.Send(LocalPlayer(), "notice", message)
 			return
 		end
 
-		local notice = vgui.Create("nutNotice")
-		local i = table.insert(nut.notices, notice)
+		local notice = vgui.Create("ixNotice")
+		local i = table.insert(ix.notices, notice)
 		local scrW = ScrW()
 
 		-- Set up information for the notice.
@@ -50,8 +50,8 @@ else
 
 		-- Move all notices to their proper positions.
 		local function OrganizeNotices()
-			for k, v in ipairs(nut.notices) do
-				v:MoveTo(scrW - (v:GetWide() + 4), (k - 1) * (v:GetTall() + 4) + 4, 0.15, (k / #nut.notices) * 0.25, nil)
+			for k, v in ipairs(ix.notices) do
+				v:MoveTo(scrW - (v:GetWide() + 4), (k - 1) * (v:GetTall() + 4) + 4, 0.15, (k / #ix.notices) * 0.25, nil)
 			end
 		end
 
@@ -70,7 +70,7 @@ else
 		timer.Simple(7.75, function()
 			if (IsValid(notice)) then
 				-- Search for the notice to remove.
-				for k, v in ipairs(nut.notices) do
+				for k, v in ipairs(ix.notices) do
 					if (v == notice) then
 						-- Move the notice off the screen.
 						notice:MoveTo(ScrW(), notice.y, 0.15, 0.1, nil, function()
@@ -78,7 +78,7 @@ else
 						end)
 
 						-- Remove the notice from the list and move other notices.
-						table.remove(nut.notices, k)
+						table.remove(ix.notices, k)
 						OrganizeNotices()
 
 						break
@@ -89,13 +89,13 @@ else
 	end
 
 	-- Creates a translated notification.
-	function nut.util.NotifyLocalized(message, ...)
-		nut.util.Notify(L(message, ...))
+	function ix.util.NotifyLocalized(message, ...)
+		ix.util.Notify(L(message, ...))
 	end
 
 	-- Receives a notification from the server.
-	netstream.Hook("notify", nut.util.Notify)
+	netstream.Hook("notify", ix.util.Notify)
 
 	-- Receives a notification from the server.
-	netstream.Hook("notifyL", nut.util.NotifyLocalized)
+	netstream.Hook("notifyL", ix.util.NotifyLocalized)
 end

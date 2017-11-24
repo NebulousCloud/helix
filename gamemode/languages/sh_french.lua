@@ -227,6 +227,6 @@ LANGUAGE = {
 	vendorNoTrade = "Vous n'êtes pas en mesure d'échanger avec ce vendeur.",
 	vendorNoMoney = "Ce vendeur ne peut vous acheter cet objet, il n'a plus d'argent.",
 	vendorNoStock = "Ce vendeur n'a pas cet objet en stock.",
-	contentTitle = "NutScript Contenu manquant",
-	contentWarning = "Vous ne devez pas avoir le contenu NutScript. Cela peut entraîner certains dysfonctionnements.\nAimeriez-vous ouvrir la page du Workshop, pour avoir le contenu NutScript?"
+	contentTitle = "Helix Contenu manquant",
+	contentWarning = "Vous ne devez pas avoir le contenu Helix. Cela peut entraîner certains dysfonctionnements.\nAimeriez-vous ouvrir la page du Workshop, pour avoir le contenu Helix?"
 }

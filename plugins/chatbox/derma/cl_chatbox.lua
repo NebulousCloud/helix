@@ -1,6 +1,6 @@
 
-NUT_CVAR_SHOWTIMESTAMPS = CreateClientConVar("nut_showtimestamps", 0, true)
-NUT_CVAR_TIMESTAMP24HOUR = CreateClientConVar("nut_timestamp24hour", 0, true)
+IX_CVAR_SHOWTIMESTAMPS = CreateClientConVar("ix_showtimestamps", 0, true)
+IX_CVAR_TIMESTAMP24HOUR = CreateClientConVar("ix_timestamp24hour", 0, true)
 
 local PANEL = {}
 	local gradient = Material("vgui/gradient-d")
@@ -15,7 +15,7 @@ local PANEL = {}
 		local scrW, scrH = ScrW(), ScrH()
 		local w, h = scrW * 0.4, scrH * 0.375
 
-		nut.gui.chat = self
+		ix.gui.chat = self
 
 		self:SetSize(w, h)
 		self:SetPos(border, scrH - h - border)
@@ -47,7 +47,7 @@ local PANEL = {}
 					local arguments = self.arguments or {}
 					local command = string.PatternSafe(arguments[1] or ""):lower()
 
-					nut.util.DrawBlur(panel)
+					ix.util.DrawBlur(panel)
 
 					surface.SetDrawColor(0, 0, 0, 200)
 					surface.DrawRect(0, 0, w, h)
@@ -55,14 +55,14 @@ local PANEL = {}
 					local currentY = 0
 
 					for k, v in ipairs(self.potentialCommands) do
-						local color = nut.config.Get("color")
+						local color = ix.config.Get("color")
 						local bSelectedCommand = (self.autocompleteIndex == 0 and command == v.uniqueID) or (self.autocompleteIndex > 0 and k == self.autocompleteIndex)
 
 						if (bSelectedCommand) then
 							local description = v:GetDescription()
 
 							if (description != "") then
-								local width, height = nut.util.DrawText(description, 4, currentY, COLOR_ACTIVE)
+								local width, height = ix.util.DrawText(description, 4, currentY, COLOR_ACTIVE)
 
 								currentY = currentY + height + 1
 							end
@@ -70,7 +70,7 @@ local PANEL = {}
 							color = Color(color.r + 35, color.g + 35, color.b + 35, 255)
 						end
 
-						local x, height = nut.util.DrawText("/" .. v.name .. "  ", 4, currentY, color)
+						local x, height = ix.util.DrawText("/" .. v.name .. "  ", 4, currentY, color)
 
 						if (bSelectedCommand and v.syntax) then
 							local i2 = 0
@@ -83,7 +83,7 @@ local PANEL = {}
 									color = COLOR_ACTIVE
 								end
 
-								local width, height = nut.util.DrawText(argument .. "  ", x, currentY, color)
+								local width, height = ix.util.DrawText(argument .. "  ", x, currentY, color)
 
 								x = x + width
 							end
@@ -110,7 +110,7 @@ local PANEL = {}
 
 		local buttons = {}
 
-		for k, v in SortedPairsByMemberValue(nut.chat.classes, "filter") do
+		for k, v in SortedPairsByMemberValue(ix.chat.classes, "filter") do
 			if (!buttons[v.filter]) then
 				self:AddFilterButton(v.filter)
 				buttons[v.filter] = true
@@ -120,7 +120,7 @@ local PANEL = {}
 
 	function PANEL:Paint(w, h)
 		if (self.active) then
-			nut.util.DrawBlur(self, 10)
+			ix.util.DrawBlur(self, 10)
 
 			surface.SetDrawColor(250, 250, 250, 2)
 			surface.DrawRect(0, 0, w, h)
@@ -146,15 +146,15 @@ local PANEL = {}
 			end
 			self.entry:SetTall(28)
 
-			nut.chat.history = nut.chat.history or {}
+			ix.chat.history = ix.chat.history or {}
 
 			self.text = self.entry:Add("DTextEntry")
 			self.text.baseClass = baseclass.Get("DTextEntry")
 			self.text:Dock(FILL)
-			self.text.History = nut.chat.history
+			self.text.History = ix.chat.history
 			self.text:SetHistoryEnabled(true)
 			self.text:DockMargin(3, 3, 3, 3)
-			self.text:SetFont("nutChatFont")
+			self.text:SetFont("ixChatFont")
 			self.text.OnEnter = function(this)
 				local text = this:GetText()
 
@@ -165,9 +165,9 @@ local PANEL = {}
 				self.entry:Remove()
 
 				if (text:find("%S")) then
-					if (!(nut.chat.lastLine or ""):find(text, 1, true)) then
-						nut.chat.history[#nut.chat.history + 1] = text
-						nut.chat.lastLine = text
+					if (!(ix.chat.lastLine or ""):find(text, 1, true)) then
+						ix.chat.history[#ix.chat.history + 1] = text
+						ix.chat.lastLine = text
 					end
 
 					netstream.Start("msg", text)
@@ -181,7 +181,7 @@ local PANEL = {}
 				surface.SetDrawColor(0, 0, 0, 200)
 				surface.DrawOutlinedRect(0, 0, w, h)
 
-				this:DrawTextEntryText(TEXT_COLOR, nut.config.Get("color"), TEXT_COLOR)
+				this:DrawTextEntryText(TEXT_COLOR, ix.config.Get("color"), TEXT_COLOR)
 			end
 			self.text.OnTextChanged = function(this)
 				local text = this:GetText()
@@ -191,8 +191,8 @@ local PANEL = {}
 				if (text:sub(1, 1) == "/" and !this.autocompleted) then
 					local command = tostring(text:match("(/(%w+))") or "/")
 
-					self.potentialCommands = nut.command.FindAll(command, true, true, true)
-					self.arguments = nut.command.ExtractArgs(text:sub(2))
+					self.potentialCommands = ix.command.FindAll(command, true, true, true)
+					self.arguments = ix.command.ExtractArgs(text:sub(2))
 
 					-- if the first suggested command is equal to the currently typed one,
 					-- offset the index so you don't have to hit tab twice to go past the first command
@@ -258,7 +258,7 @@ local PANEL = {}
 		else
 			local alpha = 120 + math.cos(RealTime() * 5) * 10
 
-			surface.SetDrawColor(ColorAlpha(nut.config.Get("color"), alpha))
+			surface.SetDrawColor(ColorAlpha(ix.config.Get("color"), alpha))
 		end
 
 		surface.DrawRect(0, 0, w, h)
@@ -271,7 +271,7 @@ local PANEL = {}
 		local name = L(filter)
 
 		local tab = self.tabs:Add("DButton")
-		tab:SetFont("nutChatFont")
+		tab:SetFont("ixChatFont")
 		tab:SetText(name:upper())
 		tab:SizeToContents()
 		tab:DockMargin(0, 0, 3, 0)
@@ -283,7 +283,7 @@ local PANEL = {}
 		tab.DoClick = function(this)
 			this.active = !this.active
 
-			local filters = NUT_CVAR_CHATFILTER:GetString():lower()
+			local filters = IX_CVAR_CHATFILTER:GetString():lower()
 
 			if (filters == "none") then
 				filters = ""
@@ -300,21 +300,21 @@ local PANEL = {}
 			end
 
 			self:SetFilter(filter, this.active)
-			RunConsoleCommand("nut_chatfilter", filters)
+			RunConsoleCommand("ix_chatfilter", filters)
 		end
 
-		if (NUT_CVAR_CHATFILTER:GetString():lower():find(filter)) then
+		if (IX_CVAR_CHATFILTER:GetString():lower():find(filter)) then
 			tab.active = true
 		end
 	end
 
 	function PANEL:AddText(...)
-		local text = "<font=nutChatFont>"
+		local text = "<font=ixChatFont>"
 
-		if (NUT_CVAR_SHOWTIMESTAMPS:GetBool()) then
+		if (IX_CVAR_SHOWTIMESTAMPS:GetBool()) then
 			text = text .. "<color=150,150,150>("
 
-			if (NUT_CVAR_TIMESTAMP24HOUR:GetBool()) then
+			if (IX_CVAR_TIMESTAMP24HOUR:GetBool()) then
 				text = text .. os.date("%H:%M")
 			else
 				text = text .. os.date("%I:%M %p")
@@ -324,14 +324,17 @@ local PANEL = {}
 		end
 
 		if (CHAT_CLASS) then
-			text = text .. "<font="..(CHAT_CLASS.font or "nutChatFont")..">"
+			text = text .. "<font="..(CHAT_CLASS.font or "ixChatFont")..">"
 		end
 
 		for k, v in ipairs({...}) do
 			if (type(v) == "IMaterial") then
-				local ttx = tostring(v):match("%[[a-z0-9/_]+%]")
-				ttx = ttx:sub(2, ttx:len() - 1)
-				text = text.."<img="..ttx..","..v:Width().."x"..v:Height().."> "
+				local texture = tostring(v):match("%[[a-z0-9/_]+%]")
+
+				if (texture) then
+					texture = texture:sub(2, texture:len() - 1)
+					text = text.."<img="..texture..","..v:Width().."x"..v:Height().."> "
+				end
 			elseif (type(v) == "table" and v.r and v.g and v.b) then
 				text = text.."<color="..v.r..","..v.g..","..v.b..">"
 			elseif (type(v) == "Player") then
@@ -344,7 +347,7 @@ local PANEL = {}
 					local inner = value:sub(2, -2)
 
 					if (inner:find("%S")) then
-						return "<font=nutChatFontItalics>"..value:sub(2, -2).."</font>"
+						return "<font=ixChatFontItalics>"..value:sub(2, -2).."</font>"
 					end
 				end)
 			end
@@ -352,7 +355,7 @@ local PANEL = {}
 
 		text = text.."</font>"
 
-		local panel = self.scroll:Add("nutMarkupPanel")
+		local panel = self.scroll:Add("ixMarkupPanel")
 		panel:SetWide(self:GetWide() - 8)
 		panel:SetMarkup(text, OnDrawText)
 		panel.start = CurTime() + 15
@@ -369,7 +372,7 @@ local PANEL = {}
 
 		local class = CHAT_CLASS and CHAT_CLASS.filter and CHAT_CLASS.filter:lower() or "ic"
 
-		if (NUT_CVAR_CHATFILTER:GetString():lower():find(class)) then
+		if (IX_CVAR_CHATFILTER:GetString():lower():find(class)) then
 			self.filtered[panel] = class
 			panel:SetVisible(false)
 		else
@@ -428,8 +431,8 @@ local PANEL = {}
 			end
 		end
 	end
-vgui.Register("nutChatBox", PANEL, "DPanel")
+vgui.Register("ixChatBox", PANEL, "DPanel")
 
-if (IsValid(nut.gui.chat)) then
+if (IsValid(ix.gui.chat)) then
 	RunConsoleCommand("fixchatplz")
 end

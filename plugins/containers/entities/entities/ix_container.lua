@@ -2,7 +2,7 @@ local PLUGIN = PLUGIN
 
 ENT.Type = "anim"
 ENT.PrintName = "Container"
-ENT.Category = "NutScript"
+ENT.Category = "Helix"
 ENT.Spawnable = false
 
 if (SERVER) then
@@ -29,14 +29,14 @@ if (SERVER) then
 	function ENT:OnRemove()
 		local index = self:GetNetVar("id")
 
-		if (!nut.shuttingDown and !self.nutIsSafe and nut.entityDataLoaded and index) then
-			local item = nut.item.inventories[index]
+		if (!ix.shuttingDown and !self.ixIsSafe and ix.entityDataLoaded and index) then
+			local item = ix.item.inventories[index]
 
 			if (item) then
-				nut.item.inventories[index] = nil
+				ix.item.inventories[index] = nil
 
-				nut.db.query("DELETE FROM nut_items WHERE _invID = "..index)
-				nut.db.query("DELETE FROM nut_inventories WHERE _invID = "..index)
+				ix.db.query("DELETE FROM ix_items WHERE _invID = "..index)
+				ix.db.query("DELETE FROM ix_inventories WHERE _invID = "..index)
 
 				hook.Run("ContainerItemRemoved", self, item)
 			end
@@ -48,10 +48,10 @@ if (SERVER) then
 		local inventory = self:GetInventory()
 
 		if (inventory) then
-			nut.storage.Open(activator, inventory, {
+			ix.storage.Open(activator, inventory, {
 				name = definition.name,
 				entity = self,
-				searchTime = nut.config.Get("containerOpenTime", 0.7)
+				searchTime = ix.config.Get("containerOpenTime", 0.7)
 			})
 		end
 	end
@@ -59,7 +59,7 @@ if (SERVER) then
 	function ENT:Use(activator)
 		local inventory = self:GetInventory()
 
-		if (inventory and (activator.nutNextOpen or 0) < CurTime()) then
+		if (inventory and (activator.ixNextOpen or 0) < CurTime()) then
 			if (activator:GetChar()) then
 				local def = PLUGIN.definitions[self:GetModel():lower()]
 
@@ -74,7 +74,7 @@ if (SERVER) then
 				end
 			end
 
-			activator.nutNextOpen = CurTime() + 1
+			activator.ixNextOpen = CurTime() + 1
 		end
 	end
 else
@@ -84,8 +84,8 @@ else
 	local COLOR_UNLOCKED = Color(135, 211, 124)
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
-	local drawText = nut.util.DrawText
-	local configGet = nut.config.Get
+	local drawText = ix.util.DrawText
+	local configGet = ix.config.Get
 
 	function ENT:OnDrawEntityInfo(alpha)
 		local locked = self.GetNetVar(self, "locked", false)
@@ -93,7 +93,7 @@ else
 		local x, y = position.x, position.y
 
 		y = y - 20
-		local tx, ty = nut.util.DrawText(locked and "P" or "Q", x, y, colorAlpha(locked and COLOR_LOCKED or COLOR_UNLOCKED, alpha), 1, 1, "nutIconsMedium", alpha * 0.65)
+		local tx, ty = ix.util.DrawText(locked and "P" or "Q", x, y, colorAlpha(locked and COLOR_LOCKED or COLOR_UNLOCKED, alpha), 1, 1, "ixIconsMedium", alpha * 0.65)
 		y = y + ty*.9
 
 		local def = PLUGIN.definitions[self:GetModel():lower()]
@@ -106,5 +106,5 @@ else
 end
 
 function ENT:GetInventory()
-	return nut.item.inventories[self:GetNetVar("id", 0)]
+	return ix.item.inventories[self:GetNetVar("id", 0)]
 end

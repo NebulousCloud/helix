@@ -13,7 +13,7 @@ if (SERVER) then
 		local cost = 0
 
 		for k, v in pairs(items) do
-			local itemTable = nut.item.list[k]
+			local itemTable = ix.item.list[k]
 
 			if (itemTable and hook.Run("CanPlayerUseBusiness", client, k) != false) then
 				local amount = math.Clamp(tonumber(v) or 0, 0, 10)
@@ -35,7 +35,7 @@ if (SERVER) then
 		if (char:HasMoney(cost)) then
 			char:TakeMoney(cost)
 
-			local entity = ents.Create("nut_shipment")
+			local entity = ents.Create("ix_shipment")
 			entity:Spawn()
 			entity:SetPos(client:GetItemDropPos(entity))
 			entity:SetItems(items)
@@ -51,12 +51,12 @@ if (SERVER) then
 	end)
 
 	netstream.Hook("shpUse", function(client, uniqueID, drop)
-		local entity = client.nutShipment
-		local itemTable = nut.item.list[uniqueID]
+		local entity = client.ixShipment
+		local itemTable = ix.item.list[uniqueID]
 
 		if (itemTable and IsValid(entity)) then
 			if (entity:GetPos():Distance(client:GetPos()) > 128) then
-				client.nutShipment = nil
+				client.ixShipment = nil
 
 				return
 			end
@@ -69,7 +69,7 @@ if (SERVER) then
 				end
 
 				if (drop) then
-					nut.item.Spawn(uniqueID, entity:GetPos() + Vector(0, 0, 16))
+					ix.item.Spawn(uniqueID, entity:GetPos() + Vector(0, 0, 16))
 				else
 					local status, fault = client:GetChar():GetInv():Add(uniqueID)
 
@@ -91,18 +91,18 @@ if (SERVER) then
 	end)
 else
 	netstream.Hook("openShp", function(entity, items)
-		nut.gui.shipment = vgui.Create("nutShipment")
-		nut.gui.shipment:SetItems(entity, items)
+		ix.gui.shipment = vgui.Create("ixShipment")
+		ix.gui.shipment:SetItems(entity, items)
 	end)
 
 	netstream.Hook("updtShp", function(entity, items)
-		if (nut.gui.shipment and nut.gui.shipment:IsVisible()) then
+		if (ix.gui.shipment and ix.gui.shipment:IsVisible()) then
 		end
 	end)
 
 	netstream.Hook("takeShp", function(name, amount)
-		if (nut.gui.shipment and nut.gui.shipment:IsVisible()) then
-			local item = nut.gui.shipment.itemPanel[name]
+		if (ix.gui.shipment and ix.gui.shipment:IsVisible()) then
+			local item = ix.gui.shipment.itemPanel[name]
 
 			if (item) then
 				item.amount = item.amount - 1

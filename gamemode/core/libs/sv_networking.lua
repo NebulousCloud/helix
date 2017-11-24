@@ -1,8 +1,8 @@
 local entityMeta = FindMetaTable("Entity")
 local playerMeta = FindMetaTable("Player")
 
-nut.net = nut.net or {}
-nut.net.globals = nut.net.globals or {}
+ix.net = ix.net or {}
+ix.net.globals = ix.net.globals or {}
 
 -- Check if there is an attempt to send a function. Can't send those.
 local function CheckBadType(name, object)
@@ -26,12 +26,12 @@ function SetNetVar(key, value, receiver)
 	if (CheckBadType(key, value)) then return end
 	if (GetNetVar(key) == value) then return end
 
-	nut.net.globals[key] = value
+	ix.net.globals[key] = value
 	netstream.Start(receiver, "gVar", key, value)
 end
 
 function playerMeta:SyncVars()
-	for entity, data in pairs(nut.net) do
+	for entity, data in pairs(ix.net) do
 		if (entity == "globals") then
 			for k, v in pairs(data) do
 				netstream.Start(self, "gVar", k, v)
@@ -45,29 +45,29 @@ function playerMeta:SyncVars()
 end
 
 function entityMeta:SendNetVar(key, receiver)
-	netstream.Start(receiver, "nVar", self:EntIndex(), key, nut.net[self] and nut.net[self][key])
+	netstream.Start(receiver, "nVar", self:EntIndex(), key, ix.net[self] and ix.net[self][key])
 end
 
 function entityMeta:ClearNetVars(receiver)
-	nut.net[self] = nil
+	ix.net[self] = nil
 	netstream.Start(receiver, "nDel", self:EntIndex())
 end
 
 function entityMeta:SetNetVar(key, value, receiver)
 	if (CheckBadType(key, value)) then return end
 
-	nut.net[self] = nut.net[self] or {}
+	ix.net[self] = ix.net[self] or {}
 
-	if (nut.net[self][key] != value) then
-		nut.net[self][key] = value
+	if (ix.net[self][key] != value) then
+		ix.net[self][key] = value
 	end
 
 	self:SendNetVar(key, receiver)
 end
 
 function entityMeta:GetNetVar(key, default)
-	if (nut.net[self] and nut.net[self][key] != nil) then
-		return nut.net[self][key]
+	if (ix.net[self] and ix.net[self][key] != nil) then
+		return ix.net[self][key]
 	end
 
 	return default
@@ -76,8 +76,8 @@ end
 function playerMeta:SetLocalVar(key, value)
 	if (CheckBadType(key, value)) then return end
 
-	nut.net[self] = nut.net[self] or {}
-	nut.net[self][key] = value
+	ix.net[self] = ix.net[self] or {}
+	ix.net[self][key] = value
 
 	netstream.Start(self, "nLcl", key, value)
 end
@@ -85,7 +85,7 @@ end
 playerMeta.GetLocalVar = entityMeta.GetNetVar
 
 function GetNetVar(key, default)
-	local value = nut.net.globals[key]
+	local value = ix.net.globals[key]
 
 	return value != nil and value or default
 end

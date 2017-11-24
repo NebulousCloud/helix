@@ -1,10 +1,10 @@
--- Include NutScript content.
+-- Include Helix content.
 resource.AddWorkshop("207739713")
 
 -- Include features from the Sandbox gamemode.
 DeriveGamemode("sandbox")
--- Define a global shared table to store NutScript information.
-nut = nut or {util = {}, meta = {}}
+-- Define a global shared table to store Helix information.
+ix = ix or {util = {}, meta = {}}
 
 -- Send the following files to players.
 AddCSLuaFile("cl_init.lua")
@@ -20,23 +20,23 @@ include("shared.lua")
 timer.Simple(0, function()
 	hook.Run("SetupDatabase")
 
-	nut.db.Connect(function()
+	ix.db.Connect(function()
 		-- Create the SQL tables if they do not exist.
-		nut.db.LoadTables()
-		nut.log.LoadTables()
+		ix.db.LoadTables()
+		ix.log.LoadTables()
 
-		MsgC(Color(0, 255, 0), "NutScript has connected to the database.\n")
-		MsgC(Color(0, 255, 0), "Database Type: " .. nut.db.module .. ".\n")
+		MsgC(Color(0, 255, 0), "Helix has connected to the database.\n")
+		MsgC(Color(0, 255, 0), "Database Type: " .. ix.db.module .. ".\n")
 	end)
 end)
 
 -- Resources that are required for players to download are here.
-resource.AddFile("materials/nutscript/gui/vignette.png")
+resource.AddFile("materials/helix/gui/vignette.png")
 resource.AddFile("resource/fonts/fontello.ttf")
 
-concommand.Add("nut_setowner", function(client, command, arguments)
+concommand.Add("ix_setowner", function(client, command, arguments)
 	if (!IsValid(client)) then
-		MsgC(Color(255, 0, 0), "** 'nut_setowner' has been deprecated in NutScript 1.1\n")
+		MsgC(Color(255, 0, 0), "** 'ix_setowner' has been deprecated in Helix 1.1\n")
 		MsgC(Color(255, 0, 0), "** Instead, please install an admin mod and use that instead.\n")
 	end
 end)

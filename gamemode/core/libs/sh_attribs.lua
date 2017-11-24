@@ -1,32 +1,32 @@
-if (!nut.char) then include("sh_character.lua") end
+if (!ix.char) then include("sh_character.lua") end
 
-nut.attribs = nut.attribs or {}
-nut.attribs.list = nut.attribs.list or {}
+ix.attribs = ix.attribs or {}
+ix.attribs.list = ix.attribs.list or {}
 
-function nut.attribs.LoadFromDir(directory)
+function ix.attribs.LoadFromDir(directory)
 	for k, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
 		local niceName = v:sub(4, -5)
 
-		ATTRIBUTE = nut.attribs.list[niceName] or {}
+		ATTRIBUTE = ix.attribs.list[niceName] or {}
 			if (PLUGIN) then
 				ATTRIBUTE.plugin = PLUGIN.uniqueID
 			end
 
-			nut.util.Include(directory.."/"..v)
+			ix.util.Include(directory.."/"..v)
 
 			ATTRIBUTE.name = ATTRIBUTE.name or "Unknown"
 			ATTRIBUTE.description = ATTRIBUTE.description or "No description availalble."
 
-			nut.attribs.list[niceName] = ATTRIBUTE
+			ix.attribs.list[niceName] = ATTRIBUTE
 		ATTRIBUTE = nil
 	end
 end
 
-function nut.attribs.Setup(client)
+function ix.attribs.Setup(client)
 	local character = client:GetChar()
 
 	if (character) then
-		for k, v in pairs(nut.attribs.list) do
+		for k, v in pairs(ix.attribs.list) do
 			if (v.OnSetup) then
 				v:OnSetup(client, character:GetAttrib(k, 0))
 			end
@@ -36,17 +36,17 @@ end
 
 -- Add updating of attributes to the character metatable.
 do
-	local charMeta = nut.meta.character
+	local charMeta = ix.meta.character
 	
 	if (SERVER) then
 		function charMeta:UpdateAttrib(key, value)
-			local attribute = nut.attribs.list[key]
+			local attribute = ix.attribs.list[key]
 
 			if (attribute) then
 				local attrib = self:GetAttribs()
 				local client = self:GetPlayer()
 
-				attrib[key] = math.min((attrib[key] or 0) + value, attribute.maxValue or nut.config.Get("maxAttribs", 30))
+				attrib[key] = math.min((attrib[key] or 0) + value, attribute.maxValue or ix.config.Get("maxAttribs", 30))
 
 				if (IsValid(client)) then
 					netstream.Start(client, "attrib", self:GetID(), key, attrib[key])
@@ -61,7 +61,7 @@ do
 		end
 
 		function charMeta:SetAttrib(key, value)
-			local attribute = nut.attribs.list[key]
+			local attribute = ix.attribs.list[key]
 
 			if (attribute) then
 				local attrib = self:GetAttribs()
@@ -104,7 +104,7 @@ do
 		end
 	else
 		netstream.Hook("attrib", function(id, key, value)
-			local character = nut.char.loaded[id]
+			local character = ix.char.loaded[id]
 
 			if (character) then
 				character:GetAttribs()[key] = value

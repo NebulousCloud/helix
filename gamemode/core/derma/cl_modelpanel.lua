@@ -81,7 +81,7 @@ local PANEL = {}
 
 		-- Excecute Some stuffs
 		if (self.enableHook) then
-			hook.Run("DrawNutModelView", self, self.Entity)
+			hook.Run("DrawHelixModelView", self, self.Entity)
 		end
 		
 		self.Entity:DrawModel()
@@ -89,4 +89,4 @@ local PANEL = {}
 
 	function PANEL:OnMousePressed()
 	end
-vgui.Register("nutModelPanel", PANEL, "DModelPanel")
+vgui.Register("ixModelPanel", PANEL, "DModelPanel")

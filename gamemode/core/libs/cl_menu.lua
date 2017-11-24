@@ -1,14 +1,14 @@
-nut.menu = nut.menu or {}
-nut.menu.list = nut.menu.list or {}
+ix.menu = ix.menu or {}
+ix.menu.list = ix.menu.list or {}
 
 -- Adds a new menu to the list of drawn menus.
-function nut.menu.Add(options, position, onRemove)
+function ix.menu.Add(options, position, onRemove)
 	-- Set up the width of the menu.
 	local width = 0
 	local entity
 
 	-- The font for the buttons.
-	surface.SetFont("nutMediumFont")
+	surface.SetFont("ixMediumFont")
 
 	-- Set the width to the longest button width.
 	for k, v in pairs(options) do
@@ -24,7 +24,7 @@ function nut.menu.Add(options, position, onRemove)
 	end
 
 	-- Add the new menu to the list.
-	return table.insert(nut.menu.list, {
+	return table.insert(ix.menu.list, {
 		-- Use the specified position or whatever the player is looking at.
 		position = position or LocalPlayer():GetEyeTrace().HitPos,
 		-- Options are the list with button text as keys and their callbacks as values.
@@ -44,13 +44,13 @@ end
 local gradient = Material("vgui/gradient-u")
 
 -- A function to draw all of the active menus or hide them when needed.
-function nut.menu.DrawAll()
+function ix.menu.DrawAll()
 	local frameTime = FrameTime() * 30
 	local mX, mY = ScrW() * 0.5, ScrH() * 0.5
 	local position2 = LocalPlayer():GetPos()
 
 	-- Loop through the current menus.
-	for k, v in ipairs(nut.menu.list) do
+	for k, v in ipairs(ix.menu.list) do
 		-- Get their position on the screen.
 		local position
 		local entity = v.entity
@@ -64,7 +64,7 @@ function nut.menu.DrawAll()
 				position = v.entPos:ToScreen()
 			-- The attached entity is gone, remove the menu.
 			else
-				table.remove(nut.menu.list, k)
+				table.remove(ix.menu.list, k)
 
 				if (v.OnRemove) then
 					v:OnRemove()
@@ -99,7 +99,7 @@ function nut.menu.DrawAll()
 			-- If it has completely faded away, remove it.
 			if (v.alpha == 0) then
 				-- Remove the menu from being drawn.
-				table.remove(nut.menu.list, k)
+				table.remove(ix.menu.list, k)
 
 				if (v.OnRemove) then
 					v:OnRemove()
@@ -138,12 +138,12 @@ function nut.menu.DrawAll()
 			-- Check if the button is hovered.
 			if (inside and mY >= y and mY <= (y + 28)) then
 				-- If so, draw a colored rectangle to indicate it.
-				surface.SetDrawColor(ColorAlpha(nut.config.Get("color"), v.alpha + math.cos(RealTime() * 8) * 40))
+				surface.SetDrawColor(ColorAlpha(ix.config.Get("color"), v.alpha + math.cos(RealTime() * 8) * 40))
 				surface.DrawRect(startX, y, width, 28)
 			end
 
 			-- Draw the button's text.
-			nut.util.DrawText(k2, startX + 4, y, ColorAlpha(color_white, v.alpha), nil, nil, "nutMediumFont")
+			ix.util.DrawText(k2, startX + 4, y, ColorAlpha(color_white, v.alpha), nil, nil, "ixMediumFont")
 
 			-- Make sure we draw the next button in line.
 			i = i + 1
@@ -152,12 +152,12 @@ function nut.menu.DrawAll()
 end
 
 -- Determines which menu is being looked at
-function nut.menu.GetActiveMenu()
+function ix.menu.GetActiveMenu()
 	local mX, mY = ScrW() * 0.5, ScrH() * 0.5
 	local position2 = LocalPlayer():GetPos()
 
 	-- Loop through the current menus.
-	for k, v in ipairs(nut.menu.list) do
+	for k, v in ipairs(ix.menu.list) do
 		-- Get their position on the screen.
 		local position
 		local entity = v.entity
@@ -169,7 +169,7 @@ function nut.menu.GetActiveMenu()
 				position = (v.entPos or entity:LocalToWorld(v.position)):ToScreen()
 			-- The attached entity is gone, remove the menu.
 			else
-				table.remove(nut.menu.list, k)
+				table.remove(ix.menu.list, k)
 
 				continue
 			end
@@ -210,8 +210,8 @@ function nut.menu.GetActiveMenu()
 end
 
 -- Handles whenever a button has been pressed.
-function nut.menu.OnButtonPressed(menu, callback)
-	table.remove(nut.menu.list, menu)
+function ix.menu.OnButtonPressed(menu, callback)
+	table.remove(ix.menu.list, menu)
 
 	if (callback) then
 		callback()

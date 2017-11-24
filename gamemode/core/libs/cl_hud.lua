@@ -1,11 +1,11 @@
-nut.hud = {}
+ix.hud = {}
 
 local owner, w, h, ceil, ft, clmp
 ceil = math.ceil
 clmp = math.Clamp
 local aprg, aprg2 = 0, 0
 
-function nut.hud.DrawDeath()
+function ix.hud.DrawDeath()
 	owner = LocalPlayer()
 	ft = FrameTime()
 	w, h = ScrW(), ScrH()
@@ -28,33 +28,33 @@ function nut.hud.DrawDeath()
 		end
 	end
 
-	if (IsValid(nut.char.gui) and nut.gui.char:IsVisible() or !owner:GetChar()) then
+	if (IsValid(ix.char.gui) and ix.gui.char:IsVisible() or !owner:GetChar()) then
 		return
 	end
 
 	surface.SetDrawColor(0, 0, 0, ceil((aprg^.5) * 255))
 	surface.DrawRect(-1, -1, w+2, h+2)
-	local tx, ty = nut.util.DrawText(string.upper(L"youreDead"), w/2, h/2, ColorAlpha(color_white, aprg2 * 255), 1, 1, "nutDynFontMedium", aprg2 * 255)
+	local tx, ty = ix.util.DrawText(string.upper(L"youreDead"), w/2, h/2, ColorAlpha(color_white, aprg2 * 255), 1, 1, "ixDynFontMedium", aprg2 * 255)
 end
 
-function nut.hud.DrawItemPickup()
-	local pickupTime = nut.config.Get("itemPickupTime", 0.5)
+function ix.hud.DrawItemPickup()
+	local pickupTime = ix.config.Get("itemPickupTime", 0.5)
 
 	if (pickupTime == 0) then
 		return
 	end
 
 	local client = LocalPlayer()
-	local entity = client.nutInteractionTarget
-	local startTime = client.nutInteractionStartTime
+	local entity = client.ixInteractionTarget
+	local startTime = client.ixInteractionStartTime
 
 	if (IsValid(entity) and startTime) then
 		local sysTime = SysTime()
 		local endTime = startTime + pickupTime
 
 		if (sysTime >= endTime or client:GetEyeTrace().Entity != entity) then
-			client.nutInteractionTarget = nil
-			client.nutInteractionStartTime = nil
+			client.ixInteractionTarget = nil
+			client.ixInteractionStartTime = nil
 
 			return
 		end
@@ -66,18 +66,18 @@ function nut.hud.DrawItemPickup()
 		local endAngle = startAngle + (1 - fraction) * 360
 		local color = ColorAlpha(color_white, fraction * 255)
 
-		nut.util.DrawArc(x, y, radius, thickness, startAngle, endAngle, 2, color)
+		ix.util.DrawArc(x, y, radius, thickness, startAngle, endAngle, 2, color)
 	end
 end
 
-hook.Add("GetCrosshairAlpha", "nutCrosshair", function(alpha)
+hook.Add("GetCrosshairAlpha", "ixCrosshair", function(alpha)
 	return alpha * (1 - aprg)
 end)
 
-function nut.hud.DrawAll(postHook)
+function ix.hud.DrawAll(postHook)
 	if (postHook) then
-		nut.hud.DrawDeath()
+		ix.hud.DrawDeath()
 	end
 
-	nut.hud.DrawItemPickup()
+	ix.hud.DrawItemPickup()
 end

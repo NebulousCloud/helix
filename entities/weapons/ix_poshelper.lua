@@ -8,7 +8,7 @@ if( CLIENT ) then
 end
 SWEP.HoldType 			= "fists"
 
-SWEP.Category 			= "Nutscript"
+SWEP.Category 			= "Helix"
 SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= true
 
@@ -154,7 +154,7 @@ if CLIENT then
 			, HELPER_INFO.renderAng[1], HELPER_INFO.renderAng[2], HELPER_INFO.renderAng[3]))
 		end
 	end
-	vgui.Register("nutHelperFrame", PANEL, "DFrame")
+	vgui.Register("ixHelperFrame", PANEL, "DFrame")
 
 	function SWEP:PrimaryAttack()
 		if IsFirstTimePredicted() then
@@ -171,7 +171,7 @@ if CLIENT then
 		if (!self.menuOpen) then
 			self.menuOpen = true
 
-			local a = vgui.Create("nutHelperFrame")
+			local a = vgui.Create("ixHelperFrame")
 			timer.Simple(.3, function()
 				self.menuOpen = false
 			end)
@@ -214,11 +214,11 @@ if CLIENT then
 	function SWEP:DrawHUD()
 		local w, h = ScrW(), ScrH()
 		local cury = h/4*3
-		local tx, ty = draw.SimpleText("Left Click: Select Entity", "nutMediumFont", w/2, cury, color_white, 1, 1)
+		local tx, ty = draw.SimpleText("Left Click: Select Entity", "ixMediumFont", w/2, cury, color_white, 1, 1)
 		cury = cury + ty
-		local tx, ty = draw.SimpleText("Right Click: Deselect Entity", "nutMediumFont", w/2, cury, color_white, 1, 1)
+		local tx, ty = draw.SimpleText("Right Click: Deselect Entity", "ixMediumFont", w/2, cury, color_white, 1, 1)
 		cury = cury + ty
-		local tx, ty = draw.SimpleText("Reload: Register Area", "nutMediumFont", w/2, cury, color_white, 1, 1)
+		local tx, ty = draw.SimpleText("Reload: Register Area", "ixMediumFont", w/2, cury, color_white, 1, 1)
 	end
 
 	hook.Add("PostDrawOpaqueRenderables", "helperDrawModel", function()

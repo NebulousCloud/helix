@@ -1,34 +1,34 @@
-nut.config = nut.config or {}
-nut.config.stored = nut.config.stored or {}
+ix.config = ix.config or {}
+ix.config.stored = ix.config.stored or {}
 
-function nut.config.Add(key, value, desc, callback, data, noNetworking, schemaOnly)
-	local oldConfig = nut.config.stored[key]
+function ix.config.Add(key, value, desc, callback, data, noNetworking, schemaOnly)
+	local oldConfig = ix.config.stored[key]
 
-	nut.config.stored[key] = {data = data, value = oldConfig and oldConfig.value or value, default = value, desc = desc, noNetworking = noNetworking, global = !schemaOnly, callback = callback}
+	ix.config.stored[key] = {data = data, value = oldConfig and oldConfig.value or value, default = value, desc = desc, noNetworking = noNetworking, global = !schemaOnly, callback = callback}
 end
 
-function nut.config.SetDefault(key, value)
-	local config = nut.config.stored[key]
+function ix.config.SetDefault(key, value)
+	local config = ix.config.stored[key]
 
 	if (config) then
 		config.default = value
 	end
 end
 
-function nut.config.ForceSet(key, value, noSave)
-	local config = nut.config.stored[key]
+function ix.config.ForceSet(key, value, noSave)
+	local config = ix.config.stored[key]
 
 	if (config) then
 		config.value = value
 	end
 
 	if (noSave) then
-		nut.config.Save()
+		ix.config.Save()
 	end
 end
 
-function nut.config.Set(key, value)
-	local config = nut.config.stored[key]
+function ix.config.Set(key, value)
+	local config = ix.config.stored[key]
 
 	if (config) then
 		local oldValue = value
@@ -43,13 +43,13 @@ function nut.config.Set(key, value)
 				config.callback(oldValue, value)
 			end
 
-			nut.config.Save()
+			ix.config.Save()
 		end
 	end
 end
 
-function nut.config.Get(key, default)
-	local config = nut.config.stored[key]
+function ix.config.Get(key, default)
+	local config = ix.config.stored[key]
 
 	if (config) then
 		if (config.value != nil) then
@@ -62,35 +62,35 @@ function nut.config.Get(key, default)
 	return default
 end
 
-function nut.config.Load()
+function ix.config.Load()
 	if (SERVER) then
-		local globals = nut.data.Get("config", nil, true, true)
-		local data = nut.data.Get("config", nil, false, true)
+		local globals = ix.data.Get("config", nil, true, true)
+		local data = ix.data.Get("config", nil, false, true)
 
 		if (globals) then
 			for k, v in pairs(globals) do
-				nut.config.stored[k] = nut.config.stored[k] or {}
-				nut.config.stored[k].value = v
+				ix.config.stored[k] = ix.config.stored[k] or {}
+				ix.config.stored[k].value = v
 			end
 		end
 
 		if (data) then
 			for k, v in pairs(data) do
-				nut.config.stored[k] = nut.config.stored[k] or {}
-				nut.config.stored[k].value = v
+				ix.config.stored[k] = ix.config.stored[k] or {}
+				ix.config.stored[k].value = v
 			end
 		end
 	end
 
-	nut.util.Include("nutscript/gamemode/config/sh_config.lua")
+	ix.util.Include("helix/gamemode/config/sh_config.lua")
 	hook.Run("InitializedConfig")
 end
 
 if (SERVER) then
-	function nut.config.GetChangedValues()
+	function ix.config.GetChangedValues()
 		local data = {}
 
-		for k, v in pairs(nut.config.stored) do
+		for k, v in pairs(ix.config.stored) do
 			if (v.default != v.value) then
 				data[k] = v.value
 			end
@@ -99,16 +99,16 @@ if (SERVER) then
 		return data
 	end
 
-	function nut.config.Send(client)
-		netstream.Start(client, "cfgList", nut.config.GetChangedValues())
+	function ix.config.Send(client)
+		netstream.Start(client, "cfgList", ix.config.GetChangedValues())
 	end
 
-	function nut.config.Save()
+	function ix.config.Save()
 		local globals = {}
 		local data = {}
 
-		for k, v in pairs(nut.config.GetChangedValues()) do
-			if (nut.config.stored[k].global) then
+		for k, v in pairs(ix.config.GetChangedValues()) do
+			if (ix.config.stored[k].global) then
 				globals[k] = v
 			else
 				data[k] = v
@@ -116,14 +116,14 @@ if (SERVER) then
 		end
 
 		-- Global and schema data set respectively.
-		nut.data.Set("config", globals, true, true)
-		nut.data.Set("config", data, false, true)
+		ix.data.Set("config", globals, true, true)
+		ix.data.Set("config", data, false, true)
 	end
 
 	netstream.Hook("cfgSet", function(client, key, value)
 		-- NEED TO ADD HOOK: CanPlayerModifyConfig
-		if (client:IsSuperAdmin() and type(nut.config.stored[key].default) == type(value)) then
-			nut.config.Set(key, value)
+		if (client:IsSuperAdmin() and type(ix.config.stored[key].default) == type(value)) then
+			ix.config.Set(key, value)
 
 			if (type(value) == "table") then
 				local value2 = "["
@@ -138,15 +138,15 @@ if (SERVER) then
 				value = value2
 			end
 
-			nut.util.NotifyLocalized("cfgSet", nil, client:Name(), key, tostring(value), v)
-			nut.log.Add(client, "cfgSet", key, value)
+			ix.util.NotifyLocalized("cfgSet", nil, client:Name(), key, tostring(value), v)
+			ix.log.Add(client, "cfgSet", key, value)
 		end
 	end)
 else
 	netstream.Hook("cfgList", function(data)
 		for k, v in pairs(data) do
-			if (nut.config.stored[k]) then
-				nut.config.stored[k].value = v
+			if (ix.config.stored[k]) then
+				ix.config.stored[k].value = v
 			end
 		end
 
@@ -154,7 +154,7 @@ else
 	end)
 
 	netstream.Hook("cfgSet", function(key, value)
-		local config = nut.config.stored[key]
+		local config = ix.config.stored[key]
 
 		if (config) then
 			if (config.callback) then
@@ -163,7 +163,7 @@ else
 
 			config.value = value
 
-			local properties = nut.gui.properties
+			local properties = ix.gui.properties
 
 			if (IsValid(properties)) then
 				local row = properties:GetCategory(L(config.data and config.data.category or "misc")):GetRow(key)
@@ -181,7 +181,7 @@ else
 end
 
 if (CLIENT) then
-	hook.Add("CreateMenuButtons", "nutConfig", function(tabs)
+	hook.Add("CreateMenuButtons", "ixConfig", function(tabs)
 		if (LocalPlayer():IsSuperAdmin() and hook.Run("CanPlayerUseConfig", LocalPlayer()) != false) then
 			tabs["config"] = function(panel)
 				local scroll = panel:Add("DScrollPanel")
@@ -190,12 +190,12 @@ if (CLIENT) then
 				local properties = scroll:Add("DProperties")
 				properties:SetSize(panel:GetSize())
 
-				nut.gui.properties = properties
+				ix.gui.properties = properties
 
 				-- We're about to store the categories in this buffer.
 				local buffer = {}
 
-				for k, v in pairs(nut.config.stored) do
+				for k, v in pairs(ix.config.stored) do
 					-- Get the category name.
 					local index = v.data and v.data.category or "misc"
 
@@ -212,17 +212,17 @@ if (CLIENT) then
 					for k, v in SortedPairs(configs) do
 						-- Determine which type of panel to create.
 						local form = v.data and v.data.form
-						local value = nut.config.stored[k].default
+						local value = ix.config.stored[k].default
 
 						if (!form) then
 							local formType = type(value)
 
 							if (formType == "number") then
 								form = "Int"
-								value = tonumber(nut.config.Get(k)) or value
+								value = tonumber(ix.config.Get(k)) or value
 							elseif (formType == "boolean") then
 								form = "Boolean"
-								value = util.tobool(nut.config.Get(k))
+								value = util.tobool(ix.config.Get(k))
 							else
 								form = "Generic"
 							end
@@ -247,7 +247,7 @@ if (CLIENT) then
 						row:SetValue(value)
 						row:SetToolTip(v.description)
 						row.DataChanged = function(this, value)
-							timer.Create("nutCfgSend"..k, delay, 1, function()
+							timer.Create("ixCfgSend"..k, delay, 1, function()
 								if (IsValid(row)) then
 									if (form == "VectorColor") then
 										local vector = Vector(value)

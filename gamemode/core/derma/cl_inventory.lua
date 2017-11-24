@@ -27,7 +27,7 @@ function PANEL:Init()
 end
 
 function PANEL:PaintOver(w, h)
-	local itemTable = nut.item.instances[self.itemID]
+	local itemTable = ix.item.instances[self.itemID]
 
 	if (self.waiting and self.waiting > CurTime()) then
 		local wait = (self.waiting - CurTime()) / self.waitingTime
@@ -66,7 +66,7 @@ function PANEL:isWaiting()
 	end
 end
 
-vgui.Register("nutItemIcon", PANEL, "SpawnIcon")
+vgui.Register("ixItemIcon", PANEL, "SpawnIcon")
 
 PANEL = {}
 	DEFINE_BASECLASS("DFrame")
@@ -108,8 +108,8 @@ PANEL = {}
 		local iconSize = self.iconSize
 
 		if (inventory.slots) then
-			if (IsValid(nut.gui.inv1) and nut.gui.inv1.childPanels and inventory != LocalPlayer():GetChar():GetInv()) then
-				table.insert(nut.gui.inv1.childPanels, self)
+			if (IsValid(ix.gui.inv1) and ix.gui.inv1.childPanels and inventory != LocalPlayer():GetChar():GetInv()) then
+				table.insert(ix.gui.inv1.childPanels, self)
 			end
 
 			self.invID = inventory:GetID()
@@ -120,7 +120,7 @@ PANEL = {}
 				for y, data in pairs(items) do
 					if (!data.id) then continue end
 
-					local item = nut.item.instances[data.id]
+					local item = ix.item.instances[data.id]
 
 					if (item and !IsValid(self.panels[item.id])) then
 						local icon = self:AddIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height, item.skin or 0)
@@ -132,7 +132,7 @@ PANEL = {}
 								icon:SetToolTip(newTooltip)
 							else
 								icon:SetToolTip(
-									Format(nut.config.itemFormat,
+									Format(ix.config.itemFormat,
 									item.GetName and item:GetName() or L(item.name), item:GetDescription() or "")
 								)
 							end
@@ -233,7 +233,7 @@ PANEL = {}
 	local activePanels = {}
 	function PANEL:PaintOver(w, h)
 		local iconSize = self.iconSize
-		local item = nut.item.held
+		local item = ix.item.held
 		
 		if (IsValid(item)) then
 			local mouseX, mouseY = self:LocalCursorPos()
@@ -290,8 +290,8 @@ PANEL = {}
 	end
 	
 	function PANEL:OnTransfer(oldX, oldY, x, y, oldInventory, noSend)
-		local inventory = nut.item.inventories[oldInventory.invID]
-		local inventory2 = nut.item.inventories[self.invID]
+		local inventory = ix.item.inventories[oldInventory.invID]
+		local inventory2 = ix.item.inventories[self.invID]
 		local item
 		
 		if (inventory) then
@@ -301,7 +301,7 @@ PANEL = {}
 				return false
 			end
 
-			if (hook.Run("CanItemBeTransfered", item, nut.item.inventories[oldInventory.invID], nut.item.inventories[self.invID]) == false) then
+			if (hook.Run("CanItemBeTransfered", item, ix.item.inventories[oldInventory.invID], ix.item.inventories[self.invID]) == false) then
 				return false, "notAllowed"
 			end
 		
@@ -335,7 +335,7 @@ PANEL = {}
 		h = h or 1
 		
 		if (self.slots[x] and self.slots[x][y]) then
-			local panel = self:Add("nutItemIcon")
+			local panel = self:Add("ixItemIcon")
 			panel:SetSize(w * iconSize, h * iconSize)
 			panel:SetZPos(999)
 			panel:InvalidateLayout(true)
@@ -346,7 +346,7 @@ PANEL = {}
 			panel.gridW = w
 			panel.gridH = h
 
-			local inventory = nut.item.inventories[self.invID]
+			local inventory = ix.item.inventories[self.invID]
 
 			if (!inventory) then
 				return
@@ -474,21 +474,21 @@ PANEL = {}
 						this:DragMousePress(code)
 						this:MouseCapture(true)
 
-						nut.item.held = this
+						ix.item.held = this
 					end
 				elseif (code == MOUSE_RIGHT and this.doRightClick) then
 					this:doRightClick()
 				end
 			end
 			panel.OnMouseReleased = function(this, code)
-				if (code == MOUSE_LEFT and nut.item.held == this) then
+				if (code == MOUSE_LEFT and ix.item.held == this) then
 					local data = this.dropPos
 
 					this:DragMouseRelease(code)
 					this:MouseCapture(false)
 					this:SetZPos(99)
 
-					nut.item.held = nil
+					ix.item.held = nil
 					
 					if (table.Count(activePanels) == 0) then
 						local item = this.itemTable
@@ -681,26 +681,26 @@ PANEL = {}
 			return panel
 		end
 	end
-vgui.Register("nutInventory", PANEL, "DFrame")
+vgui.Register("ixInventory", PANEL, "DFrame")
 
-hook.Add("CreateMenuButtons", "nutInventory", function(tabs)
+hook.Add("CreateMenuButtons", "ixInventory", function(tabs)
 	if (hook.Run("CanPlayerViewInventory") != false) then
 		tabs["inv"] = function(panel)
-			nut.gui.inv1 = panel:Add("nutInventory")
-			nut.gui.inv1.childPanels = {}
+			ix.gui.inv1 = panel:Add("ixInventory")
+			ix.gui.inv1.childPanels = {}
 
 			local inventory = LocalPlayer():GetChar():GetInv()
 
 			if (inventory) then
-				nut.gui.inv1:SetInventory(inventory)
+				ix.gui.inv1:SetInventory(inventory)
 			end
-			nut.gui.inv1:SetPos(panel:GetPos())
+			ix.gui.inv1:SetPos(panel:GetPos())
 		end
 	end
 end)
 
-hook.Add("PostRenderVGUI", "nutInvHelper", function()
-	local pnl = nut.gui.inv1
+hook.Add("PostRenderVGUI", "ixInvHelper", function()
+	local pnl = ix.gui.inv1
 
 	hook.Run("PostDrawInventory", pnl)
 end)

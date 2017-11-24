@@ -4,8 +4,8 @@ PLUGIN.description = "Adds on to the no-clip mode to prevent instrusion."
 
 if (CLIENT) then
 	-- Create a setting to see if the player will teleport back after noclipping.
-	NUT_CVAR_OBSTPBACK = CreateClientConVar("nut_obstpback", 0, true, true)
-	NUT_CVAR_ADMINESP = CreateClientConVar("nut_obsesp", 1, true, true)
+	IX_CVAR_OBSTPBACK = CreateClientConVar("ix_obstpback", 0, true, true)
+	IX_CVAR_ADMINESP = CreateClientConVar("ix_obsesp", 1, true, true)
 
 	local dimDistance = 1024
 	local aimLength = 128
@@ -14,7 +14,7 @@ if (CLIENT) then
 	function PLUGIN:HUDPaint()
 		client = LocalPlayer()
 		
-		if (client:IsAdmin() and client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle() and NUT_CVAR_ADMINESP:GetBool()) then
+		if (client:IsAdmin() and client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle() and IX_CVAR_ADMINESP:GetBool()) then
 			scrW, scrH = ScrW(), ScrH()
 
 			for k, v in ipairs(player.GetAll()) do
@@ -35,7 +35,7 @@ if (CLIENT) then
 				local aimAlpha = (1 - factor * 1.5) * 80
 
 				surface.SetDrawColor(teamColor.r, teamColor.g, teamColor.b, alpha)
-				surface.SetFont("nutGenericFont")
+				surface.SetFont("ixGenericFont")
 
 				local text = v:Name()
 				local textWidth, textHeight = surface.GetTextSize(text)
@@ -45,7 +45,7 @@ if (CLIENT) then
 				
 
 				-- we can assume that if we're using cheap blur, we'd want to save some fps here
-				if ((NUT_CVAR_CHEAP and !NUT_CVAR_CHEAP:GetBool())) then
+				if ((IX_CVAR_CHEAP and !IX_CVAR_CHEAP:GetBool())) then
 					local data = {}
 					data.start = client:EyePos()
 					data.endpos = v:EyePos()
@@ -67,7 +67,7 @@ if (CLIENT) then
 				surface.SetDrawColor(teamColor.r * 1.6, teamColor.g * 1.6, teamColor.b * 1.6, alpha)
 				surface.DrawRect(x - barWidth / 2, y - size - textHeight / 2, barWidth, barHeight)
 
-				nut.util.DrawText(text, x, y - size, ColorAlpha(teamColor, alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, nil, alpha)
+				ix.util.DrawText(text, x, y - size, ColorAlpha(teamColor, alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, nil, alpha)
 			end
 		end
 	end
@@ -76,19 +76,19 @@ if (CLIENT) then
 		if (LocalPlayer():IsAdmin()) then
 			local buttonESP = menu:AddCheck(L"toggleESP", function(panel, state)
 				if (state) then
-					RunConsoleCommand("nut_obsesp", "1")
+					RunConsoleCommand("ix_obsesp", "1")
 				else
-					RunConsoleCommand("nut_obsesp", "0")
+					RunConsoleCommand("ix_obsesp", "0")
 				end
-			end, NUT_CVAR_ADMINESP:GetBool())
+			end, IX_CVAR_ADMINESP:GetBool())
 		
 			local buttonTP = menu:AddCheck(L"toggleObserverTP", function(panel, state)
 				if (state) then
-					RunConsoleCommand("nut_obstpback", "1")
+					RunConsoleCommand("ix_obstpback", "1")
 				else
-					RunConsoleCommand("nut_obstpback", "0")
+					RunConsoleCommand("ix_obstpback", "0")
 				end
-			end, NUT_CVAR_OBSTPBACK:GetBool())
+			end, IX_CVAR_OBSTPBACK:GetBool())
 
 			menu:AddSpacer()
 		end
@@ -104,11 +104,11 @@ if (CLIENT) then
 		end
 	end
 else
-	nut.log.AddType("observerEnter", function(client, ...)
+	ix.log.AddType("observerEnter", function(client, ...)
 		return string.format("%s is now in observer.", client:Name())
 	end)
 
-	nut.log.AddType("observerExit", function(client, ...)
+	ix.log.AddType("observerExit", function(client, ...)
 		return string.format("%s is no longer in observer.", client:Name())
 	end)
 
@@ -118,7 +118,7 @@ else
 			-- Check if they are entering noclip.
 			if (state) then
 				-- Store their old position and looking		 at angle.
-				client.nutObsData = {client:GetPos(), client:EyeAngles()}
+				client.ixObsData = {client:GetPos(), client:EyeAngles()}
 				-- Hide them so they are not visible.
 				client:SetNoDraw(true)
 				client:SetNotSolid(true)
@@ -130,10 +130,10 @@ else
 				client:SetNoTarget(true)
 				hook.Run("OnPlayerObserve", client, state)
 			else
-				if (client.nutObsData) then
+				if (client.ixObsData) then
 					-- Move they player back if they want.
-					if (client:GetInfoNum("nut_obstpback", 0) > 0) then
-						local position, angles = client.nutObsData[1], client.nutObsData[2]
+					if (client:GetInfoNum("ix_obstpback", 0) > 0) then
+						local position, angles = client.ixObsData[1], client.ixObsData[2]
 
 						-- Do it the next frame since the player can not be moved right now.
 						timer.Simple(0, function()
@@ -145,7 +145,7 @@ else
 					end
 
 					-- Delete the old data.
-					client.nutObsData = nil
+					client.ixObsData = nil
 				end
 
 				-- Make the player visible again.
@@ -164,9 +164,9 @@ else
 
 	function PLUGIN:OnPlayerObserve(client, state)
 		if (state) then
-			nut.log.Add(client, "observerEnter")
+			ix.log.Add(client, "observerEnter")
 		else
-			nut.log.Add(client, "observerExit")
+			ix.log.Add(client, "observerExit")
 		end
 	end
 end

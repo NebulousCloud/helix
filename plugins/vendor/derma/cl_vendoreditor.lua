@@ -1,9 +1,9 @@
 local PANEL = {}
 	function PANEL:Init()
-		local entity = nut.gui.vendor.entity
+		local entity = ix.gui.vendor.entity
 
 		self:SetSize(320, 480)
-		self:MoveLeftOf(nut.gui.vendor, 8)
+		self:MoveLeftOf(ix.gui.vendor, 8)
 		self:MakePopup()
 		self:CenterVertical()
 		self:SetTitle(L"vendorEditor")
@@ -91,7 +91,7 @@ local PANEL = {}
 			if (this.noSend) then
 				this.noSend = nil
 			else
-				timer.Create("nutVendorScale", 1, 1, function()
+				timer.Create("ixVendorScale", 1, 1, function()
 					if (IsValid(self) and IsValid(self.sellScale)) then
 						value = self.sellScale:GetValue()
 
@@ -109,14 +109,14 @@ local PANEL = {}
 		self.faction:SetTextColor(color_white)
 		self.faction:DockMargin(0, 4, 0, 0)
 		self.faction.DoClick = function(this)
-			if (IsValid(nut.gui.editorFaction)) then
-				nut.gui.editorFaction:Remove()
+			if (IsValid(ix.gui.editorFaction)) then
+				ix.gui.editorFaction:Remove()
 			end
 
-			nut.gui.editorFaction = vgui.Create("nutVendorFactionEditor")
-			nut.gui.editorFaction.updateVendor = self.updateVendor
-			nut.gui.editorFaction.entity = entity
-			nut.gui.editorFaction:Setup()
+			ix.gui.editorFaction = vgui.Create("ixVendorFactionEditor")
+			ix.gui.editorFaction.updateVendor = self.updateVendor
+			ix.gui.editorFaction.entity = entity
+			ix.gui.editorFaction:Setup()
 		end
 
 		local menu
@@ -161,7 +161,7 @@ local PANEL = {}
 					self:updateVendor("mode", {uniqueID, VENDOR_SELLONLY})
 				end):SetImage("icon16/cog_add.png")
 
-				local itemTable = nut.item.list[uniqueID]
+				local itemTable = ix.item.list[uniqueID]
 
 				-- Set the price of the item.
 				menu:AddOption(L"price", function()
@@ -205,7 +205,7 @@ local PANEL = {}
 
 		self.lines = {}
 
-		for k, v in SortedPairs(nut.item.list) do
+		for k, v in SortedPairs(ix.item.list) do
 			local mode = entity.items[k] and entity.items[k][VENDOR_MODE]
 			local current, max = entity:GetStock(k)
 			local panel = self.items:AddLine(v.GetName and v:GetName() or L(v.name), mode and L(VENDOR_TEXT[mode]) or L"none", entity:GetPrice(k), max and current.."/"..max or "-")
@@ -216,16 +216,16 @@ local PANEL = {}
 	end
 
 	function PANEL:OnRemove()
-		if (IsValid(nut.gui.vendor)) then
-			nut.gui.vendor:Remove()
+		if (IsValid(ix.gui.vendor)) then
+			ix.gui.vendor:Remove()
 		end
 
-		if (IsValid(nut.gui.editorFaction)) then
-			nut.gui.editorFaction:Remove()
+		if (IsValid(ix.gui.editorFaction)) then
+			ix.gui.editorFaction:Remove()
 		end
 	end
 
 	function PANEL:updateVendor(key, value)
 		netstream.Start("vendorEdit", key, value)
 	end
-vgui.Register("nutVendorEditor", PANEL, "DFrame")
+vgui.Register("ixVendorEditor", PANEL, "DFrame")

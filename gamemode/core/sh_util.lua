@@ -1,7 +1,7 @@
 -- Includes a file from the prefix.
-function nut.util.Include(fileName, state)
+function ix.util.Include(fileName, state)
 	if (!fileName) then
-		error("[NutScript] No file name specified for including.")
+		error("[Helix] No file name specified for including.")
 	end
 
 	-- Only include server-side if we're on the server.
@@ -26,9 +26,9 @@ function nut.util.Include(fileName, state)
 end
 
 -- Include files based off the prefix within a directory.
-function nut.util.IncludeDir(directory, fromLua)
-	-- By default, we include relatively to NutScript.
-	local baseDir = "nutscript"
+function ix.util.IncludeDir(directory, fromLua)
+	-- By default, we include relatively to Helix.
+	local baseDir = "helix"
 
 	-- If we're in a schema, include relative to the schema.
 	if (Schema and Schema.folder and Schema.loading) then
@@ -40,12 +40,12 @@ function nut.util.IncludeDir(directory, fromLua)
 	-- Find all of the files within the directory.
 	for k, v in ipairs(file.Find((fromLua and "" or baseDir)..directory.."/*.lua", "LUA")) do
 		-- Include the file from the prefix.
-		nut.util.Include(directory.."/"..v)
+		ix.util.Include(directory.."/"..v)
 	end
 end
 
 -- Returns the address:port of the server.
-function nut.util.GetAddress()
+function ix.util.GetAddress()
 	local address = tonumber(GetConVarString("hostip"))
 
 	if (!address) then
@@ -61,7 +61,7 @@ function nut.util.GetAddress()
 end
 
 -- Returns a table of admin players
-function nut.util.GetAdmins(isSuper)
+function ix.util.GetAdmins(isSuper)
 	local admins = {}
 
 	for k, v in ipairs(player.GetAll()) do
@@ -80,16 +80,16 @@ function nut.util.GetAdmins(isSuper)
 end
 
 -- Returns a single cached copy of a material or creates it if it doesn't exist.
-function nut.util.GetMaterial(materialPath)
+function ix.util.GetMaterial(materialPath)
 	-- Cache the material.
-	nut.util.cachedMaterials = nut.util.cachedMaterials or {}
-	nut.util.cachedMaterials[materialPath] = nut.util.cachedMaterials[materialPath] or Material(materialPath)
+	ix.util.cachedMaterials = ix.util.cachedMaterials or {}
+	ix.util.cachedMaterials[materialPath] = ix.util.cachedMaterials[materialPath] or Material(materialPath)
 
-	return nut.util.cachedMaterials[materialPath]
+	return ix.util.cachedMaterials[materialPath]
 end
 
 -- Finds a player by matching their name or steam id.
-function nut.util.FindPlayer(identifier, allowPatterns)
+function ix.util.FindPlayer(identifier, allowPatterns)
 	if (string.find(identifier, "STEAM_(%d+):(%d+):(%d+)")) then
 		return player.GetBySteamID(identifier)
 	end
@@ -99,14 +99,14 @@ function nut.util.FindPlayer(identifier, allowPatterns)
 	end
 
 	for k, v in ipairs(player.GetAll()) do
-		if (nut.util.StringMatches(v:Name(), identifier)) then
+		if (ix.util.StringMatches(v:Name(), identifier)) then
 			return v
 		end
 	end
 end
 
 -- Returns whether or a not a string matches.
-function nut.util.StringMatches(a, b)
+function ix.util.StringMatches(a, b)
 	if (a and b) then
 		local a2, b2 = a:lower(), b:lower()
 
@@ -124,8 +124,8 @@ end
 
 -- Returns a string that has the items in the format string replaced with the input.
 -- You can also pass in a table with regular indices to replace them in order
--- Example: nut.util.FormatStringNamed("Hello, my name is {name}.", {name = "Bobby"})
-function nut.util.FormatStringNamed(format, ...)
+-- Example: ix.util.FormatStringNamed("Hello, my name is {name}.", {name = "Bobby"})
+function ix.util.FormatStringNamed(format, ...)
 	local arguments = {...}
 	local bArray = false -- Whether or not the input has numerical indices or named ones
 	local input
@@ -148,7 +148,7 @@ function nut.util.FormatStringNamed(format, ...)
 	return result
 end
 
-function nut.util.GridVector(vec, gridSize)
+function ix.util.GridVector(vec, gridSize)
 	if (gridSize <= 0) then
 		gridSize = 1
 	end
@@ -162,7 +162,7 @@ function nut.util.GridVector(vec, gridSize)
 	return vec
 end
 
-function nut.util.GetAllChar()
+function ix.util.GetAllChar()
 	local charTable = {}
 
 	for k, v in ipairs(player.GetAll()) do
@@ -175,18 +175,18 @@ function nut.util.GetAllChar()
 end
 
 if (CLIENT) then
-	NUT_CVAR_CHEAP = CreateClientConVar("nut_cheapblur", 0, true)
+	IX_CVAR_CHEAP = CreateClientConVar("ix_cheapblur", 0, true)
 
-	local useCheapBlur = NUT_CVAR_CHEAP:GetBool()
-	local blur = nut.util.GetMaterial("pp/blurscreen")
+	local useCheapBlur = IX_CVAR_CHEAP:GetBool()
+	local blur = ix.util.GetMaterial("pp/blurscreen")
 	local surface = surface
 
-	cvars.AddChangeCallback("nut_cheapblur", function(name, old, new)
+	cvars.AddChangeCallback("ix_cheapblur", function(name, old, new)
 		useCheapBlur = (tonumber(new) or 0) > 0
 	end)
 
 	-- Draws a blurred material over the screen, to blur things.
-	function nut.util.DrawBlur(panel, amount, passes)
+	function ix.util.DrawBlur(panel, amount, passes)
 		-- Intensity of the blur.
 		amount = amount or 5
 
@@ -211,7 +211,7 @@ if (CLIENT) then
 		end
 	end
 
-	function nut.util.DrawBlurAt(x, y, w, h, amount, passes)
+	function ix.util.DrawBlurAt(x, y, w, h, amount, passes)
 		-- Intensity of the blur.
 		amount = amount or 5
 
@@ -237,12 +237,12 @@ if (CLIENT) then
 	end
 
 	-- Draw a text with a shadow.
-	function nut.util.DrawText(text, x, y, color, alignX, alignY, font, alpha)
+	function ix.util.DrawText(text, x, y, color, alignX, alignY, font, alpha)
 		color = color or color_white
 
 		return draw.TextShadow({
 			text = text,
-			font = font or "nutGenericFont",
+			font = font or "ixGenericFont",
 			pos = {x, y},
 			color = color,
 			xalign = alignX or 0,
@@ -251,8 +251,8 @@ if (CLIENT) then
 	end
 
 	-- Wraps text so it does not pass a certain width.
-	function nut.util.WrapText(text, width, font)
-		font = font or "nutChatFont"
+	function ix.util.WrapText(text, width, font)
+		font = font or "ixChatFont"
 		surface.SetFont(font)
 
 		local exploded = string.Explode("%s", text, true)
@@ -313,18 +313,18 @@ if (CLIENT) then
 	-- arc drawing functions
 	-- by bobbleheadbob
 	-- https://facepunch.com/showthread.php?t=1558060
-	function nut.util.DrawArc(cx, cy, radius, thickness, startang, endang, roughness, color)
+	function ix.util.DrawArc(cx, cy, radius, thickness, startang, endang, roughness, color)
 		surface.SetDrawColor(color)
-		nut.util.DrawPrecachedArc(nut.util.PrecacheArc(cx, cy, radius, thickness, startang, endang, roughness))
+		ix.util.DrawPrecachedArc(ix.util.PrecacheArc(cx, cy, radius, thickness, startang, endang, roughness))
 	end
 
-	function nut.util.DrawPrecachedArc(arc) -- Draw a premade arc.
+	function ix.util.DrawPrecachedArc(arc) -- Draw a premade arc.
 		for k,v in ipairs(arc) do
 			surface.DrawPoly(v)
 		end
 	end
 
-	function nut.util.PrecacheArc(cx, cy, radius, thickness, startang, endang, roughness)
+	function ix.util.PrecacheArc(cx, cy, radius, thickness, startang, endang, roughness)
 		local quadarc = {}
 		
 		-- Correct start/end ang
@@ -388,7 +388,7 @@ if (CLIENT) then
 	local LAST_WIDTH = ScrW()
 	local LAST_HEIGHT = ScrH()
 
-	timer.Create("nutResolutionMonitor", 1, 0, function()
+	timer.Create("ixResolutionMonitor", 1, 0, function()
 		local scrW, scrH = ScrW(), ScrH()
 
 		if (scrW != LAST_WIDTH or scrH != LAST_HEIGHT) then
@@ -464,7 +464,7 @@ do
 	if (SERVER) then
 		-- Returns the door's slave entity.
 		function entityMeta:GetDoorPartner()
-			return self.nutPartner
+			return self.ixPartner
 		end
 
 		-- Returns whether door/button is locked or not.
@@ -495,7 +495,7 @@ do
 	else
 		-- Returns the door's slave entity.
 		function entityMeta:GetDoorPartner()
-			local owner = self:GetOwner() or self.nutDoorOwner
+			local owner = self:GetOwner() or self.ixDoorOwner
 
 			if (IsValid(owner) and owner:IsDoor()) then
 				return owner
@@ -503,7 +503,7 @@ do
 
 			for k, v in ipairs(ents.FindByClass("prop_door_rotating")) do
 				if (v:GetOwner() == self) then
-					self.nutDoorOwner = v
+					self.ixDoorOwner = v
 
 					return v
 				end
@@ -517,8 +517,8 @@ do
 			return
 		end
 
-		if (IsValid(self.nutDummy)) then
-			self.nutDummy:Remove()
+		if (IsValid(self.ixDummy)) then
+			self.ixDummy:Remove()
 		end
 
 		velocity = velocity or VectorRand()*100
@@ -547,7 +547,7 @@ do
 				self:SetNoDraw(false)
 				self:DrawShadow(true)
 				self.ignoreUse = false
-				self.nutIsMuted = false
+				self.ixIsMuted = false
 
 				for k, v in ipairs(ents.GetAll()) do
 					if (v:GetParent() == self) then
@@ -570,8 +570,8 @@ do
 		self:SetNoDraw(true)
 		self:DrawShadow(false)
 		self.ignoreUse = true
-		self.nutDummy = dummy
-		self.nutIsMuted = true
+		self.ixDummy = dummy
+		self.ixIsMuted = true
 		self:DeleteOnRemove(dummy)
 
 		for k, v in ipairs(self:GetBodyGroups()) do
@@ -595,7 +595,7 @@ do
 		local uniqueID2 = "doorOpener"..self:EntIndex()
 
 		timer.Create(uniqueID2, 1, 0, function()
-			if (IsValid(self) and IsValid(self.nutDummy)) then
+			if (IsValid(self) and IsValid(self.ixDummy)) then
 				self:Fire("open")
 			else
 				timer.Remove(uniqueID2)
@@ -632,7 +632,7 @@ do
 	FCAP_USE_ONGROUND = 0x00000100
 	FCAP_USE_IN_RADIUS = 0x00000200
 
-	function nut.util.IsUseableEntity(pEntity, requiredCaps)
+	function ix.util.IsUseableEntity(pEntity, requiredCaps)
 		if (IsValid(pEntity)) then
 			local caps = pEntity:ObjectCaps()
 
@@ -666,7 +666,7 @@ do
 		local NUM_TANGENTS = 8
 		local tangents = {0, 1, 0.57735026919, 0.3639702342, 0.267949192431, 0.1763269807, -0.1763269807, -0.267949192431}
 
-		function nut.util.FindUseEntity(player, origin, forward)
+		function ix.util.FindUseEntity(player, origin, forward)
 			local tr
 			local up = forward:Up()
 			-- Search for objects in a sphere (tests for entities that are not solid, yet still useable)
@@ -711,7 +711,7 @@ do
 
 				pObject = tr.Entity
 
-				local bUsable = nut.util.IsUseableEntity(pObject, 0)
+				local bUsable = ix.util.IsUseableEntity(pObject, 0)
 
 				while (IsValid(pObject) and !bUsable and pObject:GetMoveParent()) do
 					pObject = pObject:GetMoveParent()
@@ -738,7 +738,7 @@ do
 			-- check ground entity first
 			-- if you've got a useable ground entity, then shrink the cone of this search to 45 degrees
 			-- otherwise, search out in a 90 degree cone (hemisphere)
-			if (IsValid(player:GetGroundEntity()) and nut.util.IsUseableEntity(player:GetGroundEntity(), FCAP_USE_ONGROUND)) then
+			if (IsValid(player:GetGroundEntity()) and ix.util.IsUseableEntity(player:GetGroundEntity(), FCAP_USE_ONGROUND)) then
 				pNearest = player:GetGroundEntity()
 			end
 
@@ -749,7 +749,7 @@ do
 			end
 
 			for k, v in pairs(ents.FindInSphere( searchCenter, 80 )) do
-				if (!nut.util.IsUseableEntity(v, FCAP_USE_IN_RADIUS)) then
+				if (!ix.util.IsUseableEntity(v, FCAP_USE_IN_RADIUS)) then
 					continue
 				end
 
@@ -798,18 +798,18 @@ do
 	ALWAYS_RAISED = {}
 	ALWAYS_RAISED["weapon_physgun"] = true
 	ALWAYS_RAISED["gmod_tool"] = true
-	ALWAYS_RAISED["nut_poshelper"] = true
+	ALWAYS_RAISED["ix_poshelper"] = true
 
 	-- Returns how many seconds the player has played on the server in total.
 	if (SERVER) then
 		function playerMeta:GetPlayTime()
-			return self.nutPlayTime + (RealTime() - (self.nutJoinTime or RealTime()))
+			return self.ixPlayTime + (RealTime() - (self.ixJoinTime or RealTime()))
 		end
 	else
-		nut.playTime = nut.playTime or 0
+		ix.playTime = ix.playTime or 0
 
 		function playerMeta:GetPlayTime()
-			return nut.playTime + (RealTime() - nut.joinTime or 0)
+			return ix.playTime + (RealTime() - ix.joinTime or 0)
 		end
 	end
 
@@ -840,7 +840,7 @@ do
 		end
 
 		-- Let the config decide before actual results.
-		if (nut.config.Get("wepAlwaysRaised")) then
+		if (ix.config.Get("wepAlwaysRaised")) then
 			return true
 		end
 
@@ -859,7 +859,7 @@ do
 	function playerMeta:IsFemale()
 		local model = self:GetModel():lower()
 
-		return model:find("female") or model:find("alyx") or model:find("mossman") or nut.anim.GetModelClass(model) == "citizen_female"
+		return model:find("female") or model:find("alyx") or model:find("mossman") or ix.anim.GetModelClass(model) == "citizen_female"
 	end
 
 	-- Returns a good position in front of the player for an entity.
@@ -893,7 +893,7 @@ do
 
 	-- Do an action that requires the player to stare at something.
 	function playerMeta:DoStaredAction(entity, callback, time, onCancel, distance)
-		local uniqueID = "nutStare"..self:UniqueID()
+		local uniqueID = "ixStare"..self:UniqueID()
 		local data = {}
 		data.filter = self
 
@@ -955,19 +955,19 @@ do
 		-- The callback will be ran right away if the time is zero.
 		function playerMeta:PerformInteraction(time, entity, callback)
 			if (time > 0) then
-				self.nutInteractionTarget = entity
-				self.nutInteractionCharacter = self:GetCharacter():GetID()
+				self.ixInteractionTarget = entity
+				self.ixInteractionCharacter = self:GetCharacter():GetID()
 
-				timer.Create("nutCharacterInteraction" .. self:SteamID(), time, 1, function()
-					if (IsValid(self) and IsValid(entity) and IsValid(self.nutInteractionTarget) and
-						self.nutInteractionCharacter == self:GetCharacter():GetID()) then
+				timer.Create("ixCharacterInteraction" .. self:SteamID(), time, 1, function()
+					if (IsValid(self) and IsValid(entity) and IsValid(self.ixInteractionTarget) and
+						self.ixInteractionCharacter == self:GetCharacter():GetID()) then
 						local data = {}
 							data.start = self:GetShootPos()
 							data.endpos = data.start + self:GetAimVector() * 96
 							data.filter = self
 						local traceEntity = util.TraceLine(data).Entity
 
-						if (IsValid(traceEntity) and traceEntity == self.nutInteractionTarget) then
+						if (IsValid(traceEntity) and traceEntity == self.ixInteractionTarget) then
 							callback(self)
 						end
 					end
@@ -993,7 +993,7 @@ do
 			finishTime = finishTime or (startTime + time)
 
 			if (text == false) then
-				timer.Remove("nutAct"..self:UniqueID())
+				timer.Remove("ixAct"..self:UniqueID())
 				netstream.Start(self, "actBar")
 
 				return
@@ -1005,7 +1005,7 @@ do
 			-- If we have provided a callback, run it delayed.
 			if (callback) then
 				-- Create a timer that runs once with a delay.
-				timer.Create("nutAct"..self:UniqueID(), time, 1, function()
+				timer.Create("ixAct"..self:UniqueID(), time, 1, function()
 					-- Call the callback if the player is still valid.
 					if (IsValid(self)) then
 						callback(self)
@@ -1018,8 +1018,8 @@ do
 		function playerMeta:RequestString(title, subTitle, callback, default)
 			local time = math.floor(os.time())
 
-			self.nutStrReqs = self.nutStrReqs or {}
-			self.nutStrReqs[time] = callback
+			self.ixStrReqs = self.ixStrReqs or {}
+			self.ixStrReqs[time] = callback
 
 			netstream.Start(self, "strReq", time, title, subTitle, default)
 		end
@@ -1033,10 +1033,10 @@ do
 					self:SetLocalVar("restrictNoMsg", true)
 				end
 
-				self.nutRestrictWeps = self.nutRestrictWeps or {}
+				self.ixRestrictWeps = self.ixRestrictWeps or {}
 
 				for k, v in ipairs(self:GetWeapons()) do
-					self.nutRestrictWeps[#self.nutRestrictWeps + 1] = v:GetClass()
+					self.ixRestrictWeps[#self.ixRestrictWeps + 1] = v:GetClass()
 					v:Remove()
 				end
 
@@ -1048,12 +1048,12 @@ do
 					self:SetLocalVar("restrictNoMsg")
 				end
 
-				if (self.nutRestrictWeps) then
-					for k, v in ipairs(self.nutRestrictWeps) do
+				if (self.ixRestrictWeps) then
+					for k, v in ipairs(self.ixRestrictWeps) do
 						self:Give(v)
 					end
 
-					self.nutRestrictWeps = nil
+					self.ixRestrictWeps = nil
 				end
 
 				hook.Run("OnPlayerUnRestricted", self)
@@ -1063,7 +1063,7 @@ do
 
 	-- Player ragdoll utility stuff.
 	do
-		function nut.util.FindEmptySpace(entity, filter, spacing, size, height, tolerance)
+		function ix.util.FindEmptySpace(entity, filter, spacing, size, height, tolerance)
 			spacing = spacing or 32
 			size = size or 3
 			height = height or 36
@@ -1156,8 +1156,8 @@ do
 			getUpGrace = getUpGrace or time or 5
 
 			if (state) then
-				if (IsValid(self.nutRagdoll)) then
-					self.nutRagdoll:Remove()
+				if (IsValid(self.ixRagdoll)) then
+					self.ixRagdoll:Remove()
 				end
 
 				local entity = self:CreateServerRagdoll()
@@ -1167,7 +1167,7 @@ do
 						self:SetLocalVar("blur", nil)
 						self:SetLocalVar("ragdoll", nil)
 
-						if (!entity.nutNoReset) then
+						if (!entity.ixNoReset) then
 							self:SetPos(entity:GetPos())
 						end
 
@@ -1175,15 +1175,15 @@ do
 						self:SetNotSolid(false)
 						self:Freeze(false)
 						self:SetMoveType(MOVETYPE_WALK)
-						self:SetLocalVelocity(IsValid(entity) and entity.nutLastVelocity or vector_origin)
+						self:SetLocalVelocity(IsValid(entity) and entity.ixLastVelocity or vector_origin)
 					end
 
-					if (IsValid(self) and !entity.nutIgnoreDelete) then
-						if (entity.nutWeapons) then
-							for k, v in ipairs(entity.nutWeapons) do
+					if (IsValid(self) and !entity.ixIgnoreDelete) then
+						if (entity.ixWeapons) then
+							for k, v in ipairs(entity.ixWeapons) do
 								self:Give(v)
-								if (entity.nutAmmo) then
-									for k2, v2 in ipairs(entity.nutAmmo) do
+								if (entity.ixAmmo) then
+									for k2, v2 in ipairs(entity.ixAmmo) do
 										if v == v2[1] then
 											self:SetAmmo(v2[2], tostring(k2))
 										end
@@ -1199,7 +1199,7 @@ do
 							entity:DropToFloor()
 							self:SetPos(entity:GetPos() + Vector(0, 0, 16))
 
-							local positions = nut.util.FindEmptySpace(self, {entity, self})
+							local positions = ix.util.FindEmptySpace(self, {entity, self})
 
 							for k, v in ipairs(positions) do
 								self:SetPos(v)
@@ -1213,29 +1213,29 @@ do
 				end)
 
 				self:SetLocalVar("blur", 25)
-				self.nutRagdoll = entity
+				self.ixRagdoll = entity
 
-				entity.nutWeapons = {}
-				entity.nutAmmo = {}
-				entity.nutPlayer = self
+				entity.ixWeapons = {}
+				entity.ixAmmo = {}
+				entity.ixPlayer = self
 
 				if (getUpGrace) then
-					entity.nutGrace = CurTime() + getUpGrace
+					entity.ixGrace = CurTime() + getUpGrace
 				end
 
 				if (time and time > 0) then
-					entity.nutStart = CurTime()
-					entity.nutFinish = entity.nutStart + time
+					entity.ixStart = CurTime()
+					entity.ixFinish = entity.ixStart + time
 
-					self:SetAction("@wakingUp", nil, nil, entity.nutStart, entity.nutFinish)
+					self:SetAction("@wakingUp", nil, nil, entity.ixStart, entity.ixFinish)
 				end
 
 				for k, v in ipairs(self:GetWeapons()) do
-					entity.nutWeapons[#entity.nutWeapons + 1] = v:GetClass()
+					entity.ixWeapons[#entity.ixWeapons + 1] = v:GetClass()
 					local clip = v:Clip1()
 					local reserve = self:GetAmmoCount(v:GetPrimaryAmmoType())
 					local ammo = clip + reserve
-					entity.nutAmmo[v:GetPrimaryAmmoType()] = {v:GetClass(), ammo}
+					entity.ixAmmo[v:GetPrimaryAmmoType()] = {v:GetClass(), ammo}
 				end
 
 				self:GodDisable()
@@ -1246,25 +1246,25 @@ do
 
 				if (time) then
 					local time2 = time
-					local uniqueID = "nutUnRagdoll"..self:SteamID()
+					local uniqueID = "ixUnRagdoll"..self:SteamID()
 
 					timer.Create(uniqueID, 0.33, 0, function()
 						if (IsValid(entity) and IsValid(self)) then
 							local velocity = entity:GetVelocity()
-							entity.nutLastVelocity = velocity
+							entity.ixLastVelocity = velocity
 
 							self:SetPos(entity:GetPos())
 
 							if (velocity:Length2D() >= 8) then
-								if (!entity.nutPausing) then
+								if (!entity.ixPausing) then
 									self:SetAction()
-									entity.nutPausing = true
+									entity.ixPausing = true
 								end
 
 								return
-							elseif (entity.nutPausing) then
+							elseif (entity.ixPausing) then
 								self:SetAction("@wakingUp", time)
-								entity.nutPausing = false
+								entity.ixPausing = false
 							end
 
 							time = time - 0.33
@@ -1280,8 +1280,8 @@ do
 
 				self:SetLocalVar("ragdoll", entity:EntIndex())
 				hook.Run("OnCharFallover", self, entity, true)
-			elseif (IsValid(self.nutRagdoll)) then
-				self.nutRagdoll:Remove()
+			elseif (IsValid(self.ixRagdoll)) then
+				self.ixRagdoll:Remove()
 
 				hook.Run("OnCharFallover", self, entity, false)
 			end
@@ -1292,7 +1292,7 @@ end
 -- Time related stuff.
 do
 	-- Gets the current time in the UTC time-zone.
-	function nut.util.GetUTCTime()
+	function ix.util.GetUTCTime()
 		local date = os.date("!*t")
 		local localDate = os.date("*t")
 		localDate.isdst = false
@@ -1313,7 +1313,7 @@ do
 	-- Gets the amount of seconds from a given formatted string.
 	-- Example: 5y2d7w = 5 years, 2 days, and 7 weeks.
 	-- If just given a minute, it is assumed minutes.
-	function nut.util.GetStringTime(text)
+	function ix.util.GetStringTime(text)
 		local minutes = tonumber(text)
 
 		if (minutes) then
@@ -1402,7 +1402,7 @@ if (system.IsLinux()) then
 		return (f:Size() - 44) / (f_SampleDepth(f) / 8 * f_SampleRate(f) * f_Channels(f))
 	end
 
-	nutSoundDuration = nutSoundDuration or SoundDuration
+	ixSoundDuration = ixSoundDuration or SoundDuration
 
 	function SoundDuration(str)
 		local path, gamedir = GetSoundPath(str)
@@ -1417,7 +1417,7 @@ if (system.IsLinux()) then
 		elseif (f_IsWAV(f)) then
 			ret = f_Duration(f)
 		else
-			ret = nutSoundDuration(str)
+			ret = ixSoundDuration(str)
 		end
 
 		f:Close()
@@ -1429,7 +1429,7 @@ end
 local ADJUST_SOUND = SoundDuration("npc/metropolice/pain1.wav") > 0 and "" or "../../hl2/sound/"
 
 -- Emits sounds one after the other from an entity.
-function nut.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
+function ix.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
 	-- Let there be a delay before any sound is played.
 	delay = delay or 0
 	spacing = spacing or 0.1

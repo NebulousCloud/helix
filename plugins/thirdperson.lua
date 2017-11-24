@@ -3,16 +3,16 @@ PLUGIN.name = "New Fancy Third Person"
 PLUGIN.author = "Black Tea"
 PLUGIN.description = "Third Person plugin."
 
-nut.config.Add("thirdperson", false, "Allow Thirdperson in the server.", nil, {
+ix.config.Add("thirdperson", false, "Allow Thirdperson in the server.", nil, {
 	category = "server"
 })
 
 if (CLIENT) then
-	local NUT_CVAR_THIRDPERSON = CreateClientConVar("nut_tp_enabled", "0", true)
-	local NUT_CVAR_TP_CLASSIC = CreateClientConVar("nut_tp_classic", "0", true)
-	local NUT_CVAR_TP_VERT = CreateClientConVar("nut_tp_vertical", 10, true)
-	local NUT_CVAR_TP_HORI = CreateClientConVar("nut_tp_horizontal", 0, true)
-	local NUT_CVAR_TP_DIST = CreateClientConVar("nut_tp_distance", 50, true)
+	local IX_CVAR_THIRDPERSON = CreateClientConVar("ix_tp_enabled", "0", true)
+	local IX_CVAR_TP_CLASSIC = CreateClientConVar("ix_tp_classic", "0", true)
+	local IX_CVAR_TP_VERT = CreateClientConVar("ix_tp_vertical", 10, true)
+	local IX_CVAR_TP_HORI = CreateClientConVar("ix_tp_horizontal", 0, true)
+	local IX_CVAR_TP_DIST = CreateClientConVar("ix_tp_distance", 50, true)
 
 	local PANEL = {}
 
@@ -37,7 +37,7 @@ if (CLIENT) then
 		cfg:SetMin(0)				 -- Set the minimum number you can slide to
 		cfg:SetMax(30)				-- Set the maximum number you can slide to
 		cfg:SetDecimals(0)			 -- Decimal places - zero for whole number
-		cfg:SetConVar("nut_tp_vertical") -- Changes the ConVar when you slide
+		cfg:SetConVar("ix_tp_vertical") -- Changes the ConVar when you slide
 		cfg:DockMargin(10, 0, 0, 5)
 
 		local cfg = self.list:Add("DNumSlider")
@@ -46,7 +46,7 @@ if (CLIENT) then
 		cfg:SetMin(-30)				 -- Set the minimum number you can slide to
 		cfg:SetMax(30)				-- Set the maximum number you can slide to
 		cfg:SetDecimals(0)			 -- Decimal places - zero for whole number
-		cfg:SetConVar("nut_tp_horizontal") -- Changes the ConVar when you slide
+		cfg:SetConVar("ix_tp_horizontal") -- Changes the ConVar when you slide
 		cfg:DockMargin(10, 0, 0, 5)
 
 		local cfg = self.list:Add("DNumSlider")
@@ -55,42 +55,42 @@ if (CLIENT) then
 		cfg:SetMin(0)				 -- Set the minimum number you can slide to
 		cfg:SetMax(100)				-- Set the maximum number you can slide to
 		cfg:SetDecimals(0)			 -- Decimal places - zero for whole number
-		cfg:SetConVar("nut_tp_distance") -- Changes the ConVar when you slide
+		cfg:SetConVar("ix_tp_distance") -- Changes the ConVar when you slide
 		cfg:DockMargin(10, 0, 0, 5)
 
 	end
-	vgui.Register("nutTPConfig", PANEL, "DFrame")
+	vgui.Register("ixTPConfig", PANEL, "DFrame")
 
 	local function isAllowed()
-		return nut.config.Get("thirdperson")
+		return ix.config.Get("thirdperson")
 	end
 
 	function PLUGIN:SetupQuickMenu(menu)
 		if (isAllowed()) then
 			local button = menu:AddCheck(L"thirdpersonToggle", function(panel, state)
 				if (state) then
-					RunConsoleCommand("nut_tp_enabled", "1")
+					RunConsoleCommand("ix_tp_enabled", "1")
 				else
-					RunConsoleCommand("nut_tp_enabled", "0")
+					RunConsoleCommand("ix_tp_enabled", "0")
 				end
-			end, NUT_CVAR_THIRDPERSON:GetBool())
+			end, IX_CVAR_THIRDPERSON:GetBool())
 
 			function button:DoRightClick()
-				if (nut.gui.tpconfig and nut.gui.tpconfig:IsVisible()) then
-					nut.gui.tpconfig:Close()
-					nut.gui.tpconfig = nil
+				if (ix.gui.tpconfig and ix.gui.tpconfig:IsVisible()) then
+					ix.gui.tpconfig:Close()
+					ix.gui.tpconfig = nil
 				end
 
-				nut.gui.tpconfig = vgui.Create("nutTPConfig")
+				ix.gui.tpconfig = vgui.Create("ixTPConfig")
 			end
 
 			local button = menu:AddCheck(L"thirdpersonClassic", function(panel, state)
 				if (state) then
-					RunConsoleCommand("nut_tp_classic", "1")
+					RunConsoleCommand("ix_tp_classic", "1")
 				else
-					RunConsoleCommand("nut_tp_classic", "0")
+					RunConsoleCommand("ix_tp_classic", "0")
 				end
-			end, NUT_CVAR_TP_CLASSIC:GetBool())
+			end, IX_CVAR_TP_CLASSIC:GetBool())
 
 			menu:AddSpacer()
 		end
@@ -101,8 +101,8 @@ if (CLIENT) then
 	function playerMeta:CanOverrideView()
 		local entity = Entity(self:GetLocalVar("ragdoll", 0))
 		local ragdoll = self:GetRagdollEntity()
-		if ((nut.gui.char and !nut.gui.char:IsVisible()) and
-			NUT_CVAR_THIRDPERSON:GetBool() and
+		if ((ix.gui.char and !ix.gui.char:IsVisible()) and
+			IX_CVAR_THIRDPERSON:GetBool() and
 			!IsValid(self:GetVehicle()) and
 			isAllowed() and 
 			IsValid(self) and
@@ -132,10 +132,10 @@ if (CLIENT) then
 			view = {}
 			traceData = {}
 				traceData.start = 	client:GetPos() + client:GetViewOffset() + 
-									curAng:Up() * clmp(NUT_CVAR_TP_VERT:GetInt(), 0, maxValues.height) + 
-									curAng:Right() * clmp(NUT_CVAR_TP_HORI:GetInt(), -maxValues.horizontal, maxValues.horizontal) -
+									curAng:Up() * clmp(IX_CVAR_TP_VERT:GetInt(), 0, maxValues.height) + 
+									curAng:Right() * clmp(IX_CVAR_TP_HORI:GetInt(), -maxValues.horizontal, maxValues.horizontal) -
 									client:GetViewOffsetDucked()*.5 * crouchFactor
-				traceData.endpos = traceData.start - curAng:Forward() * clmp(NUT_CVAR_TP_DIST:GetInt(), 0, maxValues.distance)
+				traceData.endpos = traceData.start - curAng:Forward() * clmp(IX_CVAR_TP_DIST:GetInt(), 0, maxValues.distance)
 				traceData.filter = client
 			view.origin = util.TraceLine(traceData).HitPos
 			aimOrigin = view.origin
@@ -146,7 +146,7 @@ if (CLIENT) then
 				traceData2.endpos = aimOrigin + curAng:Forward() * 65535
 				traceData2.filter = client
 
-			if ((NUT_CVAR_TP_CLASSIC:GetBool() or owner:IsWepRaised() or 
+			if ((IX_CVAR_TP_CLASSIC:GetBool() or owner:IsWepRaised() or 
 				(owner:KeyDown(bit.bor(IN_FORWARD, IN_BACK, IN_MOVELEFT, IN_MOVERIGHT)) and owner:GetVelocity():Length() >= 10)) ) then
 				client:SetEyeAngles((util.TraceLine(traceData2).HitPos - client:GetShootPos()):Angle())
 			end

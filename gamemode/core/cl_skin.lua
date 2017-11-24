@@ -1,7 +1,7 @@
 local SKIN = {}
 	SKIN.fontFrame = "BudgetLabel"
-	SKIN.fontTab = "nutSmallFont"
-	SKIN.fontButton = "nutSmallFont"
+	SKIN.fontTab = "ixSmallFont"
+	SKIN.fontButton = "ixSmallFont"
 	SKIN.Colours = table.Copy(derma.SkinList.Default.Colours)
 	SKIN.Colours.Window.TitleActive = Color(0, 0, 0)
 	SKIN.Colours.Window.TitleInactive = Color(255, 255, 255)
@@ -12,15 +12,15 @@ local SKIN = {}
 	SKIN.Colours.Button.Disabled = Color(0, 0, 0, 100)
 
 	function SKIN:PaintFrame(panel)
-		nut.util.DrawBlur(panel, 10)
+		ix.util.DrawBlur(panel, 10)
 
 		surface.SetDrawColor(45, 45, 45, 200)
 		surface.DrawRect(0, 0, panel:GetWide(), panel:GetTall())
 
-		surface.SetDrawColor(nut.config.Get("color"))
+		surface.SetDrawColor(ix.config.Get("color"))
 		surface.DrawRect(0, 0, panel:GetWide(), 24)
 
-		surface.SetDrawColor(nut.config.Get("color"))
+		surface.SetDrawColor(ix.config.Get("color"))
 		surface.DrawOutlinedRect(0, 0, panel:GetWide(), panel:GetTall())
 
 	end
@@ -77,5 +77,5 @@ local SKIN = {}
 	function SKIN:PaintWindowMaximizeButton( panel, w, h )
 	end
 
-derma.DefineSkin("nutscript", "The base skin for the NutScript framework.", SKIN)
+derma.DefineSkin("helix", "The base skin for the Helix framework.", SKIN)
 derma.RefreshSkins()

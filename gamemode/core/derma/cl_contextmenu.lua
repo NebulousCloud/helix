@@ -239,7 +239,7 @@ function GM:OnContextMenuOpen()
 	if ( IsValid( g_ContextMenu ) && !g_ContextMenu:IsVisible() ) then
 		g_ContextMenu:Open()
 
-		vgui.Create("nutQuick")
+		vgui.Create("ixQuick")
 
 		menubar.ParentTo( g_ContextMenu )
 	end
@@ -253,8 +253,8 @@ function GM:OnContextMenuClose()
 		g_ContextMenu:Close()
 	end
 
-	if (IsValid(nut.gui.quick)) then
-		nut.gui.quick:Remove()
+	if (IsValid(ix.gui.quick)) then
+		ix.gui.quick:Remove()
 	end
 end
 

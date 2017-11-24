@@ -1,29 +1,29 @@
 local entityMeta = FindMetaTable("Entity")
 local playerMeta = FindMetaTable("Player")
 
-nut.net = nut.net or {}
-nut.net.globals = nut.net.globals or {}
+ix.net = ix.net or {}
+ix.net.globals = ix.net.globals or {}
 
 netstream.Hook("nVar", function(index, key, value)
-	nut.net[index] = nut.net[index] or {}
-	nut.net[index][key] = value
+	ix.net[index] = ix.net[index] or {}
+	ix.net[index][key] = value
 end)
 
 netstream.Hook("nDel", function(index)
-	nut.net[index] = nil
+	ix.net[index] = nil
 end)
 
 netstream.Hook("nLcl", function(key, value)
-	nut.net[LocalPlayer():EntIndex()] = nut.net[LocalPlayer():EntIndex()] or {}
-	nut.net[LocalPlayer():EntIndex()][key] = value
+	ix.net[LocalPlayer():EntIndex()] = ix.net[LocalPlayer():EntIndex()] or {}
+	ix.net[LocalPlayer():EntIndex()][key] = value
 end)
 
 netstream.Hook("gVar", function(key, value)
-	nut.net.globals[key] = value
+	ix.net.globals[key] = value
 end)
 
 function GetNetVar(key, default)
-	local value = nut.net.globals[key]
+	local value = ix.net.globals[key]
 
 	return value != nil and value or default
 end
@@ -31,8 +31,8 @@ end
 function entityMeta:GetNetVar(key, default)
 	local index = self:EntIndex()
 
-	if (nut.net[index] and nut.net[index][key] != nil) then
-		return nut.net[index][key]
+	if (ix.net[index] and ix.net[index][key] != nil) then
+		return ix.net[index][key]
 	end
 
 	return default

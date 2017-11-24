@@ -1,10 +1,10 @@
-nut.command = nut.command or {}
-nut.command.list = nut.command.list or {}
+ix.command = ix.command or {}
+ix.command.list = ix.command.list or {}
 
 local COMMAND_PREFIX = "/"
 
 -- Adds a new command to the list of commands.
-function nut.command.Add(command, data)
+function ix.command.Add(command, data)
 	data.name = string.gsub(command, "%s", "")
 	data.description = data.description or ""
 	data.syntax = data.syntax or "[none]"
@@ -89,19 +89,19 @@ function nut.command.Add(command, data)
 	if (alias) then
 		if (type(alias) == "table") then
 			for k, v in ipairs(alias) do
-				nut.command.list[v] = data
+				ix.command.list[v] = data
 			end
 		elseif (type(alias) == "string") then
-			nut.command.list[alias] = data
+			ix.command.list[alias] = data
 		end
 	end
 
-	nut.command.list[command] = data
+	ix.command.list[command] = data
 end
 
 -- Returns whether or not a player is allowed to run a certain command.
-function nut.command.HasAccess(client, command)
-	command = nut.command.list[command]
+function ix.command.HasAccess(client, command)
+	command = ix.command.list[command]
 
 	if (command) then
 		if (command.OnCheckAccess) then
@@ -115,7 +115,7 @@ function nut.command.HasAccess(client, command)
 end
 
 -- Gets a table of arguments from a string.
-function nut.command.ExtractArgs(text)
+function ix.command.ExtractArgs(text)
 	local skip = 0
 	local arguments = {}
 	local curString = ""
@@ -158,7 +158,7 @@ end
 -- When bSorted is true, the commands will be sorted by name. When bReorganize is true,
 -- it will move any exact match to the top of the array. When bRemoveDupes is true, it
 -- will remove any commands that have the same NAME.
-function nut.command.FindAll(identifier, bSorted, bReorganize, bRemoveDupes)
+function ix.command.FindAll(identifier, bSorted, bReorganize, bRemoveDupes)
 	local result = {}
 	local iterator = bSorted and SortedPairs or pairs
 	local fullMatch
@@ -167,7 +167,7 @@ function nut.command.FindAll(identifier, bSorted, bReorganize, bRemoveDupes)
 
 	if (identifier == "/") then
 		-- we don't simply copy because we need numeric indices
-		for k, v in iterator(nut.command.list) do
+		for k, v in iterator(ix.command.list) do
 			result[#result + 1] = v
 		end
 		
@@ -176,7 +176,7 @@ function nut.command.FindAll(identifier, bSorted, bReorganize, bRemoveDupes)
 		identifier = identifier:sub(2)
 	end
 
-	for k, v in iterator(nut.command.list) do
+	for k, v in iterator(ix.command.list) do
 		if (k:match(identifier)) then
 			local index = #result + 1
 			result[index] = v
@@ -209,8 +209,8 @@ end
 
 if (SERVER) then
 	-- Finds a player or gives an error notification.
-	function nut.command.FindPlayer(client, name)
-		local target = type(name) == "string" and nut.util.FindPlayer(name) or NULL
+	function ix.command.FindPlayer(client, name)
+		local target = type(name) == "string" and ix.util.FindPlayer(name) or NULL
 
 		if (IsValid(target)) then
 			return target
@@ -220,8 +220,8 @@ if (SERVER) then
 	end
 
 	-- Forces a player to run a command.
-	function nut.command.Run(client, command, arguments)
-		local command = nut.command.list[command]
+	function ix.command.Run(client, command, arguments)
+		local command = ix.command.list[command]
 
 		if (command) then
 			-- Run the command's callback and get the return.
@@ -244,13 +244,13 @@ if (SERVER) then
 			end
 
 			if (IsValid(client)) then
-				nut.log.Add(client, "command", COMMAND_PREFIX..command.name, arguments and table.concat(arguments, " "))
+				ix.log.Add(client, "command", COMMAND_PREFIX..command.name, arguments and table.concat(arguments, " "))
 			end
 		end
 	end
 
 	-- Add a function to parse a regular chat string.
-	function nut.command.Parse(client, text, realCommand, arguments)
+	function ix.command.Parse(client, text, realCommand, arguments)
 		if (realCommand or text:utf8sub(1, 1) == COMMAND_PREFIX) then
 			-- See if the string contains a command.
 
@@ -267,16 +267,16 @@ if (SERVER) then
 
 			match = match:lower()
 
-			local command = nut.command.list[match]
+			local command = ix.command.list[match]
 			-- We have a valid, registered command.
 			if (command) then
 				-- Get the arguments like a console command.
 				if (!arguments) then
-					arguments = nut.command.ExtractArgs(text:sub(#match + 3))
+					arguments = ix.command.ExtractArgs(text:sub(#match + 3))
 				end
 
 				-- Runs the actual command.
-				nut.command.Run(client, match, arguments)
+				ix.command.Run(client, match, arguments)
 			else
 				if (IsValid(client)) then
 					client:NotifyLocalized("cmdNoExist")
@@ -291,15 +291,15 @@ if (SERVER) then
 		return false
 	end
 
-	concommand.Add("nut", function(client, _, arguments)
+	concommand.Add("ix", function(client, _, arguments)
 		local command = arguments[1]
 		table.remove(arguments, 1)
 
-		nut.command.Parse(client, nil, command or "", arguments)
+		ix.command.Parse(client, nil, command or "", arguments)
 	end)
 
 	netstream.Hook("cmd", function(client, command, arguments)
-		if ((client.nutNextCmd or 0) < CurTime()) then
+		if ((client.ixNextCmd or 0) < CurTime()) then
 			local arguments2 = {}
 
 			for k, v in ipairs(arguments) do
@@ -308,12 +308,12 @@ if (SERVER) then
 				end
 			end
 
-			nut.command.Parse(client, nil, command, arguments2)
-			client.nutNextCmd = CurTime() + 0.2
+			ix.command.Parse(client, nil, command, arguments2)
+			client.ixNextCmd = CurTime() + 0.2
 		end
 	end)
 else
-	function nut.command.Send(command, ...)
+	function ix.command.Send(command, ...)
 		netstream.Start("cmd", command, {...})
 	end
 end

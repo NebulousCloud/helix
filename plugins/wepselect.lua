@@ -3,7 +3,7 @@ PLUGIN.author = "Chessnut"
 PLUGIN.description = "A replacement for the default weapon selection."
 
 if (SERVER) then
-	concommand.Add("nut_selectweapon", function(client, command, arguments)
+	concommand.Add("ix_selectweapon", function(client, command, arguments)
 		local index = tonumber(arguments[1]) or 1
 		local weapon = client:GetWeapons()[index]
 
@@ -43,7 +43,7 @@ else
 				end
 
 				local theta = (k - index) * 0.1
-				local color = ColorAlpha(k == self.index and nut.config.Get("color") or color_white, (255 - math.abs(theta * 3) * 255) * fraction)
+				local color = ColorAlpha(k == self.index and ix.config.Get("color") or color_white, (255 - math.abs(theta * 3) * 255) * fraction)
 				local lastY = 0
 				local shiftX = ScrW()*.02
 
@@ -59,7 +59,7 @@ else
 					end
 				end
 
-				surface.SetFont("nutSubTitleFont")
+				surface.SetFont("ixSubTitleFont")
 				local tx, ty = surface.GetTextSize(v:GetPrintName():upper())
 				local scale = (1 - math.abs(theta*2))
 
@@ -72,7 +72,7 @@ else
 				matrix:Scale(Vector(1, 1, 0) * scale)
 
 				cam.PushModelMatrix(matrix)
-					nut.util.DrawText(v:GetPrintName():upper(), 2, ty/2, color, 0, 1, "nutSubTitleFont")
+					ix.util.DrawText(v:GetPrintName():upper(), 2, ty/2, color, 0, 1, "ixSubTitleFont")
 				cam.PopModelMatrix()
 			end
 
@@ -95,13 +95,13 @@ else
 			local text = ""
 
 			if (instructions != nil and instructions:find("%S")) then
-				local color = nut.config.Get("color")
+				local color = ix.config.Get("color")
 
-				text = text.."<font=nutItemBoldFont><color="..color.r..","..color.g..","..color.b..">"..L("Instructions").."</font></color>\n"..instructions.."\n"
+				text = text.."<font=ixItemBoldFont><color="..color.r..","..color.g..","..color.b..">"..L("Instructions").."</font></color>\n"..instructions.."\n"
 			end
 
 			if (text != "") then
-				self.markup = markup.Parse("<font=nutItemDescFont>"..text, ScrW() * 0.3)
+				self.markup = markup.Parse("<font=ixItemDescFont>"..text, ScrW() * 0.3)
 				self.infoAlpha = 0
 			end
 
@@ -145,7 +145,7 @@ else
 			elseif (bind:find("attack") and pressed and self.alpha > 0) then
 				LocalPlayer():EmitSound(hook.Run("WeaponSelectSound", LocalPlayer():GetWeapons()[self.index]) or "HL2Player.Use")
 
-				RunConsoleCommand("nut_selectweapon", self.index)
+				RunConsoleCommand("ix_selectweapon", self.index)
 				self.alpha = 0
 
 				return true

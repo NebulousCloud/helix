@@ -1,5 +1,5 @@
-hook.Add("LoadFonts", "nutNoticeFont", function(font, genericFont)
-	surface.CreateFont("nutNoticeFont", {
+hook.Add("LoadFonts", "ixNoticeFont", function(font, genericFont)
+	surface.CreateFont("ixNoticeFont", {
 		font = genericFont,
 		size = 16,
 		weight = 500,
@@ -44,7 +44,7 @@ PANEL.pnlTypes = {
 function PANEL:Init()
 	self.type = 1
 	self.text = self:Add("DLabel")
-	self.text:SetFont("nutNoticeFont")
+	self.text:SetFont("ixNoticeFont")
 	self.text:SetContentAlignment(5)
 	self.text:SetTextColor(color_white)
 	self.text:SizeToContents()
@@ -69,7 +69,7 @@ function PANEL:SetFont(value)
 end
 
 function PANEL:Paint()
-	self.material = nut.util.GetMaterial(self.pnlTypes[self.type].icon)
+	self.material = ix.util.GetMaterial(self.pnlTypes[self.type].icon)
 
 	local col = self.pnlTypes[self.type].col
 	local mat = self.material
@@ -85,4 +85,4 @@ function PANEL:Paint()
 	end
 end
 
-vgui.Register("nutNoticeBar", PANEL, "DPanel")
+vgui.Register("ixNoticeBar", PANEL, "DPanel")

@@ -1,15 +1,15 @@
 local PANEL = {}
 	function PANEL:Init()
-		if (IsValid(nut.gui.charCreate)) then
-			nut.gui.charCreate:Remove()
+		if (IsValid(ix.gui.charCreate)) then
+			ix.gui.charCreate:Remove()
 		end
 
-		nut.gui.charCreate = self
+		ix.gui.charCreate = self
 
 		self:SetSize(ScrW() * 0.45, ScrH() * 0.55)
 		self:SetPos(ScrW() * 0.3, ScrH() * 0.3 + 16)
 
-		self.notice = self:Add("nutNoticeBar")
+		self.notice = self:Add("ixNoticeBar")
 		self.notice:SetType(4)
 		self.notice:SetText(L"charCreateTip")
 		self.notice:SetWide(self:GetWide())
@@ -21,7 +21,7 @@ local PANEL = {}
 	function PANEL:AddLabel(text)
 		local label = self:Add("DLabel")
 		label:SetPos(0, self.lastY)
-		label:SetFont("nutMenuButtonFont")
+		label:SetFont("ixMenuButtonFont")
 		label:SetText(L(text))
 		label:SizeToContents()
 		label:SetTextColor(color_white)
@@ -34,7 +34,7 @@ local PANEL = {}
 
 	function PANEL:AddTextBox()
 		local textBox = self:Add("DTextEntry")
-		textBox:SetFont("nutMenuButtonLightFont")
+		textBox:SetFont("ixMenuButtonLightFont")
 		textBox:SetWide(self:GetWide())
 		textBox:SetPos(0, self.lastY)
 		textBox:SetTall(36)
@@ -48,7 +48,7 @@ local PANEL = {}
 		self.faction = faction
 		self.payload.faction = self.faction
 		
-		for k, v in SortedPairsByMemberValue(nut.char.vars, "index") do
+		for k, v in SortedPairsByMemberValue(ix.char.vars, "index") do
 			if (!v.noDisplay and k != "__SortedIndex") then
 				if (v.shouldDisplay) then
 					if (v.shouldDisplay(self) == false) then
@@ -81,4 +81,4 @@ local PANEL = {}
 			end
 		end
 	end
-vgui.Register("nutCharCreate", PANEL, "DScrollPanel")
+vgui.Register("ixCharCreate", PANEL, "DScrollPanel")

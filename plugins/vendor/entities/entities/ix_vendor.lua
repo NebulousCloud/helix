@@ -1,6 +1,6 @@
 ENT.Type = "anim"
 ENT.PrintName = "Vendor"
-ENT.Category = "NutScript"
+ENT.Category = "Helix"
 ENT.Spawnable = true
 ENT.AdminOnly = true
 ENT.isVendor = true
@@ -45,7 +45,7 @@ function ENT:CanAccess(client)
 	end
 
 	local allowed = false
-	local uniqueID = nut.faction.indices[client:Team()].uniqueID
+	local uniqueID = ix.faction.indices[client:Team()].uniqueID
 
 	if (self.factions and table.Count(self.factions) > 0) then
 		if (self.factions[uniqueID]) then
@@ -56,7 +56,7 @@ function ENT:CanAccess(client)
 	end
 
 	if (allowed and self.classes and table.Count(self.classes) > 0) then
-		local class = nut.class.list[client:GetChar():GetClass()]
+		local class = ix.class.list[client:GetChar():GetClass()]
 		local uniqueID = class and class.uniqueID
 
 		if (!self.classes[uniqueID]) then
@@ -74,7 +74,7 @@ function ENT:GetStock(uniqueID)
 end
 
 function ENT:GetPrice(uniqueID, selling)
-	local price = nut.item.list[uniqueID] and self.items[uniqueID] and self.items[uniqueID][VENDOR_PRICE] or nut.item.list[uniqueID].price or 0
+	local price = ix.item.list[uniqueID] and self.items[uniqueID] and self.items[uniqueID][VENDOR_PRICE] or ix.item.list[uniqueID].price or 0
 
 	if (selling) then
 		price = math.floor(price * (self.scale or 0.5))
@@ -86,7 +86,7 @@ end
 function ENT:CanSellToPlayer(client, uniqueID)
 	local data = self.items[uniqueID]
 
-	if (!data or !client:GetChar() or !nut.item.list[uniqueID]) then
+	if (!data or !client:GetChar() or !ix.item.list[uniqueID]) then
 		return false
 	end
 
@@ -108,7 +108,7 @@ end
 function ENT:CanBuyFromPlayer(client, uniqueID)
 	local data = self.items[uniqueID]
 
-	if (!data or !client:GetChar() or !nut.item.list[uniqueID]) then
+	if (!data or !client:GetChar() or !ix.item.list[uniqueID]) then
 		return false
 	end
 
@@ -116,7 +116,7 @@ function ENT:CanBuyFromPlayer(client, uniqueID)
 		return false
 	end
 
-	if (!self:HasMoney(data[VENDOR_PRICE] or nut.item.list[uniqueID].price or 0)) then
+	if (!self:HasMoney(data[VENDOR_PRICE] or ix.item.list[uniqueID].price or 0)) then
 		return false
 	end
 
@@ -151,7 +151,7 @@ if (SERVER) then
 		angles.p = 0
 		angles.y = angles.y + 180
 
-		local entity = ents.Create("nut_vendor")
+		local entity = ents.Create("ix_vendor")
 		entity:SetPos(trace.HitPos)
 		entity:SetAngles(angles)
 		entity:Spawn()
@@ -198,7 +198,7 @@ if (SERVER) then
 			data[6] = self.classes
 		end
 
-		activator.nutVendor = self
+		activator.ixVendor = self
 		netstream.Start(activator, "vendorOpen", self:EntIndex(), unpack(data))
 	end
 
@@ -294,8 +294,8 @@ else
 	local TEXT_OFFSET = Vector(0, 0, 20)
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
-	local drawText = nut.util.DrawText
-	local configGet = nut.config.Get
+	local drawText = ix.util.DrawText
+	local configGet = ix.config.Get
 
 	ENT.DrawEntityInfo = true
 
@@ -307,7 +307,7 @@ else
 		drawText(self.GetNetVar(self, "name", "John Doe"), x, y, colorAlpha(configGet("color"), alpha), 1, 1, nil, alpha * 0.65)
 
 		if (desc) then
-			drawText(desc, x, y + 16, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+			drawText(desc, x, y + 16, colorAlpha(color_white, alpha), 1, 1, "ixSmallFont", alpha * 0.65)
 		end
 	end
 end

@@ -8,9 +8,9 @@ DOOR_TENANT = 2
 DOOR_GUEST = 1
 DOOR_NONE = 0
 
-nut.util.Include("sv_plugin.lua")
-nut.util.Include("cl_plugin.lua")
-nut.util.Include("sh_commands.lua")
+ix.util.Include("sv_plugin.lua")
+ix.util.Include("cl_plugin.lua")
+ix.util.Include("sh_commands.lua")
 
 do
 	local entityMeta = FindMetaTable("Entity")
@@ -22,7 +22,7 @@ do
 
 		access = access or DOOR_GUEST
 
-		local parent = self.nutParent
+		local parent = self.ixParent
 
 		if (IsValid(parent)) then
 			return parent:CheckDoorAccess(client, access)
@@ -32,7 +32,7 @@ do
 			return true
 		end
 
-		if (self.nutAccess and (self.nutAccess[client] or 0) >= access) then
+		if (self.ixAccess and (self.ixAccess[client] or 0) >= access) then
 			return true
 		end
 
@@ -43,11 +43,11 @@ do
 		function entityMeta:RemoveDoorAccessData()
 			-- Don't ask why. This happened with 60 player servers.
 			if (IsValid(self)) then
-				for k, v in pairs(self.nutAccess or {}) do
+				for k, v in pairs(self.ixAccess or {}) do
 					netstream.Start(k, "doorMenu")
 				end
 				
-				self.nutAccess = {}
+				self.ixAccess = {}
 				self:SetDTEntity(0, nil)
 			end
 		end
@@ -55,16 +55,16 @@ do
 end
 
 -- Configurations for door prices.
-nut.config.Add("doorCost", 10, "The price to purchase a door.", nil, {
+ix.config.Add("doorCost", 10, "The price to purchase a door.", nil, {
 	data = {min = 0, max = 500},
 	category = "dConfigName"
 })
-nut.config.Add("doorSellRatio", 0.5, "How much of the door price is returned when selling a door.", nil, {
+ix.config.Add("doorSellRatio", 0.5, "How much of the door price is returned when selling a door.", nil, {
 	form = "Float",
 	data = {min = 0, max = 1.0},
 	category = "dConfigName"
 })
-nut.config.Add("doorLockTime", 1, "How long it takes to (un)lock a door.", nil, {
+ix.config.Add("doorLockTime", 1, "How long it takes to (un)lock a door.", nil, {
 	form = "Float",
 	data = {min = 0, max = 10.0},
 	category = "dConfigName"

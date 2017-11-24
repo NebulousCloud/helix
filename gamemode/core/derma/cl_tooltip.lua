@@ -12,7 +12,7 @@ function PANEL:Init()
 	self:SetDrawOnTop( true )
 	self.DeleteContentsOnClose = false
 	self:SetText( "" )
-	self:SetFont( "nutToolTipText" )
+	self:SetFont( "ixToolTipText" )
 
 end
 
@@ -81,7 +81,7 @@ function PANEL:Paint( w, h )
 	self:PositionTooltip()
 
 	if (self.iconMode == TOOLTIP_ITEM) then
-		nut.util.DrawBlur(self, 10)
+		ix.util.DrawBlur(self, 10)
 		surface.SetDrawColor(55, 55, 55, 120)
 		surface.DrawRect(0, 0, w, h)
 		surface.SetDrawColor(255, 255, 255, 120)
@@ -104,7 +104,7 @@ function PANEL:OpenForPanel( panel )
 	end
 	
 	if (self.iconMode == TOOLTIP_ITEM) then
-		self.markupObject = nut.markup.parse(self:GetText(), itemWidth)
+		self.markupObject = ix.markup.parse(self:GetText(), itemWidth)
 		self:SetText("")
 		self:SetWide(math.max(itemWidth, 200) + 15)
 		self:SetHeight(self.markupObject:GetHeight() + 20)

@@ -32,7 +32,7 @@ PLAYER_HOLDTYPE_TRANSLATOR["knife"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["duel"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["bugbait"] = "normal"
 
-local getModelClass = nut.anim.GetModelClass
+local getModelClass = ix.anim.GetModelClass
 local IsValid = IsValid
 local string = string
 local type = type
@@ -45,12 +45,12 @@ function GM:TranslateActivity(client, act)
 	local class = getModelClass(model) or "player"
 	local weapon = client.GetActiveWeapon(client)
 	if (class == "player") then
-		if (!nut.config.Get("wepAlwaysRaised") and IsValid(weapon) and !client.IsWepRaised(client) and client.OnGround(client)) then
+		if (!ix.config.Get("wepAlwaysRaised") and IsValid(weapon) and !client.IsWepRaised(client) and client.OnGround(client)) then
 			if (string.find(model, "zombie")) then
-				local tree = nut.anim.zombie
+				local tree = ix.anim.zombie
 
 				if (string.find(model, "fast")) then
-					tree = nut.anim.fastZombie
+					tree = ix.anim.fastZombie
 				end
 
 				if (tree[act]) then
@@ -60,11 +60,11 @@ function GM:TranslateActivity(client, act)
 
 			local holdType = IsValid(weapon) and (weapon.HoldType or weapon.GetHoldType(weapon)) or "normal"
 
-			if (!nut.config.Get("wepAlwaysRaised") and IsValid(weapon) and !client.IsWepRaised(client) and client:OnGround()) then
+			if (!ix.config.Get("wepAlwaysRaised") and IsValid(weapon) and !client.IsWepRaised(client) and client:OnGround()) then
 				holdType = PLAYER_HOLDTYPE_TRANSLATOR[holdType] or "passive"
 			end
 
-			local tree = nut.anim.player[holdType]
+			local tree = ix.anim.player[holdType]
 
 			if (tree and tree[act]) then
 				if (type(tree[act]) == "string") then
@@ -80,7 +80,7 @@ function GM:TranslateActivity(client, act)
 		return self.BaseClass.TranslateActivity(self.BaseClass, client, act)
 	end
 
-	local tree = nut.anim[class]
+	local tree = ix.anim[class]
 
 	if (tree) then
 		local subClass = "normal"
@@ -140,7 +140,7 @@ function GM:TranslateActivity(client, act)
 end
 
 function GM:CanPlayerUseBusiness(client, uniqueID)
-	local itemTable = nut.item.list[uniqueID]
+	local itemTable = ix.item.list[uniqueID]
 
 	if (!client:GetChar()) then
 		return false
@@ -201,7 +201,7 @@ end
 
 function GM:DoAnimationEvent(client, event, data)
 	local model = client:GetModel():lower()
-	local class = nut.anim.GetModelClass(model)
+	local class = ix.anim.GetModelClass(model)
 
 	if (class == "player") then
 		return self.BaseClass:DoAnimationEvent(client, event, data)
@@ -212,7 +212,7 @@ function GM:DoAnimationEvent(client, event, data)
 			local holdType = weapon.HoldType or weapon:GetHoldType()
 			holdType = HOLDTYPE_TRANSLATOR[holdType] or holdType
 
-			local animation = nut.anim[class][holdType]
+			local animation = ix.anim[class][holdType]
 
 			if (event == PLAYERANIMEVENT_ATTACK_PRIMARY) then
 				client:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, animation.attack or ACT_GESTURE_RANGE_ATTACK_SMG1, true)
@@ -246,7 +246,7 @@ function GM:DoAnimationEvent(client, event, data)
 end
 
 function GM:EntityEmitSound(data)
-	if (data.Entity.nutIsMuted) then
+	if (data.Entity.ixIsMuted) then
 		return false
 	end
 end
@@ -265,11 +265,11 @@ function GM:CalcMainActivity(client, velocity)
 	local seqIdeal, seqOverride = self.BaseClass.CalcMainActivity(self.BaseClass, client, velocity)
 	--client.CalcSeqOverride is being -1 after this line.
 
-	if (client.nutForceSeq and client:GetSequence() != client.nutForceSeq) then
+	if (client.ixForceSeq and client:GetSequence() != client.ixForceSeq) then
 		client:SetCycle(0)
 	end
 
-	return seqIdeal, client.nutForceSeq or oldSeqOverride or client.CalcSeqOverride
+	return seqIdeal, client.ixForceSeq or oldSeqOverride or client.CalcSeqOverride
 end
 
 local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2
@@ -287,8 +287,8 @@ function GM:StartCommand(client, command)
 end
 
 function GM:OnCharVarChanged(char, varName, oldVar, newVar)
-	if (nut.char.varHooks[varName]) then
-		for k, v in pairs(nut.char.varHooks[varName]) do
+	if (ix.char.varHooks[varName]) then
+		for k, v in pairs(ix.char.varHooks[varName]) do
 			v(char, oldVar, newVar)
 		end
 	end
@@ -303,7 +303,7 @@ function GM:CanPlayerThrowPunch(client)
 end
 
 function GM:GetDefaultCharName(client, faction)
-	local info = nut.faction.indices[faction]
+	local info = ix.faction.indices[faction]
 
 	if (info and info.GetDefaultName) then
 		return info:GetDefaultName(client)
@@ -392,7 +392,7 @@ function GM:Move(client, moveData)
 		if (client:GetMoveType() == MOVETYPE_WALK and moveData:KeyDown(IN_WALK)) then
 			local mf, ms = 0, 0
 			local speed = client:GetWalkSpeed()
-			local ratio = nut.config.Get("walkRatio")
+			local ratio = ix.config.Get("walkRatio")
 
 			if (moveData:KeyDown(IN_FORWARD)) then
 				mf = ratio
@@ -420,7 +420,7 @@ function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 			end
 		end
 
-		local inventory = nut.item.inventories[itemObject:GetData("id")]
+		local inventory = ix.item.inventories[itemObject:GetData("id")]
 
 		if (inventory) then
 			for k, v in pairs(inventory:GetItems()) do
@@ -448,7 +448,7 @@ function GM:PreGamemodeLoaded()
 end
 
 function GM:PostGamemodeLoaded()
-	baseclass.Set("nut_character", nut.meta.character)
-	baseclass.Set("nut_inventory", nut.meta.inventory)
-	baseclass.Set("nut_item", nut.meta.item)
+	baseclass.Set("ix_character", ix.meta.character)
+	baseclass.Set("ix_inventory", ix.meta.inventory)
+	baseclass.Set("ix_item", ix.meta.item)
 end

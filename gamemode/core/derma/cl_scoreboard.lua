@@ -10,11 +10,11 @@ local PANEL = {}
 	end
 
 	function PANEL:Init()
-		if (IsValid(nut.gui.score)) then
-			nut.gui.score:Remove()
+		if (IsValid(ix.gui.score)) then
+			ix.gui.score:Remove()
 		end
 
-		nut.gui.score = self
+		ix.gui.score = self
 		self:Dock(FILL)
 
 		self.scroll = self:Add("DScrollPanel")
@@ -29,7 +29,7 @@ local PANEL = {}
 		self.slots = {}
 		self.i = {}
 
-		for k, v in ipairs(nut.faction.indices) do
+		for k, v in ipairs(ix.faction.indices) do
 			local color = team.GetColor(k)
 			local r, g, b = color.r, color.g, color.b
 
@@ -38,9 +38,9 @@ local PANEL = {}
 			list:SetTall(28)
 			list.Think = function(this)
 				for k2, v2 in ipairs(team.GetPlayers(k)) do
-					if (!IsValid(v2.nutScoreSlot) or v2.nutScoreSlot:GetParent() != this) then
-						if (IsValid(v2.nutPlayerSlot)) then
-							v2.nutPlayerSlot:SetParent(this)
+					if (!IsValid(v2.ixScoreSlot) or v2.ixScoreSlot:GetParent() != this) then
+						if (IsValid(v2.ixPlayerSlot)) then
+							v2.ixPlayerSlot:SetParent(this)
 						else
 							self:AddPlayer(v2, this)
 						end
@@ -52,7 +52,7 @@ local PANEL = {}
 			header:Dock(TOP)
 			header:SetText(L(v.name))
 			header:SetTextInset(3, 0)
-			header:SetFont("nutMediumFont")
+			header:SetFont("ixMediumFont")
 			header:SetTextColor(color_white)
 			header:SetExpensiveShadow(1, color_black)
 			header:SetTall(28)
@@ -101,9 +101,9 @@ local PANEL = {}
 		slot:DockMargin(0, 0, 0, 1)
 		slot.character = client:GetChar()
 
-		client.nutScoreSlot = slot
+		client.ixScoreSlot = slot
 
-		slot.model = slot:Add("nutSpawnIcon")
+		slot.model = slot:Add("ixSpawnIcon")
 		slot.model:SetModel(client:GetModel(), client:GetSkin())
 		slot.model:SetSize(64, 64)
 		slot.model.DoClick = function()
@@ -146,7 +146,7 @@ local PANEL = {}
 		slot.name:Dock(TOP)
 		slot.name:DockMargin(65, 0, 48, 0)
 		slot.name:SetTall(18)
-		slot.name:SetFont("nutGenericFont")
+		slot.name:SetFont("ixGenericFont")
 		slot.name:SetTextColor(color_white)
 		slot.name:SetExpensiveShadow(1, color_black)
 
@@ -159,7 +159,7 @@ local PANEL = {}
 				this:SetText(client:Ping())
 			end
 		end
-		slot.ping:SetFont("nutGenericFont")
+		slot.ping:SetFont("ixGenericFont")
 		slot.ping:SetContentAlignment(6)
 		slot.ping:SetTextColor(color_white)
 		slot.ping:SetTextInset(16, 0)
@@ -173,7 +173,7 @@ local PANEL = {}
 		slot.description:SetText(hook.Run("GetDisplayedDescription", client) or (client:GetChar() and client:GetChar():GetDescription()) or "")
 		slot.description:SetTextColor(color_white)
 		slot.description:SetExpensiveShadow(1, Color(0, 0, 0, 100))
-		slot.description:SetFont("nutSmallFont")
+		slot.description:SetFont("ixSmallFont")
 
 		local oldTeam = client:Team()
 
@@ -259,7 +259,7 @@ local PANEL = {}
 	end
 
 	function PANEL:Paint(w, h)
-		nut.util.DrawBlur(self, 10)
+		ix.util.DrawBlur(self, 10)
 
 		surface.SetDrawColor(30, 30, 30, 100)
 		surface.DrawRect(0, 0, w, h)
@@ -267,10 +267,10 @@ local PANEL = {}
 		surface.SetDrawColor(0, 0, 0, 150)
 		surface.DrawOutlinedRect(0, 0, w, h)
 	end
-vgui.Register("nutScoreboard", PANEL, "EditablePanel")
+vgui.Register("ixScoreboard", PANEL, "EditablePanel")
 
-hook.Add("CreateMenuButtons", "nutScoreboard", function(tabs)
+hook.Add("CreateMenuButtons", "ixScoreboard", function(tabs)
 	tabs["scoreboard"] = function(panel)
-		panel:Add("nutScoreboard")
+		panel:Add("ixScoreboard")
 	end
 end)

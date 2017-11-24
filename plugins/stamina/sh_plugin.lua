@@ -6,7 +6,7 @@ if (SERVER) then
 	function PLUGIN:PostPlayerLoadout(client)
 		client:SetLocalVar("stm", 100)
 
-		local uniqueID = "nutStam"..client:SteamID()
+		local uniqueID = "ixStam"..client:SteamID()
 		local offset = 0
 		local velocity
 		local length2D = 0
@@ -19,7 +19,7 @@ if (SERVER) then
 				if (client:GetMoveType() != MOVETYPE_NOCLIP and character) then
 					velocity = client:GetVelocity()
 					length2D = velocity:Length2D()
-					runSpeed = nut.config.Get("runSpeed") + character:GetAttrib("stm", 0)
+					runSpeed = ix.config.Get("runSpeed") + character:GetAttrib("stm", 0)
 
 					if (client:WaterLevel() > 1) then
 						runSpeed = runSpeed * 0.775
@@ -44,7 +44,7 @@ if (SERVER) then
 						client:SetLocalVar("stm", value)
 
 						if (value == 0 and !client:GetNetVar("brth", false)) then
-							client:SetRunSpeed(nut.config.Get("walkSpeed"))
+							client:SetRunSpeed(ix.config.Get("walkSpeed"))
 							client:SetNetVar("brth", true)
 
 							--character:UpdateAttrib("end", 0.1)
@@ -74,7 +74,7 @@ if (SERVER) then
 		self:SetLocalVar("stm", value)
 	end
 else
-	nut.bar.Add(function()
+	ix.bar.Add(function()
 		return LocalPlayer():GetLocalVar("stm", 0) / 100
 	end, Color(200, 200, 40), nil, "stm")
 end

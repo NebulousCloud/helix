@@ -2,7 +2,7 @@ AddCSLuaFile()
 
 ENT.Type = "anim"
 ENT.PrintName = "Shipment"
-ENT.Category = "NutScript"
+ENT.Category = "Helix"
 ENT.Spawnable = false
 ENT.ShowPlayerInteraction = true
 
@@ -31,9 +31,9 @@ if (SERVER) then
 	end
 
 	function ENT:Use(activator)
-		activator:PerformInteraction(nut.config.Get("itemPickupTime", 0.5), self, function(client)
+		activator:PerformInteraction(ix.config.Get("itemPickupTime", 0.5), self, function(client)
 			if (client:GetChar() and client:GetChar():GetID() == self:GetNetVar("owner", 0) and hook.Run("PlayerCanOpenShipment", client, self) != false) then
-				client.nutShipment = self
+				client.ixShipment = self
 				netstream.Start(client, "openShp", self, self.items)
 			end
 		end)
@@ -69,7 +69,7 @@ else
 
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
-	local drawText = nut.util.DrawText
+	local drawText = ix.util.DrawText
 	
 	local cir = {}
 	local cir2= setmetatable({},{__index=function(self,key)
@@ -119,8 +119,8 @@ else
 			surface.SetDrawColor(0, 0, 0, 200)
 			surface.DrawTexturedRect(-size/2, -size/2 - 10, size, size)
 	
-			nut.util.DrawText("k", 0, 0, color_white, 1, 4, "nutIconsBig")
-			nut.util.DrawText(delTime, 0, -10, color_white, 1, 5, "nutBigFont")
+			ix.util.DrawText("k", 0, 0, color_white, 1, 4, "ixIconsBig")
+			ix.util.DrawText(delTime, 0, -10, color_white, 1, 5, "ixBigFont")
 		end
 		
 		cam.Start3D2D(pos, ang, .15)
@@ -138,12 +138,12 @@ else
 	function ENT:OnDrawEntityInfo(alpha)
 		local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
 		local x, y = position.x, position.y
-		local owner = nut.char.loaded[self.GetNetVar(self, "owner", 0)]
+		local owner = ix.char.loaded[self.GetNetVar(self, "owner", 0)]
 
-		drawText(L"shipment", x, y, colorAlpha(nut.config.Get("color"), alpha), 1, 1, nil, alpha * 0.65)
+		drawText(L"shipment", x, y, colorAlpha(ix.config.Get("color"), alpha), 1, 1, nil, alpha * 0.65)
 
 		if (owner) then
-			drawText(L("shipmentDesc", owner.GetName(owner)), x, y + 16, colorAlpha(color_white, alpha), 1, 1, "nutSmallFont", alpha * 0.65)
+			drawText(L("shipmentDesc", owner.GetName(owner)), x, y + 16, colorAlpha(color_white, alpha), 1, 1, "ixSmallFont", alpha * 0.65)
 		end
 	end
 end

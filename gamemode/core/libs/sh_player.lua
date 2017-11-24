@@ -1,14 +1,14 @@
 local playerMeta = FindMetaTable("Player")
 
--- nutData information for the player.
+-- ixData information for the player.
 do
 	if (SERVER) then
 		function playerMeta:GetData(key, default)
 			if (key == true) then
-				return self.nutData
+				return self.ixData
 			end
 
-			local data = self.nutData and self.nutData[key]
+			local data = self.ixData and self.ixData[key]
 
 			if (data == nil) then
 				return default
@@ -18,7 +18,7 @@ do
 		end
 	else
 		function playerMeta:GetData(key, default)
-			local data = nut.localData and nut.localData[key]
+			local data = ix.localData and ix.localData[key]
 
 			if (data == nil) then
 				return default
@@ -27,14 +27,14 @@ do
 			end
 		end
 
-		netstream.Hook("nutDataSync", function(data, playTime)
-			nut.localData = data
-			nut.playTime = playTime
+		netstream.Hook("ixDataSync", function(data, playTime)
+			ix.localData = data
+			ix.playTime = playTime
 		end)
 
-		netstream.Hook("nutData", function(key, value)
-			nut.localData = nut.localData or {}
-			nut.localData[key] = value
+		netstream.Hook("ixData", function(key, value)
+			ix.localData = ix.localData or {}
+			ix.localData[key] = value
 		end)
 	end
 end
@@ -42,16 +42,16 @@ end
 -- Whitelist networking information here.
 do
 	function playerMeta:HasWhitelist(faction)
-		local data = nut.faction.indices[faction]
+		local data = ix.faction.indices[faction]
 
 		if (data) then
 			if (data.isDefault) then
 				return true
 			end
 
-			local nutData = self:GetData("whitelists", {})
+			local ixData = self:GetData("whitelists", {})
 
-			return nutData[Schema.folder] and nutData[Schema.folder][data.uniqueID] == true or false
+			return ixData[Schema.folder] and ixData[Schema.folder][data.uniqueID] == true or false
 		end
 
 		return false
@@ -76,7 +76,7 @@ do
 			local class = char:GetClass()
 
 			if (class) then
-				local classData = nut.class.list[class]
+				local classData = ix.class.list[class]
 
 				return classData
 			end

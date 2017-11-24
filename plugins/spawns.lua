@@ -11,7 +11,7 @@ function PLUGIN:PostPlayerLoadout(client)
 		local points
 		local className = ""
 
-		for k, v in ipairs(nut.faction.indices) do
+		for k, v in ipairs(ix.faction.indices) do
 			if (k == client:Team()) then
 				points = self.spawns[v.uniqueID] or {}
 
@@ -20,7 +20,7 @@ function PLUGIN:PostPlayerLoadout(client)
 		end
 
 		if (points) then
-			for k, v in ipairs(nut.class.list) do
+			for k, v in ipairs(ix.class.list) do
 				if (class == v.index) then
 					className = v.uniqueID
 
@@ -47,7 +47,7 @@ function PLUGIN:SaveSpawns()
 	self:SetData(self.spawns)
 end
 
-nut.command.Add("SpawnAdd", {
+ix.command.Add("SpawnAdd", {
 	description = "@cmdSpawnAdd",
 	adminOnly = true,
 	syntax = "<string faction> [string class]",
@@ -59,11 +59,11 @@ nut.command.Add("SpawnAdd", {
 		local info2
 
 		if (name) then
-			info = nut.faction.indices[name:lower()]
+			info = ix.faction.indices[name:lower()]
 
 			if (!info) then
-				for k, v in ipairs(nut.faction.indices) do
-					if (nut.util.StringMatches(v.uniqueID, name) or nut.util.StringMatches(L(v.name, client), name)) then
+				for k, v in ipairs(ix.faction.indices) do
+					if (ix.util.StringMatches(v.uniqueID, name) or ix.util.StringMatches(L(v.name, client), name)) then
 						faction = v.uniqueID
 						info = v
 
@@ -76,8 +76,8 @@ nut.command.Add("SpawnAdd", {
 				if (class and class != "") then
 					local found = false
 
-					for k, v in ipairs(nut.class.list) do
-						if (v.faction == info.index and (v.uniqueID:lower() == class:lower() or nut.util.StringMatches(L(v.name, client), class))) then
+					for k, v in ipairs(ix.class.list) do
+						if (v.faction == info.index and (v.uniqueID:lower() == class:lower() or ix.util.StringMatches(L(v.name, client), class))) then
 							class = v.uniqueID
 							info2 = v
 							found = true
@@ -116,7 +116,7 @@ nut.command.Add("SpawnAdd", {
 	end
 })
 
-nut.command.Add("SpawnRemove", {
+ix.command.Add("SpawnRemove", {
 	description = "@cmdSpawnRemove",
 	adminOnly = true,
 	syntax = "[number radius]",

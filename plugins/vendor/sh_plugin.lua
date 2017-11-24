@@ -29,7 +29,7 @@ if (SERVER) then
 
 	function PLUGIN:SaveData()
 		local data = {}
-			for k, v in ipairs(ents.FindByClass("nut_vendor")) do
+			for k, v in ipairs(ents.FindByClass("ix_vendor")) do
 				data[#data + 1] = {
 					name = v:GetNetVar("name"),
 					desc = v:GetNetVar("desc"),
@@ -49,7 +49,7 @@ if (SERVER) then
 
 	function PLUGIN:LoadData()
 		for k, v in ipairs(self:GetData() or {}) do
-			local entity = ents.Create("nut_vendor")
+			local entity = ents.Create("ix_vendor")
 			entity:SetPos(v.pos)
 			entity:SetAngles(v.angles)
 			entity:Spawn()
@@ -87,7 +87,7 @@ if (SERVER) then
 	end
 
 	netstream.Hook("vendorExit", function(client)
-		local entity = client.nutVendor
+		local entity = client.ixVendor
 
 		if (IsValid(entity)) then
 			for k, v in ipairs(entity.receivers) do
@@ -98,13 +98,13 @@ if (SERVER) then
 				end
 			end
 
-			client.nutVendor = nil
+			client.ixVendor = nil
 		end
 	end)
 
 	netstream.Hook("vendorEdit", function(client, key, data)
 		if (client:IsAdmin()) then
-			local entity = client.nutVendor
+			local entity = client.ixVendor
 
 			if (!IsValid(entity)) then
 				return
@@ -171,7 +171,7 @@ if (SERVER) then
 				netstream.Start(entity.receivers, "vendorEdit", key, data)
 				data = uniqueID
 			elseif (key == "faction") then
-				local faction = nut.faction.teams[data]
+				local faction = ix.faction.teams[data]
 
 				if (faction) then
 					entity.factions[data] = !entity.factions[data]
@@ -186,7 +186,7 @@ if (SERVER) then
 			elseif (key == "class") then
 				local class
 
-				for k, v in ipairs(nut.class.list) do
+				for k, v in ipairs(ix.class.list) do
 					if (v.uniqueID == data) then
 						class = v
 
@@ -242,14 +242,14 @@ if (SERVER) then
 	end)
 
 	netstream.Hook("vendorTrade", function(client, uniqueID, isSellingToVendor)
-		if ((client.nutVendorTry or 0) < CurTime()) then
-			client.nutVendorTry = CurTime() + 0.33
+		if ((client.ixVendorTry or 0) < CurTime()) then
+			client.ixVendorTry = CurTime() + 0.33
 		else
 			return
 		end
 
 		local found
-		local entity = client.nutVendor
+		local entity = client.ixVendor
 
 		if (!IsValid(entity) or client:GetPos():Distance(entity:GetPos()) > 192) then
 			return
@@ -287,7 +287,7 @@ if (SERVER) then
 				end
 
 				client:GetChar():GiveMoney(price)
-				client:NotifyLocalized("businessSell", name, nut.currency.Get(price))
+				client:NotifyLocalized("businessSell", name, ix.currency.Get(price))
 				entity:TakeMoney(price)
 				entity:AddStock(uniqueID)
 
@@ -304,15 +304,15 @@ if (SERVER) then
 					return client:NotifyLocalized("canNotAfford")
 				end
 
-				local name = L(nut.item.list[uniqueID].name, client)
+				local name = L(ix.item.list[uniqueID].name, client)
 			
 				client:GetChar():TakeMoney(price)
-				client:NotifyLocalized("businessPurchase", name, nut.currency.Get(price))
+				client:NotifyLocalized("businessPurchase", name, ix.currency.Get(price))
 				
 				entity:GiveMoney(price)
 
 				if (!client:GetChar():GetInv():Add(uniqueID)) then
-					nut.item.Spawn(uniqueID, client:GetItemDropPos())
+					ix.item.Spawn(uniqueID, client:GetItemDropPos())
 				else
 					netstream.Start(client, "vendorAdd", uniqueID)
 				end
@@ -346,16 +346,16 @@ else
 		entity.classes = classes
 		entity.scale = scale
 
-		nut.gui.vendor = vgui.Create("nutVendor")
-		nut.gui.vendor:Setup(entity)
+		ix.gui.vendor = vgui.Create("ixVendor")
+		ix.gui.vendor:Setup(entity)
 
 		if (LocalPlayer():IsAdmin() and messages) then
-			nut.gui.vendorEditor = vgui.Create("nutVendorEditor")
+			ix.gui.vendorEditor = vgui.Create("ixVendorEditor")
 		end
 	end)
 
 	netstream.Hook("vendorEdit", function(key, data)
-		local panel = nut.gui.vendor
+		local panel = ix.gui.vendor
 
 		if (!IsValid(panel)) then
 			return
@@ -413,8 +413,8 @@ else
 	end)
 
 	netstream.Hook("vendorEditFinish", function(key, data)
-		local panel = nut.gui.vendor
-		local editor = nut.gui.vendorEditor
+		local panel = ix.gui.vendor
+		local editor = ix.gui.vendorEditor
 
 		if (!IsValid(panel) or !IsValid(editor)) then
 			return
@@ -450,7 +450,7 @@ else
 		elseif (key == "faction") then
 			local uniqueID = data[1]
 			local state = data[2]
-			local panel = nut.gui.editorFaction
+			local panel = ix.gui.editorFaction
 
 			entity.factions[uniqueID] = state
 
@@ -460,7 +460,7 @@ else
 		elseif (key == "class") then
 			local uniqueID = data[1]
 			local state = data[2]
-			local panel = nut.gui.editorFaction
+			local panel = ix.gui.editorFaction
 
 			entity.classes[uniqueID] = state
 
@@ -478,7 +478,7 @@ else
 	end)
 
 	netstream.Hook("vendorMoney", function(value)
-		local panel = nut.gui.vendor
+		local panel = ix.gui.vendor
 
 		if (!IsValid(panel)) then
 			return
@@ -492,7 +492,7 @@ else
 
 		entity.money = value
 
-		local editor = nut.gui.vendorEditor
+		local editor = ix.gui.vendorEditor
 
 		if (IsValid(editor)) then
 			local useMoney = tonumber(value) != nil
@@ -504,7 +504,7 @@ else
 	end)
 
 	netstream.Hook("vendorStock", function(uniqueID, amount)
-		local panel = nut.gui.vendor
+		local panel = ix.gui.vendor
 
 		if (!IsValid(panel)) then
 			return
@@ -519,7 +519,7 @@ else
 		entity.items[uniqueID] = entity.items[uniqueID] or {}
 		entity.items[uniqueID][VENDOR_STOCK] = amount
 
-		local editor = nut.gui.vendorEditor
+		local editor = ix.gui.vendorEditor
 
 		if (IsValid(editor)) then
 			local _, max = entity:GetStock(uniqueID)
@@ -529,8 +529,8 @@ else
 	end)
 
 	netstream.Hook("vendorAdd", function(uniqueID)
-		if (IsValid(nut.gui.vendor)) then
-			nut.gui.vendor:addItem(uniqueID, "buying")
+		if (IsValid(ix.gui.vendor)) then
+			ix.gui.vendor:addItem(uniqueID, "buying")
 		end
 	end)
 end

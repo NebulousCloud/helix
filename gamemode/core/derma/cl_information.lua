@@ -29,7 +29,7 @@ function PANEL:Init()
 	self.canvas:DockMargin(4, 4, 4, 0)
 	self.canvas:Dock(FILL)
 
-	self:SetFont("nutMediumFont")
+	self:SetFont("ixMediumFont")
 	self:SetTitle("Info")
 	self:SetSubtitle("")
 	self:SetTitleBackground(nil)
@@ -73,11 +73,11 @@ function PANEL:Paint(width, height)
 	local titleBackground = self.titleBackground
 
 	if (!IsColor(titleBackground)) then
-		titleBackground = nut.config.Get("color")
+		titleBackground = ix.config.Get("color")
 	end
 
 	-- background
-	nut.util.DrawBlur(self, 10)
+	ix.util.DrawBlur(self, 10)
 
 	surface.SetDrawColor(30, 30, 30, 100)
 	surface.DrawRect(0, 0, width, height)
@@ -91,15 +91,15 @@ function PANEL:Paint(width, height)
 	surface.DrawOutlinedRect(0, 0, width, height)
 end
 
-vgui.Register("nutInfoPanel", PANEL, "EditablePanel")
+vgui.Register("ixInfoPanel", PANEL, "EditablePanel")
 
 PANEL = {}
 function PANEL:Init()
-	if (IsValid(nut.gui.info)) then
-		nut.gui.info:Remove()
+	if (IsValid(ix.gui.info)) then
+		ix.gui.info:Remove()
 	end
 
-	nut.gui.info = self
+	ix.gui.info = self
 
 	self:Dock(FILL)
 	self:Center()
@@ -108,7 +108,7 @@ function PANEL:Init()
 
 	if (!suppress or (suppress and !suppress.all)) then
 		if (!suppress or !suppress.model) then
-			self.model = self:Add("nutModelPanel")
+			self.model = self:Add("ixModelPanel")
 			self.model:SetWide(ScrW() * 0.25)
 			self.model:Dock(LEFT)
 			self.model:SetFOV(50)
@@ -126,7 +126,7 @@ function PANEL:Init()
 
 		if (!suppress or !suppress.time) then
 			self.time = self.info:Add("DLabel")
-			self.time:SetFont("nutMediumFont")
+			self.time:SetFont("ixMediumFont")
 			self.time:SetTall(28)
 			self.time:SetContentAlignment(5)
 			self.time:Dock(TOP)
@@ -136,13 +136,13 @@ function PANEL:Init()
 		end
 
 		if (!suppress or !suppress.basicInfo) then
-			self.basicInfo = self.info:Add("nutInfoPanel")
+			self.basicInfo = self.info:Add("ixInfoPanel")
 			self.basicInfo:SetTitle(L("you"))
 			self.basicInfo:Dock(TOP)
 
 			if (!suppress or !suppress.description) then
 				self.description = self.basicInfo:Add("DLabel")
-				self.description:SetFont("nutMediumFont")
+				self.description:SetFont("ixMediumFont")
 				self.description:SetTextColor(color_white)
 				self.description:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 				self.description:SetWide(self.info:GetWide())
@@ -151,13 +151,13 @@ function PANEL:Init()
 				self.description:SetMouseInputEnabled(true)
 				self.description:SetCursor("hand")
 				self.description.DoClick = function(this)
-					RunConsoleCommand("nut", "CharDesc")
+					RunConsoleCommand("ix", "CharDesc")
 				end
 			end
 
 			if (!suppress or !suppress.money) then
 				self.money = self.basicInfo:Add("DLabel")
-				self.money:SetFont("nutMediumFont")
+				self.money:SetFont("ixMediumFont")
 				self.money:SetTextColor(color_white)
 				self.money:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 				self.money:DockMargin(0, 8, 0, 0)
@@ -165,12 +165,12 @@ function PANEL:Init()
 			end
 
 			if (!suppress or !suppress.class) then
-				local class = nut.class.list[LocalPlayer():GetChar():GetClass()]
+				local class = ix.class.list[LocalPlayer():GetChar():GetClass()]
 				
 				if (class) then
 					self.class = self.basicInfo:Add("DLabel")
 					self.class:Dock(TOP)
-					self.class:SetFont("nutMediumFont")
+					self.class:SetFont("ixMediumFont")
 					self.class:SetTextColor(color_white)
 					self.class:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 				end
@@ -180,7 +180,7 @@ function PANEL:Init()
 		hook.Run("CreateCharInfoText", self)
 
 		if (!suppress or !suppress.attrib) then
-			self.attribInfo = self.info:Add("nutInfoPanel")
+			self.attribInfo = self.info:Add("ixInfoPanel")
 			self.attribInfo:SetTitle(L"attribs")
 			self.attribInfo:DockMargin(0, 16, 0, 0)
 			self.attribInfo:Dock(TOP)
@@ -208,17 +208,17 @@ function PANEL:Setup()
 		if (self.time) then
 			local format = "%A, %B %d, %Y. %X"
 			
-			self.time:SetText(os.date(format, nut.date.Get()))
+			self.time:SetText(os.date(format, ix.date.Get()))
 			self.time.Think = function(this)
 				if ((this.nextTime or 0) < CurTime()) then
-					this:SetText(os.date(format, nut.date.Get()))
+					this:SetText(os.date(format, ix.date.Get()))
 					this.nextTime = CurTime() + 0.5
 				end
 			end
 		end
 
 		if (self.class) then
-			local class = nut.class.list[char:GetClass()]
+			local class = ix.class.list[char:GetClass()]
 
 			-- don't show class label if the class is the same name as the faction
 			if (class and class.name != factionName) then
@@ -256,7 +256,7 @@ function PANEL:Setup()
 	if (self.attribInfo) then
 		local boost = char:GetBoosts()
 
-		for k, v in SortedPairsByMemberValue(nut.attribs.list, "name") do
+		for k, v in SortedPairsByMemberValue(ix.attribs.list, "name") do
 			local attribBoost = 0
 			if (boost[k]) then
 				for _, bValue in pairs(boost[k]) do
@@ -264,7 +264,7 @@ function PANEL:Setup()
 				end
 			end
 
-			local bar = self.attribInfo:Add("nutAttribBar")
+			local bar = self.attribInfo:Add("ixAttribBar")
 			bar:Dock(TOP)
 			bar:DockMargin(0, 0, 0, 3)
 
@@ -275,7 +275,7 @@ function PANEL:Setup()
 				bar:SetValue(attribValue)
 			end
 
-			local maximum = v.maxValue or nut.config.Get("maxAttribs", 30)
+			local maximum = v.maxValue or ix.config.Get("maxAttribs", 30)
 			bar:SetMax(maximum)
 			bar:SetReadOnly()
 			bar:SetText(Format("%s [%.1f/%.1f] (%.1f", L(v.name), attribValue, maximum, attribValue/maximum*100) .. "%)")
@@ -291,13 +291,13 @@ function PANEL:Setup()
 	hook.Run("OnCharInfoSetup", self)
 end
 
-vgui.Register("nutCharInfo", PANEL, "EditablePanel")
+vgui.Register("ixCharInfo", PANEL, "EditablePanel")
 
-hook.Add("CreateMenuButtons", "nutCharInfo", function(tabs)
+hook.Add("CreateMenuButtons", "ixCharInfo", function(tabs)
 	tabs["you"] = function(panel, button, menu)
 		menu.title:SetVisible(false)
 
-		local info = panel:Add("nutCharInfo")
+		local info = panel:Add("ixCharInfo")
 		info:Setup()
 	end
 end)

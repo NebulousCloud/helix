@@ -72,7 +72,7 @@ function ITEM:Equip(client)
 
 	for k, v in pairs(items) do
 		if (v.id != self.id) then
-			local itemTable = nut.item.instances[v.id]
+			local itemTable = ix.item.instances[v.id]
 			
 			if (!itemTable) then
 				client:NotifyLocalized("tellAdmin", "wid!xt")
@@ -116,13 +116,13 @@ function ITEM:Equip(client)
 		self:SetData("equip", true)
 
 		weapon:SetClip1(self:GetData("ammo", 0))
-		weapon.nutItem = self
+		weapon.ixItem = self
 
 		if (self.OnEquipWeapon) then
 			self:OnEquipWeapon(client, weapon)
 		end
 	else
-		print(Format("[Nutscript] Weapon %s does not exist!", self.class))
+		print(Format("[Helix] Weapon %s does not exist!", self.class))
 	end
 end
 
@@ -136,12 +136,12 @@ function ITEM:Unequip(client, bPlaySound, bRemoveItem)
 	end
 
 	if (IsValid(weapon)) then
-		weapon.nutItem = nil
+		weapon.ixItem = nil
 
 		self:SetData("ammo", weapon:Clip1())
 		client:StripWeapon(self.class)
 	else
-		print(Format("[Nutscript] Weapon %s does not exist!", self.class))
+		print(Format("[Helix] Weapon %s does not exist!", self.class))
 	end
 
 	if (bPlaySound) then
@@ -179,10 +179,10 @@ function ITEM:OnLoadout()
 			client:RemoveAmmo(weapon:Clip1(), weapon:GetPrimaryAmmoType())
 			client.carryWeapons[self.weaponCategory] = weapon
 
-			weapon.nutItem = self
+			weapon.ixItem = self
 			weapon:SetClip1(self:GetData("ammo", 0))
 		else
-			print(Format("[Nutscript] Weapon %s does not exist!", self.class))
+			print(Format("[Helix] Weapon %s does not exist!", self.class))
 		end
 	end
 end
@@ -196,7 +196,7 @@ function ITEM:OnSave()
 end
 
 function ITEM:OnRemoved()
-	local inventory = nut.item.inventories[self.invID]
+	local inventory = ix.item.inventories[self.invID]
 	local receiver = inventory.GetReceiver and inventory:GetReciever()
 
 	if (IsValid(receiver) and receiver:IsPlayer()) then
@@ -217,7 +217,7 @@ function ITEM:OnRegistered()
 	end
 end
 
-hook.Add("PlayerDeath", "nutStripClip", function(client)
+hook.Add("PlayerDeath", "ixStripClip", function(client)
 	client.carryWeapons = {}
 
 	for k, v in pairs(client:GetChar():GetInv():GetItems()) do

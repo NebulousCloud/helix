@@ -1,6 +1,6 @@
 local PANEL = {}
-	local gradient = nut.util.GetMaterial("vgui/gradient-u")
-	local gradient2 = nut.util.GetMaterial("vgui/gradient-d")
+	local gradient = ix.util.GetMaterial("vgui/gradient-u")
+	local gradient2 = ix.util.GetMaterial("vgui/gradient-d")
 
 	function PANEL:Init()
 		self:SetTall(20)
@@ -56,7 +56,7 @@ local PANEL = {}
 			local value = self.deltaValue / self.max
 
 			if (value > 0) then
-				local color = nut.config.Get("color")
+				local color = ix.config.Get("color")
 				local boostedValue = self.boostValue or 0
 				local add = 0
 
@@ -168,4 +168,4 @@ local PANEL = {}
 		self.sub:Remove()
 		self.add:Remove()
 	end
-vgui.Register("nutAttribBar", PANEL, "DPanel")
+vgui.Register("ixAttribBar", PANEL, "DPanel")

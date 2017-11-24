@@ -1,14 +1,14 @@
-local gradient = nut.util.GetMaterial("vgui/gradient-r.vtf")
+local gradient = ix.util.GetMaterial("vgui/gradient-r.vtf")
 local glow = surface.GetTextureID("particle/Particle_Glow_04_Additive")
 
 local PANEL = {}
 	function PANEL:Init()
 
-		if (IsValid(nut.gui.intro)) then
-			nut.gui.intro:Remove()
+		if (IsValid(ix.gui.intro)) then
+			ix.gui.intro:Remove()
 		end
 
-		nut.gui.intro = self
+		ix.gui.intro = self
 
 		self:SetSize(ScrW(), ScrH())
 		self:SetZPos(9999)
@@ -25,7 +25,7 @@ local PANEL = {}
 
 		self.authors = self:Add("DLabel")
 		self.authors:SetText(GAMEMODE.Author.." Presents")
-		self.authors:SetFont("nutIntroMediumFont")
+		self.authors:SetFont("ixIntroMediumFont")
 		self.authors:SetTextColor(color_white)
 		self.authors:SetAlpha(0)
 		self.authors:AlphaTo(255, 5, 1.5, function()
@@ -59,7 +59,7 @@ local PANEL = {}
 
 		self.name = self:Add("DLabel")
 		self.name:SetText(GAMEMODE.Name)
-		self.name:SetFont("nutIntroTitleFont")
+		self.name:SetFont("ixIntroTitleFont")
 		self.name:SetTextColor(color_white)
 		self.name:SizeToContents()
 		self.name:Center()
@@ -68,7 +68,7 @@ local PANEL = {}
 
 		self.schema = self:Add("DLabel")
 		self.schema:SetText(Schema.introName and L(Schema.introName) or L(Schema.name))
-		self.schema:SetFont("nutIntroBigFont")
+		self.schema:SetFont("ixIntroBigFont")
 		self.schema:SizeToContents()
 		self.schema:Center()
 		self.schema:MoveBelow(self.name, 10)
@@ -99,7 +99,7 @@ local PANEL = {}
 		self.info:SetTall(36)
 		self.info:DockMargin(0, 0, 0, 32)
 		self.info:SetText("Press Space to continue...")
-		self.info:SetFont("nutIntroSmallFont")
+		self.info:SetFont("ixIntroSmallFont")
 		self.info:SetContentAlignment(2)
 		self.info:SetAlpha(0)
 		self.info:AlphaTo(255, 1, 0, function()
@@ -124,8 +124,8 @@ local PANEL = {}
 			self.sound:Stop()
 			self.sound = nil
 
-			if (IsValid(nut.gui.char)) then
-				nut.gui.char:PlayMusic()
+			if (IsValid(ix.gui.char)) then
+				ix.gui.char:PlayMusic()
 			end
 		end
 	end
@@ -144,4 +144,4 @@ local PANEL = {}
 			surface.DrawTexturedRect(x, y, 1400, 680)
 		end
 	end
-vgui.Register("nutIntro", PANEL, "EditablePanel")
+vgui.Register("ixIntro", PANEL, "EditablePanel")

@@ -338,7 +338,7 @@ end
 
 -- use this command for memergency case.
 -- like ruining everyone's dream.
-concommand.Add("nut_flushicon", function()
+concommand.Add("ix_flushicon", function()
 	ikon.cache = {}
 	file.Delete("nsIcon/" .. schemaName)
 end)

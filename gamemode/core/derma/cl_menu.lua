@@ -2,16 +2,16 @@
 DEFINE_BASECLASS("EditablePanel")
 
 local PANEL = {}
-	local gradient = nut.util.GetMaterial("vgui/gradient-u")
-	local gradient2 = nut.util.GetMaterial("vgui/gradient-d")
+	local gradient = ix.util.GetMaterial("vgui/gradient-u")
+	local gradient2 = ix.util.GetMaterial("vgui/gradient-d")
 	local alpha = 80
 
 	function PANEL:Init()
-		if (IsValid(nut.gui.menu)) then
-			nut.gui.menu:Remove()
+		if (IsValid(ix.gui.menu)) then
+			ix.gui.menu:Remove()
 		end
 
-		nut.gui.menu = self
+		ix.gui.menu = self
 
 		self:SetSize(ScrW(), ScrH())
 		self:SetAlpha(0)
@@ -32,7 +32,7 @@ local PANEL = {}
 		self.title:SetPos(self.panel.x, self.panel.y - 80)
 		self.title:SetTextColor(color_white)
 		self.title:SetExpensiveShadow(1, Color(0, 0, 0, 150))
-		self.title:SetFont("nutTitleFont")
+		self.title:SetFont("ixTitleFont")
 		self.title:SetText("")
 		self.title:SetAlpha(0)
 		self.title:SetSize(self.panel:GetWide(), 72)
@@ -70,8 +70,8 @@ local PANEL = {}
 		self.anchorMode = true
 		self:MakePopup()
 
-		if (self.tabList[nut.gui.lastMenuTab]) then
-			self:SetActiveTab(nut.gui.lastMenuTab)
+		if (self.tabList[ix.gui.lastMenuTab]) then
+			self:SetActiveTab(ix.gui.lastMenuTab)
 		else
 			self:SetActiveTab("you")
 		end
@@ -111,7 +111,7 @@ local PANEL = {}
 	local color_bright = Color(240, 240, 240, 180)
 
 	function PANEL:Paint(w, h)
-		nut.util.DrawBlur(self, 12)
+		ix.util.DrawBlur(self, 12)
 
 		surface.SetDrawColor(0, 0, 0)
 		surface.SetMaterial(gradient)
@@ -129,7 +129,7 @@ local PANEL = {}
 
 		local function PaintTab(tab, w, h)
 			if (self.activeTab == tab) then
-				surface.SetDrawColor(ColorAlpha(nut.config.Get("color"), 200))
+				surface.SetDrawColor(ColorAlpha(ix.config.Get("color"), 200))
 				surface.DrawRect(0, h - 8, w, 8)
 			elseif (tab.Hovered) then
 				surface.SetDrawColor(0, 0, 0, 50)
@@ -137,7 +137,7 @@ local PANEL = {}
 			end
 		end
 
-		surface.SetFont("nutMenuButtonLightFont")
+		surface.SetFont("ixMenuButtonLightFont")
 		local w = surface.GetTextSize(name)
 
 		local tab = self.tabs:Add("DButton")
@@ -145,14 +145,14 @@ local PANEL = {}
 			tab:SetText(name)
 			tab:SetPos(self.tabs:GetWide(), 0)
 			tab:SetTextColor(Color(250, 250, 250))
-			tab:SetFont("nutMenuButtonLightFont")
+			tab:SetFont("ixMenuButtonLightFont")
 			tab:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 			tab:SizeToContentsX()
 			tab:SetWide(w + 32)
 			tab.Paint = PaintTab
 			tab.DoClick = function(this)
-				if (IsValid(nut.gui.info)) then
-					nut.gui.info:Remove()
+				if (IsValid(ix.gui.info)) then
+					ix.gui.info:Remove()
 				end
 				
 				self.panel:Clear()
@@ -167,7 +167,7 @@ local PANEL = {}
 				self.activeTab = this
 				
 				if (uniqueID != "Characters") then
-					nut.gui.lastMenuTab = uniqueID
+					ix.gui.lastMenuTab = uniqueID
 				end
 
 				if (callback) then
@@ -201,10 +201,10 @@ local PANEL = {}
 			self.closing = true
 		end
 	end
-vgui.Register("nutMenu", PANEL, "EditablePanel")
+vgui.Register("ixMenu", PANEL, "EditablePanel")
 
-if (IsValid(nut.gui.menu)) then
-	vgui.Create("nutMenu")
+if (IsValid(ix.gui.menu)) then
+	vgui.Create("ixMenu")
 end
 
-nut.gui.lastMenuTab = nil
+ix.gui.lastMenuTab = nil

@@ -4,22 +4,22 @@ PLUGIN.author = "Chessnut"
 PLUGIN.description = "Provides the ability to store items."
 PLUGIN.definitions = PLUGIN.definitions or {}
 
-nut.util.Include("sh_definitions.lua")
+ix.util.Include("sh_definitions.lua")
 
 for k, v in pairs(PLUGIN.definitions) do
 	if (v.name and v.width and v.height) then
-		nut.item.RegisterInv("container" .. v.name, v.width, v.height)
+		ix.item.RegisterInv("container" .. v.name, v.width, v.height)
 	else
-		ErrorNoHalt("[NutScript] Container for '"..k.."' is missing all inventory information!\n")
+		ErrorNoHalt("[Helix] Container for '"..k.."' is missing all inventory information!\n")
 		PLUGIN.definitions[k] = nil
 	end
 end
 
-nut.config.Add("containerSave", true, "Whether or not containers will save after a server restart.", nil, {
+ix.config.Add("containerSave", true, "Whether or not containers will save after a server restart.", nil, {
 	category = "Containers"
 })
 
-nut.config.Add("containerOpenTime", 0.7, "How long it takes to open a container.", nil, {
+ix.config.Add("containerOpenTime", 0.7, "How long it takes to open a container.", nil, {
 	data = {min = 0, max = 50},
 	category = "Containers"
 })
@@ -31,13 +31,13 @@ if (SERVER) then
 		if (data) then
 			if (hook.Run("CanPlayerSpawnContainer", client, model, entity) == false) then return end
 			
-			local container = ents.Create("nut_container")
+			local container = ents.Create("ix_container")
 			container:SetPos(entity:GetPos())
 			container:SetAngles(entity:GetAngles())
 			container:SetModel(model)
 			container:Spawn()
 
-			nut.item.NewInv(0, "container" .. data.name, function(inventory)
+			ix.item.NewInv(0, "container" .. data.name, function(inventory)
 				inventory.vars.isContainer = true
 
 				if (IsValid(container)) then
@@ -51,13 +51,13 @@ if (SERVER) then
 	end
 
 	function PLUGIN:CanSaveContainer(entity, inventory)
-		return nut.config.Get("containerSave", true)
+		return ix.config.Get("containerSave", true)
 	end
 
 	function PLUGIN:SaveContainer()
 		local data = {}
 
-		for k, v in ipairs(ents.FindByClass("nut_container")) do
+		for k, v in ipairs(ents.FindByClass("ix_container")) do
 			if (hook.Run("CanSaveContainer", v, v:GetInventory()) != false) then
 				if (v:GetInventory()) then
 					data[#data + 1] = {v:GetPos(), v:GetAngles(), v:GetNetVar("id"), v:GetModel(), v.password}
@@ -65,8 +65,8 @@ if (SERVER) then
 			else
 				local index = v:GetNetVar("id")
 
-				nut.db.query("DELETE FROM nut_items WHERE _invID = "..index)
-				nut.db.query("DELETE FROM nut_inventories WHERE _invID = "..index)
+				ix.db.query("DELETE FROM ix_items WHERE _invID = "..index)
+				ix.db.query("DELETE FROM ix_inventories WHERE _invID = "..index)
 			end
 		end
 
@@ -89,7 +89,7 @@ if (SERVER) then
 				local data2 = self.definitions[v[4]:lower()]
 
 				if (data2) then
-					local entity = ents.Create("nut_container")
+					local entity = ents.Create("ix_container")
 					entity:SetPos(v[1])
 					entity:SetAngles(v[2])
 					entity:Spawn()
@@ -102,7 +102,7 @@ if (SERVER) then
 						entity:SetNetVar("locked", true)
 					end
 					
-					nut.item.RestoreInv(v[3], data2.width, data2.height, function(inventory)
+					ix.item.RestoreInv(v[3], data2.width, data2.height, function(inventory)
 						inventory.vars.isContainer = true
 						
 						if (IsValid(entity)) then
@@ -146,7 +146,7 @@ else
 	end)
 end
 
-nut.command.Add("ContainerSetPassword", {
+ix.command.Add("ContainerSetPassword", {
 	description = "@cmdContainerSetPassword",
 	adminOnly = true,
 	syntax = "[string password]",

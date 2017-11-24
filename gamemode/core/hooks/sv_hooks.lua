@@ -1,53 +1,53 @@
 function GM:PlayerInitialSpawn(client)
-	client.nutJoinTime = RealTime()
+	client.ixJoinTime = RealTime()
 
 	if (client:IsBot()) then
 		local botID = os.time()
-		local index = math.random(1, table.Count(nut.faction.indices))
-		local faction = nut.faction.indices[index]
+		local index = math.random(1, table.Count(ix.faction.indices))
+		local faction = ix.faction.indices[index]
 
-		local character = nut.char.New({
+		local character = ix.char.New({
 			name = client:Name(),
 			faction = faction and faction.uniqueID or "unknown",
 			model = faction and table.Random(faction.models) or "models/gman.mdl"
 		}, botID, client, client:SteamID64())
 		character.isBot = true
 
-		local inventory = nut.item.CreateInv(nut.config.Get("invW"), nut.config.Get("invH"), botID)
+		local inventory = ix.item.CreateInv(ix.config.Get("invW"), ix.config.Get("invH"), botID)
 		inventory:SetOwner(botID)
 		inventory.noSave = true
 
 		character.vars.inv = {inventory}
 
-		nut.char.loaded[os.time()] = character
+		ix.char.loaded[os.time()] = character
 
 		character:Setup()
 		client:Spawn()
 		
-		nut.chat.Send(nil, "connect", client:SteamName())
+		ix.chat.Send(nil, "connect", client:SteamName())
 
 		return
 	end
 
-	nut.config.Send(client)
-	nut.date.Send(client)
+	ix.config.Send(client)
+	ix.date.Send(client)
 
 	client:LoadData(function(data)
 		if (!IsValid(client)) then return end
 
-		local address = nut.util.GetAddress()
+		local address = ix.util.GetAddress()
 		local noCache = client:GetData("lastIP", address) != address
 		client:SetData("lastIP", address)
 
-		netstream.Start(client, "nutDataSync", data, client.nutPlayTime)
+		netstream.Start(client, "ixDataSync", data, client.ixPlayTime)
 
-		nut.char.Restore(client, function(charList)
+		ix.char.Restore(client, function(charList)
 			if (!IsValid(client)) then return end
 
 			MsgN("Loaded ("..table.concat(charList, ", ")..") for "..client:Name())
 
 			for k, v in ipairs(charList) do
-				nut.char.loaded[v]:Sync(client)
+				ix.char.loaded[v]:Sync(client)
 			end
 
 			for k, v in ipairs(player.GetAll()) do
@@ -56,14 +56,14 @@ function GM:PlayerInitialSpawn(client)
 				end
 			end
 
-			client.nutCharList = charList
+			client.ixCharList = charList
 				netstream.Start(client, "charMenu", charList)
-			client.nutLoaded = true
+			client.ixLoaded = true
 
 			client:SetData("intro", true)
 		end, noCache)
 
-		nut.chat.Send(nil, "connect", client:SteamName())
+		ix.chat.Send(nil, "connect", client:SteamName())
 	end)
 
 	client:SetNoDraw(true)
@@ -88,7 +88,7 @@ end
 
 function GM:KeyPress(client, key)
 	if (key == IN_RELOAD) then
-		timer.Create("nutToggleRaise"..client:SteamID(), 1, 1, function()
+		timer.Create("ixToggleRaise"..client:SteamID(), 1, 1, function()
 			if (IsValid(client)) then
 				client:ToggleWepRaised()
 			end
@@ -114,9 +114,9 @@ end
 
 function GM:KeyRelease(client, key)
 	if (key == IN_RELOAD) then
-		timer.Remove("nutToggleRaise" .. client:SteamID())
+		timer.Remove("ixToggleRaise" .. client:SteamID())
 	elseif (key == IN_USE) then
-		timer.Remove("nutItemUse" .. client:SteamID())
+		timer.Remove("ixItemUse" .. client:SteamID())
 	elseif (key == IN_ATTACK) then
 		-- hack for engine grenades
 		local weapon = client:GetActiveWeapon()
@@ -127,8 +127,8 @@ function GM:KeyRelease(client, key)
 			if (ammoName and ammoName:lower() == "grenade") then
 				timer.Simple(FrameTime() * 4, function()
 					if (client:GetAmmoCount(ammoName) == 0) then
-						if (weapon.nutItem and weapon.nutItem.Unequip) then
-							weapon.nutItem:Unequip(client, false, true)
+						if (weapon.ixItem and weapon.ixItem.Unequip) then
+							weapon.ixItem:Unequip(client, false, true)
 						end
 
 						client:StripWeapon(weapon:GetClass())
@@ -159,7 +159,7 @@ function GM:CanPlayerTakeItem(client, item)
 	if (type(item) == "Entity") then
 		local char = client:GetChar()
 
-		if (item.nutSteamID and item.nutSteamID == client:SteamID() and item.nutCharID != char:GetID()) then
+		if (item.ixSteamID and item.ixSteamID == client:SteamID() and item.ixCharID != char:GetID()) then
 			client:NotifyLocalized("playerCharBelonging")
 
 			return false
@@ -180,20 +180,20 @@ function GM:GetFallDamage(client, speed)
 end
 
 function GM:EntityTakeDamage(entity, dmgInfo)
-	if (IsValid(entity.nutPlayer)) then
+	if (IsValid(entity.ixPlayer)) then
 		if (dmgInfo:IsDamageType(DMG_CRUSH)) then
-			if ((entity.nutFallGrace or 0) < CurTime()) then
+			if ((entity.ixFallGrace or 0) < CurTime()) then
 				if (dmgInfo:GetDamage() <= 10) then
 					dmgInfo:SetDamage(0)
 				end
 
-				entity.nutFallGrace = CurTime() + 0.5
+				entity.ixFallGrace = CurTime() + 0.5
 			else
 				return
 			end
 		end
 
-		entity.nutPlayer:TakeDamageInfo(dmgInfo)
+		entity.ixPlayer:TakeDamageInfo(dmgInfo)
 	end
 end
 
@@ -217,7 +217,7 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 	end
 
 	if (character) then
-		for k, v in pairs(nut.class.list) do
+		for k, v in pairs(ix.class.list) do
 			if (v.faction == client:Team()) then
 				if (v.isDefault) then
 					character:SetClass(v.index)
@@ -228,21 +228,21 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 		end
 	end
 
-	if (IsValid(client.nutRagdoll)) then
-		client.nutRagdoll.nutNoReset = true
-		client.nutRagdoll.nutIgnoreDelete = true
-		client.nutRagdoll:Remove()
+	if (IsValid(client.ixRagdoll)) then
+		client.ixRagdoll.ixNoReset = true
+		client.ixRagdoll.ixIgnoreDelete = true
+		client.ixRagdoll:Remove()
 	end
 
-	local faction = nut.faction.indices[character:GetFaction()]
+	local faction = ix.faction.indices[character:GetFaction()]
 
 	if (faction and faction.pay and faction.pay > 0) then
-		timer.Create("nutSalary"..client:UniqueID(), faction.payTime or 300, 0, function()
+		timer.Create("ixSalary"..client:UniqueID(), faction.payTime or 300, 0, function()
 			if (hook.Run("CanPlayerEarnSalary", client, faction) != false) then
 				local pay = hook.Run("GetSalaryAmount", client, faction) or faction.pay
 
 				character:GiveMoney(pay)
-				client:NotifyLocalized("salary", nut.currency.Get(pay))
+				client:NotifyLocalized("salary", ix.currency.Get(pay))
 			end
 		end)
 	end
@@ -255,9 +255,9 @@ function GM:CharacterLoaded(character)
 	local client = character:GetPlayer()
 
 	if (IsValid(client)) then
-		local uniqueID = "nutSaveChar"..client:SteamID()
+		local uniqueID = "ixSaveChar"..client:SteamID()
 
-		timer.Create(uniqueID, nut.config.Get("saveInterval"), 0, function()
+		timer.Create(uniqueID, ix.config.Get("saveInterval"), 0, function()
 			if (IsValid(client) and client:GetChar()) then
 				client:GetChar():Save()
 			else
@@ -268,17 +268,17 @@ function GM:CharacterLoaded(character)
 end
 
 function GM:PlayerSay(client, message)
-	local chatType, message, anonymous = nut.chat.Parse(client, message, true)
+	local chatType, message, anonymous = ix.chat.Parse(client, message, true)
 
 	if (chatType == "ic") then
-		if (nut.command.Parse(client, message)) then
+		if (ix.command.Parse(client, message)) then
 			return ""
 		end
 	end
 
-	nut.chat.Send(client, chatType, message, anonymous)
-	nut.log.Add(client, "chat", chatType and chatType:upper() or "??", message)
-	--nut.log.Add(client:Name().." said ["..chatType:upper().."] \""..message.."\"")
+	ix.chat.Send(client, chatType, message, anonymous)
+	ix.log.Add(client, "chat", chatType and chatType:upper() or "??", message)
+	--ix.log.Add(client:Name().." said ["..chatType:upper().."] \""..message.."\"")
 
 	hook.Run("PostPlayerSay", client, message, chatType, anonymous)
 
@@ -346,8 +346,8 @@ end
 
 -- Called when weapons should be given to a player.
 function GM:PlayerLoadout(client)
-	if (client.nutSkipLoadout) then
-		client.nutSkipLoadout = nil
+	if (client.ixSkipLoadout) then
+		client.ixSkipLoadout = nil
 
 		return
 	end
@@ -363,11 +363,11 @@ function GM:PlayerLoadout(client)
 		client:SetupHands()
 		-- Set their player model to the character's model.
 		client:SetModel(character:GetModel())
-		client:Give("nut_hands")
-		client:SetWalkSpeed(nut.config.Get("walkSpeed"))
-		client:SetRunSpeed(nut.config.Get("runSpeed"))
+		client:Give("ix_hands")
+		client:SetWalkSpeed(ix.config.Get("walkSpeed"))
+		client:SetRunSpeed(ix.config.Get("runSpeed"))
 		
-		local faction = nut.faction.indices[client:Team()]
+		local faction = ix.faction.indices[client:Team()]
 
 		if (faction) then
 			-- If their faction wants to do something when the player spawns, let it.
@@ -384,7 +384,7 @@ function GM:PlayerLoadout(client)
 		end
 
 		-- Ditto, but for classes.
-		local class = nut.class.list[client:GetChar():GetClass()]
+		local class = ix.class.list[client:GetChar():GetClass()]
 
 		if (class) then
 			if (class.OnSpawn) then
@@ -399,12 +399,12 @@ function GM:PlayerLoadout(client)
 		end
 
 		-- Apply any flags as needed.
-		nut.flag.OnSpawn(client)
-		nut.attribs.Setup(client)
+		ix.flag.OnSpawn(client)
+		ix.attribs.Setup(client)
 
 		hook.Run("PostPlayerLoadout", client)
 
-		client:SelectWeapon("nut_hands")
+		client:SelectWeapon("ix_hands")
 	else
 		client:SetNoDraw(true)
 		client:Lock()
@@ -452,20 +452,20 @@ function GM:DoPlayerDeath(client, attacker, damageinfo)
 		end
 	end
 
-	client:SetAction("@respawning", nut.config.Get("spawnTime", 5))
+	client:SetAction("@respawning", ix.config.Get("spawnTime", 5))
 	client:SetDSP(31)
 end
 
 function GM:PlayerDeath(client, inflictor, attacker)
 	if (client:GetChar()) then
-		if (IsValid(client.nutRagdoll)) then
-			client.nutRagdoll.nutIgnoreDelete = true
-			client.nutRagdoll:Remove()
+		if (IsValid(client.ixRagdoll)) then
+			client.ixRagdoll.ixIgnoreDelete = true
+			client.ixRagdoll:Remove()
 			client:SetLocalVar("blur", nil)
 		end
 
 		client:SetNetVar("deathStartTime", CurTime())
-		client:SetNetVar("deathTime", CurTime() + nut.config.Get("spawnTime", 5))
+		client:SetNetVar("deathTime", CurTime() + ix.config.Get("spawnTime", 5))
 
 		local deathSound = hook.Run("GetPlayerDeathSound", client) or deathSounds[math.random(1, #deathSounds)]
 
@@ -475,7 +475,7 @@ function GM:PlayerDeath(client, inflictor, attacker)
 
 		client:EmitSound(deathSound)
 
-		nut.log.Add(client, "playerDeath", attacker:GetName() ~= "" and attacker:GetName() or attacker:GetClass()) 
+		ix.log.Add(client, "playerDeath", attacker:GetName() ~= "" and attacker:GetName() or attacker:GetClass()) 
 	end
 end
 
@@ -501,7 +501,7 @@ function GM:GetPlayerPainSound(client)
 end
 
 function GM:PlayerHurt(client, attacker, health, damage)
-	if ((client.nutNextPain or 0) < CurTime()) then
+	if ((client.ixNextPain or 0) < CurTime()) then
 		local painSound = hook.Run("GetPlayerPainSound", client) or painSounds[math.random(1, #painSounds)]
 
 		if (client:IsFemale() and !painSound:find("female")) then
@@ -509,10 +509,10 @@ function GM:PlayerHurt(client, attacker, health, damage)
 		end
 
 		client:EmitSound(painSound)
-		client.nutNextPain = CurTime() + 0.33
+		client.ixNextPain = CurTime() + 0.33
 	end
 
-	nut.log.Add(client, "playerHurt", damage, attacker:GetName() ~= "" and attacker:GetName() or attacker:GetClass())
+	ix.log.Add(client, "playerHurt", damage, attacker:GetName() ~= "" and attacker:GetName() or attacker:GetClass())
 end
 
 function GM:PlayerDeathThink(client)
@@ -543,7 +543,7 @@ function GM:PlayerDisconnected(client)
 
 		hook.Run("OnCharDisconnect", client, character)
 			character:Save()
-		nut.chat.Send(nil, "disconnect", client:SteamName())
+		ix.chat.Send(nil, "disconnect", client:SteamName())
 	end
 end
 
@@ -554,13 +554,13 @@ function GM:InitPostEntity()
 		local parent = v:GetOwner()
 
 		if (IsValid(parent)) then
-			v.nutPartner = parent
-			parent.nutPartner = v
+			v.ixPartner = parent
+			parent.ixPartner = v
 		else
 			for k2, v2 in ipairs(doors) do
 				if (v2:GetOwner() == v) then
-					v2.nutPartner = v
-					v.nutPartner = v2
+					v2.ixPartner = v
+					v.ixPartner = v2
 
 					break
 				end
@@ -573,13 +573,13 @@ function GM:InitPostEntity()
 	end)
 
 	timer.Simple(2, function()
-		nut.entityDataLoaded = true
+		ix.entityDataLoaded = true
 	end)
 end
 
 function GM:ShutDown()
-	nut.shuttingDown = true
-	nut.config.Save()
+	ix.shuttingDown = true
+	ix.config.Save()
 
 	hook.Run("SaveData")
 
@@ -625,22 +625,22 @@ function GM:PlayerDeathSound()
 end
 
 function GM:InitializedSchema()
-	if (!nut.data.Get("date", nil, false, true)) then
-		nut.data.Set("date", os.time(), false, true)
+	if (!ix.data.Get("date", nil, false, true)) then
+		ix.data.Set("date", os.time(), false, true)
 	end
 
-	nut.date.start = nut.data.Get("date", os.time(), false, true)
+	ix.date.start = ix.data.Get("date", os.time(), false, true)
 
-	game.ConsoleCommand("sbox_persist ns_"..Schema.folder.."\n")
+	game.ConsoleCommand("sbox_persist ix_"..Schema.folder.."\n")
 end
 
 function GM:PlayerCanHearPlayersVoice(listener, speaker)
-	local allowVoice = nut.config.Get("allowVoice")
+	local allowVoice = ix.config.Get("allowVoice")
 	if allowVoice then
 		local listener_pos = listener:GetPos()
 		local speaker_pos = speaker:GetPos()
 		local voice_dis = math.Distance(speaker_pos.x, speaker_pos.y, listener_pos.x, listener_pos.y)
-		if voice_dis > nut.config.Get("voiceDistance") then
+		if voice_dis > ix.config.Get("voiceDistance") then
 			allowVoice = false
 		end
 	end
@@ -700,7 +700,7 @@ function GM:CharacterPreSave(character)
 	end
 end
 
-timer.Create("nutLifeGuard", 1, 0, function()
+timer.Create("ixLifeGuard", 1, 0, function()
 	for k, v in ipairs(player.GetAll()) do
 		if (v:GetChar() and v:Alive() and hook.Run("ShouldPlayerDrowned", v) != false) then
 			if (v:WaterLevel() >= 3) then
@@ -736,14 +736,14 @@ timer.Create("nutLifeGuard", 1, 0, function()
 end)
 
 netstream.Hook("strReq", function(client, time, text)
-	if (client.nutStrReqs and client.nutStrReqs[time]) then
-		client.nutStrReqs[time](text)
-		client.nutStrReqs[time] = nil
+	if (client.ixStrReqs and client.ixStrReqs[time]) then
+		client.ixStrReqs[time](text)
+		client.ixStrReqs[time] = nil
 	end
 end)
 
 function GM:GetPreferredCarryAngles(entity)
-	if (entity:GetClass() == "nut_item") then
+	if (entity:GetClass() == "ix_item") then
 		local itemTable = entity:GetItemTable()
 
 		if (itemTable) then

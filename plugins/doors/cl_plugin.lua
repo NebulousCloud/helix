@@ -12,8 +12,8 @@ end
 
 local toScreen = FindMetaTable("Vector").ToScreen
 local colorAlpha = ColorAlpha
-local drawText = nut.util.DrawText
-local configGet = nut.config.Get
+local drawText = ix.util.DrawText
+local configGet = ix.config.Get
 local teamGetColor = team.GetColor
 
 function PLUGIN:DrawEntityInfo(entity, alpha)
@@ -34,7 +34,7 @@ function PLUGIN:DrawEntityInfo(entity, alpha)
 
 		local classData
 		if (class) then
-			classData = nut.class.list[class]
+			classData = ix.class.list[class]
 			
 			if (classData and classData.color) then
 				color = classData.color
@@ -50,7 +50,7 @@ function PLUGIN:DrawEntityInfo(entity, alpha)
 		if (IsValid(owner)) then
 			drawText(L("dOwnedBy", owner.Name(owner)), x, y + 16, colorAlpha(color_white, alpha), 1, 1)
 		elseif (faction) then
-			local info = nut.faction.indices[faction]
+			local info = ix.faction.indices[faction]
 
 			if (info) then
 				drawText(L("dOwnedBy", L2(info.name) or info.name), x, y + 16, colorAlpha(color_white, alpha), 1, 1)
@@ -66,18 +66,18 @@ function PLUGIN:DrawEntityInfo(entity, alpha)
 end
 
 netstream.Hook("doorMenu", function(entity, access, door2)
-	if (IsValid(nut.gui.door)) then
-		return nut.gui.door:Remove()
+	if (IsValid(ix.gui.door)) then
+		return ix.gui.door:Remove()
 	end
 
 	if (IsValid(entity)) then
-		nut.gui.door = vgui.Create("nutDoorMenu")
-		nut.gui.door:SetDoor(entity, access, door2)
+		ix.gui.door = vgui.Create("ixDoorMenu")
+		ix.gui.door:SetDoor(entity, access, door2)
 	end
 end)
 
 netstream.Hook("doorPerm", function(door, client, access)
-	local panel = door.nutPanel
+	local panel = door.ixPanel
 
 	if (IsValid(panel) and IsValid(client)) then
 		panel.access[client] = access

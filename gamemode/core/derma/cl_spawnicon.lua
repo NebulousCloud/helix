@@ -93,4 +93,4 @@ local PANEL = {}
 			self:DoClick()
 		end
 	end
-vgui.Register("nutSpawnIcon", PANEL, "DModelPanel")
+vgui.Register("ixSpawnIcon", PANEL, "DModelPanel")

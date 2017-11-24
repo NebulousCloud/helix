@@ -1,6 +1,6 @@
 local PANEL = {}
 	function PANEL:Init()
-		nut.gui.quick = self
+		ix.gui.quick = self
 
 		self:SetSize(400, 36)
 		self:SetPos(ScrW() - 36, -36)
@@ -12,21 +12,21 @@ local PANEL = {}
 		self.title = self:Add("DLabel")
 		self.title:SetTall(36)
 		self.title:Dock(TOP)
-		self.title:SetFont("nutMediumFont")
+		self.title:SetFont("ixMediumFont")
 		self.title:SetText(L"quickSettings")
 		self.title:SetContentAlignment(4)
 		self.title:SetTextInset(44, 0)
 		self.title:SetTextColor(Color(250, 250, 250))
 		self.title:SetExpensiveShadow(1, Color(0, 0, 0, 175))
 		self.title.Paint = function(this, w, h)
-			surface.SetDrawColor(nut.config.Get("color"))
+			surface.SetDrawColor(ix.config.Get("color"))
 			surface.DrawRect(0, 0, w, h)
 		end
 
 		self.expand = self:Add("DButton")
 		self.expand:SetContentAlignment(5)
 		self.expand:SetText("`")
-		self.expand:SetFont("nutIconsMedium")
+		self.expand:SetFont("ixIconsMedium")
 		self.expand:SetDrawBackground(false)
 		self.expand:SetTextColor(color_white)
 		self.expand:SetExpensiveShadow(1, Color(0, 0, 0, 150))
@@ -85,7 +85,7 @@ local PANEL = {}
 		button:SetTall(36)
 		button:Dock(TOP)
 		button:DockMargin(0, 1, 0, 0)
-		button:SetFont("nutMediumLightFont")
+		button:SetFont("ixMediumLightFont")
 		button:SetExpensiveShadow(1, Color(0, 0, 0, 150))
 		button:SetContentAlignment(4)
 		button:SetTextInset(8, 0)
@@ -133,12 +133,12 @@ local PANEL = {}
 			x, y = w - 8, h * 0.5
 
 			if (this.checked) then
-				color = nut.config.Get("color")
+				color = ix.config.Get("color")
 			else
 				color = color_dark
 			end
 
-			draw.SimpleText(self.icon or "F", "nutIconsSmall", x, y, color, 2, 1)
+			draw.SimpleText(self.icon or "F", "ixIconsSmall", x, y, color, 2, 1)
 		end
 		button.checked = checked
 
@@ -150,12 +150,12 @@ local PANEL = {}
 	end
 
 	function PANEL:Paint(w, h)
-		nut.util.DrawBlur(self)
+		ix.util.DrawBlur(self)
 
-		surface.SetDrawColor(nut.config.Get("color"))
+		surface.SetDrawColor(ix.config.Get("color"))
 		surface.DrawRect(0, 0, w, 36)
 
 		surface.SetDrawColor(255, 255, 255, 5)
 		surface.DrawRect(0, 0, w, h)
 	end
-vgui.Register("nutQuick", PANEL, "EditablePanel")
+vgui.Register("ixQuick", PANEL, "EditablePanel")

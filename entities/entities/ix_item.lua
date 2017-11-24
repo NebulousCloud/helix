@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Base = "base_entity"
 ENT.Type = "anim"
 ENT.PrintName = "Item"
-ENT.Category = "NutScript"
+ENT.Category = "Helix"
 ENT.Spawnable = false
 ENT.ShowPlayerInteraction = true
 ENT.RenderGroup = RENDERGROUP_BOTH
@@ -27,9 +27,9 @@ if (SERVER) then
 	end
 
 	function ENT:Use(activator, caller)
-		if (IsValid(caller) and caller:IsPlayer() and caller:GetChar() and self.nutItemID) then
-			caller:PerformInteraction(nut.config.Get("itemPickupTime", 0.5), self, function(client)
-				nut.item.PerformInventoryAction(client, "take", self)
+		if (IsValid(caller) and caller:IsPlayer() and caller:GetChar() and self.ixItemID) then
+			caller:PerformInteraction(ix.config.Get("itemPickupTime", 0.5), self, function(client)
+				ix.item.PerformInventoryAction(client, "take", self)
 			end)
 		end
 	end
@@ -49,7 +49,7 @@ if (SERVER) then
 	end
 
 	function ENT:SetItem(itemID)
-		local itemTable = nut.item.instances[itemID]
+		local itemTable = ix.item.instances[itemID]
 
 		if (itemTable) then
 			local model = itemTable.OnGetDropModel and itemTable:OnGetDropModel(self) or itemTable.model
@@ -64,7 +64,7 @@ if (SERVER) then
 			self:PhysicsInit(SOLID_VPHYSICS)
 			self:SetSolid(SOLID_VPHYSICS)
 			self:SetNetVar("id", itemTable.uniqueID)
-			self.nutItemID = itemID
+			self.ixItemID = itemID
 
 			if (table.Count(itemTable.data) > 0) then
 				self:SetNetVar("data", itemTable.data)
@@ -91,8 +91,8 @@ if (SERVER) then
 	end
 
 	function ENT:OnRemove()
-		if (!nut.shuttingDown and !self.nutIsSafe and self.nutItemID) then
-			local itemTable = nut.item.instances[self.nutItemID]
+		if (!ix.shuttingDown and !self.ixIsSafe and self.ixItemID) then
+			local itemTable = ix.item.instances[self.ixItemID]
 
 			if (self.OnBreak) then
 				self:EmitSound("physics/cardboard/cardboard_box_break"..math.random(1, 3)..".wav")
@@ -114,7 +114,7 @@ if (SERVER) then
 					itemTable:OnRemoved()
 				end
 
-				nut.db.query("DELETE FROM nut_items WHERE _itemID = "..self.nutItemID)
+				ix.db.query("DELETE FROM ix_items WHERE _itemID = "..self.ixItemID)
 			end
 		end
 	end
@@ -148,10 +148,10 @@ else
 
 			if (description != self.description) then
 				self.description = description
-				self.markup = nut.markup.parse("<font=nutItemDescFont>" .. description .. "</font>", ScrW() * 0.7)
+				self.markup = ix.markup.parse("<font=ixItemDescFont>" .. description .. "</font>", ScrW() * 0.7)
 			end
 			
-			nut.util.DrawText(itemTable.GetName and itemTable:GetName() or L(itemTable.name), x, y, colorAlpha(nut.config.Get("color"), alpha), 1, 1, nil, alpha * 0.65)
+			ix.util.DrawText(itemTable.GetName and itemTable:GetName() or L(itemTable.name), x, y, colorAlpha(ix.config.Get("color"), alpha), 1, 1, nil, alpha * 0.65)
 
 			y = y + 12
 			if (self.markup) then
@@ -183,7 +183,7 @@ function ENT:GetItemID()
 end
 
 function ENT:GetItemTable()
-	return nut.item.list[self:GetItemID()]
+	return ix.item.list[self:GetItemID()]
 end
 
 function ENT:GetData(key, default)

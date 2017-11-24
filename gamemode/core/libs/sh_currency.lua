@@ -1,35 +1,35 @@
-nut.currency = nut.currency or {}
-nut.currency.symbol = nut.currency.symbol or "$"
-nut.currency.singular = nut.currency.singular or "dollar"
-nut.currency.plural = nut.currency.plural or "dollars"
+ix.currency = ix.currency or {}
+ix.currency.symbol = ix.currency.symbol or "$"
+ix.currency.singular = ix.currency.singular or "dollar"
+ix.currency.plural = ix.currency.plural or "dollars"
 
-function nut.currency.Set(symbol, singular, plural)
-	nut.currency.symbol = symbol
-	nut.currency.singular = singular
-	nut.currency.plural = plural
+function ix.currency.Set(symbol, singular, plural)
+	ix.currency.symbol = symbol
+	ix.currency.singular = singular
+	ix.currency.plural = plural
 end
 
-function nut.currency.Get(amount)
+function ix.currency.Get(amount)
 	if (amount == 1) then
-		return nut.currency.symbol.."1 "..nut.currency.singular
+		return ix.currency.symbol.."1 "..ix.currency.singular
 	else
-		return nut.currency.symbol..amount.." "..nut.currency.plural
+		return ix.currency.symbol..amount.." "..ix.currency.plural
 	end
 end
 
-function nut.currency.Spawn(pos, amount, angle)
+function ix.currency.Spawn(pos, amount, angle)
 	if (!amount or amount < 0) then
-		print("[Nutscript] Can't create currency entity: Invalid Amount of money")
+		print("[Helix] Can't create currency entity: Invalid Amount of money")
 		return
 	end
 
-	local money = ents.Create("nut_money")
+	local money = ents.Create("ix_money")
 	money:Spawn()
 
 	if (IsValid(pos) and pos:IsPlayer()) then
 		pos = pos:GetItemDropPos(money)
 	elseif (!isvector(pos)) then
-		print("[Nutscript] Can't create currency entity: Invalid Position")
+		print("[Helix] Can't create currency entity: Invalid Position")
 
 		money:Remove()
 		return
@@ -49,12 +49,12 @@ function GM:OnPickupMoney(client, moneyEntity)
 		local amount = moneyEntity:GetAmount()
 
 		client:GetChar():GiveMoney(amount)
-		client:NotifyLocalized("moneyTaken", nut.currency.Get(amount))
+		client:NotifyLocalized("moneyTaken", ix.currency.Get(amount))
 	end
 end
 
 do
-	local character = nut.meta.character
+	local character = ix.meta.character
 
 	function character:HasMoney(amount)
 		if (amount < 0) then
@@ -66,7 +66,7 @@ do
 
 	function character:GiveMoney(amount, noLog)
 		if (!noLog) then
-			nut.log.Add(self:GetPlayer(), "money", amount)
+			ix.log.Add(self:GetPlayer(), "money", amount)
 		end
 		
 		self:SetMoney(self:GetMoney() + amount)
@@ -75,7 +75,7 @@ do
 	end
 
 	function character:TakeMoney(amount)
-		nut.log.Add(self:GetPlayer(), "money", -amount)
+		ix.log.Add(self:GetPlayer(), "money", -amount)
 		amount = math.abs(amount)
 		self:GiveMoney(-amount, true)
 

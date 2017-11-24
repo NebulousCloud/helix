@@ -7,7 +7,7 @@ function PANEL:Init()
 	self:Center()
 	self:MakePopup()
 
-	local noticeBar = self:Add("nutNoticeBar")
+	local noticeBar = self:Add("ixNoticeBar")
 	noticeBar:Dock(TOP)
 	noticeBar:SetType(4)
 	noticeBar:SetText(L("areaManagerTip"))
@@ -68,9 +68,9 @@ function PANEL:LoadBusinesses()
 	end
 end
 
-vgui.Register("nutAreaManager", PANEL, "DFrame")
+vgui.Register("ixAreaManager", PANEL, "DFrame")
 
-netstream.Hook("nutAreaManager", function(areaList)
+netstream.Hook("ixAreaManager", function(areaList)
 	PLUGIN.areaTable = areaList
-	areaManager = vgui.Create("nutAreaManager")
+	areaManager = vgui.Create("ixAreaManager")
 end)

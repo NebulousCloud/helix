@@ -1,19 +1,19 @@
-nut.class = nut.class or {}
-nut.class.list = {}
+ix.class = ix.class or {}
+ix.class.list = {}
 
-local charMeta = nut.meta.character
+local charMeta = ix.meta.character
 
 -- Register classes from a directory.
-function nut.class.LoadFromDir(directory)
+function ix.class.LoadFromDir(directory)
 	-- Search the directory for .lua files.
 	for k, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
 		-- Get the name without the "sh_" prefix and ".lua" suffix.
 		local niceName = v:sub(4, -5)
 		-- Determine a numeric identifier for this class.
-		local index = #nut.class.list + 1
+		local index = #ix.class.list + 1
 
 		local halt
-		for k, v in ipairs(nut.class.list) do
+		for k, v in ipairs(ix.class.list) do
 			if (v.uniqueID == niceName) then
 				halt = true
 			end
@@ -36,7 +36,7 @@ function nut.class.LoadFromDir(directory)
 			end
 
 			-- Include the file so data can be modified.
-			nut.util.Include(directory.."/"..v, "shared")
+			ix.util.Include(directory.."/"..v, "shared")
 
 			-- Why have a class without a faction?
 			if (!CLASS.faction or !team.Valid(CLASS.faction)) then
@@ -54,16 +54,16 @@ function nut.class.LoadFromDir(directory)
 			end
 
 			-- Add the class to the list of classes.
-			nut.class.list[index] = CLASS
+			ix.class.list[index] = CLASS
 		-- Remove the global variable to prevent conflict.
 		CLASS = nil
 	end
 end
 
 -- Determines if a player is allowed to join a specific class.
-function nut.class.CanBe(client, class)
+function ix.class.CanBe(client, class)
 	-- Get the class table by its numeric identifier.
-	local info = nut.class.list[class]
+	local info = ix.class.list[class]
 
 	-- See if the class exists.
 	if (!info) then
@@ -80,7 +80,7 @@ function nut.class.CanBe(client, class)
 	end
 
 	if (info.limit > 0) then
-		if (#nut.class.GetPlayers(info.index) >= info.limit) then
+		if (#ix.class.GetPlayers(info.index) >= info.limit) then
 			return false, "class is full"
 		end
 	end
@@ -91,11 +91,11 @@ function nut.class.CanBe(client, class)
 	return info:OnCanBe(client)
 end
 
-function nut.class.Get(identifier)
-	return nut.class.list[identifier]
+function ix.class.Get(identifier)
+	return ix.class.list[identifier]
 end
 
-function nut.class.GetPlayers(class)
+function ix.class.GetPlayers(class)
 	local players = {}
 	for k, v in ipairs(player.GetAll()) do
 		local char = v:GetChar()
@@ -118,7 +118,7 @@ function charMeta:JoinClass(class)
 	local oldClass = self:GetClass()
 	local client = self:GetPlayer()
 
-	if (nut.class.CanBe(client, class)) then
+	if (ix.class.CanBe(client, class)) then
 		self:SetClass(class)
 		hook.Run("OnPlayerJoinClass", client, class, oldClass)
 
@@ -134,7 +134,7 @@ function charMeta:KickClass()
 	
 	local goClass
 
-	for k, v in pairs(nut.class.list) do
+	for k, v in pairs(ix.class.list) do
 		if (v.faction == client:Team() and v.isDefault) then
 			goClass = k
 			
@@ -148,8 +148,8 @@ function charMeta:KickClass()
 end
 
 function GM:OnPlayerJoinClass(client, class, oldClass)
-	local info = nut.class.list[class]
-	local info2 = nut.class.list[oldClass]
+	local info = ix.class.list[class]
+	local info2 = ix.class.list[oldClass]
 
 	if (info.OnSet) then
 		info:OnSet(client)

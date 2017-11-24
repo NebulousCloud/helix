@@ -226,7 +226,7 @@ LANGUAGE = {
 	vendorNoTrade = "Du er ikke i stand til å handle med denne leverandøren.",
 	vendorNoMoney = "Denne leverandøren ikke har råd til dette elementet.",
 	vendorNoStock = "Denne leverandøren har ikke at varen på lager.",
-	contentTitle = "NutScript Innhold Mangler",
-	contentWarning = "Du har ikke NutScript innhold montert. Dette kan føre til enkelte funksjoner mangler. \nVil du åpne Workshop side for NutScript innhold?",
+	contentTitle = "Helix Innhold Mangler",
+	contentWarning = "Du har ikke Helix innhold montert. Dette kan føre til enkelte funksjoner mangler. \nVil du åpne Workshop side for Helix innhold?",
 	flags = "Flagg"
 }

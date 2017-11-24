@@ -112,7 +112,7 @@ ITEM.functions.Equip = {
 
 		for k, v in pairs(items) do
 			if (v.id != item.id) then
-				local itemTable = nut.item.instances[v.id]
+				local itemTable = ix.item.instances[v.id]
 
 				if (itemTable.pacData and v.outfitCategory == item.outfitCategory and itemTable:GetData("equip")) then
 					item.player:Notify("You're already equipping this kind of outfit")

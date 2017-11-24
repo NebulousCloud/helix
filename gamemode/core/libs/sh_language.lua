@@ -1,20 +1,20 @@
-nut.lang = nut.lang or {}
-nut.lang.stored = nut.lang.stored or {}
-nut.lang.names = nut.lang.names or {}
+ix.lang = ix.lang or {}
+ix.lang.stored = ix.lang.stored or {}
+ix.lang.names = ix.lang.names or {}
 
-function nut.lang.LoadFromDir(directory)
+function ix.lang.LoadFromDir(directory)
 	for k, v in ipairs(file.Find(directory.."/sh_*.lua", "LUA")) do
 		local niceName = v:sub(4, -5):lower()
 
-		nut.util.Include(directory.."/"..v, "shared")
+		ix.util.Include(directory.."/"..v, "shared")
 
 		if (LANGUAGE) then
 			if (NAME) then
-				nut.lang.names[niceName] = NAME
+				ix.lang.names[niceName] = NAME
 				NAME = nil
 			end
 			
-			nut.lang.stored[niceName] = table.Merge(nut.lang.stored[niceName] or {}, LANGUAGE)
+			ix.lang.stored[niceName] = table.Merge(ix.lang.stored[niceName] or {}, LANGUAGE)
 			LANGUAGE = nil
 		end
 	end
@@ -26,16 +26,16 @@ if (SERVER) then
 	local ClientGetInfo = FindMetaTable("Player").GetInfo
 
 	function L(key, client, ...)
-		local languages = nut.lang.stored
-		local langKey = ClientGetInfo(client, "nut_language")
+		local languages = ix.lang.stored
+		local langKey = ClientGetInfo(client, "ix_language")
 		local info = languages[langKey] or languages.english
 		
 		return FormatString(info and info[key] or key, ...)
 	end
 
 	function L2(key, client, ...)
-		local languages = nut.lang.stored
-		local langKey = ClientGetInfo(client, "nut_language")
+		local languages = ix.lang.stored
+		local langKey = ClientGetInfo(client, "ix_language")
 		local info = languages[langKey] or languages.english
 		
 		if (info and info[key]) then
@@ -43,19 +43,19 @@ if (SERVER) then
 		end
 	end
 else
-	NUT_CVAR_LANG = CreateClientConVar("nut_language", nut.config.language or "english", true, true)
+	IX_CVAR_LANG = CreateClientConVar("ix_language", ix.config.language or "english", true, true)
 
 	function L(key, ...)
-		local languages = nut.lang.stored
-		local langKey = NUT_CVAR_LANG:GetString()
+		local languages = ix.lang.stored
+		local langKey = IX_CVAR_LANG:GetString()
 		local info = languages[langKey] or languages.english
 		
 		return FormatString(info and info[key] or key, ...)
 	end
 
 	function L2(key, ...)
-		local langKey = NUT_CVAR_LANG:GetString()
-		local info = nut.lang.stored[langKey]
+		local langKey = IX_CVAR_LANG:GetString()
+		local info = ix.lang.stored[langKey]
 
 		if (info and info[key]) then
 			return FormatString(info[key], ...)

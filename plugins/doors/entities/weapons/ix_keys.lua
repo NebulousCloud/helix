@@ -93,7 +93,7 @@ function SWEP:Initialize()
 end
 
 function SWEP:PrimaryAttack()
-	local time = nut.config.Get("doorLockTime", 1)
+	local time = ix.config.Get("doorLockTime", 1)
 	local time2 = math.max(time, 1)
 
 	self:SetNextPrimaryFire(CurTime() + time2)
@@ -173,7 +173,7 @@ function SWEP:toggleLock(door, state)
 end
 
 function SWEP:SecondaryAttack()
-	local time = nut.config.Get("doorLockTime", 1)
+	local time = ix.config.Get("doorLockTime", 1)
 	local time2 = math.max(time, 1)
 
 	self:SetNextPrimaryFire(CurTime() + time2)

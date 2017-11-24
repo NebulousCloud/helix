@@ -3,14 +3,14 @@ DEFINE_BASECLASS("DButton")
 
 local PANEL = {}
 	function PANEL:Init()
-		self:SetFont("nutMenuButtonFont")
+		self:SetFont("ixMenuButtonFont")
 		self:SetExpensiveShadow(2, Color(0, 0, 0, 200))
 		self:SetTextColor(color_white)
 		self:SetDrawBackground(false)
 	end
 
 	function PANEL:SetText(text, noTranslation)
-		surface.SetFont("nutMenuButtonFont")
+		surface.SetFont("ixMenuButtonFont")
 
 		BaseClass.SetText(self, noTranslation and text:upper() or L(text):upper())
 
@@ -46,7 +46,7 @@ local PANEL = {}
 		if (self.color) then
 			self:SetTextColor(self.color)
 		else
-			self:SetTextColor(nut.config.Get("color"))
+			self:SetTextColor(ix.config.Get("color"))
 		end
 
 		surface.PlaySound("ui/buttonclickrelease.wav")
@@ -63,4 +63,4 @@ local PANEL = {}
 			self:SetTextColor(color_white)
 		end
 	end
-vgui.Register("nutMenuButton", PANEL, "DButton")
+vgui.Register("ixMenuButton", PANEL, "DButton")

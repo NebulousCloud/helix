@@ -1,53 +1,53 @@
-nut.date = nut.date or {}
-nut.date.cache = nut.date.cache or {}
-nut.date.start = nut.date.start or os.time()
+ix.date = ix.date or {}
+ix.date.cache = ix.date.cache or {}
+ix.date.start = ix.date.start or os.time()
 
-if (!nut.config) then
-	include("nutscript/gamemode/core/sh_config.lua")
+if (!ix.config) then
+	include("helix/gamemode/core/sh_config.lua")
 end
 
-nut.config.Add("year", 2015, "The starting year of the schema.", nil, {
+ix.config.Add("year", 2015, "The starting year of the schema.", nil, {
 	data = {min = 0, max = 4000},
 	category = "date"
 })
-nut.config.Add("month", 1, "The starting month of the schema.", nil, {
+ix.config.Add("month", 1, "The starting month of the schema.", nil, {
 	data = {min = 1, max = 12},
 	category = "date"
 })
-nut.config.Add("day", 1, "The starting day of the schema.", nil, {
+ix.config.Add("day", 1, "The starting day of the schema.", nil, {
 	data = {min = 1, max = 31},
 	category = "date"
 })
 
 if (SERVER) then
-	function nut.date.Get()
+	function ix.date.Get()
 		local unixTime = os.time()
 
-		return (unixTime - (nut.date.start or unixTime)) + os.time({
-			year = nut.config.Get("year"),
-			month = nut.config.Get("month"),
-			day = nut.config.Get("day")
+		return (unixTime - (ix.date.start or unixTime)) + os.time({
+			year = ix.config.Get("year"),
+			month = ix.config.Get("month"),
+			day = ix.config.Get("day")
 		})
 	end
 
-	function nut.date.Send(client)
-		netstream.Start(client, "dateSync", CurTime(), os.time() - nut.date.start)
+	function ix.date.Send(client)
+		netstream.Start(client, "dateSync", CurTime(), os.time() - ix.date.start)
 	end
 else
-	function nut.date.Get()
+	function ix.date.Get()
 		local realTime = RealTime()
 
 		-- Add the starting time + offset + current time played.
-		return nut.date.start + os.time({
-			year = nut.config.Get("year"),
-			month = nut.config.Get("month"),
-			day = nut.config.Get("day")
-		}) + (realTime - (nut.joinTime or realTime))
+		return ix.date.start + os.time({
+			year = ix.config.Get("year"),
+			month = ix.config.Get("month"),
+			day = ix.config.Get("day")
+		}) + (realTime - (ix.joinTime or realTime))
 	end
 
 	netstream.Hook("dateSync", function(curTime, offset)
 		offset = offset + (CurTime() - curTime)
 
-		nut.date.start = offset
+		ix.date.start = offset
 	end)
 end

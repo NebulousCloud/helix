@@ -34,7 +34,7 @@ if (CLIENT) then
 					if (alpha > 0) then
 						local screen = (position + (v:Crouching() and TYPE_OFFSET_CROUCHED or TYPE_OFFSET)):ToScreen()
 
-						nut.util.DrawText("(Typing)", screen.x, screen.y - 18, ColorAlpha(TYPE_COLOR, alpha), 1, 1, "nutChatFontItalics", alpha)
+						ix.util.DrawText("(Typing)", screen.x, screen.y - 18, ColorAlpha(TYPE_COLOR, alpha), 1, 1, "ixChatFontItalics", alpha)
 					end
 				end
 			end

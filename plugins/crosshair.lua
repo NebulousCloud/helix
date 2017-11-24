@@ -39,7 +39,7 @@ if (CLIENT) then
 			return
 		end
 
-		if (hook.Run("ShouldDrawCrosshair") == false or g_ContextMenu:IsVisible() or nut.gui.char:IsVisible()) then
+		if (hook.Run("ShouldDrawCrosshair") == false or g_ContextMenu:IsVisible() or ix.gui.char:IsVisible()) then
 			return
 		end
 
@@ -68,7 +68,7 @@ if (CLIENT) then
 		crossSize = 4
 		crossGap = 25 * (scaleFraction - (client:IsWepRaised() and 0 or .1))
 
-		if (IsValid(entity) and entity:GetClass() == "nut_item" and 
+		if (IsValid(entity) and entity:GetClass() == "ix_item" and 
 			entity:GetPos():DistToSqr(data.start) <= 16384) then
 			crossGap = 0
 			crossSize = 5

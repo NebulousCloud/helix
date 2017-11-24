@@ -141,7 +141,7 @@ else
 	end
 end
 
-nut.command.Add("PanelAdd", {
+ix.command.Add("PanelAdd", {
 	description = "@cmdPanelAdd",
 	adminOnly = true,
 	syntax = "<string url> [number w] [number h] [number scale]",
@@ -165,7 +165,7 @@ nut.command.Add("PanelAdd", {
 	end
 })
 
-nut.command.Add("PanelRemove", {
+ix.command.Add("PanelRemove", {
 	description = "@cmdPanelRemove",
 	adminOnly = true,
 	syntax = "[number radius]",
