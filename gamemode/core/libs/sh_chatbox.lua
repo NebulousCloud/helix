@@ -320,6 +320,7 @@ do
 				chat.AddText(icon, Color(255, 50, 50), "[OOC] ", speaker, color_white, ": "..text)
 			end,
 			prefix = {"//", "/OOC"},
+			description = "@cmdOOC",
 			noSpaceAfter = true,
 			filter = "ooc"
 		})
@@ -349,6 +350,7 @@ do
 			end,
 			OnCanHear = ix.config.Get("chatRange", 280),
 			prefix = {".//", "[[", "/LOOC"},
+			description = "@cmdLOOC",
 			noSpaceAfter = true,
 			filter = "ooc"
 		})

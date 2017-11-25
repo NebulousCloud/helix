@@ -312,7 +312,7 @@ if (SERVER) then
 				entity:GiveMoney(price)
 
 				if (!client:GetChar():GetInv():Add(uniqueID)) then
-					ix.item.Spawn(uniqueID, client:GetItemDropPos())
+					ix.item.Spawn(uniqueID, client)
 				else
 					netstream.Start(client, "vendorAdd", uniqueID)
 				end

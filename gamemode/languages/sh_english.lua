@@ -313,5 +313,7 @@ LANGUAGE = {
 	cmdIt = "Make something around you perform an action.",
 	cmdW = "Whisper something to the people near you.",
 	cmdY = "Yell something to the people around you.",
-	cmdEvent = "Make something perform an action that everyone can see."
+	cmdEvent = "Make something perform an action that everyone can see.",
+	cmdOOC = "Sends a message in global out-of-character chat.",
+	cmdLOOC = "Sends a message in local out-of-character chat."
 }
