@@ -4,7 +4,7 @@ PLUGIN.description = "Adds on to the no-clip mode to prevent instrusion."
 
 if (CLIENT) then
 	-- Create a setting to see if the player will teleport back after noclipping.
-	IX_CVAR_OBSTPBACK = CreateClientConVar("ix_obstpback", 0, true, true)
+	IX_CVAR_OBSTPBACK = CreateClientConVar("ix_obstpback", 1, true, true)
 	IX_CVAR_ADMINESP = CreateClientConVar("ix_obsesp", 1, true, true)
 
 	local dimDistance = 1024
