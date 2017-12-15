@@ -11,43 +11,47 @@ if (SERVER) then
 
 		data.money = data.money or ix.config.Get("defMoney", 0)
 
-		ix.db.InsertTable({
-			_name = data.name or "",
-			_description = data.description or "",
-			_model = data.model or "models/error.mdl",
-			_schema = Schema and Schema.folder or "helix",
-			_createTime = timeStamp,
-			_lastJoinTime = timeStamp,
-			_steamID = data.steamID,
-			_faction = data.faction or "Unknown",
-			_money = data.money,
-			_data = data.data
-		}, function(data2, charID)
-			ix.db.query("INSERT INTO ix_inventories (_charID) VALUES ("..charID..")", function(_, invID)
-				local client
+		local query = mysql:Insert("ix_characters")
+			query:Insert("name", data.name or "")
+			query:Insert("description", data.description or "")
+			query:Insert("model", data.model or "models/error.mdl")
+			query:Insert("schema", Schema and Schema.folder or "helix")
+			query:Insert("create_time", timeStamp)
+			query:Insert("last_join_time", timeStamp)
+			query:Insert("steamid", data.steamID)
+			query:Insert("faction", data.faction or "Unknown")
+			query:Insert("money", data.money)
+			query:Insert("data", util.TableToJSON(data.data))
+			query:Callback(function(result, status, lastID)
+				local invQuery = mysql:Insert("ix_inventories")
+					invQuery:Insert("character_id", lastID)
+					invQuery:Callback(function(invResult, invStats, invLastID)
+						local client
 
-				for k, v in ipairs(player.GetAll()) do
-					if (v:SteamID64() == data.steamID) then
-						client = v
-						break
-					end
-				end
+						for k, v in ipairs(player.GetAll()) do
+							if (v:SteamID64() == data.steamID) then
+								client = v
+								break
+							end
+						end
 
-				local w, h = ix.config.Get("invW"), ix.config.Get("invH")
-				local character = ix.char.New(data, charID, client, data.steamID)
-				local inventory = ix.item.CreateInv(w, h, invID)
+						local w, h = ix.config.Get("invW"), ix.config.Get("invH")
+						local character = ix.char.New(data, lastID, client, data.steamID)
+						local inventory = ix.item.CreateInv(w, h, invLastID)
 
-				character.vars.inv = {inventory}
-				inventory:SetOwner(charID)
+						character.vars.inv = {inventory}
+						inventory:SetOwner(lastID)
 
-				ix.char.loaded[charID] = character
-				table.insert(ix.char.cache[data.steamID], charID)
+						ix.char.loaded[lastID] = character
+						table.insert(ix.char.cache[data.steamID], lastID)
 
-				if (callback) then
-					callback(charID)
-				end
+						if (callback) then
+							callback(lastID)
+						end
+					end)
+				invQuery:Execute()
 			end)
-		end)
+		query:Execute()
 	end
 
 	function ix.char.Restore(client, callback, noCache, id)
@@ -70,197 +74,230 @@ if (SERVER) then
 			return
 		end
 
-		local fields = "_id, _name, _description, _model, _attribs, _data, _money, _faction"
-		local condition = "_schema = '"..ix.db.escape(Schema.folder).."' AND _steamID = "..steamID64
+		local query = mysql:Select("ix_characters")
+			query:Select("id")
+			query:Select("name")
+			query:Select("description")
+			query:Select("model")
+			query:Select("attributes")
+			query:Select("data")
+			query:Select("money")
+			query:Select("faction")
+			query:Where("schema", Schema.folder)
+			query:Where("steamid", steamID64)
 
-		if (id) then
-			condition = condition.." AND _id = "..id
-		end
+			if (id) then
+				query:Where("id", id)
+			end
 
-		ix.db.query("SELECT "..fields.." FROM ix_characters WHERE "..condition, function(data)
-			local characters = {}
+			query:Callback(function(result)
+				local characters = {}
 
-			for k, v in ipairs(data or {}) do
-				local id = tonumber(v._id)
+				for k, v in ipairs(result or {}) do
+					local id = tonumber(v.id)
 
-				if (id) then
-					local data = {}
+					if (id) then
+						local data = {}
 
-					for k2, v2 in pairs(ix.char.vars) do
-						if (v2.field and v[v2.field]) then
-							local value = tostring(v[v2.field])
+						for k2, v2 in pairs(ix.char.vars) do
+							if (v2.field and v[v2.field]) then
+								local value = tostring(v[v2.field])
 
-							if (type(v2.default) == "number") then
-								value = tonumber(value) or v2.default
-							elseif (type(v2.default) == "boolean") then
-								value = tobool(vlaue)
-							elseif (type(v2.default) == "table") then
-								value = util.JSONToTable(value)
+								if (type(v2.default) == "number") then
+									value = tonumber(value) or v2.default
+								elseif (type(v2.default) == "boolean") then
+									value = tobool(vlaue)
+								elseif (type(v2.default) == "table") then
+									value = util.JSONToTable(value)
+								end
+
+								data[k2] = value
 							end
-
-							data[k2] = value
 						end
-					end
 
-					characters[#characters + 1] = id
+						characters[#characters + 1] = id
+						local character = ix.char.New(data, id, client)
 
-					local character = ix.char.New(data, id, client)
 						hook.Run("CharacterRestored", character)
 						character.vars.inv = {
 							[1] = -1,
 						}
 
-						ix.db.query("SELECT _invID, _invType FROM ix_inventories WHERE _charID = "..id, function(data)
-							if (data and #data > 0) then
-								for k, v in pairs(data) do
-									if (v._invType and isstring(v._invType) and v._invType == "NULL") then
-										v._invType = nil
-									end
-
-									local w, h = ix.config.Get("invW"), ix.config.Get("invH")
-
-									local invType 
-									if (v._invType) then
-										invType = ix.item.inventoryTypes[v._invType]
-
-										if (invType) then
-											w, h = invType.w, invType.h
-										end
-									end
-
-									ix.item.RestoreInv(tonumber(v._invID), w, h, function(inventory)
-										if (v._invType) then
-											inventory.vars.isBag = v._invType
-											table.insert(character.vars.inv, inventory)
-										else
-											character.vars.inv[1] = inventory
+						local invQuery = mysql:Select("ix_inventories")
+							invQuery:Select("inventory_id")
+							invQuery:Select("inventory_type")
+							invQuery:Where("character_id", id)
+							invQuery:Callback(function(result)
+								if (istable(result) and #result > 0) then
+									for k, v in pairs(result) do
+										if (v.inventory_type and isstring(v.inventory_type) and v.inventory_type == "NULL") then
+											v.inventory_type = nil
 										end
 
-										inventory:SetOwner(id)
-									end, true)
+										local w, h = ix.config.Get("invW"), ix.config.Get("invH")
+										local invType
+
+										if (v.inventory_type) then
+											invType = ix.item.inventoryTypes[v.inventory_type]
+
+											if (invType) then
+												w, h = invType.w, invType.h
+											end
+										end
+
+										ix.item.RestoreInv(tonumber(v.inventory_id), w, h, function(inventory)
+											if (v.inventory_type) then
+												inventory.vars.isBag = v.inventory_type
+												table.insert(character.vars.inv, inventory)
+											else
+												character.vars.inv[1] = inventory
+											end
+
+											inventory:SetOwner(id)
+										end, true)
+									end
+								else
+									local insertQuery = mysql:Insert("ix_inventories")
+										insertQuery:Insert("character_id", id)
+										insertQuery:Callback(function(result, status, lastID)
+											local w, h = ix.config.Get("invW"), ix.config.Get("invH")
+											local inventory = ix.item.CreateInv(w, h, lastID)
+											inventory:SetOwner(id)
+
+											character.vars.inv = {
+												inventory
+											}
+										end)
+									insertQuery:Execute()
 								end
-							else
-								ix.db.InsertTable({
-									_charID = id
-								}, function(_, invID)
-									local w, h = ix.config.Get("invW"), ix.config.Get("invH")
-									local inventory = ix.item.CreateInv(w, h, invID)
-									inventory:SetOwner(id)
+							end)
+						invQuery:Execute()
 
-									character.vars.inv = {
-										inventory
-									}
-								end, "inventories")
-							end
-						end)
-					ix.char.loaded[id] = character
-				else
-					ErrorNoHalt("[Helix] Attempt to load character '"..(data._name or "nil").."' with invalid ID!")
+						ix.char.loaded[id] = character
+					else
+						ErrorNoHalt("[Helix] Attempt to load character '" .. (data.name or "nil") .. "' with invalid ID!")
+					end
 				end
-			end
 
-			if (callback) then
-				callback(characters)
-			end
+				if (callback) then
+					callback(characters)
+				end
 
-			ix.char.cache[steamID64] = characters
-		end)
+				ix.char.cache[steamID64] = characters
+			end)
+		query:Execute()
 	end
 
 	function ix.char.LoadChar(callback, noCache, id)
-		local fields = "_id, _name, _description, _model, _attribs, _data, _money, _faction"
-		local condition = "_schema = '"..ix.db.escape(Schema.folder)
+		local query = mysql:Select("ix_characters")
+			query:Select("id")
+			query:Select("name")
+			query:Select("description")
+			query:Select("model")
+			query:Select("attributes")
+			query:Select("data")
+			query:Select("money")
+			query:Select("faction")
+			query:Where("schema", Schema.folder)
 
-		if (id) then
-			condition = condition.."' AND _id = "..id
-		else
-			ErrorNoHalt("Tried to load invalid character with ix.char.loadChar")
+			if (id) then
+				query:Where("id", id)
+			else
+				ErrorNoHalt("Tried to load invalid character with ix.char.loadChar")
+				return
+			end
 
-			return
-		end
+			query:Callback(function(result)
+				for k, v in ipairs(result or {}) do
+					local id = tonumber(v.id)
 
-		ix.db.query("SELECT "..fields.." FROM ix_characters WHERE "..condition, function(data)
-			for k, v in ipairs(data or {}) do
-				local id = tonumber(v._id)
+					if (id) then
+						local data = {}
 
-				if (id) then
-					local data = {}
+						for k2, v2 in pairs(ix.char.vars) do
+							if (v2.field and v[v2.field]) then
+								local value = tostring(v[v2.field])
 
-					for k2, v2 in pairs(ix.char.vars) do
-						if (v2.field and v[v2.field]) then
-							local value = tostring(v[v2.field])
+								if (type(v2.default) == "number") then
+									value = tonumber(value) or v2.default
+								elseif (type(v2.default) == "boolean") then
+									value = tobool(vlaue)
+								elseif (type(v2.default) == "table") then
+									value = util.JSONToTable(value)
+								end
 
-							if (type(v2.default) == "number") then
-								value = tonumber(value) or v2.default
-							elseif (type(v2.default) == "boolean") then
-								value = tobool(vlaue)
-							elseif (type(v2.default) == "table") then
-								value = util.JSONToTable(value)
+								data[k2] = value
 							end
-
-							data[k2] = value
 						end
-					end
 
-					local character = ix.char.New(data, id)
+						local character = ix.char.New(data, id)
+
 						hook.Run("CharacterRestored", character)
 						character.vars.inv = {
 							[1] = -1,
 						}
 
-						ix.db.query("SELECT _invID, _invType FROM ix_inventories WHERE _charID = "..id, function(data)
-							if (data and #data > 0) then
-								for k, v in pairs(data) do
-									if (v._invType and isstring(v._invType) and v._invType == "NULL") then
-										v._invType = nil
-									end
-
-									local w, h = ix.config.Get("invW"), ix.config.Get("invH")
-
-									local invType 
-									if (v._invType) then
-										invType = ix.item.inventoryTypes[v._invType]
-
-										if (invType) then
-											w, h = invType.w, invType.h
-										end
-									end
-
-									ix.item.RestoreInv(tonumber(v._invID), w, h, function(inventory)
-										if (v._invType) then
-											inventory.vars.isBag = v._invType
-											table.insert(character.vars.inv, inventory)
-										else
-											character.vars.inv[1] = inventory
+						local invQuery = mysql:Select("ix_inventories")
+							invQuery:Select("inventory_id")
+							invQuery:Select("inventory_type")
+							invQuery:Where("character_id", id)
+							invQuery:Callback(function(result)
+								if (result and #result > 0) then
+									for k, v in pairs(result) do
+										if (v.inventory_type and isstring(v.inventory_type) and v.inventory_type == "NULL") then
+											v.inventory_type = nil
 										end
 
-										inventory:SetOwner(id)
-									end, true)
+										local invType
+										local w, h = ix.config.Get("invW"), ix.config.Get("invH")
+
+										if (v.inventory_type) then
+											invType = ix.item.inventoryTypes[v.inventory_type]
+
+											if (invType) then
+												w, h = invType.w, invType.h
+											end
+										end
+
+										ix.item.RestoreInv(tonumber(v.inventory_id), w, h, function(inventory)
+											if (v.inventory_type) then
+												inventory.vars.isBag = v.inventory_type
+												table.insert(character.vars.inv, inventory)
+											else
+												character.vars.inv[1] = inventory
+											end
+
+											inventory:SetOwner(id)
+										end, true)
+									end
+								else
+									local insertQuery = mysql:Insert("ix_inventories")
+										insertQuery:Insert("character_id", id)
+										insertQuery:Callback(function(result, status, lastID)
+											local w, h = ix.config.Get("invW"), ix.config.Get("invH")
+											local inventory = ix.item.CreateInv(w, h, lastID)
+
+											inventory:SetOwner(id)
+											character.vars.inv = {
+												inventory
+											}
+										end)
+									insertQuery:Execute()
 								end
-							else
-								ix.db.InsertTable({
-									_charID = id
-								}, function(_, invID)
-									local w, h = ix.config.Get("invW"), ix.config.Get("invH")
-									local inventory = ix.item.CreateInv(w, h, invID)
-									inventory:SetOwner(id)
+							end)
+						invQuery:Execute()
 
-									character.vars.inv = {
-										inventory
-									}
-								end, "inventories")
-							end
-						end)
-					ix.char.loaded[id] = character
-				else
-					ErrorNoHalt("[Helix] Attempt to load character '"..(data._name or "nil").."' with invalid ID!")
+						ix.char.loaded[id] = character
+					else
+						ErrorNoHalt("[Helix] Attempt to load character '" .. (data.name or "nil") .. "' with invalid ID!")
+					end
 				end
-			end
 
-			if (callback) then
-				callback(character)
-			end
-		end)
+				if (callback) then
+					callback(character)
+				end
+			end)
+		query:Execute()
 	end
 end
 
@@ -299,7 +336,7 @@ end
 -- Registration of default variables go here.
 do
 	ix.char.RegisterVar("name", {
-		field = "_name",
+		field = "name",
 		default = "John Doe",
 		index = 1,
 		OnValidate = function(value, data, client)
@@ -332,7 +369,7 @@ do
 	})
 
 	ix.char.RegisterVar("description", {
-		field = "_description",
+		field = "description",
 		default = "",
 		index = 2,
 		OnValidate = function(value, data)
@@ -351,7 +388,7 @@ do
 	local gradient = ix.util.GetMaterial("vgui/gradient-d")
 
 	ix.char.RegisterVar("model", {
-		field = "_model",
+		field = "model",
 		default = "models/error.mdl",
 		OnSet = function(character, value)
 			local client = character:GetPlayer()
@@ -448,7 +485,7 @@ do
 	})
 
 	ix.char.RegisterVar("faction", {
-		field = "_faction",
+		field = "faction",
 		default = "Citizen",
 		OnSet = function(character, value)
 			local client = character:GetPlayer()
@@ -477,8 +514,8 @@ do
 		end
 	})
 
-	ix.char.RegisterVar("attribs", {
-		field = "_attribs",
+	ix.char.RegisterVar("attributes", {
+		field = "attributes",
 		default = {},
 		isLocal = true,
 		index = 4,
@@ -489,12 +526,12 @@ do
 
 			local y2 = 0
 			local total = 0
-			local maximum = hook.Run("GetStartAttribPoints", LocalPlayer(), panel.payload) or ix.config.Get("maxAttribs", 30)
+			local maximum = hook.Run("GetStartAttribPoints", LocalPlayer(), panel.payload) or ix.config.Get("maxAttributes", 30)
 
-			panel.payload.attribs = {}
+			panel.payload.attributes = {}
 
-			for k, v in SortedPairsByMemberValue(ix.attribs.list, "name") do
-				panel.payload.attribs[k] = 0
+			for k, v in SortedPairsByMemberValue(ix.attributes.list, "name") do
+				panel.payload.attributes[k] = 0
 
 				local bar = container:Add("ixAttribBar")
 				bar:SetMax(maximum)
@@ -507,7 +544,7 @@ do
 					end
 
 					total = total + difference
-					panel.payload.attribs[k] = panel.payload.attribs[k] + difference
+					panel.payload.attributes[k] = panel.payload.attributes[k] + difference
 				end
 
 				if (v.noStartBonus) then
@@ -529,7 +566,7 @@ do
 						count = count + v
 					end
 
-					if (count > (hook.Run("GetStartAttribPoints", client, count) or ix.config.Get("maxAttribs", 30))) then
+					if (count > (hook.Run("GetStartAttribPoints", client, count) or ix.config.Get("maxAttributes", 30))) then
 						return false, "unknownError"
 					end
 				else
@@ -537,11 +574,11 @@ do
 				end
 			end
 		end,
-		shouldDisplay = function(panel) return table.Count(ix.attribs.list) > 0 end
+		shouldDisplay = function(panel) return table.Count(ix.attributes.list) > 0 end
 	})
 
 	ix.char.RegisterVar("money", {
-		field = "_money",
+		field = "money",
 		default = 0,
 		isLocal = true,
 		noDisplay = true
@@ -551,7 +588,7 @@ do
 		default = {},
 		isLocal = true,
 		noDisplay = true,
-		field = "_data",
+		field = "data",
 		OnSet = function(character, key, value, noReplication, receiver)
 			local data = character:GetData()
 			local client = character:GetPlayer()
@@ -738,16 +775,33 @@ do
 				hook.Run("PreCharDelete", client, character)
 				ix.char.loaded[id] = nil
 				netstream.Start(nil, "charDel", id)
-				ix.db.query("DELETE FROM ix_characters WHERE _id = "..id.." AND _steamID = "..client:SteamID64())
-				ix.db.query("SELECT _invID FROM ix_inventories WHERE _charID = "..id, function(data)
-					if (data) then
-						for k, v in ipairs(data) do
-							ix.db.query("DELETE FROM ix_items WHERE _invID = "..v._invID)
-							ix.item.inventories[tonumber(v._invID)] = nil
-						end
-					end
 
-					ix.db.query("DELETE FROM ix_inventories WHERE _charID = "..id)
+				-- remove character from database
+				local query = mysql:Delete("ix_characters")
+					query:Where("id", id)
+					query:Where("steamid", client:SteamID64())
+				query:Execute()
+
+				-- DBTODO: setup relations instead
+				-- remove inventory from database
+				query = mysql:Select("ix_inventories")
+					query:Select("inventory_id")
+					query:Where("character_id", id)
+					query:Callback(function(result)
+						if (istable(result)) then
+							-- remove associated items from database
+							for k, v in ipairs(result) do
+								local itemQuery = mysql:Delete("ix_items")
+									itemQuery:Where("inventory_id", v.inventory_id)
+								itemQuery:Execute()
+
+								ix.item.inventories[tonumber(v._invID)] = nil
+							end
+						end
+
+					local invQuery = mysql:Delete("ix_inventories")
+						invQuery:Where("character_id", id)
+					invQuery:Execute()
 				end)
 
 				-- other plugins might need to deal with deleted characters.

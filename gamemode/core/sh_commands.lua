@@ -220,10 +220,10 @@ ix.command.Add("CharSetAttribute", {
 		if (IsValid(target)) then
 			local char = target:GetChar()
 			if (char) then
-				for k, v in pairs(ix.attribs.list) do
+				for k, v in pairs(ix.attributes.list) do
 					if (ix.util.StringMatches(L(v.name, client), attribName) or ix.util.StringMatches(k, attribName)) then
 						char:SetAttrib(k, math.abs(attribNumber))
-						client:NotifyLocalized("attribSet", target:Name(), L(v.name, client), math.abs(attribNumber))
+						client:NotifyLocalized("attributeSet", target:Name(), L(v.name, client), math.abs(attribNumber))
 
 						return
 					end
@@ -256,7 +256,7 @@ ix.command.Add("CharAddAttribute", {
 		if (IsValid(target)) then
 			local char = target:GetChar()
 			if (char) then
-				for k, v in pairs(ix.attribs.list) do
+				for k, v in pairs(ix.attributes.list) do
 					if (ix.util.StringMatches(L(v.name, client), attribName) or ix.util.StringMatches(k, attribName)) then
 						char:UpdateAttrib(k, math.abs(attribNumber))
 						client:NotifyLocalized("attribUpdate", target:Name(), L(v.name, client), math.abs(attribNumber))
@@ -409,24 +409,35 @@ ix.command.Add("CharUnban", {
 
 		client.ixNextSearch = CurTime() + 15
 
-		ix.db.query("SELECT _id, _name, _data FROM ix_characters WHERE _name LIKE \"%"..ix.db.escape(name).."%\" LIMIT 1", function(data)
-			if (data and data[1]) then
-				local charID = tonumber(data[1]._id)
-				local name = data[1]._name
-				local data = util.JSONToTable(data[1]._data or "[]")
+		local query = mysql:Select("ix_characters")
+			query:Select("id")
+			query:Select("name")
+			query:Select("data")
+			query:WhereLike("name", name)
+			query:Limit(1)
+			query:Callback(function(result)
+				if (istable(result) and #result > 0) then
+					local characterID = tonumber(result[1].id)
+					local name = result[1].name
+					local data = util.JSONToTable(result[1].data or "[]")
 
-				client.ixNextSearch = 0
+					client.ixNextSearch = 0
 
-				if (!data.banned) then
-					return client:NotifyLocalized("charNotBanned")
+					if (!data.banned) then
+						return client:NotifyLocalized("charNotBanned")
+					end
+
+					data.banned = nil
+
+					local updateQuery = mysql:Update("ix_characters")
+						updateQuery:Update("data", util.TableToJSON(data))
+						updateQuery:Where("id", characterID)
+					updateQuery:Execute()
+					
+					ix.util.NotifyLocalized("charUnBan", nil, client:Name(), v:GetName())
 				end
-
-				data.banned = nil
-				
-				ix.db.UpdateTable({_data = data}, nil, nil, "_id = "..charID)
-				ix.util.NotifyLocalized("charUnBan", nil, client:Name(), v:GetName())
-			end
-		end)
+			end)
+		query:Execute()
 	end
 })
 

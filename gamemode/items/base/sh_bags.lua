@@ -89,7 +89,11 @@ end
 ITEM.postHooks.drop = function(item, result)
 	local index = item:GetData("id")
 
-	ix.db.query("UPDATE ix_inventories SET _charID = 0 WHERE _invID = "..index)
+	local query = mysql:Update("ix_inventories")
+		query:Update("character_id", 0)
+		query:Where("inventory_id", index)
+	query:Execute()
+
 	netstream.Start(item.player, "ixBagDrop", index)
 end
 
@@ -108,8 +112,13 @@ function ITEM:OnRemoved()
 	local index = self:GetData("id")
 
 	if (index) then
-		ix.db.query("DELETE FROM ix_items WHERE _invID = "..index)
-		ix.db.query("DELETE FROM ix_inventories WHERE _invID = "..index)
+		local query = mysql:Delete("ix_items")
+			query:Where("inventory_id", index)
+		query:Execute()
+
+		local query = mysql:Delete("ix_inventories")
+			query:Where("inventory_id", index)
+		query:Execute()
 	end
 end
 

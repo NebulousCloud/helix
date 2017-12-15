@@ -1,3 +1,4 @@
+
 function GM:PlayerInitialSpawn(client)
 	client.ixJoinTime = RealTime()
 
@@ -400,7 +401,7 @@ function GM:PlayerLoadout(client)
 
 		-- Apply any flags as needed.
 		ix.flag.OnSpawn(client)
-		ix.attribs.Setup(client)
+		ix.attributes.Setup(client)
 
 		hook.Run("PostPlayerLoadout", client)
 
@@ -754,4 +755,16 @@ function GM:GetPreferredCarryAngles(entity)
 			end
 		end
 	end
+end
+
+function GM:DatabaseConnected()
+	-- Create the SQL tables if they do not exist.
+	ix.db.LoadTables()
+	ix.log.LoadTables()
+
+	MsgC(Color(0, 255, 0), "Database Type: " .. ix.db.module .. ".\n")
+
+	timer.Create("ixDatabaseThink", 0.5, 0, function()
+		mysql:Think()
+	end)
 end

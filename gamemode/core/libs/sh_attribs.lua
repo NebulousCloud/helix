@@ -1,13 +1,13 @@
 if (!ix.char) then include("sh_character.lua") end
 
-ix.attribs = ix.attribs or {}
-ix.attribs.list = ix.attribs.list or {}
+ix.attributes = ix.attributes or {}
+ix.attributes.list = ix.attributes.list or {}
 
-function ix.attribs.LoadFromDir(directory)
+function ix.attributes.LoadFromDir(directory)
 	for k, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
 		local niceName = v:sub(4, -5)
 
-		ATTRIBUTE = ix.attribs.list[niceName] or {}
+		ATTRIBUTE = ix.attributes.list[niceName] or {}
 			if (PLUGIN) then
 				ATTRIBUTE.plugin = PLUGIN.uniqueID
 			end
@@ -17,16 +17,16 @@ function ix.attribs.LoadFromDir(directory)
 			ATTRIBUTE.name = ATTRIBUTE.name or "Unknown"
 			ATTRIBUTE.description = ATTRIBUTE.description or "No description availalble."
 
-			ix.attribs.list[niceName] = ATTRIBUTE
+			ix.attributes.list[niceName] = ATTRIBUTE
 		ATTRIBUTE = nil
 	end
 end
 
-function ix.attribs.Setup(client)
+function ix.attributes.Setup(client)
 	local character = client:GetChar()
 
 	if (character) then
-		for k, v in pairs(ix.attribs.list) do
+		for k, v in pairs(ix.attributes.list) do
 			if (v.OnSetup) then
 				v:OnSetup(client, character:GetAttrib(k, 0))
 			end
@@ -40,13 +40,13 @@ do
 	
 	if (SERVER) then
 		function charMeta:UpdateAttrib(key, value)
-			local attribute = ix.attribs.list[key]
+			local attribute = ix.attributes.list[key]
 
 			if (attribute) then
-				local attrib = self:GetAttribs()
+				local attrib = self:GetAttributes()
 				local client = self:GetPlayer()
 
-				attrib[key] = math.min((attrib[key] or 0) + value, attribute.maxValue or ix.config.Get("maxAttribs", 30))
+				attrib[key] = math.min((attrib[key] or 0) + value, attribute.maxValue or ix.config.Get("maxAttributes", 30))
 
 				if (IsValid(client)) then
 					netstream.Start(client, "attrib", self:GetID(), key, attrib[key])
@@ -61,10 +61,10 @@ do
 		end
 
 		function charMeta:SetAttrib(key, value)
-			local attribute = ix.attribs.list[key]
+			local attribute = ix.attributes.list[key]
 
 			if (attribute) then
-				local attrib = self:GetAttribs()
+				local attrib = self:GetAttributes()
 				local client = self:GetPlayer()
 
 				attrib[key] = value
@@ -107,7 +107,7 @@ do
 			local character = ix.char.loaded[id]
 
 			if (character) then
-				character:GetAttribs()[key] = value
+				character:GetAttributes()[key] = value
 			end
 		end)
 	end
@@ -123,7 +123,7 @@ do
 	end
 
 	function charMeta:GetAttrib(key, default)
-		local att = self:GetAttribs()[key] or default
+		local att = self:GetAttributes()[key] or default
 		local boosts = self:GetBoosts()[key]
 
 		if (boosts) then

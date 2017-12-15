@@ -65,8 +65,13 @@ if (SERVER) then
 			else
 				local index = v:GetNetVar("id")
 
-				ix.db.query("DELETE FROM ix_items WHERE _invID = "..index)
-				ix.db.query("DELETE FROM ix_inventories WHERE _invID = "..index)
+				local query = mysql:Delete("ix_items")
+					query:Where("inventory_id", index)
+				query:Execute()
+
+				query = mysql:Delete("ix_inventories")
+					query:Where("inventory_id", index)
+				query:Execute()
 			end
 		end
 

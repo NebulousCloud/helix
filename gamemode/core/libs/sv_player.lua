@@ -5,48 +5,55 @@ do
 	function playerMeta:LoadData(callback)
 		local name = self:SteamName()
 		local steamID64 = self:SteamID64()
-		local timeStamp = math.floor(os.time())
+		local timestamp = math.floor(os.time())
 		local ip = self:IPAddress():match("%d+%.%d+%.%d+%.%d+")
 
-		ix.db.query("SELECT _data, _playTime FROM ix_players WHERE _steamID = "..steamID64, function(data)
-			if (IsValid(self) and data and data[1] and data[1]._data) then
-				ix.db.UpdateTable({
-					_lastJoin = timeStamp,
-					_address = ip
-				}, nil, "players", "_steamID = "..steamID64)
+		local query = mysql:Select("ix_players")
+			query:Select("data")
+			query:Select("play_time")
+			query:Where("steamid", steamID64)
+			query:Callback(function(result)
+				if (IsValid(self) and istable(result) and #result > 0 and result[1].data) then
+					local updateQuery = mysql:Update("ix_players")
+						updateQuery:Update("last_join_time", timestamp)
+						updateQuery:Update("address", ip)
+						updateQuery:Where("steamid", steamID64)
+					updateQuery:Execute()
 
-				self.ixPlayTime = tonumber(data[1]._playTime) or 0
-				self.ixData = util.JSONToTable(data[1]._data)
+					self.ixPlayTime = tonumber(result[1].play_time) or 0
+					self.ixData = util.JSONToTable(result[1].data)
 
-				if (callback) then
-					callback(self.ixData)
+					if (callback) then
+						callback(self.ixData)
+					end
+				else
+					local insertQuery = mysql:Insert("ix_players")
+						insertQuery:Insert("steamid", steamID64)
+						insertQuery:Insert("steam_name", name)
+						insertQuery:Insert("play_time", 0)
+						insertQuery:Insert("address", ip)
+						insertQuery:Insert("last_join_time", timestamp)
+						insertQuery:Insert("data", util.TableToJSON({}))
+					insertQuery:Execute()
+
+					if (callback) then
+						callback({})
+					end
 				end
-			else
-				ix.db.InsertTable({
-					_steamID = steamID64,
-					_steamName = name,
-					_playTime = 0,
-					_address = ip,
-					_lastJoin = timeStamp,
-					_data = {}
-				}, nil, "players")
-
-				if (callback) then
-					callback({})
-				end
-			end
-		end)
+			end)
+		query:Execute()
 	end
 
 	function playerMeta:SaveData()
 		local name = self:Name()
 		local steamID64 = self:SteamID64()
 
-		ix.db.UpdateTable({
-			_steamName = name,
-			_playTime = math.floor((self.ixPlayTime or 0) + (RealTime() - (self.ixJoinTime or RealTime() - 1))),
-			_data = self.ixData
-		}, nil, "players", "_steamID = "..steamID64)
+		local query = mysql:Update("ix_players")
+			query:Update("steam_name", name)
+			query:Update("play_time", math.floor((self.ixPlayTime or 0) + (RealTime() - (self.ixJoinTime or RealTime() - 1))))
+			query:Update("data", util.TableToJSON(self.ixData))
+			query:Where("steamid", steamID64)
+		query:Execute()
 	end
 
 	function playerMeta:SetData(key, value, noNetworking)

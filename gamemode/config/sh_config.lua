@@ -28,7 +28,7 @@ ix.config.Add("genericFont", "Segoe UI", "The font used to display generic texts
 	end
 end, {category = "appearance"})
 
-ix.config.Add("maxAttribs", 30, "The total maximum amount of attribute points allowed.", nil, {
+ix.config.Add("maxAttributes", 30, "The total maximum amount of attribute points allowed.", nil, {
 	data = {min = 1, max = 250},
 	category = "characters"
 })

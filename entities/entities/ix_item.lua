@@ -114,7 +114,9 @@ if (SERVER) then
 					itemTable:OnRemoved()
 				end
 
-				ix.db.query("DELETE FROM ix_items WHERE _itemID = "..self.ixItemID)
+				local query = mysql:Delete("ix_items")
+					query:Where("item_id", self.ixItemID)
+				query:Execute()
 			end
 		end
 	end

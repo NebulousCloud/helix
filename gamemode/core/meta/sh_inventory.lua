@@ -96,7 +96,10 @@ function META:SetOwner(owner, fullUpdate)
 			end
 		end
 		
-		ix.db.query("UPDATE ix_inventories SET _charID = "..owner.." WHERE _invID = "..self:GetID())
+		local query = mysql:Update("ix_inventories")
+			query:Update("character_id", owner)
+			query:Where("inventory_id", self:GetID())
+		query:Execute()
 	end
 
 	self.owner = owner
@@ -205,8 +208,11 @@ function META:Remove(id, noReplication, noDelete)
 			if (item and item.OnRemoved) then
 				item:OnRemoved()
 			end
-			
-			ix.db.query("DELETE FROM ix_items WHERE _itemID = "..id)
+
+			local query = mysql:Delete("ix_items")
+				query:Where("item_id", id)
+			query:Execute()
+
 			ix.item.instances[id] = nil
 		end
 	end
@@ -422,7 +428,12 @@ if (SERVER) then
 						end
 
 						if (!self.noSave) then
-							ix.db.query("UPDATE ix_items SET _invID = "..targetInv:GetID()..", _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
+							local query = mysql:Update("ix_items")
+								query:Update("inventory_id", targetInv:GetID())
+								query:Update("x", x)
+								query:Update("y", y)
+								query:Where("item_id", item.id)
+							query:Execute()
 						end
 
 						return x, y, targetInv:GetID()

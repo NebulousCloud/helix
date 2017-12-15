@@ -29,39 +29,46 @@ function PLUGIN:LoadData()
 		end
 
 		if (#idRange > 0) then
-			local range = "("..table.concat(idRange, ", ")..")"
-
 			if (hook.Run("ShouldDeleteSavedItems") == true) then
 				-- don't spawn saved item and just delete them.
-				ix.db.query("DELETE FROM ix_items WHERE _itemID IN " .. range)
+				local query = mysql:Delete("ix_items")
+					query:WhereIn("item_id", idRange)
+				query:Execute()
+
 				print("Server Deleted Server Items (does not includes Logical Items)")
 				print(range)
 			else
-				ix.db.query("SELECT _itemID, _uniqueID, _data FROM ix_items WHERE _itemID IN "..range, function(data)
-					if (data) then
-						local loadedItems = {}
+				local query = mysql:Select("ix_items")
+					query:Select("item_id")
+					query:Select("unique_id")
+					query:Select("data")
+					query:WhereIn("item_id", idRange)
+					query:Callback(function(result)
+						if (istable(result)) then
+							local loadedItems = {}
 
-						for k, v in ipairs(data) do
-							local itemID = tonumber(v._itemID)
-							local data = util.JSONToTable(v._data or "[]")
-							local uniqueID = v._uniqueID
-							local itemTable = ix.item.list[uniqueID]
-							local position = positions[itemID]
-
-							if (itemTable and itemID) then
+							for k, v in ipairs(result) do
+								local itemID = tonumber(v.item_id)
+								local data = util.JSONToTable(v.data or "[]")
+								local uniqueID = v.unique_id
+								local itemTable = ix.item.list[uniqueID]
 								local position = positions[itemID]
-								local item = ix.item.New(uniqueID, itemID)
-								item.data = data or {}
-								item:Spawn(position).ixItemID = itemID
 
-								item.invID = 0
-								table.insert(loadedItems, item)
+								if (itemTable and itemID) then
+									local position = positions[itemID]
+									local item = ix.item.New(uniqueID, itemID)
+									item.data = data or {}
+									item:Spawn(position).ixItemID = itemID
+
+									item.invID = 0
+									table.insert(loadedItems, item)
+								end
 							end
-						end
 
-						hook.Run("OnSavedItemLoaded", loadedItems) -- when you have something in the dropped item.
-					end
-				end)
+							hook.Run("OnSavedItemLoaded", loadedItems) -- when you have something in the dropped item.
+						end
+					end)
+				query:Execute()
 			end
 		end
 	end

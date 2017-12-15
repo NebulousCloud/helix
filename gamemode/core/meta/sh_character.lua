@@ -26,29 +26,31 @@ if (SERVER) then
 		if (self.isBot) then
 			return
 		end
-		
-		-- Prepare a list of information to be saved.
-		local data = {}
-
-		-- Save all the character variables.
-		for k, v in pairs(ix.char.vars) do
-			if (v.field and self.vars[k] != nil) then
-				data[v.field] = self.vars[k]
-			end
-		end
 
 		-- Let plugins/schema determine if the character should be saved.
 		local shouldSave = hook.Run("CharacterPreSave", self)
 
 		if (shouldSave != false) then
 			-- Run a query to save the character to the database.
-			ix.db.UpdateTable(data, function()
-				if (callback) then
-					callback()
+			local query = mysql:Update("ix_characters")
+				-- update all character vars
+				for k, v in pairs(ix.char.vars) do
+					if (v.field and self.vars[k] != nil) then
+						local value = self.vars[k]
+
+						query:Update(v.field, istable(value) and util.TableToJSON(value) or tostring(value))
+					end
 				end
 
-				hook.Run("CharacterPostSave", self)
-			end, nil, "_id = "..self:GetID())
+				query:Where("id", self:GetID())
+				query:Callback(function()
+					if (callback) then
+						callback()
+					end
+
+					hook.Run("CharacterPostSave", self)
+				end)
+			query:Execute()
 		end
 	end
 

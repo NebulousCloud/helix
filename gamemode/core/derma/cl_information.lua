@@ -181,7 +181,7 @@ function PANEL:Init()
 
 		if (!suppress or !suppress.attrib) then
 			self.attribInfo = self.info:Add("ixInfoPanel")
-			self.attribInfo:SetTitle(L"attribs")
+			self.attribInfo:SetTitle(L"attributes")
 			self.attribInfo:DockMargin(0, 16, 0, 0)
 			self.attribInfo:Dock(TOP)
 		end
@@ -256,7 +256,7 @@ function PANEL:Setup()
 	if (self.attribInfo) then
 		local boost = char:GetBoosts()
 
-		for k, v in SortedPairsByMemberValue(ix.attribs.list, "name") do
+		for k, v in SortedPairsByMemberValue(ix.attributes.list, "name") do
 			local attribBoost = 0
 			if (boost[k]) then
 				for _, bValue in pairs(boost[k]) do
@@ -275,7 +275,7 @@ function PANEL:Setup()
 				bar:SetValue(attribValue)
 			end
 
-			local maximum = v.maxValue or ix.config.Get("maxAttribs", 30)
+			local maximum = v.maxValue or ix.config.Get("maxAttributes", 30)
 			bar:SetMax(maximum)
 			bar:SetReadOnly()
 			bar:SetText(Format("%s [%.1f/%.1f] (%.1f", L(v.name), attribValue, maximum, attribValue/maximum*100) .. "%)")

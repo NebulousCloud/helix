@@ -105,11 +105,12 @@ function ITEM:SetData(key, value, receivers, noSave, noCheckEntity)
 		end
 	end
 
-	if (!noSave) then
-		if (ix.db) then
-			ix.db.UpdateTable({_data = self.data}, nil, "items", "_itemID = "..self:GetID())
-		end
-	end	
+	if (!noSave and ix.db) then
+		local query = mysql:Update("ix_items")
+			query:Update("data", util.TableToJSON(self.data))
+			query:Where("item_id", self:GetID())
+		query:Execute()
+	end
 end
 
 function ITEM:GetData(key, default)
@@ -228,7 +229,10 @@ function ITEM:Remove()
 				item:OnRemoved()
 			end
 			
-			ix.db.query("DELETE FROM ix_items WHERE _itemID = "..self.id)
+			local query = mysql:Delete("ix_items")
+				query:Where("item_id", self.id)
+			query:Execute()
+
 			ix.item.instances[self.id] = nil
 		end
 	end
@@ -354,9 +358,12 @@ if (SERVER) then
 				end
 			elseif (IsValid(client)) then
 				self.invID = 0
-
 				curInv:Remove(self.id, false, true)
-				ix.db.query("UPDATE ix_items SET _invID = 0 WHERE _itemID = "..self.id)
+
+				local query = mysql:Update("ix_items")
+					query:Update("inventory_id", 0)
+					query:Where("item_id", self.id)
+				query:Execute()
 
 				if (isLogical != true) then
 					return self:Spawn(client)	

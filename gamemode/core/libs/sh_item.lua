@@ -48,30 +48,31 @@ end
 
 function ix.item.Instance(index, uniqueID, itemData, x, y, callback)
 	if (!uniqueID or ix.item.list[uniqueID]) then
-		ix.db.InsertTable({
-			_invID = index,
-			_uniqueID = uniqueID,
-			_data = itemData,
-			_x = x,
-			_y = y
-		}, function(data, itemID)
-			local item = ix.item.New(uniqueID, itemID)
+		local query = mysql:Insert("ix_items")
+			query:Insert("inventory_id", index)
+			query:Insert("unique_id", uniqueID)
+			query:Insert("data", util.TableToJSON(itemData))
+			query:Insert("x", x)
+			query:Insert("y", y)
+			query:Callback(function(result, status, lastID)
+				local item = ix.item.New(uniqueID, lastID)
 
-			if (item) then
-				item.data = itemData or {}				
-				item.invID = index
+				if (item) then
+					item.data = itemData or {}				
+					item.invID = index
 
-				if (callback) then
-					callback(item)
+					if (callback) then
+						callback(item)
+					end
+
+					if (item.OnInstanced) then
+						item:OnInstanced(index, x, y, item)
+					end
 				end
-
-				if (item.OnInstanced) then
-					item:OnInstanced(index, x, y, item)
-				end
-			end
-		end, "items")
+			end)
+		query:Execute()
 	else
-		ErrorNoHalt("[Helix] Attempt to give an invalid item! ("..(uniqueID or "nil")..")\n")
+		ErrorNoHalt("[Helix] Attempt to give an invalid item! (" .. (uniqueID or "nil") .. ")\n")
 	end
 end
 
@@ -88,31 +89,32 @@ end
 function ix.item.NewInv(owner, invType, callback)
 	local invData = ix.item.inventoryTypes[invType] or {w = 1, h = 1}
 
-	ix.db.InsertTable({
-		_invType = invType,
-		_charID = owner
-	}, function(data, invID)
-		local inventory = ix.item.CreateInv(invData.w, invData.h, invID)
-		
-		if (invType) then
-			inventory.vars.isBag = invType
-		end
+	local query = mysql:Insert("ix_inventories")
+		query:Insert("inventory_type", invType)
+		query:Insert("character_id", owner)
+		query:Callback(function(result, status, lastID)
+			local inventory = ix.item.CreateInv(invData.w, invData.h, lastID)
+			
+			if (invType) then
+				inventory.vars.isBag = invType
+			end
 
-		if (owner and owner > 0) then
-			for k, v in ipairs(player.GetAll()) do
-				if (v:GetChar() and v:GetChar():GetID() == owner) then
-					inventory:SetOwner(owner)
-					inventory:Sync(v)
+			if (owner and owner > 0) then
+				for k, v in ipairs(player.GetAll()) do
+					if (v:GetChar() and v:GetChar():GetID() == owner) then
+						inventory:SetOwner(owner)
+						inventory:Sync(v)
 
-					break
+						break
+					end
 				end
 			end
-		end
 
-		if (callback) then
-			callback(inventory)
-		end
-	end, "inventories")
+			if (callback) then
+				callback(inventory)
+			end
+		end)
+	query:Execute()
 end
 
 function ix.item.Get(identifier)
@@ -318,64 +320,74 @@ do
 		
 		local inventory = ix.item.CreateInv(w, h, invID)
 
-		ix.db.query("SELECT _itemID, _uniqueID, _data, _x, _y FROM ix_items WHERE _invID = "..invID, function(data)
-			local badItemsUniqueID = {}
-			
-			if (data) then
-				local slots = {}
-				local badItems = {}
+		local query = mysql:Select("ix_items")
+			query:Select("item_id")
+			query:Select("unique_id")
+			query:Select("data")
+			query:Select("x")
+			query:Select("y")
+			query:Where("inventory_id", invID)
+			query:Callback(function(result)
+				local badItemsUniqueID = {}
 
-				for _, item in ipairs(data) do
-					local x, y = tonumber(item._x), tonumber(item._y)
-					local itemID = tonumber(item._itemID)
-					local data = util.JSONToTable(item._data or "[]")
+				if (istable(result) and #result > 0) then
+					local slots = {}
+					local badItems = {}
 
-					if (x and y and itemID) then
-						if (x <= w and x > 0 and y <= h and y > 0) then
-							local item2 = ix.item.New(item._uniqueID, itemID)
+					for _, item in ipairs(result) do
+						local x, y = tonumber(item.x), tonumber(item.y)
+						local itemID = tonumber(item.item_id)
+						local data = util.JSONToTable(item.data or "[]")
 
-							if (item2) then
-								item2.data = {}
-								if (data) then
-									item2.data = data
-								end
+						if (x and y and itemID) then
+							if (x <= w and x > 0 and y <= h and y > 0) then
+								local item2 = ix.item.New(item.unique_id, itemID)
 
-								item2.gridX = x
-								item2.gridY = y
-								item2.invID = invID
-								
-								for x2 = 0, item2.width - 1 do
-									for y2 = 0, item2.height - 1 do
-										slots[x + x2] = slots[x + x2] or {}
-										slots[x + x2][y + y2] = item2
+								if (item2) then
+									item2.data = {}
+									if (data) then
+										item2.data = data
 									end
-								end
 
-								if (item2.OnRestored) then
-									item2:OnRestored(item2, invID)
+									item2.gridX = x
+									item2.gridY = y
+									item2.invID = invID
+									
+									for x2 = 0, item2.width - 1 do
+										for y2 = 0, item2.height - 1 do
+											slots[x + x2] = slots[x + x2] or {}
+											slots[x + x2][y + y2] = item2
+										end
+									end
+
+									if (item2.OnRestored) then
+										item2:OnRestored(item2, invID)
+									end
+								else
+									badItemsUniqueID[#badItemsUniqueID + 1] = item.unique_id
+									badItems[#badItems + 1] = itemID
 								end
 							else
-								badItemsUniqueID[#badItemsUniqueID + 1] = item._uniqueID
+								badItemsUniqueID[#badItemsUniqueID + 1] = item.unique_id
 								badItems[#badItems + 1] = itemID
 							end
-						else
-							badItemsUniqueID[#badItemsUniqueID + 1] = item._uniqueID
-							badItems[#badItems + 1] = itemID
 						end
 					end
-				end
-				
-				inventory.slots = slots
+					
+					inventory.slots = slots
 
-				if (table.Count(badItems) > 0) then
-					ix.db.query("DELETE FROM ix_items WHERE _itemID IN ("..table.concat(badItems, ", ")..")")
+					if (table.Count(badItems) > 0) then
+						local deleteQuery = mysql:Delete("ix_items")
+							deleteQuery:WhereIn("item_id", badItems)
+						deleteQuery:Execute()
+					end
 				end
-			end
 
-			if (callback) then
-				callback(inventory, badItemsUniqueID)
-			end
-		end)
+				if (callback) then
+					callback(inventory, badItemsUniqueID)
+				end
+			end)
+		query:Execute()
 	end
 
 	if (CLIENT) then
@@ -548,32 +560,29 @@ do
 		end)
 	else
 		function ix.item.LoadItemByID(itemIndex, recipientFilter)
-			local range
-			if (type(itemIndex) == "table") then
-				range = "("..table.concat(itemIndex, ", ")..")"
-			elseif (type(itemIndex) == "number") then
-				range = "(".. itemIndex ..")"
-			else
-				return
-			end
+			local query = mysql:Select("ix_items")
+				query:Select("item_id")
+				query:Select("unique_id")
+				query:Select("data")
+				query:WhereIn("item_id", itemIndex)
+				query:Callback(function(result)
+					if (istable(result)) then
+						for k, v in ipairs(result) do
+							local itemID = tonumber(v.item_id)
+							local data = util.JSONToTable(v.data or "[]")
+							local uniqueID = v.unique_id
+							local itemTable = ix.item.list[uniqueID]
 
-			ix.db.query("SELECT _itemID, _uniqueID, _data FROM ix_items WHERE _itemID IN "..range, function(data)
-				if (data) then
-					for k, v in ipairs(data) do
-						local itemID = tonumber(v._itemID)
-						local data = util.JSONToTable(v._data or "[]")
-						local uniqueID = v._uniqueID
-						local itemTable = ix.item.list[uniqueID]
+							if (itemTable and itemID) then
+								local item = ix.item.New(uniqueID, itemID)
 
-						if (itemTable and itemID) then
-							local item = ix.item.New(uniqueID, itemID)
-
-							item.data = data or {}
-							item.invID = 0
+								item.data = data or {}
+								item.invID = 0
+							end
 						end
 					end
-				end
-			end) 
+				end)
+			query:Execute()
 		end
 
 		function ix.item.PerformInventoryAction(client, action, item, invID, data)
@@ -728,7 +737,11 @@ do
 							end
 
 							if (!inventory.noSave) then
-								ix.db.query("UPDATE ix_items SET _x = "..x..", _y = "..y.." WHERE _itemID = "..item.id)
+								local query = mysql:Update("ix_items")
+									query:Update("x", x)
+									query:Update("y", y)
+									query:Where("item_id", item.id)
+								query:Execute()
 							end
 						end
 					end
