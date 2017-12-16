@@ -217,9 +217,11 @@ ix.command.Add("DoorSetFaction", {
 				client:NotifyLocalized("invalidFaction")
 			-- The player didn't provide a faction.
 			else
+				entity.ixFactionID = nil
 				entity:SetNetVar("faction", nil)
 
 				PLUGIN:CallOnDoorChildren(entity, function()
+					entity.ixFactionID = nil
 					entity:SetNetVar("faction", nil)
 				end)
 
