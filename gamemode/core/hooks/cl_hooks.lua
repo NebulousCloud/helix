@@ -327,6 +327,12 @@ function GM:InitPostEntity()
 	ix.joinTime = RealTime() - 0.9716
 end
 
+function GM:NetworkEntityCreated(entity)
+	if (entity:IsPlayer()) then
+		entity:SetIK(false)
+	end
+end
+
 local vignette = ix.util.GetMaterial("helix/gui/vignette.png")
 local vignetteAlphaGoal = 0
 local vignetteAlphaDelta = 0
