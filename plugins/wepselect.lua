@@ -2,16 +2,7 @@ PLUGIN.name = "Weapon Select"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "A replacement for the default weapon selection."
 
-if (SERVER) then
-	concommand.Add("ix_selectweapon", function(client, command, arguments)
-		local index = tonumber(arguments[1]) or 1
-		local weapon = client:GetWeapons()[index]
-
-		if (IsValid(weapon)) then
-			client:SelectWeapon(weapon:GetClass())
-		end
-	end)
-else
+if (CLIENT) then
 	PLUGIN.index = PLUGIN.index or 1
 	PLUGIN.deltaIndex = PLUGIN.deltaIndex or PLUGIN.index
 	PLUGIN.infoAlpha = PLUGIN.infoAlpha or 0
@@ -143,10 +134,14 @@ else
 
 				return true
 			elseif (bind:find("attack") and pressed and self.alpha > 0) then
-				LocalPlayer():EmitSound(hook.Run("WeaponSelectSound", LocalPlayer():GetWeapons()[self.index]) or "HL2Player.Use")
+				local weapon = LocalPlayer():GetWeapons()[self.index]
 
-				RunConsoleCommand("ix_selectweapon", self.index)
-				self.alpha = 0
+				if (IsValid(weapon)) then
+					LocalPlayer():EmitSound(hook.Run("WeaponSelectSound", weapon) or "HL2Player.Use")
+
+					input.SelectWeapon(weapon)
+					self.alpha = 0
+				end
 
 				return true
 			end
