@@ -37,7 +37,7 @@ SWEP.WorldModel = ""
 
 SWEP.UseHands = false
 SWEP.LowerAngles = Angle(0, 5, -14)
-SWEP.LowerAngles2 = Angle(0, 5, -22)
+SWEP.LowerAngles2 = Angle(0, 5, -42)
 
 SWEP.FireWhenLowered = true
 SWEP.HoldType = "fist"
