@@ -611,7 +611,7 @@ function GM:ScalePlayerDamage(client, hitGroup, dmgInfo)
 end
 
 function GM:GetGameDescription()
-	return "NS - "..(Schema and Schema.name or "Unknown")
+	return "IX: "..(Schema and Schema.name or "Unknown")
 end
 
 function GM:OnPlayerUseBusiness(client, item)
