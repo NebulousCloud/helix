@@ -51,7 +51,7 @@ local function ArgumentCheckStub(command, client, given)
 			local value = ix.command.FindPlayer(client, argument)
 
 			-- FindPlayer emits feedback for us
-			if (!value and bOptional) then
+			if (!value and !bOptional) then
 				return
 			end
 
