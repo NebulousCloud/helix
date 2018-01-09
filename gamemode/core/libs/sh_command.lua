@@ -1,13 +1,122 @@
+
 ix.command = ix.command or {}
 ix.command.list = ix.command.list or {}
+ix.type = ix.type or {
+	[1] = "string", -- any word
+	[2] = "text", -- a special type that concatenates all trailing arguments into a string
+	[3] = "number", -- any number
+	[4] = "player", -- any player that matches the given string
+	[5] = "steamid", -- a string that matches the steamid format
+
+	string = 1,
+	text = 2,
+	number = 3,
+	player = 4,
+	steamid = 5
+}
 
 local COMMAND_PREFIX = "/"
 
--- Adds a new command to the list of commands.
+local function ArgumentCheckStub(command, client, given)
+	local arguments = command.arguments
+	local result = {command, client}
+
+	for i = 1, #arguments do
+		local argType = arguments[i][1]
+		local bOptional = arguments[i][3]
+		local argument = given[i]
+
+		if (!argument and !bOptional) then
+			return L("invalidArg", client, i)
+		end
+
+		if (argType == ix.type.string) then
+			if (!argument and bOptional) then
+				result[#result + 1] = nil
+			else
+				result[#result + 1] = tostring(argument)
+			end
+		elseif (argType == ix.type.text) then
+			result[#result + 1] = table.concat(given, " ", i) or ""
+			break
+		elseif (argType == ix.type.number) then
+			local value = tonumber(argument)
+
+			if (!bOptional and !value) then
+				return L("invalidArg", client, i)
+			end
+
+			result[#result + 1] = value
+		elseif (argType == ix.type.player) then
+			local value = ix.command.FindPlayer(client, argument)
+
+			-- FindPlayer emits feedback for us
+			if (!value and bOptional) then
+				return
+			end
+
+			result[#result + 1] = value
+		elseif (argType == ix.type.steamid) then
+			local result = argument:match("STEAM_(%d+):(%d+):(%d+)")
+
+			if (!result and bOptional) then
+				return L("invalidArg", client, i)
+			end
+
+			result[#result + 1] = value
+		end
+	end
+
+	return result
+end
+
+--[[
+	Adds a new command to the list of commands. You can specify the following fields:
+		description (default: "@noDesc")
+			The help text that appears when the user types in the command.
+		syntax (default: "[none]")
+			The arguments that your command accepts. This field is automatically
+			populated when using the arguments field. Syntax strings generally take
+			the form of "<type argumentName> [type optionalName]" - it is recommended
+			to stick to this format to keep consistent with other commands.
+		arguments (optional)
+			If this field is defined, then additional checks will be performed to ensure
+			that the arguments given to the command are valid. This removes extra
+			boilerplate code since all the passed arguments are guaranteed to be valid.
+		adminOnly (default: false)
+			Provides an additional check to see if the user is an admin before running.
+		superAdminOnly (default: false)
+			Provides an additional check to see if the user is a superadmin before
+			running.
+		OnRun (required)
+			This function is called when the command has passed all the checks and
+			can execute. The first two arguments will be the running command table
+			and the calling player. If the arguments field has been specified, the
+			arguments will be passed as regular upvalues rather than a table.
+			When the arguments table is defined:
+				OnRun(self, client, target, length, message)
+			When the arguments table is NOT defined:
+				OnRun(self, client, arguments)
+
+	The format for the arguments table is as follows:
+		arguments = {
+			{ix.type.player, "target"}
+			{ix.type.number, "length"}
+			{ix.type.text, "message", true}
+		}
+	The types are defined in the ix.type table above. The first argument in the table
+	is the type, followed by the name of the argument. The third argument is an optional
+	bool that specifies whether or not that argument is optional. Optional arguments must
+	always be at the end of a list of arguments - or rather, they must not follow a
+	required argument. Optional arguments will either be nil or a valid argument. This
+	means you must check for nil in your OnRun method when dealing with optional arguments.
+	You may specify one argument instead of a table of arguments if you only have one
+	argument that you wish to define. For example:
+		arguments = {ix.type.number, "length"}
+]]--
 function ix.command.Add(command, data)
 	data.name = string.gsub(command, "%s", "")
 	data.description = data.description or ""
-	data.syntax = data.syntax or "[none]"
 
 	command = command:lower()
 	data.uniqueID = command
@@ -81,6 +190,62 @@ function ix.command.Add(command, data)
 				return OnRun(self, client, arguments)
 			end
 		end
+	end
+
+	-- if we have an arguments table, then we're using the new command format
+	if (data.arguments) then
+		local bFirst = true
+		local bLastOptional = false
+		data.syntax = ""
+
+		-- if one argument is supplied by itself, put it into a table
+		if (!istable(data.arguments[1])) then
+			local argument = data.arguments
+			data.arguments = {argument}
+		end
+
+		-- check the arguments table to see if its entries are valid
+		for i = 1, #data.arguments do
+			local argument = data.arguments[i]
+
+			if (!isnumber(argument[1]) or !ix.type[argument[1]]) then
+				return ErrorNoHalt(string.format("Command '%s' tried to use an invalid type for an argument", command))
+			elseif (!isstring(argument[2])) then
+				return ErrorNoHalt(string.format("Command '%s' tried to use a non-string key for an argument", command))
+			elseif (argument[1] == ix.type.text and i != #data.arguments) then
+				return ErrorNoHalt(string.format("Command '%s' tried to use a text argument outside of the last argument", command))
+			elseif (!argument[3] and bLastOptional) then
+				return ErrorNoHalt(string.format("Command '%s' tried to use an required argument after an optional one", command))
+			end
+
+			-- text is always optional and will return an empty string if nothing is specified, rather than nil
+			if (argument[1] == ix.type.text) then
+				argument[3] = true
+			end
+
+			data.syntax = data.syntax .. (bFirst and "" or " ") .. string.format((argument[3] and "[%s %s]" or "<%s %s>"), ix.type[argument[1]], argument[2])
+
+			bFirst = false
+			bLastOptional = argument[3]
+		end
+
+		if (data.syntax:len() == 0) then
+			data.syntax = "[none]"
+		end
+
+		data.OnRunNoCheck = data.OnRun
+		data.OnRun = function(...)
+			local result = ArgumentCheckStub(...)
+
+			-- successful check will pass a table of arguments, otherwise an error string
+			if (istable(result)) then
+				data.OnRunNoCheck(unpack(result))
+			else
+				return result
+			end
+		end
+	else
+		data.syntax = data.syntax or "[none]"
 	end
 
 	-- Add the command to the list of commands.

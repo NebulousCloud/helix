@@ -1,9 +1,9 @@
 
 ix.command.Add("Roll", {
 	description = "@cmdRoll",
-	syntax = "[number maximum]",
-	OnRun = function(self, client, arguments)
-		ix.chat.Send(client, "roll", math.random(0, math.min(tonumber(arguments[1]) or 100, 100)))
+	arguments = {ix.type.number, "maximum", true},
+	OnRun = function(self, client, maximum)
+		ix.chat.Send(client, "roll", math.random(0, math.min(maximum or 100, 100)))
 	end
 })
 
