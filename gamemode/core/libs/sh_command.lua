@@ -239,7 +239,7 @@ function ix.command.Add(command, data)
 
 			-- successful check will pass a table of arguments, otherwise an error string
 			if (istable(result)) then
-				data.OnRunNoCheck(unpack(result))
+				return data.OnRunNoCheck(unpack(result))
 			else
 				return result
 			end
