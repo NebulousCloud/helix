@@ -371,7 +371,7 @@ if (SERVER) then
 
 	-- Forces a player to run a command.
 	function ix.command.Run(client, command, arguments)
-		local command = ix.command.list[command]
+		local command = ix.command.list[tostring(command):lower()]
 
 		if (command) then
 			local results
