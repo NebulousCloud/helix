@@ -7,19 +7,21 @@ ix.type = ix.type or {
 	[3] = "number", -- any number
 	[4] = "player", -- any player that matches the given string
 	[5] = "steamid", -- a string that matches the steamid format
+	[6] = "character", -- any player with a valid character that matches the given string
 
 	string = 1,
 	text = 2,
 	number = 3,
 	player = 4,
-	steamid = 5
+	steamid = 5,
+	character = 6
 }
 
 local COMMAND_PREFIX = "/"
 
 local function ArgumentCheckStub(command, client, given)
 	local arguments = command.arguments
-	local result = {command, client}
+	local result = {client}
 
 	for i = 1, #arguments do
 		local argType = arguments[i][1]
@@ -47,12 +49,23 @@ local function ArgumentCheckStub(command, client, given)
 			end
 
 			result[#result + 1] = value
-		elseif (argType == ix.type.player) then
+		elseif (argType == ix.type.player or argType == ix.type.character) then
 			local value = ix.command.FindPlayer(client, argument)
 
 			-- FindPlayer emits feedback for us
 			if (!value and !bOptional) then
 				return
+			end
+
+			-- check for the character if we're using the character type
+			if (argType == ix.type.character) then
+				local character = value:GetCharacter()
+
+				if (!character) then
+					return L("charNoExist", client)
+				end
+
+				value = character
 			end
 
 			result[#result + 1] = value
@@ -176,22 +189,6 @@ function ix.command.Add(command, data)
 		end
 	end
 
-	local OnCheckAccess = data.OnCheckAccess
-
-	-- Only overwrite the OnRun to check for access if there is anything to check.
-	if (OnCheckAccess) then
-		local OnRun = data.OnRun
-		data._OnRun = data.OnRun -- for refactoring purpose.
-
-		function data:OnRun(client, arguments)
-			if (!self:OnCheckAccess(client)) then
-				return "@noPerm"
-			else
-				return OnRun(self, client, arguments)
-			end
-		end
-	end
-
 	-- if we have an arguments table, then we're using the new command format
 	if (data.arguments) then
 		local bFirst = true
@@ -209,13 +206,13 @@ function ix.command.Add(command, data)
 			local argument = data.arguments[i]
 
 			if (!isnumber(argument[1]) or !ix.type[argument[1]]) then
-				return ErrorNoHalt(string.format("Command '%s' tried to use an invalid type for an argument", command))
+				return ErrorNoHalt(string.format("Command '%s' tried to use an invalid type for an argument\n", command))
 			elseif (!isstring(argument[2])) then
-				return ErrorNoHalt(string.format("Command '%s' tried to use a non-string key for an argument", command))
+				return ErrorNoHalt(string.format("Command '%s' tried to use a non-string key for an argument\n", command))
 			elseif (argument[1] == ix.type.text and i != #data.arguments) then
-				return ErrorNoHalt(string.format("Command '%s' tried to use a text argument outside of the last argument", command))
+				return ErrorNoHalt(string.format("Command '%s' tried to use a text argument outside of the last argument\n", command))
 			elseif (!argument[3] and bLastOptional) then
-				return ErrorNoHalt(string.format("Command '%s' tried to use an required argument after an optional one", command))
+				return ErrorNoHalt(string.format("Command '%s' tried to use an required argument after an optional one\n", command))
 			end
 
 			-- text is always optional and will return an empty string if nothing is specified, rather than nil
@@ -231,18 +228,6 @@ function ix.command.Add(command, data)
 
 		if (data.syntax:len() == 0) then
 			data.syntax = "[none]"
-		end
-
-		data.OnRunNoCheck = data.OnRun
-		data.OnRun = function(...)
-			local result = ArgumentCheckStub(...)
-
-			-- successful check will pass a table of arguments, otherwise an error string
-			if (istable(result)) then
-				return data.OnRunNoCheck(unpack(result))
-			else
-				return result
-			end
 		end
 	else
 		data.syntax = data.syntax or "[none]"
@@ -389,9 +374,32 @@ if (SERVER) then
 		local command = ix.command.list[command]
 
 		if (command) then
-			-- Run the command's callback and get the return.
-			local results = {command:OnRun(client, arguments or {})}
-			local result = results[1]
+			local result
+
+			-- check access if available
+			if (command.OnCheckAccess) then
+				if (!command:OnCheckAccess(client)) then
+					result = "@noPerm"
+				end
+			end
+
+			-- check arguments if available
+			if (command.arguments) then
+				local results = ArgumentCheckStub(command, client, arguments)
+
+				-- successful check will pass a table of arguments, otherwise an error string
+				if (istable(results)) then
+					result = command:OnRun(unpack(results)) or true
+				else
+					result = results
+				end
+			end
+
+			if (!result) then
+				-- Run the command's callback and get the return.
+				local results = {command:OnRun(client, arguments or {})}
+				result = results[1]
+			end
 			
 			-- If a string is returned, it is a notification.
 			if (isstring(result)) then
