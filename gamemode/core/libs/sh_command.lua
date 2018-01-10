@@ -21,7 +21,7 @@ local COMMAND_PREFIX = "/"
 
 local function ArgumentCheckStub(command, client, given)
 	local arguments = command.arguments
-	local result = {client}
+	local result = {}
 
 	for i = 1, #arguments do
 		local argType = arguments[i][1]
@@ -101,6 +101,10 @@ end
 		superAdminOnly (default: false)
 			Provides an additional check to see if the user is a superadmin before
 			running.
+		group (default: nil)
+			Provides an additional check to see if the user is part of the specified
+			usergroup before running. This can be a string or table of strings for
+			allowing multiple groups to use the command.
 		OnRun (required)
 			This function is called when the command has passed all the checks and
 			can execute. The first two arguments will be the running command table
@@ -154,7 +158,8 @@ function ix.command.Add(command, data)
 		end
 	end
 
-	-- Store the old OnRun because we're able to change it.
+	-- if no access checking is specified, we'll generate one based on the
+	-- populated fields for admin/superadmin/group
 	if (!data.OnCheckAccess) then
 		-- Check if the command is for basic admins only.
 		if (data.adminOnly) then
@@ -373,52 +378,54 @@ if (SERVER) then
 	function ix.command.Run(client, command, arguments)
 		local command = ix.command.list[tostring(command):lower()]
 
-		if (command) then
-			local results
-			local result
+		if (!command) then
+			return
+		end
 
-			-- check access if available
-			if (command.OnCheckAccess) then
-				if (!command:OnCheckAccess(client)) then
-					result = "@noPerm"
-				end
+		-- we throw it into a table since arguments get unpacked and only
+		-- the arguments table gets passed in by default
+		local argumentsTable = arguments
+		arguments = {argumentsTable}
+
+		-- if feedback is non-nil, we can assume that the command failed
+		-- and is a phrase string
+		local feedback
+
+		-- check for group access
+		if (command.OnCheckAccess) then
+			feedback = !command:OnCheckAccess(client) and "@noPerm" or nil
+		end
+
+		-- check for strict arguments
+		if (!feedback and command.arguments) then
+			arguments = ArgumentCheckStub(command, client, argumentsTable)
+
+			if (isstring(arguments)) then
+				feedback = arguments
 			end
+		end
 
-			-- check arguments if available
-			if (command.arguments) then
-				results = ArgumentCheckStub(command, client, arguments)
+		-- run the command if all the checks passed
+		if (!feedback) then
+			local results = {command:OnRun(client, unpack(arguments))}
+			local phrase = results[1]
 
-				-- successful check will pass a table of arguments, otherwise an error string
-				if (istable(results)) then
-					result = command:OnRun(unpack(results)) or true
-				else
-					result = results
-				end
-			end
-
-			if (!result) then
-				-- Run the command's callback and get the return.
-				results = {command:OnRun(client, arguments or {})}
-				result = results[1]
-			end
-			
-			-- If a string is returned, it is a notification.
-			if (isstring(result)) then
-				-- Normal player here.
+			-- check to see if the command has returned a phrase string and display it
+			if (isstring(phrase)) then
 				if (IsValid(client)) then
-					if (result:sub(1, 1) == "@") then
-						client:NotifyLocalized(result:sub(2), unpack(results, 3))
+					if (phrase:sub(1, 1) == "@") then
+						client:NotifyLocalized(phrase:sub(2), unpack(results, 2))
 					else
-						client:Notify(result)
+						client:Notify(phrase)
 					end
 				else
-					-- Show the message in server console since we're running from RCON.
-					print(result)
+					-- print message since we're running from the server console
+					print(phrase)
 				end
 			end
 
 			if (IsValid(client)) then
-				ix.log.Add(client, "command", COMMAND_PREFIX..command.name, arguments and table.concat(arguments, " "))
+				ix.log.Add(client, "command", COMMAND_PREFIX .. command.name, argumentsTable and table.concat(argumentsTable, " "))
 			end
 		end
 	end
