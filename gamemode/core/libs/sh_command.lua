@@ -374,6 +374,7 @@ if (SERVER) then
 		local command = ix.command.list[command]
 
 		if (command) then
+			local results
 			local result
 
 			-- check access if available
@@ -385,7 +386,7 @@ if (SERVER) then
 
 			-- check arguments if available
 			if (command.arguments) then
-				local results = ArgumentCheckStub(command, client, arguments)
+				results = ArgumentCheckStub(command, client, arguments)
 
 				-- successful check will pass a table of arguments, otherwise an error string
 				if (istable(results)) then
@@ -397,7 +398,7 @@ if (SERVER) then
 
 			if (!result) then
 				-- Run the command's callback and get the return.
-				local results = {command:OnRun(client, arguments or {})}
+				results = {command:OnRun(client, arguments or {})}
 				result = results[1]
 			end
 			
