@@ -268,7 +268,7 @@ if (SERVER) then
 
 				local invOkay = true
 				for k, v in pairs(client:GetChar():GetInv():GetItems()) do
-					if (v.uniqueID == uniqueID and v:GetID() != 0) then
+					if (v.uniqueID == uniqueID and v:GetID() != 0 and nut.item.instances[v:GetID()] and !v:GetData("equip", true)) then
 						invOkay = v:Remove()
 						found = true
 						name = L(v.name, client)
