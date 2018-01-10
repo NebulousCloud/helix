@@ -407,7 +407,7 @@ if (SERVER) then
 				-- Normal player here.
 				if (IsValid(client)) then
 					if (result:sub(1, 1) == "@") then
-						client:NotifyLocalized(result:sub(2), unpack(results, 2))
+						client:NotifyLocalized(result:sub(2), unpack(results, 3))
 					else
 						client:Notify(result)
 					end
