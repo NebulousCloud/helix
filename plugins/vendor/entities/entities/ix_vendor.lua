@@ -162,6 +162,8 @@ if (SERVER) then
 	end
 
 	function ENT:Use(activator)
+		local character = activator:GetCharacter()
+
 		if (!self:CanAccess(activator) or hook.Run("CanPlayerUseVendor", activator) == false) then
 			if (self.messages[VENDOR_NOTRADE]) then
 				activator:ChatPrint(self:GetNetVar("name")..": "..self.messages[VENDOR_NOTRADE])
@@ -199,6 +201,12 @@ if (SERVER) then
 		end
 
 		activator.ixVendor = self
+
+		-- force sync to prevent outdated inventories while buying/selling
+		if (character) then
+			character:GetInventory():Sync(activator, true)
+		end
+
 		netstream.Start(activator, "vendorOpen", self:EntIndex(), unpack(data))
 	end
 
