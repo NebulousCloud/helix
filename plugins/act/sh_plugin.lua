@@ -21,14 +21,14 @@ for k, v in pairs(PLUGIN.acts) do
 	end
 
 	if (multiple) then
-		COMMAND.syntax = "[number type]"
+		COMMAND.arguments = {ix.type.number, "type", true}
 	end
 
 	function COMMAND:GetDescription()
 		return L("cmdAct", k)
 	end
 
-	function COMMAND:OnRun(client, arguments)
+	function COMMAND:OnRun(client, index)
 		if (client.ixSeqUntimed) then
 			client:SetNetVar("actAng")
 			client:LeaveSequence()
@@ -59,8 +59,7 @@ for k, v in pairs(PLUGIN.acts) do
 				local sequence
 
 				if (type(info.sequence) == "table") then
-					local index = math.Clamp(math.floor(tonumber(arguments[1]) or 1), 1, #info.sequence)
-
+					index = math.Clamp(math.floor(index or 1), 1, #info.sequence)
 					sequence = info.sequence[index]
 				else
 					sequence = info.sequence

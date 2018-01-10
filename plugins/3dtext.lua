@@ -158,8 +158,11 @@ end
 ix.command.Add("TextAdd", {
 	description = "@cmdTextAdd",
 	adminOnly = true,
-	syntax = "<string text> [number scale]",
-	OnRun = function(self, client, arguments)
+	arguments = {
+		{ix.type.string, "text"},
+		{ix.type.number, "scale", true}
+	},
+	OnRun = function(self, client, text, scale)
 		-- Get the position and angles of the text.
 		local trace = client:GetEyeTrace()
 		local position = trace.HitPos
@@ -168,25 +171,22 @@ ix.command.Add("TextAdd", {
 		angles:RotateAroundAxis(angles:Forward(), 90)
 		
 		-- Add the text.
-		PLUGIN:AddText(position + angles:Up()*0.1, angles, arguments[1], tonumber(arguments[2]))
-
-		-- Tell the player the text was added.
-		return L("textAdded", client)
+		PLUGIN:AddText(position + angles:Up() * 0.1, angles, text, scale)
+		return "@textAdded"
 	end
 })
 
 ix.command.Add("TextRemove", {
 	description = "@cmdTextRemove",
 	adminOnly = true,
-	syntax = "[number radius]",
-	OnRun = function(self, client, arguments)
+	arguments = {ix.type.number, "radius"},
+	OnRun = function(self, client, radius)
 		-- Get the origin to remove text.
 		local trace = client:GetEyeTrace()
-		local position = trace.HitPos + trace.HitNormal*2
+		local position = trace.HitPos + trace.HitNormal * 2
 		-- Remove the text(s) and get the amount removed.
-		local amount = PLUGIN:RemoveText(position, tonumber(arguments[1]))
+		local amount = PLUGIN:RemoveText(position, radius)
 
-		-- Tell the player how many texts got removed.
-		return L("textRemoved", client, amount)
+		return "@textRemoved", amount
 	end
 })

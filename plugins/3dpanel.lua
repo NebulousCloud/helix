@@ -144,12 +144,13 @@ end
 ix.command.Add("PanelAdd", {
 	description = "@cmdPanelAdd",
 	adminOnly = true,
-	syntax = "<string url> [number w] [number h] [number scale]",
-	OnRun = function(self, client, arguments)
-		if (!arguments[1]) then
-			return L("invalidArg", 1)
-		end
-
+	arguments = {
+		{ix.type.string, "url"},
+		{ix.type.number, "width", true},
+		{ix.type.number, "height", true},
+		{ix.type.number, "scale", true},
+	},
+	OnRun = function(self, client, url, width, height, scale)
 		-- Get the position and angles of the panel.
 		local trace = client:GetEyeTrace()
 		local position = trace.HitPos
@@ -158,25 +159,22 @@ ix.command.Add("PanelAdd", {
 		angles:RotateAroundAxis(angles:Forward(), 90)
 		
 		-- Add the panel.
-		PLUGIN:AddPanel(position + angles:Up()*0.1, angles, arguments[1], tonumber(arguments[2]), tonumber(arguments[3]), tonumber(arguments[4]))
-
-		-- Tell the player the panel was added.
-		return L("panelAdded", client)
+		PLUGIN:AddPanel(position + angles:Up() * 0.1, angles, url, width, height, scale)
+		return "@panelAdded"
 	end
 })
 
 ix.command.Add("PanelRemove", {
 	description = "@cmdPanelRemove",
 	adminOnly = true,
-	syntax = "[number radius]",
-	OnRun = function(self, client, arguments)
+	arguments = {ix.type.number, "radius", true},
+	OnRun = function(self, client, radius)
 		-- Get the origin to remove panel.
 		local trace = client:GetEyeTrace()
 		local position = trace.HitPos
 		-- Remove the panel(s) and get the amount removed.
-		local amount = PLUGIN:RemovePanel(position, tonumber(arguments[1]))
+		local amount = PLUGIN:RemovePanel(position, radius)
 
-		-- Tell the player how many panels got removed.
-		return L("panelRemoved", client, amount)
+		return "@panelRemoved", amount
 	end
 })

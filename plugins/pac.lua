@@ -24,7 +24,7 @@ if (CLIENT) then
 		description = "@cmdFixPAC",
 		OnRun = function(self, client, arguments)
 			RunConsoleCommand("pac_restart")
-		end,
+		end
 	})
 
 	-- Disable few features of PAC3's feature.

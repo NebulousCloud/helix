@@ -9,36 +9,34 @@ ix.command.Add("Roll", {
 
 ix.command.Add("PM", {
 	description = "@cmdPM",
-	syntax = "<string target> <string message>",
-	OnRun = function(self, client, arguments)
-		local message = table.concat(arguments, " ", 2)
-		local target = ix.command.FindPlayer(client, arguments[1])
+	arguments = {
+		{ix.type.player, "target"},
+		{ix.type.text, "message"}
+	},
+	OnRun = function(self, client, target, message)
+		local voiceMail = target:GetData("vm")
 
-		if (IsValid(target)) then
-			local voiceMail = target:GetData("vm")
+		if (voiceMail and voiceMail:find("%S")) then
+			return target:Name()..": "..voiceMail
+		end
 
-			if (voiceMail and voiceMail:find("%S")) then
-				return target:Name()..": "..voiceMail
-			end
+		if ((client.ixNextPM or 0) < CurTime()) then
+			ix.chat.Send(client, "pm", message, false, {client, target})
 
-			if ((client.ixNextPM or 0) < CurTime()) then
-				ix.chat.Send(client, "pm", message, false, {client, target})
-
-				client.ixNextPM = CurTime() + 0.5
-				target.ixLastPM = client
-			end
+			client.ixNextPM = CurTime() + 0.5
+			target.ixLastPM = client
 		end
 	end
 })
 
 ix.command.Add("Reply", {
 	description = "@cmdReply",
-	syntax = "<string message>",
-	OnRun = function(self, client, arguments)
+	arguments = {ix.type.text, "message"},
+	OnRun = function(self, client, message)
 		local target = client.ixLastPM
 
 		if (IsValid(target) and (client.ixNextPM or 0) < CurTime()) then
-			ix.chat.Send(client, "pm", table.concat(arguments, " "), false, {client, target})
+			ix.chat.Send(client, "pm", message, false, {client, target})
 			client.ixNextPM = CurTime() + 0.5
 		end
 	end
@@ -46,17 +44,13 @@ ix.command.Add("Reply", {
 
 ix.command.Add("SetVoicemail", {
 	description = "@cmdSetVoicemail",
-	syntax = "[string message]",
-	OnRun = function(self, client, arguments)
-		local message = table.concat(arguments, " ")
-
+	arguments = {ix.type.text, "message"},
+	OnRun = function(self, client, message)
 		if (message:find("%S")) then
 			client:SetData("vm", message:sub(1, 240))
-
 			return "@vmSet"
 		else
 			client:SetData("vm")
-
 			return "@vmRem"
 		end
 	end
@@ -65,59 +59,48 @@ ix.command.Add("SetVoicemail", {
 ix.command.Add("CharGiveFlag", {
 	description = "@cmdCharGiveFlag",
 	adminOnly = true,
-	syntax = "<string name> [string flags]",
-	OnRun = function(self, client, arguments)
-		local target = ix.command.FindPlayer(client, arguments[1])
+	arguments = {
+		{ix.type.character, "target"},
+		{ix.type.string, "flags", true}
+	},
+	OnRun = function(self, client, target, flags)
+		-- show string request if no flags are specified
+		if (!flags) then
+			local available = ""
 
-		if (IsValid(target) and target:GetChar()) then
-			local flags = arguments[2]
-
-			if (!flags) then
-				local available = ""
-
-				-- Aesthetics~~
-				for k, v in SortedPairs(ix.flag.list) do
-					if (!target:GetChar():HasFlags(k)) then
-						available = available..k
-					end
+			-- sort and display flags the character already has
+			for k, v in SortedPairs(ix.flag.list) do
+				if (!target:HasFlags(k)) then
+					available = available .. k
 				end
-
-				return client:RequestString("@flagGiveTitle", "@cmdCharGiveFlag", function(text)
-					ix.command.Run(client, "flaggive", {target:Name(), text})
-				end, available)
 			end
 
-			target:GetChar():GiveFlags(flags)
-
-			ix.util.NotifyLocalized("flagGive", nil, client:Name(), target:Name(), flags)
-		else
-			return "@charNoExist"
+			return client:RequestString("@flagGiveTitle", "@cmdCharGiveFlag", function(text)
+				ix.command.Run(client, "CharGiveFlag", {target:GetName(), text})
+			end, available)
 		end
+
+		target:GiveFlags(flags)
+		ix.util.NotifyLocalized("flagGive", nil, client:GetName(), target:GetName(), flags)
 	end
 })
 
 ix.command.Add("CharTakeFlag", {
 	description = "@cmdCharTakeFlag",
 	adminOnly = true,
-	syntax = "<string name> [string flags]",
-	OnRun = function(self, client, arguments)
-		local target = ix.command.FindPlayer(client, arguments[1])
-
-		if (IsValid(target) and target:GetChar()) then
-			local flags = arguments[2]
-
-			if (!flags) then
-				return client:RequestString("@flagTakeTitle", "@cmdCharTakeFlag", function(text)
-					ix.command.Run(client, "flagtake", {target:Name(), text})
-				end, target:GetChar():GetFlags())
-			end
-
-			target:GetChar():TakeFlags(flags)
-
-			ix.util.NotifyLocalized("flagTake", nil, client:Name(), flags, target:Name())
-		else
-			return "@charNoExist"
+	arguments = {
+		{ix.type.character, "target"},
+		{ix.type.string, "flags", true}
+	},
+	OnRun = function(self, client, target, flags)
+		if (!flags) then
+			return client:RequestString("@flagTakeTitle", "@cmdCharTakeFlag", function(text)
+				ix.command.Run(client, "CharTakeFlag", {target:GetName(), text})
+			end, target:GetFlags())
 		end
+
+		target:TakeFlags(flags)
+		ix.util.NotifyLocalized("flagTake", nil, client:GetName(), flags, target:GetName())
 	end
 })
 
@@ -134,67 +117,57 @@ ix.command.Add("ToggleRaise", {
 ix.command.Add("CharSetModel", {
 	description = "@cmdCharSetModel",
 	adminOnly = true,
-	syntax = "<string name> <string model>",
-	OnRun = function(self, client, arguments)
-		if (!arguments[2]) then
-			return L("invalidArg", client, 2)
-		end
+	arguments = {
+		{ix.type.character, "target"},
+		{ix.type.string, "model"}
+	},
+	OnRun = function(self, client, target, model)
+		target:SetModel(model)
+		target:GetPlayer():SetupHands()
 
-		local target = ix.command.FindPlayer(client, arguments[1])
-
-		if (IsValid(target) and target:GetChar()) then
-			target:GetChar():SetModel(arguments[2])
-			target:SetupHands()
-
-			ix.util.NotifyLocalized("cChangeModel", nil, client:Name(), target:Name(), arguments[2])
-		else
-			return "@charNoExist"
-		end
+		ix.util.NotifyLocalized("cChangeModel", nil, client:GetName(), target:GetName(), model)
 	end
 })
 
 ix.command.Add("CharSetSkin", {
 	description = "@cmdCharSetSkin",
 	adminOnly = true,
-	syntax = "<string name> [number skin]",
-	OnRun = function(self, client, arguments)
-		local skin = tonumber(arguments[2])
-		local target = ix.command.FindPlayer(client, arguments[1])
+	arguments = {
+		{ix.type.character, "target"},
+		{ix.type.number, "skin", true}
+	},
+	OnRun = function(self, client, target, skin)
+		target:SetData("skin", skin)
+		target:GetPlayer():SetSkin(skin or 0)
 
-		if (IsValid(target) and target:GetChar()) then
-			target:GetChar():SetData("skin", skin)
-			target:SetSkin(skin or 0)
-
-			ix.util.NotifyLocalized("cChangeSkin", nil, client:Name(), target:Name(), skin or 0)
-		end
+		ix.util.NotifyLocalized("cChangeSkin", nil, client:GetName(), target:GetName(), skin or 0)
 	end
 })
 
 ix.command.Add("CharSetBodygroup", {
 	description = "@cmdCharSetBodygroup",
 	adminOnly = true,
-	syntax = "<string name> <string bodyGroup> [number value]",
-	OnRun = function(self, client, arguments)
-		local value = tonumber(arguments[3])
-		local target = ix.command.FindPlayer(client, arguments[1])
+	arguments = {
+		{ix.type.character, "target"},
+		{ix.type.string, "bodygroup"},
+		{ix.type.number, "value", true}
+	},
+	OnRun = function(self, client, target, bodygroup, value)
+		local index = target:GetPlayer():FindBodygroupByName(bodygroup)
 
-		if (IsValid(target) and target:GetChar()) then
-			local index = target:FindBodygroupByName(arguments[2])
-
-			if (index > -1) then
-				if (value and value < 1) then
-					value = nil
-				end
-
-				local groups = target:GetChar():GetData("groups", {})
-					groups[index] = value
-				target:GetChar():SetData("groups", groups)
-				target:SetBodygroup(index, value or 0)
-
-				ix.util.NotifyLocalized("cChangeGroups", nil, client:Name(), target:Name(), arguments[2], value or 0)
-			else
-				return "@invalidArg", 2
+		if (index > -1) then
+			if (value and value < 1) then
+				value = nil
 			end
+
+			local groups = target:GetChar():GetData("groups", {})
+				groups[index] = value
+			target:SetData("groups", groups)
+			target:GetPlayer():SetBodygroup(index, value or 0)
+
+			ix.util.NotifyLocalized("cChangeGroups", nil, client:GetName(), target:GetName(), bodygroup, value or 0)
+		else
+			return "@invalidArg", 2
 		end
 	end
 })
@@ -202,140 +175,93 @@ ix.command.Add("CharSetBodygroup", {
 ix.command.Add("CharSetAttribute", {
 	description = "@cmdCharSetAttribute",
 	adminOnly = true,
-	syntax = "<string charname> <string attribname> <number level>",
-	OnRun = function(self, client, arguments)
-		local attribName = arguments[2]
-		if (!attribName) then
-			return L("invalidArg", client, 2)
-		end
-
-		local attribNumber = arguments[3]
-		attribNumber = tonumber(attribNumber)
-		if (!attribNumber or !isnumber(attribNumber)) then
-			return L("invalidArg", client, 3)
-		end
-
-		local target = ix.command.FindPlayer(client, arguments[1])
-
-		if (IsValid(target)) then
-			local char = target:GetChar()
-			if (char) then
-				for k, v in pairs(ix.attributes.list) do
-					if (ix.util.StringMatches(L(v.name, client), attribName) or ix.util.StringMatches(k, attribName)) then
-						char:SetAttrib(k, math.abs(attribNumber))
-						client:NotifyLocalized("attributeSet", target:Name(), L(v.name, client), math.abs(attribNumber))
-
-						return
-					end
-				end
+	arguments = {
+		{ix.type.character, "target"},
+		{ix.type.string, "attributeName"},
+		{ix.type.number, "level"}
+	},
+	OnRun = function(self, client, target, attributeName, level)
+		for k, v in pairs(ix.attributes.list) do
+			if (ix.util.StringMatches(L(v.name, client), attributeName) or ix.util.StringMatches(k, attributeName)) then
+				target:SetAttrib(k, math.abs(level))
+				return "@attributeSet", target:GetName(), L(v.name, client), math.abs(level)
 			end
-		else
-			return "@charNoExist"
 		end
+
+		return "@attributeNotFound", attributeName
 	end
 })
 
 ix.command.Add("CharAddAttribute", {
 	description = "@cmdCharAddAttribute",
 	adminOnly = true,
-	syntax = "<string charname> <string attribname> <number level>",
-	OnRun = function(self, client, arguments)
-		local attribName = arguments[2]
-		if (!attribName) then
-			return L("invalidArg", client, 2)
-		end
-
-		local attribNumber = arguments[3]
-		attribNumber = tonumber(attribNumber)
-		if (!attribNumber or !isnumber(attribNumber)) then
-			return L("invalidArg", client, 3)
-		end
-
-		local target = ix.command.FindPlayer(client, arguments[1])
-
-		if (IsValid(target)) then
-			local char = target:GetChar()
-			if (char) then
-				for k, v in pairs(ix.attributes.list) do
-					if (ix.util.StringMatches(L(v.name, client), attribName) or ix.util.StringMatches(k, attribName)) then
-						char:UpdateAttrib(k, math.abs(attribNumber))
-						client:NotifyLocalized("attribUpdate", target:Name(), L(v.name, client), math.abs(attribNumber))
-
-						return
-					end
-				end
+	arguments = {
+		{ix.type.character, "target"},
+		{ix.type.string, "attributeName"},
+		{ix.type.number, "level"}
+	},
+	OnRun = function(self, client, target, attributeName, level)
+		for k, v in pairs(ix.attributes.list) do
+			if (ix.util.StringMatches(L(v.name, client), attributeName) or ix.util.StringMatches(k, attributeName)) then
+				target:UpdateAttrib(k, math.abs(level))
+				return "@attributeUpdate", target:GetName(), L(v.name, client), math.abs(level)
 			end
-		else
-			return "@charNoExist"
 		end
+
+		return "@attributeNotFound", attributeName
 	end
 })
 
 ix.command.Add("CharSetName", {
 	description = "@cmdCharSetName",
 	adminOnly = true,
-	syntax = "<string name> [string newName]",
-	OnRun = function(self, client, arguments)
-		local target = ix.command.FindPlayer(client, arguments[1])
-
+	arguments = {
+		{ix.type.character, "target"},
+		{ix.type.text, "newName"}
+	},
+	OnRun = function(self, client, target, newName)
 		-- display string request if no name was specified
-		if (IsValid(target) and !arguments[2]) then
+		if (newName:len() == 0) then
 			return client:RequestString("@chgName", "@chgNameDesc", function(text)
-				ix.command.Run(client, "charsetname", {target:Name(), text})
-			end, target:Name())
+				ix.command.Run(client, "CharSetName", {target:GetName(), text})
+			end, target:GetName())
 		end
 
-		table.remove(arguments, 1)
-
-		local targetName = table.concat(arguments, " ")
-
-		if (IsValid(target) and target:GetChar()) then
-			ix.util.NotifyLocalized("cChangeName", nil, client:Name(), target:Name(), targetName)
-
-			target:GetChar():SetName(targetName:gsub("#", "#​"))
-		else
-			return "@charNoExist"
-		end
+		ix.util.NotifyLocalized("cChangeName", nil, client:GetName(), target:GetName(), newName)
+		target:SetName(newName:gsub("#", "#​"))
 	end
 })
 
 ix.command.Add("CharGiveItem", {
 	description = "@cmdCharGiveItem",
 	adminOnly = true,
-	syntax = "<string name> <string item>",
-	OnRun = function(self, client, arguments)
-		if (!arguments[2]) then
-			return L("invalidArg", client, 2)
+	arguments = {
+		{ix.type.character, "target"},
+		{ix.type.string, "item"}
+	},
+	OnRun = function(self, client, target, item)
+		local uniqueID = item:lower()
+
+		if (!ix.item.list[uniqueID]) then
+			for k, v in SortedPairs(ix.item.list) do
+				if (ix.util.StringMatches(v.name, uniqueID)) then
+					uniqueID = k
+
+					break
+				end
+			end
 		end
 
-		local target = ix.command.FindPlayer(client, arguments[1])
+		local bSuccess, error = target:GetInventory():Add(uniqueID)
 
-		if (IsValid(target) and target:GetChar()) then
-			local uniqueID = arguments[2]:lower()
+		if (bSuccess) then
+			target:GetPlayer():NotifyLocalized("itemCreated")
 
-			if (!ix.item.list[uniqueID]) then
-				for k, v in SortedPairs(ix.item.list) do
-					if (ix.util.StringMatches(v.name, uniqueID)) then
-						uniqueID = k
-
-						break
-					end
-				end
-			end
-
-			local inv = target:GetChar():GetInv()
-			local succ, err = target:GetChar():GetInv():Add(uniqueID)
-
-			if (succ) then
-				target:NotifyLocalized("itemCreated")
-				if(target != client) then
-					client:NotifyLocalized("itemCreated")
-				end
-			else
-				target:NotifyLocalized(tostring(err))
+			if (target != client:GetCharacter()) then
+				return "@itemCreated"
 			end
 		else
-			return "@charNoExist"
+			return "@" .. tostring(error)
 		end
 	end
 })
@@ -343,57 +269,33 @@ ix.command.Add("CharGiveItem", {
 ix.command.Add("CharKick", {
 	description = "@cmdCharKick",
 	adminOnly = true,
-	syntax = "<string name>",
-	OnRun = function(self, client, arguments)
-		local target = ix.command.FindPlayer(client, arguments[1])
-
-		if (IsValid(target)) then
-			local char = target:GetChar()
-			if (char) then
-				for k, v in ipairs(player.GetAll()) do
-					v:NotifyLocalized("charKick", client:Name(), target:Name())
-				end
-
-				char:Kick()
-			end
-		else
-			return "@charNoExist"
-		end
+	arguments = {ix.type.character, "target"},
+	OnRun = function(self, client, target)
+		ix.util.NotifyLocalized("charKick", nil, client:GetName(), target:GetName())
+		target:Kick()
 	end
 })
 
 ix.command.Add("CharBan", {
 	description = "@cmdCharBan",
-	syntax = "<string name>",
+	arguments = {ix.type.character, "target"},
 	adminOnly = true,
-	OnRun = function(self, client, arguments)
-		local target = ix.command.FindPlayer(client, arguments[1])
-
-		if (IsValid(target)) then
-			local char = target:GetChar()
-
-			if (char) then
-				ix.util.NotifyLocalized("charBan", nil, client:Name(), target:Name())
-				
-				char:SetData("banned", true)
-				char:Kick()
-			end
-		else
-			return "@charNoExist"
-		end
+	OnRun = function(self, client, target)
+		ix.util.NotifyLocalized("charBan", nil, client:GetName(), target:GetName())
+	
+		target:SetData("banned", true)
+		target:Kick()
 	end
 })
 
 ix.command.Add("CharUnban", {
 	description = "@cmdCharUnban",
-	syntax = "<string name>",
+	arguments = {ix.type.text, "name"},
 	adminOnly = true,
-	OnRun = function(self, client, arguments)
+	OnRun = function(self, client, name)
 		if ((client.ixNextSearch or 0) >= CurTime()) then
 			return L("charSearching", client)
 		end
-
-		local name = table.concat(arguments, " ")
 
 		for k, v in pairs(ix.char.loaded) do
 			if (ix.util.StringMatches(v:GetName(), name)) then
@@ -403,7 +305,7 @@ ix.command.Add("CharUnban", {
 					return "@charNotBanned"
 				end
 
-				return ix.util.NotifyLocalized("charUnBan", nil, client:Name(), v:GetName())
+				return ix.util.NotifyLocalized("charUnBan", nil, client:GetName(), v:GetName())
 			end
 		end
 
@@ -434,7 +336,7 @@ ix.command.Add("CharUnban", {
 						updateQuery:Where("id", characterID)
 					updateQuery:Execute()
 					
-					ix.util.NotifyLocalized("charUnBan", nil, client:Name(), v:GetName())
+					ix.util.NotifyLocalized("charUnBan", nil, client:GetName(), v:GetName())
 				end
 			end)
 		query:Execute()
@@ -443,31 +345,27 @@ ix.command.Add("CharUnban", {
 
 ix.command.Add("GiveMoney", {
 	description = "@cmdGiveMoney",
-	syntax = "<number amount>",
-	OnRun = function(self, client, arguments)
-		local number = tonumber(arguments[1])
-		number = number or 0
-		local amount = math.floor(number)
+	arguments = {ix.type.number, "amount"},
+	OnRun = function(self, client, amount)
+		amount = math.floor(amount)
 
-		if (!amount or !isnumber(amount) or amount <= 0) then
+		if (amount <= 0) then
 			return L("invalidArg", client, 1)
 		end
 
 		local data = {}
 			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector()*96
+			data.endpos = data.start + client:GetAimVector() * 96
 			data.filter = client
 		local target = util.TraceLine(data).Entity
 
-		if (IsValid(target) and target:IsPlayer() and target:GetChar()) then
-			amount = math.Round(amount)
-
-			if (!client:GetChar():HasMoney(amount)) then
+		if (IsValid(target) and target:IsPlayer() and target:GetCharacter()) then
+			if (!client:GetCharacter():HasMoney(amount)) then
 				return
 			end
 
-			target:GetChar():GiveMoney(amount)
-			client:GetChar():TakeMoney(amount)
+			target:GetCharacter():GiveMoney(amount)
+			client:GetCharacter():TakeMoney(amount)
 
 			target:NotifyLocalized("moneyTaken", ix.currency.Get(amount))
 			client:NotifyLocalized("moneyGiven", ix.currency.Get(amount))
@@ -478,47 +376,38 @@ ix.command.Add("GiveMoney", {
 ix.command.Add("CharSetMoney", {
 	description = "@cmdCharSetMoney",
 	adminOnly = true,
-	syntax = "<string target> <number amount>",
-	OnRun = function(self, client, arguments)
-		local amount = tonumber(arguments[2])
-
-		if (!amount or !isnumber(amount) or amount < 0) then
+	arguments = {
+		{ix.type.character, "target"},
+		{ix.type.number, "amount"}
+	},
+	OnRun = function(self, client, target, amount)
+		if (amount <= 0) then
 			return "@invalidArg", 2
 		end
 
-		local target = ix.command.FindPlayer(client, arguments[1])
+		amount = math.Round(amount)
 
-		if (IsValid(target)) then
-			local char = target:GetChar()
-			
-			if (char and amount) then
-				amount = math.Round(amount)
-				char:SetMoney(amount)
-				client:NotifyLocalized("setMoney", target:Name(), ix.currency.Get(amount))
-			end
-		else
-			return "@charNoExist"
-		end
+		target:SetMoney(amount)
+		client:NotifyLocalized("setMoney", target:GetName(), ix.currency.Get(amount))
 	end
 })
 
 ix.command.Add("DropMoney", {
 	description = "@cmdDropMoney",
-	syntax = "<number amount>",
-	OnRun = function(self, client, arguments)
-		local amount = tonumber(arguments[1])
-
-		if (!amount or !isnumber(amount) or amount < 1) then
+	arguments = {ix.type.number, "amount"},
+	OnRun = function(self, client, amount)
+		if (amount <= 0) then
 			return "@invalidArg", 1
 		end
 
 		amount = math.Round(amount)
 		
-		if (!client:GetChar():HasMoney(amount)) then
+		if (!client:GetCharacter():HasMoney(amount)) then
 			return
 		end
 
-		client:GetChar():TakeMoney(amount)
+		client:GetCharacter():TakeMoney(amount)
+
 		local money = ix.currency.Spawn(client, amount)
 		money.client = client
 		money.charID = client:GetChar():GetID()
@@ -528,33 +417,31 @@ ix.command.Add("DropMoney", {
 ix.command.Add("PlyWhitelist", {
 	description = "@cmdPlyWhitelist",
 	adminOnly = true,
-	syntax = "<string name> <string faction>",
-	OnRun = function(self, client, arguments)
-		local target = ix.command.FindPlayer(client, arguments[1])
-		local name = table.concat(arguments, " ", 2)
+	arguments = {
+		{ix.type.player, "target"},
+		{ix.type.text, "faction"}
+	},
+	OnRun = function(self, client, target, name)
+		local faction = ix.faction.teams[name]
 
-		if (IsValid(target)) then
-			local faction = ix.faction.teams[name]
+		if (!faction) then
+			for k, v in ipairs(ix.faction.indices) do
+				if (ix.util.StringMatches(L(v.name, client), name) or ix.util.StringMatches(v.uniqueID, name)) then
+					faction = v
 
-			if (!faction) then
-				for k, v in ipairs(ix.faction.indices) do
-					if (ix.util.StringMatches(L(v.name, client), name) or ix.util.StringMatches(v.uniqueID, name)) then
-						faction = v
-
-						break
-					end
+					break
 				end
 			end
+		end
 
-			if (faction) then
-				if (target:SetWhitelisted(faction.index, true)) then
-					for k, v in ipairs(player.GetAll()) do
-						v:NotifyLocalized("whitelist", client:Name(), target:Name(), L(faction.name, v))
-					end
+		if (faction) then
+			if (target:SetWhitelisted(faction.index, true)) then
+				for k, v in ipairs(player.GetAll()) do
+					v:NotifyLocalized("whitelist", client:GetName(), target:GetName(), L(faction.name, v))
 				end
-			else
-				return "@invalidFaction"
 			end
+		else
+			return "@invalidFaction"
 		end
 	end
 })
@@ -581,47 +468,41 @@ ix.command.Add("CharGetUp", {
 ix.command.Add("PlyUnwhitelist", {
 	description = "@cmdPlyUnwhitelist",
 	adminOnly = true,
-	syntax = "<string name> <string faction>",
-	OnRun = function(self, client, arguments)
-		local target = ix.command.FindPlayer(client, arguments[1])
-		local name = table.concat(arguments, " ", 2)
+	arguments = {
+		{ix.type.player, "target"},
+		{ix.type.text, "faction"}
+	},
+	OnRun = function(self, client, target, name)
+		local faction = ix.faction.teams[name]
 
-		if (IsValid(target)) then
-			local faction = ix.faction.teams[name]
+		if (!faction) then
+			for k, v in ipairs(ix.faction.indices) do
+				if (ix.util.StringMatches(L(v.name, client), name) or ix.util.StringMatches(v.uniqueID, name)) then
+					faction = v
 
-			if (!faction) then
-				for k, v in ipairs(ix.faction.indices) do
-					if (ix.util.StringMatches(L(v.name, client), name) or ix.util.StringMatches(v.uniqueID, name)) then
-						faction = v
-
-						break
-					end
+					break
 				end
 			end
+		end
 
-			if (faction) then
-				if (target:SetWhitelisted(faction.index, false)) then
-					for k, v in ipairs(player.GetAll()) do
-						v:NotifyLocalized("unwhitelist", client:Name(), target:Name(), L(faction.name, v))
-					end
+		if (faction) then
+			if (target:SetWhitelisted(faction.index, false)) then
+				for k, v in ipairs(player.GetAll()) do
+					v:NotifyLocalized("unwhitelist", client:GetName(), target:GetName(), L(faction.name, v))
 				end
-			else
-				return "@invalidFaction"
 			end
+		else
+			return "@invalidFaction"
 		end
 	end
 })
 
 ix.command.Add("CharFallOver", {
 	description = "@cmdCharFallOver",
-	syntax = "[number time]",
-	OnRun = function(self, client, arguments)
-		local time = tonumber(arguments[1]) or 0
-
-		if (time > 0) then
+	arguments = {ix.type.number, "time", true},
+	OnRun = function(self, client, time)
+		if (time and time > 0) then
 			time = math.Clamp(time, 1, 60)
-		else
-			time = nil
 		end
 
 		if (!IsValid(client.ixRagdoll)) then
@@ -633,69 +514,58 @@ ix.command.Add("CharFallOver", {
 ix.command.Add("BecomeClass", {
 	description = "@cmdBecomeClass",
 	syntax = "<string class>",
-	OnRun = function(self, client, arguments)
-		local class = table.concat(arguments, " ")
-		local char = client:GetChar()
+	arguments = {ix.type.text, "class"},
+	OnRun = function(self, client, class)
+		local character = client:GetCharacter()
 
-		if (IsValid(client) and char) then
+		if (character) then
 			local num = isnumber(tonumber(class)) and tonumber(class) or -1
 			
 			if (ix.class.list[num]) then
 				local v = ix.class.list[num]
 
-				if (char:JoinClass(num)) then
-					client:NotifyLocalized("becomeClass", L(v.name, client))
-
-					return
+				if (character:JoinClass(num)) then
+					return "@becomeClass", L(v.name, client)
 				else
-					client:NotifyLocalized("becomeClassFail", L(v.name, client))
-
-					return
+					return "@becomeClassFail", L(v.name, client)
 				end
 			else
 				for k, v in ipairs(ix.class.list) do
 					if (ix.util.StringMatches(v.uniqueID, class) or ix.util.StringMatches(L(v.name, client), class)) then
-						if (char:JoinClass(k)) then
-							client:NotifyLocalized("becomeClass", L(v.name, client))
-
-							return
+						if (character:JoinClass(k)) then
+							return "@becomeClass", L(v.name, client)
 						else
-							client:NotifyLocalized("becomeClassFail", L(v.name, client))
-
-							return
+							return "@becomeClassFail", L(v.name, client)
 						end
 					end
 				end
 			end
 			
-			client:NotifyLocalized("invalid", L("class", client))
+			return "@invalid", L("class", client)
 		else
-			client:NotifyLocalized("illegalAccess")
+			return "@illegalAccess"
 		end
 	end
 })
 
 ix.command.Add("CharDesc", {
 	description = "@cmdCharDesc",
-	syntax = "<string desc>",
-	OnRun = function(self, client, arguments)
-		arguments = table.concat(arguments, " ")
-
-		if (!arguments:find("%S")) then
+	arguments = {ix.type.text, "description"},
+	OnRun = function(self, client, description)
+		if (!description:find("%S")) then
 			return client:RequestString("@chgDesc", "@chgDescDesc", function(text)
 				ix.command.Run(client, "CharDesc", {text})
-			end, client:GetChar():GetDescription())
+			end, client:GetCharacter():GetDescription())
 		end
 
 		local info = ix.char.vars.description
-		local result, fault, count = info.OnValidate(arguments)
+		local result, fault, count = info.OnValidate(description)
 
 		if (result == false) then
-			return "@"..fault, count
+			return "@" .. fault, count
 		end
 
-		client:GetChar():SetDescription(arguments)
-
+		client:GetCharacter():SetDescription(description)
 		return "@descChanged"
 	end
 })
@@ -703,36 +573,36 @@ ix.command.Add("CharDesc", {
 ix.command.Add("PlyTransfer", {
 	description = "@cmdPlyTransfer",
 	adminOnly = true,
-	syntax = "<string name> <string faction>",
-	OnRun = function(self, client, arguments)
-		local target = ix.command.FindPlayer(client, arguments[1])
-		local name = table.concat(arguments, " ", 2)
+	arguments = {
+		{ix.type.character, "target"},
+		{ix.type.text, "faction"}
+	},
+	OnRun = function(self, client, target, name)
+		local faction = ix.faction.teams[name]
 
-		if (IsValid(target) and target:GetChar()) then
-			local faction = ix.faction.teams[name]
+		if (!name) then
+			for k, v in pairs(ix.faction.indices) do
+				if (ix.util.StringMatches(L(v.name, client), name)) then
+					faction = v
 
-			if (!faction) then
-				for k, v in pairs(ix.faction.indices) do
-					if (ix.util.StringMatches(L(v.name, client), name)) then
-						faction = v
-
-						break
-					end
+					break
 				end
 			end
+		end
 
-			if (faction) then
-				target:GetChar().vars.faction = faction.uniqueID
-				target:GetChar():SetFaction(faction.index)
+		if (faction) then
+			target.vars.faction = faction.uniqueID
+			target:SetFaction(faction.index)
 
-				if (faction.OnTransfered) then
-					faction:OnTransfered(target)
-				end
-
-				ix.util.NotifyLocalized("cChangeFaction", nil, client:Name(), target:Name(), L(faction.name, v))
-			else
-				return "@invalidFaction"
+			if (faction.OnTransfered) then
+				faction:OnTransfered(target)
 			end
+
+			for k, v in ipairs(player.GetAll()) do
+				v:NotifyLocalized("cChangeFaction", client:GetName(), target:GetName(), L(faction.name, v))
+			end
+		else
+			return "@invalidFaction"
 		end
 	end
 })
@@ -740,46 +610,35 @@ ix.command.Add("PlyTransfer", {
 ix.command.Add("CharSetClass", {
 	description = "@cmdCharSetClass",
 	adminOnly = true,
-	syntax = "<string name> <string class>",
-	OnRun = function(self, client, arguments)
-		if (!arguments[2]) then
-			return L("invalidArg", client, 2)
+	arguments = {
+		{ix.type.character, "target"},
+		{ix.type.text, "class"}
+	},
+	OnRun = function(self, client, target, name)
+		for k, v in ipairs(ix.class.list) do
+			if (ix.util.StringMatches(v.uniqueID, class) or ix.util.StringMatches(v.name, name)) then
+				classTable = v
+			end
 		end
 
-		local target = ix.command.FindPlayer(client, arguments[1])
-		local targetCharacter = target:GetCharacter()
+		if (classTable) then
+			local oldClass = target:GetClass()
 
-		if (IsValid(target) and targetCharacter) then
-			local class = table.concat(arguments, " ", 2)
-			local classTable = nil
+			if (target:GetPlayer():Team() == classTable.faction) then
+				target:SetClass(classTable.index)
+				hook.Run("OnPlayerJoinClass", client, classTable.index, oldClass)
 
-			for k, v in ipairs(ix.class.list) do
-				if (ix.util.StringMatches(v.uniqueID, class) or ix.util.StringMatches(v.name, name)) then
-					classTable = v
-				end
-			end
+				target:NotifyLocalized("becomeClass", L(classTable.name, target))
 
-			if (classTable) then
-				local oldClass = targetCharacter:GetClass()
-
-				if (target:Team() == classTable.faction) then
-					targetCharacter:SetClass(classTable.index)
-					hook.Run("OnPlayerJoinClass", client, classTable.index, oldClass)
-
-					target:NotifyLocalized("becomeClass", L(classTable.name, target))
-
-					-- only send second notification if the character isn't setting their own class
-					if (client != target) then
-						client:NotifyLocalized("setClass", targetCharacter:GetName(), L(classTable.name, target))
-					end
-				else
-					client:NotifyLocalized("invalidClassFaction")
+				-- only send second notification if the character isn't setting their own class
+				if (client != target) then
+					return "@setClass", target:GetName(), L(classTable.name, client)
 				end
 			else
-				client:NotifyLocalized("invalidClass")
+				return "@invalidClassFaction"
 			end
 		else
-			return "@charNoExist"
+			return "@invalidClass"
 		end
 	end
 })
@@ -787,9 +646,9 @@ ix.command.Add("CharSetClass", {
 ix.command.Add("MapRestart", {
 	description = "@cmdMapRestart",
 	adminOnly = true,
-	syntax = "[number delay]",
-	OnRun = function(self, client, arguments)
-		local delay = tonumber(arguments[1] or 10)
+	arguments = {ix.type.number, "delay", true},
+	OnRun = function(self, client, delay)
+		local delay = delay or 10
 		ix.util.NotifyLocalized("mapRestarting", nil, delay)
 
 		timer.Simple(delay, function()

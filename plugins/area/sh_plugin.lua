@@ -384,18 +384,12 @@ end
 ix.command.Add("AreaAdd", {
 	description = "@cmdAreaAdd",
 	adminOnly = true,
-	syntax = "<string name>",
-	OnRun = function(self, client, arguments)
-		local name = table.concat(arguments, " ") or "Area"
-
+	arguments = {ix.type.text, "name"},
+	OnRun = function(self, client, name)
+		name = name:len() == 0 and "Area" or name
 		local pos = client:GetEyeTraceNoCursor().HitPos
 
 		if (!client:GetNetVar("areaMin")) then
-			if (!name) then
-				ix.util.Notify(ix.lang.Get("missing_arg", 1), client)
-
-				return
-			end
 			netstream.Start(client, "displayPosition", pos)
 
 			client:SetNetVar("areaMin", pos, client)
@@ -444,8 +438,9 @@ ix.command.Add("AreaChange", {
 	description = "@cmdAreaChange",
 	adminOnly = true,
 	syntax = "<string name>",
-	OnRun = function(self, client, arguments)
-		local name = table.concat(arguments, " ") or "Area"
+	arguments = {ix.type.text, "name"},
+	OnRun = function(self, client, name)
+		name = name:len() == 0 and "Area" or name
 		local areaID = client:GetArea()
 
 		if (!areaID) then

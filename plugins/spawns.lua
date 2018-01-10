@@ -50,68 +50,63 @@ end
 ix.command.Add("SpawnAdd", {
 	description = "@cmdSpawnAdd",
 	adminOnly = true,
-	syntax = "<string faction> [string class]",
-	OnRun = function(self, client, arguments)
-		local faction
-		local name = arguments[1]
-		local class = table.concat(arguments, " ", 2)
-		local info
+	arguments = {
+		{ix.type.string, "faction"},
+		{ix.type.text, "class"}
+	},
+	OnRun = function(self, client, name, class)
+		local info = ix.faction.indices[name:lower()]
 		local info2
+		local faction
 
-		if (name) then
-			info = ix.faction.indices[name:lower()]
+		if (!info) then
+			for k, v in ipairs(ix.faction.indices) do
+				if (ix.util.StringMatches(v.uniqueID, name) or ix.util.StringMatches(L(v.name, client), name)) then
+					faction = v.uniqueID
+					info = v
 
-			if (!info) then
-				for k, v in ipairs(ix.faction.indices) do
-					if (ix.util.StringMatches(v.uniqueID, name) or ix.util.StringMatches(L(v.name, client), name)) then
-						faction = v.uniqueID
-						info = v
+					break
+				end
+			end
+		end
+
+		if (info) then
+			if (class and class != "") then
+				local found = false
+
+				for k, v in ipairs(ix.class.list) do
+					if (v.faction == info.index and (v.uniqueID:lower() == class:lower() or ix.util.StringMatches(L(v.name, client), class))) then
+						class = v.uniqueID
+						info2 = v
+						found = true
 
 						break
 					end
 				end
-			end
 
-			if (info) then
-				if (class and class != "") then
-					local found = false
-
-					for k, v in ipairs(ix.class.list) do
-						if (v.faction == info.index and (v.uniqueID:lower() == class:lower() or ix.util.StringMatches(L(v.name, client), class))) then
-							class = v.uniqueID
-							info2 = v
-							found = true
-
-							break
-						end
-					end
-
-					if (!found) then
-						return L("invalidClass", client)
-					end
-				else
-					class = ""
+				if (!found) then
+					return "@invalidClass"
 				end
-
-				PLUGIN.spawns[faction] = PLUGIN.spawns[faction] or {}
-				PLUGIN.spawns[faction][class] = PLUGIN.spawns[faction][class] or {}
-
-				table.insert(PLUGIN.spawns[faction][class], client:GetPos())
-
-				PLUGIN:SaveSpawns()
-
-				local name = L(info.name, client)
-
-				if (info2) then
-					name = name.." ("..L(info2.name, client)..")"
-				end
-
-				return L("spawnAdded", client, name)
 			else
-				return L("invalidFaction", client)
+				class = ""
 			end
+
+			PLUGIN.spawns[faction] = PLUGIN.spawns[faction] or {}
+			PLUGIN.spawns[faction][class] = PLUGIN.spawns[faction][class] or {}
+
+			table.insert(PLUGIN.spawns[faction][class], client:GetPos())
+
+			PLUGIN:SaveSpawns()
+
+			local name = L(info.name, client)
+
+			if (info2) then
+				name = name .. " (" .. L(info2.name, client) .. ")"
+			end
+
+			return "@spawnAdded", name
 		else
-			return L("invalidArg", client, 1)
+			return "@invalidFaction"
 		end
 	end
 })
@@ -119,10 +114,11 @@ ix.command.Add("SpawnAdd", {
 ix.command.Add("SpawnRemove", {
 	description = "@cmdSpawnRemove",
 	adminOnly = true,
-	syntax = "[number radius]",
-	OnRun = function(self, client, arguments)
+	arguments = {ix.type.number, "radius", true},
+	OnRun = function(self, client, radius)
+		radius = radius or 120
+
 		local position = client:GetPos()
-		local radius = tonumber(arguments[1]) or 120
 		local i = 0
 
 		for k, v in pairs(PLUGIN.spawns) do
@@ -140,6 +136,6 @@ ix.command.Add("SpawnRemove", {
 			PLUGIN:SaveSpawns()
 		end
 
-		return L("spawnDeleted", client, i)
+		return "@spawnDeleted", i
 	end
 })

@@ -165,15 +165,15 @@ local PLUGIN = PLUGIN
 ix.command.Add("MapSceneAdd", {
 	description = "@cmdMapSceneAdd",
 	adminOnly = true,
-	syntax = "[bool isPair]",
-	OnRun = function(self, client, arguments)
+	arguments = {ix.type.bool, "isPair", true},
+	OnRun = function(self, client, bIsPair)
 		local position, angles = client:EyePos(), client:EyeAngles()
 
 		-- This scene is in a pair for moving scenes.
-		if (util.tobool(arguments[1]) and !client.ixScnPair) then
+		if (util.tobool(bIsPair) and !client.ixScnPair) then
 			client.ixScnPair = {position, angles}
 
-			return L("mapRepeat", client)
+			return "@mapRepeat"
 		else
 			if (client.ixScnPair) then
 				PLUGIN:AddScene(client.ixScnPair[1], client.ixScnPair[2], position, angles)
@@ -182,7 +182,7 @@ ix.command.Add("MapSceneAdd", {
 				PLUGIN:AddScene(position, angles)
 			end
 
-			return L("mapAdd", client)
+			return "@mapAdd"
 		end
 	end
 })
@@ -190,9 +190,10 @@ ix.command.Add("MapSceneAdd", {
 ix.command.Add("MapSceneRemove", {
 	description = "@cmdMapSceneRemove",
 	adminOnly = true,
-	syntax = "[number radius]",
-	OnRun = function(self, client, arguments)
-		local radius = tonumber(arguments[1]) or 280
+	arguments = {ix.type.number, "radius", true},
+	OnRun = function(self, client, radius)
+		radius = radius or 280
+
 		local position = client:GetPos()
 		local i = 0
 
@@ -219,6 +220,6 @@ ix.command.Add("MapSceneRemove", {
 			PLUGIN:SaveScenes()
 		end
 
-		return L("mapDel", client, i)
+		return "@mapDel", i
 	end
 })

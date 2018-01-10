@@ -154,25 +154,25 @@ end
 ix.command.Add("ContainerSetPassword", {
 	description = "@cmdContainerSetPassword",
 	adminOnly = true,
-	syntax = "[string password]",
-	OnRun = function(self, client, arguments)
+	arguments = {ix.type.text, "password"},
+	OnRun = function(self, client, password)
 		local trace = client:GetEyeTraceNoCursor()
 		local ent = trace.Entity
 
 		if (ent and ent:IsValid()) then
-			local password = table.concat(arguments, " ")
-
-			if (password != "") then
+			if (password:len() != 0) then
 				ent:SetNetVar("locked", true)
 				ent.password = password
-				client:NotifyLocalized("containerPassword", password)
+
+				return "@containerPassword", password
 			else
 				ent:SetNetVar("locked", nil)
 				ent.password = nil
-				client:NotifyLocalized("containerPasswordRemove")
+
+				return "@containerPasswordRemove"
 			end
 		else
-			client:NotifyLocalized("invalid", "Entity")
+			return "@invalid", "Entity"
 		end
 	end
 })
