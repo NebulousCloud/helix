@@ -8,13 +8,15 @@ ix.type = ix.type or {
 	[4] = "player", -- any player that matches the given string
 	[5] = "steamid", -- a string that matches the steamid format
 	[6] = "character", -- any player with a valid character that matches the given string
+	[7] = "bool", -- a string representation of a bool - "false"/"0" will return false, otherwise true
 
 	string = 1,
 	text = 2,
 	number = 3,
 	player = 4,
 	steamid = 5,
-	character = 6
+	character = 6,
+	bool = 7
 }
 
 local COMMAND_PREFIX = "/"
@@ -77,6 +79,12 @@ local function ArgumentCheckStub(command, client, given)
 			end
 
 			result[#result + 1] = value
+		elseif (argType == ix.type.bool) then
+			if (argument == nil and bOptional) then
+				result[#result + 1] = nil
+			else
+				result[#result + 1] = tobool(argument)
+			end
 		end
 	end
 
