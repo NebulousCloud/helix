@@ -62,8 +62,11 @@ function ix.db.LoadTables()
 	query:Execute()
 end
 
-function ix.db.WipeTables()
+function ix.db.WipeTables(callback)
 	local query
+
+	query = mysql:Drop("ix_schema")
+	query:Execute()
 
 	query = mysql:Drop("ix_characters")
 	query:Execute()
@@ -75,26 +78,30 @@ function ix.db.WipeTables()
 	query:Execute()
 
 	query = mysql:Drop("ix_players")
+		query:Callback(callback)
 	query:Execute()
-
-	ix.db.LoadTables()
 end
 
 local resetCalled = 0
-concommand.Add("ix_recreatedb", function(client, cmd, arguments)
-	-- this command can be run in RCON or SERVER CONSOLE
+
+concommand.Add("ix_wipedb", function(client, cmd, arguments)
+	-- can only be ran through the server's console
 	if (!IsValid(client)) then
 		if (resetCalled < RealTime()) then
 			resetCalled = RealTime() + 3
 
-			MsgC(Color(255, 0, 0), "[Helix] TO CONFIRM DATABASE RESET, RUN 'ix_recreatedb' AGAIN in 3 SECONDS.\n")
+			MsgC(Color(255, 0, 0), "[Helix] WIPING THE DATABASE WILL PERMENANTLY REMOVE ALL PLAYER, CHARACTER, ITEM, AND INVENTORY DATA.\n")
+			MsgC(Color(255, 0, 0), "[Helix] THE SERVER WILL RESTART TO APPLY THESE CHANGES WHEN COMPLETED.\n")
+			MsgC(Color(255, 0, 0), "[Helix] TO CONFIRM DATABASE RESET, RUN 'ix_wipedb' AGAIN WITHIN 3 SECONDS.\n")
 		else
 			resetCalled = 0
-
-			MsgC(Color(255, 0, 0), "[Helix] DATABASE WIPE IN PROGRESS.\n")
+			MsgC(Color(255, 0, 0), "[Helix] DATABASE WIPE IN PROGRESS...\n")
 
 			hook.Run("OnWipeTables")
-			ix.db.WipeTables()
+			ix.db.WipeTables(function()
+				MsgC(Color(255, 255, 0), "[Helix] DATABASE WIPE COMPLETED!\n")
+				RunConsoleCommand("changelevel", game.GetMap())
+			end)
 		end
 	end
 end)
