@@ -1,0 +1,390 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Helix Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../highlight.css">
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Helix</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/ix.markup.html">ix.markup</a></li>
+  <li><strong>ix.command</strong></li>
+  <li><a href="../modules/ix.util.html">ix.util</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>ix.command</code></h1>
+<p>This library handles the registration, parsing, and handling of commands.</p>
+<p>Commands can be ran through the chat with slash commands or they can be executed through the console.</p>
+
+<h2>Command structure</h2>
+<p>When registering commands, you'll need to pass in a valid command structure. This is simply a table with various fields
+defined. The fields you can specify are as follows:</p>
+
+
+<ul>
+<li><p>
+<code>description</code><br />
+(default: <code>&quot;@noDesc&quot;</code>)<br />
+The help text that appears when the user types in the command.
+</p></li>
+
+
+<li><p>
+<code>syntax</code><br />
+(default: <code>&quot;[none]&quot;</code>)<br />
+The arguments that your command accepts. This field is automatically populated when using the arguments field. Syntax strings
+generally take the form of <code>&quot;&lt;type argumentName&gt; [type optionalName]&quot;</code> - it is recommended to stick to this format to keep
+consistent with other commands.
+</p></li>
+
+<li><p>
+<code>arguments</code><br />
+(optional)<br />
+If this field is defined, then additional checks will be performed to ensure that the arguments given to the command are valid.
+This removes extra boilerplate code since all the passed arguments are guaranteed to be valid. See the `Command arguments
+structure` for more information.
+</p></li>
+
+<li><p>
+<code>adminOnly</code><br />
+(default: <code>false</code>)<br />
+Provides an additional check to see if the user is an admin before running.
+</p></li>
+
+<li><p>
+<code>superAdminOnly</code><br />
+(default: <code>false</code>)<br />
+Provides an additional check to see if the user is a superadmin before running.
+</p></li>
+
+<li><p>
+<code>group</code><br />
+(default: <code>nil</code>)<br />
+Provides an additional check to see if the user is part of the specified usergroup before running. This can be a string or
+table of strings for allowing multiple groups to use the command.
+</p></li>
+
+<li><p>
+<code>OnRun</code><br />
+(required)<br />
+This function is called when the command has passed all the checks and can execute. The first two arguments will be the running
+command table and the calling player. If the arguments field has been specified, the arguments will be passed as regular
+function parameters rather than in a table.
+When the <code>arguments</code> field is defined:
+<pre>
+OnRun(self, client, target, length, message)
+</pre>
+When the <code>arguments</code> field is NOT defined:
+<pre>
+OnRun(self, client, arguments)
+</pre>
+</p></li>
+</ul>
+
+
+<h2>Command arguments structure</h2>
+<p>Rather than checking the validity for arguments in your command's <code>OnRun</code> function, you can have Helix do it for you to reduce
+the amount of boilerplate code that needs to be written. This can be done by populating the <code>arguments</code> field.</p>
+
+<p>When using the <code>arguments</code> field in your command, you are specifying specific types that you expect to receive when the command
+is ran successfully. This means that before <code>OnRun</code> is called, the arguments passed to the command from a user will be verified
+to be valid. Each argument is an array that holds at least two entries - the type, and the name of the variable. The third entry
+is an optional bool that specifies whether or not the argument is optional. In this case, the argument can be nil if not
+specified, otherwise it is valid.</p>
+
+<p>Note that optional arguments must always be at the end of a list of arguments - or rather, they must not follow a required
+argument. Here is an example:</p>
+
+<pre>
+ix.command.Add(<span class="string">"CharSlap"</span>, {
+    description = <span class="string">"Slaps a character with a large trout."</span>
+    adminOnly = <span class="keyword">true</span>,
+    arguments = {
+        {ix.<span class="global">type</span>.player, <span class="string">"target"</span>},
+        {ix.<span class="global">type</span>.number, <span class="string">"damage"</span>, <span class="keyword">true</span>}
+    },
+    OnRun = <span class="keyword">function</span>(self, client, target, damage)
+        <span class="comment">-- WHAM!
+</span>    <span class="keyword">end</span>
+})
+</pre>
+
+<p>Here, we've specified the first argument called <code>target</code> to be of type <code>player</code>, and the second argument called <code>damage</code> to be
+of type <code>number</code>. The <code>damage</code> argument is optional, meaning that the command will still run if the user has not specified
+any value for the damage. In this case, we'll need to check if it was specified by doing a simple <code>if (damage) then</code>. </p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#ix.command.Add">ix.command.Add(command, data)</a></td>
+	<td class="summary">Creates a new command.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.command.HasAccess">ix.command.HasAccess(client, command)</a></td>
+	<td class="summary">Returns true if a player is allowed to run a certain command.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.command.ExtractArgs">ix.command.ExtractArgs(text)</a></td>
+	<td class="summary">Returns a table of arguments from a given string.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.command.FindAll">ix.command.FindAll(identifier[, bSorted=false[, bReorganize=false[, bRemoveDupes=false]]])</a></td>
+	<td class="summary">Returns an array of potential commands by unique id.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.command.FindPlayer">ix.command.FindPlayer(client, name)</a></td>
+	<td class="summary">Attempts to find a player by an identifier.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "ix.command.Add"></a>
+    <strong><span class="realm shared" title="Shared"></span> ix.command.Add(command, data)</strong>
+    </dt>
+    <dd>
+    Creates a new command.
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">command</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Name of the command (recommended in UpperCamelCase)
+        </li>
+        <li><span class="parameter">data</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         Command structure (see above)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.command.HasAccess"></a>
+    <strong><span class="realm shared" title="Shared"></span> ix.command.HasAccess(client, command)</strong>
+    </dt>
+    <dd>
+    Returns true if a player is allowed to run a certain command.
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">client</span>
+            <span class="types"><span class="type">player</span></span>
+         Player to check access for
+        </li>
+        <li><span class="parameter">command</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Name of the command to check access for
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">bool</span></span>
+        Whether or not the player is allowed to run the command
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.command.ExtractArgs"></a>
+    <strong><span class="realm shared" title="Shared"></span> ix.command.ExtractArgs(text)</strong>
+    </dt>
+    <dd>
+    Returns a table of arguments from a given string.
+ Words separated by spaces will be considered one argument. To have an argument containing multiple words, they must be
+ contained within quotation marks.
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">text</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         String to extract arguments from
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+        Arguments extracted from string
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><code class="lua">ix.command.ExtractArgs(<span class="string">"these are \"some arguments\""</span>)
+ &gt; {<span class="string">"these"</span>, <span class="string">"are"</span>, <span class="string">"some arguments"</span>}</code></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "ix.command.FindAll"></a>
+    <strong><span class="realm shared" title="Shared"></span> ix.command.FindAll(identifier[, bSorted=false[, bReorganize=false[, bRemoveDupes=false]]])</strong>
+    </dt>
+    <dd>
+    Returns an array of potential commands by unique id.
+ When bSorted is true, the commands will be sorted by name. When bReorganize is true, it will move any exact match to the top
+ of the array. When bRemoveDupes is true, it will remove any commands that have the same NAME.
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">identifier</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Search query
+        </li>
+        <li><span class="parameter">bSorted</span>
+            <span class="types"><span class="type">boolean</span></span>
+         Whether or not to sort the commands by name
+         (<em>default</em> false)
+        </li>
+        <li><span class="parameter">bReorganize</span>
+            <span class="types"><span class="type">boolean</span></span>
+         Whether or not any exact match will be moved to the top of the array
+         (<em>default</em> false)
+        </li>
+        <li><span class="parameter">bRemoveDupes</span>
+            <span class="types"><span class="type">boolean</span></span>
+         Whether or not to remove any commands that have the same name
+         (<em>default</em> false)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+        Array of command tables whose name partially or completely matches the search query
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.command.FindPlayer"></a>
+    <strong><span class="realm server" title="Server"></span> ix.command.FindPlayer(client, name)</strong>
+    </dt>
+    <dd>
+    Attempts to find a player by an identifier.  If unsuccessful, a notice will be displayed to the specified player. The
+ search criteria is derived from <a href="../modules/ix.util.html#ix.util.FindPlayer">ix.util.FindPlayer</a>.
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">client</span>
+            <span class="types"><span class="type">player</span></span>
+         Player to give a notification to if the player could not be found
+        </li>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Search query
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">player</span></span>
+        Player that matches the given search query - this will be <code>nil</code> if a player could not be found
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/ix.util.html#ix.util.FindPlayer">ix.util.FindPlayer</a>
+    </ul>
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2018-01-13 12:31:05 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+
+<script type="text/javascript" src="../highlight.min.js"></script>
+<script type="text/javascript">
+  hljs.configure({
+    languages: ["lua"]
+  });
+  hljs.initHighlightingOnLoad();
+</script>
+</body>
+</html>

@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Helix Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../highlight.css">
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Helix</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Fields">Fields</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><strong>ix.markup</strong></li>
+  <li><a href="../modules/ix.command.html">ix.command</a></li>
+  <li><a href="../modules/ix.util.html">ix.util</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>ix.markup</code></h1>
+<p>(no description)</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#MarkupObject:create">MarkupObject:create()</a></td>
+	<td class="summary">
+<p>Name: MarkupObject:Create()</p>
+<pre><code>Desc: Called by Parse.
+</code></pre>
+</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#MarkupObject:GetWidth">MarkupObject:GetWidth()</a></td>
+	<td class="summary">Name: MarkupObject:GetWidth()</p>
+<pre><code>Desc: Returns the width of a markup block
+</code></pre>
+<p>   Usage: ml:GetWidth()</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#MarkupObject:GetHeight">MarkupObject:GetHeight()</a></td>
+	<td class="summary">Name: MarkupObject:GetHeight()</p>
+<pre><code>Desc: Returns the height of a markup block
+</code></pre>
+<p>   Usage: ml:GetHeight()</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#MarkupObject:draw">MarkupObject:draw(xOffset, yOffset, halign, valign, alphaoverride)</a></td>
+	<td class="summary">
+<p>Name: MarkupObject:Draw(xOffset, yOffset, halign, valign, alphaoverride)</p>
+<pre><code>Desc: Draw the markup text to the screen as position
+      xOffset, yOffset.
+</code></pre>
+</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#parse">parse(ml, maxwidth)</a></td>
+	<td class="summary">
+<p>Name: Parse(ml, maxwidth)</p>
+<pre><code>Desc: Parses the pseudo-html markup language, and creates a
+      MarkupObject, which can be used to the draw the
+      text to the screen.
+</code></pre>
+</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#TEXT_ALIGN_LEFT">TEXT_ALIGN_LEFT</a></td>
+	<td class="summary">Name: Constants used for text alignment.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "MarkupObject:create"></a>
+    <strong>MarkupObject:create()</strong>
+    </dt>
+    <dd>
+    Name: MarkupObject:Create()</p>
+<pre><code>Desc: Called by Parse.  Creates a new table, and setups the
+      metatable.
+</code></pre>
+<p>   Usage: <em>* INTERNAL *</em> Do not use!
+
+    </ul>
+    </ul>
+    </ul>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "MarkupObject:GetWidth"></a>
+    <strong>MarkupObject:GetWidth()</strong>
+    </dt>
+    <dd>
+    Name: MarkupObject:GetWidth()</p>
+<pre><code>Desc: Returns the width of a markup block
+</code></pre>
+<p>   Usage: ml:GetWidth()
+
+    </ul>
+    </ul>
+    </ul>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "MarkupObject:GetHeight"></a>
+    <strong>MarkupObject:GetHeight()</strong>
+    </dt>
+    <dd>
+    Name: MarkupObject:GetHeight()</p>
+<pre><code>Desc: Returns the height of a markup block
+</code></pre>
+<p>   Usage: ml:GetHeight()
+
+    </ul>
+    </ul>
+    </ul>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "MarkupObject:draw"></a>
+    <strong>MarkupObject:draw(xOffset, yOffset, halign, valign, alphaoverride)</strong>
+    </dt>
+    <dd>
+    Name: MarkupObject:Draw(xOffset, yOffset, halign, valign, alphaoverride)</p>
+<pre><code>Desc: Draw the markup text to the screen as position
+      xOffset, yOffset.  Halign and Valign can be used
+      to align the text. Alphaoverride can be used to override
+      the alpha value of the text-colour.
+</code></pre>
+<p>   Usage: MarkupObject:Draw(100, 100)
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">xOffset</span>
+
+
+
+        </li>
+        <li><span class="parameter">yOffset</span>
+
+
+
+        </li>
+        <li><span class="parameter">halign</span>
+
+
+
+        </li>
+        <li><span class="parameter">valign</span>
+
+
+
+        </li>
+        <li><span class="parameter">alphaoverride</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "parse"></a>
+    <strong>parse(ml, maxwidth)</strong>
+    </dt>
+    <dd>
+    Name: Parse(ml, maxwidth)</p>
+<pre><code>Desc: Parses the pseudo-html markup language, and creates a
+      MarkupObject, which can be used to the draw the
+      text to the screen.  Valid tags are: font and colour.
+      \n and \t are also available to move to the next line,
+      or insert a tab character.
+      Maxwidth can be used to make the text wrap to a specific
+      width.
+</code></pre>
+<p>   Usage: markup.Parse("<font=Default>changed font</font>\n<colour=255,0,255,255>changed colour</colour>")
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ml</span>
+
+
+
+        </li>
+        <li><span class="parameter">maxwidth</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "TEXT_ALIGN_LEFT"></a>
+    <strong>TEXT_ALIGN_LEFT</strong>
+    </dt>
+    <dd>
+
+<p>Name: Constants used for text alignment. </p>
+<pre><code>      These must be the same values as in the draw module.
+</code></pre>
+
+
+    </ul>
+    </ul>
+    </ul>
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2018-01-13 12:31:05 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+
+<script type="text/javascript" src="../highlight.min.js"></script>
+<script type="text/javascript">
+  hljs.configure({
+    languages: ["lua"]
+  });
+  hljs.initHighlightingOnLoad();
+</script>
+</body>
+</html>
