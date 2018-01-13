@@ -49,7 +49,7 @@ local PANEL = {}
 		self.payload.faction = self.faction
 		
 		for k, v in SortedPairsByMemberValue(ix.char.vars, "index") do
-			if (!v.noDisplay and k != "__SortedIndex") then
+			if (!v.bNoDisplay and k != "__SortedIndex") then
 				if (v.shouldDisplay) then
 					if (v.shouldDisplay(self) == false) then
 						continue

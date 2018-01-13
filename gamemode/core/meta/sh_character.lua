@@ -1,8 +1,14 @@
+
 -- Create the character metatable.
 local CHAR = ix.meta.character or {}
 CHAR.__index = CHAR
 CHAR.id = CHAR.id or 0
 CHAR.vars = CHAR.vars or {}
+
+-- TODO: not this
+if (!ix.db) then
+	ix.util.Include("../libs/sv_database.lua")
+end
 
 -- Called when the character is being printed as a string.
 function CHAR:__tostring()
@@ -66,7 +72,7 @@ if (SERVER) then
 			local data = {}
 
 			for k, v in pairs(self.vars) do
-				if (ix.char.vars[k] != nil and !ix.char.vars[k].noNetworking) then
+				if (ix.char.vars[k] != nil and !ix.char.vars[k].bNoNetworking) then
 					data[k] = v
 				end
 			end
@@ -77,7 +83,7 @@ if (SERVER) then
 			local data = {}
 
 			for k, v in pairs(ix.char.vars) do
-				if (!v.noNetworking and !v.isLocal) then
+				if (!v.bNoNetworking and !v.isLocal) then
 					data[k] = self.vars[k]
 				end
 			end
@@ -87,7 +93,7 @@ if (SERVER) then
 	end
 
 	-- Sets up the "appearance" related inforomation for the character.
-	function CHAR:Setup(noNetworking)
+	function CHAR:Setup(bNoNetworking)
 		local client = self:GetPlayer()
 
 		if (IsValid(client)) then
@@ -105,7 +111,7 @@ if (SERVER) then
 			client:SetSkin(self:GetData("skin", 0))
 			
 			-- Synchronize the character if we should.
-			if (!noNetworking) then
+			if (!bNoNetworking) then
 				self:Sync()
 				
 				-- wtf
@@ -185,43 +191,48 @@ function ix.char.RegisterVar(key, data)
 	ix.char.vars[key] = data
 	data.index = data.index or table.Count(ix.char.vars)
 
-	-- Convert the name of the variable to be capitalized.
-	local upperName = key:sub(1, 1):upper()..key:sub(2)
+	local upperName = key:sub(1, 1):upper() .. key:sub(2)
 
-	-- Provide functions to change the variable if allowed.
-	if (SERVER and !data.isNotModifiable) then
-		-- Overwrite the set function if desired.
-		if (data.OnSet) then
-			CHAR["Set"..upperName] = data.OnSet
-		-- Have the set function only set on the server if no networking.
-		elseif (data.noNetworking) then
-			CHAR["Set"..upperName] = function(self, value)
-				self.vars[key] = value
-			end
-		-- If the variable is a local one, only send the variable to the local player.
-		elseif (data.isLocal) then
-			CHAR["Set"..upperName] = function(self, value)
-				local curChar = self:GetPlayer() and self:GetPlayer():GetChar()
-				local sendID = true
+	if (SERVER) then
+		if (data.field) then
+			ix.db.AddToSchema("ix_characters", data.field, data.fieldType or ix.type.string)
+		end
 
-				if (curChar and curChar == self) then
-					sendID = false
+		-- Provide functions to change the variable if allowed.
+		if (!data.bNotModifiable) then
+			-- Overwrite the set function if desired.
+			if (data.OnSet) then
+				CHAR["Set"..upperName] = data.OnSet
+			-- Have the set function only set on the server if no networking.
+			elseif (data.bNoNetworking) then
+				CHAR["Set"..upperName] = function(self, value)
+					self.vars[key] = value
 				end
+			-- If the variable is a local one, only send the variable to the local player.
+			elseif (data.isLocal) then
+				CHAR["Set"..upperName] = function(self, value)
+					local curChar = self:GetPlayer() and self:GetPlayer():GetChar()
+					local sendID = true
 
-				local oldVar = self.vars[key]
-					self.vars[key] = value
-				netstream.Start(self.player, "charSet", key, value, sendID and self:GetID() or nil)
+					if (curChar and curChar == self) then
+						sendID = false
+					end
 
-				hook.Run("OnCharVarChanged", self, key, oldVar, value)
-			end
-		-- Otherwise network the variable to everyone.
-		else
-			CHAR["Set"..upperName] = function(self, value)
-				local oldVar = self.vars[key]
-					self.vars[key] = value
-				netstream.Start(nil, "charSet", key, value, self:GetID())
-				
-				hook.Run("OnCharVarChanged", self, key, oldVar, value)
+					local oldVar = self.vars[key]
+						self.vars[key] = value
+					netstream.Start(self.player, "charSet", key, value, sendID and self:GetID() or nil)
+
+					hook.Run("OnCharVarChanged", self, key, oldVar, value)
+				end
+			-- Otherwise network the variable to everyone.
+			else
+				CHAR["Set"..upperName] = function(self, value)
+					local oldVar = self.vars[key]
+						self.vars[key] = value
+					netstream.Start(nil, "charSet", key, value, self:GetID())
+					
+					hook.Run("OnCharVarChanged", self, key, oldVar, value)
+				end
 			end
 		end
 	end

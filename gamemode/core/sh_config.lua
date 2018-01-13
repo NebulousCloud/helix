@@ -1,10 +1,10 @@
 ix.config = ix.config or {}
 ix.config.stored = ix.config.stored or {}
 
-function ix.config.Add(key, value, desc, callback, data, noNetworking, schemaOnly)
+function ix.config.Add(key, value, desc, callback, data, bNoNetworking, schemaOnly)
 	local oldConfig = ix.config.stored[key]
 
-	ix.config.stored[key] = {data = data, value = oldConfig and oldConfig.value or value, default = value, desc = desc, noNetworking = noNetworking, global = !schemaOnly, callback = callback}
+	ix.config.stored[key] = {data = data, value = oldConfig and oldConfig.value or value, default = value, desc = desc, bNoNetworking = bNoNetworking, global = !schemaOnly, callback = callback}
 end
 
 function ix.config.SetDefault(key, value)
@@ -35,7 +35,7 @@ function ix.config.Set(key, value)
 		config.value = value
 
 		if (SERVER) then
-			if (!config.noNetworking) then
+			if (!config.bNoNetworking) then
 				netstream.Start(nil, "cfgSet", key, value)
 			end
 

@@ -208,7 +208,7 @@ local PANEL = {}
 												for k, v in SortedPairsByMemberValue(ix.char.vars, "index") do
 													local value = self.creation.payload[k]
 
-													if (!v.noDisplay or v.OnValidate) then
+													if (!v.bNoDisplay or v.OnValidate) then
 														if (v.OnValidate) then
 															local result = {v.OnValidate(value, self.creation.payload, LocalPlayer())}
 

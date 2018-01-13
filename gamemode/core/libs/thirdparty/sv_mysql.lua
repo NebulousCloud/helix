@@ -167,6 +167,14 @@ function QUERY_CLASS:Create(key, value)
 	self.createList[#self.createList + 1] = {"`"..key.."`", value};
 end;
 
+function QUERY_CLASS:Add(key, value)
+	self.add = {"`"..key.."`", value};
+end;
+
+function QUERY_CLASS:Drop(key)
+	self.drop = "`"..key.."`";
+end;
+
 function QUERY_CLASS:PrimaryKey(key)
 	self.primaryKey = "`"..key.."`";
 end;
@@ -228,8 +236,9 @@ local function BuildSelectQuery(queryObj)
 	return table.concat(queryString);
 end;
 
-local function BuildInsertQuery(queryObj)
-	local queryString = {"INSERT INTO"};
+local function BuildInsertQuery(queryObj, bIgnore)
+	local suffix = (bIgnore and (Module == "sqlite" and "INSERT OR IGNORE INTO" or "INSERT IGNORE INTO") or "INSERT INTO");
+	local queryString = {suffix};
 	local keyList = {};
 	local valueList = {};
 
@@ -372,7 +381,31 @@ local function BuildCreateQuery(queryObj)
 
 	queryString[#queryString + 1] = " )";
 
-	return table.concat(queryString); 
+	return table.concat(queryString);
+end;
+
+local function BuildAlterQuery(queryObj)
+	local queryString = {"ALTER TABLE"};
+
+	if (type(queryObj.tableName) == "string") then
+		queryString[#queryString + 1] = " `"..queryObj.tableName.."`";
+	else
+		ErrorNoHalt("[mysql] No table name specified!\n");
+		return;
+	end;
+
+	if (type(queryObj.add) == "table") then
+		queryString[#queryString + 1] = " ADD "..queryObj.add[1].." "..ApplyQueryReplacements("Create", queryObj.add[2]);
+	elseif (type(queryObj.drop) == "string") then
+		if (Module == "sqlite") then
+			ErrorNoHalt("[mysql] Cannot drop columns in sqlite!\n");
+			return;
+		end;
+
+		queryString[#queryString + 1] = " DROP COLUMN "..queryObj.drop;
+	end;
+
+	return table.concat(queryString);
 end;
 
 function QUERY_CLASS:Execute(bQueueQuery)
@@ -383,6 +416,8 @@ function QUERY_CLASS:Execute(bQueueQuery)
 		queryString = BuildSelectQuery(self);
 	elseif (queryType == "insert") then
 		queryString = BuildInsertQuery(self);
+	elseif (queryType == "insert ignore") then
+		queryString = BuildInsertQuery(self, true);
 	elseif (queryType == "update") then
 		queryString = BuildUpdateQuery(self);
 	elseif (queryType == "delete") then
@@ -393,6 +428,8 @@ function QUERY_CLASS:Execute(bQueueQuery)
 		queryString = BuildTruncateQuery(self);
 	elseif (queryType == "create") then
 		queryString = BuildCreateQuery(self);
+	elseif (queryType == "alter") then
+		queryString = BuildAlterQuery(self);
 	end;
 
 	if (type(queryString) == "string") then
@@ -416,6 +453,10 @@ function mysql:Insert(tableName)
 	return QUERY_CLASS:New(tableName, "INSERT");
 end;
 
+function mysql:InsertIgnore(tableName)
+	return QUERY_CLASS:New(tableName, "INSERT IGNORE");
+end;
+
 function mysql:Update(tableName)
 	return QUERY_CLASS:New(tableName, "UPDATE");
 end;
@@ -434,6 +475,10 @@ end;
 
 function mysql:Create(tableName)
 	return QUERY_CLASS:New(tableName, "CREATE");
+end;
+
+function mysql:Alter(tableName)
+	return QUERY_CLASS:New(tableName, "ALTER");
 end;
 
 -- A function to connect to the MySQL database.

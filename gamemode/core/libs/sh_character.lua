@@ -337,6 +337,7 @@ end
 do
 	ix.char.RegisterVar("name", {
 		field = "name",
+		fieldType = ix.type.string,
 		default = "John Doe",
 		index = 1,
 		OnValidate = function(value, data, client)
@@ -370,6 +371,7 @@ do
 
 	ix.char.RegisterVar("description", {
 		field = "description",
+		fieldType = ix.type.text,
 		default = "",
 		index = 2,
 		OnValidate = function(value, data)
@@ -389,6 +391,7 @@ do
 
 	ix.char.RegisterVar("model", {
 		field = "model",
+		fieldType = ix.type.string,
 		default = "models/error.mdl",
 		OnSet = function(character, value)
 			local client = character:GetPlayer()
@@ -481,11 +484,12 @@ do
 	})
 
 	ix.char.RegisterVar("class", {
-		noDisplay = true,
+		bNoDisplay = true,
 	})
 
 	ix.char.RegisterVar("faction", {
 		field = "faction",
+		fieldType = ix.type.string,
 		default = "Citizen",
 		OnSet = function(character, value)
 			local client = character:GetPlayer()
@@ -499,7 +503,7 @@ do
 
 			return faction and faction.index or 0
 		end,
-		noDisplay = true,
+		bNoDisplay = true,
 		OnValidate = function(value, data, client)
 			if (value) then
 				if (client:HasWhitelist(value)) then
@@ -516,6 +520,7 @@ do
 
 	ix.char.RegisterVar("attributes", {
 		field = "attributes",
+		fieldType = ix.type.text,
 		default = {},
 		isLocal = true,
 		index = 4,
@@ -579,16 +584,18 @@ do
 
 	ix.char.RegisterVar("money", {
 		field = "money",
+		fieldType = ix.type.number,
 		default = 0,
 		isLocal = true,
-		noDisplay = true
+		bNoDisplay = true
 	})
 
 	ix.char.RegisterVar("data", {
 		default = {},
 		isLocal = true,
-		noDisplay = true,
+		bNoDisplay = true,
 		field = "data",
+		fieldType = ix.type.text,
 		OnSet = function(character, key, value, noReplication, receiver)
 			local data = character:GetData()
 			local client = character:GetPlayer()
@@ -620,7 +627,7 @@ do
 
 	ix.char.RegisterVar("var", {
 		default = {},
-		noDisplay = true,
+		bNoDisplay = true,
 		OnSet = function(character, key, value, noReplication, receiver)
 			local data = character:GetVar()
 			local client = character:GetPlayer()
@@ -657,6 +664,38 @@ do
 				return default or data
 			end
 		end
+	})
+
+	ix.char.RegisterVar("createTime", {
+		field = "create_time",
+		fieldType = ix.type.number,
+		bNoDisplay = true,
+		bNoNetworking = true,
+		bNotModifiable = true
+	})
+
+	ix.char.RegisterVar("lastJoinTime", {
+		field = "last_join_time",
+		fieldType = ix.type.number,
+		bNoDisplay = true,
+		bNoNetworking = true,
+		bNotModifiable = true -- this is updated manually through sql for now
+	})
+
+	ix.char.RegisterVar("schema", {
+		field = "schema",
+		fieldType = ix.type.string,
+		bNoDisplay = true,
+		bNoNetworking = true,
+		bNotModifiable = true
+	})
+
+	ix.char.RegisterVar("steamID", {
+		field = "steamID",
+		fieldType = ix.type.steamid,
+		bNoDisplay = true,
+		bNoNetworking = true,
+		bNotModifiable = true
 	})
 end
 
@@ -719,7 +758,7 @@ do
 			for k, v in pairs(data) do
 				local info = ix.char.vars[k]
 
-				if (!info or (!info.OnValidate and info.noDisplay)) then
+				if (!info or (!info.OnValidate and info.bNoDisplay)) then
 					data[k] = nil
 				end
 			end

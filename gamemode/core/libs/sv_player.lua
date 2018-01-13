@@ -56,11 +56,11 @@ do
 		query:Execute()
 	end
 
-	function playerMeta:SetData(key, value, noNetworking)
+	function playerMeta:SetData(key, value, bNoNetworking)
 		self.ixData = self.ixData or {}
 		self.ixData[key] = value
 
-		if (!noNetworking) then
+		if (!bNoNetworking) then
 			netstream.Start(self, "ixData", key, value)
 		end
 	end

@@ -766,9 +766,9 @@ do
 	end
 end
 
-ix.char.RegisterVar("inv", {
-	noNetworking = true,
-	noDisplay = true,
+ix.char.RegisterVar("Inventory", {
+	bNoNetworking = true,
+	bNoDisplay = true,
 	OnGet = function(character, index)
 		if (index and type(index) != "number") then
 			return character.vars.inv or {}
@@ -776,5 +776,5 @@ ix.char.RegisterVar("inv", {
 
 		return character.vars.inv and character.vars.inv[index or 1]
 	end,
-	alias = "inventory"
+	alias = "Inv"
 })
