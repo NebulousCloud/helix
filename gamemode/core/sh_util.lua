@@ -1,4 +1,9 @@
 
+--[[--
+This library provides various helper functions.
+]]
+-- @module ix.util
+
 ix.type = ix.type or {
 	[1] = "string", -- any word
 	[2] = "text", -- a special type that concatenates all trailing arguments into a string
@@ -107,13 +112,17 @@ function ix.util.GetMaterial(materialPath)
 	return ix.util.cachedMaterials[materialPath]
 end
 
--- Finds a player by matching their name or steam id.
-function ix.util.FindPlayer(identifier, allowPatterns)
+--- Attempts to find a player by matching their name or Steam ID.
+-- @shared
+-- @string identifier Search query
+-- @bool[opt=false] bAllowPatterns Whether or not to accept Lua patterns in `identifier`
+-- @treturn player Player that matches the given search query - this will be `nil` if a player could not be found
+function ix.util.FindPlayer(identifier, bAllowPatterns)
 	if (string.find(identifier, "STEAM_(%d+):(%d+):(%d+)")) then
 		return player.GetBySteamID(identifier)
 	end
 
-	if (!allowPatterns) then
+	if (!bAllowPatterns) then
 		identifier = string.PatternSafe(identifier)
 	end
 
