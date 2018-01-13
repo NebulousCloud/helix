@@ -1,0 +1,35 @@
+
+sudo: false
+language: python
+
+branches:
+  only:
+    - master
+
+cache:
+  directories:
+    - $HOME/env
+
+before_install:
+  - pip install hererocks
+  - hererocks $HOME/env --luajit 2.0.4 --luarocks latest
+  - source $HOME/env/bin/activate
+
+install:
+  - luarocks install ldoc
+
+script:
+  - ldoc -c docs/config.ld gamemode . --fatalwarnings
+
+after_success:
+  - cp -v docs/css/* docs/html
+  - cp -v docs/js/* docs/html
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: true
+  local-dir: docs/html
+  on:
+    branch: master

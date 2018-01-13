@@ -1,4 +1,98 @@
 
+--[[--
+This library handles the registration, parsing, and handling of commands.
+
+Commands can be ran through the chat with slash commands or they can be executed through the console.
+
+## Command structure
+When registering commands, you'll need to pass in a valid command structure. This is simply a table with various fields
+defined. The fields you can specify are as follows:
+
+<ul>
+<li><p>
+`description`<br />
+(default: `"@noDesc"`)<br />
+The help text that appears when the user types in the command.
+</p></li>
+
+
+<li><p>
+`syntax`<br />
+(default: `"[none]"`)<br />
+The arguments that your command accepts. This field is automatically populated when using the arguments field. Syntax strings
+generally take the form of `"<type argumentName> [type optionalName]"` - it is recommended to stick to this format to keep
+consistent with other commands.
+</p></li>
+
+<li><p>
+`arguments`<br />
+(optional)<br />
+If this field is defined, then additional checks will be performed to ensure that the arguments given to the command are valid.
+This removes extra boilerplate code since all the passed arguments are guaranteed to be valid. See the `Command arguments
+structure` for more information.
+</p></li>
+
+<li><p>
+`adminOnly`<br />
+(default: `false`)<br />
+Provides an additional check to see if the user is an admin before running.
+</p></li>
+
+<li><p>
+`superAdminOnly`<br />
+(default: `false`)<br />
+Provides an additional check to see if the user is a superadmin before running.
+</p></li>
+
+<li><p>
+`group`<br />
+(default: `nil`)<br />
+Provides an additional check to see if the user is part of the specified usergroup before running. This can be a string or
+table of strings for allowing multiple groups to use the command.
+</p></li>
+
+<li><p>
+`OnRun`<br />
+(required)<br />
+This function is called when the command has passed all the checks and can execute. The first two arguments will be the running
+command table and the calling player. If the arguments field has been specified, the arguments will be passed as regular
+function parameters rather than in a table.
+When the `arguments` field is defined:
+	OnRun(self, client, target, length, message)
+When the `arguments` field is NOT defined:
+	OnRun(self, client, arguments)
+</p></li>
+</ul>
+
+## Command arguments structure
+Rather than checking the validity for arguments in your command's `OnRun` function, you can have Helix do it for you to reduce
+the amount of boilerplate code that needs to be written. This can be done by populating the `arguments` field.
+
+When using the `arguments` field in your command, you are specifying specific types that you expect to receive when the command
+is ran successfully. This means that before `OnRun` is called, the arguments passed to the command from a user will be verified
+to be valid. Each argument is an array that holds at least two entries - the type, and the name of the variable. The third entry
+is an optional bool that specifies whether or not the argument is optional. In this case, the argument can be nil if not
+specified, otherwise it is valid.
+
+Note that optional arguments must always be at the end of a list of arguments - or rather, they must not follow a required
+argument. Here is an example:
+	ix.command.Add("CharSlap", {
+		description = "Slaps a character with a large trout."
+		adminOnly = true,
+		arguments = {
+			{ix.type.player, "target"},
+			{ix.type.number, "damage", true}
+		},
+		OnRun = function(self, client, target, damage)
+			-- WHAM!
+		end
+	})
+Here, we've specified the first argument called `target` to be of type `player`, and the second argument called `damage` to be
+of type `number`. The `damage` argument is optional, meaning that the command will still run if the user has not specified
+any value for the damage. In this case, we'll need to check if it was specified by doing a simple `if (damage) then`. 
+]]
+-- @module ix.command
+
 ix.command = ix.command or {}
 ix.command.list = ix.command.list or {}
 
@@ -74,54 +168,10 @@ local function ArgumentCheckStub(command, client, given)
 	return result
 end
 
---[[
-	Adds a new command to the list of commands. You can specify the following fields:
-		description (default: "@noDesc")
-			The help text that appears when the user types in the command.
-		syntax (default: "[none]")
-			The arguments that your command accepts. This field is automatically
-			populated when using the arguments field. Syntax strings generally take
-			the form of "<type argumentName> [type optionalName]" - it is recommended
-			to stick to this format to keep consistent with other commands.
-		arguments (optional)
-			If this field is defined, then additional checks will be performed to ensure
-			that the arguments given to the command are valid. This removes extra
-			boilerplate code since all the passed arguments are guaranteed to be valid.
-		adminOnly (default: false)
-			Provides an additional check to see if the user is an admin before running.
-		superAdminOnly (default: false)
-			Provides an additional check to see if the user is a superadmin before
-			running.
-		group (default: nil)
-			Provides an additional check to see if the user is part of the specified
-			usergroup before running. This can be a string or table of strings for
-			allowing multiple groups to use the command.
-		OnRun (required)
-			This function is called when the command has passed all the checks and
-			can execute. The first two arguments will be the running command table
-			and the calling player. If the arguments field has been specified, the
-			arguments will be passed as regular upvalues rather than a table.
-			When the arguments table is defined:
-				OnRun(self, client, target, length, message)
-			When the arguments table is NOT defined:
-				OnRun(self, client, arguments)
-
-	The format for the arguments table is as follows:
-		arguments = {
-			{ix.type.player, "target"}
-			{ix.type.number, "length"}
-			{ix.type.text, "message", true}
-		}
-	The types are defined in the ix.type table above. The first argument in the table
-	is the type, followed by the name of the argument. The third argument is an optional
-	bool that specifies whether or not that argument is optional. Optional arguments must
-	always be at the end of a list of arguments - or rather, they must not follow a
-	required argument. Optional arguments will either be nil or a valid argument. This
-	means you must check for nil in your OnRun method when dealing with optional arguments.
-	You may specify one argument instead of a table of arguments if you only have one
-	argument that you wish to define. For example:
-		arguments = {ix.type.number, "length"}
-]]--
+--- Creates a new command.
+-- @shared
+-- @string command Name of the command (recommended in UpperCamelCase)
+-- @table data Command structure (see above)
 function ix.command.Add(command, data)
 	data.name = string.gsub(command, "%s", "")
 	data.description = data.description or ""
@@ -245,7 +295,11 @@ function ix.command.Add(command, data)
 	ix.command.list[command] = data
 end
 
--- Returns whether or not a player is allowed to run a certain command.
+--- Returns true if a player is allowed to run a certain command.
+-- @shared
+-- @player client Player to check access for
+-- @string command Name of the command to check access for
+-- @treturn bool Whether or not the player is allowed to run the command
 function ix.command.HasAccess(client, command)
 	command = ix.command.list[command]
 
@@ -260,7 +314,14 @@ function ix.command.HasAccess(client, command)
 	return false
 end
 
--- Gets a table of arguments from a string.
+--- Returns a table of arguments from a given string.
+-- Words separated by spaces will be considered one argument. To have an argument containing multiple words, they must be
+-- contained within quotation marks.
+-- @shared
+-- @string text String to extract arguments from
+-- @treturn table Arguments extracted from string
+-- @usage ix.command.ExtractArgs("these are \"some arguments\"")
+-- > {"these", "are", "some arguments"}
 function ix.command.ExtractArgs(text)
 	local skip = 0
 	local arguments = {}
@@ -300,10 +361,15 @@ function ix.command.ExtractArgs(text)
 	return arguments
 end
 
--- Returns an array of potential commands by unique id.
--- When bSorted is true, the commands will be sorted by name. When bReorganize is true,
--- it will move any exact match to the top of the array. When bRemoveDupes is true, it
--- will remove any commands that have the same NAME.
+--- Returns an array of potential commands by unique id.
+-- When bSorted is true, the commands will be sorted by name. When bReorganize is true, it will move any exact match to the top
+-- of the array. When bRemoveDupes is true, it will remove any commands that have the same NAME.
+-- @shared
+-- @string identifier Search query
+-- @bool[opt=false] bSorted Whether or not to sort the commands by name
+-- @bool[opt=false] bReorganize Whether or not any exact match will be moved to the top of the array
+-- @bool[opt=false] bRemoveDupes Whether or not to remove any commands that have the same name
+-- @treturn table Array of command tables whose name partially or completely matches the search query
 function ix.command.FindAll(identifier, bSorted, bReorganize, bRemoveDupes)
 	local result = {}
 	local iterator = bSorted and SortedPairs or pairs
@@ -354,7 +420,13 @@ function ix.command.FindAll(identifier, bSorted, bReorganize, bRemoveDupes)
 end
 
 if (SERVER) then
-	-- Finds a player or gives an error notification.
+	--- Attempts to find a player by an identifier. If unsuccessful, a notice will be displayed to the specified player. The
+	-- search criteria is derived from `ix.util.FindPlayer`.
+	-- @server
+	-- @player client Player to give a notification to if the player could not be found
+	-- @string name Search query
+	-- @treturn player Player that matches the given search query - this will be `nil` if a player could not be found
+	-- @see ix.util.FindPlayer
 	function ix.command.FindPlayer(client, name)
 		local target = type(name) == "string" and ix.util.FindPlayer(name) or NULL
 
