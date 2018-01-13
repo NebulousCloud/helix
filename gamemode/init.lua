@@ -1,5 +1,6 @@
+
 -- Include Helix content.
-resource.AddWorkshop("207739713")
+resource.AddWorkshop("1267236756")
 
 -- Include features from the Sandbox gamemode.
 DeriveGamemode("sandbox")

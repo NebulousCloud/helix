@@ -547,13 +547,13 @@ local PANEL = {}
 		end
 
 		for k, v in ipairs(engine.GetAddons()) do
-			if (v.wsid == "207739713" and v.mounted) then
+			if (v.wsid == "1267236756" and v.mounted) then
 				return
 			end
 		end
 
 		Derma_Query(L"contentWarning", L"contentTitle", L"yes", function()
-			gui.OpenURL("http://steamcommunity.com/sharedfiles/filedetails/?id=207739713")
+			gui.OpenURL("http://steamcommunity.com/sharedfiles/filedetails/?id=1267236756")
 		end, L"no")
 	end
 

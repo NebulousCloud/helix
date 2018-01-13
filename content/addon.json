@@ -1,0 +1,13 @@
+{
+	"title": "Helix Content",
+	"type": "ServerContent",
+	"tags": ["roleplay", "fun"],
+	"workshopid": "1267236756",
+	"ignore":
+	[
+		".*",
+		"*.txt",
+		"*.md",
+		"*.lua"
+	]
+}
