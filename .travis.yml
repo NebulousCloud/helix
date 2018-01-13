@@ -2,10 +2,6 @@
 sudo: false
 language: python
 
-branches:
-  only:
-    - master
-
 cache:
   directories:
     - $HOME/env
