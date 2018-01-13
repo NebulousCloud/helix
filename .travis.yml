@@ -32,4 +32,6 @@ deploy:
   keep-history: true
   local-dir: docs/html
   on:
-    branch: master
+    branch:
+      - master
+      - ci
