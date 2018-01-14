@@ -305,7 +305,7 @@ function ix.command.HasAccess(client, command)
 
 	if (command) then
 		if (command.OnCheckAccess) then
-			return command.OnCheckAccess(client)
+			return command:OnCheckAccess(client)
 		else
 			return true
 		end
