@@ -15,7 +15,7 @@ install:
   - luarocks install ldoc
 
 script:
-  - ldoc -c docs/config.ld gamemode . --fatalwarnings
+  - ldoc -c docs/config.ld ./ --fatalwarnings
 
 after_success:
   - cp -v docs/css/* docs/html
@@ -28,6 +28,4 @@ deploy:
   keep-history: true
   local-dir: docs/html
   on:
-    branch:
-      - master
-      - ci
+    branch: master

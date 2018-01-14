@@ -10,6 +10,7 @@ style = "docs/css"
 template = "docs/templates"
 format = "markdown"
 ignore = true
+kind_names = {module = "Libraries"}
 
 custom_tags = {
 	{"shared", hidden = true},
