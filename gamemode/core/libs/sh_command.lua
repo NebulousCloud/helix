@@ -501,6 +501,7 @@ if (SERVER) then
 
 	--- Parses a chat string and runs the command if one is found. Specifically, it checks for commands in a string with the
 	-- format `/CommandName some arguments`
+	-- @server
 	-- @player client Player who is executing the command
 	-- @string text Input string to search for the command format
 	-- @string[opt] realCommand Specific command to check for. If this is specified, it will not try to run any command that's
