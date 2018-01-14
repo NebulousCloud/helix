@@ -55,8 +55,8 @@
 <p>Commands can be ran through the chat with slash commands or they can be executed through the console.</p>
 
 <h2>Command structure</h2>
-<p>When registering commands, you'll need to pass in a valid command structure. This is simply a table with various fields
-defined. The fields you can specify are as follows:</p>
+<p>When registering commands with <a href="../libraries/ix.command.html#ix.command.Add">ix.command.Add</a>, you'll need to pass in a valid command structure. This is simply a table with
+various fields defined. The fields you can specify are as follows:</p>
 
 
 <ul>
@@ -173,6 +173,14 @@ any value for the damage. In this case, we'll need to check if it was specified 
 	<tr>
 	<td class="name" nowrap><a href="#ix.command.FindPlayer">ix.command.FindPlayer(client, name)</a></td>
 	<td class="summary">Attempts to find a player by an identifier.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.command.Run">ix.command.Run(client, command, arguments)</a></td>
+	<td class="summary">Forces a player to execute a command by name.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.command.Parse">ix.command.Parse(client, text[, realCommand[, arguments]])</a></td>
+	<td class="summary">Parses a chat string and runs the command if one is found.</td>
 	</tr>
 </table>
 
@@ -368,6 +376,94 @@ any value for the damage. In this case, we'll need to check if it was specified 
 
 
 </dd>
+    <dt>
+    <a name = "ix.command.Run"></a>
+    <strong><span class="realm server" title="Server"></span> ix.command.Run(client, command, arguments)</strong>
+    </dt>
+    <dd>
+    Forces a player to execute a command by name.
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">client</span>
+            <span class="types"><span class="type">player</span></span>
+         Player who is executing the command
+        </li>
+        <li><span class="parameter">command</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Full name of the command to be executed. This string gets lowered, but it's good practice to stick with
+ the exact name of the command
+        </li>
+        <li><span class="parameter">arguments</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         Array of arguments to be passed to the command
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><code class="lua">ix.command.Run(player.GetByID(<span class="number">1</span>), <span class="string">"Roll"</span>, {<span class="number">10</span>})</code></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "ix.command.Parse"></a>
+    <strong>ix.command.Parse(client, text[, realCommand[, arguments]])</strong>
+    </dt>
+    <dd>
+    Parses a chat string and runs the command if one is found.  Specifically, it checks for commands in a string with the
+ format <code>/CommandName some arguments</code>
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">client</span>
+            <span class="types"><span class="type">player</span></span>
+         Player who is executing the command
+        </li>
+        <li><span class="parameter">text</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Input string to search for the command format
+        </li>
+        <li><span class="parameter">realCommand</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Specific command to check for. If this is specified, it will not try to run any command that's
+ found at the beginning - only if it matches <code>realCommand</code>
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">arguments</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         Array of arguments to pass to the command. If not specified, it will try to extract it from the
+ string specified in <code>text</code> using <a href="../libraries/ix.command.html#ix.command.ExtractArgs">ix.command.ExtractArgs</a>
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">bool</span></span>
+        Whether or not a command has been found
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><code class="lua">ix.command.Parse(player.GetByID(<span class="number">1</span>), <span class="string">"/roll 10"</span>)</code></pre>
+    </ul>
+
+</dd>
 </dl>
 
 
@@ -375,7 +471,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2018-01-14 00:12:32 </i>
+<i style="float:right;">Last updated 2018-01-14 00:52:42 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 
