@@ -77,7 +77,7 @@ specified, otherwise it is valid.
 Note that optional arguments must always be at the end of a list of arguments - or rather, they must not follow a required
 argument. Here is an example:
 	ix.command.Add("CharSlap", {
-		description = "Slaps a character with a large trout."
+		description = "Slaps a character with a large trout.",
 		adminOnly = true,
 		arguments = {
 			{ix.type.player, "target"},

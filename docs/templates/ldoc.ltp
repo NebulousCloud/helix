@@ -1,5 +1,9 @@
 
 # local root = ldoc.css:gsub("ldoc.css", "") -- lol
+# local repo = "https://github.com/nebulouscloud/helix/"
+# local function repoReference(item)
+#   return repo .. "tree/master" .. item.file.filename:gsub(item.file.base, "") .. "#L" .. item.lineno
+# end
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -28,14 +32,7 @@
 
 # local no_spaces = ldoc.no_spaces
 # local use_li = ldoc.use_li
-# local realmTag = "<span class=\"realm %s\" title=\"%s\"></span> %s"
-# local display_name = function(item)
-#   local realm = item.realm
-#   if (realm) then
-#     return realmTag:format(realm, realm:sub(1, 1):upper() .. realm:sub(2), ldoc.display_name(item))
-#   end
-#   return ldoc.display_name(item)
-# end
+# local display_name = ldoc.display_name
 # local iter = ldoc.modules.iter
 # local function M(txt,item) return ldoc.markup(txt,item,ldoc.plain) end
 # local nowrap = ldoc.wrap and '' or 'nowrap'
@@ -117,7 +114,7 @@
     <h3>Usage:</h3>
     <ul>
 #     for usage in iter(module.usage) do
-        $(li)<pre class="example"><code class="lua">$(ldoc.escape(usage))</code></pre>$(il)
+        $(li)<pre class="example">$(ldoc.escape(usage))</pre>$(il)
 #     end -- for
     </ul>
 #   end -- if usage
@@ -138,7 +135,7 @@
 <table class="function_list">
 #  for item in items() do
 	<tr>
-	<td class="name" $(nowrap)><a href="#$(item.name)">$(display_name(item))</a></td>
+	<td class="name" $(nowrap)><a href="#$(item.name)"><code>$(display_name(item))</code></a></td>
 	<td class="summary">$(M(item.summary,item))</td>
 	</tr>
 #  end -- for items
@@ -167,17 +164,15 @@
 #       end
 #       if kitem.usage then
             <h3>Usage:</h3>
-            <pre class="example"><code class="lua">$(ldoc.prettify(kitem.usage[1]))</code></pre>
+            <pre class="example">$(ldoc.prettify(kitem.usage[1]))</pre>
 #        end
 #   end
     <dl class="function">
 #  for item in items() do
     <dt>
     <a name = "$(item.name)"></a>
-    <strong>$(display_name(item))</strong>
-#   if ldoc.prettify_files and ldoc.is_file_prettified[item.module.file.filename] then
-    <a style="float:right;" href="$(ldoc.source_ref(item))">line $(item.lineno)</a>
-#  end
+    <pre>$(display_name(item))</pre>
+    <a style="float:right;" href="$(repoReference(item))">View source &raquo;</a>
     </dt>
     <dd>
     $(M(ldoc.descript(item),item))
@@ -280,7 +275,7 @@
     <h3>Usage:</h3>
     <ul>
 #     for usage in iter(item.usage) do
-        $(li)<pre class="example"><code class="lua">$(ldoc.prettify(usage))</code></pre>$(il)
+        $(li)<pre class="example">$(ldoc.prettify(usage))</pre>$(il)
 #     end -- for
     </ul>
 #   end -- if usage
@@ -323,10 +318,16 @@
 
 <script type="text/javascript" src="$(root)highlight.min.js"></script>
 <script type="text/javascript">
+  var elements = document.querySelectorAll("pre, table.function_list td.name")
+
   hljs.configure({
     languages: ["lua"]
   });
-  hljs.initHighlightingOnLoad();
+
+  for (var i = 0; i < elements.length; i++)
+  {
+    hljs.highlightBlock(elements[i])
+  }
 </script>
 </body>
 </html>

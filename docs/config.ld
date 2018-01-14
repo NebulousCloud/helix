@@ -1,4 +1,6 @@
 
+local nameFormat = "<span class=\"realm %s\" title=\"%s\"></span> %s"
+
 file = "./"
 dir = "docs/html"
 project = "Helix"
@@ -27,6 +29,8 @@ custom_display_name_handler = function(item, default_handler)
 		elseif (item.tags.server) then
 			item.realm = "server"
 		end
+
+		return nameFormat:format(item.realm, item.realm:sub(1, 1):upper() .. item.realm:sub(2), default_handler(item))
 	end
 
 	return default_handler(item)
