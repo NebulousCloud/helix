@@ -20,7 +20,8 @@ span.realm.client {
 span.realm.server {
 	background-color: #08f;
 }
-code, tt { font-family: monospace; font-size: 1.1em; }
+code, tt { font-family: monospace; font-size: 16px; font-weight: 300; }
+
 span.parameter { font-family:monospace; }
 span.parameter:after { content:":"; }
 span.types:before { content:"("; }
@@ -38,9 +39,11 @@ h2, h3, h4 { margin: 15px 0 10px 0; }
 h2 { font-size: 1.25em; }
 h3 { font-size: 1.15em; }
 h4 { font-size: 1.06em; }
+a { text-decoration: none; }
 a:link { font-weight: bold; color: #004080; text-decoration: none; }
-a:visited { font-weight: bold; color: #006699; text-decoration: none; }
-a:link:hover { text-decoration: underline; }
+a:visited { font-weight: bold; color: #004080; text-decoration: none; }
+a:link:hover { text-decoration: none; }
+a:hover { text-decoration: none; }
 hr {
 	color:#cccccc;
 	background: #00007f;
@@ -53,7 +56,7 @@ p.name {
 	padding-top: 1em;
 }
 pre {
-	background-color: rgb(245, 245, 245);
+	background-color: #F8F8F8;
 	border: 1px solid #C0C0C0; /* silver */
 	padding: 10px;
 	margin: 10px 0 10px 0;
@@ -172,15 +175,21 @@ table.function_list {
 	border-style: solid;
 	border-color: #cccccc;
 	border-collapse: collapse;
+	background-color: #f8f8f8;
 }
 table.function_list td {
-	border-width: 1px;
-	padding: 3px;
+	border-width: 0px;
+	padding: 6px;
 	border-style: solid;
 	border-color: #cccccc;
 }
-table.function_list td.name { background-color: #f6f6ff; ; min-width: 200px; }
-table.function_list td.summary { width: 100%; }
+table.function_list td.name {
+	min-width: 200px;
+}
+table.function_list td.summary {
+	background-color: #fff;
+	width: 100%;
+}
 dl.table dt, dl.function dt {border-top: 1px solid #ccc; padding-top: 1em;}
 dl.table dd, dl.function dd {padding-bottom: 1em; margin: 10px 0 0 20px;}
 dl.table h3, dl.function h3 {font-size: .95em;}

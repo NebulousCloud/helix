@@ -135,7 +135,7 @@ argument. Here is an example:</p>
 
 <pre>
 ix.command.Add(<span class="string">"CharSlap"</span>, {
-    description = <span class="string">"Slaps a character with a large trout."</span>
+    description = <span class="string">"Slaps a character with a large trout."</span>,
     adminOnly = <span class="keyword">true</span>,
     arguments = {
         {ix.<span class="global">type</span>.player, <span class="string">"target"</span>},
@@ -155,31 +155,31 @@ any value for the damage. In this case, we'll need to check if it was specified 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#ix.command.Add">ix.command.Add(command, data)</a></td>
+	<td class="name" nowrap><a href="#ix.command.Add"><code><span class="realm shared" title="Shared"></span> ix.command.Add(command, data)</code></a></td>
 	<td class="summary">Creates a new command.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#ix.command.HasAccess">ix.command.HasAccess(client, command)</a></td>
+	<td class="name" nowrap><a href="#ix.command.HasAccess"><code><span class="realm shared" title="Shared"></span> ix.command.HasAccess(client, command)</code></a></td>
 	<td class="summary">Returns true if a player is allowed to run a certain command.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#ix.command.ExtractArgs">ix.command.ExtractArgs(text)</a></td>
+	<td class="name" nowrap><a href="#ix.command.ExtractArgs"><code><span class="realm shared" title="Shared"></span> ix.command.ExtractArgs(text)</code></a></td>
 	<td class="summary">Returns a table of arguments from a given string.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#ix.command.FindAll">ix.command.FindAll(identifier[, bSorted=false[, bReorganize=false[, bRemoveDupes=false]]])</a></td>
+	<td class="name" nowrap><a href="#ix.command.FindAll"><code><span class="realm shared" title="Shared"></span> ix.command.FindAll(identifier[, bSorted=false[, bReorganize=false[, bRemoveDupes=false]]])</code></a></td>
 	<td class="summary">Returns an array of potential commands by unique id.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#ix.command.FindPlayer">ix.command.FindPlayer(client, name)</a></td>
+	<td class="name" nowrap><a href="#ix.command.FindPlayer"><code><span class="realm server" title="Server"></span> ix.command.FindPlayer(client, name)</code></a></td>
 	<td class="summary">Attempts to find a player by an identifier.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#ix.command.Run">ix.command.Run(client, command, arguments)</a></td>
+	<td class="name" nowrap><a href="#ix.command.Run"><code><span class="realm server" title="Server"></span> ix.command.Run(client, command, arguments)</code></a></td>
 	<td class="summary">Forces a player to execute a command by name.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#ix.command.Parse">ix.command.Parse(client, text[, realCommand[, arguments]])</a></td>
+	<td class="name" nowrap><a href="#ix.command.Parse"><code><span class="realm server" title="Server"></span> ix.command.Parse(client, text[, realCommand[, arguments]])</code></a></td>
 	<td class="summary">Parses a chat string and runs the command if one is found.</td>
 	</tr>
 </table>
@@ -193,7 +193,8 @@ any value for the damage. In this case, we'll need to check if it was specified 
     <dl class="function">
     <dt>
     <a name = "ix.command.Add"></a>
-    <strong><span class="realm shared" title="Shared"></span> ix.command.Add(command, data)</strong>
+    <pre><span class="realm shared" title="Shared"></span> ix.command.Add(command, data)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L175">View source &raquo;</a>
     </dt>
     <dd>
     Creates a new command.
@@ -221,7 +222,8 @@ any value for the damage. In this case, we'll need to check if it was specified 
 </dd>
     <dt>
     <a name = "ix.command.HasAccess"></a>
-    <strong><span class="realm shared" title="Shared"></span> ix.command.HasAccess(client, command)</strong>
+    <pre><span class="realm shared" title="Shared"></span> ix.command.HasAccess(client, command)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L303">View source &raquo;</a>
     </dt>
     <dd>
     Returns true if a player is allowed to run a certain command.
@@ -255,7 +257,8 @@ any value for the damage. In this case, we'll need to check if it was specified 
 </dd>
     <dt>
     <a name = "ix.command.ExtractArgs"></a>
-    <strong><span class="realm shared" title="Shared"></span> ix.command.ExtractArgs(text)</strong>
+    <pre><span class="realm shared" title="Shared"></span> ix.command.ExtractArgs(text)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L325">View source &raquo;</a>
     </dt>
     <dd>
     Returns a table of arguments from a given string.
@@ -285,14 +288,15 @@ any value for the damage. In this case, we'll need to check if it was specified 
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example"><code class="lua">ix.command.ExtractArgs(<span class="string">"these are \"some arguments\""</span>)
- &gt; {<span class="string">"these"</span>, <span class="string">"are"</span>, <span class="string">"some arguments"</span>}</code></pre>
+        <pre class="example">ix.command.ExtractArgs(<span class="string">"these are \"some arguments\""</span>)
+ &gt; {<span class="string">"these"</span>, <span class="string">"are"</span>, <span class="string">"some arguments"</span>}</pre>
     </ul>
 
 </dd>
     <dt>
     <a name = "ix.command.FindAll"></a>
-    <strong><span class="realm shared" title="Shared"></span> ix.command.FindAll(identifier[, bSorted=false[, bReorganize=false[, bRemoveDupes=false]]])</strong>
+    <pre><span class="realm shared" title="Shared"></span> ix.command.FindAll(identifier[, bSorted=false[, bReorganize=false[, bRemoveDupes=false]]])</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L373">View source &raquo;</a>
     </dt>
     <dd>
     Returns an array of potential commands by unique id.
@@ -339,7 +343,8 @@ any value for the damage. In this case, we'll need to check if it was specified 
 </dd>
     <dt>
     <a name = "ix.command.FindPlayer"></a>
-    <strong><span class="realm server" title="Server"></span> ix.command.FindPlayer(client, name)</strong>
+    <pre><span class="realm server" title="Server"></span> ix.command.FindPlayer(client, name)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L430">View source &raquo;</a>
     </dt>
     <dd>
     Attempts to find a player by an identifier.  If unsuccessful, a notice will be displayed to the specified player. The
@@ -378,7 +383,8 @@ any value for the damage. In this case, we'll need to check if it was specified 
 </dd>
     <dt>
     <a name = "ix.command.Run"></a>
-    <strong><span class="realm server" title="Server"></span> ix.command.Run(client, command, arguments)</strong>
+    <pre><span class="realm server" title="Server"></span> ix.command.Run(client, command, arguments)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L447">View source &raquo;</a>
     </dt>
     <dd>
     Forces a player to execute a command by name.
@@ -409,13 +415,14 @@ any value for the damage. In this case, we'll need to check if it was specified 
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example"><code class="lua">ix.command.Run(player.GetByID(<span class="number">1</span>), <span class="string">"Roll"</span>, {<span class="number">10</span>})</code></pre>
+        <pre class="example">ix.command.Run(player.GetByID(<span class="number">1</span>), <span class="string">"Roll"</span>, {<span class="number">10</span>})</pre>
     </ul>
 
 </dd>
     <dt>
     <a name = "ix.command.Parse"></a>
-    <strong><span class="realm server" title="Server"></span> ix.command.Parse(client, text[, realCommand[, arguments]])</strong>
+    <pre><span class="realm server" title="Server"></span> ix.command.Parse(client, text[, realCommand[, arguments]])</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L513">View source &raquo;</a>
     </dt>
     <dd>
     Parses a chat string and runs the command if one is found.  Specifically, it checks for commands in a string with the
@@ -460,7 +467,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example"><code class="lua">ix.command.Parse(player.GetByID(<span class="number">1</span>), <span class="string">"/roll 10"</span>)</code></pre>
+        <pre class="example">ix.command.Parse(player.GetByID(<span class="number">1</span>), <span class="string">"/roll 10"</span>)</pre>
     </ul>
 
 </dd>
@@ -471,16 +478,22 @@ any value for the damage. In this case, we'll need to check if it was specified 
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2018-01-14 01:08:10 </i>
+<i style="float:right;">Last updated 2018-01-14 04:43:50 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 
 <script type="text/javascript" src="../highlight.min.js"></script>
 <script type="text/javascript">
+  var elements = document.querySelectorAll("pre, table.function_list td.name")
+
   hljs.configure({
     languages: ["lua"]
   });
-  hljs.initHighlightingOnLoad();
+
+  for (var i = 0; i < elements.length; i++)
+  {
+    hljs.highlightBlock(elements[i])
+  }
 </script>
 </body>
 </html>
