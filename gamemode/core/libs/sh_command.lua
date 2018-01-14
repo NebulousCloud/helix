@@ -5,8 +5,8 @@ This library handles the registration, parsing, and handling of commands.
 Commands can be ran through the chat with slash commands or they can be executed through the console.
 
 ## Command structure
-When registering commands, you'll need to pass in a valid command structure. This is simply a table with various fields
-defined. The fields you can specify are as follows:
+When registering commands with `ix.command.Add`, you'll need to pass in a valid command structure. This is simply a table with
+various fields defined. The fields you can specify are as follows:
 
 <ul>
 <li><p>
@@ -437,7 +437,13 @@ if (SERVER) then
 		end
 	end
 
-	-- Forces a player to run a command.
+	--- Forces a player to execute a command by name.
+	-- @server
+	-- @player client Player who is executing the command
+	-- @string command Full name of the command to be executed. This string gets lowered, but it's good practice to stick with
+	-- the exact name of the command
+	-- @table arguments Array of arguments to be passed to the command
+	-- @usage ix.command.Run(player.GetByID(1), "Roll", {10})
 	function ix.command.Run(client, command, arguments)
 		local command = ix.command.list[tostring(command):lower()]
 
@@ -493,7 +499,16 @@ if (SERVER) then
 		end
 	end
 
-	-- Add a function to parse a regular chat string.
+	--- Parses a chat string and runs the command if one is found. Specifically, it checks for commands in a string with the
+	-- format `/CommandName some arguments`
+	-- @player client Player who is executing the command
+	-- @string text Input string to search for the command format
+	-- @string[opt] realCommand Specific command to check for. If this is specified, it will not try to run any command that's
+	-- found at the beginning - only if it matches `realCommand`
+	-- @table[opt] arguments Array of arguments to pass to the command. If not specified, it will try to extract it from the
+	-- string specified in `text` using `ix.command.ExtractArgs`
+	-- @treturn bool Whether or not a command has been found
+	-- @usage ix.command.Parse(player.GetByID(1), "/roll 10")
 	function ix.command.Parse(client, text, realCommand, arguments)
 		if (realCommand or text:utf8sub(1, 1) == COMMAND_PREFIX) then
 			-- See if the string contains a command.
@@ -501,7 +516,6 @@ if (SERVER) then
 			local match = realCommand or text:lower():match(COMMAND_PREFIX.."([_%w]+)")
 
 			-- is it unicode text?
-			-- i hate unicode.
 			if (!match) then
 				local post = string.Explode(" ", text)
 				local len = string.len(post[1])
