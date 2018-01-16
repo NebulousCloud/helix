@@ -1,6 +1,9 @@
+
 ix.plugin = ix.plugin or {}
 ix.plugin.list = ix.plugin.list or {}
 ix.plugin.unloaded = ix.plugin.unloaded or {}
+
+ix.util.Include("helix/gamemode/core/meta/sh_tool.lua")
 
 HOOKS_CACHE = {}
 
@@ -95,6 +98,7 @@ function ix.plugin.GetHook(pluginName, hookName)
 end
 
 function ix.plugin.LoadEntities(path)
+	local bLoadedTools
 	local files, folders
 
 	local function IncludeFiles(path2, clientOnly)
@@ -115,7 +119,7 @@ function ix.plugin.LoadEntities(path)
 		return false
 	end
 
-	local function HandleEntityInclusion(folder, variable, register, default, clientOnly)
+	local function HandleEntityInclusion(folder, variable, register, default, clientOnly, create)
 		files, folders = file.Find(path.."/"..folder.."/*", "LUA")
 		default = default or {}
 
@@ -123,17 +127,23 @@ function ix.plugin.LoadEntities(path)
 			local path2 = path.."/"..folder.."/"..v.."/"
 
 			_G[variable] = table.Copy(default)
-				_G[variable].ClassName = v
 
-				if (IncludeFiles(path2, clientOnly) and !client) then
-					if (clientOnly) then
-						if (CLIENT) then
-							register(_G[variable], v)
-						end
-					else
+			if (!isfunction(create)) then
+				_G[variable].ClassName = v
+			else
+				create(v)
+			end
+
+			if (IncludeFiles(path2, clientOnly) and !client) then
+				if (clientOnly) then
+					if (CLIENT) then
 						register(_G[variable], v)
 					end
+				else
+					register(_G[variable], v)
 				end
+			end
+
 			_G[variable] = nil
 		end
 
@@ -141,18 +151,42 @@ function ix.plugin.LoadEntities(path)
 			local niceName = string.StripExtension(v)
 
 			_G[variable] = table.Copy(default)
-				_G[variable].ClassName = niceName
-				ix.util.Include(path.."/"..folder.."/"..v, clientOnly and "client" or "shared")
 
-				if (clientOnly) then
-					if (CLIENT) then
-						register(_G[variable], niceName)
-					end
-				else
+			if (!isfunction(create)) then
+				_G[variable].ClassName = niceName
+			else
+				create(niceName)
+			end
+
+			ix.util.Include(path.."/"..folder.."/"..v, clientOnly and "client" or "shared")
+
+			if (clientOnly) then
+				if (CLIENT) then
 					register(_G[variable], niceName)
 				end
+			else
+				register(_G[variable], niceName)
+			end
+
 			_G[variable] = nil
 		end
+	end
+
+	local function RegisterTool(tool, className)
+		local gmodTool = weapons.GetStored("gmod_tool")
+
+		if (className:sub(1, 3) == "sh_") then
+			className = className:sub(4)
+		end
+
+		if (gmodTool) then
+			gmodTool.Tool[className] = tool
+		else
+			-- this should never happen
+			ErrorNoHalt(string.format("attempted to register tool '%s' with invalid gmod_tool weapon", className))
+		end
+
+		bLoadedTools = true
 	end
 
 	-- Include entities.
@@ -169,8 +203,23 @@ function ix.plugin.LoadEntities(path)
 		Base = "weapon_base"
 	})
 
+	HandleEntityInclusion("tools", "TOOL", RegisterTool, {}, false, function(className)
+		if (className:sub(1, 3) == "sh_") then
+			className = className:sub(4)
+		end
+		
+		TOOL = ix.meta.tool:Create()
+		TOOL.Mode = className
+		TOOL:CreateConVars()
+	end)
+
 	-- Include effects.
 	HandleEntityInclusion("effects", "EFFECT", effects and effects.Register, nil, true)
+
+	-- only reload spawn menu if any new tools were registered
+	if (CLIENT and bLoadedTools) then
+		RunConsoleCommand("spawnmenu_reload")
+	end
 end
 
 function ix.plugin.Initialize()
