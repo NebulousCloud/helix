@@ -207,7 +207,7 @@ function ix.plugin.LoadEntities(path)
 		if (className:sub(1, 3) == "sh_") then
 			className = className:sub(4)
 		end
-		
+
 		TOOL = ix.meta.tool:Create()
 		TOOL.Mode = className
 		TOOL:CreateConVars()
@@ -293,7 +293,7 @@ end
 if (SERVER) then
 	ix.plugin.repos = ix.plugin.repos or {}
 	ix.plugin.files = ix.plugin.files or {}
-	
+
 	local function ThrowFault(fault)
 		MsgN(fault)
 	end

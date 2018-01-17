@@ -126,7 +126,7 @@ function SWEP:PrimaryAttack()
 	) then
 		self.Owner:SetAction("@locking", time, function()
 			self:toggleLock(entity, true)
-		end)			
+		end)
 
 		return
 	end
@@ -209,6 +209,6 @@ function SWEP:SecondaryAttack()
 			self:toggleLock(entity, false)
 		end)
 
-		return	
+		return
 	end
 end

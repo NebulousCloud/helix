@@ -11,7 +11,7 @@ IX_CVAR_SHOWBARS = CreateClientConVar("ix_alwaysshowbars", "0", true)
 function ix.bar.Get(identifier)
 	for i = 1, #ix.bar.list do
 		local bar = ix.bar.list[i]
-		
+
 		if (bar and bar.identifier == identifier) then
 			return bar
 		end
@@ -21,7 +21,7 @@ end
 function ix.bar.Add(getValue, color, priority, identifier)
 	if (identifier) then
 		local oldBar = ix.bar.Get(identifier)
-		
+
 		if (oldBar) then
 			table.remove(ix.bar.list, oldBar.priority)
 		end
@@ -52,7 +52,7 @@ local SHADOW_COLOR = Color(20, 20, 20)
 
 function ix.bar.Draw(x, y, w, h, value, color, text)
 	local origX, origY = x, y
-	
+
 	ix.util.DrawBlurAt(x, y, w, h)
 
 	surface.SetDrawColor(255, 255, 255, 15)

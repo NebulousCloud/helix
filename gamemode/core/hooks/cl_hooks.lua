@@ -79,7 +79,7 @@ function GM:LoadFonts(font, genericFont)
 
 	-- The more readable font.
 	font = genericFont
-	
+
 	surface.CreateFont("ixCleanTitleFont", {
 		font = font,
 		size = 200,
@@ -237,11 +237,11 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 
 	local fraction = (client.ixRaisedFrac or 0) / 100
 	local rotation = weapon.LowerAngles or LOWERED_ANGLES
-	
+
 	if (IX_CVAR_LOWER2:GetBool() and weapon.LowerAngles2) then
 		rotation = weapon.LowerAngles2
 	end
-	
+
 	eyeAngles:RotateAroundAxis(eyeAngles:Up(), rotation.p * fraction)
 	eyeAngles:RotateAroundAxis(eyeAngles:Forward(), rotation.y * fraction)
 	eyeAngles:RotateAroundAxis(eyeAngles:Right(), rotation.r * fraction)
@@ -256,7 +256,7 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 		oldEyePos = position or oldEyePos
 		eyeAngles = angles or eyeAngles
 	end
-	
+
 	if (weapon.CalcViewModelView) then
 		local position, angles = weapon:CalcViewModelView(viewModel, oldEyePos, oldEyeAngles, eyePos, eyeAngles)
 
@@ -269,7 +269,7 @@ end
 
 function GM:LoadIntro()
 	-- If skip intro is on
-	if (true) then 
+	if (true) then
 		if (IsValid(ix.gui.char)) then
 			vgui.Create("ixCharMenu")
 		end
@@ -280,7 +280,7 @@ end
 
 function GM:InitializedConfig()
 	hook.Run("LoadFonts", ix.config.Get("font"), ix.config.Get("genericFont"))
-	
+
 	if (!ix.config.loaded and !IsValid(ix.gui.loading)) then
 		local loader = vgui.Create("EditablePanel")
 		loader:ParentToHUD()
@@ -368,7 +368,7 @@ function GM:CalcView(client, origin, angles, fov)
 	local entity = Entity(client:GetLocalVar("ragdoll", 0))
 	local ragdoll = client:GetRagdollEntity() or entity
 
-	if ((!client:ShouldDrawLocalPlayer() and IsValid(entity) and entity:IsRagdoll()) or 
+	if ((!client:ShouldDrawLocalPlayer() and IsValid(entity) and entity:IsRagdoll()) or
 		(!LocalPlayer():Alive() and IsValid(ragdoll))) then
 	 	local ent = LocalPlayer():Alive() and entity or ragdoll
 		local index = ent:LookupAttachment("eyes")
@@ -380,7 +380,7 @@ function GM:CalcView(client, origin, angles, fov)
 				view.origin = data.Pos
 				view.angles = data.Ang
 			end
-			
+
 			return view
 		end
 	end
@@ -420,7 +420,7 @@ function GM:HUDPaintBackground()
 
 		lastTrace.start = localPlayer.GetShootPos(localPlayer)
 		lastTrace.endpos = lastTrace.start + localPlayer.GetAimVector(localPlayer)*160
-		lastTrace.filter = localPlayer		
+		lastTrace.filter = localPlayer
 		lastTrace.mins = Vector( -4, -4, -4 )
 		lastTrace.maxs = Vector( 4, 4, 4 )
 		lastTrace.mask = MASK_SHOT_HULL
@@ -431,7 +431,7 @@ function GM:HUDPaintBackground()
 			paintedEntitiesCache[lastEntity] = true
 		end
 	end
-    
+
 	for entity, drawing in pairs(paintedEntitiesCache) do
 		if (IsValid(entity)) then
 			local goal = drawing and 255 or 0
@@ -512,7 +512,7 @@ function GM:HUDPaintBackground()
 			end
 		end
 	end
-	
+
 	if (localPlayer.GetLocalVar(localPlayer, "restricted") and !localPlayer.GetLocalVar(localPlayer, "restrictNoMsg")) then
 		ix.util.DrawText(L"restricted", scrW * 0.5, scrH * 0.33, nil, 1, 1, "ixBigFont")
 	end
@@ -573,7 +573,7 @@ function GM:DrawEntityInfo(entity, alpha, position)
 	if (entity.IsPlayer(entity)) then
 		local localPlayer = LocalPlayer()
 		local character = entity.GetChar(entity)
-		
+
 		position = position or toScreen(entity.GetPos(entity) + (entity.Crouching(entity) and OFFSET_CROUCHING or OFFSET_NORMAL))
 
 		if (character) then
@@ -599,7 +599,7 @@ function GM:DrawEntityInfo(entity, alpha, position)
 
 			for i = 1, #charInfo do
 				local info = charInfo[i]
-				
+
 				_, ty = drawText(info[1], x, y, colorAlpha(info[2] or color_white, alpha), 1, 1, "ixSmallFont")
 				y = y + ty
 			end
@@ -618,7 +618,7 @@ end
 
 function GM:PlayerBindPress(client, bind, pressed)
 	bind = bind:lower()
-	
+
 	if (bind:find("use") and pressed) then
 		local pickupTime = ix.config.Get("itemPickupTime", 0.5)
 
@@ -787,7 +787,7 @@ function GM:SetupQuickMenu(menu)
 
 		local button = menu:AddCheck(name, function(panel)
 			panel.checked = true
-			
+
 			if (IsValid(current)) then
 				if (current == panel) then
 					return
@@ -883,7 +883,7 @@ function GM:ShowPlayerOptions(client, options)
 	options["viewProfile"] = {"icon16/user.png", function()
 		if (IsValid(client)) then
 			client:ShowProfile()
-		end	
+		end
 	end}
 	options["Copy Steam ID"] = {"icon16/user.png", function()
 		if (IsValid(client)) then
@@ -939,7 +939,7 @@ function GM:PostPlayerDraw(client)
 						if (curClass != class and drawModel and IsValid(drawModel)) then
 							local Right 	= boneAng:Right()
 							local Up 		= boneAng:Up()
-							local Forward 	= boneAng:Forward()	
+							local Forward 	= boneAng:Forward()
 
 							boneAng:RotateAroundAxis(Right, drawInfo.ang[1])
 							boneAng:RotateAroundAxis(Up, drawInfo.ang[2])

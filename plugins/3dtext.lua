@@ -169,7 +169,7 @@ ix.command.Add("TextAdd", {
 		local angles = trace.HitNormal:Angle()
 		angles:RotateAroundAxis(angles:Up(), 90)
 		angles:RotateAroundAxis(angles:Forward(), 90)
-		
+
 		-- Add the text.
 		PLUGIN:AddText(position + angles:Up() * 0.1, angles, text, scale)
 		return "@textAdded"

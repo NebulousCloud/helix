@@ -1,10 +1,10 @@
 PLUGIN.name = "Logging"
 PLUGIN.author = "Black Tea"
 PLUGIN.description = "You can modfiy the logging text/lists on this plugin."
- 
+
 if (SERVER) then
 	local L = Format
-	
+
 	ix.log.AddType("chat", function(client, ...)
 		local arg = {...}
 		return L("[%s] %s: %s", arg[1], client:Name(), arg[2])

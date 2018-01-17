@@ -42,7 +42,7 @@ local PANEL = {}
 		hook.Run("CreateMenuButtons", tabs)
 
 		self.tabList = {}
-		
+
 		for name, callback in SortedPairs(tabs) do
 			if (type(callback) == "string") then
 				local body = callback
@@ -65,7 +65,7 @@ local PANEL = {}
 			local tab = self:AddTab(L(name), callback, name)
 			self.tabList[name] = tab
 		end
-		
+
 		self.noAnchor = CurTime() + .4
 		self.anchorMode = true
 		self:MakePopup()
@@ -154,7 +154,7 @@ local PANEL = {}
 				if (IsValid(ix.gui.info)) then
 					ix.gui.info:Remove()
 				end
-				
+
 				self.panel:Clear()
 
 				self.title:SetVisible(true)
@@ -165,7 +165,7 @@ local PANEL = {}
 
 				self.panel:AlphaTo(255, 0.5, 0.1)
 				self.activeTab = this
-				
+
 				if (uniqueID != "Characters") then
 					ix.gui.lastMenuTab = uniqueID
 				end
@@ -193,7 +193,7 @@ local PANEL = {}
 
 	function PANEL:Remove()
 		CloseDermaMenus()
-		
+
 		if (!self.closing) then
 			self:AlphaTo(0, 0.25, 0, function()
 				BaseClass.Remove(self)

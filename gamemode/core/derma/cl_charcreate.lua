@@ -47,7 +47,7 @@ local PANEL = {}
 	function PANEL:SetUp(faction)
 		self.faction = faction
 		self.payload.faction = self.faction
-		
+
 		for k, v in SortedPairsByMemberValue(ix.char.vars, "index") do
 			if (!v.bNoDisplay and k != "__SortedIndex") then
 				if (v.shouldDisplay) then

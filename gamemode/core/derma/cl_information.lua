@@ -166,7 +166,7 @@ function PANEL:Init()
 
 			if (!suppress or !suppress.class) then
 				local class = ix.class.list[LocalPlayer():GetChar():GetClass()]
-				
+
 				if (class) then
 					self.class = self.basicInfo:Add("DLabel")
 					self.class:Dock(TOP)
@@ -207,7 +207,7 @@ function PANEL:Setup()
 
 		if (self.time) then
 			local format = "%A, %B %d, %Y. %X"
-			
+
 			self.time:SetText(os.date(format, ix.date.Get()))
 			self.time.Think = function(this)
 				if ((this.nextTime or 0) < CurTime()) then
@@ -229,7 +229,7 @@ function PANEL:Setup()
 
 			self.class:SizeToContents()
 		end
-		
+
 		if (self.model) then
 			self.model:SetModel(LocalPlayer():GetModel())
 			self.model.Entity:SetSkin(LocalPlayer():GetSkin())

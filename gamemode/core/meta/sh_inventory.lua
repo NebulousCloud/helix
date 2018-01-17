@@ -95,7 +95,7 @@ function META:SetOwner(owner, fullUpdate)
 				end
 			end
 		end
-		
+
 		local query = mysql:Update("ix_inventories")
 			query:Update("character_id", owner)
 			query:Where("inventory_id", self:GetID())
@@ -152,7 +152,7 @@ function META:FindEmptySlot(w, h, onlyMain)
 
 	if (onlyMain != true) then
 		local bags = self:GetBags()
-		
+
 		if (#bags > 0) then
 			for _, invID in ipairs(bags) do
 				local bagInv = ix.item.inventories[invID]
@@ -335,7 +335,7 @@ end
 
 function META:HasItem(targetID, data)
 	local items = self:GetItems()
-	
+
 	for k, v in pairs(items) do
 		if (v.uniqueID == targetID) then
 			if (data) then
@@ -502,7 +502,7 @@ if (SERVER) then
 				end
 			end
 		end
-		
+
 		netstream.Start(receiver, "inv", slots, self:GetID(), self.w, self.h, (receiver == nil or fullUpdate) and self.owner or nil, self.vars or {})
 
 		for k, v in pairs(self:GetItems()) do

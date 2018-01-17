@@ -94,7 +94,7 @@ end
 
 function PLUGIN:OnPlayerLeaveSequence(client)
 	client:SetNetVar("actAng")
-	
+
 	if (client.ixOldPosition) then
 		client:SetPos(client.ixOldPosition)
 		client.ixOldPosition = nil

@@ -38,7 +38,7 @@ if (SERVER) then
 
 	function ix.log.GetString(client, logType, ...)
 		local text = ix.log.types[logType]
-		
+
 		if (text) then
 			if (isfunction(text)) then
 				text = text(client, ...)
@@ -50,11 +50,11 @@ if (SERVER) then
 		return text
 	end
 
-	function ix.log.AddRaw(logString)		
+	function ix.log.AddRaw(logString)
 		ix.log.Send(ix.util.GetAdmins(), logString)
-		
+
 		Msg("[LOG] ", logString .. "\n")
-		
+
 		if (!noSave) then
 			file.Append("helix/logs/"..os.date("%x"):gsub("/", "-")..".txt", "["..os.date("%X").."]\t"..logString.."\r\n")
 		end
@@ -65,9 +65,9 @@ if (SERVER) then
 		if (logString == -1) then return end
 
 		ix.log.Send(ix.util.GetAdmins(), logString)
-		
+
 		Msg("[LOG] ", logString .. "\n")
-		
+
 		if (!noSave) then
 			file.Append("helix/logs/"..os.date("%x"):gsub("/", "-")..".txt", "["..os.date("%X").."]\t"..logString.."\r\n")
 		end

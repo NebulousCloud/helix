@@ -8,7 +8,7 @@ local PANEL = {}
 		self:SetKeyBoardInputEnabled(false)
 		self:SetZPos(999)
 		self:SetMouseInputEnabled(true)
-		
+
 		self.title = self:Add("DLabel")
 		self.title:SetTall(36)
 		self.title:Dock(TOP)
@@ -58,7 +58,7 @@ local PANEL = {}
 		self.scroll = self:Add("DScrollPanel")
 		self.scroll:SetPos(0, 36)
 		self.scroll:SetSize(self:GetWide(), ScrH() * 0.5)
-		
+
 		self:MoveTo(self.x, 0, 0.05)
 
 		self.items = {}

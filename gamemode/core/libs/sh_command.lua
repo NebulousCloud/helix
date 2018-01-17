@@ -89,7 +89,7 @@ argument. Here is an example:
 	})
 Here, we've specified the first argument called `target` to be of type `player`, and the second argument called `damage` to be
 of type `number`. The `damage` argument is optional, meaning that the command will still run if the user has not specified
-any value for the damage. In this case, we'll need to check if it was specified by doing a simple `if (damage) then`. 
+any value for the damage. In this case, we'll need to check if it was specified by doing a simple `if (damage) then`.
 ]]
 -- @module ix.command
 
@@ -382,7 +382,7 @@ function ix.command.FindAll(identifier, bSorted, bReorganize, bRemoveDupes)
 		for k, v in iterator(ix.command.list) do
 			result[#result + 1] = v
 		end
-		
+
 		return result
 	elseif (identifier:sub(1, 1) == "/") then
 		identifier = identifier:sub(2)
@@ -415,7 +415,7 @@ function ix.command.FindAll(identifier, bSorted, bReorganize, bRemoveDupes)
 	if (bReorganize and fullMatch and fullMatch != 1) then
 		result[1], result[fullMatch] = result[fullMatch], result[1]
 	end
-	
+
 	return result
 end
 

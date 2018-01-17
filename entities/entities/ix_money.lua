@@ -29,16 +29,16 @@ if (SERVER) then
 	function ENT:Use(activator)
 		if (self.client and self.charID) then
 			local char = activator:GetChar()
-			
+
 			if (char) then
 				if (self.charID != char:GetID() and self.client == activator) then
 					activator:NotifyLocalized("logged")
-					
+
 					return false
 				end
 			end
 		end
-		
+
 		activator:PerformInteraction(ix.config.Get("itemPickupTime", 0.5), self, function(client)
 			if (hook.Run("OnPickupMoney", client, self) != false) then
 				self:Remove()

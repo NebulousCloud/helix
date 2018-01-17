@@ -282,7 +282,7 @@ do
 			OnCanSay = function(self, speaker, text)
 				if (!ix.config.Get("allowGlobalOOC")) then
 					speaker:NotifyLocalized("Global OOC is disabled on this server.")
-					return false		
+					return false
 				else
 					local delay = ix.config.Get("oocDelay", 10)
 

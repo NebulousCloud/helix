@@ -309,7 +309,7 @@ function ix.char.New(data, id, client, steamID)
 	if (data.description) then
 		data.description = data.description:gsub("#", "#​")
 	end
-	
+
 	local character = setmetatable({vars = {}}, ix.meta.character)
 		for k, v in pairs(data) do
 			if (v != nil) then
@@ -705,7 +705,7 @@ do
 		netstream.Hook("charChoose", function(client, id)
 			if (client:GetChar() and client:GetChar():GetID() == id) then
 				netstream.Start(client, "charLoaded")
-				
+
 				return client:NotifyLocalized("usingChar")
 			end
 
@@ -746,7 +746,7 @@ do
 
 		netstream.Hook("charCreate", function(client, data)
 			local newData = {}
-			
+
 			local maxChars = hook.Run("GetMaxPlayerCharacter", client) or ix.config.Get("maxChars", 5)
 			local charList = client.ixCharList
 			local charCount = table.Count(charList)
@@ -796,7 +796,7 @@ do
 					hook.Run("OnCharCreated", client, ix.char.loaded[id])
 				end
 			end)
-			
+
 		end)
 
 		netstream.Hook("charDel", function(client, id)
@@ -845,7 +845,7 @@ do
 
 				-- other plugins might need to deal with deleted characters.
 				hook.Run("OnCharDelete", client, id, isCurrentChar)
-				
+
 				if (isCurrentChar) then
 					client:SetNetVar("char", nil)
 					client:Spawn()
@@ -859,7 +859,7 @@ do
 
 		netstream.Hook("charSet", function(key, value, id)
 			id = id or (LocalPlayer():GetChar() and LocalPlayer():GetChar().id)
-			
+
 			local character = ix.char.loaded[id]
 
 			if (character) then
@@ -943,7 +943,7 @@ do
 
 	function playerMeta:Name()
 		local character = self:GetCharacter()
-		
+
 		return character and character:GetName() or self:SteamName()
 	end
 

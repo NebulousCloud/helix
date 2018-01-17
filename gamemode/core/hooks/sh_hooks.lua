@@ -149,7 +149,7 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 	if (itemTable.noBusiness) then
 		return false
 	end
-	
+
 	if (itemTable.factions) then
 		local allowed = false
 
@@ -338,7 +338,7 @@ function GM:PhysgunPickup(client, entity)
 	if (client:IsSuperAdmin()) then
 		return true
 	end
-	
+
 	if (client:IsAdmin() and !(entity:IsPlayer() and entity:IsSuperAdmin())) then
 		return true
 	end
@@ -365,7 +365,7 @@ function GM:CanTool(client, trace, tool)
 	if (TOOL_DANGEROUS[tool]) then
 		return false
 	end
-	
+
 	local entity = trace.Entity
 
 	if (IsValid(entity)) then
@@ -406,8 +406,8 @@ function GM:Move(client, moveData)
 				ms = ratio
 			end
 
-			moveData:SetForwardSpeed(mf * speed) 
-			moveData:SetSideSpeed(ms * speed) 
+			moveData:SetForwardSpeed(mf * speed)
+			moveData:SetSideSpeed(ms * speed)
 		end
 	end
 end
@@ -416,7 +416,7 @@ function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 	if (itemObject and itemObject.isBag) then
 		if (inventory.id != 0 and curInv.id != inventory.id) then
 			if (inventory.vars and inventory.vars.isBag) then
-				return false 
+				return false
 			end
 		end
 
@@ -426,7 +426,7 @@ function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 			for k, v in pairs(inventory:GetItems()) do
 				if (v:GetData("equip") == true) then
 					local owner = itemObject:GetOwner()
-					
+
 					if (owner and IsValid(owner)) then
 						if (SERVER) then
 							owner:NotifyLocalized("equippedBag")

@@ -83,7 +83,7 @@ local PANEL = {}
 		if (self.enableHook) then
 			hook.Run("DrawHelixModelView", self, self.Entity)
 		end
-		
+
 		self.Entity:DrawModel()
 	end
 

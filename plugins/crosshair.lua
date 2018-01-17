@@ -68,7 +68,7 @@ if (CLIENT) then
 		crossSize = 4
 		crossGap = 25 * (scaleFraction - (client:IsWepRaised() and 0 or .1))
 
-		if (IsValid(entity) and entity:GetClass() == "ix_item" and 
+		if (IsValid(entity) and entity:GetClass() == "ix_item" and
 			entity:GetPos():DistToSqr(data.start) <= 16384) then
 			crossGap = 0
 			crossSize = 5
@@ -81,8 +81,8 @@ if (CLIENT) then
 
 		drawdot( {math_round(screen.x), math_round(screen.y)}, crossSize, colors)
 		drawdot( {math_round(screen.x + curGap), math_round(screen.y)}, crossSize, colors)
-		drawdot( {math_round(screen.x - curGap), math_round(screen.y)}, crossSize, colors) 
-		drawdot( {math_round(screen.x), math_round(screen.y + curGap * .8)}, crossSize, colors) 
-		drawdot( {math_round(screen.x), math_round(screen.y - curGap * .8)}, crossSize, colors) 
+		drawdot( {math_round(screen.x - curGap), math_round(screen.y)}, crossSize, colors)
+		drawdot( {math_round(screen.x), math_round(screen.y + curGap * .8)}, crossSize, colors)
+		drawdot( {math_round(screen.x), math_round(screen.y - curGap * .8)}, crossSize, colors)
 	end
 end

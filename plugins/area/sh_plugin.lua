@@ -6,7 +6,7 @@ PLUGIN.areaTable = PLUGIN.areaTable or {}
 ix.area = ix.area or {}
 ALWAYS_RAISED["ix_areahelper"] = true
 
-ix.config.Add("areaFontSize", 26, "The size of the font of Area Display.", 
+ix.config.Add("areaFontSize", 26, "The size of the font of Area Display.",
 	function(oldValue, newValue)
 		if (CLIENT) then
 			hook.Run("LoadFonts", ix.config.Get("font"))
@@ -104,7 +104,7 @@ if (SERVER) then
 		table.insert(PLUGIN.areaTable, {
 			name = name,
 			minVector = minVector,
-			maxVector = maxVector, 
+			maxVector = maxVector,
 			desc = desc or "",
 		})
 
@@ -215,7 +215,7 @@ else
 		panel:SetTall(30)
 		frame:AddItem(panel)
 	end
-	
+
 	function ix.area.openAreaManager()
 		local frame = vgui.Create("DFrame")
 		frame:SetSize(400, 300)
@@ -309,9 +309,9 @@ else
 	function PLUGIN:HUDPaint()
 		-- values
 		if ((hook.Run("CanDisplayArea") == false) or (dieTrigger and dieTimer < RealTime() and dieAlpha <= 1)) then
-			return	 
+			return
 		end
-		
+
 		ft = FrameTime()
 		w, h = ScrW(), ScrH()
 		dsx, dsy = 0
@@ -319,7 +319,7 @@ else
 		local rTime = RealTime()
 
 		surface.SetFont("ixAreaDisplay")
-		local sx, sy = surface.GetTextSize(dispString)	
+		local sx, sy = surface.GetTextSize(dispString)
 
 		-- Number of characters to display.
 		local maxDisplay = math.Round(rTime*speed - powTime)
@@ -364,7 +364,7 @@ else
 				(dieTrigger and dieTimer < RealTime()) and dieAlpha or flipTable[i][2])
 			)
 
-			-- next 
+			-- next
 			dsx = dsx + tx*scale
 		end
 
@@ -407,7 +407,7 @@ ix.command.Add("AreaAdd", {
 			client:SetNetVar("areaName", nil, client)
 
 			ix.area.AddArea(name, min, max)
-			
+
 			return "@areaAdded", name
 		end
 	end

@@ -109,15 +109,15 @@ if (SERVER) then
 
 			-- Apply a saved skin.
 			client:SetSkin(self:GetData("skin", 0))
-			
+
 			-- Synchronize the character if we should.
 			if (!bNoNetworking) then
 				self:Sync()
-				
+
 				-- wtf
 				for k, v in ipairs(self:GetInv(true)) do
-					if (type(v) == "table") then 
-						v:Sync(client)	
+					if (type(v) == "table") then
+						v:Sync(client)
 					end
 				end
 			end
@@ -139,9 +139,9 @@ if (SERVER) then
 		local steamID = client:SteamID64()
 		local id = self:GetID()
 		local isCurrentChar = self and self:GetID() == id
-		
+
 		-- Return the player to the character menu.
-		if (self and self.steamID == steamID) then			
+		if (self and self.steamID == steamID) then
 			netstream.Start(client, "charKick", id, isCurrentChar)
 
 			if (isCurrentChar) then
@@ -230,7 +230,7 @@ function ix.char.RegisterVar(key, data)
 					local oldVar = self.vars[key]
 						self.vars[key] = value
 					netstream.Start(nil, "charSet", key, value, self:GetID())
-					
+
 					hook.Run("OnCharVarChanged", self, key, oldVar, value)
 				end
 			end

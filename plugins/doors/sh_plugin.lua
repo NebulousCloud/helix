@@ -46,7 +46,7 @@ do
 				for k, v in pairs(self.ixAccess or {}) do
 					netstream.Start(k, "doorMenu")
 				end
-				
+
 				self.ixAccess = {}
 				self:SetDTEntity(0, nil)
 			end

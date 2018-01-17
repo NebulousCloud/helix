@@ -92,9 +92,9 @@ end
 function SWEP:Precache()
 	util.PrecacheSound("npc/vort/claw_swing1.wav")
 	util.PrecacheSound("npc/vort/claw_swing2.wav")
-	util.PrecacheSound("physics/plastic/plastic_box_impact_hard1.wav")	
-	util.PrecacheSound("physics/plastic/plastic_box_impact_hard2.wav")	
-	util.PrecacheSound("physics/plastic/plastic_box_impact_hard3.wav")	
+	util.PrecacheSound("physics/plastic/plastic_box_impact_hard1.wav")
+	util.PrecacheSound("physics/plastic/plastic_box_impact_hard2.wav")
+	util.PrecacheSound("physics/plastic/plastic_box_impact_hard3.wav")
 	util.PrecacheSound("physics/plastic/plastic_box_impact_hard4.wav")
 	util.PrecacheSound("physics/wood/wood_crate_impact_hard2.wav")
 	util.PrecacheSound("physics/wood/wood_crate_impact_hard3.wav")
@@ -184,7 +184,7 @@ end
 
 function SWEP:IsHoldingObject()
 	return (IsValid(self.heldEntity) and
-		IsValid(self.heldEntity.ixHeldOwner) and 
+		IsValid(self.heldEntity.ixHeldOwner) and
 		self.heldEntity.ixHeldOwner == self.Owner)
 end
 
@@ -228,7 +228,7 @@ function SWEP:DropObject(bThrow)
 	physics:EnableGravity(true)
 	physics:Wake()
 	physics:SetVelocityInstantaneous(vector_origin)
-	
+
 	if (bThrow) then
 		physics:ApplyForceCenter(self.Owner:GetAimVector() * ix.config.Get("throwForce", 732))
 	end
@@ -379,7 +379,7 @@ function SWEP:SecondaryAttack()
 		data.filter = {self, self.Owner}
 	local trace = util.TraceLine(data)
 	local entity = trace.Entity
-	
+
 	if (SERVER and IsValid(entity)) then
 		if (entity:IsDoor()) then
 			if (hook.Run("PlayerCanKnock", self.Owner, entity) == false) then
@@ -387,7 +387,7 @@ function SWEP:SecondaryAttack()
 			end
 
 			self.Owner:ViewPunch(Angle(-1.3, 1.8, 0))
-			self.Owner:EmitSound("physics/wood/wood_crate_impact_hard"..math.random(2, 3)..".wav")	
+			self.Owner:EmitSound("physics/wood/wood_crate_impact_hard"..math.random(2, 3)..".wav")
 			self.Owner:SetAnimation(PLAYER_ATTACK1)
 
 			self:DoPunchAnimation()

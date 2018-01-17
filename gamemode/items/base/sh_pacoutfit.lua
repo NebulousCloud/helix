@@ -66,7 +66,7 @@ end
 
 function ITEM:RemovePart(client)
 	local char = client:GetChar()
-	
+
 	self:SetData("equip", false)
 	client:RemovePart(self.uniqueID)
 
@@ -91,7 +91,7 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 	icon = "icon16/cross.png",
 	OnRun = function(item)
 		item:RemovePart(item.player)
-		
+
 		return false
 	end,
 	OnCanRun = function(item)
@@ -128,7 +128,7 @@ ITEM.functions.Equip = {
 				char:AddBoost(item.uniqueID, k, v)
 			end
 		end
-		
+
 		return false
 	end,
 	OnCanRun = function(item)

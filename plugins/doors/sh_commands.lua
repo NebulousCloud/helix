@@ -38,7 +38,7 @@ ix.command.Add("DoorSell", {
 		else
 			-- Tell the player the door isn't valid.
 			return "@dNotValid"
-		end		
+		end
 	end
 })
 
@@ -73,7 +73,7 @@ ix.command.Add("DoorBuy", {
 				entity.ixAccess = {
 					[client] = DOOR_OWNER
 				}
-				
+
 				PLUGIN:CallOnDoorChildren(entity, function(child)
 					child:SetDTEntity(0, client)
 				end)
@@ -312,7 +312,7 @@ ix.command.Add("DoorSetParent", {
 		else
 			-- Tell the player the door isn't valid.
 			return "@dNotValid"
-		end		
+		end
 	end
 })
 
@@ -350,7 +350,7 @@ ix.command.Add("DoorSetChild", {
 		else
 			-- Tell the player the door isn't valid.
 			return "@dNotValid"
-		end		
+		end
 	end
 })
 
@@ -385,7 +385,7 @@ ix.command.Add("DoorRemoveChild", {
 		else
 			-- Tell the player the door isn't valid.
 			return "@dNotValid"
-		end		
+		end
 	end
 })
 
@@ -400,7 +400,7 @@ ix.command.Add("DoorSetHidden", {
 		-- Validate it is a door.
 		if (IsValid(entity) and entity:IsDoor()) then
 			entity:SetNetVar("hidden", bHidden)
-			
+
 			PLUGIN:CallOnDoorChildren(entity, function(child)
 				child:SetNetVar("hidden", bHidden)
 			end)

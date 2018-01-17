@@ -127,7 +127,7 @@ end;
 
 function QUERY_CLASS:WhereIn(key, value)
 	value = istable(value) and value or {value}
-	
+
 	local values = "";
 	local bFirst = true;
 
@@ -509,7 +509,7 @@ function mysql:Connect(host, username, password, database, port, socket, flags)
 		if (type(mysqloo) != "table") then
 			require("mysqloo");
 		end;
-	
+
 		if (mysqloo) then
 			local clientFlag = flags or 0;
 
@@ -525,7 +525,7 @@ function mysql:Connect(host, username, password, database, port, socket, flags)
 
 			self.connection.onConnectionFailed = function(database, errorText)
 				mysql:OnConnectionFailed(errorText);
-			end;		
+			end;
 
 			self.connection:connect();
 		else
@@ -623,7 +623,7 @@ end;
 function mysql:Disconnect()
 	if (self.connection) then
 		if (Module == "tmysql4") then
-			return self.connection:Disconnect();	
+			return self.connection:Disconnect();
 		end;
 	end;
 
@@ -636,7 +636,7 @@ function mysql:Think()
 			local queueObj = QueueTable[1];
 			local queryString = queueObj[1];
 			local callback = queueObj[2];
-			
+
 			if (type(queryString) == "string") then
 				self:RawQuery(queryString, callback);
 			end;

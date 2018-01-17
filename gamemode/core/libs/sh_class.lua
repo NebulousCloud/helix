@@ -131,19 +131,19 @@ end
 function charMeta:KickClass()
 	local client = self:GetPlayer()
 	if (!client) then return end
-	
+
 	local goClass
 
 	for k, v in pairs(ix.class.list) do
 		if (v.faction == client:Team() and v.isDefault) then
 			goClass = k
-			
+
 			break
 		end
 	end
 
 	self:JoinClass(goClass)
-	
+
 	hook.Run("OnPlayerJoinClass", client, goClass)
 end
 

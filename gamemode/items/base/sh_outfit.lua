@@ -40,14 +40,14 @@ end
 
 function ITEM:removeOutfit(client)
 	local character = client:GetChar()
-	
+
 	self:SetData("equip", false)
 
 	if (character:GetData("oldMdl")) then
 		character:SetModel(character:GetData("oldMdl"))
 		character:SetData("oldMdl", nil)
 	end
-	
+
 	if (self.newSkin) then
 		if (character:GetData("oldSkin")) then
 			client:SetSkin(character:GetData("oldSkin"))
@@ -93,7 +93,7 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 	icon = "icon16/cross.png",
 	OnRun = function(item)
 		item:removeOutfit(item.player)
-		
+
 		return false
 	end,
 	OnCanRun = function(item)
@@ -123,7 +123,7 @@ ITEM.functions.Equip = {
 		end
 
 		item:SetData("equip", true)
-		
+
 		if (type(item.OnGetReplacement) == "function") then
 			char:SetData("oldMdl", char:GetData("oldMdl", item.player:GetModel()))
 			char:SetModel(item:OnGetReplacement())
@@ -142,12 +142,12 @@ ITEM.functions.Equip = {
 				char:SetModel(item.replacement or item.replacements)
 			end
 		end
-		
+
 		if (item.newSkin) then
 			char:SetData("oldSkin", item.player:GetSkin())
 			item.player:SetSkin(item.newSkin)
 		end
-		
+
 		if (item.bodyGroups) then
 			local groups = {}
 
@@ -176,7 +176,7 @@ ITEM.functions.Equip = {
 				char:AddBoost(item.uniqueID, k, v)
 			end
 		end
-		
+
 		return false
 	end,
 	OnCanRun = function(item)

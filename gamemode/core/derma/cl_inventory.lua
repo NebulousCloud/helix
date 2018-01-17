@@ -13,7 +13,7 @@ local function RenderNewIcon(panel, itemTable)
 			cam_fov = iconCam.fov,
 		}
 		renderdIcons[string.lower(itemTable.model)] = true
-		
+
 		panel.Icon:RebuildSpawnIconEx(
 			iconCam
 		)
@@ -173,31 +173,31 @@ PANEL = {}
 			self:RebuildItems()
 		end
 	end
-	
+
 	function PANEL:BuildSlots()
 		local iconSize = self.iconSize
 
 		self.slots = self.slots or {}
-		
+
 		local function PaintSlot(slot, w, h)
 			surface.SetDrawColor(35, 35, 35, 85)
 			surface.DrawRect(1, 1, w - 2, h - 2)
-			
+
 			surface.SetDrawColor(0, 0, 0, 250)
 			surface.DrawOutlinedRect(1, 1, w - 2, h - 2)
 		end
-		
+
 		for k, v in ipairs(self.slots) do
 			for k2, v2 in ipairs(v) do
 				v2:Remove()
 			end
 		end
-		
+
 		self.slots = {}
-		
+
 		for x = 1, self.gridW do
 			self.slots[x] = {}
-			
+
 			for y = 1, self.gridH do
 				local slot = self:Add("DPanel")
 				slot:SetZPos(-999)
@@ -206,15 +206,15 @@ PANEL = {}
 				slot:SetPos((x - 1) * iconSize + 4, (y - 1) * iconSize + 27)
 				slot:SetSize(iconSize, iconSize)
 				slot.Paint = PaintSlot
-				
-				self.slots[x][y] = slot	
+
+				self.slots[x][y] = slot
 			end
 		end
 	end
 
 	function PANEL:RebuildItems()
 		local iconSize = self.iconSize
-		
+
 		for x = 1, self.gridW do
 			for y = 1, self.gridH do
 				local slot = self.slots[x][y]
@@ -229,12 +229,12 @@ PANEL = {}
 			v:SetSize(v.gridW * iconSize, v.gridH * iconSize)
 		end
 	end
-	
+
 	local activePanels = {}
 	function PANEL:PaintOver(w, h)
 		local iconSize = self.iconSize
 		local item = ix.item.held
-		
+
 		if (IsValid(item)) then
 			local mouseX, mouseY = self:LocalCursorPos()
 			local dropX, dropY = math.ceil((mouseX - 4 - (item.gridW - 1) * 32) / iconSize), math.ceil((mouseY - 27 - (item.gridH - 1) * 32) / iconSize)
@@ -253,27 +253,27 @@ PANEL = {}
 			for x = 0, item.gridW - 1 do
 				for y = 0, item.gridH - 1 do
 					local x2, y2 = dropX + x, dropY + y
-					
+
 					-- Is Drag and Drop icon is in the Frame?
 					if (self.slots[x2] and IsValid(self.slots[x2][y2])) then
 						local bool = self:IsEmpty(x2, y2, item)
-						
+
 						surface.SetDrawColor(0, 0, 255, 10)
 
 						if (x == 0 and y == 0) then
 							item.dropPos[self] = {x = (x2 - 1) * iconSize + 4, y = (y2 - 1) * iconSize + 27, x2 = x2, y2 = y2}
 						end
-							
+
 						if (bool) then
 							surface.SetDrawColor(0, 255, 0, 10)
 						else
 							surface.SetDrawColor(255, 255, 0, 10)
-							
+
 							if (self.slots[x2] and self.slots[x2][y2] and item.dropPos[self]) then
 								item.dropPos[self].item = self.slots[x2][y2].item
 							end
 						end
-					
+
 						surface.DrawRect((x2 - 1) * iconSize + 4, (y2 - 1) * iconSize + 27, iconSize, iconSize)
 					else
 						if (item.dropPos) then
@@ -284,19 +284,19 @@ PANEL = {}
 			end
 		end
 	end
-	
+
 	function PANEL:IsEmpty(x, y, this)
 		return (!IsValid(self.slots[x][y].item) or self.slots[x][y].item == this)
 	end
-	
+
 	function PANEL:OnTransfer(oldX, oldY, x, y, oldInventory, noSend)
 		local inventory = ix.item.inventories[oldInventory.invID]
 		local inventory2 = ix.item.inventories[self.invID]
 		local item
-		
+
 		if (inventory) then
 			item = inventory:GetItemAt(oldX, oldY)
-			
+
 			if (!item) then
 				return false
 			end
@@ -304,7 +304,7 @@ PANEL = {}
 			if (hook.Run("CanItemBeTransfered", item, ix.item.inventories[oldInventory.invID], ix.item.inventories[self.invID]) == false) then
 				return false, "notAllowed"
 			end
-		
+
 			if (item.OnCanBeTransfered and item:OnCanBeTransfered(inventory, inventory != inventory2 and inventory2 or nil) == false) then
 				return false
 			end
@@ -318,7 +318,7 @@ PANEL = {}
 			end
 		end
 
-		if (inventory) then			
+		if (inventory) then
 			inventory.slots[oldX][oldY] = nil
 		end
 
@@ -333,7 +333,7 @@ PANEL = {}
 
 		w = w or 1
 		h = h or 1
-		
+
 		if (self.slots[x] and self.slots[x][y]) then
 			local panel = self:Add("ixItemIcon")
 			panel:SetSize(w * iconSize, h * iconSize)
@@ -360,7 +360,7 @@ PANEL = {}
 			if (self.panels[itemTable:GetID()]) then
 				self.panels[itemTable:GetID()]:Remove()
 			end
-			
+
 			if (itemTable.exRender) then
 				panel.Icon:SetVisible(false)
 				panel.ExtraPaint = function(self, x, y)
@@ -408,7 +408,7 @@ PANEL = {}
 						end
 					end
 				end
-				
+
 				this.slots = {}
 
 				for x = 1, this.gridW do
@@ -489,7 +489,7 @@ PANEL = {}
 					this:SetZPos(99)
 
 					ix.item.held = nil
-					
+
 					if (table.Count(activePanels) == 0) then
 						local item = this.itemTable
 						local inv = this.inv
@@ -497,14 +497,14 @@ PANEL = {}
 						if (item and inv) then
 							netstream.Start("invAct", "drop", item.id, inv:GetID(), item.id)
 						end
-						
+
 						return false
 					end
 					activePanels = {}
 
 					if (data) then
 						local inventory = table.GetFirstKey(data)
-						
+
 						if (IsValid(inventory)) then
 							data = data[inventory]
 
@@ -513,7 +513,7 @@ PANEL = {}
 
 								if (inventory) then
 									local targetItem = data.item.itemTable
-									
+
 									if (targetItem) then
 										-- to make sure...
 										if (targetItem.id == itemTable.id) then return end
@@ -546,10 +546,10 @@ PANEL = {}
 														if (bagInv) then
 															print(bagInv, "baggeD")
 															local mx, my = bagInv:FindEmptySlot(itemTable.width, itemTable.height, true)
-															
+
 															-- we found slot for the inventory.
-															if (mx and my) then		
-																print(bagInv, "move")						
+															if (mx and my) then
+																print(bagInv, "move")
 																this:move({x2 = mx, y2 = my}, bagInv)
 															end
 														end
@@ -562,7 +562,7 @@ PANEL = {}
 							else
 								local oldX, oldY = this.gridX, this.gridY
 
-								if (oldX != data.x2 or oldY != data.y2 or inventory != self) then									
+								if (oldX != data.x2 or oldY != data.y2 or inventory != self) then
 									this:move(data, inventory)
 								end
 							end
@@ -575,10 +575,10 @@ PANEL = {}
 					itemTable.player = LocalPlayer()
 						local menu = DermaMenu()
 						local override = hook.Run("OnCreateItemInteractionMenu", panel, menu, itemTable)
-						
+
 						if (override == true) then if (menu.Remove) then menu:Remove() end return end
 							for k, v in SortedPairs(itemTable.functions) do
-								if (k == "combine") then continue end -- we don't need combine on the menu mate. 
+								if (k == "combine") then continue end -- we don't need combine on the menu mate.
 
 								if (v.OnCanRun) then
 									if (v.OnCanRun(itemTable) == false) then
@@ -656,9 +656,9 @@ PANEL = {}
 					itemTable.player = nil
 				end
 			end
-			
+
 			panel.slots = {}
-			
+
 			for i = 0, w - 1 do
 				for i2 = 0, h - 1 do
 					local slot = self.slots[x + i] and self.slots[x + i][y + i2]
@@ -677,7 +677,7 @@ PANEL = {}
 					end
 				end
 			end
-			
+
 			return panel
 		end
 	end

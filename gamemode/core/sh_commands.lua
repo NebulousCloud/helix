@@ -282,7 +282,7 @@ ix.command.Add("CharBan", {
 	adminOnly = true,
 	OnRun = function(self, client, target)
 		ix.util.NotifyLocalized("charBan", nil, client:GetName(), target:GetName())
-	
+
 		target:SetData("banned", true)
 		target:Kick()
 	end
@@ -335,7 +335,7 @@ ix.command.Add("CharUnban", {
 						updateQuery:Update("data", util.TableToJSON(data))
 						updateQuery:Where("id", characterID)
 					updateQuery:Execute()
-					
+
 					ix.util.NotifyLocalized("charUnBan", nil, client:GetName(), v:GetName())
 				end
 			end)
@@ -401,7 +401,7 @@ ix.command.Add("DropMoney", {
 		end
 
 		amount = math.Round(amount)
-		
+
 		if (!client:GetCharacter():HasMoney(amount)) then
 			return
 		end
@@ -520,7 +520,7 @@ ix.command.Add("BecomeClass", {
 
 		if (character) then
 			local num = isnumber(tonumber(class)) and tonumber(class) or -1
-			
+
 			if (ix.class.list[num]) then
 				local v = ix.class.list[num]
 
@@ -540,7 +540,7 @@ ix.command.Add("BecomeClass", {
 					end
 				end
 			end
-			
+
 			return "@invalid", L("class", client)
 		else
 			return "@illegalAccess"

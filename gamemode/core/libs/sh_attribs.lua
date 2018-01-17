@@ -37,7 +37,7 @@ end
 -- Add updating of attributes to the character metatable.
 do
 	local charMeta = ix.meta.character
-	
+
 	if (SERVER) then
 		function charMeta:UpdateAttrib(key, value)
 			local attribute = ix.attributes.list[key]
@@ -77,7 +77,7 @@ do
 					end
 				end
 			end
-			
+
 			hook.Run("OnCharAttribUpdated", client, self, key, value)
 		end
 
@@ -91,7 +91,7 @@ do
 
 			return self:SetVar("boosts", boosts, nil, self:GetPlayer())
 		end
-		
+
 		function charMeta:RemoveBoost(boostID, attribID)
 			local boosts = self:GetVar("boosts", {})
 
@@ -130,8 +130,8 @@ do
 			for k, v in pairs(boosts) do
 				att = att + v
 			end
-		end 
-	
+		end
+
 		return att
 	end
 end

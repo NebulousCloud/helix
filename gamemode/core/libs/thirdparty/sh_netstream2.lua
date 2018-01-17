@@ -3,7 +3,7 @@
 
 	Alexander Grist-Hucker
 	http://www.revotech.org
-	
+
 	Credits to:
 		thelastpenguin for pON.
 		https://github.com/thelastpenguin/gLUA-Library/tree/master/pON
@@ -29,16 +29,16 @@ function netstream.Split(data)
 
 	for i = 0, string.len(data) do
 		buffer[#buffer + 1] = string.sub(data, i, i);
-				
+
 		if (#buffer == 32768) then
 			result[#result + 1] = table.concat(buffer);
 				index = index + 1;
 			buffer = {};
 		end;
 	end;
-			
+
 	result[#result + 1] = table.concat(buffer);
-	
+
 	return result;
 end;
 
@@ -65,16 +65,16 @@ if (SERVER) then
 				player = {player};
 			end;
 		end;
-		
+
 		if (type(player) != "Vector") then
 			for k, v in pairs(player) do
 				if (type(v) == "Player") then
 					recipients[#recipients + 1] = v;
-					
+
 					bShouldSend = true;
 				elseif (type(k) == "Player") then
 					recipients[#recipients + 1] = k;
-				
+
 					bShouldSend = true;
 				end;
 			end;
@@ -97,34 +97,34 @@ if (SERVER) then
 			end;
 		end;
 	end;
-	
+
 	net.Receive("NetStreamDS", function(length, player)
 		local NS_DS_NAME = net.ReadString();
 		local NS_DS_LENGTH = net.ReadUInt(32);
 		local NS_DS_DATA = net.ReadData(NS_DS_LENGTH);
-		
+
 		if (NS_DS_NAME and NS_DS_DATA and NS_DS_LENGTH) then
 			player.nsDataStreamName = NS_DS_NAME;
 			player.nsDataStreamData = "";
-			
+
 			if (player.nsDataStreamName and player.nsDataStreamData) then
 				player.nsDataStreamData = NS_DS_DATA;
-								
+
 				if (netstream.stored[player.nsDataStreamName]) then
 					local bStatus, value = pcall(pon.decode, player.nsDataStreamData);
-					
+
 					if (bStatus) then
 						netstream.stored[player.nsDataStreamName](player, unpack(value));
 					else
 						ErrorNoHalt("NetStream: '"..NS_DS_NAME.."'\n"..value.."\n");
 					end;
 				end;
-				
+
 				player.nsDataStreamName = nil;
 				player.nsDataStreamData = nil;
 			end;
 		end;
-		
+
 		NS_DS_NAME, NS_DS_DATA, NS_DS_LENGTH = nil, nil, nil;
 	end);
 else
@@ -132,7 +132,7 @@ else
 	function netstream.Start(name, ...)
 		local dataTable = {...};
 		local encodedData = pon.encode(dataTable);
-		
+
 		if (encodedData and #encodedData > 0) then
 			net.Start("NetStreamDS");
 				net.WriteString(name);
@@ -141,12 +141,12 @@ else
 			net.SendToServer();
 		end;
 	end;
-	
+
 	net.Receive("NetStreamDS", function(length)
 		local NS_DS_NAME = net.ReadString();
 		local NS_DS_LENGTH = net.ReadUInt(32);
 		local NS_DS_DATA = net.ReadData(NS_DS_LENGTH);
-		
+
 		if (NS_DS_NAME and NS_DS_DATA and NS_DS_LENGTH) then
 			if (netstream.stored[NS_DS_NAME]) then
 				local bStatus, value = pcall(pon.decode, NS_DS_DATA);
@@ -158,7 +158,7 @@ else
 				end;
 			end;
 		end;
-		
+
 		NS_DS_NAME, NS_DS_DATA, NS_DS_LENGTH = nil, nil, nil;
 	end);
 end;

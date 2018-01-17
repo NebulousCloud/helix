@@ -21,18 +21,18 @@
 	FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 	ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 	DEALINGS IN THE SOFTWARE.
-	
+
 	TL;DR: https://tldrlegal.com/license/mit-license
-	OK - 
+	OK -
 			Commercial Use
 			Modify
 			Distribute
 			Sublicense
 			Private Use
-	
+
 	NOT OK -
 			Hold Liable
-	
+
 	MUST -
 			Include Copyright
 			Include License
@@ -58,7 +58,7 @@ function ikon:init()
 		hook.Add("HUDPaint", "ikon_dev2", ikon.showResult)
 	else
 		hook.Remove("HUDPaint", "ikon_dev2")
-	end	
+	end
 
 	--[[
 		Being good at gmod is knowing all of stinky hacks
@@ -102,7 +102,7 @@ local TEXTURE_FLAGS_CLAMP_T = 0x0008
 ikon.max = ikon.maxSize * 64
 ikon.RT = GetRenderTargetEx("nsIconRendered",
 												ikon.max,
-												ikon.max, 
+												ikon.max,
 												RT_SIZE_NO_CHANGE,
 												MATERIAL_RT_DEPTH_SHARED,
 												bit.bor(TEXTURE_FLAGS_CLAMP_S, TEXTURE_FLAGS_CLAMP_T),
@@ -134,10 +134,10 @@ function ikon:renderHook()
 
 	local w, h = ikon.curWidth * 64, ikon.curHeight * 64
 	local x, y = 0, 0
-	
+
 	local tab
 	if (ikon.info) then
-		tab = 
+		tab =
 		{
 			origin = ikon.info.pos,
 			angles = ikon.info.ang,
@@ -174,7 +174,7 @@ function ikon:renderHook()
 					render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
 					render.SetStencilFailOperation(STENCILOPERATION_REPLACE)
 				end
-				
+
 				--[[
 					Add more effects on the Models!
 				]]--
@@ -182,9 +182,9 @@ function ikon:renderHook()
 					ikon.info.drawHook(ikon.renderEntity)
 				end
 
-				cam.Start3D(tab.origin, tab.angles, tab.fov, 0, 0, w, h) 
+				cam.Start3D(tab.origin, tab.angles, tab.fov, 0, 0, w, h)
 					render.SetBlend(1)
-					ikon.renderEntity:DrawModel()	
+					ikon.renderEntity:DrawModel()
 				cam.End3D()
 
 				if (tab.outline) then
@@ -194,7 +194,7 @@ function ikon:renderHook()
 					cam.Start2D()
 						cam.Start3D(tab.origin, tab.angles, tab.fov, 0, 0, w, h)
 								render.SetBlend(0)
-								ikon.renderEntity:DrawModel()	
+								ikon.renderEntity:DrawModel()
 
 								render.SetStencilWriteMask(138) -- could you please?
 								render.SetStencilTestMask(1)
@@ -209,10 +209,10 @@ function ikon:renderHook()
 						cam.End3D()
 					cam.End2D()
 					render.PopRenderTarget()
-					
+
 					render.SetBlend(1)
 					render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_NOTEQUAL)
-					
+
 					--[[
 						Thanks for Noiwex
 						NxServ.eu
@@ -227,7 +227,7 @@ function ikon:renderHook()
 
 					render.SetStencilEnable(false)
 				end
-				
+
 				render.SuppressEngineLighting( false )
 				render.SetWriteDepthToDestAlpha( true )
 		end, function(rrer) print(rrer) end)
@@ -270,7 +270,7 @@ function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
 
 	local w, h = ikon.curWidth * 64, ikon.curHeight * 64
 	local sw, sh = ScrW(), ScrH()
-	
+
 	if (ikon.renderModel) then
 		if (!IsValid(ikon.renderEntity)) then
 			ikon.renderEntity = ClientsideModel(ikon.renderModel, RENDERGROUP_BOTH)
@@ -281,7 +281,7 @@ function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
 	ikon.renderEntity:SetModel(ikon.renderModel)
 	local oldRT = render.GetRenderTarget()
 	render.PushRenderTarget(ikon.RT)
-	
+
 	ikon.rendering = true
 		ikon:renderHook()
 	ikon.rendering = nil
@@ -330,7 +330,7 @@ function ikon:GetIcon(name)
 
 	if (file.Exists("nsIcon/" .. schemaName .. "/" .. name .. ".png", "DATA")) then
 		ikon.cache[name] = Material("../data/nsIcon/" .. schemaName .. "/".. name ..".png")
-		return ikon.cache[name] -- yeah return cache		
+		return ikon.cache[name] -- yeah return cache
 	else
 		return false -- retryd
 	end

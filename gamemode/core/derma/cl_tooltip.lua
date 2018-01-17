@@ -98,11 +98,11 @@ end
 function PANEL:OpenForPanel( panel )
 	self.TargetPanel = panel
 	self:PositionTooltip()
-	
+
 	if (panel.itemID) then
 		self.iconMode = TOOLTIP_ITEM
 	end
-	
+
 	if (self.iconMode == TOOLTIP_ITEM) then
 		self.markupObject = ix.markup.parse(self:GetText(), itemWidth)
 		self:SetText("")

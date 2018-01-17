@@ -16,7 +16,7 @@ ITEM.functions.View = {
 			local panel = ix.gui["inv"..index]
 			local parent = item.invID and ix.gui["inv"..item.invID] or nil
 			local inventory = ix.item.inventories[index]
-			
+
 			if (IsValid(panel)) then
 				panel:Remove()
 			end
@@ -143,7 +143,7 @@ function ITEM:OnCanBeTransfered(oldInventory, newInventory)
 			end
 		end
 	end
-	
+
 	return !newInventory or newInventory:GetID() != oldInventory:GetID() or newInventory.vars.isBag
 end
 

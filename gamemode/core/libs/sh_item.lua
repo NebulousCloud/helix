@@ -58,7 +58,7 @@ function ix.item.Instance(index, uniqueID, itemData, x, y, callback)
 				local item = ix.item.New(uniqueID, lastID)
 
 				if (item) then
-					item.data = itemData or {}				
+					item.data = itemData or {}
 					item.invID = index
 
 					if (callback) then
@@ -78,11 +78,11 @@ end
 
 function ix.item.RegisterInv(invType, w, h, isBag)
 	ix.item.inventoryTypes[invType] = {w = w, h = h}
-	
+
 	if (isBag) then
 		ix.item.inventoryTypes[invType].isBag = invType
 	end
-	
+
 	return ix.item.inventoryTypes[invType]
 end
 
@@ -94,7 +94,7 @@ function ix.item.NewInv(owner, invType, callback)
 		query:Insert("character_id", owner)
 		query:Callback(function(result, status, lastID)
 			local inventory = ix.item.CreateInv(invData.w, invData.h, lastID)
-			
+
 			if (invType) then
 				inventory.vars.isBag = invType
 			end
@@ -272,7 +272,7 @@ function ix.item.LoadFromDir(directory)
 		if (v == "base") then
 			continue
 		end
-		
+
 		for k2, v2 in ipairs(file.Find(directory.."/"..v.."/*.lua", "LUA")) do
 			ix.item.Load(directory.."/"..v .. "/".. v2, "base_"..v)
 		end
@@ -309,7 +309,7 @@ do
 	function ix.item.CreateInv(w, h, id)
 		local inventory = setmetatable({w = w, h = h, id = id, slots = {}, vars = {}}, ix.meta.inventory)
 			ix.item.inventories[id] = inventory
-			
+
 		return inventory
 	end
 
@@ -317,7 +317,7 @@ do
 		if (type(invID) != "number" or invID < 0) then
 			error("Attempt to restore inventory with an invalid ID!")
 		end
-		
+
 		local inventory = ix.item.CreateInv(w, h, invID)
 
 		local query = mysql:Select("ix_items")
@@ -352,7 +352,7 @@ do
 									item2.gridX = x
 									item2.gridY = y
 									item2.invID = invID
-									
+
 									for x2 = 0, item2.width - 1 do
 										for y2 = 0, item2.height - 1 do
 											slots[x + x2] = slots[x + x2] or {}
@@ -373,7 +373,7 @@ do
 							end
 						end
 					end
-					
+
 					inventory.slots = slots
 
 					if (table.Count(badItems) > 0) then
@@ -419,7 +419,7 @@ do
 				inventory.vars = vars
 
 				local x, y
-				
+
 				for k, v in ipairs(slots) do
 					x, y = v[1], v[2]
 
@@ -506,14 +506,14 @@ do
 								item.GetName and item:GetName() or L(item.name), item:GetDescription() or "")
 							)
 							icon.itemID = item.id
-							
+
 							panel.panels[item.id] = icon
 						end
 					end
 				end
 			end
 		end)
-		
+
 		netstream.Hook("invMv", function(invID, itemID, x, y)
 			local inventory = ix.item.inventories[invID]
 			local panel = ix.gui["inv"..invID]
@@ -556,7 +556,7 @@ do
 						end
 					end
 				end
-			end			
+			end
 		end)
 	else
 		function ix.item.LoadItemByID(itemIndex, recipientFilter)
@@ -645,14 +645,14 @@ do
 
 					return
 				end
-				
+
 				local entity = item.entity
 				local result
-				
+
 				if (item.hooks[action]) then
 					result = item.hooks[action](item, data)
 				end
-				
+
 				if (result == nil) then
 					result = callback.OnRun(item, data)
 				end

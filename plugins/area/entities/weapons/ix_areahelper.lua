@@ -16,15 +16,15 @@ SWEP.ViewModel = "models/weapons/v_pistol.mdl"
 SWEP.WorldModel = "models/weapons/w_pistol.mdl"
 
 SWEP.Primary.Delay			= 1
-SWEP.Primary.Recoil			= 0	
+SWEP.Primary.Recoil			= 0
 SWEP.Primary.Damage			= 0
 SWEP.Primary.NumShots		= 0
-SWEP.Primary.Cone			= 0 	
-SWEP.Primary.ClipSize		= -1	
-SWEP.Primary.DefaultClip	= -1	
-SWEP.Primary.Automatic   	= false	
+SWEP.Primary.Cone			= 0
+SWEP.Primary.ClipSize		= -1
+SWEP.Primary.DefaultClip	= -1
+SWEP.Primary.Automatic   	= false
 SWEP.Primary.Ammo         	= "none"
- 
+
 SWEP.Secondary.Delay		= 0.9
 SWEP.Secondary.Recoil		= 0
 SWEP.Secondary.Damage		= 0
@@ -38,7 +38,7 @@ SWEP.Secondary.Ammo         = "none"
 function SWEP:Initialize()
 	self:SetWeaponHoldType("knife")
 end
-	
+
 function SWEP:Deploy()
 	return true
 end
@@ -77,7 +77,7 @@ if CLIENT then
 		end
 	end
 
-	function SWEP:openAreaManager()		
+	function SWEP:openAreaManager()
 	end
 
 	function SWEP:Reload()
@@ -87,15 +87,15 @@ if CLIENT then
 				self.ohWow = false
 				netstream.Start("areaAdd", text, areaPoint.startVector, areaPoint.endVector)
 			end, function()
-				self.ohWow = false 
+				self.ohWow = false
 			end)
 		end
 	end
-	
+
 	function SWEP:SecondaryAttack()
 		if (IsFirstTimePredicted()) then
 			areaPoint = {}
-			
+
 			if (!self.rSnd) then
 				surface.PlaySound("buttons/button2.wav")
 				self.rSnd = true
@@ -144,7 +144,7 @@ if CLIENT then
 
 	hook.Add("PostDrawOpaqueRenderables", "helperDraw", function()
 		if (areaPoint) then
-			local sPos, ePos 
+			local sPos, ePos
 			if (areaPoint.startVector and areaPoint.endVector) then
 				sPos = areaPoint.startVector
 				ePos = areaPoint.endVector

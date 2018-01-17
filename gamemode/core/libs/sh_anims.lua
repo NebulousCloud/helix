@@ -326,7 +326,7 @@ function ix.anim.SetModelClass(model, class)
 	if (!ix.anim[class]) then
 		error("'"..tostring(class).."' is not a valid animation class!")
 	end
-	
+
 	translations[model:lower()] = class
 end
 
@@ -347,7 +347,7 @@ function ix.anim.GetModelClass(model)
 	if (class == "citizen_male" and (stringFind(model, "female") or stringFind(model, "alyx") or stringFind(model, "mossman"))) then
 		class = "citizen_female"
 	end
-	
+
 	return class
 end
 

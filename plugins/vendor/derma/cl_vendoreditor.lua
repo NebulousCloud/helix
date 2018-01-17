@@ -17,7 +17,7 @@ local PANEL = {}
 			end
 		end
 
-		self.description = self:Add("DTextEntry")
+	self.description = self:Add("DTextEntry")
 		self.description:Dock(TOP)
 		self.description:DockMargin(0, 4, 0, 0)
 		self.description:SetText(entity:GetNetVar("desc", ""))
@@ -124,7 +124,7 @@ local PANEL = {}
 		self.items = self:Add("DListView")
 		self.items:Dock(FILL)
 		self.items:DockMargin(0, 4, 0, 0)
-		self.items:AddColumn(L"name").Header:SetTextColor(color_black)	
+		self.items:AddColumn(L"name").Header:SetTextColor(color_black)
 		self.items:AddColumn(L"mode").Header:SetTextColor(color_black)
 		self.items:AddColumn(L"price").Header:SetTextColor(color_black)
 		self.items:AddColumn(L"stock").Header:SetTextColor(color_black)
@@ -198,7 +198,7 @@ local PANEL = {}
 				stock:AddOption(L"vendorEditCurStock", function()
 					Derma_StringRequest(itemTable.GetName and itemTable:GetName() or L(itemTable.name), L"vendorStockCurReq", entity:GetStock(uniqueID) or 0, function(text)
 						self:updateVendor("stock", {uniqueID, text})
-					end)					
+					end)
 				end):SetImage("icon16/table_edit.png")
 			menu:Open()
 		end

@@ -157,7 +157,7 @@ ix.command.Add("PanelAdd", {
 		local angles = trace.HitNormal:Angle()
 		angles:RotateAroundAxis(angles:Up(), 90)
 		angles:RotateAroundAxis(angles:Forward(), 90)
-		
+
 		-- Add the panel.
 		PLUGIN:AddPanel(position + angles:Up() * 0.1, angles, url, width, height, scale)
 		return "@panelAdded"

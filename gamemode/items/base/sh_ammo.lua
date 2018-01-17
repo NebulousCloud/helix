@@ -25,7 +25,7 @@ ITEM.functions.use = { -- sorry, for name order.
 	OnRun = function(item)
 		item.player:GiveAmmo(item.ammoAmount, item.ammo)
 		item.player:EmitSound("items/ammo_pickup.wav", 110)
-		
+
 		return true
 	end,
 }

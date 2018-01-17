@@ -17,7 +17,7 @@ if (SERVER) then
 
 			if (itemTable and hook.Run("CanPlayerUseBusiness", client, k) != false) then
 				local amount = math.Clamp(tonumber(v) or 0, 0, 10)
-				
+
 				if (amount == 0) then
 					items[k] = nil
 				else
@@ -77,7 +77,7 @@ if (SERVER) then
 						return client:NotifyLocalized("noFit")
 					end
 				end
-					
+
 				hook.Run("OnTakeShipmentItem", client, uniqueID, amount)
 
 				entity.items[uniqueID] = entity.items[uniqueID] - 1

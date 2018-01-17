@@ -13,7 +13,7 @@ function ix.lang.LoadFromDir(directory)
 				ix.lang.names[niceName] = NAME
 				NAME = nil
 			end
-			
+
 			ix.lang.stored[niceName] = table.Merge(ix.lang.stored[niceName] or {}, LANGUAGE)
 			LANGUAGE = nil
 		end
@@ -29,7 +29,7 @@ if (SERVER) then
 		local languages = ix.lang.stored
 		local langKey = ClientGetInfo(client, "ix_language")
 		local info = languages[langKey] or languages.english
-		
+
 		return FormatString(info and info[key] or key, ...)
 	end
 
@@ -37,7 +37,7 @@ if (SERVER) then
 		local languages = ix.lang.stored
 		local langKey = ClientGetInfo(client, "ix_language")
 		local info = languages[langKey] or languages.english
-		
+
 		if (info and info[key]) then
 			return FormatString(info[key], ...)
 		end
@@ -49,7 +49,7 @@ else
 		local languages = ix.lang.stored
 		local langKey = IX_CVAR_LANG:GetString()
 		local info = languages[langKey] or languages.english
-		
+
 		return FormatString(info and info[key] or key, ...)
 	end
 

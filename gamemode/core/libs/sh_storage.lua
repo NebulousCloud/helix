@@ -72,7 +72,7 @@ if (SERVER) then
 				return self.storageInfo.receivers[client] == true
 			end
 		end
-		
+
 		function inventory:OnAuthorizeTransfer(inventoryClient, oldInventory, item)
 			return IsValid(inventoryClient) and IsValid(self.storageInfo.entity) and self.storageInfo.receivers[inventoryClient] != nil
 		end

@@ -186,7 +186,7 @@ if (CLIENT) then
 			tabs["config"] = function(panel)
 				local scroll = panel:Add("DScrollPanel")
 				scroll:Dock(FILL)
-				
+
 				local properties = scroll:Add("DProperties")
 				properties:SetSize(panel:GetSize())
 

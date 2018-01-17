@@ -54,7 +54,7 @@ function ix.faction.LoadFromDir(directory)
 			end
 
 			team.SetUp(FACTION.index, FACTION.name or "Unknown", FACTION.color or Color(125, 125, 125))
-			
+
 			FACTION.models = FACTION.models or CITIZEN_MODELS
 			FACTION.uniqueID = FACTION.uniqueID or niceName
 

@@ -1,7 +1,7 @@
 if (CLIENT) then
 	local HELP_DEFAULT
 
-	hook.Add("CreateMenuButtons", "ixHelpMenu", function(tabs)		
+	hook.Add("CreateMenuButtons", "ixHelpMenu", function(tabs)
 		HELP_DEFAULT = [[
 			<div id="parent"><div id="child">
 				<center>

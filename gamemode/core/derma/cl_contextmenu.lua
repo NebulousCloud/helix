@@ -14,39 +14,39 @@ function PANEL:Init()
 
 	self.Canvas = vgui.Create( "DCategoryList", self )
 	self.m_bHangOpen = false
-	
+
 	--self.Canvas:EnableVerticalScrollbar( true )
 	--self.Canvas:SetSpacing( 0 )
 	--self.Canvas:SetPadding( 5 )
 	--self.Canvas:SetDrawBackground( false )
-	
+
 end
 
 
 function PANEL:Open()
 
 	self:SetHangOpen( false )
-	
+
 	-- If the spawn menu is open, try to close it..
 	if ( g_SpawnMenu:IsVisible() ) then
 		g_SpawnMenu:Close( true )
 	end
-	
+
 	if ( self:IsVisible() ) then return end
-	
+
 	CloseDermaMenus()
-	
+
 	self:MakePopup()
 	self:SetVisible( true )
 	self:SetKeyboardInputEnabled( false )
 	self:SetMouseInputEnabled( true )
-	
+
 	RestoreCursorPosition()
 
 	local bShouldShow = true;
 
 	-- TODO: Any situation in which we shouldn't show the tool menu on the context menu?
-	
+
 	-- Set up the active panel..
 	if ( bShouldShow and IsValid( spawnmenu.ActiveControlPanel() ) ) then
 
@@ -63,7 +63,7 @@ function PANEL:Open()
 		self.Canvas:SetVisible( false )
 
 	end
-	
+
 	self:InvalidateLayout( true )
 
 end
@@ -75,44 +75,44 @@ function PANEL:Close( bSkipAnim )
 		self:SetHangOpen( false )
 		return
 	end
-	
+
 	RememberCursorPosition()
-	
+
 	CloseDermaMenus()
 
 	self:SetKeyboardInputEnabled( false )
 	self:SetMouseInputEnabled( false )
-	
+
 	self:SetAlpha( 255 )
 	self:SetVisible( false )
 	self:RestoreControlPanel()
-	
+
 end
 
 
 function PANEL:PerformLayout()
-	
+
 	self:SetPos( 0, -32 )
 	self:SetSize( ScrW(), ScrH() )
 
 	self.Canvas:SetWide( 311 )
 	self.Canvas:SetPos( ScrW() - self.Canvas:GetWide() - 50, self.y )
-	
+
 	if ( IsValid( spawnmenu.ActiveControlPanel() ) ) then
-	
+
 		spawnmenu.ActiveControlPanel():InvalidateLayout( true )
-		
+
 		local Tall = spawnmenu.ActiveControlPanel():GetTall() + 10
 		local MaxTall = ScrH() * 0.8
 		if ( Tall > MaxTall ) then Tall = MaxTall end
-		
+
 		self.Canvas:SetTall( Tall )
 		self.Canvas.y = ScrH() - 50 - Tall
-	
+
 	end
-	
+
 	self.Canvas:InvalidateLayout( true )
-	
+
 end
 
 
@@ -120,7 +120,7 @@ function PANEL:StartKeyFocus( pPanel )
 
 	self:SetKeyboardInputEnabled( true )
 	self:SetHangOpen( true )
-	
+
 end
 
 
@@ -136,10 +136,10 @@ function PANEL:RestoreControlPanel()
 	-- Restore the active panel
 	if ( !spawnmenu.ActiveControlPanel() ) then return end
 	if ( !self.OldParent ) then return end
-	
+
 	spawnmenu.ActiveControlPanel():SetParent( self.OldParent )
 	spawnmenu.ActiveControlPanel():SetPos( self.OldPosX, self.OldPosY )
-	
+
 	self.OldParent = nil
 
 end
@@ -161,7 +161,7 @@ function CreateContextMenu()
 
 	g_ContextMenu = vgui.Create( "ContextMenu" )
 	g_ContextMenu:SetVisible( false )
-	
+
 	--
 	-- We're blocking clicks to the world - but we don't want to
 	-- so feed clicks to the proper functions..
@@ -172,7 +172,7 @@ function CreateContextMenu()
 	g_ContextMenu.OnMouseReleased = function( p, code )
 		hook.Run( "GUIMouseReleased", code, gui.ScreenToVector( gui.MousePos() ) )
 	end
-	
+
 	hook.Run( "ContextMenuCreated", g_ContextMenu )
 
 
@@ -186,7 +186,7 @@ function CreateContextMenu()
 	IconLayout:SetLayoutDir( LEFT )
 
 	for k, v in pairs( list.Get( "DesktopWindows" ) ) do
-		
+
 		local icon = IconLayout:Add( "DButton" )
 		icon:SetText( "" )
 		icon:SetSize( 80, 82 )
@@ -235,7 +235,7 @@ function GM:OnContextMenuOpen()
 
 	-- Let the gamemode decide whether we should open or not..
 	if ( !hook.Call( "ContextMenuOpen", GAMEMODE ) ) then return end
-		
+
 	if ( IsValid( g_ContextMenu ) and !g_ContextMenu:IsVisible() ) then
 		g_ContextMenu:Open()
 
@@ -243,7 +243,7 @@ function GM:OnContextMenuOpen()
 
 		menubar.ParentTo( g_ContextMenu )
 	end
-	
+
 end
 
 
@@ -265,7 +265,7 @@ DMenuBar.AddMenu = function( self, label )
 		m:SetDrawColumn( true )
 		m:Hide()
 	self.Menus[ label ] = m
-	
+
 	local b = self:Add( "DButton" )
 	b:SetText( label )
 	b:Dock( LEFT )
@@ -274,25 +274,25 @@ DMenuBar.AddMenu = function( self, label )
 	b:SetIsMenu( true )
 	b:SetDrawBackground( false )
 	b:SizeToContentsX( 16 )
-	b.DoClick = function() 
-	
+	b.DoClick = function()
+
 		if ( m:IsVisible() ) then
-			m:Hide() 
-			return 
+			m:Hide()
+			return
 		end
-	
+
 		local x, y = b:LocalToScreen( 0, 0 )
 		m:Open( x, y + b:GetTall(), false, b )
-		
+
 	end
-	
+
 	b.OnCursorEntered = function()
 		local opened = self:GetOpenMenu()
 		if ( !IsValid( opened ) or opened == m ) then return end
 		opened:Hide()
 		b:DoClick()
 	end
-	
+
 	return m
 
 end

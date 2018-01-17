@@ -46,7 +46,7 @@ local PANEL = {}
 						self.cover:MoveTo(self.name:GetWide(), 0, 7.5, 5, nil, function()
 							self.glow = true
 							self.delta = 0
-				
+
 							self.schema:AlphaTo(255, 5, 1)
 						end)
 					end)

@@ -77,7 +77,7 @@ local PANEL = {}
 			</html>
 		]])
 		self.icon:SetToolTip(ix.config.Get("logoURL", "https://nutscript.net"))
-	
+
 		self.icon.click = self.icon:Add("DButton")
 		self.icon.click:Dock(FILL)
 		self.icon.click.DoClick = function(this)
@@ -196,7 +196,7 @@ local PANEL = {}
 										self.creation:SetUp(v.index)
 										self.creation:AlphaTo(255, 0.5, 0)
 										self.fadePanels[#self.fadePanels + 1] = self.creation
-	
+
 										self.finish = self:Add("ixMenuButton")
 										self.finish:SetPos(ScrW() * 0.3 - 32, ScrH() * 0.3 + 16)
 										self.finish:SetText("finish")
@@ -252,11 +252,11 @@ local PANEL = {}
 															end)
 														end
 													end
-	
+
 													self.fadePanels = {}
-													ClearAllButtons(CreateMainButtons)												
+													ClearAllButtons(CreateMainButtons)
 												end)
-	
+
 												timer.Create("ixCharTimeout", 20, 1, function()
 													if (IsValid(self.creation) and self.creation.creating) then
 														self.creation.notice:SetType(1)
@@ -265,13 +265,13 @@ local PANEL = {}
 														self.finish:AlphaTo(255, 0.5, 0)
 													end
 												end)
-	
+
 												netstream.Start("charCreate", payload)
 											end
 										end
-	
+
 										self.fadePanels[#self.fadePanels + 1] = self.finish
-										
+
 										fadedIn = true
 									end
 								end)
@@ -403,7 +403,7 @@ local PANEL = {}
 										self.model.Entity:SetBodygroup(k, v)
 									end
 								end
-								
+
 								id = character:GetID()
 							end
 						end
@@ -509,13 +509,13 @@ local PANEL = {}
 
 		CreateMainButtons()
 	end
-	
+
 	function PANEL:Think()
 		if (input.IsKeyDown(KEY_F1) and LocalPlayer():GetChar() and !self.choosing) then
 			self:Remove()
 		end
 	end
-	
+
 	function PANEL:PlayMusic()
 		if (ix.menuMusic) then
 			ix.menuMusic:Stop()

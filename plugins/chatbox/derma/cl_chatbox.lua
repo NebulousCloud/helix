@@ -211,7 +211,7 @@ local PANEL = {}
 						self.autocompleteIndex = (self.autocompleteIndex + 1) > #self.potentialCommands and 1 or (self.autocompleteIndex + 1)
 
 						local command = self.potentialCommands[self.autocompleteIndex]
-						
+
 						if (command) then
 							local text = string.format("/%s ", command.uniqueID)
 

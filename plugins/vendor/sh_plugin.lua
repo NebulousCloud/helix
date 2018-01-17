@@ -261,7 +261,7 @@ if (SERVER) then
 			if (isSellingToVendor) then
 				local found = false
 				local name
-				
+
 				if (!entity:HasMoney(price)) then
 					return client:NotifyLocalized("vendorNoMoney")
 				end
@@ -280,7 +280,7 @@ if (SERVER) then
 				if (!found) then
 					return
 				end
-				
+
 				if (!invOkay) then
 					client:GetChar():GetInv():Sync(client, true)
 					return client:NotifyLocalized("tellAdmin", "trd!iid")
@@ -305,10 +305,10 @@ if (SERVER) then
 				end
 
 				local name = L(ix.item.list[uniqueID].name, client)
-			
+
 				client:GetChar():TakeMoney(price)
 				client:NotifyLocalized("businessPurchase", name, ix.currency.Get(price))
-				
+
 				entity:GiveMoney(price)
 
 				if (!client:GetChar():GetInv():Add(uniqueID)) then

@@ -2,8 +2,8 @@
 local PANEL = {}
     function PANEL:Init()
         self:SetTall(64)
-        
-        local function AssignClick(panel)   
+
+        local function AssignClick(panel)
             panel.OnMousePressed = function()
                 self.pressing = -1
                 self:OnClick()
@@ -40,7 +40,7 @@ local PANEL = {}
             end
             ]]--
         end
-        AssignClick(self.icon) 
+        AssignClick(self.icon)
 
         self.limit = self:Add("DLabel")
         self.limit:Dock(RIGHT)
@@ -50,7 +50,7 @@ local PANEL = {}
         self.limit:SetContentAlignment(5)
         self.limit:SetFont("ixMediumFont")
         self.limit:SetWide(64)
-        AssignClick(self.limit) 
+        AssignClick(self.limit)
 
         self.label = self:Add("DLabel")
         self.label:Dock(FILL)
@@ -59,7 +59,7 @@ local PANEL = {}
         self.label:SetExpensiveShadow(1, Color(0, 0, 60))
         self.label:SetContentAlignment(5)
         self.label:SetFont("ixMediumFont")
-        AssignClick(self.label) 
+        AssignClick(self.label)
     end
 
     function PANEL:OnClick()
@@ -95,8 +95,8 @@ local PANEL = {}
             self.icon:SetModel(model)
         end
 
-        self.label:SetText(L(data.name))   
-        self.data = data 
+        self.label:SetText(L(data.name))
+        self.data = data
         self.class = data.index
 
         self:SetNumber(#ix.class.GetPlayers(data.index))
@@ -121,7 +121,7 @@ PANEL = {}
 
     function PANEL:LoadClasses()
         self.list:Clear()
-        
+
         for k, v in ipairs(ix.class.list) do
             local no, why = ix.class.CanBe(LocalPlayer(), k)
             local itsFull = ("class is full" == why)
@@ -141,7 +141,7 @@ hook.Add("CreateMenuButtons", "ixClasses", function(tabs)
     local cnt = table.Count(ix.class.list)
 
     if (cnt <= 1) then return end
-    
+
     for k, v in ipairs(ix.class.list) do
         if (!ix.class.CanBe(LocalPlayer(), k)) then
             continue

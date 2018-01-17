@@ -30,7 +30,7 @@ if (SERVER) then
 
 		if (data) then
 			if (hook.Run("CanPlayerSpawnContainer", client, model, entity) == false) then return end
-			
+
 			local container = ents.Create("ix_container")
 			container:SetPos(entity:GetPos())
 			container:SetAngles(entity:GetAngles())
@@ -101,15 +101,15 @@ if (SERVER) then
 					entity:SetModel(v[4])
 					entity:SetSolid(SOLID_VPHYSICS)
 					entity:PhysicsInit(SOLID_VPHYSICS)
-					
+
 					if (v[5]) then
 						entity.password = v[5]
 						entity:SetNetVar("locked", true)
 					end
-					
+
 					ix.item.RestoreInv(v[3], data2.width, data2.height, function(inventory)
 						inventory.vars.isContainer = true
-						
+
 						if (IsValid(entity)) then
 							entity:SetInventory(inventory)
 						end

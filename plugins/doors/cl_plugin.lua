@@ -35,7 +35,7 @@ function PLUGIN:DrawEntityInfo(entity, alpha)
 		local classData
 		if (class) then
 			classData = ix.class.list[class]
-			
+
 			if (classData and classData.color) then
 				color = classData.color
 			else

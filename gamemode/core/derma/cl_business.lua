@@ -66,7 +66,7 @@ function PANEL:SetItem(itemTable)
 			cam_ang = iconCam.ang,
 		}
 		renderdIcons[itemTable.uniqueID] = true
-		
+
 		self.icon:RebuildSpawnIconEx(
 			iconCam
 		)
@@ -171,7 +171,7 @@ function PANEL:Init()
 			if (self.selected != this) then
 				self.selected = this
 				self:LoadItems(realName)
-				timer.Simple(0.01, function() 
+				timer.Simple(0.01, function()
 					self.scroll:InvalidateLayout()
 				end)
 			end

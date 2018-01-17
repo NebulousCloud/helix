@@ -27,7 +27,7 @@ function PLUGIN:CallOnDoorChildren(entity, callback)
 
 	if (IsValid(parent)) then
 		callback(parent)
-		
+
 		for k, v in pairs(parent.ixChildren) do
 			local child = ents.GetMapCreatedEntity(k)
 
@@ -143,7 +143,7 @@ function PLUGIN:SaveDoorData()
 			end
 		end
 	-- Save all of the door information.
-	self:SetData(data)	
+	self:SetData(data)
 end
 
 function PLUGIN:CanPlayerUseDoor(client, entity)
@@ -219,7 +219,7 @@ function PLUGIN:PlayerDisconnected(client)
 		if (v == client) then
 			return
 		end
-		
+
 		if (v.IsDoor and v:IsDoor() and v:GetDTEntity(0) == client) then
 			v:RemoveDoorAccessData()
 		end

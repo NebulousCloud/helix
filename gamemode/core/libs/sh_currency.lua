@@ -58,7 +58,7 @@ do
 
 	function character:HasMoney(amount)
 		if (amount < 0) then
-			print("Negative Money Check Received.")	
+			print("Negative Money Check Received.")
 		end
 
 		return self:GetMoney() >= amount
@@ -68,7 +68,7 @@ do
 		if (!noLog) then
 			ix.log.Add(self:GetPlayer(), "money", amount)
 		end
-		
+
 		self:SetMoney(self:GetMoney() + amount)
 
 		return true

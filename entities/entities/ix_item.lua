@@ -22,7 +22,7 @@ if (SERVER) then
 			physObj:EnableMotion(true)
 			physObj:Wake()
 		end
-		
+
 		hook.Run("OnItemSpawned", self)
 	end
 
@@ -37,7 +37,7 @@ if (SERVER) then
 	function ENT:SetHealth(amount)
 		self.health = amount
 	end
-	
+
 	function ENT:OnTakeDamage(dmginfo)
 		local damage = dmginfo:GetDamage()
 		self:SetHealth(self.health - damage)
@@ -120,10 +120,10 @@ if (SERVER) then
 			end
 		end
 	end
-	
+
 	function ENT:Think()
 		local itemTable = self:GetItemTable()
-				
+
 		if (itemTable.Think) then
 			itemTable:Think(self)
 		end
@@ -152,7 +152,7 @@ else
 				self.description = description
 				self.markup = ix.markup.parse("<font=ixItemDescFont>" .. description .. "</font>", ScrW() * 0.7)
 			end
-			
+
 			ix.util.DrawText(itemTable.GetName and itemTable:GetName() or L(itemTable.name), x, y, colorAlpha(ix.config.Get("color"), alpha), 1, 1, nil, alpha * 0.65)
 
 			y = y + 12
@@ -164,7 +164,7 @@ else
 
 			itemTable.entity = nil
 			itemTable.data = oldData
-		end		
+		end
 	end
 
 	function ENT:DrawTranslucent()

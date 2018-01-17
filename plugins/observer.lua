@@ -13,7 +13,7 @@ if (CLIENT) then
 
 	function PLUGIN:HUDPaint()
 		client = LocalPlayer()
-		
+
 		if (client:IsAdmin() and client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle() and IX_CVAR_ADMINESP:GetBool()) then
 			scrW, scrH = ScrW(), ScrH()
 
@@ -42,7 +42,7 @@ if (CLIENT) then
 				local barWidth = math.Clamp((v:Health() / v:GetMaxHealth()) * textWidth, 0, textWidth)
 
 				surface.DrawRect(x - size / 2, y - size / 2, size, size)
-				
+
 
 				-- we can assume that if we're using cheap blur, we'd want to save some fps here
 				if ((IX_CVAR_CHEAP and !IX_CVAR_CHEAP:GetBool())) then
@@ -81,7 +81,7 @@ if (CLIENT) then
 					RunConsoleCommand("ix_obsesp", "0")
 				end
 			end, IX_CVAR_ADMINESP:GetBool())
-		
+
 			local buttonTP = menu:AddCheck(L"toggleObserverTP", function(panel, state)
 				if (state) then
 					RunConsoleCommand("ix_obstpback", "1")

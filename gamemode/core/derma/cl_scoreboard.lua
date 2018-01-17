@@ -1,6 +1,6 @@
 local PANEL = {}
 	local paintFunctions = {}
-	
+
 	paintFunctions[0] = function(this, w, h)
 		surface.SetDrawColor(0, 0, 0, 50)
 		surface.DrawRect(0, 0, w, h)
@@ -220,7 +220,7 @@ local PANEL = {}
 			if (self.lastModel != model or self.lastSkin != skin) then
 				self.model:SetModel(client:GetModel(), client:GetSkin())
 				self.model:SetToolTip(L("sbOptions", client:SteamName()))
-				
+
 				self.lastModel = model
 				self.lastSkin = skin
 			end

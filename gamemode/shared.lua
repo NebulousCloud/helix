@@ -107,7 +107,7 @@ ix.util.Include("core/sh_commands.lua")
 
 if (SERVER and game.IsDedicated()) then
 	concommand.Remove("gm_save")
-	
+
 	concommand.Add("gm_save", function(client, command, arguments)
 		client:ChatPrint("You are not allowed to do that, administrators have been notified.")
 

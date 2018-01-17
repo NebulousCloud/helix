@@ -73,7 +73,7 @@ function ITEM:Equip(client)
 	for k, v in pairs(items) do
 		if (v.id != self.id) then
 			local itemTable = ix.item.instances[v.id]
-			
+
 			if (!itemTable) then
 				client:NotifyLocalized("tellAdmin", "wid!xt")
 
@@ -87,7 +87,7 @@ function ITEM:Equip(client)
 			end
 		end
 	end
-	
+
 	if (client:HasWeapon(self.class)) then
 		client:StripWeapon(self.class)
 	end
@@ -132,7 +132,7 @@ function ITEM:Unequip(client, bPlaySound, bRemoveItem)
 	local weapon = client.carryWeapons[self.weaponCategory]
 
 	if (!IsValid(weapon)) then
-		weapon = client:GetWeapon(self.class)	
+		weapon = client:GetWeapon(self.class)
 	end
 
 	if (IsValid(weapon)) then

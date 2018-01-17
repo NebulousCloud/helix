@@ -11,7 +11,7 @@ if (SERVER) then
 		self:SetSolid(SOLID_VPHYSICS)
 		self:SetUseType(SIMPLE_USE)
 		self.receivers = {}
-		
+
 		local physObj = self:GetPhysicsObject()
 
 		if (IsValid(physObj)) then
@@ -70,7 +70,7 @@ if (SERVER) then
 
 				if (self:GetNetVar("locked")) then
 					self:EmitSound(def.locksound or "doors/default_locked.wav")
-					
+
 					if (!self.keypad) then
 						netstream.Start(activator, "invLock", self)
 					end

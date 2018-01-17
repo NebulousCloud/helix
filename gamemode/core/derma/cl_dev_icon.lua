@@ -38,7 +38,7 @@ function PANEL:Init()
 	end
 	function self.model:LayoutEntity()
 	end
-	
+
 	self:AdjustSize(ICON_INFO.w, ICON_INFO.h)
 end
 
@@ -72,7 +72,7 @@ function PANEL:Init()
 		surface.SetDrawColor(255, 255, 255)
 		surface.DrawOutlinedRect(0, 0, w, h)
 	end
-	
+
 	self.model.Icon:SetVisible(false)
 	self.model.Paint = function(self, x, y)
 		local exIcon = ikon:GetIcon("iconEditor")
@@ -82,7 +82,7 @@ function PANEL:Init()
 			surface.DrawTexturedRect(0, 0, x, y)
 		end
 	end
-			
+
 
 	self:AdjustSize(ICON_INFO.w, ICON_INFO.h)
 end
@@ -113,7 +113,7 @@ local function action(self)
 		tab.cam_pos = iconModel:GetCamPos()
 		tab.cam_ang = iconModel:GetLookAng()
 		tab.cam_fov = iconModel:GetFOV()
-		
+
 		local text =
 		"ITEM.model = \""..ICON_INFO.modelName:gsub("\\", "/"):lower().."\"" .. "\n"..
 		"ITEM.width = "..ICON_INFO.w .."\n"..
@@ -149,7 +149,7 @@ local function renderAction(self)
 		tab.cam_fov = iconModel:GetFOV()
 
 		icon:SetModel(ent:GetModel())
-		
+
 		ikon:renderIcon(
 			"iconEditor",
 			ICON_INFO.w,
@@ -257,11 +257,11 @@ function PANEL:Init()
 
 	local cfg = self.list:Add("DNumSlider")
 	cfg:Dock(TOP)
-	cfg:SetText("W") 
-	cfg:SetMin(0)				 
-	cfg:SetMax(10)				
-	cfg:SetDecimals(0)	
-	cfg:SetValue(ICON_INFO.w)		 
+	cfg:SetText("W")
+	cfg:SetMin(0)
+	cfg:SetMax(10)
+	cfg:SetDecimals(0)
+	cfg:SetValue(ICON_INFO.w)
 	cfg:DockMargin(10, 0, 0, 5)
 	cfg.OnValueChanged = function(cfg, value)
 		ICON_INFO.w = value
@@ -271,11 +271,11 @@ function PANEL:Init()
 
 	local cfg = self.list:Add("DNumSlider")
 	cfg:Dock(TOP)
-	cfg:SetText("H") 
-	cfg:SetMin(0)				 
-	cfg:SetMax(10)				
-	cfg:SetDecimals(0)	
-	cfg:SetValue(ICON_INFO.h)		 
+	cfg:SetText("H")
+	cfg:SetMin(0)
+	cfg:SetMax(10)
+	cfg:SetDecimals(0)
+	cfg:SetValue(ICON_INFO.h)
 	cfg:DockMargin(10, 0, 0, 5)
 	cfg.OnValueChanged = function(cfg, value)
 		print(self)
@@ -288,13 +288,13 @@ function PANEL:Init()
 
 	self.camFOV = self.list:Add("DNumSlider")
 	self.camFOV:Dock(TOP)
-	self.camFOV:SetText("CAMFOV") 
-	self.camFOV:SetMin(0)				 
-	self.camFOV:SetMax(180)				
-	self.camFOV:SetDecimals(3)	
-	self.camFOV:SetValue(ICON_INFO.FOV)		 
+	self.camFOV:SetText("CAMFOV")
+	self.camFOV:SetMin(0)
+	self.camFOV:SetMax(180)
+	self.camFOV:SetDecimals(3)
+	self.camFOV:SetValue(ICON_INFO.FOV)
 	self.camFOV:DockMargin(10, 0, 0, 5)
-	self.camFOV.OnValueChanged = function(cfg, value)	
+	self.camFOV.OnValueChanged = function(cfg, value)
 		if (!fagLord) then
 			ICON_INFO.FOV = value
 
@@ -311,13 +311,13 @@ function PANEL:Init()
 	for i = 1, 3 do
 		self.camPos[i] = self.list:Add("DNumSlider")
 		self.camPos[i]:Dock(TOP)
-		self.camPos[i]:SetText("CAMPOS_" .. vTxt[i]) 
-		self.camPos[i]:SetMin(-500)				 
-		self.camPos[i]:SetMax(500)				
-		self.camPos[i]:SetDecimals(3)	
-		self.camPos[i]:SetValue(ICON_INFO.camPos[i])		 
+		self.camPos[i]:SetText("CAMPOS_" .. vTxt[i])
+		self.camPos[i]:SetMin(-500)
+		self.camPos[i]:SetMax(500)
+		self.camPos[i]:SetDecimals(3)
+		self.camPos[i]:SetValue(ICON_INFO.camPos[i])
 		self.camPos[i]:DockMargin(10, 0, 0, 5)
-		self.camPos[i].OnValueChanged = function(cfg, value)	
+		self.camPos[i].OnValueChanged = function(cfg, value)
 			if (!fagLord) then
 				ICON_INFO.camPos[i] = value
 			end
@@ -330,13 +330,13 @@ function PANEL:Init()
 	for i = 1, 3 do
 		self.camAng[i] = self.list:Add("DNumSlider")
 		self.camAng[i]:Dock(TOP)
-		self.camAng[i]:SetText("CAMANG_" .. aTxt[i]) 
-		self.camAng[i]:SetMin(-180)				 
-		self.camAng[i]:SetMax(180)				
-		self.camAng[i]:SetDecimals(3)	
-		self.camAng[i]:SetValue(ICON_INFO.camAng[i])		 
+		self.camAng[i]:SetText("CAMANG_" .. aTxt[i])
+		self.camAng[i]:SetMin(-180)
+		self.camAng[i]:SetMax(180)
+		self.camAng[i]:SetDecimals(3)
+		self.camAng[i]:SetValue(ICON_INFO.camAng[i])
 		self.camAng[i]:DockMargin(10, 0, 0, 5)
-		self.camAng[i].OnValueChanged = function(cfg, value)	
+		self.camAng[i].OnValueChanged = function(cfg, value)
 			if (!fagLord) then
 				ICON_INFO.camAng[i] = value
 			end
@@ -344,15 +344,15 @@ function PANEL:Init()
 	end
 
 	local aaoa = self.list:Add("DPanel")
-	aaoa:Dock(TOP)	 
+	aaoa:Dock(TOP)
 	aaoa:DockMargin(10, 0, 0, 5)
 	aaoa:SetHeight(250)
 
 	self.color = aaoa:Add("DCheckBoxLabel")
-	self.color:SetText("Draw Outline?") 		
-	self.color:SetValue(ICON_INFO.outline)		 
+	self.color:SetText("Draw Outline?")
+	self.color:SetValue(ICON_INFO.outline)
 	self.color:DockMargin(10, 5, 0, 5)
-	self.color:Dock(TOP)	 
+	self.color:Dock(TOP)
 	function self.color:OnChange(bool)
 		ICON_INFO.outline = bool
 	end
@@ -374,10 +374,10 @@ end
 
 function PANEL:UpdateShits()
 	fagLord = true
-		self.camFOV:SetValue(ICON_INFO.FOV)		
+		self.camFOV:SetValue(ICON_INFO.FOV)
 		for i = 1, 3 do
-			self.camPos[i]:SetValue(ICON_INFO.camPos[i])	
-			self.camAng[i]:SetValue(ICON_INFO.camAng[i])	
+			self.camPos[i]:SetValue(ICON_INFO.camPos[i])
+			self.camAng[i]:SetValue(ICON_INFO.camAng[i])
 		end
 	fagLord = false
 end
@@ -392,7 +392,7 @@ function PANEL:SetupEditor(update, mode)
 		if (!update) then
 			self.mdl:SetText(ICON_INFO.modelName)
 		end
-		
+
 		if (mode) then
 			if (mode == 1) then
 				self:BestGuessLayout()
@@ -407,7 +407,7 @@ function PANEL:SetupEditor(update, mode)
 			end
 		else
 			self:BestGuessLayout()
-		end	
+		end
 
 		p.model:SetCamPos(ICON_INFO.camPos)
 		p.model:SetFOV(ICON_INFO.FOV)
@@ -420,7 +420,7 @@ function PANEL:BestGuessLayout()
 	local ent = p.model:GetEntity()
 	local pos = ent:GetPos()
 	local tab = PositionSpawnIcon(ent, pos)
-	
+
 	if ( tab ) then
 		ICON_INFO.camPos = tab.origin
 		ICON_INFO.FOV = tab.fov
@@ -433,7 +433,7 @@ function PANEL:FullFrontalLayout()
 	local ent = p.model:GetEntity()
 	local pos = ent:GetPos()
 	local campos = pos + Vector( -200, 0, 0 )
-	
+
 	ICON_INFO.camPos = campos
 	ICON_INFO.FOV = 45
 	ICON_INFO.camAng = (campos * -1):Angle()
@@ -444,7 +444,7 @@ function PANEL:AboveLayout()
 	local ent = p.model:GetEntity()
 	local pos = ent:GetPos()
 	local campos = pos + Vector( 0, 0, 200 )
-	
+
 	ICON_INFO.camPos = campos
 	ICON_INFO.FOV = 45
 	ICON_INFO.camAng = (campos * -1):Angle()
@@ -455,7 +455,7 @@ function PANEL:RightLayout()
 	local ent = p.model:GetEntity()
 	local pos = ent:GetPos()
 	local campos = pos + Vector( 0, 200, 0 )
-	
+
 	ICON_INFO.camPos = campos
 	ICON_INFO.FOV = 45
 	ICON_INFO.camAng = (campos * -1):Angle()
@@ -466,7 +466,7 @@ function PANEL:OriginLayout()
 	local ent = p.model:GetEntity()
 	local pos = ent:GetPos()
 	local campos = pos + Vector( 0, 0, 0 )
-	
+
 	ICON_INFO.camPos = campos
 	ICON_INFO.FOV = 45
 	ICON_INFO.camAng = Angle( 0, -180, 0 )

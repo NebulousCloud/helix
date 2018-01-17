@@ -24,7 +24,7 @@ function GM:PlayerInitialSpawn(client)
 
 		character:Setup()
 		client:Spawn()
-		
+
 		ix.chat.Send(nil, "connect", client:SteamName())
 
 		return
@@ -214,7 +214,7 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 			end
 		end
 
-		lastChar:SetVar("charEnts", nil) 
+		lastChar:SetVar("charEnts", nil)
 	end
 
 	if (character) then
@@ -341,7 +341,7 @@ function GM:PlayerSpawnVehicle(client, model, name, data)
 			return client:GetChar():HasFlags("C")
 		end
 	end
-	
+
 	return false
 end
 
@@ -352,7 +352,7 @@ function GM:PlayerLoadout(client)
 
 		return
 	end
-	
+
 	client:SetWeaponColor(Vector(client:GetInfo("cl_weaponcolor")))
 	client:StripWeapons()
 	client:SetLocalVar("blur", nil)
@@ -367,7 +367,7 @@ function GM:PlayerLoadout(client)
 		client:Give("ix_hands")
 		client:SetWalkSpeed(ix.config.Get("walkSpeed"))
 		client:SetRunSpeed(ix.config.Get("runSpeed"))
-		
+
 		local faction = ix.faction.indices[client:Team()]
 
 		if (faction) then
@@ -476,7 +476,7 @@ function GM:PlayerDeath(client, inflictor, attacker)
 
 		client:EmitSound(deathSound)
 
-		ix.log.Add(client, "playerDeath", attacker:GetName() ~= "" and attacker:GetName() or attacker:GetClass()) 
+		ix.log.Add(client, "playerDeath", attacker:GetName() ~= "" and attacker:GetName() or attacker:GetClass())
 	end
 end
 

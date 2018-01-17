@@ -23,7 +23,7 @@ end
 
 function ITEM:GetDescription()
 	if (!self.description) then return "ERROR" end
-	
+
 	return L(self.description or "noDesc")
 end
 
@@ -211,7 +211,7 @@ function ITEM:Remove()
 		if (IsValid(entity)) then
 			entity:Remove()
 		end
-		
+
 		local receiver = inv.GetReceiver and inv:GetReceiver()
 
 		if (self.invID != 0) then
@@ -228,7 +228,7 @@ function ITEM:Remove()
 			if (item and item.OnRemoved) then
 				item:OnRemoved()
 			end
-			
+
 			local query = mysql:Delete("ix_items")
 				query:Where("item_id", self.id)
 			query:Execute()
@@ -283,13 +283,13 @@ if (SERVER) then
 	end
 
 	-- Transfers an item to a specific inventory.
-	function ITEM:Transfer(invID, x, y, client, noReplication, isLogical)		
+	function ITEM:Transfer(invID, x, y, client, noReplication, isLogical)
 		invID = invID or 0
-		
+
 		if (self.invID == invID) then
 			return false, "same inv"
 		end
-		
+
 		local inventory = ix.item.inventories[invID]
 		local curInv = ix.item.inventories[self.invID or 0]
 
@@ -366,7 +366,7 @@ if (SERVER) then
 				query:Execute()
 
 				if (isLogical != true) then
-					return self:Spawn(client)	
+					return self:Spawn(client)
 				else
 					local inventory = ix.item.inventories[0]
 					inventory[self:GetID()] = self
@@ -375,7 +375,7 @@ if (SERVER) then
 						self:OnTransfered(curInv, inventory)
 					end
 					hook.Run("OnItemTransfered", self, curInv, inventory)
-						
+
 					return true
 				end
 			else

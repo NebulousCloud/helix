@@ -72,7 +72,7 @@ end
 -- Get Player's PAC3 Parts.
 function meta:GetParts()
 	if (!pac) then return end
-	
+
 	return self:GetNetVar("parts", {})
 end
 
@@ -81,7 +81,7 @@ if (SERVER) then
 		if (!pac) then
 			ErrorNoHalt("NO PAC3!\n")
 		return end
-		
+
 		local curParts = self:GetParts()
 
 		-- wear the parts.
@@ -90,10 +90,10 @@ if (SERVER) then
 
 		self:SetNetVar("parts", curParts)
 	end
-	
+
 	function meta:RemovePart(uid)
 		if (!pac) then return end
-		
+
 		local curParts = self:GetParts()
 
 		-- remove the parts.
@@ -105,7 +105,7 @@ if (SERVER) then
 
 	function meta:ResetParts()
 		if (!pac) then return end
-		
+
 		netstream.Start(player.GetAll(), "partReset", self, self:GetParts())
 		self:SetNetVar("parts", {})
 	end
@@ -151,11 +151,11 @@ else
 
 	netstream.Hook("partWear", function(wearer, outfitID)
 		if (!pac) then return end
-		
+
 		if (!wearer.pac_owner) then
 			pac.SetupENT(wearer)
 		end
-		
+
 		local itemTable = ix.item.list[outfitID]
 		local newPac = ix.pac.list[outfitID]
 
@@ -183,7 +183,7 @@ else
 
 	netstream.Hook("partRemove", function(wearer, outfitID)
 		if (!pac) then return end
-		
+
 		if (!wearer.pac_owner) then
 			pac.SetupENT(wearer)
 		end
@@ -205,7 +205,7 @@ else
 
 	function PLUGIN:DrawPlayerRagdoll(entity)
 		local ply = entity.objCache
-		
+
 		if (IsValid(ply)) then
 			if (!entity.overridePAC3) then
 				if ply.pac_parts then
@@ -218,7 +218,7 @@ else
 					end
 				end
 				ply.pac_playerspawn = pac.RealTime -- used for events
-				
+
 				entity.overridePAC3 = true
 			end
 		end
@@ -226,7 +226,7 @@ else
 
 	function PLUGIN:OnEntityCreated(entity)
 		local class = entity:GetClass()
-		
+
 		-- For safe progress, I skip one frame.
 		timer.Simple(0.01, function()
 			if (class == "prop_ragdoll") then
@@ -234,7 +234,7 @@ else
 					entity.RenderOverride = function()
 						entity.objCache = entity:GetNetVar("player")
 						entity:DrawModel()
-						
+
 						hook.Run("DrawPlayerRagdoll", entity)
 					end
 				end
@@ -246,10 +246,10 @@ else
 						entity.objCache = v
 					end
 				end
-				
+
 				entity.RenderOverride = function()
 					entity:DrawModel()
-					
+
 					hook.Run("DrawPlayerRagdoll", entity)
 				end
 			end
@@ -275,7 +275,7 @@ else
 						ent:AttachPACPart(ix.pac.list[k])
 					end
 				end
-				
+
 				-- Overrride Model Drawing function of ModelPanel. (Function revision: 2015/01/05)
 				-- by setting ent.forcedraw true, The PAC3 outfit will drawn on the model even if it's NoDraw Status is true.
 				ent.forceDraw = true

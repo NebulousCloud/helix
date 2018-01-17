@@ -104,7 +104,7 @@ if (CLIENT) then
 		if ((ix.gui.char and !ix.gui.char:IsVisible()) and
 			IX_CVAR_THIRDPERSON:GetBool() and
 			!IsValid(self:GetVehicle()) and
-			isAllowed() and 
+			isAllowed() and
 			IsValid(self) and
 			self:GetChar() and
 			!self:GetNetVar("actAng") and
@@ -123,16 +123,16 @@ if (CLIENT) then
 
 		if (client:CanOverrideView() and LocalPlayer():GetViewEntity() == LocalPlayer()) then
 			if ((client:OnGround() and client:KeyDown(IN_DUCK)) or client:Crouching()) then
-				crouchFactor = Lerp(ft*5, crouchFactor, 1) 
+				crouchFactor = Lerp(ft*5, crouchFactor, 1)
 			else
 				crouchFactor = Lerp(ft*5, crouchFactor, 0)
 			end
-			
+
 			curAng = owner.camAng or Angle(0, 0, 0)
 			view = {}
 			traceData = {}
-				traceData.start = 	client:GetPos() + client:GetViewOffset() + 
-									curAng:Up() * clmp(IX_CVAR_TP_VERT:GetInt(), 0, maxValues.height) + 
+				traceData.start = 	client:GetPos() + client:GetViewOffset() +
+									curAng:Up() * clmp(IX_CVAR_TP_VERT:GetInt(), 0, maxValues.height) +
 									curAng:Right() * clmp(IX_CVAR_TP_HORI:GetInt(), -maxValues.horizontal, maxValues.horizontal) -
 									client:GetViewOffsetDucked()*.5 * crouchFactor
 				traceData.endpos = traceData.start - curAng:Forward() * clmp(IX_CVAR_TP_DIST:GetInt(), 0, maxValues.distance)
@@ -146,11 +146,11 @@ if (CLIENT) then
 				traceData2.endpos = aimOrigin + curAng:Forward() * 65535
 				traceData2.filter = client
 
-			if ((IX_CVAR_TP_CLASSIC:GetBool() or owner:IsWepRaised() or 
+			if ((IX_CVAR_TP_CLASSIC:GetBool() or owner:IsWepRaised() or
 				(owner:KeyDown(bit.bor(IN_FORWARD, IN_BACK, IN_MOVELEFT, IN_MOVERIGHT)) and owner:GetVelocity():Length() >= 10)) ) then
 				client:SetEyeAngles((util.TraceLine(traceData2).HitPos - client:GetShootPos()):Angle())
 			end
-			
+
 			return view
 		end
 	end
@@ -173,16 +173,16 @@ if (CLIENT) then
 
 	function PLUGIN:InputMouseApply(cmd, x, y, ang)
 		owner = LocalPlayer( )
-	       
+
 		if (!owner.camAng) then
 		    owner.camAng = Angle( 0, 0, 0 )
 		end
 
 	    if (owner:CanOverrideView() and LocalPlayer():GetViewEntity() == LocalPlayer()) then
-		        
+
 		    owner.camAng.p = clmp(math.NormalizeAngle( owner.camAng.p + y / 50 ), -85, 85)
 		    owner.camAng.y = math.NormalizeAngle( owner.camAng.y - x / 50 )
-		   
+
 			return true
 		end
 	end
