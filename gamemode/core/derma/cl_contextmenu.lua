@@ -48,7 +48,7 @@ function PANEL:Open()
 	-- TODO: Any situation in which we shouldn't show the tool menu on the context menu?
 	
 	-- Set up the active panel..
-	if ( bShouldShow && IsValid( spawnmenu.ActiveControlPanel() ) ) then
+	if ( bShouldShow and IsValid( spawnmenu.ActiveControlPanel() ) ) then
 
 		self.OldParent = spawnmenu.ActiveControlPanel():GetParent()
 		self.OldPosX, self.OldPosY = spawnmenu.ActiveControlPanel():GetPos()
@@ -236,7 +236,7 @@ function GM:OnContextMenuOpen()
 	-- Let the gamemode decide whether we should open or not..
 	if ( !hook.Call( "ContextMenuOpen", GAMEMODE ) ) then return end
 		
-	if ( IsValid( g_ContextMenu ) && !g_ContextMenu:IsVisible() ) then
+	if ( IsValid( g_ContextMenu ) and !g_ContextMenu:IsVisible() ) then
 		g_ContextMenu:Open()
 
 		vgui.Create("ixQuick")
@@ -288,7 +288,7 @@ DMenuBar.AddMenu = function( self, label )
 	
 	b.OnCursorEntered = function()
 		local opened = self:GetOpenMenu()
-		if ( !IsValid( opened ) || opened == m ) then return end
+		if ( !IsValid( opened ) or opened == m ) then return end
 		opened:Hide()
 		b:DoClick()
 	end

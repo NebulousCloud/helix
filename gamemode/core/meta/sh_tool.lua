@@ -121,7 +121,7 @@ end
 -- This is to make sure that the entities haven't been removed
 function TOOL:CheckObjects()
 	for k, v in pairs(self.Objects) do
-		if (!v.Ent:IsWorld() && !v.Ent:IsValid()) then
+		if (!v.Ent:IsWorld() and !v.Ent:IsValid()) then
 			self:ClearObjects()
 		end
 	end

@@ -10,14 +10,19 @@ before_install:
   - pip install hererocks
   - hererocks $HOME/env --luajit 2.0.4 --luarocks latest
   - source $HOME/env/bin/activate
+  - git clone https://github.com/impulsh/gluacheck $HOME/gluacheck
 
 install:
   - luarocks install ldoc
+  - cd $HOME/gluacheck
+  - luarocks make
+  - cd $TRAVIS_BUILD_DIR
 
 script:
   - ldoc -c docs/config.ld ./ --fatalwarnings
+  - luacheck .
 
-after_success:
+before_deploy:
   - cp -v docs/css/* docs/html
   - cp -v docs/js/* docs/html
 
