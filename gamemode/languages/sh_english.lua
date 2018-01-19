@@ -161,7 +161,6 @@ LANGUAGE = {
 	charClass = "Class: %s",
 	noSpace = "Inventory is Full.",
 	noOwner = "The owner is invalid.",
-	notAllowed = "This action is not allowed.",
 	invalidIndex = "The Item Index is Invalid.",
 	invalidItem = "The Item Object is Invalid.",
 	invalidInventory = "The Inventory Object is Invalid.",
@@ -249,7 +248,6 @@ LANGUAGE = {
 
 	moneyLeft = "Your Money: ",
 	currentMoney = "Money Left: ",
-	checkout = "Checkout",
 
 	invalidClass = "That is not a valid class!",
 	invalidClassFaction = "That is not a valid class for that faction!",

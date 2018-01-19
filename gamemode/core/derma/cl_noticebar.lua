@@ -1,3 +1,4 @@
+
 hook.Add("LoadFonts", "ixNoticeFont", function(font, genericFont)
 	surface.CreateFont("ixNoticeFont", {
 		font = genericFont,
@@ -74,7 +75,6 @@ function PANEL:Paint()
 	local col = self.pnlTypes[self.type].col
 	local mat = self.material
 	local size = self:GetTall()*.6
-	local marg = 3
 
 	draw.RoundedBox(4, 0, 0, self:GetWide(), self:GetTall(), col)
 

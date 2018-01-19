@@ -1,3 +1,4 @@
+
 ix.char = ix.char or {}
 ix.char.loaded = ix.char.loaded or {}
 ix.char.vars = ix.char.vars or {}
@@ -28,7 +29,7 @@ if (SERVER) then
 					invQuery:Callback(function(invResult, invStats, invLastID)
 						local client
 
-						for k, v in ipairs(player.GetAll()) do
+						for _, v in ipairs(player.GetAll()) do
 							if (v:SteamID64() == data.steamID) then
 								client = v
 								break
@@ -59,7 +60,7 @@ if (SERVER) then
 		local cache = ix.char.cache[steamID64]
 
 		if (cache and !noCache) then
-			for k, v in ipairs(cache) do
+			for _, v in ipairs(cache) do
 				local character = ix.char.loaded[v]
 
 				if (character and !IsValid(character.client)) then
@@ -93,10 +94,10 @@ if (SERVER) then
 			query:Callback(function(result)
 				local characters = {}
 
-				for k, v in ipairs(result or {}) do
-					local id = tonumber(v.id)
+				for _, v in ipairs(result or {}) do
+					local charID = tonumber(v.id)
 
-					if (id) then
+					if (charID) then
 						local data = {}
 
 						for k2, v2 in pairs(ix.char.vars) do
@@ -106,7 +107,7 @@ if (SERVER) then
 								if (type(v2.default) == "number") then
 									value = tonumber(value) or v2.default
 								elseif (type(v2.default) == "boolean") then
-									value = tobool(vlaue)
+									value = tobool(value)
 								elseif (type(v2.default) == "table") then
 									value = util.JSONToTable(value)
 								end
@@ -115,8 +116,8 @@ if (SERVER) then
 							end
 						end
 
-						characters[#characters + 1] = id
-						local character = ix.char.New(data, id, client)
+						characters[#characters + 1] = charID
+						local character = ix.char.New(data, charID, client)
 
 						hook.Run("CharacterRestored", character)
 						character.vars.inv = {
@@ -126,43 +127,43 @@ if (SERVER) then
 						local invQuery = mysql:Select("ix_inventories")
 							invQuery:Select("inventory_id")
 							invQuery:Select("inventory_type")
-							invQuery:Where("character_id", id)
-							invQuery:Callback(function(result)
-								if (istable(result) and #result > 0) then
-									for k, v in pairs(result) do
-										if (v.inventory_type and isstring(v.inventory_type) and v.inventory_type == "NULL") then
-											v.inventory_type = nil
+							invQuery:Where("character_id", charID)
+							invQuery:Callback(function(info)
+								if (istable(info) and #info > 0) then
+									for _, v2 in pairs(info) do
+										if (v2.inventory_type and isstring(v2.inventory_type) and v2.inventory_type == "NULL") then
+											v2.inventory_type = nil
 										end
 
 										local w, h = ix.config.Get("invW"), ix.config.Get("invH")
 										local invType
 
-										if (v.inventory_type) then
-											invType = ix.item.inventoryTypes[v.inventory_type]
+										if (v2.inventory_type) then
+											invType = ix.item.inventoryTypes[v2.inventory_type]
 
 											if (invType) then
 												w, h = invType.w, invType.h
 											end
 										end
 
-										ix.item.RestoreInv(tonumber(v.inventory_id), w, h, function(inventory)
-											if (v.inventory_type) then
-												inventory.vars.isBag = v.inventory_type
+										ix.item.RestoreInv(tonumber(v2.inventory_id), w, h, function(inventory)
+											if (v2.inventory_type) then
+												inventory.vars.isBag = v2.inventory_type
 												table.insert(character.vars.inv, inventory)
 											else
 												character.vars.inv[1] = inventory
 											end
 
-											inventory:SetOwner(id)
+											inventory:SetOwner(charID)
 										end, true)
 									end
 								else
 									local insertQuery = mysql:Insert("ix_inventories")
-										insertQuery:Insert("character_id", id)
-										insertQuery:Callback(function(result, status, lastID)
+										insertQuery:Insert("character_id", charID)
+										insertQuery:Callback(function(_, status, lastID)
 											local w, h = ix.config.Get("invW"), ix.config.Get("invH")
 											local inventory = ix.item.CreateInv(w, h, lastID)
-											inventory:SetOwner(id)
+											inventory:SetOwner(charID)
 
 											character.vars.inv = {
 												inventory
@@ -173,9 +174,9 @@ if (SERVER) then
 							end)
 						invQuery:Execute()
 
-						ix.char.loaded[id] = character
+						ix.char.loaded[charID] = character
 					else
-						ErrorNoHalt("[Helix] Attempt to load character '" .. (data.name or "nil") .. "' with invalid ID!")
+						ErrorNoHalt("[Helix] Attempt to load character with invalid ID '" .. tostring(id) .. "'!")
 					end
 				end
 
@@ -184,118 +185,6 @@ if (SERVER) then
 				end
 
 				ix.char.cache[steamID64] = characters
-			end)
-		query:Execute()
-	end
-
-	function ix.char.LoadChar(callback, noCache, id)
-		local query = mysql:Select("ix_characters")
-			query:Select("id")
-			query:Select("name")
-			query:Select("description")
-			query:Select("model")
-			query:Select("attributes")
-			query:Select("data")
-			query:Select("money")
-			query:Select("faction")
-			query:Where("schema", Schema.folder)
-
-			if (id) then
-				query:Where("id", id)
-			else
-				ErrorNoHalt("Tried to load invalid character with ix.char.loadChar")
-				return
-			end
-
-			query:Callback(function(result)
-				for k, v in ipairs(result or {}) do
-					local id = tonumber(v.id)
-
-					if (id) then
-						local data = {}
-
-						for k2, v2 in pairs(ix.char.vars) do
-							if (v2.field and v[v2.field]) then
-								local value = tostring(v[v2.field])
-
-								if (type(v2.default) == "number") then
-									value = tonumber(value) or v2.default
-								elseif (type(v2.default) == "boolean") then
-									value = tobool(vlaue)
-								elseif (type(v2.default) == "table") then
-									value = util.JSONToTable(value)
-								end
-
-								data[k2] = value
-							end
-						end
-
-						local character = ix.char.New(data, id)
-
-						hook.Run("CharacterRestored", character)
-						character.vars.inv = {
-							[1] = -1,
-						}
-
-						local invQuery = mysql:Select("ix_inventories")
-							invQuery:Select("inventory_id")
-							invQuery:Select("inventory_type")
-							invQuery:Where("character_id", id)
-							invQuery:Callback(function(result)
-								if (result and #result > 0) then
-									for k, v in pairs(result) do
-										if (v.inventory_type and isstring(v.inventory_type) and v.inventory_type == "NULL") then
-											v.inventory_type = nil
-										end
-
-										local invType
-										local w, h = ix.config.Get("invW"), ix.config.Get("invH")
-
-										if (v.inventory_type) then
-											invType = ix.item.inventoryTypes[v.inventory_type]
-
-											if (invType) then
-												w, h = invType.w, invType.h
-											end
-										end
-
-										ix.item.RestoreInv(tonumber(v.inventory_id), w, h, function(inventory)
-											if (v.inventory_type) then
-												inventory.vars.isBag = v.inventory_type
-												table.insert(character.vars.inv, inventory)
-											else
-												character.vars.inv[1] = inventory
-											end
-
-											inventory:SetOwner(id)
-										end, true)
-									end
-								else
-									local insertQuery = mysql:Insert("ix_inventories")
-										insertQuery:Insert("character_id", id)
-										insertQuery:Callback(function(result, status, lastID)
-											local w, h = ix.config.Get("invW"), ix.config.Get("invH")
-											local inventory = ix.item.CreateInv(w, h, lastID)
-
-											inventory:SetOwner(id)
-											character.vars.inv = {
-												inventory
-											}
-										end)
-									insertQuery:Execute()
-								end
-							end)
-						invQuery:Execute()
-
-						ix.char.loaded[id] = character
-					else
-						ErrorNoHalt("[Helix] Attempt to load character '" .. (data.name or "nil") .. "' with invalid ID!")
-					end
-				end
-
-				if (callback) then
-					callback(character)
-				end
 			end)
 		query:Execute()
 	end
@@ -375,8 +264,6 @@ do
 		default = "",
 		index = 2,
 		OnValidate = function(value, data)
-			if (noDesc) then return true end
-
 			local minLength = ix.config.Get("minDescLen", 16)
 
 			if (!value or #value:gsub("%s", "") < minLength) then
@@ -567,7 +454,7 @@ do
 				if (type(value) == "table") then
 					local count = 0
 
-					for k, v in pairs(value) do
+					for _, v in pairs(value) do
 						count = count + v
 					end
 
@@ -755,7 +642,7 @@ do
 				return netstream.Start(client, "charAuthed", "maxCharacters")
 			end
 
-			for k, v in pairs(data) do
+			for k, _ in pairs(data) do
 				local info = ix.char.vars[k]
 
 				if (!info or (!info.OnValidate and info.bNoDisplay)) then
@@ -829,12 +716,12 @@ do
 					query:Callback(function(result)
 						if (istable(result)) then
 							-- remove associated items from database
-							for k, v in ipairs(result) do
+							for _, v in ipairs(result) do
 								local itemQuery = mysql:Delete("ix_items")
 									itemQuery:Where("inventory_id", v.inventory_id)
 								itemQuery:Execute()
 
-								ix.item.inventories[tonumber(v._invID)] = nil
+								ix.item.inventories[tonumber(v.inventory_id)] = nil
 							end
 						end
 
@@ -885,7 +772,6 @@ do
 				ix.characters = data
 			end
 
-			OPENNEXT = openNext
 			vgui.Create("ixCharMenu")
 		end)
 

@@ -69,7 +69,7 @@ ix.command.Add("CharGiveFlag", {
 			local available = ""
 
 			-- sort and display flags the character already has
-			for k, v in SortedPairs(ix.flag.list) do
+			for k, _ in SortedPairs(ix.flag.list) do
 				if (!target:HasFlags(k)) then
 					available = available .. k
 				end
@@ -297,7 +297,7 @@ ix.command.Add("CharUnban", {
 			return L("charSearching", client)
 		end
 
-		for k, v in pairs(ix.char.loaded) do
+		for _, v in pairs(ix.char.loaded) do
 			if (ix.util.StringMatches(v:GetName(), name)) then
 				if (v:GetData("banned")) then
 					v:SetData("banned")
@@ -320,8 +320,8 @@ ix.command.Add("CharUnban", {
 			query:Callback(function(result)
 				if (istable(result) and #result > 0) then
 					local characterID = tonumber(result[1].id)
-					local name = result[1].name
 					local data = util.JSONToTable(result[1].data or "[]")
+					name = result[1].name
 
 					client.ixNextSearch = 0
 
@@ -336,7 +336,7 @@ ix.command.Add("CharUnban", {
 						updateQuery:Where("id", characterID)
 					updateQuery:Execute()
 
-					ix.util.NotifyLocalized("charUnBan", nil, client:GetName(), v:GetName())
+					ix.util.NotifyLocalized("charUnBan", nil, client:GetName(), name)
 				end
 			end)
 		query:Execute()
@@ -425,7 +425,7 @@ ix.command.Add("PlyWhitelist", {
 		local faction = ix.faction.teams[name]
 
 		if (!faction) then
-			for k, v in ipairs(ix.faction.indices) do
+			for _, v in ipairs(ix.faction.indices) do
 				if (ix.util.StringMatches(L(v.name, client), name) or ix.util.StringMatches(v.uniqueID, name)) then
 					faction = v
 
@@ -436,7 +436,7 @@ ix.command.Add("PlyWhitelist", {
 
 		if (faction) then
 			if (target:SetWhitelisted(faction.index, true)) then
-				for k, v in ipairs(player.GetAll()) do
+				for _, v in ipairs(player.GetAll()) do
 					v:NotifyLocalized("whitelist", client:GetName(), target:GetName(), L(faction.name, v))
 				end
 			end
@@ -451,7 +451,8 @@ ix.command.Add("CharGetUp", {
 	OnRun = function(self, client, arguments)
 		local entity = client.ixRagdoll
 
-		if (IsValid(entity) and entity.ixGrace and entity.ixGrace < CurTime() and entity:GetVelocity():Length2D() < 8 and !entity.ixWakingUp) then
+		if (IsValid(entity) and entity.ixGrace and entity.ixGrace < CurTime() and
+			entity:GetVelocity():Length2D() < 8 and !entity.ixWakingUp) then
 			entity.ixWakingUp = true
 
 			client:SetAction("@gettingUp", 5, function()
@@ -476,7 +477,7 @@ ix.command.Add("PlyUnwhitelist", {
 		local faction = ix.faction.teams[name]
 
 		if (!faction) then
-			for k, v in ipairs(ix.faction.indices) do
+			for _, v in ipairs(ix.faction.indices) do
 				if (ix.util.StringMatches(L(v.name, client), name) or ix.util.StringMatches(v.uniqueID, name)) then
 					faction = v
 
@@ -487,7 +488,7 @@ ix.command.Add("PlyUnwhitelist", {
 
 		if (faction) then
 			if (target:SetWhitelisted(faction.index, false)) then
-				for k, v in ipairs(player.GetAll()) do
+				for _, v in ipairs(player.GetAll()) do
 					v:NotifyLocalized("unwhitelist", client:GetName(), target:GetName(), L(faction.name, v))
 				end
 			end
@@ -581,7 +582,7 @@ ix.command.Add("PlyTransfer", {
 		local faction = ix.faction.teams[name]
 
 		if (!name) then
-			for k, v in pairs(ix.faction.indices) do
+			for _, v in pairs(ix.faction.indices) do
 				if (ix.util.StringMatches(L(v.name, client), name)) then
 					faction = v
 
@@ -598,7 +599,7 @@ ix.command.Add("PlyTransfer", {
 				faction:OnTransfered(target)
 			end
 
-			for k, v in ipairs(player.GetAll()) do
+			for _, v in ipairs(player.GetAll()) do
 				v:NotifyLocalized("cChangeFaction", client:GetName(), target:GetName(), L(faction.name, v))
 			end
 		else
@@ -614,9 +615,11 @@ ix.command.Add("CharSetClass", {
 		{ix.type.character, "target"},
 		{ix.type.text, "class"}
 	},
-	OnRun = function(self, client, target, name)
-		for k, v in ipairs(ix.class.list) do
-			if (ix.util.StringMatches(v.uniqueID, class) or ix.util.StringMatches(v.name, name)) then
+	OnRun = function(self, client, target, class)
+		local classTable
+
+		for _, v in ipairs(ix.class.list) do
+			if (ix.util.StringMatches(v.uniqueID, class) or ix.util.StringMatches(v.name, class)) then
 				classTable = v
 			end
 		end
@@ -648,7 +651,7 @@ ix.command.Add("MapRestart", {
 	adminOnly = true,
 	arguments = {ix.type.number, "delay", true},
 	OnRun = function(self, client, delay)
-		local delay = delay or 10
+		delay = delay or 10
 		ix.util.NotifyLocalized("mapRestarting", nil, delay)
 
 		timer.Simple(delay, function()

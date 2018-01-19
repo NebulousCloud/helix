@@ -1,3 +1,6 @@
+
+-- luacheck: globals pac pace
+
 -- This Library is just for PAC3 Integration.
 -- You must install PAC3 to make this library works.
 
@@ -118,8 +121,9 @@ if (SERVER) then
 
 		-- After resetting all PAC3 outfits, wear all equipped PAC3 outfits.
 		if (curChar) then
-			local inv = curChar:GetInv()
-			for k, v in pairs(inv:GetItems()) do
+			local inv = curChar:GetInventory()
+
+			for _, v in pairs(inv:GetItems()) do
 				if (v:GetData("equip") == true and v.pacData) then
 					client:AddPart(v.uniqueID, v)
 				end
@@ -134,15 +138,15 @@ else
 	netstream.Hook("updatePAC", function()
 		if (!pac) then return end
 
-		for k, v in ipairs(player.GetAll()) do
-			local char = v:GetChar()
+		for _, v in ipairs(player.GetAll()) do
+			local character = v:GetCharacter()
 
-			if (char) then
-				local parts = client:GetParts()
+			if (character) then
+				local parts = LocalPlayer():GetParts()
 
-				for pacKey, pacValue in pairs(parts) do
-					if (ix.pac.list[pacKey]) then
-						v:AttachPACPart(ix.pac.list[pacKey])
+				for k, _ in pairs(parts) do
+					if (ix.pac.list[k]) then
+						v:AttachPACPart(ix.pac.list[k])
 					end
 				end
 			end
@@ -198,7 +202,7 @@ else
 	end)
 
 	netstream.Hook("partReset", function(wearer, outfitList)
-		for k, v in pairs(outfitList) do
+		for k, _ in pairs(outfitList) do
 			wearer:RemovePACPart(ix.pac.list[k])
 		end
 	end)
@@ -241,7 +245,7 @@ else
 			end
 
 			if (class:find("HL2MPRagdoll")) then
-				for k, v in ipairs(player.GetAll()) do
+				for _, v in ipairs(player.GetAll()) do
 					if (v:GetRagdollEntity() == entity) then
 						entity.objCache = v
 					end
@@ -270,7 +274,7 @@ else
 				local parts = LocalPlayer():GetParts()
 
 				-- Wear current player's PAC3 Outfits on the ModelPanel's Clientside Model Entity.
-				for k, v in pairs(parts) do
+				for k, _ in pairs(parts) do
 					if (ix.pac.list[k]) then
 						ent:AttachPACPart(ix.pac.list[k])
 					end
@@ -296,7 +300,7 @@ end
 function PLUGIN:InitializedPlugins()
 	local items = ix.item.list
 
-	for k, v in pairs(items) do
+	for _, v in pairs(items) do
 		if (v.pacData) then
 			ix.pac.list[v.uniqueID] = v.pacData
 		end

@@ -1,3 +1,4 @@
+
 AddCSLuaFile()
 
 ENT.Type = "anim"
@@ -32,7 +33,8 @@ if (SERVER) then
 
 	function ENT:Use(activator)
 		activator:PerformInteraction(ix.config.Get("itemPickupTime", 0.5), self, function(client)
-			if (client:GetChar() and client:GetChar():GetID() == self:GetNetVar("owner", 0) and hook.Run("PlayerCanOpenShipment", client, self) != false) then
+			if (client:GetChar() and client:GetChar():GetID() == self:GetNetVar("owner", 0) and
+				hook.Run("PlayerCanOpenShipment", client, self) != false) then
 				client.ixShipment = self
 				netstream.Start(client, "openShp", self, self.items)
 			end
@@ -46,7 +48,7 @@ if (SERVER) then
 	function ENT:GetItemCount()
 		local count = 0
 
-		for k, v in pairs(self.items) do
+		for _, v in pairs(self.items) do
 			count = count + math.max(v, 0)
 		end
 
@@ -70,39 +72,9 @@ else
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
 	local drawText = ix.util.DrawText
-
-	local cir = {}
-	local cir2= setmetatable({},{__index=function(self,key)
-		local t = {}
-		self[key]=t
-		return t
-	end})
-
-	local function drawCircle( x, y, radius, seg,angle,offset )
-		for i = 1, seg+1 do
-			cir[i] = cir2[i]
-		end
-
-		for i=#cir,seg+2,-1 do
-			cir[i]=nil
-		end
-
-		for i = 0, seg do
-			local a = math.rad( ( i / seg ) * angle + offset )
-			local sa = math.sin( a )
-			local ca = math.cos( a )
-			local t = cir[i+1]
-			t.x = x + sa * radius
-			t.y = y + ca * radius
-			t.u = sa * 0.5 + 0.5
-			t.v = ca * 0.5 + 0.5
-		end
-
-		surface.DrawPoly( cir )
-	end
-
 	local size = 150
 	local tempMat = Material("particle/warp1_warp", "alphatest")
+
 	function ENT:Draw()
 		local pos, ang = self:GetPos(), self:GetAngles()
 
@@ -143,7 +115,10 @@ else
 		drawText(L"shipment", x, y, colorAlpha(ix.config.Get("color"), alpha), 1, 1, nil, alpha * 0.65)
 
 		if (owner) then
-			drawText(L("shipmentDesc", owner.GetName(owner)), x, y + 16, colorAlpha(color_white, alpha), 1, 1, "ixSmallFont", alpha * 0.65)
+			drawText(
+				L("shipmentDesc", owner.GetName(owner)),
+				x, y + 16, colorAlpha(color_white, alpha), 1, 1, "ixSmallFont", alpha * 0.65
+			)
 		end
 	end
 end

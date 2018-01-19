@@ -1,3 +1,4 @@
+
 ITEM.name = "Outfit"
 ITEM.description = "A Outfit Base."
 ITEM.category = "Outfit"
@@ -57,7 +58,7 @@ function ITEM:removeOutfit(client)
 		end
 	end
 
-	for k, v in pairs(self.bodyGroups or {}) do
+	for k, _ in pairs(self.bodyGroups or {}) do
 		local index = client:FindBodygroupByName(k)
 
 		if (index > -1) then
@@ -110,7 +111,7 @@ ITEM.functions.Equip = {
 		local char = item.player:GetChar()
 		local items = char:GetInv():GetItems()
 
-		for k, v in pairs(items) do
+		for _, v in pairs(items) do
 			if (v.id != item.id) then
 				local itemTable = ix.item.instances[v.id]
 
@@ -134,7 +135,7 @@ ITEM.functions.Equip = {
 				if (#item.replacements == 2 and type(item.replacements[1]) == "string") then
 					char:SetModel(item.player:GetModel():gsub(item.replacements[1], item.replacements[2]))
 				else
-					for k, v in ipairs(item.replacements) do
+					for _, v in ipairs(item.replacements) do
 						char:SetModel(item.player:GetModel():gsub(v[1], v[2]))
 					end
 				end

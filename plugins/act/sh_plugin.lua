@@ -12,7 +12,7 @@ for k, v in pairs(PLUGIN.acts) do
 	}
 	local multiple = false
 
-	for k2, v2 in pairs(v) do
+	for _, v2 in pairs(v) do
 		if (type(v2.sequence) == "table" and #v2.sequence > 1) then
 			multiple = true
 

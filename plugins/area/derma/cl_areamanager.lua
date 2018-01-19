@@ -1,3 +1,4 @@
+
 local PLUGIN = PLUGIN
 local PANEL = {}
 
@@ -72,5 +73,5 @@ vgui.Register("ixAreaManager", PANEL, "DFrame")
 
 netstream.Hook("ixAreaManager", function(areaList)
 	PLUGIN.areaTable = areaList
-	areaManager = vgui.Create("ixAreaManager")
+	ix.gui.areaManager = vgui.Create("ixAreaManager")
 end)

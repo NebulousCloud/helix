@@ -29,10 +29,10 @@
 		- Requires setup
 		- Some server providers do not allow the uploading of .dll files so you may need
 		  to ask them for support.
-	  	- Is not as instant as SQLite (but the delay should be barely noticable)
+		- Is not as instant as SQLite (but the delay should be barely noticable)
 
-  	The following configurations are ONLY needed if you are going to be using an
-  	external database for your Helix installation.
+	The following configurations are ONLY needed if you are going to be using an
+	external database for your Helix installation.
 --]]
 
 

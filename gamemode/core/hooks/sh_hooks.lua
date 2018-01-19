@@ -1,7 +1,9 @@
+
 function GM:PlayerNoClip(client)
 	return client:IsAdmin()
 end
 
+-- luacheck: globals HOLDTYPE_TRANSLATOR
 HOLDTYPE_TRANSLATOR = {}
 HOLDTYPE_TRANSLATOR[""] = "normal"
 HOLDTYPE_TRANSLATOR["physgun"] = "smg"
@@ -19,6 +21,7 @@ HOLDTYPE_TRANSLATOR["camera"] = "smg"
 HOLDTYPE_TRANSLATOR["magic"] = "normal"
 HOLDTYPE_TRANSLATOR["revolver"] = "pistol"
 
+-- luacheck: globals  PLAYER_HOLDTYPE_TRANSLATOR
 PLAYER_HOLDTYPE_TRANSLATOR = {}
 PLAYER_HOLDTYPE_TRANSLATOR[""] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["fist"] = "normal"
@@ -42,9 +45,10 @@ local HOLDTYPE_TRANSLATOR = HOLDTYPE_TRANSLATOR
 
 function GM:TranslateActivity(client, act)
 	local model = string.lower(client.GetModel(client))
-	local class = getModelClass(model) or "player"
+	local modelClass = getModelClass(model) or "player"
 	local weapon = client.GetActiveWeapon(client)
-	if (class == "player") then
+
+	if (modelClass == "player") then
 		if (!ix.config.Get("wepAlwaysRaised") and IsValid(weapon) and !client.IsWepRaised(client) and client.OnGround(client)) then
 			if (string.find(model, "zombie")) then
 				local tree = ix.anim.zombie
@@ -80,19 +84,18 @@ function GM:TranslateActivity(client, act)
 		return self.BaseClass.TranslateActivity(self.BaseClass, client, act)
 	end
 
-	local tree = ix.anim[class]
+	local tree = ix.anim[modelClass]
 
 	if (tree) then
 		local subClass = "normal"
 
 		if (client.InVehicle(client)) then
 			local vehicle = client.GetVehicle(client)
-			local class = vehicle:IsChair() and "chair" or vehicle:GetClass()
+			local vehicleClass = vehicle:IsChair() and "chair" or vehicle:GetClass()
 
-			if (tree.vehicle and tree.vehicle[class]) then
-				local act = tree.vehicle[class][1]
-				local fixvec = tree.vehicle[class][2]
-				--local fixang = tree.vehicle[class][3]
+			if (tree.vehicle and tree.vehicle[vehicleClass]) then
+				act = tree.vehicle[vehicleClass][1]
+				local fixvec = tree.vehicle[vehicleClass][2]
 
 				if (fixvec) then
 					client:SetLocalPos(Vector(16.5438, -0.1642, -20.5493))
@@ -100,7 +103,6 @@ function GM:TranslateActivity(client, act)
 
 				if (type(act) == "string") then
 					client.CalcSeqOverride = client.LookupSequence(client, act)
-
 					return
 				else
 					return act
@@ -154,7 +156,7 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 		local allowed = false
 
 		if (type(itemTable.factions) == "table") then
-			for k, v in pairs(itemTable.factions) do
+			for _, v in pairs(itemTable.factions) do
 				if (client:Team() == v) then
 					allowed = true
 
@@ -174,7 +176,7 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 		local allowed = false
 
 		if (type(itemTable.classes) == "table") then
-			for k, v in pairs(itemTable.classes) do
+			for _, v in pairs(itemTable.classes) do
 				if (client:GetChar():GetClass() == v) then
 					allowed = true
 
@@ -262,7 +264,7 @@ function GM:CalcMainActivity(client, velocity)
 	client.SetPoseParameter(client, "move_yaw", normalized)
 
 	local oldSeqOverride = client.CalcSeqOverride
-	local seqIdeal, seqOverride = self.BaseClass.CalcMainActivity(self.BaseClass, client, velocity)
+	local seqIdeal, _ = self.BaseClass.CalcMainActivity(self.BaseClass, client, velocity)
 	--client.CalcSeqOverride is being -1 after this line.
 
 	if (client.ixForceSeq and client:GetSequence() != client.ixForceSeq) then
@@ -288,7 +290,7 @@ end
 
 function GM:OnCharVarChanged(char, varName, oldVar, newVar)
 	if (ix.char.varHooks[varName]) then
-		for k, v in pairs(ix.char.varHooks[varName]) do
+		for _, v in pairs(ix.char.varHooks[varName]) do
 			v(char, oldVar, newVar)
 		end
 	end
@@ -420,10 +422,10 @@ function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 			end
 		end
 
-		local inventory = ix.item.inventories[itemObject:GetData("id")]
+		inventory = ix.item.inventories[itemObject:GetData("id")]
 
 		if (inventory) then
-			for k, v in pairs(inventory:GetItems()) do
+			for _, v in pairs(inventory:GetItems()) do
 				if (v:GetData("equip") == true) then
 					local owner = itemObject:GetOwner()
 

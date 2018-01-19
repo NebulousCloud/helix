@@ -1,3 +1,4 @@
+
 -- Variables for door data.
 local variables = {
 	-- Whether or not the door will be disabled.
@@ -28,7 +29,7 @@ function PLUGIN:CallOnDoorChildren(entity, callback)
 	if (IsValid(parent)) then
 		callback(parent)
 
-		for k, v in pairs(parent.ixChildren) do
+		for k, _ in pairs(parent.ixChildren) do
 			local child = ents.GetMapCreatedEntity(k)
 
 			if (IsValid(child)) then
@@ -42,7 +43,7 @@ function PLUGIN:CopyParentDoor(child)
 	local parent = child.ixParent
 
 	if (IsValid(parent)) then
-		for k, v in ipairs(variables) do
+		for _, v in ipairs(variables) do
 			local value = parent:GetNetVar(v)
 
 			if (child:GetNetVar(v) != value) then
@@ -103,7 +104,7 @@ function PLUGIN:SaveDoorData()
 	local data = {}
 		local doors = {}
 
-		for k, v in ipairs(ents.GetAll()) do
+		for _, v in ipairs(ents.GetAll()) do
 			if (v:IsDoor()) then
 				doors[v:MapCreationID()] = v
 			end
@@ -117,7 +118,7 @@ function PLUGIN:SaveDoorData()
 			doorData = {}
 
 			-- Save all of the needed variables to the doorData table.
-			for k2, v2 in ipairs(variables) do
+			for _, v2 in ipairs(variables) do
 				local value = v:GetNetVar(v2)
 
 				if (value) then
@@ -215,7 +216,7 @@ function PLUGIN:ShowTeam(client)
 end
 
 function PLUGIN:PlayerDisconnected(client)
-	for k, v in ipairs(ents.GetAll()) do
+	for _, v in ipairs(ents.GetAll()) do
 		if (v == client) then
 			return
 		end

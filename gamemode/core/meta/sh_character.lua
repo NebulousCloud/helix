@@ -64,7 +64,7 @@ if (SERVER) then
 	function CHAR:Sync(receiver)
 		-- Broadcast the character information if receiver is not set.
 		if (receiver == nil) then
-			for k, v in ipairs(player.GetAll()) do
+			for _, v in ipairs(player.GetAll()) do
 				self:Sync(v)
 			end
 		-- Send all character information if the receiver is the character's owner.
@@ -114,8 +114,7 @@ if (SERVER) then
 			if (!bNoNetworking) then
 				self:Sync()
 
-				-- wtf
-				for k, v in ipairs(self:GetInv(true)) do
+				for _, v in ipairs(self:GetInv(true)) do
 					if (type(v) == "table") then
 						v:Sync(client)
 					end
@@ -175,7 +174,7 @@ function CHAR:GetPlayer()
 	elseif (self.steamID) then
 		local steamID = self.steamID
 
-		for k, v in ipairs(player.GetAll()) do
+		for _, v in ipairs(player.GetAll()) do
 			if (v:SteamID64() == steamID) then
 				self.player = v
 
@@ -262,7 +261,7 @@ function ix.char.RegisterVar(key, data)
 
 	if (alias) then
 		if (type(alias) == "table") then
-			for k, v in ipairs(alias) do
+			for _, v in ipairs(alias) do
 				local aliasName = v:sub(1, 1):upper()..v:sub(2)
 
 				CHAR["Get"..aliasName] = CHAR["Get"..upperName]

@@ -1,3 +1,4 @@
+
 -- You can change the default language here:
 ix.config.language = "english"
 ix.config.itemFormat = "<font=ixGenericFont>%s</font>\n<font=ixSmallFont>%s</font>"
@@ -41,7 +42,9 @@ ix.config.Add("chatRange", 280, "The maximum distance a person's IC chat message
 	category = "chat"
 })
 ix.config.Add("chatColor", Color(255, 255, 150), "The default color for IC chat.", nil, {category = "chat"})
-ix.config.Add("chatListenColor", Color(175, 255, 150), "The color for IC chat if you are looking at the speaker.", nil, {category = "chat"})
+ix.config.Add("chatListenColor", Color(175, 255, 150), "The color for IC chat if you are looking at the speaker.", nil, {
+	category = "chat"
+})
 ix.config.Add("oocDelay", 10, "The delay before a player can use OOC chat again in seconds.", nil, {
 	data = {min = 0, max = 10000},
 	category = "chat"
@@ -82,7 +85,7 @@ ix.config.Add("saveInterval", 300, "How often characters save in seconds.", nil,
 	category = "characters"
 })
 ix.config.Add("walkSpeed", 130, "How fast a player normally walks.", function(oldValue, newValue)
-	for k, v in ipairs(player.GetAll())	do
+	for _, v in ipairs(player.GetAll())	do
 		v:SetWalkSpeed(newValue)
 	end
 end, {
@@ -90,7 +93,7 @@ end, {
 	category = "characters"
 })
 ix.config.Add("runSpeed", 235, "How fast a player normally runs.", function(oldValue, newValue)
-	for k, v in ipairs(player.GetAll())	do
+	for _, v in ipairs(player.GetAll())	do
 		v:SetRunSpeed(newValue)
 	end
 end, {
@@ -112,7 +115,8 @@ ix.config.Add("intro", true, "Whether or not the Helix intro is enabled for new 
 ix.config.Add("music", "music/hl2_song2.mp3", "The default music played in the character menu.", nil, {
 	category = "appearance"
 })
-ix.config.Add("logo", "https://static.miraheze.org/nutscriptwiki/2/26/Nutscript.png", "The icon shown on the character menu. Max size is 86x86", nil, {
+ix.config.Add("logo", "https://static.miraheze.org/nutscriptwiki/2/26/Nutscript.png",
+	"The icon shown on the character menu. Max size is 86x86", nil, {
 	category = "appearance"
 })
 ix.config.Add("logoURL", "https://nutscript.net/", "The URL opened when the icon is clicked.", nil, {

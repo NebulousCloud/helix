@@ -1,3 +1,4 @@
+
 -- FRENCH TRANSLATION - http://steamcommunity.com/id/sadness81
 NAME = "Français"
 
@@ -21,7 +22,6 @@ LANGUAGE = {
 	charCreateTip = "Remplissez les champs ci-dessous et appuyez sur 'Terminer' pour créer votre personnage.",
 	invalid = "Vous avez fourni un %s invalide",
 	descMinLen = "Votre description doit comporter au moins %d caractère(s).",
-	model = "Modèle",
 	player = "Joueur",
 	finish = "Terminer",
 	finishTip = "Terminer la création du personnage.",
@@ -84,7 +84,6 @@ LANGUAGE = {
 	dSold = "Vous avez vendu cette porte pour %s.",
 	notOwner = "Vous n'êtes pas le propriétaire de ceci.",
 	invalidArg = "Vous avez fourni une valeur non valide pour l'argument #%s.",
-	invalidFaction = "La faction que vous avez fourni n'a pu être trouvée.",
 	flagGive = "%s a donné à %s les flag's '%s'.",
 	flagGiveTitle = "Donner flag's",
 	flagGiveDesc = "Donner les flag's suivants à un joueur.",
@@ -103,7 +102,6 @@ LANGUAGE = {
 	cChangeGroups = "%s a modifié le groupe %s's \"%s\" par %s.",
 	cChangeFaction = "%s a modifié la faction %s par %s.",
 	playerCharBelonging = "Cet objet appartient à un autre de vos personnages.",
-	business = "Marché",
 	invalidFaction = "Vous avez fourni un nom de faction invalide.",
 	spawnAdd = "Vous avez ajouté un spawn pour %s.",
 	spawnDeleted = "Vous avez supprimé %s point(s) de spawn.",
@@ -157,7 +155,6 @@ LANGUAGE = {
 	charClass = "Vous êtes %s dans votre faction.",
 	noSpace = "L'inventaire est complet.",
 	noOwner = "Le propriétaire est invalide.",
-	notAllowed = "Cette action n'est pas autorisé.",
 	invalidIndex = "L'objet de l'index est invalide.",
 	invalidItem = "L'objet est invalide.",
 	invalidInventory = "L'object de l'inventaire est invalide.",
@@ -197,7 +194,7 @@ LANGUAGE = {
 	vmSet = "Vous avez défini votre messagerie vocale.",
 	vmRem = "Vous avez supprimé votre messagerie vocale.",
 	altLower = "Cacher les mains quand elles sont abaissées?",
-    noPerm = "Vous n'êtes pas autorisé à faire ceci.",
+	noPerm = "Vous n'êtes pas autorisé à faire ceci.",
 	youreDead = "Vous êtes mort",
 	injMajor = "Il semble grièvement blessé.",
 	injLittle = "Il semble blessé.",

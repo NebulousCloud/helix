@@ -1,9 +1,10 @@
+
 PLUGIN.name = "Ammo Saver"
 PLUGIN.author = "Black Tea"
 PLUGIN.description = "Saves the ammo of a character."
 PLUGIN.ammoList = {}
-ix.ammo = ix.ammo or {}
 
+ix.ammo = ix.ammo or {}
 
 function ix.ammo.register(name)
 	table.insert(PLUGIN.ammoList, name)
@@ -44,7 +45,7 @@ function PLUGIN:CharacterPreSave(character)
 	if (IsValid(client)) then
 		local ammoTable = {}
 
-		for k, v in ipairs(self.ammoList) do
+		for _, v in ipairs(self.ammoList) do
 			local ammo = client:GetAmmoCount(v)
 
 			if (ammo > 0) then

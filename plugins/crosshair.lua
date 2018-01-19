@@ -1,3 +1,6 @@
+
+local PLUGIN = PLUGIN
+
 PLUGIN.name = "Crosshair"
 PLUGIN.author = "Black Tea"
 PLUGIN.description = "A Crosshair."
@@ -8,12 +11,12 @@ if (CLIENT) then
 		surface.SetDrawColor(color.r, color.g, color.b, color.a)
 		surface.DrawRect(pos[1] - size/2, pos[2] - size/2, size, size)
 
-		local color = col[1]
+		color = col[1]
 		surface.SetDrawColor(color.r, color.g, color.b, color.a)
 		surface.DrawOutlinedRect(pos[1] - size/2, pos[2] - size/2 , size, size)
 	end
 
-	local w, h, aimVector, punchAngle, ft, screen, scaleFraction, distance, entity
+	local aimVector, punchAngle, ft, screen, scaleFraction, distance
 	local math_round = math.Round
 	local curGap = 0
 	local curAlpha = 0
@@ -23,6 +26,7 @@ if (CLIENT) then
 	local colors = {color_black}
 	local filter = {}
 
+	-- luacheck: globals g_ContextMenu
 	function PLUGIN:PostDrawHUD()
 		local client = LocalPlayer()
 		if (!client:GetChar() or !client:Alive()) then
@@ -30,11 +34,13 @@ if (CLIENT) then
 		end
 
 		local entity = Entity(client:GetLocalVar("ragdoll", 0))
+
 		if (entity:IsValid()) then
 			return
 		end
 
 		local wep = client:GetActiveWeapon()
+
 		if (wep and wep:IsValid() and wep.HUDPaint) then
 			return
 		end
@@ -45,7 +51,6 @@ if (CLIENT) then
 
 		aimVector = client:EyeAngles()
 		punchAngle = client:GetPunchAngle()
-		w, h = ScrW(), ScrH()
 		ft = FrameTime()
 		filter = {client}
 

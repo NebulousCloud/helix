@@ -28,7 +28,7 @@ local CITIZEN_MODELS = {
 }
 
 function ix.faction.LoadFromDir(directory)
-	for k, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
+	for _, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
 		local niceName = v:sub(4, -5)
 
 		FACTION = ix.faction.teams[niceName] or {index = table.Count(ix.faction.teams) + 1, isDefault = true}
@@ -58,11 +58,11 @@ function ix.faction.LoadFromDir(directory)
 			FACTION.models = FACTION.models or CITIZEN_MODELS
 			FACTION.uniqueID = FACTION.uniqueID or niceName
 
-			for k, v in pairs(FACTION.models) do
-				if (type(v) == "string") then
-					util.PrecacheModel(v)
-				elseif (type(v) == "table") then
-					util.PrecacheModel(v[1])
+			for _, v2 in pairs(FACTION.models) do
+				if (type(v2) == "string") then
+					util.PrecacheModel(v2)
+				elseif (type(v2) == "table") then
+					util.PrecacheModel(v2[1])
 				end
 			end
 

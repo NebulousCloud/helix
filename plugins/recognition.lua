@@ -1,3 +1,4 @@
+
 PLUGIN.name = "Recognition"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds the ability to recognize people."
@@ -66,7 +67,8 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:GetDisplayedDescription(client)
-		if (client:GetChar() and client != LocalPlayer() and LocalPlayer():GetChar() and !LocalPlayer():GetChar():DoesRecognize(client:GetChar()) and !hook.Run("IsPlayerRecognized", client)) then
+		if (client:GetCharacter() and client != LocalPlayer() and LocalPlayer():GetCharacter() and
+			!LocalPlayer():GetCharacter():DoesRecognize(client:GetCharacter()) and !hook.Run("IsPlayerRecognized", client)) then
 			return L"noRecog"
 		end
 	end
@@ -118,7 +120,7 @@ if (CLIENT) then
 	end)
 
 	netstream.Hook("rgnDone", function()
-		hook.Run("OnCharRecognized", client, id)
+		hook.Run("OnCharRecognized")
 	end)
 
 	function PLUGIN:OnCharRecognized(client, recogCharID)
@@ -151,7 +153,7 @@ else
 
 			class = ix.chat.classes[class]
 
-			for k, v in ipairs(player.GetAll()) do
+			for _, v in ipairs(player.GetAll()) do
 				if (client != v and v:GetChar() and class:OnCanHear(client, v)) then
 					targets[#targets + 1] = v
 				end
@@ -159,11 +161,11 @@ else
 		end
 
 		if (#targets > 0) then
-			local id = client:GetChar():GetID()
+			local id = client:GetCharacter():GetID()
 			local i = 0
 
-			for k, v in ipairs(targets) do
-				if (v:GetChar():Recognize(id)) then
+			for _, v in ipairs(targets) do
+				if (v:GetCharacter():Recognize(id)) then
 					i = i + 1
 				end
 			end

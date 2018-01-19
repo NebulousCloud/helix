@@ -1,3 +1,4 @@
+
 ix.bar = ix.bar or {}
 ix.bar.list = {}
 ix.bar.delta = ix.bar.delta or {}
@@ -6,6 +7,7 @@ ix.bar.actionStart = 0
 ix.bar.actionEnd = 0
 ix.bar.totalHeight = 0
 
+-- luacheck: globals IX_CVAR_SHOWBARS
 IX_CVAR_SHOWBARS = CreateClientConVar("ix_alwaysshowbars", "0", true)
 
 function ix.bar.Get(identifier)
@@ -112,6 +114,7 @@ end
 
 local Approach = math.Approach
 
+-- luacheck: globals BAR_HEIGHT
 BAR_HEIGHT = 10
 
 function ix.bar.DrawAll()

@@ -1,8 +1,14 @@
+
+-- @todo this is going to be replaced later on
+-- luacheck: ignore
+
 local PLUGIN = PLUGIN
+
 PLUGIN.name = "Area"
 PLUGIN.author = "Black Tea"
 PLUGIN.description = "Allows you to set area."
 PLUGIN.areaTable = PLUGIN.areaTable or {}
+
 ix.area = ix.area or {}
 ALWAYS_RAISED["ix_areahelper"] = true
 
@@ -15,13 +21,13 @@ ix.config.Add("areaFontSize", 26, "The size of the font of Area Display.",
 	{data = {min = 1, max = 128},
 	category = "areaPlugin"
 })
+
 ix.config.Add("areaDispSpeed", 20, "The Appearance Speed of Area Display.", nil, {
 	data = {min = 1, max = 40},
 	category = "areaPlugin"
 })
 
 local playerMeta = FindMetaTable("Player")
-local PLUGIN = PLUGIN
 
 if (SERVER) then
 	function ix.area.GetArea(areaID)
@@ -40,9 +46,9 @@ if (SERVER) then
 			return false, "Area you specified is not valid."
 		end
 
-		local char = v:GetChar()
+		local character = self:GetCharacter()
 
-		if (!char) then
+		if (!character) then
 			return false, "Your character is not valid."
 		end
 
@@ -113,10 +119,10 @@ if (SERVER) then
 
 	-- Timer instead of heavy think.
 	timer.Create("ixAreaController", 0.33, 0, function()
-		for k, v in ipairs(player.GetAll()) do
-			local char = v:GetChar()
+		for _, v in ipairs(player.GetAll()) do
+			local character = v:GetCharacter()
 
-			if (char and v:Alive()) then
+			if (character and v:Alive()) then
 				local area = v:GetArea()
 				for id, areaData in pairs(ix.area.GetAllArea()) do
 					local clientPos = v:GetPos() + v:OBBCenter()
@@ -216,7 +222,7 @@ else
 		frame:AddItem(panel)
 	end
 
-	function ix.area.openAreaManager()
+	function ix.area.OpenAreaManager()
 		local frame = vgui.Create("DFrame")
 		frame:SetSize(400, 300)
 		frame:Center()
@@ -232,10 +238,6 @@ else
 
 		addAreaPanel(frame.menu)
 	end
-
-	netstream.Hook("areaManager", function()
-		--ix.area.openAreaManager()
-	end)
 
 	function PLUGIN:LoadFonts(font)
 		timer.Simple(0, function()
@@ -253,7 +255,6 @@ else
 	-- slow as fuck I guess?
 	local function drawMatrixString(str, font, x, y, scale, angle, color)
 		surface.SetFont(font)
-		local tx, ty = surface.GetTextSize(str)
 
 		local matrix = Matrix()
 		matrix:Translate(Vector(x, y, 1))

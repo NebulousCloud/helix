@@ -1,3 +1,6 @@
+
+-- luacheck: globals player_manager
+
 -- Define gamemode information.
 GM.Name = "Helix 1.2"
 GM.Author = "nebulous.cloud"
@@ -67,6 +70,7 @@ function GM:Initialize()
 	ix.config.Load()
 end
 
+-- luacheck: globals IX_RELOADED
 IX_RELOADED = false
 
 -- Called when a file has been modified.
@@ -91,7 +95,7 @@ function GM:OnReloaded()
 	else
 		-- Auto-reload support for faction pay timers.
 		for index, faction in ipairs(ix.faction.indices) do
-			for k, v in ipairs(team.GetPlayers(index)) do
+			for _, v in ipairs(team.GetPlayers(index)) do
 				if (faction.pay and faction.pay > 0) then
 					timer.Adjust("ixSalary"..v:UniqueID(), faction.payTime or 300, 0)
 				else
@@ -114,7 +118,7 @@ if (SERVER and game.IsDedicated()) then
 		if ((client.ixNextWarn or 0) < CurTime()) then
 			local message = client:Name().." ["..client:SteamID().."] has possibly attempted to crash the server with 'gm_save'"
 
-			for k, v in ipairs(player.GetAll()) do
+			for _, v in ipairs(player.GetAll()) do
 				if (v:IsAdmin()) then
 					v:ChatPrint(message)
 				end

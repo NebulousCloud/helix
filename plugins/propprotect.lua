@@ -7,7 +7,6 @@ local PROP_BLACKLIST = {
 	["models/props_combine/combinetrain02a.mdl"] = true,
 	["models/props_combine/combinetrain01.mdl"] = true,
 	["models/cranes/crane_frame.mdl"] = true,
-	["models/props_wasteland/cargo_container01.mdl"] = true,
 	["models/props_junk/trashdumpster02.mdl"] = true,
 	["models/props_c17/oildrum001_explosive.mdl"] = true,
 	["models/props_canal/canal_bridge02.mdl"] = true,

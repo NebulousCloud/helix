@@ -1,3 +1,4 @@
+
 PLUGIN.name = "Typing Indicator"
 PLUGIN.description = "Shows some text when someone types."
 PLUGIN.author = "Chessnut"
@@ -23,7 +24,7 @@ if (CLIENT) then
 
 		data.start = localPlayer:EyePos()
 
-		for k, v in ipairs(player.GetAll()) do
+		for _, v in ipairs(player.GetAll()) do
 			if (v != localPlayer and v:GetNetVar("typing") and v:GetMoveType() == MOVETYPE_WALK) then
 				data.endpos = v:EyePos()
 

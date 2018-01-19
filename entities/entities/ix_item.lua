@@ -1,3 +1,4 @@
+
 AddCSLuaFile()
 
 ENT.Base = "base_entity"
@@ -150,17 +151,21 @@ else
 
 			if (description != self.description) then
 				self.description = description
-				self.markup = ix.markup.parse("<font=ixItemDescFont>" .. description .. "</font>", ScrW() * 0.7)
+				self.markup = ix.markup.Parse("<font=ixItemDescFont>" .. description .. "</font>", ScrW() * 0.7)
 			end
 
-			ix.util.DrawText(itemTable.GetName and itemTable:GetName() or L(itemTable.name), x, y, colorAlpha(ix.config.Get("color"), alpha), 1, 1, nil, alpha * 0.65)
+			ix.util.DrawText(
+				itemTable.GetName and itemTable:GetName() or L(itemTable.name),
+				x, y, colorAlpha(ix.config.Get("color"), alpha), 1, 1, nil, alpha * 0.65
+			)
 
 			y = y + 12
+
 			if (self.markup) then
 				self.markup:draw(x, y, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, alpha)
 			end
 
-			x, y = hook.Run("DrawItemDescription", self, x, y, colorAlpha(color_white, alpha), alpha * 0.65)
+			hook.Run("DrawItemDescription", self, x, y, colorAlpha(color_white, alpha), alpha * 0.65)
 
 			itemTable.entity = nil
 			itemTable.data = oldData

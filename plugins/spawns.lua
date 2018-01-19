@@ -1,3 +1,4 @@
+
 local PLUGIN = PLUGIN
 
 PLUGIN.name = "Spawns"
@@ -20,7 +21,7 @@ function PLUGIN:PostPlayerLoadout(client)
 		end
 
 		if (points) then
-			for k, v in ipairs(ix.class.list) do
+			for _, v in ipairs(ix.class.list) do
 				if (class == v.index) then
 					className = v.uniqueID
 
@@ -60,7 +61,7 @@ ix.command.Add("SpawnAdd", {
 		local faction
 
 		if (!info) then
-			for k, v in ipairs(ix.faction.indices) do
+			for _, v in ipairs(ix.faction.indices) do
 				if (ix.util.StringMatches(v.uniqueID, name) or ix.util.StringMatches(L(v.name, client), name)) then
 					faction = v.uniqueID
 					info = v
@@ -74,8 +75,9 @@ ix.command.Add("SpawnAdd", {
 			if (class and class != "") then
 				local found = false
 
-				for k, v in ipairs(ix.class.list) do
-					if (v.faction == info.index and (v.uniqueID:lower() == class:lower() or ix.util.StringMatches(L(v.name, client), class))) then
+				for _, v in ipairs(ix.class.list) do
+					if (v.faction == info.index and
+						(v.uniqueID:lower() == class:lower() or ix.util.StringMatches(L(v.name, client), class))) then
 						class = v.uniqueID
 						info2 = v
 						found = true
@@ -98,7 +100,7 @@ ix.command.Add("SpawnAdd", {
 
 			PLUGIN:SaveSpawns()
 
-			local name = L(info.name, client)
+			name = L(info.name, client)
 
 			if (info2) then
 				name = name .. " (" .. L(info2.name, client) .. ")"
@@ -121,11 +123,11 @@ ix.command.Add("SpawnRemove", {
 		local position = client:GetPos()
 		local i = 0
 
-		for k, v in pairs(PLUGIN.spawns) do
-			for k2, v in pairs(v) do
-				for k3, v3 in pairs(v) do
+		for _, v in pairs(PLUGIN.spawns) do
+			for _, v2 in pairs(v) do
+				for k3, v3 in pairs(v2) do
 					if (v3:Distance(position) <= radius) then
-						v[k3] = nil
+						v2[k3] = nil
 						i = i + 1
 					end
 				end

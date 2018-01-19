@@ -1,3 +1,4 @@
+
 local META = ix.meta.inventory or {}
 META.__index = META
 META.slots = META.slots or {}
@@ -35,19 +36,20 @@ function META:Print(printPos)
 	end
 end
 
--- find out stacked shit
+-- finds errors for stacked items
 function META:FindError()
-	for k, v in pairs(self:GetItems()) do
+	for _, v in pairs(self:GetItems()) do
 		if (v.width == 1 and v.height == 1) then
 			continue
 		end
 
-		print("Finding error: " .. v.name )
-		print("Item Position: " .. v.gridX, v.gridY )
-		local x, y;
+		print("Finding error: " .. v.name)
+		print("Item Position: " .. v.gridX, v.gridY)
+
 		for x = v.gridX, v.gridX + v.width - 1 do
 			for y = v.gridY, v.gridY + v.height - 1 do
 				local item = self.slots[x][y]
+
 				if (item and item.id != v.id) then
 					print("Error Found: ".. item.name)
 				end
@@ -87,7 +89,7 @@ function META:SetOwner(owner, fullUpdate)
 
 	if (SERVER) then
 		if (fullUpdate) then
-			for k, v in ipairs(player.GetAll()) do
+			for _, v in ipairs(player.GetAll()) do
 				if (v:GetNetVar("char") == owner) then
 					self:Sync(v, true)
 
@@ -139,8 +141,6 @@ function META:FindEmptySlot(w, h, onlyMain)
 	if (w > self.w or h > self.h) then
 		return
 	end
-
-	local canFit = false
 
 	for y = 1, self.h - (h - 1) do
 		for x = 1, self.w - (w - 1) do
@@ -221,7 +221,7 @@ function META:Remove(id, noReplication, noDelete)
 end
 
 function META:GetReceiver()
-	for k, v in ipairs(player.GetAll()) do
+	for _, v in ipairs(player.GetAll()) do
 		if (v:GetChar() and v:GetChar().id == self.owner) then
 			return v
 		end
@@ -231,7 +231,7 @@ end
 function META:GetItemCount(uniqueID, onlyMain)
 	local i = 0
 
-	for k, v in pairs(self:GetItems(onlyMain)) do
+	for _, v in pairs(self:GetItems(onlyMain)) do
 		if (v.uniqueID == uniqueID) then
 			i = i + 1
 		end
@@ -243,7 +243,7 @@ end
 function META:GetItemsByUniqueID(uniqueID, onlyMain)
 	local items = {}
 
-	for k, v in pairs(self:GetItems(onlyMain)) do
+	for _, v in pairs(self:GetItems(onlyMain)) do
 		if (v.uniqueID == uniqueID) then
 			table.insert(items, v)
 		end
@@ -253,7 +253,7 @@ function META:GetItemsByUniqueID(uniqueID, onlyMain)
 end
 
 function META:GetItemByID(id, onlyMain)
-	for k, v in pairs(self:GetItems(onlyMain)) do
+	for _, v in pairs(self:GetItems(onlyMain)) do
 		if (v.id == id) then
 			return v
 		end
@@ -263,7 +263,7 @@ end
 function META:GetItemsByID(id, onlyMain)
 	local items = {}
 
-	for k, v in pairs(self:GetItems(onlyMain)) do
+	for _, v in pairs(self:GetItems(onlyMain)) do
 		if (v.id == id) then
 			table.insert(items, v)
 		end
@@ -276,8 +276,8 @@ end
 function META:GetItems(onlyMain)
 	local items = {}
 
-	for k, v in pairs(self.slots) do
-		for k2, v2 in pairs(v) do
+	for _, v in pairs(self.slots) do
+		for _, v2 in pairs(v) do
 			if (v2 and !items[v2.id]) then
 				items[v2.id] = v2
 
@@ -302,8 +302,8 @@ end
 function META:GetBags()
 	local invs = {}
 
-	for k, v in pairs(self.slots) do
-		for k2, v2 in pairs(v) do
+	for _, v in pairs(self.slots) do
+		for _, v2 in pairs(v) do
 			if (v2.data) then
 				local isBag = v2.data.id
 
@@ -319,24 +319,10 @@ function META:GetBags()
 	return invs
 end
 
-function META:MatchData(id, matchData)
-	local item = self:GetItemByID(id)
-
-	if (item) then
-		for dataKey, dataVal in pairs(data) do
-			if (itemData[dataKey] != dataVal) then
-				return false
-			end
-		end
-
-		return true
-	end
-end
-
 function META:HasItem(targetID, data)
 	local items = self:GetItems()
 
-	for k, v in pairs(items) do
+	for _, v in pairs(items) do
 		if (v.uniqueID == targetID) then
 			if (data) then
 				local itemData = v.data
@@ -361,14 +347,16 @@ if (SERVER) then
 		local sendData = item and item.data and table.Count(item.data) > 0 and item.data or nil
 
 		if (type(receiver) == "Player" and IsValid(receiver)) then
-			netstream.Start(receiver, "invSet", self:GetID(), x, y, item and item.uniqueID or nil, item and item.id or nil, nil, sendData, sendData and 1 or nil)
+			netstream.Start(receiver, "invSet",
+				self:GetID(), x, y, item and item.uniqueID or nil, item and item.id or nil, nil, sendData, sendData and 1 or nil)
 		else
-			netstream.Start(receiver, "invSet", self:GetID(), x, y, item and item.uniqueID or nil, item and item.id or nil, self.owner, sendData, sendData and 1 or nil)
+			netstream.Start(receiver, "invSet",
+				self:GetID(), x, y, item and item.uniqueID or nil, item and item.id or nil, self.owner, sendData, sendData and 1 or nil)
 		end
 
 		if (item) then
 			if (type(receiver) == "table") then
-				for k, v in pairs(receiver) do
+				for _, v in pairs(receiver) do
 					item:Call("OnSendData", v)
 				end
 			elseif (IsValid(receiver)) then
@@ -382,7 +370,7 @@ if (SERVER) then
 
 		if (quantity > 0) then
 			if (type(uniqueID) != "number" and quantity > 1) then
-				for i = 1, quantity do
+				for _ = 1, quantity do
 					self:Add(uniqueID, 1, data)
 				end
 
@@ -503,9 +491,10 @@ if (SERVER) then
 			end
 		end
 
-		netstream.Start(receiver, "inv", slots, self:GetID(), self.w, self.h, (receiver == nil or fullUpdate) and self.owner or nil, self.vars or {})
+		netstream.Start(receiver, "inv",
+			slots, self:GetID(), self.w, self.h, (receiver == nil or fullUpdate) and self.owner or nil, self.vars or {})
 
-		for k, v in pairs(self:GetItems()) do
+		for _, v in pairs(self:GetItems()) do
 			v:Call("OnSendData", receiver)
 		end
 	end

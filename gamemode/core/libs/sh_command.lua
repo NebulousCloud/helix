@@ -149,9 +149,9 @@ local function ArgumentCheckStub(command, client, given)
 
 			result[#result + 1] = value
 		elseif (argType == ix.type.steamid) then
-			local result = argument:match("STEAM_(%d+):(%d+):(%d+)")
+			local value = argument:match("STEAM_(%d+):(%d+):(%d+)")
 
-			if (!result and bOptional) then
+			if (!value and bOptional) then
 				return L("invalidArg", client, i)
 			end
 
@@ -218,7 +218,7 @@ function ix.command.Add(command, data)
 			if (type(data.group) == "table") then
 				function data:OnCheckAccess(client)
 					-- Check if the client's group is allowed.
-					for k, v in ipairs(self.group) do
+					for _, v in ipairs(self.group) do
 						if (client:IsUserGroup(v)) then
 							return true
 						end
@@ -266,7 +266,8 @@ function ix.command.Add(command, data)
 				argument[3] = true
 			end
 
-			data.syntax = data.syntax .. (bFirst and "" or " ") .. string.format((argument[3] and "[%s %s]" or "<%s %s>"), ix.type[argument[1]], argument[2])
+			data.syntax = data.syntax .. (bFirst and "" or " ") ..
+				string.format((argument[3] and "[%s %s]" or "<%s %s>"), ix.type[argument[1]], argument[2])
 
 			bFirst = false
 			bLastOptional = argument[3]
@@ -284,7 +285,7 @@ function ix.command.Add(command, data)
 
 	if (alias) then
 		if (type(alias) == "table") then
-			for k, v in ipairs(alias) do
+			for _, v in ipairs(alias) do
 				ix.command.list[v] = data
 			end
 		elseif (type(alias) == "string") then
@@ -379,7 +380,7 @@ function ix.command.FindAll(identifier, bSorted, bReorganize, bRemoveDupes)
 
 	if (identifier == "/") then
 		-- we don't simply copy because we need numeric indices
-		for k, v in iterator(ix.command.list) do
+		for _, v in iterator(ix.command.list) do
 			result[#result + 1] = v
 		end
 
@@ -445,7 +446,7 @@ if (SERVER) then
 	-- @table arguments Array of arguments to be passed to the command
 	-- @usage ix.command.Run(player.GetByID(1), "Roll", {10})
 	function ix.command.Run(client, command, arguments)
-		local command = ix.command.list[tostring(command):lower()]
+		command = ix.command.list[tostring(command):lower()]
 
 		if (!command) then
 			return
@@ -561,7 +562,7 @@ if (SERVER) then
 		if ((client.ixNextCmd or 0) < CurTime()) then
 			local arguments2 = {}
 
-			for k, v in ipairs(arguments) do
+			for _, v in ipairs(arguments) do
 				if (isstring(v) or isnumber(v)) then
 					arguments2[#arguments2 + 1] = tostring(v)
 				end

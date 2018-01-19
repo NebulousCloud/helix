@@ -47,11 +47,11 @@ function GM:PlayerInitialSpawn(client)
 
 			MsgN("Loaded ("..table.concat(charList, ", ")..") for "..client:Name())
 
-			for k, v in ipairs(charList) do
+			for _, v in ipairs(charList) do
 				ix.char.loaded[v]:Sync(client)
 			end
 
-			for k, v in ipairs(player.GetAll()) do
+			for _, v in ipairs(player.GetAll()) do
 				if (v:GetChar()) then
 					v:GetChar():Sync(client)
 				end
@@ -208,7 +208,7 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 	if (lastChar) then
 		local charEnts = lastChar:GetVar("charEnts") or {}
 
-		for k, v in ipairs(charEnts) do
+		for _, v in ipairs(charEnts) do
 			if (v and IsValid(v)) then
 				v:Remove()
 			end
@@ -218,7 +218,7 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 	end
 
 	if (character) then
-		for k, v in pairs(ix.class.list) do
+		for _, v in pairs(ix.class.list) do
 			if (v.faction == client:Team()) then
 				if (v.isDefault) then
 					character:SetClass(v.index)
@@ -268,8 +268,8 @@ function GM:CharacterLoaded(character)
 	end
 end
 
-function GM:PlayerSay(client, message)
-	local chatType, message, anonymous = ix.chat.Parse(client, message, true)
+function GM:PlayerSay(client, text)
+	local chatType, message, anonymous = ix.chat.Parse(client, text, true)
 
 	if (chatType == "ic") then
 		if (ix.command.Parse(client, message)) then
@@ -378,7 +378,7 @@ function GM:PlayerLoadout(client)
 
 			-- If the faction has default weapons, give them to the player.
 			if (faction.weapons) then
-				for k, v in ipairs(faction.weapons) do
+				for _, v in ipairs(faction.weapons) do
 					client:Give(v)
 				end
 			end
@@ -393,7 +393,7 @@ function GM:PlayerLoadout(client)
 			end
 
 			if (class.weapons) then
-				for k, v in ipairs(class.weapons) do
+				for _, v in ipairs(class.weapons) do
 					client:Give(v)
 				end
 			end
@@ -415,17 +415,15 @@ end
 
 function GM:PostPlayerLoadout(client)
 	-- Reload All Attrib Boosts
-	local char = client:GetChar()
+	local character = client:GetCharacter()
 
-	if (char:GetInv()) then
-		for k, v in pairs(char:GetInv():GetItems()) do
+	if (character:GetInv()) then
+		for _, v in pairs(character:GetInv():GetItems()) do
 			v:Call("OnLoadout", client)
 
-			if (v:GetData("equip")) then
-				if (v.attribBoosts) then
-					for k, v in pairs(v.attribBoosts) do
-						char:AddBoost(v.uniqueID, k, v)
-					end
+			if (v:GetData("equip") and v.attribBoosts) then
+				for attribKey, attribValue in pairs(v.attribBoosts) do
+					character:AddBoost(v.uniqueID, attribKey, attribValue)
 				end
 			end
 		end
@@ -536,7 +534,7 @@ function GM:PlayerDisconnected(client)
 	if (character) then
 		local charEnts = character:GetVar("charEnts") or {}
 
-		for k, v in ipairs(charEnts) do
+		for _, v in ipairs(charEnts) do
 			if (v and IsValid(v)) then
 				v:Remove()
 			end
@@ -551,14 +549,14 @@ end
 function GM:InitPostEntity()
 	local doors = ents.FindByClass("prop_door_rotating")
 
-	for k, v in ipairs(doors) do
+	for _, v in ipairs(doors) do
 		local parent = v:GetOwner()
 
 		if (IsValid(parent)) then
 			v.ixPartner = parent
 			parent.ixPartner = v
 		else
-			for k2, v2 in ipairs(doors) do
+			for _, v2 in ipairs(doors) do
 				if (v2:GetOwner() == v) then
 					v2.ixPartner = v
 					v.ixPartner = v2
@@ -584,15 +582,16 @@ function GM:ShutDown()
 
 	hook.Run("SaveData")
 
-	for k, v in ipairs(player.GetAll()) do
+	for _, v in ipairs(player.GetAll()) do
 		v:SaveData()
 
-		if (v:GetChar()) then
-			v:GetChar():Save()
+		if (v:GetCharacter()) then
+			v:GetCharacter():Save()
 		end
 	end
 end
 
+-- luacheck: globals LIMB_GROUPS
 LIMB_GROUPS = {}
 LIMB_GROUPS[HITGROUP_LEFTARM] = true
 LIMB_GROUPS[HITGROUP_RIGHTARM] = true
@@ -694,7 +693,7 @@ end
 function GM:CharacterPreSave(character)
 	local client = character:GetPlayer()
 
-	for k, v in pairs(character:GetInv():GetItems()) do
+	for _, v in pairs(character:GetInventory():GetItems()) do
 		if (v.OnSave) then
 			v:Call("OnSave", client)
 		end
@@ -702,7 +701,7 @@ function GM:CharacterPreSave(character)
 end
 
 timer.Create("ixLifeGuard", 1, 0, function()
-	for k, v in ipairs(player.GetAll()) do
+	for _, v in ipairs(player.GetAll()) do
 		if (v:GetChar() and v:Alive() and hook.Run("ShouldPlayerDrowned", v) != false) then
 			if (v:WaterLevel() >= 3) then
 				if (!v.drowningTime) then

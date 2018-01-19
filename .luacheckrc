@@ -3,7 +3,6 @@ max_line_length = 128
 std = "luajit+gmod+helix"
 ignore = {
 	"212", -- unused argument
-	"213" -- unused loop variable
 }
 
 -- helix
@@ -11,6 +10,7 @@ stds.helix = {}
 stds.helix.globals = {
 	"ix",
 	"Schema",
+
 	"ITEM",
 	"PLUGIN",
 	"ATTRIBUTE",
@@ -19,23 +19,41 @@ stds.helix.globals = {
 	"FACTION",
 	"CLASS",
 	"CHAT_RECOGNIZED",
-	"IX_RELOADED",
-	"ACCESS_LABELS",
 	"ALWAYS_RAISED",
-	"g_ContextMenu"
+	"ICON_RENDER_QUEUE",
+	"USABLE_FUNCS",
 }
 stds.helix.read_globals = {
 	"L",
 	"L2",
+	"IX_RELOADED",
 	"CHAT_CLASS",
 	"HOOKS_CACHE",
+	"HOLSTER_DRAWINFO",
+	"LIMB_GROUPS",
+	"BAR_HEIGHT",
+	"ACCESS_LABELS",
+
+	"netstream",
+	"mysql",
+	"pon",
+	"ikon",
+	"BaseClass",
+
 	"SetNetVar",
 	"GetNetVar",
 	"ixSoundDuration",
 
-	"netstream",
-	"mysql",
-	"BaseClass",
+	"HOLDTYPE_TRANSLATOR",
+	"PLAYER_HOLDTYPE_TRANSLATOR",
+
+	"ACT_VM_FISTS_DRAW",
+	"ACT_VM_FISTS_HOLSTER",
+	"ACT_STARTSEQ",
+	"ACT_ENDSEQ",
+
+	"TOOLTIP_GENERIC",
+	"TOOLTIP_ITEM",
 
 	"FLAG_NORMAL",
 	"FLAG_SUCCESS",
@@ -62,98 +80,38 @@ stds.helix.read_globals = {
 	"VENDOR_SELLANDBUY",
 	"VENDOR_SELLONLY",
 	"VENDOR_BUYONLY",
-	"VENDOR_TEXT"
+	"VENDOR_TEXT",
+
+	"FCAP_IMPULSE_USE",
+	"FCAP_CONTINUOUS_USE",
+	"FCAP_ONOFF_USE",
+	"FCAP_DIRECTIONAL_USE",
+	"FCAP_USE_ONGROUND",
+	"FCAP_USE_IN_RADIUS",
+
+	--- @todo remove these once proper client config system is implemented
+	"IX_CVAR_CHEAP",
+	"IX_CVAR_CHATNOTICE",
+	"IX_CVAR_SHOWTIMESTAMPS",
+	"IX_CVAR_TIMESTAMP24HOUR",
+	"IX_CVAR_LANG",
+	"IX_CVAR_SHOWBARS",
+	"IX_CVAR_OBSTPBACK",
+	"IX_CVAR_ADMINESP",
+	"IX_CVAR_CHATFILTER"
 }
 
--- file exceptions since some libraries need to define/override globals
 files = {
-	-- core
-	["gamemode/core/libs/sh_language.lua"] = {
-		globals = {
-			"L",
-			"L2"
-		}
-	},
-
-	["gamemode/core/libs/sh_log.lua"] = {
-		globals = {
-			"FLAG_NORMAL",
-			"FLAG_SUCCESS",
-			"FLAG_WARNING",
-			"FLAG_DANGER",
-			"FLAG_SERVER",
-			"FLAG_DEV"
-		}
-	},
-
-	["gamemode/core/libs/sh_plugin.lua"] = {
-		globals = {
-			"hook",
-			"HOOKS_CACHE"
-		}
-	},
-
-	["gamemode/core/sh_util.lua"] = {
-		globals = {
-			"SoundDuration",
-			"ixSoundDuration"
-		}
-	},
-
+	-- some phrases are unavoidably long, so we'll ignore the max line length for language files
 	["gamemode/languages/**/*.lua"] = {
-		-- some phrases are unavoidably long, so we'll ignore the max line length for language files
 		ignore = {
 			"631"
 		}
 	},
 
-	-- plugins
 	["plugins/**/languages/*.lua"] = {
-		-- some phrases are unavoidably long, so we'll ignore the max line length for language files
 		ignore = {
 			"631"
-		}
-	},
-
-	["plugins/chatbox/**/*.lua"] = {
-		globals = {
-			"chat",
-			"CHAT_CLASS"
-		}
-	},
-
-	["plugins/doors/**/*.lua"] = {
-		globals = {
-			"DOOR_OWNER",
-			"DOOR_TENANT",
-			"DOOR_GUEST",
-			"DOOR_NONE"
-		}
-	},
-
-	["plugins/vendor/**/*.lua"] = {
-		globals = {
-			"VENDOR_BUY",
-			"VENDOR_SELL",
-			"VENDOR_BOTH",
-			"VENDOR_WELCOME",
-			"VENDOR_LEAVE",
-			"VENDOR_NOTRADE",
-			"VENDOR_PRICE",
-			"VENDOR_STOCK",
-			"VENDOR_MODE",
-			"VENDOR_MAXSTOCK",
-			"VENDOR_SELLANDBUY",
-			"VENDOR_SELLONLY",
-			"VENDOR_BUYONLY",
-			"VENDOR_TEXT"
-		}
-	},
-
-	["plugins/pac.lua"] = {
-		globals = {
-			"pac",
-			"pace"
 		}
 	}
 }
@@ -184,6 +142,9 @@ stds.gmod.read_globals = {
 	"color_white",
 	"color_black",
 	"color_transparent",
+
+	"PLAYERANIMEVENT_CANCEL_RELOAD",
+	"ACT_COMBINE_THROW_GRENADE",
 
 	-- Generated on Wed Jan 17 02:56:57 2018
 	"ACT_MP_GESTURE_VC_NODYES",

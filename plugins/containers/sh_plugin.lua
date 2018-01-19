@@ -1,4 +1,6 @@
 
+local PLUGIN = PLUGIN
+
 PLUGIN.name = "Containers"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Provides the ability to store items."
@@ -57,7 +59,7 @@ if (SERVER) then
 	function PLUGIN:SaveContainer()
 		local data = {}
 
-		for k, v in ipairs(ents.FindByClass("ix_container")) do
+		for _, v in ipairs(ents.FindByClass("ix_container")) do
 			if (hook.Run("CanSaveContainer", v, v:GetInventory()) != false) then
 				if (v:GetInventory()) then
 					data[#data + 1] = {v:GetPos(), v:GetAngles(), v:GetNetVar("id"), v:GetModel(), v.password}
@@ -90,7 +92,7 @@ if (SERVER) then
 		local data = self:GetData()
 
 		if (data) then
-			for k, v in ipairs(data) do
+			for _, v in ipairs(data) do
 				local data2 = self.definitions[v[4]:lower()]
 
 				if (data2) then
@@ -137,8 +139,6 @@ if (SERVER) then
 		end
 	end)
 else
-	local PLUGIN = PLUGIN
-
 	netstream.Hook("invLock", function(entity)
 		Derma_StringRequest(
 			L("containerPasswordWrite"),

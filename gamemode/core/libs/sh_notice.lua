@@ -24,6 +24,7 @@ if (SERVER) then
 		end
 	end
 else
+	-- luacheck: globals IX_CVAR_CHATNOTICE
 	IX_CVAR_CHATNOTICE = CreateClientConVar("ix_chatnotice", 0, true)
 
 	-- List of notice panels.

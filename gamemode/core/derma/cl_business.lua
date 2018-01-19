@@ -1,3 +1,4 @@
+
 local PANEL = {}
 
 function PANEL:Init()
@@ -50,7 +51,7 @@ function PANEL:SetItem(itemTable)
 			this.nextClick = CurTime() + 0.5
 		end
 	end
-	self.icon.PaintOver = function(this, w, h)
+	self.icon.PaintOver = function(this)
 		if (itemTable and itemTable.PaintOver) then
 			local w, h = this:GetSize()
 
@@ -58,14 +59,14 @@ function PANEL:SetItem(itemTable)
 		end
 	end
 
-	if ((itemTable.iconCam and !renderdIcons[itemTable.uniqueID]) or itemTable.forceRender) then
+	if ((itemTable.iconCam and !ICON_RENDER_QUEUE[itemTable.uniqueID]) or itemTable.forceRender) then
 		local iconCam = itemTable.iconCam
 		iconCam = {
 			cam_pos = iconCam.pos,
 			cam_fov = iconCam.fov,
 			cam_ang = iconCam.ang,
 		}
-		renderdIcons[itemTable.uniqueID] = true
+		ICON_RENDER_QUEUE[itemTable.uniqueID] = true
 
 		self.icon:RebuildSpawnIconEx(
 			iconCam
@@ -194,7 +195,7 @@ end
 function PANEL:GetCartCount()
 	local count = 0
 
-	for k, v in pairs(self.cart) do
+	for _, v in pairs(self.cart) do
 		count = count + v
 	end
 
@@ -237,224 +238,229 @@ end
 vgui.Register("ixBusiness", PANEL, "EditablePanel")
 
 DEFINE_BASECLASS("DFrame")
-
 PANEL = {}
-	function PANEL:Init()
-		if (IsValid(ix.gui.checkout)) then
-			ix.gui.checkout:Remove()
+
+function PANEL:Init()
+	if (IsValid(ix.gui.checkout)) then
+		ix.gui.checkout:Remove()
+	end
+
+	ix.gui.checkout = self
+
+	self:SetTitle(L("checkout", 0))
+	self:SetSize(ScrW() / 4 > 200 and ScrW() / 4 or ScrW() / 2, ScrH() / 2 > 300 and ScrH() / 2 or ScrH())
+	self:MakePopup()
+	self:Center()
+	self:SetBackgroundBlur(true)
+	self:SetSizable(true)
+
+	self.items = self:Add("DScrollPanel")
+	self.items:Dock(FILL)
+	self.items.Paint = function(this, w, h)
+		surface.SetDrawColor(0, 0, 0, 100)
+		surface.DrawRect(0, 0, w, h)
+	end
+	self.items:DockMargin(0, 0, 0, 4)
+
+	self.buy = self:Add("DButton")
+	self.buy:Dock(BOTTOM)
+	self.buy:SetText(L"purchase")
+	self.buy:SetTextColor(color_white)
+	self.buy.DoClick = function(this)
+		if ((this.nextClick or 0) < CurTime()) then
+			this.nextClick = CurTime() + 0.5
+		else
+			return
 		end
 
-		ix.gui.checkout = self
+		if (self.preventBuy) then
+			self.finalGlow:SetText(self.final:GetText())
+			self.finalGlow:SetAlpha(255)
+			self.finalGlow:AlphaTo(0, 0.5)
 
-		self:SetTitle(L("checkout", 0))
-		self:SetSize(ScrW() / 4 > 200 and ScrW() / 4 or ScrW() / 2, ScrH() / 2 > 300 and ScrH() / 2 or ScrH())
-		self:MakePopup()
-		self:Center()
-		self:SetBackgroundBlur(true)
-		self:SetSizable(true)
-
-		self.items = self:Add("DScrollPanel")
-		self.items:Dock(FILL)
-		self.items.Paint = function(this, w, h)
-			surface.SetDrawColor(0, 0, 0, 100)
-			surface.DrawRect(0, 0, w, h)
-		end
-		self.items:DockMargin(0, 0, 0, 4)
-
-		self.buy = self:Add("DButton")
-		self.buy:Dock(BOTTOM)
-		self.buy:SetText(L"purchase")
-		self.buy:SetTextColor(color_white)
-		self.buy.DoClick = function(this)
-			if ((this.nextClick or 0) < CurTime()) then
-				this.nextClick = CurTime() + 0.5
-			else
-				return
-			end
-
-			if (self.preventBuy) then
-				self.finalGlow:SetText(self.final:GetText())
-				self.finalGlow:SetAlpha(255)
-				self.finalGlow:AlphaTo(0, 0.5)
-
-				return surface.PlaySound("buttons/button11.wav")
-			end
-
-			netstream.Start("bizBuy", self.itemData)
-			self.itemData = {}
-
-			self.items:Remove()
-			self.data:Remove()
-			self.buy:Remove()
-			self:ShowCloseButton(false)
-
-			if (IsValid(ix.gui.business)) then
-				ix.gui.business.cart = {}
-				ix.gui.business.checkout:SetText(L("checkout", 0))
-			end
-
-			self.text = self:Add("DLabel")
-			self.text:Dock(FILL)
-			self.text:SetContentAlignment(5)
-			self.text:SetTextColor(color_white)
-			self.text:SetText(L"purchasing")
-			self.text:SetFont("ixMediumFont")
-
-			netstream.Hook("bizResp", function()
-				if (IsValid(self)) then
-					self.text:SetText(L"buyGood")
-					self.done = true
-					self:ShowCloseButton(true)
-
-					surface.PlaySound("buttons/button3.wav")
-				end
-			end)
-
-			timer.Simple(5, function()
-				if (IsValid(self) and !self.done) then
-					self.text:SetText(L"buyFailed")
-					self:ShowCloseButton(true)
-
-					surface.PlaySound("buttons/button11.wav")
-				end
-			end)
+			return surface.PlaySound("buttons/button11.wav")
 		end
 
-		self.data = self:Add("DPanel")
-		self.data:Dock(BOTTOM)
-		self.data:SetTall(64)
-		self.data:DockMargin(0, 0, 0, 4)
-
-		self.current = self.data:Add("DLabel")
-		self.current:SetFont("ixSmallFont")
-		self.current:SetContentAlignment(6)
-		self.current:SetTextColor(color_white)
-		self.current:Dock(TOP)
-		self.current:SetTextInset(4, 0)
-
-		self.total = self.data:Add("DLabel")
-		self.total:SetFont("ixSmallFont")
-		self.total:SetContentAlignment(6)
-		self.total:SetTextColor(color_white)
-		self.total:Dock(TOP)
-		self.total:SetTextInset(4, 0)
-
-		local line = self.data:Add("DPanel")
-		line:SetTall(1)
-		line:DockMargin(128, 0, 4, 0)
-		line:Dock(TOP)
-		line.Paint = function(this, w, h)
-			surface.SetDrawColor(255, 255, 255, 150)
-			surface.DrawLine(0, 0, w, 0)
-		end
-
-		self.final = self.data:Add("DLabel")
-		self.final:SetFont("ixSmallFont")
-		self.final:SetContentAlignment(6)
-		self.final:SetTextColor(color_white)
-		self.final:Dock(TOP)
-		self.final:SetTextInset(4, 0)
-
-		self.finalGlow = self.final:Add("DLabel")
-		self.finalGlow:Dock(FILL)
-		self.finalGlow:SetFont("ixSmallFont")
-		self.finalGlow:SetTextColor(color_white)
-		self.finalGlow:SetContentAlignment(6)
-		self.finalGlow:SetAlpha(0)
-		self.finalGlow:SetTextInset(4, 0)
-
-
-		self:SetFocusTopLevel(true)
+		netstream.Start("bizBuy", self.itemData)
 		self.itemData = {}
-		self:OnQuantityChanged()
-	end
 
-	function PANEL:OnQuantityChanged()
-		local price = 0
-		local money = LocalPlayer():GetChar():GetMoney()
-		local valid = 0
+		self.items:Remove()
+		self.data:Remove()
+		self.buy:Remove()
+		self:ShowCloseButton(false)
 
-		for k, v in pairs(self.itemData) do
-			local itemTable = ix.item.list[k]
-
-			if (itemTable and v > 0) then
-				valid = valid + 1
-				price = price + (v * (itemTable.price or 0))
-			end
+		if (IsValid(ix.gui.business)) then
+			ix.gui.business.cart = {}
+			ix.gui.business.checkout:SetText(L("checkout", 0))
 		end
 
-		self.current:SetText(L"currentMoney"..ix.currency.Get(money))
-		self.total:SetText("- "..ix.currency.Get(price))
-		self.final:SetText(L"moneyLeft"..ix.currency.Get(money - price))
-		self.final:SetTextColor((money - price) >= 0 and Color(46, 204, 113) or Color(217, 30, 24))
+		self.text = self:Add("DLabel")
+		self.text:Dock(FILL)
+		self.text:SetContentAlignment(5)
+		self.text:SetTextColor(color_white)
+		self.text:SetText(L"purchasing")
+		self.text:SetFont("ixMediumFont")
 
-		self.preventBuy = (money - price) < 0 or valid == 0
+		netstream.Hook("bizResp", function()
+			if (IsValid(self)) then
+				self.text:SetText(L"buyGood")
+				self.done = true
+				self:ShowCloseButton(true)
+
+				surface.PlaySound("buttons/button3.wav")
+			end
+		end)
+
+		timer.Simple(5, function()
+			if (IsValid(self) and !self.done) then
+				self.text:SetText(L"buyFailed")
+				self:ShowCloseButton(true)
+
+				surface.PlaySound("buttons/button11.wav")
+			end
+		end)
 	end
 
-	function PANEL:SetCart(items)
-		self.itemData = items
+	self.data = self:Add("DPanel")
+	self.data:Dock(BOTTOM)
+	self.data:SetTall(64)
+	self.data:DockMargin(0, 0, 0, 4)
 
-		for k, v in SortedPairs(items) do
-			local itemTable = ix.item.list[k]
+	self.current = self.data:Add("DLabel")
+	self.current:SetFont("ixSmallFont")
+	self.current:SetContentAlignment(6)
+	self.current:SetTextColor(color_white)
+	self.current:Dock(TOP)
+	self.current:SetTextInset(4, 0)
 
-			if (itemTable) then
-				local slot = self.items:Add("DPanel")
-				slot:SetTall(36)
-				slot:Dock(TOP)
-				slot:DockMargin(5, 5, 5, 0)
+	self.total = self.data:Add("DLabel")
+	self.total:SetFont("ixSmallFont")
+	self.total:SetContentAlignment(6)
+	self.total:SetTextColor(color_white)
+	self.total:Dock(TOP)
+	self.total:SetTextInset(4, 0)
 
-				slot.icon = slot:Add("SpawnIcon")
-				slot.icon:SetPos(2, 2)
-				slot.icon:SetSize(32, 32)
-				slot.icon:SetModel(itemTable.model)
-				slot.icon:SetToolTip("")
+	local line = self.data:Add("DPanel")
+	line:SetTall(1)
+	line:DockMargin(128, 0, 4, 0)
+	line:Dock(TOP)
+	line.Paint = function(this, w, h)
+		surface.SetDrawColor(255, 255, 255, 150)
+		surface.DrawLine(0, 0, w, 0)
+	end
 
-				slot.name = slot:Add("DLabel")
-				slot.name:SetPos(40, 2)
-				slot.name:SetFont("ixChatFont")
-				slot.name:SetText(L(itemTable.GetName and itemTable:GetName() or L(itemTable.name)).." ("..(itemTable.price and ix.currency.Get(itemTable.price) or L"free":upper())..")")
-				slot.name:SetTextColor(color_white)
-				slot.name:SizeToContents()
-				slot.name:DockMargin(40, 0, 0, 0)
-				slot.name:Dock(FILL)
+	self.final = self.data:Add("DLabel")
+	self.final:SetFont("ixSmallFont")
+	self.final:SetContentAlignment(6)
+	self.final:SetTextColor(color_white)
+	self.final:Dock(TOP)
+	self.final:SetTextInset(4, 0)
 
-				slot.quantity = slot:Add("DTextEntry")
-				slot.quantity:SetSize(32, 32)
-				slot.quantity:Dock(RIGHT)
-				slot.quantity:DockMargin(4, 4, 4, 4)
-				slot.quantity:SetContentAlignment(5)
-				slot.quantity:SetNumeric(true)
-				slot.quantity:SetText(v)
-				slot.quantity:SetFont("ixChatFont")
-				slot.quantity.OnTextChanged = function(this)
-					local value = tonumber(this:GetValue())
+	self.finalGlow = self.final:Add("DLabel")
+	self.finalGlow:Dock(FILL)
+	self.finalGlow:SetFont("ixSmallFont")
+	self.finalGlow:SetTextColor(color_white)
+	self.finalGlow:SetContentAlignment(6)
+	self.finalGlow:SetAlpha(0)
+	self.finalGlow:SetTextInset(4, 0)
 
-					if (value) then
-						items[k] = math.Clamp(math.Round(value), 0, 10)
-						self:OnQuantityChanged()
-					else
-						this:SetValue(1)
-					end
+
+	self:SetFocusTopLevel(true)
+	self.itemData = {}
+	self:OnQuantityChanged()
+end
+
+function PANEL:OnQuantityChanged()
+	local price = 0
+	local money = LocalPlayer():GetChar():GetMoney()
+	local valid = 0
+
+	for k, v in pairs(self.itemData) do
+		local itemTable = ix.item.list[k]
+
+		if (itemTable and v > 0) then
+			valid = valid + 1
+			price = price + (v * (itemTable.price or 0))
+		end
+	end
+
+	self.current:SetText(L"currentMoney"..ix.currency.Get(money))
+	self.total:SetText("- "..ix.currency.Get(price))
+	self.final:SetText(L"moneyLeft"..ix.currency.Get(money - price))
+	self.final:SetTextColor((money - price) >= 0 and Color(46, 204, 113) or Color(217, 30, 24))
+
+	self.preventBuy = (money - price) < 0 or valid == 0
+end
+
+function PANEL:SetCart(items)
+	self.itemData = items
+
+	for k, v in SortedPairs(items) do
+		local itemTable = ix.item.list[k]
+
+		if (itemTable) then
+			local slot = self.items:Add("DPanel")
+			slot:SetTall(36)
+			slot:Dock(TOP)
+			slot:DockMargin(5, 5, 5, 0)
+
+			slot.icon = slot:Add("SpawnIcon")
+			slot.icon:SetPos(2, 2)
+			slot.icon:SetSize(32, 32)
+			slot.icon:SetModel(itemTable.model)
+			slot.icon:SetToolTip("")
+
+			slot.name = slot:Add("DLabel")
+			slot.name:SetPos(40, 2)
+			slot.name:SetFont("ixChatFont")
+			slot.name:SetText(string.format(
+				"%s (%s)",
+				L(itemTable.GetName and itemTable:GetName() or L(itemTable.name)),
+				itemTable.price and ix.currency.Get(itemTable.price) or L"free":upper()
+			))
+			slot.name:SetTextColor(color_white)
+			slot.name:SizeToContents()
+			slot.name:DockMargin(40, 0, 0, 0)
+			slot.name:Dock(FILL)
+
+			slot.quantity = slot:Add("DTextEntry")
+			slot.quantity:SetSize(32, 32)
+			slot.quantity:Dock(RIGHT)
+			slot.quantity:DockMargin(4, 4, 4, 4)
+			slot.quantity:SetContentAlignment(5)
+			slot.quantity:SetNumeric(true)
+			slot.quantity:SetText(v)
+			slot.quantity:SetFont("ixChatFont")
+			slot.quantity.OnTextChanged = function(this)
+				local value = tonumber(this:GetValue())
+
+				if (value) then
+					items[k] = math.Clamp(math.Round(value), 0, 10)
+					self:OnQuantityChanged()
+				else
+					this:SetValue(1)
 				end
-			else
-				items[k] = nil
 			end
+		else
+			items[k] = nil
 		end
-
-		self:OnQuantityChanged()
 	end
 
-	function PANEL:Think()
-		if (!self:HasFocus()) then
-			self:MakePopup()
-		end
+	self:OnQuantityChanged()
+end
 
-		BaseClass.Think(self)
+function PANEL:Think()
+	if (!self:HasFocus()) then
+		self:MakePopup()
 	end
+
+	BaseClass.Think(self)
+end
+
 vgui.Register("ixBusinessCheckout", PANEL, "DFrame")
 
 hook.Add("CreateMenuButtons", "ixBusiness", function(tabs)
-	if (hook.Run("BuildBusinessMenu", panel) != false) then
+	if (hook.Run("BuildBusinessMenu", tabs) != false) then
 		tabs["business"] = function(panel)
 			panel:Add("ixBusiness")
 		end

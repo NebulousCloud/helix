@@ -1,3 +1,4 @@
+
 ix.menu = ix.menu or {}
 ix.menu.list = ix.menu.list or {}
 
@@ -11,7 +12,7 @@ function ix.menu.Add(options, position, onRemove)
 	surface.SetFont("ixMediumFont")
 
 	-- Set the width to the longest button width.
-	for k, v in pairs(options) do
+	for k, _ in pairs(options) do
 		width = math.max(width, surface.GetTextSize(tostring(k)))
 	end
 
@@ -131,7 +132,7 @@ function ix.menu.DrawAll()
 		surface.DrawOutlinedRect(x2, y2, w2, h2)
 
 		-- Loop through all of the buttons.
-		for k2, v2 in SortedPairs(v.options) do
+		for k2, _ in SortedPairs(v.options) do
 			-- Determine where the button starts.
 			local y = startY + (i * 28)
 
@@ -189,7 +190,7 @@ function ix.menu.GetActiveMenu()
 			local i = 0
 
 			-- Loop through all of the buttons.
-			for k2, v2 in SortedPairs(v.options) do
+			for _, v2 in SortedPairs(v.options) do
 				-- Determine where the button starts.
 				local y = startY + (i * 28)
 

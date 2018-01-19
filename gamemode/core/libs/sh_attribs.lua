@@ -1,10 +1,13 @@
-if (!ix.char) then include("sh_character.lua") end
+
+if (!ix.char) then
+	include("sh_character.lua")
+end
 
 ix.attributes = ix.attributes or {}
 ix.attributes.list = ix.attributes.list or {}
 
 function ix.attributes.LoadFromDir(directory)
-	for k, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
+	for _, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
 		local niceName = v:sub(4, -5)
 
 		ATTRIBUTE = ix.attributes.list[niceName] or {}
@@ -41,10 +44,10 @@ do
 	if (SERVER) then
 		function charMeta:UpdateAttrib(key, value)
 			local attribute = ix.attributes.list[key]
+			local client = self:GetPlayer()
 
 			if (attribute) then
 				local attrib = self:GetAttributes()
-				local client = self:GetPlayer()
 
 				attrib[key] = math.min((attrib[key] or 0) + value, attribute.maxValue or ix.config.Get("maxAttributes", 30))
 
@@ -62,10 +65,10 @@ do
 
 		function charMeta:SetAttrib(key, value)
 			local attribute = ix.attributes.list[key]
+			local client = self:GetPlayer()
 
 			if (attribute) then
 				local attrib = self:GetAttributes()
-				local client = self:GetPlayer()
 
 				attrib[key] = value
 
@@ -127,7 +130,7 @@ do
 		local boosts = self:GetBoosts()[key]
 
 		if (boosts) then
-			for k, v in pairs(boosts) do
+			for _, v in pairs(boosts) do
 				att = att + v
 			end
 		end

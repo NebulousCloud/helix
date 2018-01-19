@@ -78,33 +78,34 @@ local PANEL = {}
 
 				-- boosted stat
 				do
-				if (boostedValue != 0) then
+					local boostValue
 
-					if (boostedValue < 0) then
-						local please = math.min(self.value, math.abs(boostedValue))
-						boostValue = ((please or 0) / self.max) * (self.deltaValue / self.value)
-					else
-						boostValue = ((boostedValue or 0) / self.max) * (self.deltaValue / self.value)
+					if (boostedValue != 0) then
+						if (boostedValue < 0) then
+							local please = math.min(self.value, math.abs(boostedValue))
+							boostValue = ((please or 0) / self.max) * (self.deltaValue / self.value)
+						else
+							boostValue = ((boostedValue or 0) / self.max) * (self.deltaValue / self.value)
+						end
+
+						if (boostedValue < 0) then
+							surface.SetDrawColor(200, 40, 40, 230)
+
+							local bWidth = math.abs(w * boostValue)
+							surface.DrawRect(2 + w * value - bWidth, 2, bWidth, h)
+
+							surface.SetDrawColor(255, 255, 255, 35)
+							surface.SetMaterial(gradient)
+							surface.DrawTexturedRect(2 + w * value - bWidth, 2, bWidth, h)
+						else
+							surface.SetDrawColor(40, 200, 40, 230)
+							surface.DrawRect(2 + w * value, 2, w * boostValue, h)
+
+							surface.SetDrawColor(255, 255, 255, 35)
+							surface.SetMaterial(gradient)
+							surface.DrawTexturedRect(2 + w * value, 2, w * boostValue, h)
+						end
 					end
-
-					if (boostedValue < 0) then
-						surface.SetDrawColor(200, 40, 40, 230)
-
-						local bWidth = math.abs(w * boostValue)
-						surface.DrawRect(2 + w * value - bWidth, 2, bWidth, h)
-
-						surface.SetDrawColor(255, 255, 255, 35)
-						surface.SetMaterial(gradient)
-						surface.DrawTexturedRect(2 + w * value - bWidth, 2, bWidth, h)
-					else
-						surface.SetDrawColor(40, 200, 40, 230)
-						surface.DrawRect(2 + w * value, 2, w * boostValue, h)
-
-						surface.SetDrawColor(255, 255, 255, 35)
-						surface.SetMaterial(gradient)
-						surface.DrawTexturedRect(2 + w * value, 2, w * boostValue, h)
-					end
-				end
 				end
 			end
 

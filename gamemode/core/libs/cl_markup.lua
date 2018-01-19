@@ -1,3 +1,6 @@
+
+-- luacheck: ignore
+
 local string = string
 local table = table
 local surface = surface
@@ -10,17 +13,7 @@ local Material = Material
 local tonumber = tonumber
 local file = file
 
-module("ix.markup")
-
---[[---------------------------------------------------------
-    Name: Constants used for text alignment.
-          These must be the same values as in the draw module.
------------------------------------------------------------]]
-TEXT_ALIGN_LEFT		= 0
-TEXT_ALIGN_CENTER	= 1
-TEXT_ALIGN_RIGHT	= 2
-TEXT_ALIGN_TOP		= 3
-TEXT_ALIGN_BOTTOM	= 4
+ix.markup = ix.markup or {}
 
 --[[---------------------------------------------------------
     Name: Temporary information used when building text frames.
@@ -286,7 +279,7 @@ end
           width.
    Usage: markup.Parse("<font=Default>changed font</font>\n<colour=255,0,255,255>changed colour</colour>")
 -----------------------------------------------------------]]
-function parse(ml, maxwidth)
+function ix.markup.Parse(ml, maxwidth)
 
 	colour_stack = { {r=255,g=255,b=255,a=255} }
 	font_stack = { "DermaDefault" }

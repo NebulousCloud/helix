@@ -119,7 +119,7 @@ function ix.db.LoadTables()
 				return
 			end
 
-			for k, v in pairs(result) do
+			for _, v in pairs(result) do
 				ix.db.schema[v.table] = util.JSONToTable(v.columns)
 			end
 		end)
@@ -160,7 +160,8 @@ concommand.Add("ix_wipedb", function(client, cmd, arguments)
 		if (resetCalled < RealTime()) then
 			resetCalled = RealTime() + 3
 
-			MsgC(Color(255, 0, 0), "[Helix] WIPING THE DATABASE WILL PERMENANTLY REMOVE ALL PLAYER, CHARACTER, ITEM, AND INVENTORY DATA.\n")
+			MsgC(Color(255, 0, 0),
+				"[Helix] WIPING THE DATABASE WILL PERMENANTLY REMOVE ALL PLAYER, CHARACTER, ITEM, AND INVENTORY DATA.\n")
 			MsgC(Color(255, 0, 0), "[Helix] THE SERVER WILL RESTART TO APPLY THESE CHANGES WHEN COMPLETED.\n")
 			MsgC(Color(255, 0, 0), "[Helix] TO CONFIRM DATABASE RESET, RUN 'ix_wipedb' AGAIN WITHIN 3 SECONDS.\n")
 		else

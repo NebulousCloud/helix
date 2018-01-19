@@ -1,3 +1,4 @@
+
 ix.item = ix.item or {}
 ix.item.list = ix.item.list or {}
 ix.item.base = ix.item.base or {}
@@ -16,13 +17,13 @@ function zeroInv:GetID()
 end
 
 -- WARNING: You have to manually sync the data to client if you're trying to use item in the logical inventory in the vgui.
-function zeroInv:Add(uniqueID, quantity, data)
+function zeroInv:Add(uniqueID, quantity, data, x, y)
 	quantity = quantity or 1
 
 	if (quantity > 0) then
 		if (!isnumber(uniqueID)) then
 			if (quantity > 1) then
-				for i = 1, quantity do
+				for _ = 1, quantity do
 					self:Add(uniqueID, 1, data)
 				end
 
@@ -100,7 +101,7 @@ function ix.item.NewInv(owner, invType, callback)
 			end
 
 			if (owner and owner > 0) then
-				for k, v in ipairs(player.GetAll()) do
+				for _, v in ipairs(player.GetAll()) do
 					if (v:GetChar() and v:GetChar():GetID() == owner) then
 						inventory:SetOwner(owner)
 						inventory:Sync(v)
@@ -262,23 +263,23 @@ function ix.item.LoadFromDir(directory)
 
 	files = file.Find(directory.."/base/*.lua", "LUA")
 
-	for k, v in ipairs(files) do
+	for _, v in ipairs(files) do
 		ix.item.Load(directory.."/base/"..v, nil, true)
 	end
 
 	files, folders = file.Find(directory.."/*", "LUA")
 
-	for k, v in ipairs(folders) do
+	for _, v in ipairs(folders) do
 		if (v == "base") then
 			continue
 		end
 
-		for k2, v2 in ipairs(file.Find(directory.."/"..v.."/*.lua", "LUA")) do
+		for _, v2 in ipairs(file.Find(directory.."/"..v.."/*.lua", "LUA")) do
 			ix.item.Load(directory.."/"..v .. "/".. v2, "base_"..v)
 		end
 	end
 
-	for k, v in ipairs(files) do
+	for _, v in ipairs(files) do
 		ix.item.Load(directory.."/"..v)
 	end
 end
@@ -392,10 +393,9 @@ do
 
 	if (CLIENT) then
 		netstream.Hook("item", function(uniqueID, id, data, invID)
-			local stockItem = ix.item.list[uniqueID]
 			local item = ix.item.New(uniqueID, id)
-
 			item.data = {}
+
 			if (data) then
 				item.data = data
 			end
@@ -420,7 +420,7 @@ do
 
 				local x, y
 
-				for k, v in ipairs(slots) do
+				for _, v in ipairs(slots) do
 					x, y = v[1], v[2]
 
 					inventory.slots[x] = inventory.slots[x] or {}
@@ -546,7 +546,7 @@ do
 						local icon = panel.panels[id]
 
 						if (IsValid(icon)) then
-							for k, v in ipairs(icon.slots or {}) do
+							for _, v in ipairs(icon.slots or {}) do
 								if (v.item == icon) then
 									v.item = nil
 								end
@@ -567,7 +567,7 @@ do
 				query:WhereIn("item_id", itemIndex)
 				query:Callback(function(result)
 					if (istable(result)) then
-						for k, v in ipairs(result) do
+						for _, v in ipairs(result) do
 							local itemID = tonumber(v.item_id)
 							local data = util.JSONToTable(v.data or "[]")
 							local uniqueID = v.unique_id
@@ -691,7 +691,9 @@ do
 					inventory:Sync(client)
 				end
 
-				if ((!inventory.owner or (inventory.owner and inventory.owner == character:GetID())) or (inventory.OnCheckAccess and inventory:OnCheckAccess(client))) then
+				if ((!inventory.owner or
+					(inventory.owner and inventory.owner == character:GetID())) or
+					(inventory.OnCheckAccess and inventory:OnCheckAccess(client))) then
 					local item = inventory:GetItemAt(oldX, oldY)
 
 					if (item) then
@@ -711,10 +713,10 @@ do
 
 							for x2 = 0, item.width - 1 do
 								for y2 = 0, item.height - 1 do
-									local oldX = inventory.slots[oldX + x2]
+									local previousX = inventory.slots[oldX + x2]
 
-									if (oldX) then
-										oldX[oldY + y2] = nil
+									if (previousX) then
+										previousX[oldY + y2] = nil
 									end
 								end
 							end
@@ -729,7 +731,7 @@ do
 							local receiver = inventory:GetReceiver()
 
 							if (receiver and type(receiver) == "table") then
-								for k, v in ipairs(receiver) do
+								for _, v in ipairs(receiver) do
 									if (v != client) then
 										netstream.Start(v, "invMv", invID, item:GetID(), x, y)
 									end

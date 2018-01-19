@@ -73,10 +73,10 @@ function ITEM:GetOwner()
 
 	local id = self:GetID()
 
-	for k, v in ipairs(player.GetAll()) do
-		local character = v:GetChar()
+	for _, v in ipairs(player.GetAll()) do
+		local character = v:GetCharacter()
 
-		if (character and character:GetInv():GetItemByID(id)) then
+		if (character and character:GetInventory():GetItemByID(id)) then
 			return v
 		end
 	end
@@ -127,7 +127,7 @@ function ITEM:GetData(key, default)
 			return value
 		elseif (IsValid(self.entity)) then
 			local data = self.entity:GetNetVar("data", {})
-			local value = data[key]
+			value = data[key]
 
 			if (value != nil) then
 				return value
@@ -157,12 +157,12 @@ function ITEM:PostHook(name, func)
 	end
 end
 
-function ITEM:Remove()
+function ITEM:Remove(bNoReplication, bNoDelete)
 	local inv = ix.item.inventories[self.invID]
-	local x2, y2
 
 	if (self.invID > 0 and inv) then
 		local failed = false
+
 		for x = self.gridX, self.gridX + (self.width - 1) do
 			if (inv.slots[x]) then
 				for y = self.gridY, self.gridY + (self.height - 1) do
@@ -181,7 +181,7 @@ function ITEM:Remove()
 			local items = inv:GetItems()
 
 			inv.slots = {}
-			for k, v in pairs(items) do
+			for _, v in pairs(items) do
 				if (v.invID == inv:GetID()) then
 					for x = self.gridX, self.gridX + (self.width - 1) do
 						for y = self.gridY, self.gridY + (self.height - 1) do
@@ -198,14 +198,15 @@ function ITEM:Remove()
 			return false
 		end
 	else
-		local inv = ix.item.inventories[self.invID]
+		-- @todo definition probably isn't needed
+		inv = ix.item.inventories[self.invID]
 
 		if (inv) then
 			ix.item.inventories[self.invID][self.id] = nil
 		end
 	end
 
-	if (SERVER and !noReplication) then
+	if (SERVER and !bNoReplication) then
 		local entity = self:GetEntity()
 
 		if (IsValid(entity)) then
@@ -222,7 +223,7 @@ function ITEM:Remove()
 			end
 		end
 
-		if (!noDelete) then
+		if (!bNoDelete) then
 			local item = ix.item.instances[self.id]
 
 			if (item and item.OnRemoved) then
@@ -244,7 +245,7 @@ if (SERVER) then
 	function ITEM:GetEntity()
 		local id = self:GetID()
 
-		for k, v in ipairs(ents.FindByClass("ix_item")) do
+		for _, v in ipairs(ents.FindByClass("ix_item")) do
 			if (v.ixItemID == id) then
 				return v
 			end
@@ -343,12 +344,13 @@ if (SERVER) then
 
 						return true
 					elseif (self.invID > 0 and prevID == 0) then
-						local inventory = ix.item.inventories[0]
+						inventory = ix.item.inventories[0]
 						inventory[self.id] = nil
 
 						if (self.OnTransfered) then
 							self:OnTransfered(curInv, inventory)
 						end
+
 						hook.Run("OnItemTransfered", self, curInv, inventory)
 
 						return true
@@ -368,7 +370,7 @@ if (SERVER) then
 				if (isLogical != true) then
 					return self:Spawn(client)
 				else
-					local inventory = ix.item.inventories[0]
+					inventory = ix.item.inventories[0]
 					inventory[self:GetID()] = self
 
 					if (self.OnTransfered) then

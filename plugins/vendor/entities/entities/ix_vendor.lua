@@ -1,3 +1,4 @@
+
 ENT.Type = "anim"
 ENT.PrintName = "Vendor"
 ENT.Category = "Helix"
@@ -57,9 +58,9 @@ function ENT:CanAccess(client)
 
 	if (allowed and self.classes and table.Count(self.classes) > 0) then
 		local class = ix.class.list[client:GetChar():GetClass()]
-		local uniqueID = class and class.uniqueID
+		local classID = class and class.uniqueID
 
-		if (!self.classes[uniqueID]) then
+		if (!self.classes[classID]) then
 			return false
 		end
 	end
@@ -74,7 +75,8 @@ function ENT:GetStock(uniqueID)
 end
 
 function ENT:GetPrice(uniqueID, selling)
-	local price = ix.item.list[uniqueID] and self.items[uniqueID] and self.items[uniqueID][VENDOR_PRICE] or ix.item.list[uniqueID].price or 0
+	local price = ix.item.list[uniqueID] and self.items[uniqueID] and
+		self.items[uniqueID][VENDOR_PRICE] or ix.item.list[uniqueID].price or 0
 
 	if (selling) then
 		price = math.floor(price * (self.scale or 0.5))

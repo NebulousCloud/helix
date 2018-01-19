@@ -1,18 +1,18 @@
 
 -- The queue for the rendered icons.
-renderdIcons = renderdIcons or {}
+ICON_RENDER_QUEUE = ICON_RENDER_QUEUE or {}
 
 -- To make making inventory variant, This must be followed up.
 local function RenderNewIcon(panel, itemTable)
 	-- re-render icons
-	if ((itemTable.iconCam and !renderdIcons[string.lower(itemTable.model)]) or itemTable.forceRender) then
+	if ((itemTable.iconCam and !ICON_RENDER_QUEUE[string.lower(itemTable.model)]) or itemTable.forceRender) then
 		local iconCam = itemTable.iconCam
 		iconCam = {
 			cam_pos = iconCam.pos,
 			cam_ang = iconCam.ang,
 			cam_fov = iconCam.fov,
 		}
-		renderdIcons[string.lower(itemTable.model)] = true
+		ICON_RENDER_QUEUE[string.lower(itemTable.model)] = true
 
 		panel.Icon:RebuildSpawnIconEx(
 			iconCam
@@ -36,8 +36,6 @@ function PANEL:PaintOver(w, h)
 	end
 
 	if (itemTable and itemTable.PaintOver) then
-		local w, h = self:GetSize()
-
 		itemTable.PaintOver(self, itemTable, w, h)
 	end
 end
@@ -46,8 +44,6 @@ function PANEL:ExtraPaint(w, h)
 end
 
 function PANEL:Paint(w, h)
-	local parent = self:GetParent()
-
 	surface.SetDrawColor(0, 0, 0, 85)
 	surface.DrawRect(2, 2, w - 4, h - 4)
 
@@ -86,7 +82,7 @@ PANEL = {}
 
 	function PANEL:OnRemove()
 		if (self.childPanels) then
-			for k, v in ipairs(self.childPanels) do
+			for _, v in ipairs(self.childPanels) do
 				if (v != self) then
 					v:Remove()
 				end
@@ -97,7 +93,7 @@ PANEL = {}
 	function PANEL:ViewOnly()
 		self.viewOnly = true
 
-		for id, icon in pairs(self.panels) do
+		for _, icon in pairs(self.panels) do
 			icon.OnMousePressed = nil
 			icon.OnMouseReleased = nil
 			icon.doRightClick = nil
@@ -187,8 +183,8 @@ PANEL = {}
 			surface.DrawOutlinedRect(1, 1, w - 2, h - 2)
 		end
 
-		for k, v in ipairs(self.slots) do
-			for k2, v2 in ipairs(v) do
+		for _, v in ipairs(self.slots) do
+			for _, v2 in ipairs(v) do
 				v2:Remove()
 			end
 		end
@@ -224,7 +220,7 @@ PANEL = {}
 			end
 		end
 
-		for k, v in pairs(self.panels) do
+		for _, v in pairs(self.panels) do
 			v:SetPos(self.slots[v.gridX][v.gridY]:GetPos())
 			v:SetSize(v.gridW * iconSize, v.gridH * iconSize)
 		end
@@ -237,7 +233,8 @@ PANEL = {}
 
 		if (IsValid(item)) then
 			local mouseX, mouseY = self:LocalCursorPos()
-			local dropX, dropY = math.ceil((mouseX - 4 - (item.gridW - 1) * 32) / iconSize), math.ceil((mouseY - 27 - (item.gridH - 1) * 32) / iconSize)
+			local dropX = math.ceil((mouseX - 4 - (item.gridW - 1) * 32) / iconSize)
+			local dropY = math.ceil((mouseY - 27 - (item.gridH - 1) * 32) / iconSize)
 
 			if ((mouseX < -w*0.05 or mouseX > w*1.05) or (mouseY < h*0.05 or mouseY > h*1.05)) then
 				activePanels[self] = nil
@@ -290,8 +287,9 @@ PANEL = {}
 	end
 
 	function PANEL:OnTransfer(oldX, oldY, x, y, oldInventory, noSend)
-		local inventory = ix.item.inventories[oldInventory.invID]
-		local inventory2 = ix.item.inventories[self.invID]
+		local inventories = ix.item.inventories
+		local inventory = inventories[oldInventory.invID]
+		local inventory2 = inventories[self.invID]
 		local item
 
 		if (inventory) then
@@ -301,11 +299,12 @@ PANEL = {}
 				return false
 			end
 
-			if (hook.Run("CanItemBeTransfered", item, ix.item.inventories[oldInventory.invID], ix.item.inventories[self.invID]) == false) then
+			if (hook.Run("CanItemBeTransfered", item, inventories[oldInventory.invID], inventories[self.invID]) == false) then
 				return false, "notAllowed"
 			end
 
-			if (item.OnCanBeTransfered and item:OnCanBeTransfered(inventory, inventory != inventory2 and inventory2 or nil) == false) then
+			if (item.OnCanBeTransfered and
+				item:OnCanBeTransfered(inventory, inventory != inventory2 and inventory2 or nil) == false) then
 				return false
 			end
 		end
@@ -363,12 +362,12 @@ PANEL = {}
 
 			if (itemTable.exRender) then
 				panel.Icon:SetVisible(false)
-				panel.ExtraPaint = function(self, x, y)
+				panel.ExtraPaint = function(this, panelX, panelY)
 					local exIcon = ikon:GetIcon(itemTable.uniqueID)
 					if (exIcon) then
 						surface.SetMaterial(exIcon)
 						surface.SetDrawColor(color_white)
-						surface.DrawTexturedRect(0, 0, x, y)
+						surface.DrawTexturedRect(0, 0, panelX, panelY)
 					else
 						ikon:renderIcon(
 							itemTable.uniqueID,
@@ -384,11 +383,11 @@ PANEL = {}
 				RenderNewIcon(panel, itemTable)
 			end
 
-			panel.move = function(this, data, inventory, noSend)
+			panel.move = function(this, data, givenInventory, noSend)
 				local oldX, oldY = this.gridX, this.gridY
 				local oldParent = this:GetParent()
 
-				if (inventory:OnTransfer(oldX, oldY, data.x2, data.y2, oldParent, noSend) == false) then
+				if (givenInventory:OnTransfer(oldX, oldY, data.x2, data.y2, oldParent, noSend) == false) then
 					return
 				end
 
@@ -397,12 +396,12 @@ PANEL = {}
 
 				this.gridX = data.x2
 				this.gridY = data.y2
-				this.invID = inventory.invID
-				this:SetParent(inventory)
+				this.invID = givenInventory.invID
+				this:SetParent(givenInventory)
 				this:SetPos(data.x, data.y)
 
 				if (this.slots) then
-					for k, v in ipairs(this.slots) do
+					for _, v in ipairs(this.slots) do
 						if (IsValid(v) and v.item == this) then
 							v.item = nil
 						end
@@ -411,9 +410,9 @@ PANEL = {}
 
 				this.slots = {}
 
-				for x = 1, this.gridW do
-					for y = 1, this.gridH do
-						local slot = inventory.slots[this.gridX + x-1][this.gridY + y-1]
+				for currentX = 1, this.gridW do
+					for currentY = 1, this.gridH do
+						local slot = givenInventory.slots[this.gridX + currentX - 1][this.gridY + currentY - 1]
 
 						slot.item = this
 						this.slots[#this.slots + 1] = slot
@@ -429,7 +428,8 @@ PANEL = {}
 						if (func) then
 							local use
 							local comm
-							for k, v in pairs(USABLE_FUNCS or {}) do
+
+							for _, v in pairs(USABLE_FUNCS or {}) do
 								comm = v
 								use = func[comm]
 
@@ -502,74 +502,55 @@ PANEL = {}
 					end
 					activePanels = {}
 
-					if (data) then
-						local inventory = table.GetFirstKey(data)
+					if (!data) then
+						return
+					end
 
-						if (IsValid(inventory)) then
-							data = data[inventory]
+					local curInv = table.GetFirstKey(data)
 
-							if (IsValid(data.item)) then
-								inventory = panel.inv
+					if (!IsValid(curInv)) then
+						return
+					end
 
-								if (inventory) then
-									local targetItem = data.item.itemTable
+					data = data[curInv]
 
-									if (targetItem) then
-										-- to make sure...
-										if (targetItem.id == itemTable.id) then return end
+					if (IsValid(data.item)) then
+						curInv = panel.inv
 
-										if (itemTable.functions) then
-											local combine = itemTable.functions.combine
+						if (curInv) then
+							local targetItem = data.item.itemTable
 
-											-- does the item has the combine feature?
-											if (combine) then
-												itemTable.player = LocalPlayer()
+							if (targetItem) then
+								-- to make sure...
+								if (targetItem.id == itemTable.id) then return end
 
-												-- canRun == can item combine into?
-												if (combine.OnCanRun and (combine.OnCanRun(itemTable, targetItem.id) != false)) then
-													netstream.Start("invAct", "combine", itemTable.id, inventory:GetID(), targetItem.id)
-												end
+								if (itemTable.functions) then
+									local combine = itemTable.functions.combine
 
-												itemTable.player = nil
-											else
-												--[[
-													-- Drag and drop bag transfer requires half-recode of Inventory GUI.
-													-- It will be there. But it will take some time.
+									-- does the item has the combine feature?
+									if (combine) then
+										itemTable.player = LocalPlayer()
 
-													-- okay, the bag doesn't have any combine function.
-													-- then, what's next? yes. moving the item in the bag.
-
-													if (targetItem.isBag) then
-														-- get the inventory.
-														local bagInv = targetItem.GetInv and targetItem:GetInv()
-														-- Is the bag's inventory exists?
-														if (bagInv) then
-															print(bagInv, "baggeD")
-															local mx, my = bagInv:FindEmptySlot(itemTable.width, itemTable.height, true)
-
-															-- we found slot for the inventory.
-															if (mx and my) then
-																print(bagInv, "move")
-																this:move({x2 = mx, y2 = my}, bagInv)
-															end
-														end
-													end
-												]]--
-											end
+										-- canRun == can item combine into?
+										if (combine.OnCanRun and (combine.OnCanRun(itemTable, targetItem.id) != false)) then
+											netstream.Start("invAct", "combine", itemTable.id, curInv:GetID(), targetItem.id)
 										end
+
+										itemTable.player = nil
 									end
 								end
-							else
-								local oldX, oldY = this.gridX, this.gridY
-
-								if (oldX != data.x2 or oldY != data.y2 or inventory != self) then
-									this:move(data, inventory)
-								end
 							end
+						end
+					else
+						local oldX, oldY = this.gridX, this.gridY
+
+						if (oldX != data.x2 or oldY != data.y2 or curInv != self) then
+							this:move(data, curInv)
 						end
 					end
 				end
 			end
+
 			panel.doRightClick = function(this)
 				if (itemTable) then
 					itemTable.player = LocalPlayer()
@@ -667,7 +648,7 @@ PANEL = {}
 						slot.item = panel
 						panel.slots[#panel.slots + 1] = slot
 					else
-						for k, v in ipairs(panel.slots) do
+						for _, v in ipairs(panel.slots) do
 							v.item = nil
 						end
 

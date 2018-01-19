@@ -1,11 +1,13 @@
+
 AddCSLuaFile()
 
-if( CLIENT ) then
+if (CLIENT) then
 	SWEP.PrintName = "Area Helper";
 	SWEP.Slot = 0;
 	SWEP.SlotPos = 0;
 	SWEP.CLMode = 0
 end
+
 SWEP.HoldType = "fists"
 
 SWEP.Category = "Helix"
@@ -46,9 +48,7 @@ end
 function SWEP:Think()
 end
 
-local gridsize = 1
-
-if SERVER then
+if (SERVER) then
 	function SWEP:PrimaryAttack()
 	end
 
@@ -57,44 +57,43 @@ if SERVER then
 
 	function SWEP:SecondaryAttack()
 	end
-end
-
-if CLIENT then
-	areaPoint = areaPoint or {}
+else
+	ix.areaPoint = ix.areaPoint or {}
 
 	function SWEP:PrimaryAttack()
-		if IsFirstTimePredicted() then
+		if (IsFirstTimePredicted()) then
 			local trace = LocalPlayer():GetEyeTraceNoCursor()
 			local pos = trace.HitPos
 
-			if (areaPoint.startVector) then
-				areaPoint.endVector = pos
+			if (ix.areaPoint.startVector) then
+				ix.areaPoint.endVector = pos
 				surface.PlaySound("buttons/button15.wav")
 			else
-				areaPoint.startVector = pos
+				ix.areaPoint.startVector = pos
 				surface.PlaySound("buttons/button3.wav")
 			end
 		end
 	end
 
-	function SWEP:openAreaManager()
+	function SWEP:OpenAreaManager()
 	end
 
 	function SWEP:Reload()
-		if (!self.ohWow and areaPoint.startVector and areaPoint.endVector) then
-			self.ohWow = true
+		if (!self.bRequesting and ix.areaPoint.startVector and ix.areaPoint.endVector) then
+			self.bRequesting = true
+
 			Derma_StringRequest("Area Name?", "Area Name?", "", function(text)
-				self.ohWow = false
-				netstream.Start("areaAdd", text, areaPoint.startVector, areaPoint.endVector)
+				self.bRequesting = false
+				netstream.Start("areaAdd", text, ix.areaPoint.startVector, ix.areaPoint.endVector)
 			end, function()
-				self.ohWow = false
+				self.bRequesting = false
 			end)
 		end
 	end
 
 	function SWEP:SecondaryAttack()
 		if (IsFirstTimePredicted()) then
-			areaPoint = {}
+			ix.areaPoint = {}
 
 			if (!self.rSnd) then
 				surface.PlaySound("buttons/button2.wav")
@@ -125,11 +124,15 @@ if CLIENT then
 	function SWEP:DrawHUD()
 		local w, h = ScrW(), ScrH()
 		local cury = h/4*3
-		local tx, ty = draw.SimpleText("Left Click: Set Area Point", "ixMediumFont", w/2, cury, color_white, 1, 1)
+		local _, ty
+
+		_, ty = draw.SimpleText("Left Click: Set Area Point", "ixMediumFont", w/2, cury, color_white, 1, 1)
 		cury = cury + ty
-		local tx, ty = draw.SimpleText("Right Click: Reset Area Point", "ixMediumFont", w/2, cury, color_white, 1, 1)
+
+		_, ty = draw.SimpleText("Right Click: Reset Area Point", "ixMediumFont", w/2, cury, color_white, 1, 1)
 		cury = cury + ty
-		local tx, ty = draw.SimpleText("Reload: Register Area", "ixMediumFont", w/2, cury, color_white, 1, 1)
+
+		draw.SimpleText("Reload: Register Area", "ixMediumFont", w/2, cury, color_white, 1, 1)
 
 		local trace = LocalPlayer():GetEyeTraceNoCursor()
 		local pos = trace.HitPos
@@ -143,13 +146,13 @@ if CLIENT then
 	end
 
 	hook.Add("PostDrawOpaqueRenderables", "helperDraw", function()
-		if (areaPoint) then
+		if (ix.areaPoint) then
 			local sPos, ePos
-			if (areaPoint.startVector and areaPoint.endVector) then
-				sPos = areaPoint.startVector
-				ePos = areaPoint.endVector
-			elseif (areaPoint.startVector and !areaPoint.endVector) then
-				sPos = areaPoint.startVector
+			if (ix.areaPoint.startVector and ix.areaPoint.endVector) then
+				sPos = ix.areaPoint.startVector
+				ePos = ix.areaPoint.endVector
+			elseif (ix.areaPoint.startVector and !ix.areaPoint.endVector) then
+				sPos = ix.areaPoint.startVector
 				local trace = LocalPlayer():GetEyeTraceNoCursor()
 				ePos = trace.HitPos
 			end
@@ -163,7 +166,6 @@ if CLIENT then
 				render.DrawLine(sPos, c2, color_white)
 				c3 = Vector(ePos[1], ePos[2], sPos[3])
 				render.DrawLine(c3, c1, color_white)
-				c4 = Vector(ePos[1], ePos[2], sPos[3])
 				render.DrawLine(c3, c2, color_white)
 
 				c1 = Vector(sPos[1], ePos[2], ePos[3])
@@ -172,7 +174,6 @@ if CLIENT then
 				render.DrawLine(ePos, c2, color_white)
 				c3 = Vector(sPos[1], sPos[2], ePos[3])
 				render.DrawLine(c3, c1, color_white)
-				c4 = Vector(sPos[1], sPos[2], ePos[3])
 				render.DrawLine(c3, c2, color_white)
 
 				local c5, c6, c7, c8

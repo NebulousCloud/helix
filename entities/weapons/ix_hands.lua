@@ -1,3 +1,4 @@
+
 AddCSLuaFile()
 
 if (CLIENT) then
@@ -51,6 +52,7 @@ SWEP.allowedHoldableClasses = {
 	["prop_ragdoll"] = true
 }
 
+-- luacheck: globals ACT_VM_FISTS_DRAW ACT_VM_FISTS_HOLSTER
 ACT_VM_FISTS_DRAW = 3
 ACT_VM_FISTS_HOLSTER = 2
 
@@ -318,8 +320,6 @@ function SWEP:PrimaryAttack()
 	if (SERVER) then
 		self.Owner:EmitSound("npc/vort/claw_swing"..math.random(1, 2)..".wav")
 	end
-
-	local damage = self.Primary.Damage
 
 	self:DoPunchAnimation()
 

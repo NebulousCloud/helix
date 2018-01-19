@@ -1,3 +1,4 @@
+
 PLUGIN.name = "3D Panels"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds web panels that can be placed on the map."
@@ -102,7 +103,7 @@ else
 		PLUGIN.list = values
 
 		-- Loop through the list of panels.
-		for k, v in pairs(PLUGIN.list) do
+		for _, v in pairs(PLUGIN.list) do
 			-- Create a VGUI object to display the URL.
 			local object = vgui.Create("DHTML")
 			object:OpenURL(v[6])
@@ -123,7 +124,7 @@ else
 			local ourPosition = LocalPlayer():GetPos()
 
 			-- Loop through all of the panel.
-			for k, v in pairs(self.list) do
+			for _, v in pairs(self.list) do
 				local position = v[1]
 
 				if (ourPosition:DistToSqr(position) <= 4194304) then

@@ -1,3 +1,4 @@
+
 PLUGIN.name = "Save Items"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Saves items that were dropped."
@@ -23,7 +24,7 @@ function PLUGIN:LoadData()
 		local idRange = {}
 		local positions = {}
 
-		for k, v in ipairs(items) do
+		for _, v in ipairs(items) do
 			idRange[#idRange + 1] = v[1]
 			positions[v[1]] = v[2]
 		end
@@ -36,7 +37,6 @@ function PLUGIN:LoadData()
 				query:Execute()
 
 				print("Server Deleted Server Items (does not includes Logical Items)")
-				print(range)
 			else
 				local query = mysql:Select("ix_items")
 					query:Select("item_id")
@@ -47,12 +47,11 @@ function PLUGIN:LoadData()
 						if (istable(result)) then
 							local loadedItems = {}
 
-							for k, v in ipairs(result) do
+							for _, v in ipairs(result) do
 								local itemID = tonumber(v.item_id)
 								local data = util.JSONToTable(v.data or "[]")
 								local uniqueID = v.unique_id
 								local itemTable = ix.item.list[uniqueID]
-								local position = positions[itemID]
 
 								if (itemTable and itemID) then
 									local position = positions[itemID]
@@ -77,7 +76,7 @@ end
 function PLUGIN:SaveData()
 	local items = {}
 
-	for k, v in ipairs(ents.FindByClass("ix_item")) do
+	for _, v in ipairs(ents.FindByClass("ix_item")) do
 		if (v.ixItemID and !v.temp) then
 			items[#items + 1] = {v.ixItemID, v:GetPos()}
 		end

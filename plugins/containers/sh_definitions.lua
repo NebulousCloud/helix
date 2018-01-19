@@ -64,13 +64,13 @@ PLUGIN.definitions["models/items/ammocrate_smg1.mdl"] = {
 	width = 5,
 	height = 3,
 	OnOpen = function(entity, activator)
-		local seq = entity:LookupSequence("Close")
-		entity:ResetSequence(seq)
+		local closeSeq = entity:LookupSequence("Close")
+		entity:ResetSequence(closeSeq)
 
 		timer.Simple(2, function()
 			if (entity and IsValid(entity)) then
-				local seq = entity:LookupSequence("Open")
-				entity:ResetSequence(seq)
+				local openSeq = entity:LookupSequence("Open")
+				entity:ResetSequence(openSeq)
 			end
 		end)
 	end,

@@ -1,3 +1,4 @@
+
 PLUGIN.name = "Weapon Select"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "A replacement for the default weapon selection."
@@ -24,7 +25,7 @@ if (CLIENT) then
 			local spacing = math.pi * 0.85
 			local radius = 240 * self.alphaDelta
 
-			self.deltaIndex = Lerp(frameTime * 12, self.deltaIndex, self.index) --math.Approach(self.deltaIndex, self.index, fTime() * 12)
+			self.deltaIndex = Lerp(frameTime * 12, self.deltaIndex, self.index)
 
 			local index = self.deltaIndex
 
@@ -34,12 +35,16 @@ if (CLIENT) then
 				end
 
 				local theta = (k - index) * 0.1
-				local color = ColorAlpha(k == self.index and ix.config.Get("color") or color_white, (255 - math.abs(theta * 3) * 255) * fraction)
+				local color = ColorAlpha(
+					k == self.index and ix.config.Get("color") or color_white,
+					(255 - math.abs(theta * 3) * 255) * fraction
+				)
+
 				local lastY = 0
 				local shiftX = ScrW()*.02
 
 				if (self.markup and k < self.index) then
-					local w, h = self.markup:Size()
+					local _, h = self.markup:Size()
 
 					lastY = (h * fraction)
 
@@ -51,7 +56,7 @@ if (CLIENT) then
 				end
 
 				surface.SetFont("ixSubTitleFont")
-				local tx, ty = surface.GetTextSize(v:GetPrintName():upper())
+				local _, ty = surface.GetTextSize(v:GetPrintName():upper())
 				local scale = (1 - math.abs(theta*2))
 
 				local matrix = Matrix()
@@ -59,7 +64,6 @@ if (CLIENT) then
 					shiftX + x + math.cos(theta * spacing + math.pi) * radius + radius,
 					y + lastY + math.sin(theta * spacing + math.pi) * radius - ty/2 ,
 					1))
-				matrix:Rotate(angle or Angle(0, 0, 0))
 				matrix:Scale(Vector(1, 1, 0) * scale)
 
 				cam.PushModelMatrix(matrix)
@@ -87,8 +91,10 @@ if (CLIENT) then
 
 			if (instructions != nil and instructions:find("%S")) then
 				local color = ix.config.Get("color")
-
-				text = text.."<font=ixItemBoldFont><color="..color.r..","..color.g..","..color.b..">"..L("Instructions").."</font></color>\n"..instructions.."\n"
+				text = text .. string.format(
+					"<font=ixItemBoldFont><color=%d,%d,%d>%s</font></color>\n%s\n",
+					color.r, color.g, color.b, L("Instructions"), instructions
+				)
 			end
 
 			if (text != "") then
@@ -96,16 +102,16 @@ if (CLIENT) then
 				self.infoAlpha = 0
 			end
 
-			local source, pitch = hook.Run("WeaponCycleSound") or "common/talk.wav"
-
+			local source, pitch = hook.Run("WeaponCycleSound")
 			LocalPlayer():EmitSound(source or "common/talk.wav", 50, pitch or 180)
 		end
 	end
 
 	function PLUGIN:PlayerBindPress(client, bind, pressed)
-		local weapon = client:GetActiveWeapon()
+		local currentWeapon = client:GetActiveWeapon()
 
-		if (!client:InVehicle() and (!IsValid(weapon) or weapon:GetClass() != "weapon_physgun" or !client:KeyDown(IN_ATTACK))) then
+		if (!client:InVehicle() and
+			(!IsValid(currentWeapon) or currentWeapon:GetClass() != "weapon_physgun" or !client:KeyDown(IN_ATTACK))) then
 			bind = bind:lower()
 
 			if (bind:find("invprev") and pressed) then

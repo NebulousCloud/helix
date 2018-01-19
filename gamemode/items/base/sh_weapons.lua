@@ -1,3 +1,4 @@
+
 ITEM.name = "Weapon"
 ITEM.description = "A Weapon."
 ITEM.category = "Weapons"
@@ -70,7 +71,7 @@ function ITEM:Equip(client)
 
 	client.carryWeapons = client.carryWeapons or {}
 
-	for k, v in pairs(items) do
+	for _, v in pairs(items) do
 		if (v.id != self.id) then
 			local itemTable = ix.item.instances[v.id]
 
@@ -208,6 +209,7 @@ function ITEM:OnRemoved()
 	end
 end
 
+-- luacheck: globals HOLSTER_DRAWINFO
 HOLSTER_DRAWINFO = {}
 
 -- Called after the item is registered into the item tables.
@@ -220,7 +222,7 @@ end
 hook.Add("PlayerDeath", "ixStripClip", function(client)
 	client.carryWeapons = {}
 
-	for k, v in pairs(client:GetChar():GetInv():GetItems()) do
+	for _, v in pairs(client:GetChar():GetInv():GetItems()) do
 		if (v.isWeapon and v:GetData("equip")) then
 			v:SetData("ammo", nil)
 			v:SetData("equip", nil)

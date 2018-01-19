@@ -25,7 +25,7 @@ if (SERVER) then
 		local result = {}
 
 		if (inventory.storageInfo) then
-			for k, v in pairs(inventory.storageInfo.receivers) do
+			for k, _ in pairs(inventory.storageInfo.receivers) do
 				if (IsValid(k) and k:IsPlayer()) then
 					result[#result + 1] = k
 				end
@@ -38,7 +38,7 @@ if (SERVER) then
 	-- Returns true if this inventory has a storage context and is in use by at least one person.
 	function ix.storage.InUse(inventory)
 		if (inventory.storageInfo) then
-			for k, v in pairs(inventory.storageInfo.receivers) do
+			for k, _ in pairs(inventory.storageInfo.receivers) do
 				if (IsValid(k) and k:IsPlayer()) then
 					return true
 				end

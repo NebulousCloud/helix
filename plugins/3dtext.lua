@@ -1,3 +1,4 @@
+
 PLUGIN.name = "3D Text"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds text that can be placed on the map."
@@ -79,19 +80,18 @@ else
 		-- Check if we are adding or deleting the text.
 		if (position) then
 			-- Generate a markup object to draw fancy stuff for the text.
-			local object = ix.markup.parse("<font=ix3D2DFont>"..text:gsub("\\n", "\n"))
+			local object = ix.markup.Parse("<font=ix3D2DFont>"..text:gsub("\\n", "\n"))
 			-- We want to draw a shadow on the text object.
-			object.onDrawText = function(text, font, x, y, color, alignX, alignY, alpha)
+			object.onDrawText = function(surfaceText, font, x, y, color, alignX, alignY, alpha)
 				surface.SetTextPos(x+1, y+1)
 				surface.SetTextColor(0, 0, 0, alpha)
 				surface.SetFont(font)
-				surface.DrawText(text)
+				surface.DrawText(surfaceText)
 
 				surface.SetTextPos(x, y)
 				surface.SetTextColor(color.r, color.g, color.b, alpha)
 				surface.SetFont(font)
-				surface.DrawText(text)
-				--draw.SimpleTextOutlined(text, font, x, y, ColorAlpha(color, alpha), alignX, alignY, 2, color_black)
+				surface.DrawText(surfaceText)
 			end
 
 			-- Add the text to a list of drawn text objects.
@@ -108,9 +108,9 @@ else
 		PLUGIN.list = values
 
 		-- Loop through the list of texts.
-		for k, v in pairs(PLUGIN.list) do
+		for _, v in pairs(PLUGIN.list) do
 			-- Generate markup object since it hasn't been done already.
-			local object = ix.markup.parse("<font=ix3D2DFont>"..v[3]:gsub("\\n", "\n"))
+			local object = ix.markup.Parse("<font=ix3D2DFont>"..v[3]:gsub("\\n", "\n"))
 			-- Same thing with adding a shadow.
 			object.onDrawText = function(text, font, x, y, color, alignX, alignY, alpha)
 				draw.TextShadow({
@@ -135,7 +135,7 @@ else
 			local position = LocalPlayer():GetPos()
 
 			-- Loop through all of the text.
-			for k, v in pairs(self.list) do
+			for _, v in pairs(self.list) do
 				-- Start a 3D2D camera at the text's position and angles.
 				cam.Start3D2D(v[1], v[2], v[4] or 0.1)
 					-- Calculate the distance from the player to the text.

@@ -1,3 +1,4 @@
+
 AddCSLuaFile()
 
 if (CLIENT) then
@@ -42,33 +43,9 @@ SWEP.IsAlwaysLowered = true
 SWEP.FireWhenLowered = true
 SWEP.HoldType = "passive"
 
-function SWEP:PreDrawViewModel(viewModel, weapon, client)
-	local hands = player_manager.TranslatePlayerHands(player_manager.TranslateToPlayerModelName(client:GetModel()))
-
-	if (hands and hands.model) then
-		--viewModel:SetModel(hands.model)
-		--viewModel:SetSkin(hands.skin)
-		--viewModel:SetBodyGroups(hands.body)
-	end
-end
-
+-- luacheck: globals ACT_VM_FISTS_DRAW ACT_VM_FISTS_HOLSTER
 ACT_VM_FISTS_DRAW = 3
 ACT_VM_FISTS_HOLSTER = 2
-
-function SWEP:Deploy()
-	if (!IsValid(self.Owner)) then
-		return
-	end
-
-	local viewModel = self.Owner:GetViewModel()
-
-	if (IsValid(viewModel)) then
-		--viewModel:SetPlaybackRate(1)
-		--viewModel:ResetSequence(ACT_VM_FISTS_DRAW)
-	end
-
-	return true
-end
 
 function SWEP:Holster()
 	if (!IsValid(self.Owner)) then

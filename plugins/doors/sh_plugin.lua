@@ -3,6 +3,7 @@ PLUGIN.name = "Doors"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "A simple door system."
 
+-- luacheck: globals DOOR_OWNER DOOR_TENANT DOOR_GUEST DOOR_NONE
 DOOR_OWNER = 3
 DOOR_TENANT = 2
 DOOR_GUEST = 1
@@ -43,7 +44,7 @@ do
 		function entityMeta:RemoveDoorAccessData()
 			-- Don't ask why. This happened with 60 player servers.
 			if (IsValid(self)) then
-				for k, v in pairs(self.ixAccess or {}) do
+				for k, _ in pairs(self.ixAccess or {}) do
 					netstream.Start(k, "doorMenu")
 				end
 

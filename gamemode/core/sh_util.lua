@@ -62,7 +62,7 @@ function ix.util.IncludeDir(directory, fromLua)
 	end
 
 	-- Find all of the files within the directory.
-	for k, v in ipairs(file.Find((fromLua and "" or baseDir)..directory.."/*.lua", "LUA")) do
+	for _, v in ipairs(file.Find((fromLua and "" or baseDir)..directory.."/*.lua", "LUA")) do
 		-- Include the file from the prefix.
 		ix.util.Include(directory.."/"..v)
 	end
@@ -88,7 +88,7 @@ end
 function ix.util.GetAdmins(isSuper)
 	local admins = {}
 
-	for k, v in ipairs(player.GetAll()) do
+	for _, v in ipairs(player.GetAll()) do
 		if (isSuper) then
 			if (v:IsSuperAdmin()) then
 				table.insert(admins, v)
@@ -126,7 +126,7 @@ function ix.util.FindPlayer(identifier, bAllowPatterns)
 		identifier = string.PatternSafe(identifier)
 	end
 
-	for k, v in ipairs(player.GetAll()) do
+	for _, v in ipairs(player.GetAll()) do
 		if (ix.util.StringMatches(v:Name(), identifier)) then
 			return v
 		end
@@ -193,7 +193,7 @@ end
 function ix.util.GetAllChar()
 	local charTable = {}
 
-	for k, v in ipairs(player.GetAll()) do
+	for _, v in ipairs(player.GetAll()) do
 		if (v:GetChar()) then
 			table.insert(charTable, v:GetChar():GetID())
 		end
@@ -203,6 +203,7 @@ function ix.util.GetAllChar()
 end
 
 if (CLIENT) then
+	-- luacheck: globals IX_CVAR_CHEAP
 	IX_CVAR_CHEAP = CreateClientConVar("ix_cheapblur", 0, true)
 
 	local useCheapBlur = IX_CVAR_CHEAP:GetBool()
@@ -336,7 +337,7 @@ if (CLIENT) then
 		return lines, maxW
 	end
 
-	local cos, sin, abs, max, rad1, log, pow = math.cos, math.sin, math.abs, math.max, math.rad, math.log, math.pow
+	local cos, sin, abs, rad1, log, pow = math.cos, math.sin, math.abs, math.rad, math.log, math.pow
 
 	-- arc drawing functions
 	-- by bobbleheadbob
@@ -347,7 +348,7 @@ if (CLIENT) then
 	end
 
 	function ix.util.DrawPrecachedArc(arc) -- Draw a premade arc.
-		for k,v in ipairs(arc) do
+		for _, v in ipairs(arc) do
 			surface.DrawPoly(v)
 		end
 	end
@@ -356,7 +357,8 @@ if (CLIENT) then
 		local quadarc = {}
 
 		-- Correct start/end ang
-		local startang, endang = startang or 0, endang or 0
+		startang = startang or 0
+		endang = endang or 0
 
 		-- Define step
 		-- roughness = roughness or 1
@@ -477,7 +479,7 @@ do
 	local CHAIR_CACHE = {}
 
 	-- Add chair models to the cache by checking if its vehicle category is a class.
-	for k, v in pairs(list.Get("Vehicles")) do
+	for _, v in pairs(list.Get("Vehicles")) do
 		if (v.Category == "Chairs") then
 			CHAIR_CACHE[v.Model] = true
 		end
@@ -529,7 +531,7 @@ do
 				return owner
 			end
 
-			for k, v in ipairs(ents.FindByClass("prop_door_rotating")) do
+			for _, v in ipairs(ents.FindByClass("prop_door_rotating")) do
 				if (v:GetOwner() == self) then
 					self.ixDoorOwner = v
 
@@ -577,7 +579,7 @@ do
 				self.ignoreUse = false
 				self.ixIsMuted = false
 
-				for k, v in ipairs(ents.GetAll()) do
+				for _, v in ipairs(ents.GetAll()) do
 					if (v:GetParent() == self) then
 						v:SetNotSolid(false)
 						v:SetNoDraw(false)
@@ -602,11 +604,11 @@ do
 		self.ixIsMuted = true
 		self:DeleteOnRemove(dummy)
 
-		for k, v in ipairs(self:GetBodyGroups()) do
+		for _, v in ipairs(self:GetBodyGroups()) do
 			dummy:SetBodygroup(v.id, self:GetBodygroup(v.id))
 		end
 
-		for k, v in ipairs(ents.GetAll()) do
+		for _, v in ipairs(ents.GetAll()) do
 			if (v:GetParent() == self) then
 				v:SetNotSolid(true)
 				v:SetNoDraw(true)
@@ -653,6 +655,10 @@ do
 		return dummy
 	end
 
+	--[[
+		luacheck: globals
+		FCAP_IMPULSE_USE FCAP_CONTINUOUS_USE FCAP_ONOFF_USE FCAP_DIRECTIONAL_USE FCAP_USE_ONGROUND FCAP_USE_IN_RADIUS
+	]]
 	FCAP_IMPULSE_USE = 0x00000010
 	FCAP_CONTINUOUS_USE = 0x00000020
 	FCAP_ONOFF_USE = 0x00000040
@@ -705,7 +711,7 @@ do
 			local useableContents = bit.bor(MASK_SOLID, CONTENTS_DEBRIS, CONTENTS_PLAYERCLIP)
 
 			-- UNDONE: Might be faster to just fold this range into the sphere query
-			local pObject = NULL
+			local pObject
 
 			local nearestDist = 1e37
 			-- try the hit entity if there is one, or the ground entity if there isn't.
@@ -743,7 +749,7 @@ do
 
 				while (IsValid(pObject) and !bUsable and pObject:GetMoveParent()) do
 					pObject = pObject:GetMoveParent()
-					bUsable = IsUseableEntity(pObject, 0)
+					bUsable = ix.util.IsUseableEntity(pObject, 0)
 				end
 
 				if (bUsable) then
@@ -752,11 +758,11 @@ do
 					delta.z = IntervalDistance(tr.EndPos.z, centerZ - player:OBBMins().z, centerZ + player:OBBMaxs().z)
 					local dist = delta:Length()
 
-					if ( dist < 80 ) then
+					if (dist < 80) then
 						pNearest = pObject
 
 						-- if this is directly under the cursor just return it now
-						if ( i == 0 ) then
+						if (i == 0) then
 							return pObject
 						end
 					end
@@ -776,7 +782,7 @@ do
 				nearestDist = util.DistanceToLine(searchCenter, forward, point)
 			end
 
-			for k, v in pairs(ents.FindInSphere( searchCenter, 80 )) do
+			for _, v in pairs(ents.FindInSphere(searchCenter, 80)) do
 				if (!ix.util.IsUseableEntity(v, FCAP_USE_IN_RADIUS)) then
 					continue
 				end
@@ -786,7 +792,7 @@ do
 
 				local dir = point - searchCenter
 				dir:Normalize()
-				local dot = DotProduct(dir, forward)
+				local dot = dir:Dot(forward)
 
 				-- Need to be looking at the object more or less
 				if (dot < 0.8) then
@@ -1063,7 +1069,7 @@ do
 
 				self.ixRestrictWeps = self.ixRestrictWeps or {}
 
-				for k, v in ipairs(self:GetWeapons()) do
+				for _, v in ipairs(self:GetWeapons()) do
 					self.ixRestrictWeps[#self.ixRestrictWeps + 1] = v:GetClass()
 					v:Remove()
 				end
@@ -1077,7 +1083,7 @@ do
 				end
 
 				if (self.ixRestrictWeps) then
-					for k, v in ipairs(self.ixRestrictWeps) do
+					for _, v in ipairs(self.ixRestrictWeps) do
 						self:Give(v)
 					end
 
@@ -1098,15 +1104,12 @@ do
 			tolerance = tolerance or 5
 
 			local position = entity:GetPos()
-			local angles = Angle(0, 0, 0)
 			local mins, maxs = Vector(-spacing * 0.5, -spacing * 0.5, 0), Vector(spacing * 0.5, spacing * 0.5, height)
 			local output = {}
 
 			for x = -size, size do
 				for y = -size, size do
 					local origin = position + Vector(x * spacing, y * spacing, 0)
-					local color = green
-					local i = 0
 
 					local data = {}
 						data.start = origin + mins + Vector(0, 0, tolerance)
@@ -1208,8 +1211,9 @@ do
 
 					if (IsValid(self) and !entity.ixIgnoreDelete) then
 						if (entity.ixWeapons) then
-							for k, v in ipairs(entity.ixWeapons) do
+							for _, v in ipairs(entity.ixWeapons) do
 								self:Give(v)
+
 								if (entity.ixAmmo) then
 									for k2, v2 in ipairs(entity.ixAmmo) do
 										if v == v2[1] then
@@ -1218,7 +1222,8 @@ do
 									end
 								end
 							end
-							for k, v in ipairs(self:GetWeapons()) do
+
+							for _, v in ipairs(self:GetWeapons()) do
 								v:SetClip1(0)
 							end
 						end
@@ -1229,7 +1234,7 @@ do
 
 							local positions = ix.util.FindEmptySpace(self, {entity, self})
 
-							for k, v in ipairs(positions) do
+							for _, v in ipairs(positions) do
 								self:SetPos(v)
 
 								if (!self:IsStuck()) then
@@ -1258,11 +1263,13 @@ do
 					self:SetAction("@wakingUp", nil, nil, entity.ixStart, entity.ixFinish)
 				end
 
-				for k, v in ipairs(self:GetWeapons()) do
+				for _, v in ipairs(self:GetWeapons()) do
 					entity.ixWeapons[#entity.ixWeapons + 1] = v:GetClass()
+
 					local clip = v:Clip1()
 					local reserve = self:GetAmmoCount(v:GetPrimaryAmmoType())
 					local ammo = clip + reserve
+
 					entity.ixAmmo[v:GetPrimaryAmmoType()] = {v:GetClass(), ammo}
 				end
 
@@ -1273,7 +1280,6 @@ do
 				self:SetNotSolid(true)
 
 				if (time) then
-					local time2 = time
 					local uniqueID = "ixUnRagdoll"..self:SteamID()
 
 					timer.Create(uniqueID, 0.33, 0, function()
@@ -1311,7 +1317,7 @@ do
 			elseif (IsValid(self.ixRagdoll)) then
 				self.ixRagdoll:Remove()
 
-				hook.Run("OnCharFallover", self, entity, false)
+				hook.Run("OnCharFallover", self, nil, false)
 			end
 		end
 	end
@@ -1430,9 +1436,9 @@ if (system.IsLinux()) then
 		return (f:Size() - 44) / (f_SampleDepth(f) / 8 * f_SampleRate(f) * f_Channels(f))
 	end
 
-	ixSoundDuration = ixSoundDuration or SoundDuration
+	ixSoundDuration = ixSoundDuration or SoundDuration -- luacheck: globals ixSoundDuration
 
-	function SoundDuration(str)
+	function SoundDuration(str) -- luacheck: globals SoundDuration
 		local path, gamedir = GetSoundPath(str)
 		local f = file.Open(path, "rb", gamedir)
 
@@ -1463,7 +1469,7 @@ function ix.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
 	spacing = spacing or 0.1
 
 	-- Loop through all of the sounds.
-	for k, v in ipairs(sounds) do
+	for _, v in ipairs(sounds) do
 		local postSet, preSet = 0, 0
 
 		-- Determine if this sound has special time offsets.

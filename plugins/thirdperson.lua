@@ -1,4 +1,6 @@
+
 local PLUGIN = PLUGIN
+
 PLUGIN.name = "New Fancy Third Person"
 PLUGIN.author = "Black Tea"
 PLUGIN.description = "Third Person plugin."
@@ -21,6 +23,7 @@ if (CLIENT) then
 		horizontal = 30,
 		distance = 100
 	}
+
 	function PANEL:Init()
 		self:SetTitle(L("thirdpersonConfig"))
 		self:SetSize(300, 140)
@@ -40,7 +43,7 @@ if (CLIENT) then
 		cfg:SetConVar("ix_tp_vertical") -- Changes the ConVar when you slide
 		cfg:DockMargin(10, 0, 0, 5)
 
-		local cfg = self.list:Add("DNumSlider")
+		cfg = self.list:Add("DNumSlider")
 		cfg:Dock(TOP)
 		cfg:SetText("Horizontal") -- Set the text above the slider
 		cfg:SetMin(-30)				 -- Set the minimum number you can slide to
@@ -49,7 +52,7 @@ if (CLIENT) then
 		cfg:SetConVar("ix_tp_horizontal") -- Changes the ConVar when you slide
 		cfg:DockMargin(10, 0, 0, 5)
 
-		local cfg = self.list:Add("DNumSlider")
+		cfg = self.list:Add("DNumSlider")
 		cfg:Dock(TOP)
 		cfg:SetText("Distance") -- Set the text above the slider
 		cfg:SetMin(0)				 -- Set the minimum number you can slide to
@@ -59,6 +62,7 @@ if (CLIENT) then
 		cfg:DockMargin(10, 0, 0, 5)
 
 	end
+
 	vgui.Register("ixTPConfig", PANEL, "DFrame")
 
 	local function isAllowed()
@@ -75,7 +79,7 @@ if (CLIENT) then
 				end
 			end, IX_CVAR_THIRDPERSON:GetBool())
 
-			function button:DoRightClick()
+			button.DoRightClick = function()
 				if (ix.gui.tpconfig and ix.gui.tpconfig:IsVisible()) then
 					ix.gui.tpconfig:Close()
 					ix.gui.tpconfig = nil
@@ -84,7 +88,7 @@ if (CLIENT) then
 				ix.gui.tpconfig = vgui.Create("ixTPConfig")
 			end
 
-			local button = menu:AddCheck(L"thirdpersonClassic", function(panel, state)
+			menu:AddCheck(L"thirdpersonClassic", function(panel, state)
 				if (state) then
 					RunConsoleCommand("ix_tp_classic", "1")
 				else
@@ -100,7 +104,7 @@ if (CLIENT) then
 
 	function playerMeta:CanOverrideView()
 		local entity = Entity(self:GetLocalVar("ragdoll", 0))
-		local ragdoll = self:GetRagdollEntity()
+
 		if ((ix.gui.char and !ix.gui.char:IsVisible()) and
 			IX_CVAR_THIRDPERSON:GetBool() and
 			!IsValid(self:GetVehicle()) and
@@ -115,7 +119,7 @@ if (CLIENT) then
 		end
 	end
 
-	local view, traceData, traceData2, aimOrigin, crouchFactor, ft, trace, curAng
+	local view, traceData, traceData2, aimOrigin, crouchFactor, ft, curAng, owner
 	local clmp = math.Clamp
 	crouchFactor = 0
 	function PLUGIN:CalcView(client, origin, angles, fov)
@@ -155,11 +159,12 @@ if (CLIENT) then
 		end
 	end
 
-	local v1, v2, diff, fm, sm
+	local diff, fm, sm
 	function PLUGIN:CreateMove(cmd)
 		owner = LocalPlayer()
 
-	    if (owner:CanOverrideView() and owner:GetMoveType() != MOVETYPE_NOCLIP and LocalPlayer():GetViewEntity() == LocalPlayer()) then
+		if (owner:CanOverrideView() and owner:GetMoveType() != MOVETYPE_NOCLIP and
+			LocalPlayer():GetViewEntity() == LocalPlayer()) then
 			fm = cmd:GetForwardMove()
 			sm = cmd:GetSideMove()
 			diff = (owner:EyeAngles() - (owner.camAng or Angle(0, 0, 0)))[2] or 0

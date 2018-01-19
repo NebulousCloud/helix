@@ -1,5 +1,6 @@
 
-ICON_INFO = ICON_INFO or {}
+local bIconUpdating = false
+local ICON_INFO = {}
 ICON_INFO.camPos = ICON_INFO.camPos or Vector()
 ICON_INFO.camAng = ICON_INFO.camAng or Angle()
 ICON_INFO.FOV = ICON_INFO.FOV or 50
@@ -19,8 +20,8 @@ local bTxt = {
 	"right",
 	"origin",
 }
+
 local PANEL = {}
-local iconSize = 64
 
 --[[
 	3D ICON PREVIEW WINDOW
@@ -32,11 +33,12 @@ function PANEL:Init()
 
 	self.model = self:Add("DModelPanel")
 	self.model:SetPos(5, 22)
-	function self.model:PaintOver(w, h)
+	self.model.PaintOver = function(this, w, h)
 		surface.SetDrawColor(255, 255, 255)
 		surface.DrawOutlinedRect(0, 0, w, h)
 	end
-	function self.model:LayoutEntity()
+
+	self.model.LayoutEntity = function()
 	end
 
 	self:AdjustSize(ICON_INFO.w, ICON_INFO.h)
@@ -57,9 +59,11 @@ vgui.Register("iconPreview", PANEL, "DFrame")
 	RENDER ICON PREVIEW
 ]]--
 PANEL = {}
-AccessorFunc( PANEL, "m_strModel", 		"Model" )
-AccessorFunc( PANEL, "m_pOrigin", 		"Origin" )
-AccessorFunc( PANEL, "m_bCustomIcon", 	"CustomIcon" )
+
+AccessorFunc(PANEL, "m_strModel", "Model")
+AccessorFunc(PANEL, "m_pOrigin", "Origin")
+AccessorFunc(PANEL, "m_bCustomIcon", "CustomIcon")
+
 function PANEL:Init()
 	self:SetPos(50, 300)
 	self:ShowCloseButton(false)
@@ -68,14 +72,17 @@ function PANEL:Init()
 	self.model = self:Add("SpawnIcon")
 	self.model:InvalidateLayout(true)
 	self.model:SetPos(5, 22)
-	function self.model:PaintOver(w, h)
+
+	self.model.PaintOver = function(this, w, h)
 		surface.SetDrawColor(255, 255, 255)
 		surface.DrawOutlinedRect(0, 0, w, h)
 	end
 
 	self.model.Icon:SetVisible(false)
-	self.model.Paint = function(self, x, y)
+
+	self.model.Paint = function(this, x, y)
 		local exIcon = ikon:GetIcon("iconEditor")
+
 		if (exIcon) then
 			surface.SetMaterial(exIcon)
 			surface.SetDrawColor(color_white)
@@ -102,13 +109,11 @@ vgui.Register("iconRenderPreview", PANEL, "DFrame")
 	EDITOR FUNCTION
 ]]--
 local function action(self)
-		local p1 = self.prev
-		local p = self.prev2
-		local icon = p.model
-		local iconModel = p1.model
-
+		local p = self.prev
+		local iconModel = p.model
 		local ent = iconModel:GetEntity()
 		local tab = {}
+
 		tab.ent		= ent
 		tab.cam_pos = iconModel:GetCamPos()
 		tab.cam_ang = iconModel:GetLookAng()
@@ -187,11 +192,13 @@ local function renderAction(self)
 end
 
 PANEL = {}
+
 function PANEL:Init()
-	if (editorPanel and editorPanel:IsVisible()) then
-		editorPanel:Close()
+	if (ix.gui.iconEditorPanel and ix.gui.iconEditorPanel:IsVisible()) then
+		ix.gui.iconEditorPanel:Close()
 	end
-	editorPanel = self
+
+	ix.gui.iconEditorPanel = self
 
 	self:SetTitle("MODEL ADJUST")
 	self:MakePopup()
@@ -235,7 +242,7 @@ function PANEL:Init()
 		btn:DockMargin(5, 5, 5, 0)
 		btn.DoClick = function()
 			self:SetupEditor(true, i)
-			self:UpdateShits()
+			self:UpdateIcon()
 		end
 	end
 
@@ -250,7 +257,7 @@ function PANEL:Init()
 	self.mdl.OnEnter = function()
 		ICON_INFO.modelName = self.mdl:GetValue()
 		self:SetupEditor(true)
-		self:UpdateShits()
+		self:UpdateIcon()
 	end
 
 	self:AddText("Icon Size")
@@ -263,13 +270,14 @@ function PANEL:Init()
 	cfg:SetDecimals(0)
 	cfg:SetValue(ICON_INFO.w)
 	cfg:DockMargin(10, 0, 0, 5)
-	cfg.OnValueChanged = function(cfg, value)
+	cfg.OnValueChanged = function(this, value)
 		ICON_INFO.w = value
+
 		self.prev:AdjustSize(ICON_INFO.w, ICON_INFO.h)
 		self.prev2:AdjustSize(ICON_INFO.w, ICON_INFO.h)
 	end
 
-	local cfg = self.list:Add("DNumSlider")
+	cfg = self.list:Add("DNumSlider")
 	cfg:Dock(TOP)
 	cfg:SetText("H")
 	cfg:SetMin(0)
@@ -277,9 +285,10 @@ function PANEL:Init()
 	cfg:SetDecimals(0)
 	cfg:SetValue(ICON_INFO.h)
 	cfg:DockMargin(10, 0, 0, 5)
-	cfg.OnValueChanged = function(cfg, value)
+	cfg.OnValueChanged = function(this, value)
 		print(self)
 		ICON_INFO.h = value
+
 		self.prev:AdjustSize(ICON_INFO.w, ICON_INFO.h)
 		self.prev2:AdjustSize(ICON_INFO.w, ICON_INFO.h)
 	end
@@ -294,8 +303,8 @@ function PANEL:Init()
 	self.camFOV:SetDecimals(3)
 	self.camFOV:SetValue(ICON_INFO.FOV)
 	self.camFOV:DockMargin(10, 0, 0, 5)
-	self.camFOV.OnValueChanged = function(cfg, value)
-		if (!fagLord) then
+	self.camFOV.OnValueChanged = function(this, value)
+		if (!bIconUpdating) then
 			ICON_INFO.FOV = value
 
 			local p = self.prev
@@ -317,8 +326,8 @@ function PANEL:Init()
 		self.camPos[i]:SetDecimals(3)
 		self.camPos[i]:SetValue(ICON_INFO.camPos[i])
 		self.camPos[i]:DockMargin(10, 0, 0, 5)
-		self.camPos[i].OnValueChanged = function(cfg, value)
-			if (!fagLord) then
+		self.camPos[i].OnValueChanged = function(panel, value)
+			if (!bIconUpdating) then
 				ICON_INFO.camPos[i] = value
 			end
 		end
@@ -336,8 +345,8 @@ function PANEL:Init()
 		self.camAng[i]:SetDecimals(3)
 		self.camAng[i]:SetValue(ICON_INFO.camAng[i])
 		self.camAng[i]:DockMargin(10, 0, 0, 5)
-		self.camAng[i].OnValueChanged = function(cfg, value)
-			if (!fagLord) then
+		self.camAng[i].OnValueChanged = function(panel, value)
+			if (!bIconUpdating) then
 				ICON_INFO.camAng[i] = value
 			end
 		end
@@ -353,7 +362,7 @@ function PANEL:Init()
 	self.color:SetValue(ICON_INFO.outline)
 	self.color:DockMargin(10, 5, 0, 5)
 	self.color:Dock(TOP)
-	function self.color:OnChange(bool)
+	self.color.OnChange = function(panel, bool)
 		ICON_INFO.outline = bool
 	end
 
@@ -364,22 +373,22 @@ function PANEL:Init()
 	self.colormixer:SetWangs( true )			--Show/hide the R G B A indicators 	DEF:true
 	self.colormixer:SetColor( ICON_INFO.outlineColor  )	--Set the default color
 	self.colormixer:DockMargin(10, 5, 0, 5)
-	function self.colormixer:ValueChanged(value)
-		 ICON_INFO.outlineColor = value
+	self.colormixer.ValueChanged = function(panel, value)
+		ICON_INFO.outlineColor = value
 	end
 
 	self:SetupEditor()
-	self:UpdateShits(true)
+	self:UpdateIcon()
 end
 
-function PANEL:UpdateShits()
-	fagLord = true
+function PANEL:UpdateIcon()
+	bIconUpdating = true
 		self.camFOV:SetValue(ICON_INFO.FOV)
 		for i = 1, 3 do
 			self.camPos[i]:SetValue(ICON_INFO.camPos[i])
 			self.camAng[i]:SetValue(ICON_INFO.camAng[i])
 		end
-	fagLord = false
+	bIconUpdating = false
 end
 
 function PANEL:SetupEditor(update, mode)

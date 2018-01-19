@@ -1,3 +1,4 @@
+
 ix.anim = ix.anim or {}
 ix.anim.citizen_male = {
 	normal = {
@@ -344,7 +345,10 @@ function ix.anim.GetModelClass(model)
 
 	class = class or "citizen_male"
 
-	if (class == "citizen_male" and (stringFind(model, "female") or stringFind(model, "alyx") or stringFind(model, "mossman"))) then
+	if (class == "citizen_male" and (
+		stringFind(model, "female") or
+		stringFind(model, "alyx") or
+		stringFind(model, "mossman"))) then
 		class = "citizen_female"
 	end
 
@@ -370,7 +374,7 @@ do
 			return netstream.Start(nil, "seqSet", self)
 		end
 
-		local sequence = self:LookupSequence(sequence)
+		sequence = self:LookupSequence(sequence)
 
 		if (sequence and sequence > 0) then
 			time = time or self:SequenceDuration(sequence)

@@ -1,3 +1,4 @@
+
 local PLUGIN = PLUGIN
 
 ENT.Type = "anim"
@@ -98,13 +99,18 @@ else
 		local x, y = position.x, position.y
 
 		y = y - 20
-		local tx, ty = ix.util.DrawText(locked and "P" or "Q", x, y, colorAlpha(locked and COLOR_LOCKED or COLOR_UNLOCKED, alpha), 1, 1, "ixIconsMedium", alpha * 0.65)
+		local _, ty = ix.util.DrawText(
+			locked and "P" or "Q", x, y,
+			colorAlpha(locked and COLOR_LOCKED or COLOR_UNLOCKED, alpha),
+			1, 1, "ixIconsMedium", alpha * 0.65
+		)
 		y = y + ty*.9
 
 		local def = PLUGIN.definitions[self:GetModel():lower()]
-		local tx, ty = drawText(L("Container"), x, y, colorAlpha(configGet("color"), alpha), 1, 1, nil, alpha * 0.65)
+		local _, containerY = drawText(L("Container"), x, y, colorAlpha(configGet("color"), alpha), 1, 1, nil, alpha * 0.65)
+
 		if (def) then
-			y = y + ty + 1
+			y = y + containerY + 1
 			drawText(def.description, x, y, colorAlpha(color_white, alpha), 1, 1, nil, alpha * 0.65)
 		end
 	end

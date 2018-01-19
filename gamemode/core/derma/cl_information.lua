@@ -234,14 +234,16 @@ function PANEL:Setup()
 			self.model:SetModel(LocalPlayer():GetModel())
 			self.model.Entity:SetSkin(LocalPlayer():GetSkin())
 
-			for k, v in ipairs(LocalPlayer():GetBodyGroups()) do
+			for _, v in ipairs(LocalPlayer():GetBodyGroups()) do
 				self.model.Entity:SetBodygroup(v.id, LocalPlayer():GetBodygroup(v.id))
 			end
 
 			local ent = self.model.Entity
+
 			if (ent and IsValid(ent)) then
 				local mats = LocalPlayer():GetMaterials()
-				for k, v in pairs(mats) do
+
+				for k, _ in pairs(mats) do
 					ent:SetSubMaterial(k - 1, LocalPlayer():GetSubMaterial(k - 1))
 				end
 			end

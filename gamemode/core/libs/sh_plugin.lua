@@ -5,6 +5,7 @@ ix.plugin.unloaded = ix.plugin.unloaded or {}
 
 ix.util.Include("helix/gamemode/core/meta/sh_tool.lua")
 
+-- luacheck: globals HOOKS_CACHE
 HOOKS_CACHE = {}
 
 function ix.plugin.Load(uniqueID, path, isSingleFile, variable)
@@ -14,7 +15,14 @@ function ix.plugin.Load(uniqueID, path, isSingleFile, variable)
 
 	-- Plugins within plugins situation?
 	local oldPlugin = PLUGIN
-	local PLUGIN = {folder = path, plugin = oldPlugin, uniqueID = uniqueID, name = "Unknown", description = "Description not available", author = "Anonymous"}
+	local PLUGIN = {
+		folder = path,
+		plugin = oldPlugin,
+		uniqueID = uniqueID,
+		name = "Unknown",
+		description = "Description not available",
+		author = "Anonymous"
+	}
 
 	if (uniqueID == "schema") then
 		if (Schema) then
@@ -123,7 +131,7 @@ function ix.plugin.LoadEntities(path)
 		files, folders = file.Find(path.."/"..folder.."/*", "LUA")
 		default = default or {}
 
-		for k, v in ipairs(folders) do
+		for _, v in ipairs(folders) do
 			local path2 = path.."/"..folder.."/"..v.."/"
 
 			_G[variable] = table.Copy(default)
@@ -134,7 +142,7 @@ function ix.plugin.LoadEntities(path)
 				create(v)
 			end
 
-			if (IncludeFiles(path2, clientOnly) and !client) then
+			if (IncludeFiles(path2, clientOnly)) then
 				if (clientOnly) then
 					if (CLIENT) then
 						register(_G[variable], v)
@@ -147,7 +155,7 @@ function ix.plugin.LoadEntities(path)
 			_G[variable] = nil
 		end
 
-		for k, v in ipairs(files) do
+		for _, v in ipairs(files) do
 			local niceName = string.StripExtension(v)
 
 			_G[variable] = table.Copy(default)
@@ -239,11 +247,11 @@ end
 function ix.plugin.LoadFromDir(directory)
 	local files, folders = file.Find(directory.."/*", "LUA")
 
-	for k, v in ipairs(folders) do
+	for _, v in ipairs(folders) do
 		ix.plugin.Load(v, directory.."/"..v)
 	end
 
-	for k, v in ipairs(files) do
+	for _, v in ipairs(files) do
 		ix.plugin.Load(string.StripExtension(v), directory.."/"..v, true)
 	end
 end
@@ -294,10 +302,6 @@ if (SERVER) then
 	ix.plugin.repos = ix.plugin.repos or {}
 	ix.plugin.files = ix.plugin.files or {}
 
-	local function ThrowFault(fault)
-		MsgN(fault)
-	end
-
 	function ix.plugin.LoadRepo(url, name, callback, faultCallback)
 		name = name or url
 
@@ -322,7 +326,7 @@ if (SERVER) then
 
 			print("   * Repository identifier set to '"..name.."'")
 
-			for k, line in ipairs(exploded) do
+			for _, line in ipairs(exploded) do
 				if (line:sub(1, 1) == "@") then
 					local key, value = line:match("@repo%-([_%w]+):[%s*](.+)")
 
@@ -334,15 +338,15 @@ if (SERVER) then
 						cache.data[key] = value
 					end
 				else
-					local name = line:match("!%b[]")
+					local fullName = line:match("!%b[]")
 
-					if (name) then
-						curPlugin = name:sub(3, -2)
-						name = name:sub(8, -2)
-						curPluginName = name
-						cache.files[name] = {}
+					if (fullName) then
+						curPlugin = fullName:sub(3, -2)
+						fullName = fullName:sub(8, -2)
+						curPluginName = fullName
+						cache.files[fullName] = {}
 
-						MsgN("\t* Found '"..name.."'")
+						MsgN("\t* Found '"..fullName.."'")
 					elseif (curPlugin and line:sub(1, #curPlugin) == curPlugin and cache.files[curPluginName]) then
 						table.insert(cache.files[curPluginName], line:sub(#curPlugin + 2))
 					end
@@ -455,6 +459,7 @@ if (SERVER) then
 end
 
 do
+	-- luacheck: globals hook
 	hook.ixCall = hook.ixCall or hook.Call
 
 	function hook.Call(name, gm, ...)

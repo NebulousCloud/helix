@@ -1,3 +1,4 @@
+
 ITEM.name = "PAC Outfit"
 ITEM.description = "A PAC Outfit Base."
 ITEM.category = "Outfit"
@@ -108,7 +109,7 @@ ITEM.functions.Equip = {
 		local char = item.player:GetChar()
 		local items = char:GetInv():GetItems()
 
-		for k, v in pairs(items) do
+		for _, v in pairs(items) do
 			if (v.id != item.id) then
 				local itemTable = ix.item.instances[v.id]
 

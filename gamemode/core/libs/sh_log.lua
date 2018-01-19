@@ -1,3 +1,5 @@
+
+-- luacheck: globals FLAG_NORMAL FLAG_SUCCESS FLAG_WARNING FLAG_DANGER FLAG_SERVER FLAG_DEV
 FLAG_NORMAL = 0
 FLAG_SUCCESS = 1
 FLAG_WARNING = 2
@@ -50,12 +52,12 @@ if (SERVER) then
 		return text
 	end
 
-	function ix.log.AddRaw(logString)
+	function ix.log.AddRaw(logString, bNoSave)
 		ix.log.Send(ix.util.GetAdmins(), logString)
 
 		Msg("[LOG] ", logString .. "\n")
 
-		if (!noSave) then
+		if (!bNoSave) then
 			file.Append("helix/logs/"..os.date("%x"):gsub("/", "-")..".txt", "["..os.date("%X").."]\t"..logString.."\r\n")
 		end
 	end
@@ -68,9 +70,8 @@ if (SERVER) then
 
 		Msg("[LOG] ", logString .. "\n")
 
-		if (!noSave) then
-			file.Append("helix/logs/"..os.date("%x"):gsub("/", "-")..".txt", "["..os.date("%X").."]\t"..logString.."\r\n")
-		end
+		-- @todo maybe check for bNoSave?
+		file.Append("helix/logs/"..os.date("%x"):gsub("/", "-")..".txt", "["..os.date("%X").."]\t"..logString.."\r\n")
 	end
 
 	function ix.log.Open(client)

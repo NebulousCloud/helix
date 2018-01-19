@@ -1,3 +1,4 @@
+
 local entityMeta = FindMetaTable("Entity")
 local playerMeta = FindMetaTable("Player")
 
@@ -22,7 +23,7 @@ local function CheckBadType(name, object)
 	end
 end
 
-function SetNetVar(key, value, receiver)
+function SetNetVar(key, value, receiver) -- luacheck: globals SetNetVar
 	if (CheckBadType(key, value)) then return end
 	if (GetNetVar(key) == value) then return end
 
@@ -84,7 +85,7 @@ end
 
 playerMeta.GetLocalVar = entityMeta.GetNetVar
 
-function GetNetVar(key, default)
+function GetNetVar(key, default) -- luacheck: globals GetNetVar
 	local value = ix.net.globals[key]
 
 	return value != nil and value or default

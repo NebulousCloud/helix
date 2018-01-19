@@ -1,3 +1,4 @@
+
 ix.class = ix.class or {}
 ix.class.list = {}
 
@@ -6,15 +7,15 @@ local charMeta = ix.meta.character
 -- Register classes from a directory.
 function ix.class.LoadFromDir(directory)
 	-- Search the directory for .lua files.
-	for k, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
+	for _, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
 		-- Get the name without the "sh_" prefix and ".lua" suffix.
 		local niceName = v:sub(4, -5)
 		-- Determine a numeric identifier for this class.
 		local index = #ix.class.list + 1
-
 		local halt
-		for k, v in ipairs(ix.class.list) do
-			if (v.uniqueID == niceName) then
+
+		for _, v2 in ipairs(ix.class.list) do
+			if (v2.uniqueID == niceName) then
 				halt = true
 			end
 		end
@@ -97,7 +98,8 @@ end
 
 function ix.class.GetPlayers(class)
 	local players = {}
-	for k, v in ipairs(player.GetAll()) do
+
+	for _, v in ipairs(player.GetAll()) do
 		local char = v:GetChar()
 
 		if (char and char:GetClass() == class) then

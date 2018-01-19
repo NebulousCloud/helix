@@ -1,8 +1,9 @@
 
+-- luacheck: globals CreateContextMenu DMenuBar g_ContextMenu
+
 local PANEL = {}
 
 AccessorFunc( PANEL, "m_bHangOpen", "HangOpen" )
-
 
 function PANEL:Init()
 
@@ -28,6 +29,7 @@ function PANEL:Open()
 	self:SetHangOpen( false )
 
 	-- If the spawn menu is open, try to close it..
+	-- luacheck: globals g_SpawnMenu
 	if ( g_SpawnMenu:IsVisible() ) then
 		g_SpawnMenu:Close( true )
 	end

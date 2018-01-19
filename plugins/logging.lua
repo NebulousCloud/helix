@@ -1,3 +1,4 @@
+
 PLUGIN.name = "Logging"
 PLUGIN.author = "Black Tea"
 PLUGIN.description = "You can modfiy the logging text/lists on this plugin."
@@ -101,17 +102,9 @@ if (SERVER) then
 	function PLUGIN:OnCharTradeVendor(client, vendor, x, y, invID, price, isSell)
 	end
 
-	local logInteractions = {
-		["drop"] = true,
-		["take"] = true,
-		["equip"] = true,
-		["unequip"] = true,
-	}
-
 	function PLUGIN:OnPlayerInteractItem(client, action, item)
 		if (type(item) == "Entity") then
 			if (IsValid(item)) then
-				local entity = item
 				local itemID = item.ixItemID
 				item = ix.item.instances[itemID]
 			else

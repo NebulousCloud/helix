@@ -1,10 +1,19 @@
+
 ix.config = ix.config or {}
 ix.config.stored = ix.config.stored or {}
 
 function ix.config.Add(key, value, desc, callback, data, bNoNetworking, schemaOnly)
 	local oldConfig = ix.config.stored[key]
 
-	ix.config.stored[key] = {data = data, value = oldConfig and oldConfig.value or value, default = value, desc = desc, bNoNetworking = bNoNetworking, global = !schemaOnly, callback = callback}
+	ix.config.stored[key] = {
+		data = data,
+		value = oldConfig and oldConfig.value or value,
+		default = value,
+		desc = desc,
+		bNoNetworking = bNoNetworking,
+		global = !schemaOnly,
+		callback = callback
+	}
 end
 
 function ix.config.SetDefault(key, value)
@@ -130,7 +139,7 @@ if (SERVER) then
 				local count = table.Count(value)
 				local i = 1
 
-				for k, v in SortedPairs(value) do
+				for _, v in SortedPairs(value) do
 					value2 = value2..v..(i == count and "]" or ", ")
 					i = i + 1
 				end
@@ -138,7 +147,7 @@ if (SERVER) then
 				value = value2
 			end
 
-			ix.util.NotifyLocalized("cfgSet", nil, client:Name(), key, tostring(value), v)
+			ix.util.NotifyLocalized("cfgSet", nil, client:Name(), key, tostring(value))
 			ix.log.Add(client, "cfgSet", key, value)
 		end
 	end)
@@ -246,24 +255,24 @@ if (CLIENT) then
 						row:Setup(form, v.data and v.data.data or {})
 						row:SetValue(value)
 						row:SetToolTip(v.description)
-						row.DataChanged = function(this, value)
+						row.DataChanged = function(this, newValue)
 							timer.Create("ixCfgSend"..k, delay, 1, function()
 								if (IsValid(row)) then
 									if (form == "VectorColor") then
-										local vector = Vector(value)
+										local vector = Vector(newValue)
 
-										value = Color(math.floor(vector.x * 255), math.floor(vector.y * 255), math.floor(vector.z * 255))
+										newValue = Color(math.floor(vector.x * 255), math.floor(vector.y * 255), math.floor(vector.z * 255))
 									elseif (form == "Int" or form == "Float") then
-										value = tonumber(value)
+										newValue = tonumber(newValue)
 
 										if (form == "Int") then
-											value = math.Round(value)
+											newValue = math.Round(newValue)
 										end
 									elseif (form == "Boolean") then
-										value = util.tobool(value)
+										newValue = tobool(newValue)
 									end
 
-									netstream.Start("cfgSet", k, value)
+									netstream.Start("cfgSet", k, newValue)
 								end
 							end)
 						end

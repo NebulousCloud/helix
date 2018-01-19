@@ -1,4 +1,6 @@
+
 local PLUGIN = PLUGIN
+
 ix.command.Add("DoorSell", {
 	description = "@cmdDoorSell",
 	OnRun = function(self, client, arguments)
@@ -419,7 +421,7 @@ ix.command.Add("DoorSetHidden", {
 ix.command.Add("DoorSetClass", {
 	description = "@cmdDoorSetClass",
 	adminOnly = true,
-	arguments = {ix.type.text, "faction"},
+	arguments = {ix.type.text, "class", true},
 	OnRun = function(self, client, name)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
@@ -448,7 +450,7 @@ ix.command.Add("DoorSetClass", {
 
 				PLUGIN:SaveDoorData()
 				return "@dSetClass", L(classData.name, client)
-			elseif (arguments[1]) then
+			elseif (name) then
 				return "@invalidClass"
 			else
 				entity:SetNetVar("class", nil)

@@ -1,3 +1,4 @@
+
 PLUGIN.name = "Map Scenes"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds areas of the map that are visible during character selection."
@@ -60,7 +61,7 @@ if (CLIENT) then
 					else
 						local keys = {}
 
-						for k, v in pairs(scenes) do
+						for k, _ in pairs(scenes) do
 							if (type(k) == "Vector") then
 								keys[#keys + 1] = k
 							end
@@ -92,8 +93,6 @@ if (CLIENT) then
 	local HIDE_ANGLE = Angle(0, 0, 0)
 
 	function PLUGIN:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos, eyeAngles)
-		local scenes = self.scenes
-
 		if (IsValid(ix.gui.char)) then
 			return HIDE_WEAPON, HIDE_ANGLE
 		end

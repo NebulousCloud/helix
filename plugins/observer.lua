@@ -1,9 +1,11 @@
+
 PLUGIN.name = "Observer"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds on to the no-clip mode to prevent instrusion."
 
 if (CLIENT) then
 	-- Create a setting to see if the player will teleport back after noclipping.
+	-- luacheck: globals IX_CVAR_OBSTPBACK IX_CVAR_ADMINESP
 	IX_CVAR_OBSTPBACK = CreateClientConVar("ix_obstpback", 1, true, true)
 	IX_CVAR_ADMINESP = CreateClientConVar("ix_obsesp", 1, true, true)
 
@@ -12,12 +14,12 @@ if (CLIENT) then
 	local barHeight = 2
 
 	function PLUGIN:HUDPaint()
-		client = LocalPlayer()
+		local client = LocalPlayer()
 
 		if (client:IsAdmin() and client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle() and IX_CVAR_ADMINESP:GetBool()) then
-			scrW, scrH = ScrW(), ScrH()
+			local scrW, scrH = ScrW(), ScrH()
 
-			for k, v in ipairs(player.GetAll()) do
+			for _, v in ipairs(player.GetAll()) do
 				if (v == client or !v:GetCharacter()) then continue end
 
 				local screenPosition = v:GetPos():ToScreen()
@@ -74,7 +76,7 @@ if (CLIENT) then
 
 	function PLUGIN:SetupQuickMenu(menu)
 		if (LocalPlayer():IsAdmin()) then
-			local buttonESP = menu:AddCheck(L"toggleESP", function(panel, state)
+			menu:AddCheck(L"toggleESP", function(panel, state)
 				if (state) then
 					RunConsoleCommand("ix_obsesp", "1")
 				else
@@ -82,7 +84,7 @@ if (CLIENT) then
 				end
 			end, IX_CVAR_ADMINESP:GetBool())
 
-			local buttonTP = menu:AddCheck(L"toggleObserverTP", function(panel, state)
+			menu:AddCheck(L"toggleObserverTP", function(panel, state)
 				if (state) then
 					RunConsoleCommand("ix_obstpback", "1")
 				else

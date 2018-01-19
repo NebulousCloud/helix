@@ -1,10 +1,17 @@
-VENDOR_BUY = 1
-VENDOR_SELL = 2
-VENDOR_BOTH = 3
+
+--[[
+	luacheck: globals
+	VENDOR_BUY VENDOR_SELL VENDOR_BOTH VENDOR_WELCOME VENDOR_LEAVE VENDOR_NOTRADE VENDOR_PRICE VENDOR_STOCK VENDOR_MODE
+	VENDOR_MAXSTOCK VENDOR_SELLANDBUY VENDOR_SELLONLY VENDOR_BUYONLY VENDOR_TEXT
+]]
 
 PLUGIN.name = "Vendors"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds NPC vendors that can sell things."
+
+VENDOR_BUY = 1
+VENDOR_SELL = 2
+VENDOR_BOTH = 3
 
 -- Keys for vendor messages.
 VENDOR_WELCOME = 1
@@ -29,7 +36,7 @@ if (SERVER) then
 
 	function PLUGIN:SaveData()
 		local data = {}
-			for k, v in ipairs(ents.FindByClass("ix_vendor")) do
+			for _, v in ipairs(ents.FindByClass("ix_vendor")) do
 				data[#data + 1] = {
 					name = v:GetNetVar("name"),
 					desc = v:GetNetVar("desc"),
@@ -48,7 +55,7 @@ if (SERVER) then
 	end
 
 	function PLUGIN:LoadData()
-		for k, v in ipairs(self:GetData() or {}) do
+		for _, v in ipairs(self:GetData() or {}) do
 			local entity = ents.Create("ix_vendor")
 			entity:SetPos(v.pos)
 			entity:SetAngles(v.angles)
@@ -139,6 +146,8 @@ if (SERVER) then
 				netstream.Start(entity.receivers, "vendorEdit", key, data)
 				data = uniqueID
 			elseif (key == "stockDisable") then
+				local uniqueID = data[1]
+
 				entity.items[data] = entity.items[uniqueID] or {}
 				entity.items[data][VENDOR_MAXSTOCK] = nil
 
@@ -186,7 +195,7 @@ if (SERVER) then
 			elseif (key == "class") then
 				local class
 
-				for k, v in ipairs(ix.class.list) do
+				for _, v in ipairs(ix.class.list) do
 					if (v.uniqueID == data) then
 						class = v
 
@@ -230,7 +239,7 @@ if (SERVER) then
 			if (feedback) then
 				local receivers = {}
 
-				for k, v in ipairs(entity.receivers) do
+				for _, v in ipairs(entity.receivers) do
 					if (v:IsAdmin()) then
 						receivers[#receivers + 1] = v
 					end
@@ -248,14 +257,14 @@ if (SERVER) then
 			return
 		end
 
-		local found
 		local entity = client.ixVendor
 
 		if (!IsValid(entity) or client:GetPos():Distance(entity:GetPos()) > 192) then
 			return
 		end
 
-		if (entity.items[uniqueID] and hook.Run("CanPlayerTradeWithVendor", client, entity, uniqueID, isSellingToVendor) != false) then
+		if (entity.items[uniqueID] and
+			hook.Run("CanPlayerTradeWithVendor", client, entity, uniqueID, isSellingToVendor) != false) then
 			local price = entity:GetPrice(uniqueID, isSellingToVendor)
 
 			if (isSellingToVendor) then
@@ -267,7 +276,8 @@ if (SERVER) then
 				end
 
 				local invOkay = true
-				for k, v in pairs(client:GetChar():GetInv():GetItems()) do
+
+				for _, v in pairs(client:GetChar():GetInv():GetItems()) do
 					if (v.uniqueID == uniqueID and v:GetID() != 0 and ix.item.instances[v:GetID()] and !v:GetData("equip", true)) then
 						invOkay = v:Remove()
 						found = true
@@ -450,22 +460,22 @@ else
 		elseif (key == "faction") then
 			local uniqueID = data[1]
 			local state = data[2]
-			local panel = ix.gui.editorFaction
+			local editPanel = ix.gui.editorFaction
 
 			entity.factions[uniqueID] = state
 
-			if (IsValid(panel) and IsValid(panel.factions[uniqueID])) then
-				panel.factions[uniqueID]:SetChecked(state == true)
+			if (IsValid(editPanel) and IsValid(editPanel.factions[uniqueID])) then
+				editPanel.factions[uniqueID]:SetChecked(state == true)
 			end
 		elseif (key == "class") then
 			local uniqueID = data[1]
 			local state = data[2]
-			local panel = ix.gui.editorFaction
+			local editPanel = ix.gui.editorFaction
 
 			entity.classes[uniqueID] = state
 
-			if (IsValid(panel) and IsValid(panel.classes[uniqueID])) then
-				panel.classes[uniqueID]:SetChecked(state == true)
+			if (IsValid(editPanel) and IsValid(editPanel.classes[uniqueID])) then
+				editPanel.classes[uniqueID]:SetChecked(state == true)
 			end
 		elseif (key == "model") then
 			editor.model:SetText(entity:GetModel())

@@ -1,8 +1,12 @@
+
+local PLUGIN = PLUGIN
+
 PLUGIN.name = "Chatbox"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds a chatbox that replaces the default one."
 
 if (CLIENT) then
+	-- luacheck: globals IX_CVAR_CHATFILTER
 	IX_CVAR_CHATFILTER = CreateClientConVar("ix_chatfilter", "", true, false)
 
 	function PLUGIN:CreateChat()
@@ -33,9 +37,8 @@ if (CLIENT) then
 		end
 	end
 
+	-- luacheck: globals chat
 	chat.ixAddText = chat.ixAddText or chat.AddText
-
-	local PLUGIN = PLUGIN
 
 	function chat.AddText(...)
 		local show = true

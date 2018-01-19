@@ -1,3 +1,4 @@
+
 ITEM.name = "Bag"
 ITEM.description = "A bag to hold items."
 ITEM.model = "models/props_c17/suitcase001a.mdl"
@@ -44,9 +45,9 @@ ITEM.functions.View = {
 function ITEM:OnInstanced(invID, x, y)
 	local inventory = ix.item.inventories[invID]
 
-	ix.item.NewInv(inventory and inventory.owner or 0, self.uniqueID, function(inventory)
-		inventory.vars.isBag = self.uniqueID
-		self:SetData("id", inventory:GetID())
+	ix.item.NewInv(inventory and inventory.owner or 0, self.uniqueID, function(inv)
+		inv.vars.isBag = self.uniqueID
+		self:SetData("id", inv:GetID())
 	end)
 end
 
@@ -69,19 +70,16 @@ function ITEM:OnSendData()
 			inventory.vars.isBag = self.uniqueID
 			inventory:Sync(self.player)
 		else
-			local owner = self.player:GetChar():GetID()
+			local owner = self.player:GetCharacter():GetID()
 
-			ix.item.RestoreInv(self:GetData("id"), self.invWidth, self.invHeight, function(inventory)
-				inventory.vars.isBag = self.uniqueID
-				inventory:SetOwner(owner, true)
+			ix.item.RestoreInv(self:GetData("id"), self.invWidth, self.invHeight, function(inv)
+				inv.vars.isBag = self.uniqueID
+				inv:SetOwner(owner, true)
 			end)
 		end
 	else
-		local inventory = ix.item.inventories[self.invID]
-		local client = self.player
-
-		ix.item.NewInv(self.player:GetChar():GetID(), self.uniqueID, function(inventory)
-			self:SetData("id", inventory:GetID())
+		ix.item.NewInv(self.player:GetCharacter():GetID(), self.uniqueID, function(inv)
+			self:SetData("id", inv:GetID())
 		end)
 	end
 end
@@ -116,7 +114,7 @@ function ITEM:OnRemoved()
 			query:Where("inventory_id", index)
 		query:Execute()
 
-		local query = mysql:Delete("ix_inventories")
+		query = mysql:Delete("ix_inventories")
 			query:Where("inventory_id", index)
 		query:Execute()
 	end
@@ -137,7 +135,7 @@ function ITEM:OnCanBeTransfered(oldInventory, newInventory)
 			return false
 		end
 
-		for k, v in pairs(self:GetInv():GetItems()) do
+		for _, v in pairs(self:GetInv():GetItems()) do
 			if (v:GetData("id") == index2) then
 				return false
 			end

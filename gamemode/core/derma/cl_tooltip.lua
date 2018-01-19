@@ -1,5 +1,7 @@
+
 if (SERVER) then return end
 
+-- luacheck: globals TOOLTIP_GENERIC TOOLTIP_ITEM
 TOOLTIP_GENERIC = 0
 TOOLTIP_ITEM = 1
 
@@ -65,8 +67,7 @@ function PANEL:PositionTooltip()
 
 	local x, y = input.GetCursorPos()
 	local w, h = self:GetSize()
-
-	local lx, ly = self.TargetPanel:LocalToScreen( 0, 0 )
+	local _, ly = self.TargetPanel:LocalToScreen( 0, 0 )
 
 	y = y - 50
 
@@ -104,7 +105,7 @@ function PANEL:OpenForPanel( panel )
 	end
 
 	if (self.iconMode == TOOLTIP_ITEM) then
-		self.markupObject = ix.markup.parse(self:GetText(), itemWidth)
+		self.markupObject = ix.markup.Parse(self:GetText(), itemWidth)
 		self:SetText("")
 		self:SetWide(math.max(itemWidth, 200) + 15)
 		self:SetHeight(self.markupObject:GetHeight() + 20)

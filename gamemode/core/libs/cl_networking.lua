@@ -1,3 +1,4 @@
+
 local entityMeta = FindMetaTable("Entity")
 local playerMeta = FindMetaTable("Player")
 
@@ -22,7 +23,7 @@ netstream.Hook("gVar", function(key, value)
 	ix.net.globals[key] = value
 end)
 
-function GetNetVar(key, default)
+function GetNetVar(key, default) -- luacheck: globals GetNetVar
 	local value = ix.net.globals[key]
 
 	return value != nil and value or default

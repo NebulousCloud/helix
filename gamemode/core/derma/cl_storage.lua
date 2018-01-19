@@ -52,7 +52,10 @@ end
 
 function PANEL:SetStorageInventory(inventory)
 	self.storageInventory:SetInventory(inventory)
-	self.storageInventory:SetPos(self:GetWide() / 2 - self.storageInventory:GetWide() - 2, self:GetTall() / 2 - self.storageInventory:GetTall() / 2)
+	self.storageInventory:SetPos(
+		self:GetWide() / 2 - self.storageInventory:GetWide() - 2,
+		self:GetTall() / 2 - self.storageInventory:GetTall() / 2
+	)
 
 	ix.gui["inv" .. inventory:GetID()] = self.storageInventory
 end

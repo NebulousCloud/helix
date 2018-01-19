@@ -61,10 +61,10 @@ if (CLIENT) then
 			html:Dock(FILL)
 			html:SetHTML(header..HELP_DEFAULT)
 
-			local tabs = {}
-			hook.Run("BuildHelpMenu", tabs)
+			local helpTabs = {}
+			hook.Run("BuildHelpMenu", helpTabs)
 
-			for k, v in SortedPairs(tabs) do
+			for k, v in SortedPairs(helpTabs) do
 				if (type(v) != "function") then
 					local source = v
 
@@ -81,23 +81,23 @@ hook.Add("BuildHelpMenu", "ixBasicHelp", function(tabs)
 	tabs["commands"] = function(node)
 		local body = ""
 
-		for k, v in SortedPairs(ix.command.list) do
+		for commandName, command in SortedPairs(ix.command.list) do
 			local allowed = false
 
-			if (v.adminOnly and !LocalPlayer():IsAdmin() or v.superAdminOnly and !LocalPlayer():IsSuperAdmin()) then
+			if (command.adminOnly and !LocalPlayer():IsAdmin() or command.superAdminOnly and !LocalPlayer():IsSuperAdmin()) then
 				continue
 			end
 
-			if (v.group) then
-				if (type(v.group) == "table") then
-					for k, v in pairs(v.group) do
-						if (LocalPlayer():IsUserGroup(v)) then
+			if (command.group) then
+				if (type(command.group) == "table") then
+					for _, group in pairs(command.group) do
+						if (LocalPlayer():IsUserGroup(group)) then
 							allowed = true
 
 							break
 						end
 					end
-				elseif (LocalPlayer():IsUserGroup(v.group)) then
+				elseif (LocalPlayer():IsUserGroup(command.group)) then
 					return true
 				end
 			else
@@ -105,7 +105,7 @@ hook.Add("BuildHelpMenu", "ixBasicHelp", function(tabs)
 			end
 
 			if (allowed) then
-				body = body.."<h2>/"..k.."</h2><strong>Syntax:</strong> <em>"..v.syntax.."</em><br /><br />"
+				body = body.."<h2>/"..commandName.."</h2><strong>Syntax:</strong> <em>"..command.syntax.."</em><br /><br />"
 			end
 		end
 
@@ -115,7 +115,7 @@ hook.Add("BuildHelpMenu", "ixBasicHelp", function(tabs)
 	tabs["plugins"] = function(node)
 		local body = ""
 
-		for k, v in SortedPairsByMemberValue(ix.plugin.list, "name") do
+		for _, v in SortedPairsByMemberValue(ix.plugin.list, "name") do
 			body = (body..[[
 				<p>
 					<span style="font-size: 22;"><b>%s</b><br /></span>

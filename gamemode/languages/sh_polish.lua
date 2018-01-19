@@ -1,8 +1,5 @@
---[[
 
-	Polish translation by Veran120 (http://steamcommunity.com//id/Veran120)
-
---]]
+-- Polish translation by Veran120 (http://steamcommunity.com//id/Veran120)
 NAME = "Polski"
 
 LANGUAGE = {
@@ -25,7 +22,6 @@ LANGUAGE = {
 	charCreateTip = "Wypełnij pola poniżej i klinij 'Zakończ' aby stworzyć swoją postać.",
 	invalid = "Podałeś niewłaściwe(ą) %s",
 	descMinLen = "Rysopis musi zawierać minimum %d znak(ów).",
-	model = "Model",
 	player = "Gracz",
 	finish = "Zakończ",
 	finishTip = "Zakończ tworzenie postaci.",
@@ -86,7 +82,6 @@ LANGUAGE = {
 	dSold = "Sprzedałeś te drzwi za %s.",
 	notOwner = "Nie jesteś właścicielem tego.",
 	invalidArg = "Podałeś niepoprawną wartość dla argumentu #%s.",
-	invalidFaction = "Frakcja, którą podałeś nie mogła zostać znaleziona.",
 	flagGive = "%s dał %s następujące flagi: '%s'.",
 	flagGiveTitle = "Daj Flagi",
 	flagGiveDesc = "Daj następujące flagi graczowi.",
@@ -102,7 +97,6 @@ LANGUAGE = {
 	cChangeModel = "%s zmienił model gracza %s na %s.",
 	cChangeName = "%s zmienił imię gracza %s na %s.",
 	playerCharBelonging = "Ten przedmiot należy do innej postaci należącej do Ciebie.",
-	business = "Biznes",
 	invalidFaction = "Wprowadziłeś niewłaściwą frakcję.",
 	spawnAdd = "Dodaj punkt odradzania się (Spawn) dla %s.",
 	spawnDeleted = "Usunąłeś %s punktów odradzania się (spawn'u).",
@@ -156,7 +150,6 @@ LANGUAGE = {
 	charClass = "Piastujesz stanowisko %s we frakcji.",
 	noSpace = "Ekwipunek jest pełny.",
 	noOwner = "Nieprawidłowy właściciel.",
-	notAllowed = "Ta akcja jest niedozowolna.",
 	invalidIndex = "Index przedmiotu jest nieprawidłowy.",
 	invalidItem = "Obiekt przedmiotu jest nieprawidłowy.",
 	invalidInventory = "Obiekt ekwipunku jest nieprawidłowy.",
@@ -196,7 +189,7 @@ LANGUAGE = {
 	vmSet = "Ustawiłeś swoją automatyczną sekretarkę.",
 	vmRem = "Usunąłeś swoją automatyczną sekretarkę.",
 	altLower = "Ukryć dłonie kiedy są opuszczone?",
-    noPerm = "Nie wolno Ci tego zrobić.",
+	noPerm = "Nie wolno Ci tego zrobić.",
 	youreDead = "Jesteś martwy.",
 	injMajor = "Widoczne krytyczne obrażenia.",
 	injLittle = "Widoczne obrażenia.",

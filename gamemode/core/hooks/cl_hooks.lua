@@ -268,13 +268,8 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 end
 
 function GM:LoadIntro()
-	-- If skip intro is on
-	if (true) then
-		if (IsValid(ix.gui.char)) then
-			vgui.Create("ixCharMenu")
-		end
-	else
-
+	if (IsValid(ix.gui.char)) then
+		vgui.Create("ixCharMenu")
 	end
 end
 
@@ -290,19 +285,19 @@ function GM:InitializedConfig()
 			surface.DrawRect(0, 0, w, h)
 		end
 
-		local label = loader:Add("DLabel")
-		label:Dock(FILL)
-		label:SetText(L"loading")
-		label:SetFont("ixTitleFont")
-		label:SetContentAlignment(5)
-		label:SetTextColor(color_white)
+		local statusLabel = loader:Add("DLabel")
+		statusLabel:Dock(FILL)
+		statusLabel:SetText(L"loading")
+		statusLabel:SetFont("ixTitleFont")
+		statusLabel:SetContentAlignment(5)
+		statusLabel:SetTextColor(color_white)
 
 		timer.Simple(5, function()
 			if (IsValid(ix.gui.loading)) then
 				local fault = GetNetVar("dbError")
 
 				if (fault) then
-					label:SetText(fault and L"dbError" or L"loading")
+					statusLabel:SetText(fault and L"dbError" or L"loading")
 
 					local label = loader:Add("DLabel")
 					label:DockMargin(0, 64, 0, 0)
@@ -361,8 +356,6 @@ end)
 local OFFSET_NORMAL = Vector(0, 0, 80)
 local OFFSET_CROUCHING = Vector(0, 0, 48)
 
-paintedEntitiesCache = {}
-
 function GM:CalcView(client, origin, angles, fov)
 	local view = self.BaseClass:CalcView(client, origin, angles, fov) or {}
 	local entity = Entity(client:GetLocalVar("ragdoll", 0))
@@ -370,7 +363,7 @@ function GM:CalcView(client, origin, angles, fov)
 
 	if ((!client:ShouldDrawLocalPlayer() and IsValid(entity) and entity:IsRagdoll()) or
 		(!LocalPlayer():Alive() and IsValid(ragdoll))) then
-	 	local ent = LocalPlayer():Alive() and entity or ragdoll
+		local ent = LocalPlayer():Alive() and entity or ragdoll
 		local index = ent:LookupAttachment("eyes")
 
 		if (index) then
@@ -388,6 +381,7 @@ function GM:CalcView(client, origin, angles, fov)
 	return self.BaseClass:CalcView(client, origin, angles, fov)
 end
 
+local paintedEntitiesCache = {}
 local nextUpdate = 0
 local lastTrace = {}
 local lastEntity
@@ -426,8 +420,10 @@ function GM:HUDPaintBackground()
 		lastTrace.mask = MASK_SHOT_HULL
 
 		lastEntity = util.TraceHull(lastTrace).Entity
+		local bShouldDrawEntityInfo = lastEntity.OnShouldDrawEntityInfo and lastEntity:OnShouldDrawEntityInfo()
 
-		if (IsValid(lastEntity) and (lastEntity.DrawEntityInfo or (lastEntity.OnShouldDrawEntityInfo and lastEntity:OnShouldDrawEntityInfo()) or hookRun("ShouldDrawEntityInfo", lastEntity))) then
+		if (IsValid(lastEntity) and
+			(lastEntity.DrawEntityInfo or bShouldDrawEntityInfo or hookRun("ShouldDrawEntityInfo", lastEntity))) then
 			paintedEntitiesCache[lastEntity] = true
 		end
 	end
@@ -571,14 +567,12 @@ local charInfo = {}
 
 function GM:DrawEntityInfo(entity, alpha, position)
 	if (entity.IsPlayer(entity)) then
-		local localPlayer = LocalPlayer()
 		local character = entity.GetChar(entity)
 
 		position = position or toScreen(entity.GetPos(entity) + (entity.Crouching(entity) and OFFSET_CROUCHING or OFFSET_NORMAL))
 
 		if (character) then
 			local x, y = position.x, position.y
-			local ty = 0
 
 			charInfo = {}
 			charInfo[1] = {hookRun("GetDisplayedName", entity) or character.GetName(character), teamGetColor(entity.Team(entity))}
@@ -599,9 +593,9 @@ function GM:DrawEntityInfo(entity, alpha, position)
 
 			for i = 1, #charInfo do
 				local info = charInfo[i]
+				local _, newY = drawText(info[1], x, y, colorAlpha(info[2] or color_white, alpha), 1, 1, "ixSmallFont")
 
-				_, ty = drawText(info[1], x, y, colorAlpha(info[2] or color_white, alpha), 1, 1, "ixSmallFont")
-				y = y + ty
+				y = y + newY
 			end
 		end
 	end
@@ -774,7 +768,7 @@ function GM:SetupQuickMenu(menu)
 
 	local current
 
-	for k, v in SortedPairs(ix.lang.stored) do
+	for k, _ in SortedPairs(ix.lang.stored) do
 		local name = ix.lang.names[k]
 		local name2 = k:sub(1, 1):upper()..k:sub(2)
 		local enabled = IX_CVAR_LANG:GetString():match(k)
@@ -864,8 +858,7 @@ function GM:OnCharInfoSetup(infoPanel)
 						local act2 = type(branch) == "table" and branch[1] or branch
 
 						if (type(act2) == "string") then
-							act2 = ent:LookupSequence(act2)
-
+							--act2 = ent:LookupSequence(act2)
 							return
 						else
 							act2 = ent:SelectWeightedSequence(act2)
@@ -917,7 +910,7 @@ function GM:PostPlayerDraw(client)
 		local wep = client:GetActiveWeapon()
 		local curClass = ((wep and wep:IsValid()) and wep:GetClass():lower() or "")
 
-		for k, v in ipairs(client:GetWeapons()) do
+		for _, v in ipairs(client:GetWeapons()) do
 			if (v and IsValid(v)) then
 				local class = v:GetClass():lower()
 				local drawInfo = HOLSTER_DRAWINFO[class]

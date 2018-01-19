@@ -1,3 +1,4 @@
+
 if (SERVER) then
 	netstream.Hook("bizBuy", function(client, items)
 		local char = client:GetChar()
@@ -71,7 +72,7 @@ if (SERVER) then
 				if (drop) then
 					ix.item.Spawn(uniqueID, entity:GetPos() + Vector(0, 0, 16))
 				else
-					local status, fault = client:GetChar():GetInv():Add(uniqueID)
+					local status, _ = client:GetCharacter():GetInventory():Add(uniqueID)
 
 					if (!status) then
 						return client:NotifyLocalized("noFit")
@@ -93,11 +94,6 @@ else
 	netstream.Hook("openShp", function(entity, items)
 		ix.gui.shipment = vgui.Create("ixShipment")
 		ix.gui.shipment:SetItems(entity, items)
-	end)
-
-	netstream.Hook("updtShp", function(entity, items)
-		if (ix.gui.shipment and ix.gui.shipment:IsVisible()) then
-		end
 	end)
 
 	netstream.Hook("takeShp", function(name, amount)

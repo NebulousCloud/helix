@@ -1,3 +1,4 @@
+
 ix.chat = ix.chat or {}
 ix.chat.classes = ix.char.classes or {}
 
@@ -44,7 +45,9 @@ function ix.chat.Register(chatType, data)
 
 		function data:OnChatAdd(speaker, text, anonymous, info)
 			local color = self.color
-			local name = anonymous and L"someone" or hook.Run("GetDisplayedName", speaker, chatType) or (IsValid(speaker) and speaker:Name() or "Console")
+			local name = anonymous and
+				L"someone" or hook.Run("GetDisplayedName", speaker, chatType) or
+				(IsValid(speaker) and speaker:Name() or "Console")
 
 			if (self.OnGetColor) then
 				color = self:OnGetColor(speaker, text)
@@ -58,17 +61,21 @@ function ix.chat.Register(chatType, data)
 
 	if (CLIENT and data.prefix) then
 		if (type(data.prefix) == "table") then
-			for k, v in ipairs(data.prefix) do
+			for _, v in ipairs(data.prefix) do
 				if (v:sub(1, 1) == "/") then
 					ix.command.Add(v:sub(2), {
 						description = data.description,
-						syntax = "<string text>",
+						syntax = "<text message>",
 						OnRun = function() end
 					})
 				end
 			end
 		else
-			ix.command.Add(chatType, dummy)
+			ix.command.Add(chatType, {
+				description = data.description,
+				syntax = "<text message>",
+				OnRun = function() end
+			})
 		end
 	end
 
@@ -106,8 +113,8 @@ function ix.chat.Parse(client, message, noSend)
 		elseif (type(v.prefix) == "string") then
 			local prefix = v.prefix:lower()
 
-			isChosen = message:sub(1, #v.prefix + (noSpaceAfter and 1 or 0)):lower() == v.prefix..(noSpaceAfter and "" or " "):lower()
-			chosenPrefix = v.prefix..(v.noSpaceAfter and "" or " ")
+			isChosen = message:sub(1, #prefix + (noSpaceAfter and 1 or 0)):lower() == prefix..(noSpaceAfter and "" or " "):lower()
+			chosenPrefix = prefix..(v.noSpaceAfter and "" or " ")
 		end
 
 		-- If the checks say we have the proper chat type, then the chat type is the chosen one!
@@ -151,7 +158,7 @@ if (SERVER) then
 			if (class.OnCanHear and !receivers) then
 				receivers = {}
 
-				for k, v in ipairs(player.GetAll()) do
+				for _, v in ipairs(player.GetAll()) do
 					if (v:GetChar() and class:OnCanHear(speaker, v) != false) then
 						receivers[#receivers + 1] = v
 					end
@@ -175,7 +182,10 @@ if (SERVER) then
 				text = text:sub(1, 1):upper() .. text:sub(2)
 			end
 
-			netstream.Start(receivers, "cMsg", speaker, chatType, hook.Run("PlayerMessageSend", speaker, chatType, text, anonymous, receivers, rawText) or text, anonymous or false)
+			netstream.Start(receivers, "cMsg", speaker, chatType,
+				hook.Run("PlayerMessageSend", speaker, chatType, text, anonymous, receivers, rawText) or text,
+				anonymous or false
+			)
 		end
 	end
 else
@@ -183,6 +193,7 @@ else
 		local class = ix.chat.classes[chatType]
 
 		if (class) then
+			-- luacheck: globals CHAT_CLASS
 			CHAT_CLASS = class
 				class:OnChatAdd(speaker, text, anonymous, data)
 			CHAT_CLASS = nil
