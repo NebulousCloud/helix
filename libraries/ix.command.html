@@ -41,7 +41,7 @@
 
 <h2>Libraries</h2>
 <ul class="nowrap">
-  <li><a href="../libraries/ix.markup.html">ix.markup</a></li>
+  <li><a href="../libraries/gamemode.core.libs.cl_markup.html">gamemode.core.libs.cl_markup</a></li>
   <li><strong>ix.command</strong></li>
   <li><a href="../libraries/ix.util.html">ix.util</a></li>
 </ul>
@@ -149,7 +149,7 @@ ix.command.Add(<span class="string">"CharSlap"</span>, {
 
 <p>Here, we've specified the first argument called <code>target</code> to be of type <code>player</code>, and the second argument called <code>damage</code> to be
 of type <code>number</code>. The <code>damage</code> argument is optional, meaning that the command will still run if the user has not specified
-any value for the damage. In this case, we'll need to check if it was specified by doing a simple <code>if (damage) then</code>. </p>
+any value for the damage. In this case, we'll need to check if it was specified by doing a simple <code>if (damage) then</code>.</p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
@@ -223,7 +223,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
     <dt>
     <a name = "ix.command.HasAccess"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.command.HasAccess(client, command)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L303">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L304">View source &raquo;</a>
     </dt>
     <dd>
     Returns true if a player is allowed to run a certain command.
@@ -258,7 +258,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
     <dt>
     <a name = "ix.command.ExtractArgs"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.command.ExtractArgs(text)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L325">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L326">View source &raquo;</a>
     </dt>
     <dd>
     Returns a table of arguments from a given string.
@@ -296,7 +296,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
     <dt>
     <a name = "ix.command.FindAll"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.command.FindAll(identifier[, bSorted=false[, bReorganize=false[, bRemoveDupes=false]]])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L373">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L374">View source &raquo;</a>
     </dt>
     <dd>
     Returns an array of potential commands by unique id.
@@ -344,7 +344,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
     <dt>
     <a name = "ix.command.FindPlayer"></a>
     <pre><span class="realm server" title="Server"></span> ix.command.FindPlayer(client, name)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L430">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L431">View source &raquo;</a>
     </dt>
     <dd>
     Attempts to find a player by an identifier.  If unsuccessful, a notice will be displayed to the specified player. The
@@ -384,7 +384,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
     <dt>
     <a name = "ix.command.Run"></a>
     <pre><span class="realm server" title="Server"></span> ix.command.Run(client, command, arguments)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L447">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L448">View source &raquo;</a>
     </dt>
     <dd>
     Forces a player to execute a command by name.
@@ -422,7 +422,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
     <dt>
     <a name = "ix.command.Parse"></a>
     <pre><span class="realm server" title="Server"></span> ix.command.Parse(client, text[, realCommand[, arguments]])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L513">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L514">View source &raquo;</a>
     </dt>
     <dd>
     Parses a chat string and runs the command if one is found.  Specifically, it checks for commands in a string with the
@@ -478,7 +478,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2018-01-17 09:53:44 </i>
+<i style="float:right;">Last updated 2018-01-19 08:21:43 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 
