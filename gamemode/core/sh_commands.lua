@@ -1,7 +1,7 @@
 
 ix.command.Add("Roll", {
 	description = "@cmdRoll",
-	arguments = {ix.type.number, "maximum", true},
+	arguments = bit.bor(ix.type.number, ix.type.optional),
 	OnRun = function(self, client, maximum)
 		ix.chat.Send(client, "roll", math.random(0, math.min(maximum or 100, 100)))
 	end
@@ -10,14 +10,14 @@ ix.command.Add("Roll", {
 ix.command.Add("PM", {
 	description = "@cmdPM",
 	arguments = {
-		{ix.type.player, "target"},
-		{ix.type.text, "message"}
+		ix.type.player,
+		ix.type.text
 	},
 	OnRun = function(self, client, target, message)
 		local voiceMail = target:GetData("vm")
 
 		if (voiceMail and voiceMail:find("%S")) then
-			return target:Name()..": "..voiceMail
+			return target:GetName()..": "..voiceMail
 		end
 
 		if ((client.ixNextPM or 0) < CurTime()) then
@@ -31,7 +31,7 @@ ix.command.Add("PM", {
 
 ix.command.Add("Reply", {
 	description = "@cmdReply",
-	arguments = {ix.type.text, "message"},
+	arguments = ix.type.text,
 	OnRun = function(self, client, message)
 		local target = client.ixLastPM
 
@@ -44,7 +44,7 @@ ix.command.Add("Reply", {
 
 ix.command.Add("SetVoicemail", {
 	description = "@cmdSetVoicemail",
-	arguments = {ix.type.text, "message"},
+	arguments = ix.type.text,
 	OnRun = function(self, client, message)
 		if (message:find("%S")) then
 			client:SetData("vm", message:sub(1, 240))
@@ -60,8 +60,8 @@ ix.command.Add("CharGiveFlag", {
 	description = "@cmdCharGiveFlag",
 	adminOnly = true,
 	arguments = {
-		{ix.type.character, "target"},
-		{ix.type.string, "flags", true}
+		ix.type.character,
+		bit.bor(ix.type.string, ix.type.optional)
 	},
 	OnRun = function(self, client, target, flags)
 		-- show string request if no flags are specified
@@ -89,8 +89,8 @@ ix.command.Add("CharTakeFlag", {
 	description = "@cmdCharTakeFlag",
 	adminOnly = true,
 	arguments = {
-		{ix.type.character, "target"},
-		{ix.type.string, "flags", true}
+		ix.type.character,
+		bit.bor(ix.type.string, ix.type.optional)
 	},
 	OnRun = function(self, client, target, flags)
 		if (!flags) then
@@ -118,8 +118,8 @@ ix.command.Add("CharSetModel", {
 	description = "@cmdCharSetModel",
 	adminOnly = true,
 	arguments = {
-		{ix.type.character, "target"},
-		{ix.type.string, "model"}
+		ix.type.character,
+		ix.type.string
 	},
 	OnRun = function(self, client, target, model)
 		target:SetModel(model)
@@ -133,8 +133,8 @@ ix.command.Add("CharSetSkin", {
 	description = "@cmdCharSetSkin",
 	adminOnly = true,
 	arguments = {
-		{ix.type.character, "target"},
-		{ix.type.number, "skin", true}
+		ix.type.character,
+		bit.bor(ix.type.number, ix.type.optional)
 	},
 	OnRun = function(self, client, target, skin)
 		target:SetData("skin", skin)
@@ -148,9 +148,9 @@ ix.command.Add("CharSetBodygroup", {
 	description = "@cmdCharSetBodygroup",
 	adminOnly = true,
 	arguments = {
-		{ix.type.character, "target"},
-		{ix.type.string, "bodygroup"},
-		{ix.type.number, "value", true}
+		ix.type.character,
+		ix.type.string,
+		bit.bor(ix.type.number, ix.type.optional)
 	},
 	OnRun = function(self, client, target, bodygroup, value)
 		local index = target:GetPlayer():FindBodygroupByName(bodygroup)
@@ -176,9 +176,9 @@ ix.command.Add("CharSetAttribute", {
 	description = "@cmdCharSetAttribute",
 	adminOnly = true,
 	arguments = {
-		{ix.type.character, "target"},
-		{ix.type.string, "attributeName"},
-		{ix.type.number, "level"}
+		ix.type.character,
+		ix.type.string,
+		ix.type.number
 	},
 	OnRun = function(self, client, target, attributeName, level)
 		for k, v in pairs(ix.attributes.list) do
@@ -196,9 +196,9 @@ ix.command.Add("CharAddAttribute", {
 	description = "@cmdCharAddAttribute",
 	adminOnly = true,
 	arguments = {
-		{ix.type.character, "target"},
-		{ix.type.string, "attributeName"},
-		{ix.type.number, "level"}
+		ix.type.character,
+		ix.type.string,
+		ix.type.number
 	},
 	OnRun = function(self, client, target, attributeName, level)
 		for k, v in pairs(ix.attributes.list) do
@@ -216,8 +216,8 @@ ix.command.Add("CharSetName", {
 	description = "@cmdCharSetName",
 	adminOnly = true,
 	arguments = {
-		{ix.type.character, "target"},
-		{ix.type.text, "newName"}
+		ix.type.character,
+		ix.type.text
 	},
 	OnRun = function(self, client, target, newName)
 		-- display string request if no name was specified
@@ -236,8 +236,8 @@ ix.command.Add("CharGiveItem", {
 	description = "@cmdCharGiveItem",
 	adminOnly = true,
 	arguments = {
-		{ix.type.character, "target"},
-		{ix.type.string, "item"}
+		ix.type.character,
+		ix.type.string
 	},
 	OnRun = function(self, client, target, item)
 		local uniqueID = item:lower()
@@ -269,7 +269,7 @@ ix.command.Add("CharGiveItem", {
 ix.command.Add("CharKick", {
 	description = "@cmdCharKick",
 	adminOnly = true,
-	arguments = {ix.type.character, "target"},
+	arguments = ix.type.character,
 	OnRun = function(self, client, target)
 		ix.util.NotifyLocalized("charKick", nil, client:GetName(), target:GetName())
 		target:Kick()
@@ -278,7 +278,7 @@ ix.command.Add("CharKick", {
 
 ix.command.Add("CharBan", {
 	description = "@cmdCharBan",
-	arguments = {ix.type.character, "target"},
+	arguments = ix.type.character,
 	adminOnly = true,
 	OnRun = function(self, client, target)
 		ix.util.NotifyLocalized("charBan", nil, client:GetName(), target:GetName())
@@ -290,7 +290,7 @@ ix.command.Add("CharBan", {
 
 ix.command.Add("CharUnban", {
 	description = "@cmdCharUnban",
-	arguments = {ix.type.text, "name"},
+	arguments = ix.type.text,
 	adminOnly = true,
 	OnRun = function(self, client, name)
 		if ((client.ixNextSearch or 0) >= CurTime()) then
@@ -345,7 +345,7 @@ ix.command.Add("CharUnban", {
 
 ix.command.Add("GiveMoney", {
 	description = "@cmdGiveMoney",
-	arguments = {ix.type.number, "amount"},
+	arguments = ix.type.number,
 	OnRun = function(self, client, amount)
 		amount = math.floor(amount)
 
@@ -377,8 +377,8 @@ ix.command.Add("CharSetMoney", {
 	description = "@cmdCharSetMoney",
 	adminOnly = true,
 	arguments = {
-		{ix.type.character, "target"},
-		{ix.type.number, "amount"}
+		ix.type.character,
+		ix.type.number
 	},
 	OnRun = function(self, client, target, amount)
 		if (amount <= 0) then
@@ -394,7 +394,7 @@ ix.command.Add("CharSetMoney", {
 
 ix.command.Add("DropMoney", {
 	description = "@cmdDropMoney",
-	arguments = {ix.type.number, "amount"},
+	arguments = ix.type.number,
 	OnRun = function(self, client, amount)
 		if (amount <= 0) then
 			return "@invalidArg", 1
@@ -418,8 +418,8 @@ ix.command.Add("PlyWhitelist", {
 	description = "@cmdPlyWhitelist",
 	adminOnly = true,
 	arguments = {
-		{ix.type.player, "target"},
-		{ix.type.text, "faction"}
+		ix.type.player,
+		ix.type.text
 	},
 	OnRun = function(self, client, target, name)
 		local faction = ix.faction.teams[name]
@@ -470,8 +470,8 @@ ix.command.Add("PlyUnwhitelist", {
 	description = "@cmdPlyUnwhitelist",
 	adminOnly = true,
 	arguments = {
-		{ix.type.player, "target"},
-		{ix.type.text, "faction"}
+		ix.type.player,
+		ix.type.text
 	},
 	OnRun = function(self, client, target, name)
 		local faction = ix.faction.teams[name]
@@ -500,7 +500,7 @@ ix.command.Add("PlyUnwhitelist", {
 
 ix.command.Add("CharFallOver", {
 	description = "@cmdCharFallOver",
-	arguments = {ix.type.number, "time", true},
+	arguments = bit.bor(ix.type.number, ix.type.optional),
 	OnRun = function(self, client, time)
 		if (time and time > 0) then
 			time = math.Clamp(time, 1, 60)
@@ -515,7 +515,7 @@ ix.command.Add("CharFallOver", {
 ix.command.Add("BecomeClass", {
 	description = "@cmdBecomeClass",
 	syntax = "<string class>",
-	arguments = {ix.type.text, "class"},
+	arguments = ix.type.text,
 	OnRun = function(self, client, class)
 		local character = client:GetCharacter()
 
@@ -551,7 +551,7 @@ ix.command.Add("BecomeClass", {
 
 ix.command.Add("CharDesc", {
 	description = "@cmdCharDesc",
-	arguments = {ix.type.text, "description"},
+	arguments = ix.type.text,
 	OnRun = function(self, client, description)
 		if (!description:find("%S")) then
 			return client:RequestString("@chgDesc", "@chgDescDesc", function(text)
@@ -575,8 +575,8 @@ ix.command.Add("PlyTransfer", {
 	description = "@cmdPlyTransfer",
 	adminOnly = true,
 	arguments = {
-		{ix.type.character, "target"},
-		{ix.type.text, "faction"}
+		ix.type.character,
+		ix.type.text
 	},
 	OnRun = function(self, client, target, name)
 		local faction = ix.faction.teams[name]
@@ -612,8 +612,8 @@ ix.command.Add("CharSetClass", {
 	description = "@cmdCharSetClass",
 	adminOnly = true,
 	arguments = {
-		{ix.type.character, "target"},
-		{ix.type.text, "class"}
+		ix.type.character,
+		ix.type.text
 	},
 	OnRun = function(self, client, target, class)
 		local classTable
@@ -649,7 +649,7 @@ ix.command.Add("CharSetClass", {
 ix.command.Add("MapRestart", {
 	description = "@cmdMapRestart",
 	adminOnly = true,
-	arguments = {ix.type.number, "delay", true},
+	arguments = bit.bor(ix.type.number, ix.type.optional),
 	OnRun = function(self, client, delay)
 		delay = delay or 10
 		ix.util.NotifyLocalized("mapRestarting", nil, delay)

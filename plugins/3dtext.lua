@@ -159,8 +159,8 @@ ix.command.Add("TextAdd", {
 	description = "@cmdTextAdd",
 	adminOnly = true,
 	arguments = {
-		{ix.type.string, "text"},
-		{ix.type.number, "scale", true}
+		ix.type.string,
+		bit.bor(ix.type.number, ix.type.optional)
 	},
 	OnRun = function(self, client, text, scale)
 		-- Get the position and angles of the text.
@@ -179,7 +179,7 @@ ix.command.Add("TextAdd", {
 ix.command.Add("TextRemove", {
 	description = "@cmdTextRemove",
 	adminOnly = true,
-	arguments = {ix.type.number, "radius"},
+	arguments = ix.type.number,
 	OnRun = function(self, client, radius)
 		-- Get the origin to remove text.
 		local trace = client:GetEyeTrace()

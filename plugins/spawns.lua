@@ -52,8 +52,8 @@ ix.command.Add("SpawnAdd", {
 	description = "@cmdSpawnAdd",
 	adminOnly = true,
 	arguments = {
-		{ix.type.string, "faction"},
-		{ix.type.text, "class"}
+		ix.type.string,
+		ix.type.text
 	},
 	OnRun = function(self, client, name, class)
 		local info = ix.faction.indices[name:lower()]
@@ -116,7 +116,7 @@ ix.command.Add("SpawnAdd", {
 ix.command.Add("SpawnRemove", {
 	description = "@cmdSpawnRemove",
 	adminOnly = true,
-	arguments = {ix.type.number, "radius", true},
+	arguments = bit.bor(ix.type.number, ix.type.optional),
 	OnRun = function(self, client, radius)
 		radius = radius or 120
 

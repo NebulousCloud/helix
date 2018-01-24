@@ -154,7 +154,7 @@ end
 ix.command.Add("ContainerSetPassword", {
 	description = "@cmdContainerSetPassword",
 	adminOnly = true,
-	arguments = {ix.type.text, "password"},
+	arguments = ix.type.text,
 	OnRun = function(self, client, password)
 		local trace = client:GetEyeTraceNoCursor()
 		local ent = trace.Entity

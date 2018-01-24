@@ -164,7 +164,7 @@ local PLUGIN = PLUGIN
 ix.command.Add("MapSceneAdd", {
 	description = "@cmdMapSceneAdd",
 	adminOnly = true,
-	arguments = {ix.type.bool, "isPair", true},
+	arguments = bit.bor(ix.type.bool, ix.type.optional),
 	OnRun = function(self, client, bIsPair)
 		local position, angles = client:EyePos(), client:EyeAngles()
 
@@ -189,7 +189,7 @@ ix.command.Add("MapSceneAdd", {
 ix.command.Add("MapSceneRemove", {
 	description = "@cmdMapSceneRemove",
 	adminOnly = true,
-	arguments = {ix.type.number, "radius", true},
+	arguments = bit.bor(ix.type.number, ix.type.optional),
 	OnRun = function(self, client, radius)
 		radius = radius or 280
 

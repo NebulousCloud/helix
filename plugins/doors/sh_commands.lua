@@ -100,7 +100,7 @@ ix.command.Add("DoorBuy", {
 ix.command.Add("DoorSetUnownable", {
 	description = "@cmdDoorSetUnownable",
 	adminOnly = true,
-	arguments = {ix.type.text, "name"},
+	arguments = ix.type.text,
 	OnRun = function(self, client, name)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
@@ -136,7 +136,7 @@ ix.command.Add("DoorSetUnownable", {
 ix.command.Add("DoorSetOwnable", {
 	description = "@cmdDoorSetOwnable",
 	adminOnly = true,
-	arguments = {ix.type.text, "name"},
+	arguments = ix.type.text,
 	OnRun = function(self, client, name)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
@@ -172,7 +172,7 @@ ix.command.Add("DoorSetOwnable", {
 ix.command.Add("DoorSetFaction", {
 	description = "@cmdDoorSetFaction",
 	adminOnly = true,
-	arguments = {ix.type.text, "faction"},
+	arguments = ix.type.text,
 	OnRun = function(self, client, name)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
@@ -227,7 +227,7 @@ ix.command.Add("DoorSetFaction", {
 ix.command.Add("DoorSetDisabled", {
 	description = "@cmdDoorSetDisabled",
 	adminOnly = true,
-	arguments = {ix.type.bool, "disabled"},
+	arguments = ix.type.bool,
 	OnRun = function(self, client, bDisabled)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
@@ -254,8 +254,7 @@ ix.command.Add("DoorSetDisabled", {
 
 ix.command.Add("DoorSetTitle", {
 	description = "@cmdDoorSetTitle",
-	syntax = "<string title>",
-	arguments = {ix.type.text, "title"},
+	arguments = ix.type.text,
 	OnRun = function(self, client, name)
 		-- Get the door infront of the player.
 		local data = {}
@@ -394,7 +393,7 @@ ix.command.Add("DoorRemoveChild", {
 ix.command.Add("DoorSetHidden", {
 	description = "@cmdDoorSetHidden",
 	adminOnly = true,
-	arguments = {ix.type.bool, "hidden"},
+	arguments = ix.type.bool,
 	OnRun = function(self, client, bHidden)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
@@ -421,7 +420,7 @@ ix.command.Add("DoorSetHidden", {
 ix.command.Add("DoorSetClass", {
 	description = "@cmdDoorSetClass",
 	adminOnly = true,
-	arguments = {ix.type.text, "class", true},
+	arguments = ix.type.text,
 	OnRun = function(self, client, name)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity

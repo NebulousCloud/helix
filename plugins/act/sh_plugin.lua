@@ -21,7 +21,7 @@ for k, v in pairs(PLUGIN.acts) do
 	end
 
 	if (multiple) then
-		COMMAND.arguments = {ix.type.number, "type", true}
+		COMMAND.arguments = bit.bor(ix.type.number, ix.type.optional)
 	end
 
 	function COMMAND:GetDescription()

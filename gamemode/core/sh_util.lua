@@ -5,21 +5,22 @@ This library provides various helper functions.
 -- @module ix.util
 
 ix.type = ix.type or {
-	[1] = "string", -- any word
-	[2] = "text", -- a special type that concatenates all trailing arguments into a string
-	[3] = "number", -- any number
-	[4] = "player", -- any player that matches the given string
-	[5] = "steamid", -- a string that matches the steamid format
-	[6] = "character", -- any player with a valid character that matches the given string
-	[7] = "bool", -- a string representation of a bool - "false"/"0" will return false, otherwise true
+	[2] = "string", -- any word
+	[4] = "text", -- a special type that concatenates all trailing arguments into a string
+	[8] = "number", -- any number
+	[16] = "player", -- any player that matches the given string
+	[32] = "steamid", -- a string that matches the steamid format
+	[64] = "character", -- any player with a valid character that matches the given string
+	[128] = "bool", -- a string representation of a bool - "false"/"0" will return false, otherwise true
 
-	string = 1,
-	text = 2,
-	number = 3,
-	player = 4,
-	steamid = 5,
-	character = 6,
-	bool = 7
+	string = 2,
+	text = 4,
+	number = 8,
+	player = 16,
+	steamid = 32,
+	character = 64,
+	bool = 128,
+	optional = 256 -- special type that can be OR'd with any other type to make it optional
 }
 
 -- Includes a file from the prefix.

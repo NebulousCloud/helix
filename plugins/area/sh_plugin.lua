@@ -385,7 +385,7 @@ end
 ix.command.Add("AreaAdd", {
 	description = "@cmdAreaAdd",
 	adminOnly = true,
-	arguments = {ix.type.text, "name"},
+	arguments = ix.type.text,
 	OnRun = function(self, client, name)
 		name = name:len() == 0 and "Area" or name
 		local pos = client:GetEyeTraceNoCursor().HitPos
@@ -438,8 +438,7 @@ ix.command.Add("AreaRemove", {
 ix.command.Add("AreaChange", {
 	description = "@cmdAreaChange",
 	adminOnly = true,
-	syntax = "<string name>",
-	arguments = {ix.type.text, "name"},
+	arguments = ix.type.text,
 	OnRun = function(self, client, name)
 		name = name:len() == 0 and "Area" or name
 		local areaID = client:GetArea()

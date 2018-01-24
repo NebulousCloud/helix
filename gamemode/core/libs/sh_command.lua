@@ -15,7 +15,6 @@ various fields defined. The fields you can specify are as follows:
 The help text that appears when the user types in the command.
 </p></li>
 
-
 <li><p>
 `syntax`<br />
 (default: `"[none]"`)<br />
@@ -28,8 +27,8 @@ consistent with other commands.
 `arguments`<br />
 (optional)<br />
 If this field is defined, then additional checks will be performed to ensure that the arguments given to the command are valid.
-This removes extra boilerplate code since all the passed arguments are guaranteed to be valid. See the `Command arguments
-structure` for more information.
+This removes extra boilerplate code since all the passed arguments are guaranteed to be valid. See the <strong>Command arguments
+structure</strong> section for more information.
 </p></li>
 
 <li><p>
@@ -70,18 +69,21 @@ the amount of boilerplate code that needs to be written. This can be done by pop
 
 When using the `arguments` field in your command, you are specifying specific types that you expect to receive when the command
 is ran successfully. This means that before `OnRun` is called, the arguments passed to the command from a user will be verified
-to be valid. Each argument is an array that holds at least two entries - the type, and the name of the variable. The third entry
-is an optional bool that specifies whether or not the argument is optional. In this case, the argument can be nil if not
-specified, otherwise it is valid.
+to be valid. Each argument is an `ix.type` entry that specifies the expected type for that argument. Optional arguments can be
+specified by using a bitwise OR with the special `ix.type.optional` type. When specified as optional, the argument can be `nil`
+if the user has not entered anything for that argument - otherwise it will be valid.
 
 Note that optional arguments must always be at the end of a list of arguments - or rather, they must not follow a required
-argument. Here is an example:
+argument. The `syntax` field will be automatically populated when using strict arguments, which means you shouldn't fill out the
+`syntax` field yourself. The arguments you specify will have the same names as the arguments in your OnRun function.
+
+Here is an example command:
 	ix.command.Add("CharSlap", {
 		description = "Slaps a character with a large trout.",
 		adminOnly = true,
 		arguments = {
-			{ix.type.player, "target"},
-			{ix.type.number, "damage", true}
+			ix.type.player,
+			bit.bor(ix.type.number, ix.type.optional)
 		},
 		OnRun = function(self, client, target, damage)
 			-- WHAM!
@@ -89,7 +91,8 @@ argument. Here is an example:
 	})
 Here, we've specified the first argument called `target` to be of type `player`, and the second argument called `damage` to be
 of type `number`. The `damage` argument is optional, meaning that the command will still run if the user has not specified
-any value for the damage. In this case, we'll need to check if it was specified by doing a simple `if (damage) then`.
+any value for the damage. In this case, we'll need to check if it was specified by doing a simple `if (damage) then`. The syntax
+field will be automatically populated with the value `"<player target> [number damage]"`.
 ]]
 -- @module ix.command
 
@@ -103,8 +106,8 @@ local function ArgumentCheckStub(command, client, given)
 	local result = {}
 
 	for i = 1, #arguments do
-		local argType = arguments[i][1]
-		local bOptional = arguments[i][3]
+		local bOptional = bit.band(arguments[i], ix.type.optional) > 0
+		local argType = bOptional and bit.bxor(arguments[i], ix.type.optional) or arguments[i]
 		local argument = given[i]
 
 		if (!argument and !bOptional) then
@@ -242,35 +245,56 @@ function ix.command.Add(command, data)
 		data.syntax = ""
 
 		-- if one argument is supplied by itself, put it into a table
-		if (!istable(data.arguments[1])) then
-			local argument = data.arguments
-			data.arguments = {argument}
+		if (!istable(data.arguments)) then
+			data.arguments = {data.arguments}
 		end
 
 		-- check the arguments table to see if its entries are valid
 		for i = 1, #data.arguments do
 			local argument = data.arguments[i]
+			local argumentName = debug.getlocal(data.OnRun, 2 + i)
 
-			if (!isnumber(argument[1]) or !ix.type[argument[1]]) then
-				return ErrorNoHalt(string.format("Command '%s' tried to use an invalid type for an argument\n", command))
-			elseif (!isstring(argument[2])) then
-				return ErrorNoHalt(string.format("Command '%s' tried to use a non-string key for an argument\n", command))
-			elseif (argument[1] == ix.type.text and i != #data.arguments) then
-				return ErrorNoHalt(string.format("Command '%s' tried to use a text argument outside of the last argument\n", command))
-			elseif (!argument[3] and bLastOptional) then
-				return ErrorNoHalt(string.format("Command '%s' tried to use an required argument after an optional one\n", command))
+			if (argument == ix.type.optional) then
+				return ErrorNoHalt(string.format(
+					"Command '%s' tried to use an optional argument for #%d without specifying type\n", command, i
+				))
+			elseif (!isnumber(argument)) then
+				return ErrorNoHalt(string.format(
+					"Command '%s' tried to use an invalid type for argument #%d\n", command, i
+				))
+			end
+
+			local bOptional = bit.band(argument, ix.type.optional) > 0
+			argument = bOptional and bit.bxor(argument, ix.type.optional) or argument
+
+			if (!ix.type[argument]) then
+				return ErrorNoHalt(string.format(
+					"Command '%s' tried to use an invalid type for argument #%d\n", command, i
+				))
+			elseif (!isstring(argumentName)) then
+				return ErrorNoHalt(string.format(
+					"Command '%s' is missing function argument for command argument #%d\n", command, i
+				))
+			elseif (argument == ix.type.text and i != #data.arguments) then
+				return ErrorNoHalt(string.format(
+					"Command '%s' tried to use a text argument outside of the last argument\n", command
+				))
+			elseif (!bOptional and bLastOptional) then
+				return ErrorNoHalt(string.format(
+					"Command '%s' tried to use an required argument after an optional one\n", command
+				))
 			end
 
 			-- text is always optional and will return an empty string if nothing is specified, rather than nil
-			if (argument[1] == ix.type.text) then
-				argument[3] = true
+			if (argument == ix.type.text) then
+				bOptional = true
 			end
 
 			data.syntax = data.syntax .. (bFirst and "" or " ") ..
-				string.format((argument[3] and "[%s %s]" or "<%s %s>"), ix.type[argument[1]], argument[2])
+				string.format((bOptional and "[%s %s]" or "<%s %s>"), ix.type[argument], argumentName)
 
 			bFirst = false
-			bLastOptional = argument[3]
+			bLastOptional = bOptional
 		end
 
 		if (data.syntax:len() == 0) then
@@ -497,6 +521,8 @@ if (SERVER) then
 			if (IsValid(client)) then
 				ix.log.Add(client, "command", COMMAND_PREFIX .. command.name, argumentsTable and table.concat(argumentsTable, " "))
 			end
+		else
+			client:Notify(feedback)
 		end
 	end
 

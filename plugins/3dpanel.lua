@@ -146,10 +146,10 @@ ix.command.Add("PanelAdd", {
 	description = "@cmdPanelAdd",
 	adminOnly = true,
 	arguments = {
-		{ix.type.string, "url"},
-		{ix.type.number, "width", true},
-		{ix.type.number, "height", true},
-		{ix.type.number, "scale", true},
+		ix.type.string,
+		bit.bor(ix.type.number, ix.type.optional),
+		bit.bor(ix.type.number, ix.type.optional),
+		bit.bor(ix.type.number, ix.type.optional)
 	},
 	OnRun = function(self, client, url, width, height, scale)
 		-- Get the position and angles of the panel.
@@ -168,7 +168,7 @@ ix.command.Add("PanelAdd", {
 ix.command.Add("PanelRemove", {
 	description = "@cmdPanelRemove",
 	adminOnly = true,
-	arguments = {ix.type.number, "radius", true},
+	arguments = bit.bor(ix.type.number, ix.type.optional),
 	OnRun = function(self, client, radius)
 		-- Get the origin to remove panel.
 		local trace = client:GetEyeTrace()
