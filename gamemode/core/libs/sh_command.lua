@@ -82,17 +82,17 @@ Here is an example command:
 		description = "Slaps a character with a large trout.",
 		adminOnly = true,
 		arguments = {
-			ix.type.player,
+			ix.type.character,
 			bit.bor(ix.type.number, ix.type.optional)
 		},
 		OnRun = function(self, client, target, damage)
 			-- WHAM!
 		end
 	})
-Here, we've specified the first argument called `target` to be of type `player`, and the second argument called `damage` to be
-of type `number`. The `damage` argument is optional, meaning that the command will still run if the user has not specified
+Here, we've specified the first argument called `target` to be of type `character`, and the second argument called `damage` to
+be of type `number`. The `damage` argument is optional, meaning that the command will still run if the user has not specified
 any value for the damage. In this case, we'll need to check if it was specified by doing a simple `if (damage) then`. The syntax
-field will be automatically populated with the value `"<player target> [number damage]"`.
+field will be automatically populated with the value `"<character target> [number damage]"`.
 ]]
 -- @module ix.command
 
