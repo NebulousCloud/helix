@@ -65,7 +65,6 @@ various fields defined. The fields you can specify are as follows:</p>
 The help text that appears when the user types in the command.
 </p></li>
 
-
 <li><p>
 <code>syntax</code><br />
 (default: <code>&quot;[none]&quot;</code>)<br />
@@ -78,8 +77,8 @@ consistent with other commands.
 <code>arguments</code><br />
 (optional)<br />
 If this field is defined, then additional checks will be performed to ensure that the arguments given to the command are valid.
-This removes extra boilerplate code since all the passed arguments are guaranteed to be valid. See the `Command arguments
-structure` for more information.
+This removes extra boilerplate code since all the passed arguments are guaranteed to be valid. See the <strong>Command arguments
+structure</strong> section for more information.
 </p></li>
 
 <li><p>
@@ -125,20 +124,23 @@ the amount of boilerplate code that needs to be written. This can be done by pop
 
 <p>When using the <code>arguments</code> field in your command, you are specifying specific types that you expect to receive when the command
 is ran successfully. This means that before <code>OnRun</code> is called, the arguments passed to the command from a user will be verified
-to be valid. Each argument is an array that holds at least two entries - the type, and the name of the variable. The third entry
-is an optional bool that specifies whether or not the argument is optional. In this case, the argument can be nil if not
-specified, otherwise it is valid.</p>
+to be valid. Each argument is an <code>ix.type</code> entry that specifies the expected type for that argument. Optional arguments can be
+specified by using a bitwise OR with the special <code>ix.type.optional</code> type. When specified as optional, the argument can be <code>nil</code>
+if the user has not entered anything for that argument - otherwise it will be valid.</p>
 
 <p>Note that optional arguments must always be at the end of a list of arguments - or rather, they must not follow a required
-argument. Here is an example:</p>
+argument. The <code>syntax</code> field will be automatically populated when using strict arguments, which means you shouldn't fill out the
+<code>syntax</code> field yourself. The arguments you specify will have the same names as the arguments in your OnRun function.</p>
+
+<p>Here is an example command:</p>
 
 <pre>
 ix.command.Add(<span class="string">"CharSlap"</span>, {
     description = <span class="string">"Slaps a character with a large trout."</span>,
     adminOnly = <span class="keyword">true</span>,
     arguments = {
-        {ix.<span class="global">type</span>.player, <span class="string">"target"</span>},
-        {ix.<span class="global">type</span>.number, <span class="string">"damage"</span>, <span class="keyword">true</span>}
+        ix.<span class="global">type</span>.player,
+        bit.bor(ix.<span class="global">type</span>.number, ix.<span class="global">type</span>.optional)
     },
     OnRun = <span class="keyword">function</span>(self, client, target, damage)
         <span class="comment">-- WHAM!
@@ -148,7 +150,8 @@ ix.command.Add(<span class="string">"CharSlap"</span>, {
 
 <p>Here, we've specified the first argument called <code>target</code> to be of type <code>player</code>, and the second argument called <code>damage</code> to be
 of type <code>number</code>. The <code>damage</code> argument is optional, meaning that the command will still run if the user has not specified
-any value for the damage. In this case, we'll need to check if it was specified by doing a simple <code>if (damage) then</code>.</p>
+any value for the damage. In this case, we'll need to check if it was specified by doing a simple <code>if (damage) then</code>. The syntax
+field will be automatically populated with the value <code>&quot;&lt;player target&gt; [number damage]&quot;</code>.</p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
@@ -193,7 +196,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
     <dt>
     <a name = "ix.command.Add"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.command.Add(command, data)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L175">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L178">View source &raquo;</a>
     </dt>
     <dd>
     Creates a new command.
@@ -222,7 +225,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
     <dt>
     <a name = "ix.command.HasAccess"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.command.HasAccess(client, command)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L304">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L328">View source &raquo;</a>
     </dt>
     <dd>
     Returns true if a player is allowed to run a certain command.
@@ -257,7 +260,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
     <dt>
     <a name = "ix.command.ExtractArgs"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.command.ExtractArgs(text)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L326">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L350">View source &raquo;</a>
     </dt>
     <dd>
     Returns a table of arguments from a given string.
@@ -295,7 +298,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
     <dt>
     <a name = "ix.command.FindAll"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.command.FindAll(identifier[, bSorted=false[, bReorganize=false[, bRemoveDupes=false]]])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L374">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L398">View source &raquo;</a>
     </dt>
     <dd>
     Returns an array of potential commands by unique id.
@@ -343,7 +346,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
     <dt>
     <a name = "ix.command.FindPlayer"></a>
     <pre><span class="realm server" title="Server"></span> ix.command.FindPlayer(client, name)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L431">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L455">View source &raquo;</a>
     </dt>
     <dd>
     Attempts to find a player by an identifier.  If unsuccessful, a notice will be displayed to the specified player. The
@@ -383,7 +386,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
     <dt>
     <a name = "ix.command.Run"></a>
     <pre><span class="realm server" title="Server"></span> ix.command.Run(client, command, arguments)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L448">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L472">View source &raquo;</a>
     </dt>
     <dd>
     Forces a player to execute a command by name.
@@ -421,7 +424,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
     <dt>
     <a name = "ix.command.Parse"></a>
     <pre><span class="realm server" title="Server"></span> ix.command.Parse(client, text[, realCommand[, arguments]])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L514">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L540">View source &raquo;</a>
     </dt>
     <dd>
     Parses a chat string and runs the command if one is found.  Specifically, it checks for commands in a string with the
@@ -477,7 +480,7 @@ any value for the damage. In this case, we'll need to check if it was specified 
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2018-01-20 22:14:25 </i>
+<i style="float:right;">Last updated 2018-01-24 22:28:14 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 
