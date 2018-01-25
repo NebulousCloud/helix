@@ -1,6 +1,6 @@
 
 --[[--
-This library handles the registration, parsing, and handling of commands.
+Registration, parsing, and handling of commands.
 
 Commands can be ran through the chat with slash commands or they can be executed through the console.
 

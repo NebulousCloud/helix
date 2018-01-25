@@ -5,6 +5,7 @@ ix = ix or {util = {}, gui = {}, meta = {}}
 
 -- Include core files.
 include("core/sh_util.lua")
+include("core/sh_data.lua")
 include("shared.lua")
 
 -- Sandbox stuff

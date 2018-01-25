@@ -1,7 +1,5 @@
 
---[[--
-This library provides various helper functions.
-]]
+--- Various useful helper functions.
 -- @module ix.util
 
 ix.type = ix.type or {

@@ -10,11 +10,12 @@ ix = ix or {util = {}, meta = {}}
 -- Send the following files to players.
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("core/sh_util.lua")
+AddCSLuaFile("core/sh_data.lua")
 AddCSLuaFile("shared.lua")
 
 -- Include utility functions, data storage functions, and then shared.lua
 include("core/sh_util.lua")
-include("core/sv_data.lua")
+include("core/sh_data.lua")
 include("shared.lua")
 
 -- Connect to the database using SQLite, mysqloo, or tmysql4.
