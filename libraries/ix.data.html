@@ -1,0 +1,241 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Helix Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../highlight.css">
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Helix</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Libraries</h2>
+<ul class="nowrap">
+  <li><a href="../libraries/ix.command.html">ix.command</a></li>
+  <li><strong>ix.data</strong></li>
+  <li><a href="../libraries/ix.util.html">ix.util</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>ix.data</code></h1>
+<p>Helper library for reading/writing files to the data folder.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#ix.data.Set"><code><span class="realm shared" title="Shared"></span> ix.data.Set(key, value[, bGlobal=false[, bIgnoreMap=false]])</code></a></td>
+	<td class="summary">Populates a file in the <code>data/helix</code> folder with some serialized data.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.data.Get"><code><span class="realm shared" title="Shared"></span> ix.data.Get(key, default[, bGlobal=false[, bIgnoreMap=false[, bRefresh=false]]])</code></a></td>
+	<td class="summary">Retrieves the contents of a saved file in the <code>data/helix</code> folder.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.data.Delete"><code><span class="realm shared" title="Shared"></span> ix.data.Delete(key[, bGlobal=false[, bIgnoreMap=false]])</code></a></td>
+	<td class="summary">Deletes the contents of a saved file in the <code>data/helix</code> folder.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "ix.data.Set"></a>
+    <pre><span class="realm shared" title="Shared"></span> ix.data.Set(key, value[, bGlobal=false[, bIgnoreMap=false]])</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_data.lua#L19">View source &raquo;</a>
+    </dt>
+    <dd>
+    Populates a file in the <code>data/helix</code> folder with some serialized data.
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Name of the file to save
+        </li>
+        <li><span class="parameter">value</span>
+         Some sort of data to save
+        </li>
+        <li><span class="parameter">bGlobal</span>
+            <span class="types"><span class="type">boolean</span></span>
+         Whether or not to write directly to the <code>data/helix</code> folder, or the <code>data/helix/schema</code> folder,
+ where <code>schema</code> is the name of the current schema.
+         (<em>default</em> false)
+        </li>
+        <li><span class="parameter">bIgnoreMap</span>
+            <span class="types"><span class="type">boolean</span></span>
+         Whether or not to ignore the map and save in the schema folder, rather than
+ <code>data/helix/schema/map</code>, where <code>map</code> is the name of the current map.
+         (<em>default</em> false)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.data.Get"></a>
+    <pre><span class="realm shared" title="Shared"></span> ix.data.Get(key, default[, bGlobal=false[, bIgnoreMap=false[, bRefresh=false]]])</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_data.lua#L49">View source &raquo;</a>
+    </dt>
+    <dd>
+    Retrieves the contents of a saved file in the <code>data/helix</code> folder.
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Name of the file to load
+        </li>
+        <li><span class="parameter">default</span>
+         Value to return if the file could not be loaded successfully
+        </li>
+        <li><span class="parameter">bGlobal</span>
+            <span class="types"><span class="type">boolean</span></span>
+         Whether or not the data is in the <code>data/helix</code> folder, or the <code>data/helix/schema</code> folder,
+ where <code>schema</code> is the name of the current schema.
+         (<em>default</em> false)
+        </li>
+        <li><span class="parameter">bIgnoreMap</span>
+            <span class="types"><span class="type">boolean</span></span>
+         Whether or not to ignore the map and load from the schema folder, rather than
+ <code>data/helix/schema/map</code>, where <code>map</code> is the name of the current map.
+         (<em>default</em> false)
+        </li>
+        <li><span class="parameter">bRefresh</span>
+            <span class="types"><span class="type">boolean</span></span>
+         Whether or not to skip the cache and forcefully load from disk.
+         (<em>default</em> false)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Value associated with the key, or the default that was given if it doesn't exists
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.data.Delete"></a>
+    <pre><span class="realm shared" title="Shared"></span> ix.data.Delete(key[, bGlobal=false[, bIgnoreMap=false]])</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_data.lua#L93">View source &raquo;</a>
+    </dt>
+    <dd>
+    Deletes the contents of a saved file in the <code>data/helix</code> folder.
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Name of the file to delete
+        </li>
+        <li><span class="parameter">bGlobal</span>
+            <span class="types"><span class="type">boolean</span></span>
+         Whether or not the data is in the <code>data/helix</code> folder, or the <code>data/helix/schema</code> folder,
+ where <code>schema</code> is the name of the current schema.
+         (<em>default</em> false)
+        </li>
+        <li><span class="parameter">bIgnoreMap</span>
+            <span class="types"><span class="type">boolean</span></span>
+         Whether or not to ignore the map and delete from the schema folder, rather than
+ <code>data/helix/schema/map</code>, where <code>map</code> is the name of the current map.
+         (<em>default</em> false)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">bool</span></span>
+        Whether or not the deletion has succeeded
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2018-01-25 05:19:30 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+
+<script type="text/javascript" src="../highlight.min.js"></script>
+<script type="text/javascript">
+  var elements = document.querySelectorAll("pre, table.function_list td.name")
+
+  hljs.configure({
+    languages: ["lua"]
+  });
+
+  for (var i = 0; i < elements.length; i++)
+  {
+    hljs.highlightBlock(elements[i])
+  }
+</script>
+</body>
+</html>
