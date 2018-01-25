@@ -320,6 +320,7 @@ end
 
 function GM:InitPostEntity()
 	ix.joinTime = RealTime() - 0.9716
+	ix.option.Sync()
 end
 
 function GM:NetworkEntityCreated(entity)

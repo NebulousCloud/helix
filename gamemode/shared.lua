@@ -68,6 +68,8 @@ function GM:Initialize()
 	ix.plugin.Initialize()
 	-- Restore the configurations from earlier if applicable.
 	ix.config.Load()
+	-- Restore client options
+	ix.option.Load()
 end
 
 -- luacheck: globals IX_RELOADED
@@ -80,6 +82,8 @@ function GM:OnReloaded()
 		ix.plugin.Initialize()
 		-- Restore the configurations from earlier if applicable.
 		ix.config.Load()
+		-- Restore client options
+		ix.option.Load()
 
 		IX_RELOADED = true
 	end

@@ -3,12 +3,10 @@ PLUGIN.name = "Observer"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds on to the no-clip mode to prevent instrusion."
 
-if (CLIENT) then
-	-- Create a setting to see if the player will teleport back after noclipping.
-	-- luacheck: globals IX_CVAR_OBSTPBACK IX_CVAR_ADMINESP
-	IX_CVAR_OBSTPBACK = CreateClientConVar("ix_obstpback", 1, true, true)
-	IX_CVAR_ADMINESP = CreateClientConVar("ix_obsesp", 1, true, true)
+ix.option.Add("observerESP", true)
+ix.option.Add("observerTeleportBack", true, true)
 
+if (CLIENT) then
 	local dimDistance = 1024
 	local aimLength = 128
 	local barHeight = 2
@@ -16,7 +14,8 @@ if (CLIENT) then
 	function PLUGIN:HUDPaint()
 		local client = LocalPlayer()
 
-		if (client:IsAdmin() and client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle() and IX_CVAR_ADMINESP:GetBool()) then
+		if (client:IsAdmin() and client:GetMoveType() == MOVETYPE_NOCLIP and
+			!client:InVehicle() and ix.option.Get("observerESP", true)) then
 			local scrW, scrH = ScrW(), ScrH()
 
 			for _, v in ipairs(player.GetAll()) do
@@ -44,7 +43,6 @@ if (CLIENT) then
 				local barWidth = math.Clamp((v:Health() / v:GetMaxHealth()) * textWidth, 0, textWidth)
 
 				surface.DrawRect(x - size / 2, y - size / 2, size, size)
-
 
 				-- we can assume that if we're using cheap blur, we'd want to save some fps here
 				if ((IX_CVAR_CHEAP and !IX_CVAR_CHEAP:GetBool())) then
@@ -77,20 +75,12 @@ if (CLIENT) then
 	function PLUGIN:SetupQuickMenu(menu)
 		if (LocalPlayer():IsAdmin()) then
 			menu:AddCheck(L"toggleESP", function(panel, state)
-				if (state) then
-					RunConsoleCommand("ix_obsesp", "1")
-				else
-					RunConsoleCommand("ix_obsesp", "0")
-				end
-			end, IX_CVAR_ADMINESP:GetBool())
+				ix.option.Set("observerESP", tobool(state))
+			end, ix.option.Get("observerESP", true))
 
 			menu:AddCheck(L"toggleObserverTP", function(panel, state)
-				if (state) then
-					RunConsoleCommand("ix_obstpback", "1")
-				else
-					RunConsoleCommand("ix_obstpback", "0")
-				end
-			end, IX_CVAR_OBSTPBACK:GetBool())
+				ix.option.Set("observerTeleportBack", tobool(state))
+			end, ix.option.Get("observerTeleportBack", true))
 
 			menu:AddSpacer()
 		end
@@ -134,7 +124,7 @@ else
 			else
 				if (client.ixObsData) then
 					-- Move they player back if they want.
-					if (client:GetInfoNum("ix_obstpback", 0) > 0) then
+					if (ix.option.Get(client, "observerTeleportBack", true)) then
 						local position, angles = client.ixObsData[1], client.ixObsData[2]
 
 						-- Do it the next frame since the player can not be moved right now.
