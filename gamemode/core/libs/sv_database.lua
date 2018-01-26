@@ -122,14 +122,14 @@ function ix.db.LoadTables()
 			for _, v in pairs(result) do
 				ix.db.schema[v.table] = util.JSONToTable(v.columns)
 			end
+
+			-- update schema if needed
+			for i = 1, #ix.db.schemaQueue do
+				local entry = ix.db.schemaQueue[i]
+				ix.db.InsertSchema(entry[1], entry[2], entry[3])
+			end
 		end)
 	query:Execute()
-
-	-- update schema if needed
-	for i = 1, #ix.db.schemaQueue do
-		local entry = ix.db.schemaQueue[i]
-		ix.db.InsertSchema(entry[1], entry[2], entry[3])
-	end
 end
 
 function ix.db.WipeTables(callback)

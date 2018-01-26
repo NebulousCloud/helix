@@ -189,7 +189,7 @@ end;
 
 local function ApplyQueryReplacements(mode, query)
 	if (!Replacements[Module]) then
-		return
+		return query
 	end
 
 	local result = query
