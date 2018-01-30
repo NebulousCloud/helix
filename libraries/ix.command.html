@@ -45,6 +45,7 @@
   <li><a href="../libraries/ix.option.html">ix.option</a></li>
   <li><a href="../libraries/ix.data.html">ix.data</a></li>
   <li><a href="../libraries/ix.util.html">ix.util</a></li>
+  <li><a href="../libraries/ix.html">ix</a></li>
 </ul>
 
 </div>
@@ -126,7 +127,7 @@ the amount of boilerplate code that needs to be written. This can be done by pop
 
 <p>When using the <code>arguments</code> field in your command, you are specifying specific types that you expect to receive when the command
 is ran successfully. This means that before <code>OnRun</code> is called, the arguments passed to the command from a user will be verified
-to be valid. Each argument is an <code>ix.type</code> entry that specifies the expected type for that argument. Optional arguments can be
+to be valid. Each argument is an <a href="../libraries/ix.html#type">ix.type</a> entry that specifies the expected type for that argument. Optional arguments can be
 specified by using a bitwise OR with the special <code>ix.type.optional</code> type. When specified as optional, the argument can be <code>nil</code>
 if the user has not entered anything for that argument - otherwise it will be valid.</p>
 
@@ -227,7 +228,7 @@ field will be automatically populated with the value <code>&quot;&lt;character t
     <dt>
     <a name = "ix.command.HasAccess"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.command.HasAccess(client, command)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L328">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L332">View source &raquo;</a>
     </dt>
     <dd>
     Returns true if a player is allowed to run a certain command.
@@ -262,7 +263,7 @@ field will be automatically populated with the value <code>&quot;&lt;character t
     <dt>
     <a name = "ix.command.ExtractArgs"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.command.ExtractArgs(text)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L350">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L356">View source &raquo;</a>
     </dt>
     <dd>
     Returns a table of arguments from a given string.
@@ -292,15 +293,17 @@ field will be automatically populated with the value <code>&quot;&lt;character t
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">ix.command.ExtractArgs(<span class="string">"these are \"some arguments\""</span>)
- &gt; {<span class="string">"these"</span>, <span class="string">"are"</span>, <span class="string">"some arguments"</span>}</pre>
+        <pre class="example">PrintTable(ix.command.ExtractArgs(<span class="string">"these are \"some arguments\""</span>))
+&gt; <span class="number">1</span> = these
+&gt; <span class="number">2</span> = are
+&gt; <span class="number">3</span> = some arguments</pre>
     </ul>
 
 </dd>
     <dt>
     <a name = "ix.command.FindAll"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.command.FindAll(identifier[, bSorted=false[, bReorganize=false[, bRemoveDupes=false]]])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L398">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L404">View source &raquo;</a>
     </dt>
     <dd>
     Returns an array of potential commands by unique id.
@@ -348,7 +351,7 @@ field will be automatically populated with the value <code>&quot;&lt;character t
     <dt>
     <a name = "ix.command.FindPlayer"></a>
     <pre><span class="realm server" title="Server"></span> ix.command.FindPlayer(client, name)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L455">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L461">View source &raquo;</a>
     </dt>
     <dd>
     Attempts to find a player by an identifier.  If unsuccessful, a notice will be displayed to the specified player. The
@@ -388,7 +391,7 @@ field will be automatically populated with the value <code>&quot;&lt;character t
     <dt>
     <a name = "ix.command.Run"></a>
     <pre><span class="realm server" title="Server"></span> ix.command.Run(client, command, arguments)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L472">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L478">View source &raquo;</a>
     </dt>
     <dd>
     Forces a player to execute a command by name.
@@ -426,7 +429,7 @@ field will be automatically populated with the value <code>&quot;&lt;character t
     <dt>
     <a name = "ix.command.Parse"></a>
     <pre><span class="realm server" title="Server"></span> ix.command.Parse(client, text[, realCommand[, arguments]])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L540">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L546">View source &raquo;</a>
     </dt>
     <dd>
     Parses a chat string and runs the command if one is found.  Specifically, it checks for commands in a string with the
@@ -482,7 +485,7 @@ field will be automatically populated with the value <code>&quot;&lt;character t
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2018-01-26 23:03:44 </i>
+<i style="float:right;">Last updated 2018-01-30 23:22:10 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 

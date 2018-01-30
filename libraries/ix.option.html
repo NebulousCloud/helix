@@ -45,6 +45,7 @@
   <li><strong>ix.option</strong></li>
   <li><a href="../libraries/ix.data.html">ix.data</a></li>
   <li><a href="../libraries/ix.util.html">ix.util</a></li>
+  <li><a href="../libraries/ix.html">ix</a></li>
 </ul>
 
 </div>
@@ -53,18 +54,22 @@
 
 <h1>Module <code>ix.option</code></h1>
 <p>Client-side configuration management.</p>
+<p>
+
+
 <p>The <a href="../libraries/ix.option.html">option</a> library provides a cleaner way to manage any arbitrary data on the client without the hassle of managing CVars. It
 is analagous to the <code>ix.config</code> library, but it only deals with data that needs to be stored on the client.</p>
 
-<p>To get started, you'll need to define an option in a shared realm so the framework can be aware of its existence. This can be
-done in the <code>shared.lua</code> file of your schema, or <code>sh_plugin.lua</code> file of your plugin:</p>
+<p>To get started, you'll need to define an option in a client realm so the framework can be aware of its existence. This can be
+done in the <code>cl_init.lua</code> file of your schema, or in an <code>if (CLIENT) then</code> statement in the <code>sh_plugin.lua</code> file of your plugin:</p>
 
 <pre>
-ix.option.Add(<span class="string">"headbob"</span>, <span class="keyword">true</span>)
+ix.option.Add(<span class="string">"headbob"</span>, ix.<span class="global">type</span>.bool, <span class="keyword">true</span>)
 </pre>
 
 <p>If you need to get the value of an option on the server, you'll need to specify <code>true</code> for the <code>bNetworked</code> argument in
-<a href="../libraries/ix.option.html#ix.option.Add">ix.option.Add</a>. This makes it so that the client will send that option's value to the server whenever it changes, which then
+<a href="../libraries/ix.option.html#ix.option.Add">ix.option.Add</a>. <em>NOTE:</em> You also need to define your option in a <em>shared</em> realm, since the server now also needs to be aware
+of its existence. This makes it so that the client will send that option's value to the server whenever it changes, which then
 means that the server can now retrieve the value that the client has the option set to. For example, if you need to get what
 language a client is using, you can simply do the following:</p>
 
@@ -73,18 +78,71 @@ ix.option.Get(player.GetByID(<span class="number">1</span>), <span class="string
 </pre>
 
 <p>This will return the language of the player, or <code>&quot;english&quot;</code> if one isn't found. Note that <code>&quot;language&quot;</code> is a networked option
-that is already defined in the framework, so it will always be available.</p>
+that is already defined in the framework, so it will always be available. All options will show up in the options menu on the
+client, unless <code>bHidden</code> is <code>true</code> when using <a href="../libraries/ix.option.html#ix.option.Add">ix.option.Add</a>.</p>
+
+<p>Note that the labels for each option in the menu will use a language phrase to show the name. For example, if your option is
+named <code>headbob</code>, then you'll need to define a language phrase called <code>optHeadbob</code> that will be used as the option title.</p>
+
+<h2>Option structure</h2>
+<p>You can specify additional optional arguments for <a href="../libraries/ix.option.html#ix.option.Add">ix.option.Add</a> by passing in a table of specific fields as the fourth
+argument.</p>
+
+
+<ul>
+<li><p>
+<code>category</code><br />
+(default: <code>&quot;general&quot;</code>)<br />
+The category that this option should reside in. This is purely for aesthetic reasons when displaying the options in the options
+menu.
+</p></li>
+
+<li><p>
+<code>bNetworked</code><br />
+(default: <code>false</code>)<br />
+Whether or not the server should be aware of this option for each client.
+</p></li>
+
+<li><p>
+<code>bHidden</code><br />
+(default: <code>false</code>)<br />
+Whether or not to hide this option from the options menu.
+</p></li>
+
+<li><p>
+<code>populate</code><br />
+(default: <code>nil</code>)<br />
+The function to run when the option needs to be added to the menu. This is a required field for any array options. It should
+return a table of entries where the key is the value to set in <a href="../libraries/ix.option.html#ix.option.Set">ix.option.Set</a>, and the value is the display name for the entry.
+An example:<br />
+<pre>
+populate = <span class="keyword">function</span>()
+    <span class="keyword">return</span> {
+        [<span class="string">"english"</span>] = <span class="string">"English"</span>,
+        [<span class="string">"french"</span>] = <span class="string">"French"</span>,
+        [<span class="string">"spanish"</span>] = <span class="string">"Spanish"</span>
+    }
+<span class="keyword">end</span>
+</pre>
+</p></li>
+</ul>
+
+</p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#ix.option.Add"><code><span class="realm shared" title="Shared"></span> ix.option.Add(key, default[, bNetworked=false])</code></a></td>
+	<td class="name" nowrap><a href="#ix.option.Add"><code><span class="realm shared" title="Shared"></span> ix.option.Add(key, optionType, default, data)</code></a></td>
 	<td class="summary">Creates a client-side configuration option with the given information.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#ix.option.Load"><code><span class="realm shared" title="Shared"></span> ix.option.Load()</code></a></td>
 	<td class="summary">Loads all saved options from disk.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.option.GetAll"><code><span class="realm shared" title="Shared"></span> ix.option.GetAll()</code></a></td>
+	<td class="summary">Returns all of the available options.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#ix.option.Set"><code><span class="realm client" title="Client"></span> ix.option.Set(key, value[, bNoSave=false])</code></a></td>
@@ -117,8 +175,8 @@ that is already defined in the framework, so it will always be available.</p>
     <dl class="function">
     <dt>
     <a name = "ix.option.Add"></a>
-    <pre><span class="realm shared" title="Shared"></span> ix.option.Add(key, default[, bNetworked=false])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L31">View source &raquo;</a>
+    <pre><span class="realm shared" title="Shared"></span> ix.option.Add(key, optionType, default, data)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L77">View source &raquo;</a>
     </dt>
     <dd>
     Creates a client-side configuration option with the given information.
@@ -133,13 +191,16 @@ that is already defined in the framework, so it will always be available.</p>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          Unique ID for this option
         </li>
-        <li><span class="parameter">default</span>
-         Default value that this option will have
+        <li><span class="parameter">optionType</span>
+            <span class="types"><a class="type" href="../libraries/ix.html#type">ix.type</a></span>
+         Type of this option
         </li>
-        <li><span class="parameter">bNetworked</span>
-            <span class="types"><span class="type">boolean</span></span>
-         Whether or not the server should know about this option for each client
-         (<em>default</em> false)
+        <li><span class="parameter">default</span>
+         Default value that this option will have - this can be nil if needed
+        </li>
+        <li><span class="parameter">data</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         Additional settings for this option - see the <strong>Option structure</strong> section
         </li>
     </ul>
 
@@ -151,7 +212,7 @@ that is already defined in the framework, so it will always be available.</p>
     <dt>
     <a name = "ix.option.Load"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.option.Load()</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L40">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L94">View source &raquo;</a>
     </dt>
     <dd>
     Loads all saved options from disk.  This is an internal function and shouldn't be used!
@@ -167,9 +228,43 @@ that is already defined in the framework, so it will always be available.</p>
 
 </dd>
     <dt>
+    <a name = "ix.option.GetAll"></a>
+    <pre><span class="realm shared" title="Shared"></span> ix.option.GetAll()</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L120">View source &raquo;</a>
+    </dt>
+    <dd>
+    Returns all of the available options.  Note that this does contain the actual values of the options, just their properties.
+
+    </ul>
+    </ul>
+    </ul>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">tab</span></span>
+        Table of all options
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">PrintTable(ix.option.GetAll())
+&gt; language:
+&gt;	bHidden	= <span class="keyword">false</span>
+&gt;	bNetworked = <span class="keyword">true</span>
+&gt;	default = english
+&gt;	<span class="global">type</span> = <span class="number">514</span>
+<span class="comment">-- etc.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
     <a name = "ix.option.Set"></a>
     <pre><span class="realm client" title="Client"></span> ix.option.Set(key, value[, bNoSave=false])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L65">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L133">View source &raquo;</a>
     </dt>
     <dd>
     Sets an option value for the local player.
@@ -203,7 +298,7 @@ that is already defined in the framework, so it will always be available.</p>
     <dt>
     <a name = "ix.option.Get"></a>
     <pre><span class="realm client" title="Client"></span> ix.option.Get(key, default)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L84">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L152">View source &raquo;</a>
     </dt>
     <dd>
     Retrieves an option value for the local player.  If it is not set, it'll return the default that you've specified.
@@ -236,7 +331,7 @@ that is already defined in the framework, so it will always be available.</p>
     <dt>
     <a name = "ix.option.Save"></a>
     <pre><span class="realm client" title="Client"></span> ix.option.Save()</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L102">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L170">View source &raquo;</a>
     </dt>
     <dd>
     Saves all options to disk.  This is an internal function and shouldn't be used!
@@ -254,7 +349,7 @@ that is already defined in the framework, so it will always be available.</p>
     <dt>
     <a name = "ix.option.Sync"></a>
     <pre><span class="realm client" title="Client"></span> ix.option.Sync()</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L108">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L176">View source &raquo;</a>
     </dt>
     <dd>
     Syncs all networked options to the server.
@@ -272,7 +367,7 @@ that is already defined in the framework, so it will always be available.</p>
     <dt>
     <a name = "ix.option.Get"></a>
     <pre><span class="realm server" title="Server"></span> ix.option.Get(client, key, default)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L129">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L197">View source &raquo;</a>
     </dt>
     <dd>
     Retrieves an option value from the specified player.  If it is not set, it'll return the default that you've specified.
@@ -314,7 +409,7 @@ that is already defined in the framework, so it will always be available.</p>
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2018-01-26 23:03:44 </i>
+<i style="float:right;">Last updated 2018-01-30 23:22:10 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 
