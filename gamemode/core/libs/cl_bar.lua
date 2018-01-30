@@ -7,9 +7,6 @@ ix.bar.actionStart = 0
 ix.bar.actionEnd = 0
 ix.bar.totalHeight = 0
 
--- luacheck: globals IX_CVAR_SHOWBARS
-IX_CVAR_SHOWBARS = CreateClientConVar("ix_alwaysshowbars", "0", true)
-
 function ix.bar.Get(identifier)
 	for i = 1, #ix.bar.list do
 		local bar = ix.bar.list[i]
@@ -144,7 +141,7 @@ function ix.bar.DrawAll()
 				bar.lifeTime = curTime + 5
 			end
 
-			if (bar.lifeTime >= curTime or bar.visible or IX_CVAR_SHOWBARS:GetBool() or hook.Run("ShouldBarDraw", bar)) then
+			if (bar.lifeTime >= curTime or bar.visible or ix.option.Get("alwaysShowBars", false) or hook.Run("ShouldBarDraw", bar)) then
 				ix.bar.Draw(x, ix.bar.totalHeight, w, h, value, bar.color, bar.text)
 				ix.bar.totalHeight = ix.bar.totalHeight + h + 2
 			end

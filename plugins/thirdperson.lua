@@ -10,8 +10,9 @@ ix.config.Add("thirdperson", false, "Allow Thirdperson in the server.", nil, {
 })
 
 if (CLIENT) then
-	local IX_CVAR_THIRDPERSON = CreateClientConVar("ix_tp_enabled", "0", true)
-	local IX_CVAR_TP_CLASSIC = CreateClientConVar("ix_tp_classic", "0", true)
+	ix.option.Add("thirdpersonEnabled", ix.type.bool, false)
+	ix.option.Add("thirdpersonClassic", ix.type.bool, false)
+
 	local IX_CVAR_TP_VERT = CreateClientConVar("ix_tp_vertical", 10, true)
 	local IX_CVAR_TP_HORI = CreateClientConVar("ix_tp_horizontal", 0, true)
 	local IX_CVAR_TP_DIST = CreateClientConVar("ix_tp_distance", 50, true)
@@ -60,7 +61,6 @@ if (CLIENT) then
 		cfg:SetDecimals(0)			 -- Decimal places - zero for whole number
 		cfg:SetConVar("ix_tp_distance") -- Changes the ConVar when you slide
 		cfg:DockMargin(10, 0, 0, 5)
-
 	end
 
 	vgui.Register("ixTPConfig", PANEL, "DFrame")
@@ -69,44 +69,13 @@ if (CLIENT) then
 		return ix.config.Get("thirdperson")
 	end
 
-	function PLUGIN:SetupQuickMenu(menu)
-		if (isAllowed()) then
-			local button = menu:AddCheck(L"thirdpersonToggle", function(panel, state)
-				if (state) then
-					RunConsoleCommand("ix_tp_enabled", "1")
-				else
-					RunConsoleCommand("ix_tp_enabled", "0")
-				end
-			end, IX_CVAR_THIRDPERSON:GetBool())
-
-			button.DoRightClick = function()
-				if (ix.gui.tpconfig and ix.gui.tpconfig:IsVisible()) then
-					ix.gui.tpconfig:Close()
-					ix.gui.tpconfig = nil
-				end
-
-				ix.gui.tpconfig = vgui.Create("ixTPConfig")
-			end
-
-			menu:AddCheck(L"thirdpersonClassic", function(panel, state)
-				if (state) then
-					RunConsoleCommand("ix_tp_classic", "1")
-				else
-					RunConsoleCommand("ix_tp_classic", "0")
-				end
-			end, IX_CVAR_TP_CLASSIC:GetBool())
-
-			menu:AddSpacer()
-		end
-	end
-
 	local playerMeta = FindMetaTable("Player")
 
 	function playerMeta:CanOverrideView()
 		local entity = Entity(self:GetLocalVar("ragdoll", 0))
 
 		if ((ix.gui.char and !ix.gui.char:IsVisible()) and
-			IX_CVAR_THIRDPERSON:GetBool() and
+			ix.option.Get("thirdpersonEnabled", false) and
 			!IsValid(self:GetVehicle()) and
 			isAllowed() and
 			IsValid(self) and
@@ -150,7 +119,7 @@ if (CLIENT) then
 				traceData2.endpos = aimOrigin + curAng:Forward() * 65535
 				traceData2.filter = client
 
-			if ((IX_CVAR_TP_CLASSIC:GetBool() or owner:IsWepRaised() or
+			if ((ix.option.Get("thirdpersonClassic", false) or owner:IsWepRaised() or
 				(owner:KeyDown(bit.bor(IN_FORWARD, IN_BACK, IN_MOVELEFT, IN_MOVERIGHT)) and owner:GetVelocity():Length() >= 10)) ) then
 				client:SetEyeAngles((util.TraceLine(traceData2).HitPos - client:GetShootPos()):Angle())
 			end

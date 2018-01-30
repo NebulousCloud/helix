@@ -262,6 +262,10 @@ function ix.command.Add(command, data)
 				return ErrorNoHalt(string.format(
 					"Command '%s' tried to use an invalid type for argument #%d\n", command, i
 				))
+			elseif (argument == ix.type.array or bit.band(argument, ix.type.array) > 0) then
+				return ErrorNoHalt(string.format(
+					"Command '%s' tried to use an unsupported type 'array' for argument #%d\n", command, i
+				))
 			end
 
 			local bOptional = bit.band(argument, ix.type.optional) > 0
@@ -345,8 +349,10 @@ end
 -- @shared
 -- @string text String to extract arguments from
 -- @treturn table Arguments extracted from string
--- @usage ix.command.ExtractArgs("these are \"some arguments\"")
--- > {"these", "are", "some arguments"}
+-- @usage PrintTable(ix.command.ExtractArgs("these are \"some arguments\""))
+-- > 1 = these
+-- > 2 = are
+-- > 3 = some arguments
 function ix.command.ExtractArgs(text)
 	local skip = 0
 	local arguments = {}

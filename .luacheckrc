@@ -88,15 +88,6 @@ stds.helix.read_globals = {
 	"FCAP_DIRECTIONAL_USE",
 	"FCAP_USE_ONGROUND",
 	"FCAP_USE_IN_RADIUS",
-
-	--- @todo remove these once proper client config system is implemented
-	"IX_CVAR_CHEAP",
-	"IX_CVAR_CHATNOTICE",
-	"IX_CVAR_SHOWTIMESTAMPS",
-	"IX_CVAR_TIMESTAMP24HOUR",
-	"IX_CVAR_LANG",
-	"IX_CVAR_SHOWBARS",
-	"IX_CVAR_CHATFILTER"
 }
 
 files = {

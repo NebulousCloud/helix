@@ -65,7 +65,7 @@ function PANEL:Init()
 
 	self.items = {}
 
-	hook.Run("SetupQuickMenu", self)
+	self:Populate()
 end
 
 local function PaintButton(button, w, h)
@@ -79,6 +79,58 @@ local function PaintButton(button, w, h)
 
 	surface.SetDrawColor(255, 255, 255, alpha)
 	surface.DrawRect(0, 0, w, h)
+end
+
+-- @todo support other option types other than arrays and bools
+-- @todo implement categories
+function PANEL:Populate()
+	for k, v in SortedPairs(ix.option.GetAll()) do
+		local phrase = "opt" .. k:sub(1, 1):upper() .. k:sub(2)
+		local bArray = bit.band(v.type, ix.type.array) > 0
+		local optionType = bArray and bit.bxor(v.type, ix.type.array) or v.type
+
+		if (bArray) then
+			-- we don't need to worry about types because the populate function should only have valid entries
+			if (!isfunction(v.populate)) then
+				ErrorNoHalt(string.format("expected populate function for array option '%s'", k))
+				continue
+			end
+
+			self:AddSpacer()
+
+			local current
+			local entries = v.populate()
+
+			for value, name in pairs(entries) do
+				local bEnabled = ix.option.Get(k) == value
+
+				local button = self:AddCheck(name, function(panel)
+					panel.checked = true
+
+					if (IsValid(current)) then
+						if (current == panel) then
+							return
+						end
+
+						current.checked = false
+					end
+
+					current = panel
+					ix.option.Set(k, value)
+				end, bEnabled)
+
+				if (bEnabled and !IsValid(current)) then
+					current = button
+				end
+			end
+
+			self:AddSpacer()
+		elseif (optionType == ix.type.bool) then
+			self:AddCheck(L(phrase), function(panel, bState)
+				ix.option.Set(k, bState)
+			end, ix.option.Get(k))
+		end
+	end
 end
 
 function PANEL:AddButton(text, callback)

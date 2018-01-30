@@ -24,12 +24,10 @@ end
 local FormatString = string.format
 
 if (SERVER) then
-	local ClientGetInfo = FindMetaTable("Player").GetInfo
-
 	-- luacheck: globals L
 	function L(key, client, ...)
 		local languages = ix.lang.stored
-		local langKey = ClientGetInfo(client, "ix_language")
+		local langKey = ix.option.Get(client, "language", "english")
 		local info = languages[langKey] or languages.english
 
 		return FormatString(info and info[key] or key, ...)
@@ -38,7 +36,7 @@ if (SERVER) then
 	-- luacheck: globals L2
 	function L2(key, client, ...)
 		local languages = ix.lang.stored
-		local langKey = ClientGetInfo(client, "ix_language")
+		local langKey = ix.option.Get(client, "language", "english")
 		local info = languages[langKey] or languages.english
 
 		if (info and info[key]) then
@@ -46,19 +44,16 @@ if (SERVER) then
 		end
 	end
 else
-	-- luacheck: globals IX_CVAR_LANG
-	IX_CVAR_LANG = CreateClientConVar("ix_language", ix.config.language or "english", true, true)
-
 	function L(key, ...)
 		local languages = ix.lang.stored
-		local langKey = IX_CVAR_LANG:GetString()
+		local langKey = ix.option.Get("language", "english")
 		local info = languages[langKey] or languages.english
 
 		return FormatString(info and info[key] or key, ...)
 	end
 
 	function L2(key, ...)
-		local langKey = IX_CVAR_LANG:GetString()
+		local langKey = ix.option.Get("language", "english")
 		local info = ix.lang.stored[langKey]
 
 		if (info and info[key]) then

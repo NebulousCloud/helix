@@ -1,8 +1,4 @@
 
--- luacheck: globals IX_CVAR_SHOWTIMESTAMPS IX_CVAR_TIMESTAMP24HOUR
-IX_CVAR_SHOWTIMESTAMPS = CreateClientConVar("ix_showtimestamps", 0, true)
-IX_CVAR_TIMESTAMP24HOUR = CreateClientConVar("ix_timestamp24hour", 0, true)
-
 local PANEL = {}
 
 local COLOR_FADED = Color(200, 200, 200, 100)
@@ -283,7 +279,7 @@ function PANEL:AddFilterButton(filter)
 	tab.DoClick = function(this)
 		this.active = !this.active
 
-		local filters = IX_CVAR_CHATFILTER:GetString():lower()
+		local filters = ix.option.Get("chatFilter", ""):lower()
 
 		if (filters == "none") then
 			filters = ""
@@ -300,10 +296,10 @@ function PANEL:AddFilterButton(filter)
 		end
 
 		self:SetFilter(filter, this.active)
-		RunConsoleCommand("ix_chatfilter", filters)
+		ix.option.Set("chatFilter", filters)
 	end
 
-	if (IX_CVAR_CHATFILTER:GetString():lower():find(filter)) then
+	if (ix.option.Get("chatFilter", ""):lower():find(filter)) then
 		tab.active = true
 	end
 end
@@ -311,10 +307,10 @@ end
 function PANEL:AddText(...)
 	local text = "<font=ixChatFont>"
 
-	if (IX_CVAR_SHOWTIMESTAMPS:GetBool()) then
+	if (ix.option.Get("chatTimestamps", false)) then
 		text = text .. "<color=150,150,150>("
 
-		if (IX_CVAR_TIMESTAMP24HOUR:GetBool()) then
+		if (ix.option.Get("24hourTime", false)) then
 			text = text .. os.date("%H:%M")
 		else
 			text = text .. os.date("%I:%M %p")
@@ -372,7 +368,7 @@ function PANEL:AddText(...)
 
 	local class = CHAT_CLASS and CHAT_CLASS.filter and CHAT_CLASS.filter:lower() or "ic"
 
-	if (IX_CVAR_CHATFILTER:GetString():lower():find(class)) then
+	if (ix.option.Get("chatFilter", ""):lower():find(class)) then
 		self.filtered[panel] = class
 		panel:SetVisible(false)
 	else

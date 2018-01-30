@@ -1,5 +1,54 @@
 
--- luacheck: globals player_manager
+--- Top-level library containing all Helix libraries. A large majority of the framework is split into respective libraries that
+-- reside within `ix`.
+-- @module ix
+
+--- A table of variable types that are used throughout the framework. It represents types as a table with the keys being the
+-- name of the type, and the values being some number value. **You should never directly use these number values!** Using the
+-- values from this table will ensure backwards compatibility if the values in this table change.
+--
+-- This table also contains the numerical values of the types as keys. This means that if you need to check if a type exists, or
+-- if you need to get the name of a type, you can do a table lookup with a numerical value. Note that special types are not
+-- included since they are not real types that can be compared with.
+-- 	print(ix.type[2] != nil)
+-- 	> true
+--
+-- 	print(ix.type[ix.type.string])
+-- 	> "string"
+-- @shared
+-- @field string A regular string. In the case of `ix.command.Add`, this represents one word.
+-- @field text A regular string. In the case of `ix.command.Add`, this represents all words concatenated into a string.
+-- @field number Any number.
+-- @field player Any player that matches the given query string in `ix.util.FindPlayer`.
+-- @field steamid A string that matches the Steam ID format of `STEAM_X:X:XXXXXXXX`.
+-- @field character Any player's character that matches the given query string in `ix.util.FindPlayer`.
+-- @field bool A string representation of a bool - `false` and `0` will return `false`, anything else will return `true`.
+-- @field optional This is a special type that can be bitwise OR'd with any other type to make it optional. Currently only
+-- supported in `ix.command.Add`.
+-- @field array This is a special type that can be bitwise OR'd with any other type to make it an array of that type. Currently
+-- only supported in `ix.option.Add`.
+-- @see ix.command.Add
+-- @see ix.option.Add
+ix.type = ix.type or {
+	[2] = "string",
+	[4] = "text",
+	[8] = "number",
+	[16] = "player",
+	[32] = "steamid",
+	[64] = "character",
+	[128] = "bool",
+
+	string = 2,
+	text = 4,
+	number = 8,
+	player = 16,
+	steamid = 32,
+	character = 64,
+	bool = 128,
+
+	optional = 256,
+	array = 512
+}
 
 -- Define gamemode information.
 GM.Name = "Helix 1.2"
@@ -17,6 +66,7 @@ do
 		return self:ixSteamID64() or 0
 	end
 
+	-- luacheck: globals player_manager
 	player_manager.ixTranslateModel = player_manager.ixTranslateModel or player_manager.TranslateToPlayerModelName
 
 	function player_manager.TranslateToPlayerModelName(model)

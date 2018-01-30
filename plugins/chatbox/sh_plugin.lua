@@ -6,8 +6,11 @@ PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds a chatbox that replaces the default one."
 
 if (CLIENT) then
-	-- luacheck: globals IX_CVAR_CHATFILTER
-	IX_CVAR_CHATFILTER = CreateClientConVar("ix_chatfilter", "", true, false)
+	ix.option.Add("chatNotices", ix.type.bool, false)
+	ix.option.Add("chatTimestamps", ix.type.bool, false)
+	ix.option.Add("chatFilter", ix.type.string, "", {
+		bHidden = true
+	})
 
 	function PLUGIN:CreateChat()
 		if (IsValid(self.panel)) then

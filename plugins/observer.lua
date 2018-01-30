@@ -3,8 +3,10 @@ PLUGIN.name = "Observer"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds on to the no-clip mode to prevent instrusion."
 
-ix.option.Add("observerESP", true)
-ix.option.Add("observerTeleportBack", true, true)
+ix.option.Add("observerESP", ix.type.bool, true)
+ix.option.Add("observerTeleportBack", ix.type.bool, true, {
+	bNetworked = true
+})
 
 if (CLIENT) then
 	local dimDistance = 1024
@@ -45,7 +47,7 @@ if (CLIENT) then
 				surface.DrawRect(x - size / 2, y - size / 2, size, size)
 
 				-- we can assume that if we're using cheap blur, we'd want to save some fps here
-				if ((IX_CVAR_CHEAP and !IX_CVAR_CHEAP:GetBool())) then
+				if (!ix.option.Get("cheapBlur", false)) then
 					local data = {}
 					data.start = client:EyePos()
 					data.endpos = v:EyePos()
@@ -69,20 +71,6 @@ if (CLIENT) then
 
 				ix.util.DrawText(text, x, y - size, ColorAlpha(teamColor, alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, nil, alpha)
 			end
-		end
-	end
-
-	function PLUGIN:SetupQuickMenu(menu)
-		if (LocalPlayer():IsAdmin()) then
-			menu:AddCheck(L"toggleESP", function(panel, state)
-				ix.option.Set("observerESP", tobool(state))
-			end, ix.option.Get("observerESP", true))
-
-			menu:AddCheck(L"toggleObserverTP", function(panel, state)
-				ix.option.Set("observerTeleportBack", tobool(state))
-			end, ix.option.Get("observerTeleportBack", true))
-
-			menu:AddSpacer()
 		end
 	end
 

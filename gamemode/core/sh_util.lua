@@ -2,25 +2,6 @@
 --- Various useful helper functions.
 -- @module ix.util
 
-ix.type = ix.type or {
-	[2] = "string", -- any word
-	[4] = "text", -- a special type that concatenates all trailing arguments into a string
-	[8] = "number", -- any number
-	[16] = "player", -- any player that matches the given string
-	[32] = "steamid", -- a string that matches the steamid format
-	[64] = "character", -- any player with a valid character that matches the given string
-	[128] = "bool", -- a string representation of a bool - "false"/"0" will return false, otherwise true
-
-	string = 2,
-	text = 4,
-	number = 8,
-	player = 16,
-	steamid = 32,
-	character = 64,
-	bool = 128,
-	optional = 256 -- special type that can be OR'd with any other type to make it optional
-}
-
 -- Includes a file from the prefix.
 function ix.util.Include(fileName, state)
 	if (!fileName) then
@@ -202,23 +183,15 @@ function ix.util.GetAllChar()
 end
 
 if (CLIENT) then
-	-- luacheck: globals IX_CVAR_CHEAP
-	IX_CVAR_CHEAP = CreateClientConVar("ix_cheapblur", 0, true)
-
-	local useCheapBlur = IX_CVAR_CHEAP:GetBool()
 	local blur = ix.util.GetMaterial("pp/blurscreen")
 	local surface = surface
-
-	cvars.AddChangeCallback("ix_cheapblur", function(name, old, new)
-		useCheapBlur = (tonumber(new) or 0) > 0
-	end)
 
 	-- Draws a blurred material over the screen, to blur things.
 	function ix.util.DrawBlur(panel, amount, passes)
 		-- Intensity of the blur.
 		amount = amount or 5
 
-		if (useCheapBlur) then
+		if (ix.option.Get("cheapBlur", false)) then
 			surface.SetDrawColor(50, 50, 50, amount * 20)
 			surface.DrawRect(0, 0, panel:GetWide(), panel:GetTall())
 		else
@@ -243,7 +216,7 @@ if (CLIENT) then
 		-- Intensity of the blur.
 		amount = amount or 5
 
-		if (useCheapBlur) then
+		if (ix.option.Get("cheapBlur", false)) then
 			surface.SetDrawColor(30, 30, 30, amount * 20)
 			surface.DrawRect(x, y, w, h)
 		else

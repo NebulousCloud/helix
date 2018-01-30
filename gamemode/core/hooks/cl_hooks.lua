@@ -1,6 +1,4 @@
 
-local IX_CVAR_LOWER2 = CreateClientConVar("ix_usealtlower", "1", true)
-
 function GM:ForceDermaSkin()
 	return "helix"
 end
@@ -238,7 +236,7 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 	local fraction = (client.ixRaisedFrac or 0) / 100
 	local rotation = weapon.LowerAngles or LOWERED_ANGLES
 
-	if (IX_CVAR_LOWER2:GetBool() and weapon.LowerAngles2) then
+	if (ix.option.Get("altLower", true) and weapon.LowerAngles2) then
 		rotation = weapon.LowerAngles2
 	end
 
@@ -728,96 +726,6 @@ function GM:HUDShouldDraw(element)
 	end
 
 	return true
-end
-
-function GM:SetupQuickMenu(menu)
-	-- Performance
-	menu:AddCheck(L"cheapBlur", function(panel, state)
-		if (state) then
-			RunConsoleCommand("ix_cheapblur", "1")
-		else
-			RunConsoleCommand("ix_cheapblur", "0")
-		end
-	end, IX_CVAR_CHEAP:GetBool())
-
-	menu:AddCheck(L"chatNotice", function(panel, state)
-		if (state) then
-			RunConsoleCommand("ix_chatnotice", "1")
-		else
-			RunConsoleCommand("ix_chatnotice", "0")
-		end
-	end, IX_CVAR_CHATNOTICE:GetBool())
-
-	menu:AddCheck(L"chatShowTimestamps", function(panel, state)
-		if (state) then
-			RunConsoleCommand("ix_showtimestamps", "1")
-		else
-			RunConsoleCommand("ix_showtimestamps", "0")
-		end
-	end, IX_CVAR_SHOWTIMESTAMPS:GetBool())
-
-	menu:AddCheck(L"chatTimestamp24hour", function(panel, state)
-		if (state) then
-			RunConsoleCommand("ix_timestamp24hour", "1")
-		else
-			RunConsoleCommand("ix_timestamp24hour", "0")
-		end
-	end, IX_CVAR_TIMESTAMP24HOUR:GetBool())
-
-	-- Language settings
-	menu:AddSpacer()
-
-	local current
-
-	for k, _ in SortedPairs(ix.lang.stored) do
-		local name = ix.lang.names[k]
-		local name2 = k:sub(1, 1):upper()..k:sub(2)
-		local enabled = IX_CVAR_LANG:GetString():match(k)
-
-		if (name) then
-			name = name.." ("..name2..")"
-		else
-			name = name2
-		end
-
-		local button = menu:AddCheck(name, function(panel)
-			panel.checked = true
-
-			if (IsValid(current)) then
-				if (current == panel) then
-					return
-				end
-
-				current.checked = false
-			end
-
-			current = panel
-			RunConsoleCommand("ix_language", k)
-		end, enabled)
-
-		if (enabled and !IsValid(current)) then
-			current = button
-		end
-	end
-
-	-- Appearance
-	menu:AddSpacer()
-
-	menu:AddCheck(L("alwaysShowBars"), function(panel, state)
-		if (state) then
-			RunConsoleCommand("ix_alwaysshowbars", "1")
-		else
-			RunConsoleCommand("ix_alwaysshowbars", "0")
-		end
-	end, IX_CVAR_SHOWBARS:GetBool())
-
-	menu:AddCheck(L"altLower", function(panel, state)
-		if (state) then
-			RunConsoleCommand("ix_usealtlower", "1")
-		else
-			RunConsoleCommand("ix_usealtlower", "0")
-		end
-	end, IX_CVAR_LOWER2:GetBool())
 end
 
 function GM:ShouldDrawLocalPlayer(client)

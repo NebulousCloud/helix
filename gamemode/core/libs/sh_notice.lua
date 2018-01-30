@@ -24,15 +24,12 @@ if (SERVER) then
 		end
 	end
 else
-	-- luacheck: globals IX_CVAR_CHATNOTICE
-	IX_CVAR_CHATNOTICE = CreateClientConVar("ix_chatnotice", 0, true)
-
 	-- List of notice panels.
 	ix.notices = ix.notices or {}
 
 	-- Create a notification panel.
 	function ix.util.Notify(message)
-		if (IX_CVAR_CHATNOTICE:GetBool()) then
+		if (ix.option.Get("chatNotices", false)) then
 			ix.chat.Send(LocalPlayer(), "notice", message)
 			return
 		end
