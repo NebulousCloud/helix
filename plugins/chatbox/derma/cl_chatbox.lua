@@ -325,10 +325,9 @@ function PANEL:AddText(...)
 
 	for _, v in ipairs({...}) do
 		if (type(v) == "IMaterial") then
-			local texture = tostring(v):match("%[[a-z0-9/_]+%]")
+			local texture = v:GetName()
 
 			if (texture) then
-				texture = texture:sub(2, texture:len() - 1)
 				text = text.."<img="..texture..","..v:Width().."x"..v:Height().."> "
 			end
 		elseif (type(v) == "table" and v.r and v.g and v.b) then
