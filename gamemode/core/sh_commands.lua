@@ -160,7 +160,7 @@ ix.command.Add("CharSetBodygroup", {
 				value = nil
 			end
 
-			local groups = target:GetChar():GetData("groups", {})
+			local groups = target:GetData("groups", {})
 				groups[index] = value
 			target:SetData("groups", groups)
 			target:GetPlayer():SetBodygroup(index, value or 0)
