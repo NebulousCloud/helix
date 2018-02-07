@@ -107,7 +107,7 @@ ix.command.Add("CharTakeFlag", {
 ix.command.Add("ToggleRaise", {
 	description = "@cmdToggleRaise",
 	OnRun = function(self, client, arguments)
-		if !timer.Exists("ixToggleRaise" .. client:SteamID()) then
+		if (!timer.Exists("ixToggleRaise" .. client:SteamID())) then
 			timer.Create("ixToggleRaise" .. client:SteamID(), ix.config.Get("wepRaiseTime"), 1, function()
 				client:ToggleWepRaised()
 			end)
