@@ -143,6 +143,11 @@ ix.config.Add("voiceDistance", 600.0, "How far can the voice be heard.", nil, {
 ix.config.Add("wepAlwaysRaised", false, "Whether or not weapons are always raised.", nil, {
 	category = "server"
 })
+ix.config.Add("wepRaiseTime", 1, "The time it takes for a weapon to raise.", nil, {
+	form = "Float",
+	data = {min = 0.1, max = 60},
+	category = "server"
+})
 ix.config.Add("maxHoldWeight", 100, "The maximum weight that a player can carry in their hands.", nil, {
 	data = {min = 1, max = 500},
 	category = "interaction"
