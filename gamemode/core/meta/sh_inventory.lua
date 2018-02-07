@@ -373,7 +373,7 @@ if (SERVER) then
 				for _ = 1, quantity do
 					local bSuccess, error = self:Add(uniqueID, 1, data)
 
-					if(!bSuccess) then
+					if (!bSuccess) then
 						return false, error
 					end
 				end
