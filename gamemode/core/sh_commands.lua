@@ -237,9 +237,10 @@ ix.command.Add("CharGiveItem", {
 	adminOnly = true,
 	arguments = {
 		ix.type.character,
-		ix.type.string
+		ix.type.string,
+		ix.type.number
 	},
-	OnRun = function(self, client, target, item)
+	OnRun = function(self, client, target, item, amount)
 		local uniqueID = item:lower()
 
 		if (!ix.item.list[uniqueID]) then
@@ -251,8 +252,10 @@ ix.command.Add("CharGiveItem", {
 				end
 			end
 		end
-
-		local bSuccess, error = target:GetInventory():Add(uniqueID)
+		if (!amount) then
+			amount = 1;
+		end
+		local bSuccess, error = target:GetInventory():Add(uniqueID, amount)
 
 		if (bSuccess) then
 			target:GetPlayer():NotifyLocalized("itemCreated")

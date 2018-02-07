@@ -373,13 +373,10 @@ if (SERVER) then
 				for _ = 1, quantity do
 					self:Add(uniqueID, 1, data)
 				end
-
-				return
 			end
 
 			local targetInv = self
 			local bagInv
-
 			if (type(uniqueID) == "number") then
 				local item = ix.item.instances[uniqueID]
 
