@@ -377,6 +377,7 @@ if (SERVER) then
 
 			local targetInv = self
 			local bagInv
+			
 			if (type(uniqueID) == "number") then
 				local item = ix.item.instances[uniqueID]
 
