@@ -371,13 +371,18 @@ if (SERVER) then
 		if (quantity > 0) then
 			if (type(uniqueID) != "number" and quantity > 1) then
 				for _ = 1, quantity do
-					self:Add(uniqueID, 1, data)
+				local bSuccess, error = self:Add(uniqueID, 1, data)
+					if(!bSuccess) then 
+						return false, error
+					end
 				end
+
+				return true
 			end
 
 			local targetInv = self
 			local bagInv
-			
+
 			if (type(uniqueID) == "number") then
 				local item = ix.item.instances[uniqueID]
 
