@@ -35,15 +35,11 @@ if (SERVER) then
 		end
 	end
 
-	function ENT:SetHealth(amount)
-		self.health = amount
-	end
-
 	function ENT:OnTakeDamage(dmginfo)
 		local damage = dmginfo:GetDamage()
-		self:SetHealth(self.health - damage)
+		self:SetHealth(self:Health() - damage)
 
-		if (self.health < 0 and !self.OnBreak) then
+		if (self:Health() <= 0 and !self.OnBreak) then
 			self.OnBreak = true
 			self:Remove()
 		end
@@ -153,7 +149,7 @@ else
 				self.description = description
 				self.markup = ix.markup.Parse("<font=ixItemDescFont>" .. description .. "</font>", ScrW() * 0.7)
 			end
-
+			ix.util.DrawText("(" .. itemTable.width .. "x" .. itemTable.height .. ")", x, y - 28, Color(200,200,200,255), 1, 1, nil, alpha * 0.35)
 			ix.util.DrawText(
 				itemTable.GetName and itemTable:GetName() or L(itemTable.name),
 				x, y, colorAlpha(ix.config.Get("color"), alpha), 1, 1, nil, alpha * 0.65
