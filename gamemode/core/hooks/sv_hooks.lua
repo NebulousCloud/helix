@@ -89,7 +89,7 @@ end
 
 function GM:KeyPress(client, key)
 	if (key == IN_RELOAD) then
-		timer.Create("ixToggleRaise"..client:SteamID(), 1, 1, function()
+		timer.Create("ixToggleRaise"..client:SteamID(), ix.config.Get("wepRaiseTime"), 1, function()
 			if (IsValid(client)) then
 				client:ToggleWepRaised()
 			end
