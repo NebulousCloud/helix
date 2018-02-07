@@ -252,7 +252,7 @@ ix.command.Add("CharGiveItem", {
 				end
 			end
 		end
-		
+
 		amount = amount or 1
 		local bSuccess, error = target:GetInventory():Add(uniqueID, amount)
 
