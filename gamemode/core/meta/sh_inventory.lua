@@ -371,7 +371,8 @@ if (SERVER) then
 		if (quantity > 0) then
 			if (type(uniqueID) != "number" and quantity > 1) then
 				for _ = 1, quantity do
-				local bSuccess, error = self:Add(uniqueID, 1, data)
+					local bSuccess, error = self:Add(uniqueID, 1, data)
+
 					if(!bSuccess) then
 						return false, error
 					end
