@@ -132,12 +132,40 @@ else
 
 	local toScreen = FindMetaTable("Vector").ToScreen
 	local colorAlpha = ColorAlpha
+	local shadeColor = Color(0, 0, 0, 200)
+	local blockSize = 4
+	local blockSpacing = 2
+
+	function ENT:DrawItemSize(itemTable, x, y, alpha)
+		local width = itemTable.width - 1
+		local height = itemTable.height - 1
+		local heightDifference = ((height + 1) * blockSize + blockSpacing * height)
+
+		x = x - (width * blockSize + blockSpacing * width) * 0.5
+		y = y - heightDifference * 0.5
+
+		for i = 0, height do
+			for j = 0, width do
+				local blockX, blockY = x + j * blockSize + j * blockSpacing, y + i * blockSize + i * blockSpacing
+				local blockAlpha = Lerp(alpha / 255, 0, 255 + (i + j) * 100)
+
+				surface.SetDrawColor(ColorAlpha(shadeColor, blockAlpha))
+				surface.DrawRect(blockX + 1, blockY + 1, blockSize, blockSize)
+
+				surface.SetDrawColor(ColorAlpha(ix.config.Get("color"), blockAlpha))
+				surface.DrawRect(blockX, blockY, blockSize, blockSize)
+			end
+		end
+
+		return heightDifference + 4
+	end
 
 	function ENT:OnDrawEntityInfo(alpha)
-		local itemTable = self.GetItemTable(self)
+		local itemTable = self:GetItemTable()
 
 		if (itemTable) then
 			local oldData = itemTable.data
+
 			itemTable.data = self.GetNetVar(self, "data", {})
 			itemTable.entity = self
 
@@ -148,6 +176,11 @@ else
 			if (description != self.description) then
 				self.description = description
 				self.markup = ix.markup.Parse("<font=ixItemDescFont>" .. description .. "</font>", ScrW() * 0.7)
+			end
+
+			if ((itemTable.width > 1 or itemTable.height > 1) and
+				hook.Run("ShouldDrawItemSize", itemTable) != false) then
+				y = y + self:DrawItemSize(itemTable, x, y, alpha)
 			end
 
 			ix.util.DrawText(
