@@ -239,7 +239,7 @@ ix.command.Add("CharGiveItem", {
 	arguments = {
 		ix.type.character,
 		ix.type.string,
-		ix.type.number
+		bit.bor(ix.type.number, ix.type.optional)
 	},
 	OnRun = function(self, client, target, item, amount)
 		local uniqueID = item:lower()
