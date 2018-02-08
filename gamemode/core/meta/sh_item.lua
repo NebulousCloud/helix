@@ -1,3 +1,4 @@
+
 local ITEM = ix.meta.item or {}
 ITEM.__index = ITEM
 ITEM.name = "Undefined"
@@ -326,7 +327,7 @@ if (SERVER) then
 				end
 
 				if (!x or !y) then
-					return false .. "You do not have enough space. (" .. self.width .. "x" .. self.height .. ")"
+					return false, "noFit"
 				end
 
 				local prevID = self.invID

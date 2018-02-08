@@ -143,7 +143,6 @@ LANGUAGE = {
 	charMoney = "Je hebt momenteel %s.",
 	charFaction = "Je bent een lid van de %s 'faction'.",
 	charClass = "Je bent %s van de 'faction'.",
-	noSpace = "Inventaris is vol.",
 	noOwner = "De eigenaar is niet geldig.",
 	notAllowed = "Dit is niet toegestaan.",
 	invalidIndex = "De Item Index is Ongeldig.",

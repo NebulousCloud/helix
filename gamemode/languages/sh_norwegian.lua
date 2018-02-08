@@ -151,7 +151,6 @@ LANGUAGE = {
 	charMoney = "Du har akkurat nå %s.",
 	charFaction = "Du er et medlem av denne %s gruppen.",
 	charClass = "Du er %s i gruppen.",
-	noSpace = "Inventaret er fult.",
 	noOwner = "Eieren er ugyldig.",
 	notAllowed = "Denne handlingen er ikke tillatt.",
 	invalidIndex = "Elementet's Index er ugyldig.",

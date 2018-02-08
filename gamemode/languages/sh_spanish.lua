@@ -152,7 +152,6 @@ LANGUAGE = {
 	charMoney = "Actualmente tienes %s.",
 	charFaction = "Eres un miembro de %s.",
 	charClass = "Eres %s de la facción.",
-	noSpace = "El inventario está lleno.",
 	noOwner = "El propietario no es válido.",
 	invalidIndex = "El índice no es válido.",
 	invalidItem = "El objeto no es válido.",

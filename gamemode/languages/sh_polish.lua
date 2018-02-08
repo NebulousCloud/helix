@@ -148,7 +148,6 @@ LANGUAGE = {
 	charMoney = "Aktualnie posiadasz %s.",
 	charFaction = "Jesteś członkiem frakcji %s.",
 	charClass = "Piastujesz stanowisko %s we frakcji.",
-	noSpace = "Ekwipunek jest pełny.",
 	noOwner = "Nieprawidłowy właściciel.",
 	invalidIndex = "Index przedmiotu jest nieprawidłowy.",
 	invalidItem = "Obiekt przedmiotu jest nieprawidłowy.",

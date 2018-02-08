@@ -152,7 +152,6 @@ LANGUAGE = {
 	charMoney = "당신의 소지금은 %s 입니다.",
 	charFaction = "당신은 %s 단체에 소속되어 있습니다.",
 	charClass = "당신은 이 단체의 %s 입니다.",
-	noSpace = "소지품이 가득 찼습니다.",
 	noOwner = "소유자가 존재하지 않습니다.",
 	invalidIndex = "아이템의 구분 번호가 올바르지 않습니다.",
 	invalidItem = "아이템 객체 참조가 잘못되었습니다.",
