@@ -326,7 +326,7 @@ if (SERVER) then
 				end
 
 				if (!x or !y) then
-					return false, "noSpace"
+					return false .. "You do not have enough space. (" .. self.width .. "x" .. self.height .. ")"
 				end
 
 				local prevID = self.invID

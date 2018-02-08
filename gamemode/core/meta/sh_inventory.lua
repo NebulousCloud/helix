@@ -426,7 +426,7 @@ if (SERVER) then
 
 						return x, y, targetInv:GetID()
 					else
-						return false, "noSpace"
+						return false, "You do not have enough inventory space! (" .. item.width .. "x" .. item.height .. ")"
 					end
 				else
 					return false, "invalidIndex"
@@ -472,7 +472,7 @@ if (SERVER) then
 
 					return x, y, targetInv:GetID()
 				else
-					return false, "noSpace"
+					return false, "You do not have enough inventory space! (" .. item.width .. "x" .. item.height .. ")"
 				end
 			end
 		else

@@ -149,9 +149,6 @@ else
 				self.description = description
 				self.markup = ix.markup.Parse("<font=ixItemDescFont>" .. description .. "</font>", ScrW() * 0.7)
 			end
-			ix.util.DrawText("(" .. itemTable.width .. "x" .. itemTable.height .. ")",
-			 x, y - 28, Color(200,200,200,255), 1, 1, nil, alpha * 0.35
-			)
 			ix.util.DrawText(
 				itemTable.GetName and itemTable:GetName() or L(itemTable.name),
 				x, y, colorAlpha(ix.config.Get("color"), alpha), 1, 1, nil, alpha * 0.65
