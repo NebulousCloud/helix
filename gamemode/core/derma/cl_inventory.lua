@@ -221,8 +221,10 @@ PANEL = {}
 		end
 
 		for _, v in pairs(self.panels) do
-			v:SetPos(self.slots[v.gridX][v.gridY]:GetPos())
-			v:SetSize(v.gridW * iconSize, v.gridH * iconSize)
+			if (IsValid(v)) then
+				v:SetPos(self.slots[v.gridX][v.gridY]:GetPos())
+				v:SetSize(v.gridW * iconSize, v.gridH * iconSize)
+			end
 		end
 	end
 
