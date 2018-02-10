@@ -198,7 +198,7 @@ end
 
 function ITEM:OnRemoved()
 	local inventory = ix.item.inventories[self.invID]
-	local receiver = inventory.GetReceiver and inventory:GetReciever()
+	local receiver = inventory.GetReceiver and inventory:GetReceiver()
 
 	if (IsValid(receiver) and receiver:IsPlayer()) then
 		local weapon = receiver:GetWeapon(self.class)
