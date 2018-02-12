@@ -234,6 +234,7 @@ if (CLIENT) then
 								value = util.tobool(ix.config.Get(k))
 							else
 								form = "Generic"
+								value = ix.config.Get(k) or value
 							end
 						end
 

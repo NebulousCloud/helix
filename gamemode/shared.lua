@@ -127,20 +127,9 @@ IX_RELOADED = false
 
 -- Called when a file has been modified.
 function GM:OnReloaded()
-	if (!IX_RELOADED) then
-		-- Load all of the Helix plugins.
-		ix.plugin.Initialize()
-		-- Restore the configurations from earlier if applicable.
-		ix.config.Load()
-		-- Restore client options
-		ix.option.Load()
-
-		IX_RELOADED = true
-	end
-
 	-- Reload the default fonts.
 	if (CLIENT) then
-		hook.Run("LoadFonts", ix.config.Get("font"))
+		hook.Run("LoadFonts", ix.config.Get("font"), ix.config.Get("genericFont"))
 
 		-- Reload the scoreboard.
 		if (IsValid(ix.gui.score)) then
@@ -157,6 +146,17 @@ function GM:OnReloaded()
 				end
 			end
 		end
+	end
+
+	if (!IX_RELOADED) then
+		-- Load all of the Helix plugins.
+		ix.plugin.Initialize()
+		-- Restore the configurations from earlier if applicable.
+		ix.config.Load()
+		-- Restore client options
+		ix.option.Load()
+
+		IX_RELOADED = true
 	end
 end
 
