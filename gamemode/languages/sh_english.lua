@@ -98,6 +98,7 @@ LANGUAGE = {
 	moneyTaken = "You found %s.",
 	businessPurchase = "You purchased %s for %s.",
 	businessSell = "You sold %s for %s.",
+	businessTooFast = "Please wait a bit before purchasing another item.",
 	cChangeModel = "%s changed %s's model to %s.",
 	cChangeName = "%s changed %s's name to %s.",
 	cChangeSkin = "%s changed %s's skin to %s.",

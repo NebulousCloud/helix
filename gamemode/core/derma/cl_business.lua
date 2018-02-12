@@ -311,7 +311,7 @@ function PANEL:Init()
 			end
 		end)
 
-		timer.Simple(5, function()
+		timer.Simple(4, function()
 			if (IsValid(self) and !self.done) then
 				self.text:SetText(L"buyFailed")
 				self:ShowCloseButton(true)
