@@ -363,10 +363,6 @@ function PANEL:Init()
 											darkness:Remove()
 										end)
 									end
-
-									if (curChar != id) then
-										hook.Run("CharacterLoaded", ix.char.loaded[id])
-									end
 								end)
 
 								netstream.Start("charChoose", id)

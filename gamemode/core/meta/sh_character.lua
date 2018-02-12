@@ -121,10 +121,11 @@ if (SERVER) then
 				end
 			end
 
-			hook.Run("CharacterLoaded", ix.char.loaded[self:GetID()])
+			local id = self:GetID()
 
-			-- Close the character menu.
-			netstream.Start(client, "charLoaded")
+			hook.Run("CharacterLoaded", ix.char.loaded[id])
+			netstream.Start(client, "charLoaded", id)
+
 			self.firstTimeLoaded = true
 		end
 	end

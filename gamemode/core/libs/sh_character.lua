@@ -591,7 +591,7 @@ do
 	if (SERVER) then
 		netstream.Hook("charChoose", function(client, id)
 			if (client:GetChar() and client:GetChar():GetID() == id) then
-				netstream.Start(client, "charLoaded")
+				netstream.Start(client, "charLoaded", id)
 
 				return client:NotifyLocalized("usingChar")
 			end
@@ -811,6 +811,14 @@ do
 
 			if (isCurrentChar and !IsValid(ix.gui.char)) then
 				vgui.Create("ixCharMenu")
+			end
+		end)
+
+		netstream.Hook("charLoaded", function(id)
+			local currentCharacter = LocalPlayer():GetCharacter() and LocalPlayer():GetCharacter():GetID()
+
+			if (currentCharacter != id) then
+				hook.Run("CharacterLoaded", ix.char.loaded[id])
 			end
 		end)
 	end
