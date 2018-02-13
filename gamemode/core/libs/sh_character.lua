@@ -815,11 +815,7 @@ do
 		end)
 
 		netstream.Hook("charLoaded", function(id)
-			local currentCharacter = LocalPlayer():GetCharacter() and LocalPlayer():GetCharacter():GetID()
-
-			if (currentCharacter != id) then
-				hook.Run("CharacterLoaded", ix.char.loaded[id])
-			end
+			hook.Run("CharacterLoaded", ix.char.loaded[id])
 		end)
 	end
 end

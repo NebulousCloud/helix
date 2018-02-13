@@ -357,10 +357,12 @@ function PANEL:Init()
 
 								local curChar = LocalPlayer():GetChar() and LocalPlayer():GetChar():GetID()
 
-								netstream.Hook("charLoaded", function()
+								hook.Add("CharacterLoaded", "ix.gui.char:CharacterLoaded", function(character)
 									if (IsValid(darkness)) then
 										darkness:AlphaTo(0, 5, 0.5, function()
 											darkness:Remove()
+
+											hook.Remove("CharacterLoaded", "ix.gui.char:CharacterLoaded")
 										end)
 									end
 								end)
