@@ -100,7 +100,7 @@ function PANEL:OpenForPanel( panel )
 	self.TargetPanel = panel
 	self:PositionTooltip()
 
-	if (panel.itemID) then
+	if (panel.itemTable) then
 		self.iconMode = TOOLTIP_ITEM
 	end
 
