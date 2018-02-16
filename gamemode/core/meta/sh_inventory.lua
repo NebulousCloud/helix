@@ -410,7 +410,7 @@ if (SERVER) then
 
 						for x2 = 0, item.width - 1 do
 							local index = x + x2
-							
+
 							for y2 = 0, item.height - 1 do
 								targetInv.slots[index] = targetInv.slots[index] or {}
 								targetInv.slots[index][y + y2] = item
