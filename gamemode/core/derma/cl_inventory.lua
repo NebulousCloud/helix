@@ -164,12 +164,12 @@ function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY)
 	end
 end
 
-function PANEL:Move(newX, newY, givenInventory)
+function PANEL:Move(newX, newY, givenInventory, bNoSend)
 	local iconSize = givenInventory.iconSize
 	local oldX, oldY = self.gridX, self.gridY
 	local oldParent = self:GetParent()
 
-	if (givenInventory:OnTransfer(oldX, oldY, newX, newY, oldParent, noSend) == false) then
+	if (givenInventory:OnTransfer(oldX, oldY, newX, newY, oldParent, bNoSend) == false) then
 		return
 	end
 
@@ -438,19 +438,7 @@ function PANEL:PaintOver(width, height)
 end
 
 function PANEL:IsEmpty(x, y, this)
-	local inventory = ix.item.inventories[self.invID]
-
-	if (!inventory) then
-		return false
-	end
-
-	local width, height = inventory:GetSize()
-
-	if (!self.slots[x] or !self.slots[x][y]) then
-		return false
-	end
-
-	return (!IsValid(self.slots[x][y].item) or self.slots[x][y].item == this)
+	return (self.slots[x] and self.slots[x][y]) and (!IsValid(self.slots[x][y].item) or self.slots[x][y].item == this)
 end
 
 function PANEL:IsAllEmpty(x, y, width, height, this)
