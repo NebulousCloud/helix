@@ -355,8 +355,6 @@ function PANEL:Init()
 									surface.DrawRect(0, 0, w, h)
 								end
 
-								local curChar = LocalPlayer():GetChar() and LocalPlayer():GetChar():GetID()
-
 								hook.Add("CharacterLoaded", "ix.gui.char:CharacterLoaded", function(character)
 									if (IsValid(darkness)) then
 										darkness:AlphaTo(0, 5, 0.5, function()
