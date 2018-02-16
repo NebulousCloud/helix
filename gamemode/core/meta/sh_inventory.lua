@@ -409,9 +409,11 @@ if (SERVER) then
 						item.invID = targetInv:GetID()
 
 						for x2 = 0, item.width - 1 do
+							local index = x + x2
+							
 							for y2 = 0, item.height - 1 do
-								targetInv.slots[x + x2] = targetInv.slots[x + x2] or {}
-								targetInv.slots[x + x2][y + y2] = item
+								targetInv.slots[index] = targetInv.slots[index] or {}
+								targetInv.slots[index][y + y2] = item
 							end
 						end
 
@@ -455,17 +457,25 @@ if (SERVER) then
 				end
 
 				if (x and y) then
-					targetInv.slots[x] = targetInv.slots[x] or {}
-					targetInv.slots[x][y] = true
+					for x2 = 0, itemTable.width - 1 do
+						local index = x + x2
+
+						for y2 = 0, itemTable.height - 1 do
+							targetInv.slots[index] = targetInv.slots[index] or {}
+							targetInv.slots[index][y + y2] = true
+						end
+					end
 
 					ix.item.Instance(targetInv:GetID(), uniqueID, data, x, y, function(item)
 						item.gridX = x
 						item.gridY = y
 
 						for x2 = 0, item.width - 1 do
+							local index = x + x2
+
 							for y2 = 0, item.height - 1 do
-								targetInv.slots[x + x2] = targetInv.slots[x + x2] or {}
-								targetInv.slots[x + x2][y + y2] = item
+								targetInv.slots[index] = targetInv.slots[index] or {}
+								targetInv.slots[index][y + y2] = item
 							end
 						end
 
