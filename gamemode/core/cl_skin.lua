@@ -37,7 +37,7 @@ local SKIN = {}
 	end
 
 	function SKIN:PaintPanel(panel)
-		if (panel:GetPaintBackground()) then
+		if (panel.m_bBackground) then
 			local w, h = panel:GetWide(), panel:GetTall()
 
 			surface.SetDrawColor(0, 0, 0, 100)
@@ -47,7 +47,7 @@ local SKIN = {}
 	end
 
 	function SKIN:PaintButton(panel)
-		if (panel:GetPaintBackground()) then
+		if (panel.m_bBackground) then
 			local w, h = panel:GetWide(), panel:GetTall()
 			local alpha = 50
 
