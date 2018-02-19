@@ -109,6 +109,5 @@ end
 if (SERVER) then
 	timer.Create("ixSaveData", 600, 0, function()
 		hook.Run("SaveData")
-		hook.Run("PersistenceSave")
 	end)
 end
