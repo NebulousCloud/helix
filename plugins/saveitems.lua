@@ -17,6 +17,12 @@ PLUGIN.description = "Saves items that were dropped."
 
 -- as title says.
 
+function PLUGIN:CanProperty(client, property, entity)
+	if (entity:GetClass() == "ix_item" and property == "persist") then
+		return false
+	end
+end
+
 function PLUGIN:LoadData()
 	local items = self:GetData()
 
