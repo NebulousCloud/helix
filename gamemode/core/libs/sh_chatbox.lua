@@ -171,6 +171,11 @@ if (SERVER) then
 
 			-- Format the message if needed before we run the hook.
 			local rawText = text
+			local maxLength = ix.config.Get("chatMax")
+
+			if (text:len() > maxLength) then
+				text = text:sub(0, maxLength)
+			end
 
 			if (ix.config.Get("chatAutoFormat") and hook.Run("CanAutoFormatMessage", speaker, chatType, text)) then
 				local last = text:sub(-1)

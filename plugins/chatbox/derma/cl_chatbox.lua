@@ -179,6 +179,26 @@ function PANEL:SetActive(state)
 
 			this:DrawTextEntryText(TEXT_COLOR, ix.config.Get("color"), TEXT_COLOR)
 		end
+		self.text.AllowInput = function(this, newText)
+			local text = this:GetText()
+			local maxLength = ix.config.Get("chatMax")
+
+			if (string.len(text..newText) > maxLength) then
+				surface.PlaySound("common/talk.wav")
+				return true
+			end
+		end
+		self.text.Think = function(this)
+			local text = this:GetText()
+			local maxLength = ix.config.Get("chatMax")
+
+			if (string.len(text) > maxLength) then
+				local newText = string.sub(text, 0, maxLength)
+
+				this:SetText(newText)
+				this:SetCaretPos(string.len(newText))
+			end
+		end
 		self.text.OnTextChanged = function(this)
 			local text = this:GetText()
 

@@ -41,6 +41,10 @@ ix.config.Add("chatRange", 280, "The maximum distance a person's IC chat message
 	data = {min = 10, max = 5000},
 	category = "chat"
 })
+ix.config.Add("chatMax", 256, "The maximum amount of characters that can be sent in chat.", nil, {
+	data = {min = 32, max = 1024},
+	category = "chat"
+})
 ix.config.Add("chatColor", Color(255, 255, 150), "The default color for IC chat.", nil, {category = "chat"})
 ix.config.Add("chatListenColor", Color(175, 255, 150), "The color for IC chat if you are looking at the speaker.", nil, {
 	category = "chat"
