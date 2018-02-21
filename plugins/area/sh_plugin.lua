@@ -179,11 +179,11 @@ if (SERVER) then
 
 	netstream.Hook("areaAdd", function(client, name, vector1, vector2)
 		-- Only Admin can edit the area.
-		if (!client:IsAdmin() or !vector1 or !vector2 or !name) then
+		if (!client:IsAdmin() or !name or !vector1 or !vector2) then
 			return false
 		end
 
-		ix.area.AddArea(name, vector1, vector2)
+		ix.area.AddArea(name:sub(0, 256), vector1, vector2)
 	end)
 
 	netstream.Hook("areaRemove", function(client, areaID, editData)
@@ -387,7 +387,8 @@ ix.command.Add("AreaAdd", {
 	adminOnly = true,
 	arguments = ix.type.text,
 	OnRun = function(self, client, name)
-		name = name:len() == 0 and "Area" or name
+		name = name:len() == 0 and "Area" or name:sub(0, 256)
+
 		local pos = client:GetEyeTraceNoCursor().HitPos
 
 		if (!client:GetNetVar("areaMin")) then
