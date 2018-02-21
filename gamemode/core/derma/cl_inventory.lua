@@ -64,12 +64,8 @@ function PANEL:DoRightClick()
 
 		if (override == true) then if (menu.Remove) then menu:Remove() end return end
 			for k, v in SortedPairs(itemTable.functions) do
-				if (v.OnCanRun) then
-					if (v.OnCanRun(itemTable) == false) then
-						itemTable.player = nil
-
-						continue
-					end
+				if (v.OnCanRun and v.OnCanRun(itemTable) == false) then
+					continue
 				end
 
 				-- is Multi-Option Function
