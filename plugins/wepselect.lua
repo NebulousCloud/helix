@@ -30,7 +30,7 @@ if (CLIENT) then
 
 			local index = self.deltaIndex
 
-			for k, v in pairs(weapons) do
+			for _, v in pairs(weapons) do
 				if (!weapons[self.index]) then
 					self.index = total
 				end
