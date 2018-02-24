@@ -20,10 +20,11 @@ if (CLIENT) then
 
 		if (fraction > 0) then
 			local weapons = LocalPlayer():GetWeapons()
-			local total = #weapons
+			local total = table.Count(weapons)
 			local x, y = ScrW() * 0.5, ScrH() * 0.5
 			local spacing = math.pi * 0.85
 			local radius = 240 * self.alphaDelta
+			local i = 1
 
 			self.deltaIndex = Lerp(frameTime * 12, self.deltaIndex, self.index)
 
@@ -34,21 +35,21 @@ if (CLIENT) then
 					self.index = total
 				end
 
-				local theta = (k - index) * 0.1
+				local theta = (i - index) * 0.1
 				local color = ColorAlpha(
-					k == self.index and ix.config.Get("color") or color_white,
+					i == self.index and ix.config.Get("color") or color_white,
 					(255 - math.abs(theta * 3) * 255) * fraction
 				)
 
 				local lastY = 0
 				local shiftX = ScrW()*.02
 
-				if (self.markup and k < self.index) then
+				if (self.markup and i < self.index) then
 					local _, h = self.markup:Size()
 
 					lastY = (h * fraction)
 
-					if (k == self.index - 1) then
+					if (i == self.index - 1) then
 						self.infoAlpha = Lerp(frameTime * 3, self.infoAlpha, 255)
 
 						self.markup:Draw(x + 6 + shiftX, y + 30, 0, 0, self.infoAlpha * fraction)
@@ -69,6 +70,8 @@ if (CLIENT) then
 				cam.PushModelMatrix(matrix)
 					ix.util.DrawText(v:GetPrintName():upper(), 2, ty/2, color, 0, 1, "ixSubTitleFont")
 				cam.PopModelMatrix()
+
+				i = i + 1
 			end
 
 			if (self.fadeTime < CurTime() and self.alpha > 0) then
@@ -117,7 +120,7 @@ if (CLIENT) then
 			if (bind:find("invprev") and pressed) then
 				self.index = self.index + 1
 
-				if (self.index > #client:GetWeapons()) then
+				if (self.index > table.Count(client:GetWeapons())) then
 					self.index = 1
 				end
 
@@ -128,14 +131,14 @@ if (CLIENT) then
 				self.index = self.index - 1
 
 				if (self.index < 1) then
-					self.index = #client:GetWeapons()
+					self.index = table.Count(client:GetWeapons())
 				end
 
 				self:OnIndexChanged()
 
 				return true
 			elseif (bind:find("slot") and pressed) then
-				self.index = math.Clamp(tonumber(bind:match("slot(%d)")) or 1, 1, #LocalPlayer():GetWeapons())
+				self.index = math.Clamp(tonumber(bind:match("slot(%d)")) or 1, 1, table.Count(LocalPlayer():GetWeapons()))
 				self:OnIndexChanged()
 
 				return true
