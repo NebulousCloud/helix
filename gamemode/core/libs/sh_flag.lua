@@ -100,8 +100,16 @@ do
 
 	-- Check if the flag string contains the flags specified.
 	function character:HasFlags(flags)
+		local bHasFlag = hook.Run("CharacterHasFlags", self, flags)
+
+		if (bHasFlag == true) then
+			return true
+		end
+
+		local flagList = self:GetFlags()
+
 		for i = 1, #flags do
-			if (self:GetFlags():find(flags:sub(i, i), 1, true)) then
+			if (flagList:find(flags:sub(i, i), 1, true)) then
 				return true
 			end
 		end
