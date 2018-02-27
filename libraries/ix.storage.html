@@ -1,0 +1,467 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Helix Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../highlight.css">
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Helix</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Libraries</h2>
+<ul class="nowrap">
+  <li><a href="../libraries/ix.command.html">ix.command</a></li>
+  <li><a href="../libraries/ix.option.html">ix.option</a></li>
+  <li><strong>ix.storage</strong></li>
+  <li><a href="../libraries/ix.data.html">ix.data</a></li>
+  <li><a href="../libraries/ix.util.html">ix.util</a></li>
+  <li><a href="../libraries/ix.html">ix</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>ix.storage</code></h1>
+<p>Player manipulation of inventories.</p>
+<p>
+
+
+<p>This library provides an easy way for players to manipulate other inventories. The only functions that you should need are
+<a href="../libraries/ix.storage.html#ix.storage.Open">ix.storage.Open</a> and <a href="../libraries/ix.storage.html#ix.storage.Close">ix.storage.Close</a>. When opening an inventory as a storage item, it will display both the given inventory
+and the player's inventory in the player's UI, which allows them to drag items to and from the given inventory.</p>
+
+<p>Example usage:</p>
+
+<pre>
+ix.storage.Open(client, inventory, {
+    name = <span class="string">"Filing Cabinet"</span>,
+    entity = ents.GetByIndex(<span class="number">3</span>),
+    bMultipleUsers = <span class="keyword">true</span>,
+    searchText = <span class="string">"Rummaging..."</span>,
+    searchTime = <span class="number">4</span>
+})
+</pre>
+
+<h2>Storage info structure</h2>
+<p>There are some parameters you can customize when opening an inventory as a storage object with <a href="../libraries/ix.storage.html#ix.storage.Open">ix.storage.Open</a>.</p>
+
+<ul>
+<li><p>
+<code>id</code><br />
+(default: id of inventory passed into <a href="../libraries/ix.storage.html#ix.storage.Open">ix.storage.Open</a>)<br />
+The ID of the inventory.
+</p></li>
+
+<li><p>
+<code>name</code><br />
+(default: <code>&quot;Storage&quot;</code>)<br />
+Title to display in the UI when the inventory is open.
+</p></li>
+
+<li><p>
+<code>entity</code><br />
+(required)<br />
+Entity to "attach" the inventory to. This is used to provide a location for the inventory for things like making sure the player
+doesn't move too far away from the inventory, etc. This can also be a player.
+</p></li>
+
+<li><p>
+<code>bMultipleUsers</code><br />
+(default: <code>false</code>)<br />
+Whether or not multiple players are allowed to view this inventory at the same time.
+</p></li>
+
+<li><p>
+<code>searchTime</code><br />
+(default: <code>0</code>)<br />
+How long the player has to wait before the inventory is opened.
+</p></li>
+
+<li><p>
+<code>searchText</code><br />
+(default: <code>&quot;@storageSearching&quot;</code>)<br />
+Text to display to the user while opening the inventory. This can be a language phrase.
+</p></li>
+</ul>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#ix.storage.GetReceivers"><code><span class="realm server" title="Server"></span> ix.storage.GetReceivers(inventory)</code></a></td>
+	<td class="summary">Returns all players that currently looking at the given inventory as a storage.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.storage.InUse"><code><span class="realm server" title="Server"></span> ix.storage.InUse(inventory)</code></a></td>
+	<td class="summary">Returns whether or not the given inventory has a storage context and is being looked at by other players.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.storage.CreateContext"><code><span class="realm server" title="Server"></span> ix.storage.CreateContext(inventory, info)</code></a></td>
+	<td class="summary">Creates a storage context on the given inventory.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.storage.RemoveContext"><code><span class="realm server" title="Server"></span> ix.storage.RemoveContext(inventory)</code></a></td>
+	<td class="summary">Removes a storage context from an inventory if it exists.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.storage.Sync"><code><span class="realm server" title="Server"></span> ix.storage.Sync(client, inventory)</code></a></td>
+	<td class="summary">Synchronizes an inventory with a storage context to the given client.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.storage.AddReceiver"><code><span class="realm server" title="Server"></span> ix.storage.AddReceiver(client, inventory, bDontSync)</code></a></td>
+	<td class="summary">Adds a receiver to a given inventory with a storage context.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.storage.RemoveReceiver"><code><span class="realm server" title="Server"></span> ix.storage.RemoveReceiver(client, inventory, bDontRemove)</code></a></td>
+	<td class="summary">Removes a storage receiver and removes the context if there are no more receivers.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.storage.Open"><code><span class="realm server" title="Server"></span> ix.storage.Open(client, inventory, info)</code></a></td>
+	<td class="summary">Makes a player open an inventory that they can interact with.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.storage.Close"><code><span class="realm server" title="Server"></span> ix.storage.Close(inventory)</code></a></td>
+	<td class="summary">Forcefully makes clients close this inventory if they have it open.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "ix.storage.GetReceivers"></a>
+    <pre><span class="realm server" title="Server"></span> ix.storage.GetReceivers(inventory)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L68">View source &raquo;</a>
+    </dt>
+    <dd>
+    Returns all players that currently looking at the given inventory as a storage.
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inventory</span>
+            <span class="types"><span class="type">inventory</span></span>
+         Inventory to get receivers from
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+        An array of players that currently have <code>inventory</code> open
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.storage.InUse"></a>
+    <pre><span class="realm server" title="Server"></span> ix.storage.InUse(inventory)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L86">View source &raquo;</a>
+    </dt>
+    <dd>
+    Returns whether or not the given inventory has a storage context and is being looked at by other players.
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inventory</span>
+            <span class="types"><span class="type">inventory</span></span>
+         Inventory to check
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">bool</span></span>
+        Whether or not <code>inventory</code> is in use
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.storage.CreateContext"></a>
+    <pre><span class="realm server" title="Server"></span> ix.storage.CreateContext(inventory, info)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L102">View source &raquo;</a>
+    </dt>
+    <dd>
+    Creates a storage context on the given inventory.  This is an internal function and shouldn't be used!
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inventory</span>
+            <span class="types"><span class="type">inventory</span></span>
+         Inventory to create a storage context for
+        </li>
+        <li><span class="parameter">info</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         Information to store on the context
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.storage.RemoveContext"></a>
+    <pre><span class="realm server" title="Server"></span> ix.storage.RemoveContext(inventory)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L140">View source &raquo;</a>
+    </dt>
+    <dd>
+    Removes a storage context from an inventory if it exists.  This is an internal function and shouldn't be used!
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inventory</span>
+            <span class="types"><span class="type">inventory</span></span>
+         Inventory to remove a storage context from
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.storage.Sync"></a>
+    <pre><span class="realm server" title="Server"></span> ix.storage.Sync(client, inventory)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L160">View source &raquo;</a>
+    </dt>
+    <dd>
+    Synchronizes an inventory with a storage context to the given client.
+ This is an internal function and shouldn't be used!
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">client</span>
+            <span class="types"><span class="type">player</span></span>
+         Player to sync storage for
+        </li>
+        <li><span class="parameter">inventory</span>
+            <span class="types"><span class="type">inventory</span></span>
+         Inventory to sync storage for
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.storage.AddReceiver"></a>
+    <pre><span class="realm server" title="Server"></span> ix.storage.AddReceiver(client, inventory, bDontSync)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L171">View source &raquo;</a>
+    </dt>
+    <dd>
+    Adds a receiver to a given inventory with a storage context.  This is an internal function and shouldn't be used!
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">client</span>
+            <span class="types"><span class="type">player</span></span>
+         Player to sync storage for
+        </li>
+        <li><span class="parameter">inventory</span>
+            <span class="types"><span class="type">inventory</span></span>
+         Inventory to sync storage for
+        </li>
+        <li><span class="parameter">bDontSync</span>
+            <span class="types"><span class="type">boolean</span></span>
+         Whether or not to skip syncing the storage to the client. If this is <code>true</code>, the storage panel will not
+ show up for the player
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.storage.RemoveReceiver"></a>
+    <pre><span class="realm server" title="Server"></span> ix.storage.RemoveReceiver(client, inventory, bDontRemove)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L214">View source &raquo;</a>
+    </dt>
+    <dd>
+    Removes a storage receiver and removes the context if there are no more receivers.
+ This is an internal function and shouldn't be used!
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">client</span>
+            <span class="types"><span class="type">player</span></span>
+         Player to remove from receivers
+        </li>
+        <li><span class="parameter">inventory</span>
+            <span class="types"><span class="type">inventory</span></span>
+         Inventory with storage context to remove receiver from
+        </li>
+        <li><span class="parameter">bDontRemove</span>
+            <span class="types"><span class="type">boolean</span></span>
+         Whether or not to skip removing the storage context if there are no more receivers
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.storage.Open"></a>
+    <pre><span class="realm server" title="Server"></span> ix.storage.Open(client, inventory, info)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L245">View source &raquo;</a>
+    </dt>
+    <dd>
+    Makes a player open an inventory that they can interact with.  This can be called multiple times on the same inventory,
+ if the info passed allows for multiple users.
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">client</span>
+            <span class="types"><span class="type">player</span></span>
+         Player to open the inventory for
+        </li>
+        <li><span class="parameter">inventory</span>
+            <span class="types"><span class="type">inventory</span></span>
+         Inventory to open
+        </li>
+        <li><span class="parameter">info</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         Storage info (see <strong>Storage info structure</strong> for usage)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.storage.Close"></a>
+    <pre><span class="realm server" title="Server"></span> ix.storage.Close(inventory)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L286">View source &raquo;</a>
+    </dt>
+    <dd>
+    Forcefully makes clients close this inventory if they have it open.
+
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inventory</span>
+            <span class="types"><span class="type">inventory</span></span>
+         Inventory to close
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2018-02-27 02:46:15 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+
+<script type="text/javascript" src="../highlight.min.js"></script>
+<script type="text/javascript">
+  var elements = document.querySelectorAll("pre, table.function_list td.name")
+
+  hljs.configure({
+    languages: ["lua"]
+  });
+
+  for (var i = 0; i < elements.length; i++)
+  {
+    hljs.highlightBlock(elements[i])
+  }
+</script>
+</body>
+</html>
