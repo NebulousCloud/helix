@@ -27,7 +27,11 @@ if (SERVER) then
 		return L("%s has connected.", client:SteamName())
 	end)
 	ix.log.AddType("disconnect", function(client, ...)
-		return L("%s has disconnected.", client:SteamName())
+		if (client:IsTimingOut()) then
+			return L("%s has disconnected (timed out).", client:SteamName())
+		else
+			return L("%s has disconnected.", client:SteamName())
+		end
 	end)
 	ix.log.AddType("charCreate", function(client, ...)
 		local arg = {...}
