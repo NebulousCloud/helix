@@ -77,13 +77,13 @@ if (SERVER) then
 
 		local query = mysql:Select("ix_characters")
 			query:Select("id")
-			query:Select("name")
-			query:Select("description")
-			query:Select("model")
-			query:Select("attributes")
-			query:Select("data")
-			query:Select("money")
-			query:Select("faction")
+
+			for _, v in pairs(ix.char.vars) do
+				if (v.field and v.fieldType) then
+					query:Select(v.field)
+				end
+			end
+
 			query:Where("schema", Schema.folder)
 			query:Where("steamid", steamID64)
 
