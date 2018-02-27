@@ -1,26 +1,70 @@
 
+--[[--
+Player manipulation of inventories.
+
+This library provides an easy way for players to manipulate other inventories. The only functions that you should need are
+`ix.storage.Open` and `ix.storage.Close`. When opening an inventory as a storage item, it will display both the given inventory
+and the player's inventory in the player's UI, which allows them to drag items to and from the given inventory.
+
+Example usage:
+	ix.storage.Open(client, inventory, {
+		name = "Filing Cabinet",
+		entity = ents.GetByIndex(3),
+		bMultipleUsers = true,
+		searchText = "Rummaging...",
+		searchTime = 4
+	})
+
+## Storage info structure
+There are some parameters you can customize when opening an inventory as a storage object with `ix.storage.Open`.
+<ul>
+<li><p>
+`id`<br />
+(default: id of inventory passed into `ix.storage.Open`)<br />
+The ID of the inventory.
+</p></li>
+
+<li><p>
+`name`<br />
+(default: `"Storage"`)<br />
+Title to display in the UI when the inventory is open.
+</p></li>
+
+<li><p>
+`entity`<br />
+(required)<br />
+Entity to "attach" the inventory to. This is used to provide a location for the inventory for things like making sure the player
+doesn't move too far away from the inventory, etc. This can also be a player.
+</p></li>
+
+<li><p>
+`bMultipleUsers`<br />
+(default: `false`)<br />
+Whether or not multiple players are allowed to view this inventory at the same time.
+</p></li>
+
+<li><p>
+`searchTime`<br />
+(default: `0`)<br />
+How long the player has to wait before the inventory is opened.
+</p></li>
+
+<li><p>
+`searchText`<br />
+(default: `"@storageSearching"`)<br />
+Text to display to the user while opening the inventory. This can be a language phrase.
+</p></li>
+</ul>
+]]
+-- @module ix.storage
+
 ix.storage = ix.storage or {}
 
---[[
-	This library is used for abstracting away the mess of overriding functions and
-	making your own panels when you want to want a player to be able to view/modify an inventory.
-
-	You should always pass in the same data in the info table for the same inventory if called
-	multiple times for different users. The entity field is used to "attach" an inventory to
-	a physical object and is required to function.
-
-	example:
-	ix.storage.Open(client, inventory, {
-		name = "Filing Cabinet", 		-- defaults to "Storage"
-		entity = ents.GetByIndex(3), 	-- this is required
-		bMultipleUsers = true, 			-- defaults to false
-		searchText = "Rummaging...",	-- defaults to "@storageSearching"
-		searchTime = 4					-- defaults to 0
-	})
-]]--
-
 if (SERVER) then
-	-- Returns an array of people that currently have this inventory open.
+	--- Returns all players that currently looking at the given inventory as a storage.
+	-- @server
+	-- @inventory inventory Inventory to get receivers from
+	-- @treturn table An array of players that currently have `inventory` open
 	function ix.storage.GetReceivers(inventory)
 		local result = {}
 
@@ -35,7 +79,10 @@ if (SERVER) then
 		return result
 	end
 
-	-- Returns true if this inventory has a storage context and is in use by at least one person.
+	--- Returns whether or not the given inventory has a storage context and is being looked at by other players.
+	-- @server
+	-- @inventory inventory Inventory to check
+	-- @treturn bool Whether or not `inventory` is in use
 	function ix.storage.InUse(inventory)
 		if (inventory.storageInfo) then
 			for k, _ in pairs(inventory.storageInfo.receivers) do
@@ -48,7 +95,10 @@ if (SERVER) then
 		return false
 	end
 
-	-- Creates a storage context on the given inventory.
+	--- Creates a storage context on the given inventory. This is an internal function and shouldn't be used!
+	-- @server
+	-- @inventory inventory Inventory to create a storage context for
+	-- @table info Information to store on the context
 	function ix.storage.CreateContext(inventory, info)
 		info = info or {}
 
@@ -84,7 +134,9 @@ if (SERVER) then
 		end
 	end
 
-	-- Removes a storage context from an inventory if it exists.
+	--- Removes a storage context from an inventory if it exists. This is an internal function and shouldn't be used!
+	-- @server
+	-- @inventory inventory Inventory to remove a storage context from
 	function ix.storage.RemoveContext(inventory)
 		-- restore old callbacks
 		inventory.OnAuthorizeTransfer = inventory.oldOnAuthorizeTransfer
@@ -100,15 +152,22 @@ if (SERVER) then
 		inventory.storageInfo = nil
 	end
 
-	-- Syncs a storage to the client.
+	--- Synchronizes an inventory with a storage context to the given client.
+	-- This is an internal function and shouldn't be used!
+	-- @server
+	-- @player client Player to sync storage for
+	-- @inventory inventory Inventory to sync storage for
 	function ix.storage.Sync(client, inventory)
 		inventory:Sync(client)
 		netstream.Start(client, "StorageOpen", inventory.storageInfo)
 	end
 
-	-- Adds a receiver to a given inventory with a valid storage context
-	-- If bDontSync is true, the inventory will not be synced to the client and the
-	-- storage panel will not show up.
+	--- Adds a receiver to a given inventory with a storage context. This is an internal function and shouldn't be used!
+	-- @server
+	-- @player client Player to sync storage for
+	-- @inventory inventory Inventory to sync storage for
+	-- @bool bDontSync Whether or not to skip syncing the storage to the client. If this is `true`, the storage panel will not
+	-- show up for the player
 	function ix.storage.AddReceiver(client, inventory, bDontSync)
 		local info = inventory.storageInfo
 
@@ -146,8 +205,12 @@ if (SERVER) then
 		return false
 	end
 
-	-- Removes a storage receiver and removes the context if there are no more receivers.
-	-- If bDontRemove is true, the storage context will not be removed if not in use.
+	--- Removes a storage receiver and removes the context if there are no more receivers.
+	-- This is an internal function and shouldn't be used!
+	-- @server
+	-- @player client Player to remove from receivers
+	-- @inventory inventory Inventory with storage context to remove receiver from
+	-- @bool bDontRemove Whether or not to skip removing the storage context if there are no more receivers
 	function ix.storage.RemoveReceiver(client, inventory, bDontRemove)
 		if (inventory.storageInfo) then
 			-- restore old OnAuthorizeTransfer callback if it exists
@@ -173,9 +236,12 @@ if (SERVER) then
 		return false
 	end
 
-	-- Makes a player open an inventory that they can interact with.
-	-- This takes care of making a storage context if one doesn't exist, and adds the player
-	-- to the list of people that can view this inventory.
+	--- Makes a player open an inventory that they can interact with. This can be called multiple times on the same inventory,
+	-- if the info passed allows for multiple users.
+	-- @server
+	-- @player client Player to open the inventory for
+	-- @inventory inventory Inventory to open
+	-- @table info Storage info (see <strong>Storage info structure</strong> for usage)
 	function ix.storage.Open(client, inventory, info)
 		assert(IsValid(client) and client:IsPlayer(), "expected valid player")
 		assert(getmetatable(inventory) == ix.meta.inventory, "expected valid inventory")
@@ -214,8 +280,9 @@ if (SERVER) then
 		end
 	end
 
-	-- Forcefully makes clients close this inventory if they have it open and
-	-- clears the storage context on the inventory if it exists.
+	--- Forcefully makes clients close this inventory if they have it open.
+	-- @server
+	-- @inventory inventory Inventory to close
 	function ix.storage.Close(inventory)
 		local receivers = ix.storage.GetReceivers(inventory)
 

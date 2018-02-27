@@ -43,4 +43,6 @@ tparam_alias("table", "table")
 tparam_alias("bool", "boolean")
 tparam_alias("func", "function")
 tparam_alias("player", "player")
+
 tparam_alias("ixtype", "ix.type")
+tparam_alias("inventory", "inventory")

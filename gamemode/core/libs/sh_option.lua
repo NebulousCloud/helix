@@ -109,7 +109,7 @@ end
 
 --- Returns all of the available options. Note that this does contain the actual values of the options, just their properties.
 -- @shared
--- @treturn tab Table of all options
+-- @treturn table Table of all options
 -- @usage PrintTable(ix.option.GetAll())
 -- > language:
 -- >	bHidden	= false
