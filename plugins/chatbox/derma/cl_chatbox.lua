@@ -1,6 +1,8 @@
 
 local PANEL = {}
 
+AccessorFunc(PANEL, "active", "Active", FORCE_BOOL)
+
 local COLOR_FADED = Color(200, 200, 200, 100)
 local COLOR_ACTIVE = color_white
 
@@ -129,9 +131,14 @@ end
 local TEXT_COLOR = Color(255, 255, 255, 200)
 
 function PANEL:SetActive(state)
-	self.active = state
+	self.active = tobool(state)
 
 	if (state) then
+		-- we don't need to create if the panel already exists
+		if (IsValid(self.entry)) then
+			return
+		end
+
 		self.entry = self:Add("EditablePanel")
 		self.entry:SetPos(self.x + 4, self.y + self:GetTall() - 32)
 		self.entry:SetWide(self:GetWide() - 8)
@@ -250,6 +257,8 @@ function PANEL:SetActive(state)
 		self.tabs:SetVisible(true)
 
 		hook.Run("StartChat")
+	elseif (IsValid(self.entry)) then
+		self.entry:Remove()
 	end
 end
 
@@ -439,11 +448,7 @@ end
 function PANEL:Think()
 	if (gui.IsGameUIVisible() and self.active) then
 		self.tabs:SetVisible(false)
-		self.active = false
-
-		if (IsValid(self.entry)) then
-			self.entry:Remove()
-		end
+		self:SetActive(false)
 	end
 end
 
