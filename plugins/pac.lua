@@ -134,6 +134,19 @@ if (SERVER) then
 	function PLUGIN:PlayerInitialSpawn(client)
 		netstream.Start(client, "updatePAC")
 	end
+
+	function PLUGIN:PlayerSwitchWeapon(client, oldWeapon, newWeapon)
+		local oldItem = IsValid(oldWeapon) and oldWeapon.ixItem
+		local newItem = IsValid(newWeapon) and newWeapon.ixItem
+
+		if (oldItem and oldItem.isWeapon and oldItem:GetData("equip") and oldItem.pacData) then
+			oldItem:WearPAC(client)
+		end
+
+		if (newItem and newItem.isWeapon and newItem.pacData) then
+			newItem:RemovePAC(client)
+		end
+	end
 else
 	netstream.Hook("updatePAC", function()
 		if (!pac) then return end
@@ -153,19 +166,19 @@ else
 		end
 	end)
 
-	netstream.Hook("partWear", function(wearer, outfitID)
+	netstream.Hook("partWear", function(wearer, uid)
 		if (!pac) then return end
 
 		if (!wearer.pac_owner) then
 			pac.SetupENT(wearer)
 		end
 
-		local itemTable = ix.item.list[outfitID]
-		local newPac = ix.pac.list[outfitID]
+		local itemTable = ix.item.list[uid]
+		local newPac = ix.pac.list[uid]
 
-		if (ix.pac.list[outfitID]) then
+		if (ix.pac.list[uid]) then
 			if (itemTable and itemTable.pacAdjust) then
-				newPac = table.Copy(ix.pac.list[outfitID])
+				newPac = table.Copy(ix.pac.list[uid])
 				newPac = itemTable:pacAdjust(newPac, wearer)
 			end
 
@@ -185,24 +198,24 @@ else
 		end
 	end)
 
-	netstream.Hook("partRemove", function(wearer, outfitID)
+	netstream.Hook("partRemove", function(wearer, uid)
 		if (!pac) then return end
 
 		if (!wearer.pac_owner) then
 			pac.SetupENT(wearer)
 		end
 
-		if (ix.pac.list[outfitID]) then
+		if (ix.pac.list[uid]) then
 			if (wearer.RemovePACPart) then
-				wearer:RemovePACPart(ix.pac.list[outfitID])
+				wearer:RemovePACPart(ix.pac.list[uid])
 			else
 				pac.SetupENT(wearer)
 			end
 		end
 	end)
 
-	netstream.Hook("partReset", function(wearer, outfitList)
-		for k, _ in pairs(outfitList) do
+	netstream.Hook("partReset", function(wearer, uidList)
+		for k, _ in pairs(uidList) do
 			wearer:RemovePACPart(ix.pac.list[k])
 		end
 	end)

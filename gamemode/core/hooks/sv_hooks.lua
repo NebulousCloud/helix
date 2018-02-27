@@ -376,6 +376,11 @@ function GM:PlayerLoadout(client)
 				faction:OnSpawn(client)
 			end
 
+			-- @todo add docs for player:Give() failing if player already has weapon - which means if a player is given a weapon
+			-- here due to the faction weapons table, the weapon's :Give call in the weapon base will fail since the player
+			-- will already have it by then. This will cause issues for weapons that have pac data since the parts are applied
+			-- only if the weapon returned by :Give() is valid
+
 			-- If the faction has default weapons, give them to the player.
 			if (faction.weapons) then
 				for _, v in ipairs(faction.weapons) do

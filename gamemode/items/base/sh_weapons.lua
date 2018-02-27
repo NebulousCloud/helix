@@ -35,6 +35,8 @@ ITEM:Hook("drop", function(item)
 			item.player.carryWeapons[item.weaponCategory] = nil
 			item.player:EmitSound("items/ammo_pickup.wav", 80)
 		end
+
+		item:RemovePAC(item.player)
 	end
 end)
 
@@ -65,6 +67,18 @@ ITEM.functions.Equip = {
 		return (!IsValid(item.entity) and item:GetData("equip") != true)
 	end
 }
+
+function ITEM:WearPAC(client)
+	if (ix.pac and self.pacData) then
+		client:AddPart(self.uniqueID, self)
+	end
+end
+
+function ITEM:RemovePAC(client)
+	if (ix.pac and self.pacData) then
+		client:RemovePart(self.uniqueID)
+	end
+end
 
 function ITEM:Equip(client)
 	local items = client:GetChar():GetInventory():GetItems()
@@ -123,7 +137,7 @@ function ITEM:Equip(client)
 			self:OnEquipWeapon(client, weapon)
 		end
 	else
-		print(Format("[Helix] Weapon %s does not exist!", self.class))
+		print(Format("[Helix] Cannot equip weapon - %s does not exist!", self.class))
 	end
 end
 
@@ -142,7 +156,7 @@ function ITEM:Unequip(client, bPlaySound, bRemoveItem)
 		self:SetData("ammo", weapon:Clip1())
 		client:StripWeapon(self.class)
 	else
-		print(Format("[Helix] Weapon %s does not exist!", self.class))
+		print(Format("[Helix] Cannot unequip weapon - %s does not exist!", self.class))
 	end
 
 	if (bPlaySound) then
@@ -151,6 +165,7 @@ function ITEM:Unequip(client, bPlaySound, bRemoveItem)
 
 	client.carryWeapons[self.weaponCategory] = nil
 	self:SetData("equip", nil)
+	self:RemovePAC(client)
 
 	if (self.OnUnequipWeapon) then
 		self:OnUnequipWeapon(client, weapon)
@@ -183,7 +198,7 @@ function ITEM:OnLoadout()
 			weapon.ixItem = self
 			weapon:SetClip1(self:GetData("ammo", 0))
 		else
-			print(Format("[Helix] Weapon %s does not exist!", self.class))
+			print(Format("[Helix] Cannot give weapon - %s does not exist!", self.class))
 		end
 	end
 end
@@ -206,6 +221,8 @@ function ITEM:OnRemoved()
 		if (IsValid(weapon)) then
 			weapon:Remove()
 		end
+
+		self:RemovePAC(receiver)
 	end
 end
 
