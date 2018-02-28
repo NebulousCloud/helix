@@ -41,7 +41,7 @@ if (SERVER) then
 			local query = mysql:Update("ix_characters")
 				-- update all character vars
 				for k, v in pairs(ix.char.vars) do
-					if (v.field and self.vars[k] != nil) then
+					if (v.field and self.vars[k] != nil and !v.bSaveLoadInitialOnly) then
 						local value = self.vars[k]
 
 						query:Update(v.field, istable(value) and util.TableToJSON(value) or tostring(value))

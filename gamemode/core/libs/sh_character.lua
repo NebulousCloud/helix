@@ -79,7 +79,7 @@ if (SERVER) then
 			query:Select("id")
 
 			for _, v in pairs(ix.char.vars) do
-				if (v.field and v.fieldType) then
+				if (v.field and v.fieldType and !v.bSaveLoadInitialOnly) then
 					query:Select(v.field)
 				end
 			end
@@ -98,10 +98,12 @@ if (SERVER) then
 					local charID = tonumber(v.id)
 
 					if (charID) then
-						local data = {}
+						local data = {
+							steamID = steamID64
+						}
 
 						for k2, v2 in pairs(ix.char.vars) do
-							if (v2.field and v[v2.field]) then
+							if (v2.field and v[v2.field] and !v2.bSaveLoadInitialOnly) then
 								local value = tostring(v[v2.field])
 
 								if (type(v2.default) == "number") then
@@ -574,7 +576,8 @@ do
 		fieldType = ix.type.string,
 		bNoDisplay = true,
 		bNoNetworking = true,
-		bNotModifiable = true
+		bNotModifiable = true,
+		bSaveLoadInitialOnly = true
 	})
 
 	ix.char.RegisterVar("steamID", {
@@ -582,7 +585,8 @@ do
 		fieldType = ix.type.steamid,
 		bNoDisplay = true,
 		bNoNetworking = true,
-		bNotModifiable = true
+		bNotModifiable = true,
+		bSaveLoadInitialOnly = true
 	})
 end
 
