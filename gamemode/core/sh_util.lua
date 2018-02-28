@@ -12,7 +12,7 @@ function ix.util.Include(fileName, state)
 	if ((state == "server" or fileName:find("sv_")) and SERVER) then
 		include(fileName)
 	-- Shared is included by both server and client.
-	elseif (state == "shared" or fileName:find("sh_")) then
+	elseif (state == "shared" or fileName:find("shared.lua") or fileName:find("sh_")) then
 		if (SERVER) then
 			-- Send the file to the client if shared so they can run it.
 			AddCSLuaFile(fileName)
