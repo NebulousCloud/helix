@@ -379,6 +379,9 @@ do
 			OnCanHear = ix.config.Get("chatRange", 280),
 			deadCanChat = true
 		})
+
+		-- run a hook after we add the basic chat classes so schemas/plugins can access their info as soon as possible if needed
+		hook.Run("InitializedChatClasses")
 	end)
 end
 
