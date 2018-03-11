@@ -49,6 +49,7 @@ function ix.util.IncludeDir(directory, fromLua)
 end
 
 --- Removes the realm prefix from a file name. The returned string will be unchanged if there is no prefix found.
+-- @shared
 -- @string name String to strip prefix from
 -- @treturn string String stripped of prefix
 -- @usage print(ix.util.StripRealmPrefix("sv_init.lua"))
