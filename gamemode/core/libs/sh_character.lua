@@ -109,7 +109,7 @@ if (SERVER) then
 								if (type(v2.default) == "number") then
 									value = tonumber(value) or v2.default
 								elseif (type(v2.default) == "string") then
-									value = value == "NULL" and "" or tostring(value or "")
+									value = value == "NULL" and "" or tostring(value or v2.default)
 								elseif (type(v2.default) == "boolean") then
 									value = tobool(value)
 								elseif (type(v2.default) == "table") then
