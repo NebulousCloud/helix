@@ -141,7 +141,8 @@ function PANEL:AddText(data)
 		elseif (type(v) == "Player") then
 			local color = team.GetColor(v:Team())
 
-			text = text .. "<color=" .. color.r .. "," .. color.g .. "," .. color.b .. ">" .. v:Name():gsub("<", "&lt;"):gsub(">", "&gt;")
+			text = text .. "<color=" .. color.r .. "," .. color.g .. "," .. color.b .. ">" ..
+				v:Name():gsub("<", "&lt;"):gsub(">", "&gt;")
 		else
 			text = text .. tostring(v):gsub("<", "&lt;"):gsub(">", "&gt;")
 			text = text:gsub("%b**", function(value)
