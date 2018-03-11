@@ -136,7 +136,7 @@ if (SERVER) then
 		function inventory:GetReceiver()
 			local result = ix.storage.GetReceivers(self)
 
-			return #result > 0 and result or nil
+			return #result > 0 and (#result == 1 and result[1] or result) or nil
 		end
 	end
 
