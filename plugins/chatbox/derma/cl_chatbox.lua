@@ -7,13 +7,12 @@ local COLOR_ACTIVE = color_white
 DEFINE_BASECLASS("DButton")
 local PANEL = {}
 
-AccessorFunc(PANEL, "Active", "bActive", FORCE_BOOL)
-AccessorFunc(PANEL, "Name", "name", FORCE_STRING)
-AccessorFunc(PANEL, "Padding", "padding", FORCE_NUMBER)
+AccessorFunc(PANEL, "bActive", "Active", FORCE_BOOL)
+AccessorFunc(PANEL, "name", "Name", FORCE_STRING)
 
 function PANEL:Init()
 	self:SetFont("ixChatFont")
-	self:DockMargin(0, 0, 3, 0)
+	self:DockMargin(3, 3, 0, 3)
 	self:Dock(LEFT)
 	self:SetTextColor(color_white)
 	self:SetExpensiveShadow(1, Color(0, 0, 0, 200))
@@ -65,24 +64,59 @@ end
 
 vgui.Register("ixChatBoxFilterButton", PANEL, "DButton")
 
--- chatbox filter panel
+-- chatbox filter minimize button
 PANEL = {}
 
 function PANEL:Init()
+	self:SetSize(24, 24)
+	self:Dock(RIGHT)
+	self:SetText("")
+end
+
+function PANEL:Paint(width, height)
+	surface.SetFont("ixIconsMedium")
+	surface.SetTextColor(255, 255, 255, 10)
+	surface.SetTextPos(0, 0)
+	surface.DrawText(self:GetParent():GetMinimized() and "u" or "r")
+end
+
+function PANEL:DoClick()
+	local parent = self:GetParent()
+
+	parent:SetMinimized(!parent:GetMinimized())
+end
+
+vgui.Register("ixChatBoxFilterCloseButton", PANEL, "DButton")
+
+-- chatbox filter panel
+PANEL = {}
+
+AccessorFunc(PANEL, "bMinimized", "Minimized", FORCE_BOOL)
+
+function PANEL:Init()
 	self:Dock(TOP)
-	self:SetTall(24)
-	self:DockMargin(4, 4, 4, 4)
+	self:SetTall(28)
 	self:SetVisible(false)
 
-	-- add buttons
-	local buttons = {}
+	self.close = self:Add("ixChatBoxFilterCloseButton")
+	self.buttons = {}
 
+	-- add buttons
 	for _, v in SortedPairsByMemberValue(ix.chat.classes, "filter") do
-		if (!buttons[v.filter]) then
-			self:AddFilter(v.filter)
-			buttons[v.filter] = true
+		if (!self.buttons[v.filter]) then
+			self.buttons[v.filter] = self:AddFilter(v.filter)
 		end
 	end
+end
+
+function PANEL:SetMinimized(bState)
+	bState = tobool(bState)
+
+	for _, v in pairs(self.buttons) do
+		v:SetVisible(!bState)
+	end
+
+	self.bMinimized = bState
 end
 
 function PANEL:AddFilter(filter)
@@ -91,6 +125,20 @@ function PANEL:AddFilter(filter)
 
 	if (ix.option.Get("chatFilter", ""):lower():find(filter)) then
 		tab:SetActive(true)
+	end
+
+	return tab
+end
+
+function PANEL:Paint(width, height)
+	if (!self.bMinimized) then
+		ix.util.DrawBlur(self, 10)
+
+		surface.SetDrawColor(250, 250, 250, 2)
+		surface.DrawRect(0, 0, width, height)
+
+		surface.SetDrawColor(0, 0, 0, 240)
+		surface.DrawOutlinedRect(0, 0, width, height)
 	end
 end
 
@@ -103,7 +151,7 @@ function PANEL:Init()
 	local parent = self:GetParent()
 	local parentWidth, parentHeight = parent:GetSize()
 
-	self:SetPos(4, 30)
+	self:SetPos(4, 34)
 	self:SetSize(parentWidth - 8, parentHeight - 70)
 	self:GetVBar():SetWide(0)
 
@@ -406,15 +454,22 @@ function PANEL:Init()
 	end
 end
 
-function PANEL:Paint(w, h)
+function PANEL:Paint(width, height)
 	if (self.bActive) then
-		ix.util.DrawBlur(self, 10)
+		local y = self.tabs:GetTall() + 4
+		height = height - y
+
+		local screenX, screenY = self:LocalToScreen(0, y)
+
+		render.SetScissorRect(screenX, screenY, screenX + width, screenY + height, true)
+			ix.util.DrawBlur(self, 10)
+		render.SetScissorRect(0, 0, 0, 0, false)
 
 		surface.SetDrawColor(250, 250, 250, 2)
-		surface.DrawRect(0, 0, w, h)
+		surface.DrawRect(0, y, width, height)
 
 		surface.SetDrawColor(0, 0, 0, 240)
-		surface.DrawOutlinedRect(0, 0, w, h)
+		surface.DrawOutlinedRect(0, y, width, height)
 	end
 end
 
