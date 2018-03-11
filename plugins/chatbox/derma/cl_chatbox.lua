@@ -259,6 +259,7 @@ function PANEL:SetActive(state)
 		hook.Run("StartChat")
 	elseif (IsValid(self.entry)) then
 		self.entry:Remove()
+		self.tabs:SetVisible(false)
 	end
 end
 
@@ -447,7 +448,6 @@ end
 
 function PANEL:Think()
 	if (gui.IsGameUIVisible() and self.active) then
-		self.tabs:SetVisible(false)
 		self:SetActive(false)
 	end
 end
