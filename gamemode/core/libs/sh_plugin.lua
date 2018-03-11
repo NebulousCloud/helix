@@ -133,6 +133,7 @@ function ix.plugin.LoadEntities(path)
 
 		for _, v in ipairs(folders) do
 			local path2 = path.."/"..folder.."/"..v.."/"
+			v = ix.util.StripRealmPrefix(v)
 
 			_G[variable] = table.Copy(default)
 
@@ -156,7 +157,7 @@ function ix.plugin.LoadEntities(path)
 		end
 
 		for _, v in ipairs(files) do
-			local niceName = string.StripExtension(v)
+			local niceName = ix.util.StripRealmPrefix(string.StripExtension(v))
 
 			_G[variable] = table.Copy(default)
 

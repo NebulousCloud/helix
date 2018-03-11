@@ -48,6 +48,17 @@ function ix.util.IncludeDir(directory, fromLua)
 	end
 end
 
+--- Removes the realm prefix from a file name. The returned string will be unchanged if there is no prefix found.
+-- @string name String to strip prefix from
+-- @treturn string String stripped of prefix
+-- @usage print(ix.util.StripRealmPrefix("sv_init.lua"))
+-- > init.lua
+function ix.util.StripRealmPrefix(name)
+	local prefix = name:sub(1, 3)
+
+	return (prefix == "sh_" or prefix == "sv_" or prefix == "cl_") and name:sub(4) or name
+end
+
 -- Returns the address:port of the server.
 function ix.util.GetAddress()
 	local address = tonumber(GetConVarString("hostip"))
