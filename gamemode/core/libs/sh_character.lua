@@ -137,27 +137,29 @@ if (SERVER) then
 											v2.inventory_type = nil
 										end
 
-										local w, h = ix.config.Get("invW"), ix.config.Get("invH")
-										local invType
+										if (hook.Run("ShouldRestoreInventory", charID, v2.inventory_id, v2.inventory_type) != false) then
+											local w, h = ix.config.Get("invW"), ix.config.Get("invH")
+											local invType
 
-										if (v2.inventory_type) then
-											invType = ix.item.inventoryTypes[v2.inventory_type]
-
-											if (invType) then
-												w, h = invType.w, invType.h
-											end
-										end
-
-										ix.item.RestoreInv(tonumber(v2.inventory_id), w, h, function(inventory)
 											if (v2.inventory_type) then
-												inventory.vars.isBag = v2.inventory_type
-												table.insert(character.vars.inv, inventory)
-											else
-												character.vars.inv[1] = inventory
+												invType = ix.item.inventoryTypes[v2.inventory_type]
+
+												if (invType) then
+													w, h = invType.w, invType.h
+												end
 											end
 
-											inventory:SetOwner(charID)
-										end, true)
+											ix.item.RestoreInv(tonumber(v2.inventory_id), w, h, function(inventory)
+												if (v2.inventory_type) then
+													inventory.vars.isBag = v2.inventory_type
+													table.insert(character.vars.inv, inventory)
+												else
+													character.vars.inv[1] = inventory
+												end
+
+												inventory:SetOwner(charID)
+											end, true)
+										end
 									end
 								else
 									local insertQuery = mysql:Insert("ix_inventories")
