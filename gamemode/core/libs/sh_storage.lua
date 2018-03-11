@@ -54,6 +54,12 @@ How long the player has to wait before the inventory is opened.
 (default: `"@storageSearching"`)<br />
 Text to display to the user while opening the inventory. This can be a language phrase.
 </p></li>
+
+<li><p>
+`OnPlayerClose`<br />
+(default: `nil`)<br />
+Called when a player who was accessing the inventory has closed it. The argument passed is the player who closed it.
+</p></li>
 </ul>
 ]]
 -- @module ix.storage
@@ -158,8 +164,10 @@ if (SERVER) then
 	-- @player client Player to sync storage for
 	-- @inventory inventory Inventory to sync storage for
 	function ix.storage.Sync(client, inventory)
+		local info = inventory.storageInfo
+
 		inventory:Sync(client)
-		netstream.Start(client, "StorageOpen", inventory.storageInfo)
+		netstream.Start(client, "StorageOpen", info.id, info.entity, info.name)
 	end
 
 	--- Adds a receiver to a given inventory with a storage context. This is an internal function and shouldn't be used!
@@ -225,6 +233,10 @@ if (SERVER) then
 
 			inventory.storageInfo.receivers[client] = nil
 
+			if (isfunction(inventory.storageInfo.OnPlayerClose)) then
+				inventory.storageInfo.OnPlayerClose(client)
+			end
+
 			if (!bDontRemove and !ix.storage.InUse(inventory)) then
 				ix.storage.RemoveContext(inventory)
 			end
@@ -287,7 +299,7 @@ if (SERVER) then
 		local receivers = ix.storage.GetReceivers(inventory)
 
 		if (#receivers > 0) then
-			netstream.Start(receivers, "StorageExpired", inventory.storageInfo)
+			netstream.Start(receivers, "StorageExpired", inventory.storageInfo.id)
 		end
 
 		ix.storage.RemoveContext(inventory)
@@ -301,10 +313,10 @@ if (SERVER) then
 		end
 	end)
 else
-	netstream.Hook("StorageOpen", function(info)
-		local inventory = ix.item.inventories[info.id]
+	netstream.Hook("StorageOpen", function(id, entity, name)
+		local inventory = ix.item.inventories[id]
 
-		if (IsValid(info.entity) and inventory and inventory.slots) then
+		if (IsValid(entity) and inventory and inventory.slots) then
 			local localInventory = LocalPlayer():GetCharacter():GetInventory()
 			local panel = vgui.Create("ixStorageView")
 
@@ -312,18 +324,18 @@ else
 				panel:SetLocalInventory(localInventory)
 			end
 
-			panel:SetStorageTitle(info.name)
+			panel:SetStorageTitle(name)
 			panel:SetStorageInventory(inventory)
 		end
 	end)
 
-	netstream.Hook("StorageExpired", function(info)
+	netstream.Hook("StorageExpired", function(id)
 		if (IsValid(ix.gui.openedStorage)) then
 			ix.gui.openedStorage:Remove()
 		end
 
-		if (info.id != 0) then
-			ix.item.inventories[info.id] = nil
+		if (id != 0) then
+			ix.item.inventories[id] = nil
 		end
 	end)
 end
