@@ -304,7 +304,7 @@ function META:GetBags()
 
 	for _, v in pairs(self.slots) do
 		for _, v2 in pairs(v) do
-			if (v2.data) then
+			if (istable(v2) and v2.data) then
 				local isBag = v2.data.id
 
 				if (!table.HasValue(invs, isBag)) then
