@@ -28,7 +28,7 @@ end
 
 function PANEL:Paint(width, height)
 	if (self.bActive) then
-		surface.SetDrawColor(40, 40, 40)
+		surface.SetDrawColor(40, 40, 40, 120)
 	else
 		surface.SetDrawColor(ColorAlpha(ix.config.Get("color"), 120))
 	end
@@ -74,10 +74,12 @@ function PANEL:Init()
 end
 
 function PANEL:Paint(width, height)
+	local bMinimized = self:GetParent():GetMinimized()
+
 	surface.SetFont("ixIconsMedium")
-	surface.SetTextColor(255, 255, 255, 10)
+	surface.SetTextColor(ColorAlpha(ix.config.Get("color"), (bMinimized and !self:IsHovered()) and 40 or 120))
 	surface.SetTextPos(0, 0)
-	surface.DrawText(self:GetParent():GetMinimized() and "u" or "r")
+	surface.DrawText(bMinimized and "u" or "r")
 end
 
 function PANEL:DoClick()
