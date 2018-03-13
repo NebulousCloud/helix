@@ -602,6 +602,23 @@ end
 
 function GM:KeyRelease(client, key)
 	if (key == IN_USE) then
+		if (timer.Exists("ixItemUse")) then
+			local menu, callback = ix.menu.GetActiveMenu()
+
+			if (!menu or !ix.menu.OnButtonPressed(menu, callback)) then
+				local data = {}
+				data.start = client:GetShootPos()
+				data.endpos = data.start + client:GetAimVector() * 96
+				data.filter = client
+
+				local entity = util.TraceLine(data).Entity
+
+				if (IsValid(entity) and entity:GetClass() == "ix_item") then
+					hook.Run("ItemShowEntityMenu", entity)
+				end
+			end
+		end
+
 		timer.Remove("ixItemUse")
 
 		client.ixInteractionTarget = nil
@@ -622,7 +639,9 @@ function GM:PlayerBindPress(client, bind, pressed)
 				data.filter = client
 			local entity = util.TraceLine(data).Entity
 
-			if (IsValid(entity) and entity.ShowPlayerInteraction) then
+			local menu, callback = ix.menu.GetActiveMenu()
+
+			if (IsValid(entity) and entity.ShowPlayerInteraction and (!menu or !ix.menu.OnButtonPressed(menu, callback))) then
 				client.ixInteractionTarget = entity
 				client.ixInteractionStartTime = SysTime()
 
@@ -679,7 +698,9 @@ function GM:ItemShowEntityMenu(entity)
 	itemTable.entity = entity
 
 	for k, v in SortedPairs(itemTable.functions) do
-		if (k == "combine") then continue end -- yeah, noob protection
+		if (k == "take") then
+			continue
+		end
 
 		if (v.OnCanRun) then
 			if (v.OnCanRun(itemTable) == false) then
