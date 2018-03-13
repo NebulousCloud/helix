@@ -44,14 +44,14 @@ if (CLIENT) then
 				local lastY = 0
 				local shiftX = ScrW()*.02
 
-				if (self.markup and i < self.index) then
-					local _, h = self.markup:Size()
+				if (self.markup and (i < self.index or i == 1)) then
+					if (self.index != 1) then
+						local _, h = self.markup:Size()
+						lastY = h * fraction
+					end
 
-					lastY = (h * fraction)
-
-					if (i == self.index - 1) then
+					if (i == 1 or i == self.index - 1) then
 						self.infoAlpha = Lerp(frameTime * 3, self.infoAlpha, 255)
-
 						self.markup:Draw(x + 6 + shiftX, y + 30, 0, 0, self.infoAlpha * fraction)
 					end
 				end
