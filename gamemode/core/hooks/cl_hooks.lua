@@ -622,7 +622,7 @@ function GM:PlayerBindPress(client, bind, pressed)
 				data.filter = client
 			local entity = util.TraceLine(data).Entity
 
-			if (IsValid(entity) and (entity.ShowPlayerInteraction)) then
+			if (IsValid(entity) and entity.ShowPlayerInteraction) then
 				client.ixInteractionTarget = entity
 				client.ixInteractionStartTime = SysTime()
 
