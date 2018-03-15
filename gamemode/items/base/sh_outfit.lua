@@ -30,7 +30,6 @@ ITEM.bodyGroups = {
 
 -- Inventory drawing
 if (CLIENT) then
-	-- Draw camo if it is available.
 	function ITEM:PaintOver(item, w, h)
 		if (item:GetData("equip")) then
 			surface.SetDrawColor(110, 255, 110, 100)
@@ -40,7 +39,7 @@ if (CLIENT) then
 end
 
 function ITEM:RemoveOutfit(client)
-	local character = client:GetChar()
+	local character = client:GetCharacter()
 
 	self:SetData("equip", false)
 
@@ -78,23 +77,22 @@ function ITEM:RemoveOutfit(client)
 			character:RemoveBoost(self.uniqueID, k)
 		end
 	end
+
+	self:OnUnequipped()
 end
 
--- On item is dropped, Remove a weapon from the player and keep the ammo in the item.
 ITEM:Hook("drop", function(item)
 	if (item:GetData("equip")) then
 		item:RemoveOutfit(item.player)
 	end
 end)
 
--- On player uneqipped the item, Removes a weapon from the player and keep the ammo in the item.
 ITEM.functions.EquipUn = { -- sorry, for name order.
 	name = "Unequip",
 	tip = "equipTip",
 	icon = "icon16/cross.png",
 	OnRun = function(item)
 		item:RemoveOutfit(item.player)
-
 		return false
 	end,
 	OnCanRun = function(item)
@@ -102,22 +100,21 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 	end
 }
 
--- On player eqipped the item, Gives a weapon to player and load the ammo data from the item.
 ITEM.functions.Equip = {
 	name = "Equip",
 	tip = "equipTip",
 	icon = "icon16/tick.png",
 	OnRun = function(item)
-		local char = item.player:GetChar()
-		local items = char:GetInv():GetItems()
+		local client = item.player
+		local char = client:GetCharacter()
+		local items = char:GetInventory():GetItems()
 
 		for _, v in pairs(items) do
 			if (v.id != item.id) then
 				local itemTable = ix.item.instances[v.id]
 
 				if (itemTable.pacData and v.outfitCategory == item.outfitCategory and itemTable:GetData("equip")) then
-					item.player:Notify("You're already equipping this kind of outfit")
-
+					client:NotifyLocalized(item.equippedNotify or "outfitAlreadyEquipped")
 					return false
 				end
 			end
@@ -178,6 +175,7 @@ ITEM.functions.Equip = {
 			end
 		end
 
+		item:OnEquipped()
 		return false
 	end,
 	OnCanRun = function(item)
@@ -191,4 +189,10 @@ function ITEM:OnCanBeTransfered(oldInventory, newInventory)
 	end
 
 	return true
+end
+
+function ITEM:OnEquipped()
+end
+
+function ITEM:OnUnequipped()
 end

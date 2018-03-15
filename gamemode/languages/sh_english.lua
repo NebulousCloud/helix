@@ -200,6 +200,7 @@ LANGUAGE = {
 	chgName = "Change Name",
 	chgNameDesc = "Enter the character's new name below.",
 	equippedBag = "The bag that you moved has equipped item.",
+	outfitAlreadyEquipped = "You're already wearing this kind of outfit!",
 	useTip = "Uses the item.",
 	equipTip = "Equips the item.",
 	unequipTip = "Unequips the item.",
