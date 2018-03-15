@@ -39,7 +39,7 @@ if (CLIENT) then
 	end
 end
 
-function ITEM:removeOutfit(client)
+function ITEM:RemoveOutfit(client)
 	local character = client:GetChar()
 
 	self:SetData("equip", false)
@@ -83,7 +83,7 @@ end
 -- On item is dropped, Remove a weapon from the player and keep the ammo in the item.
 ITEM:Hook("drop", function(item)
 	if (item:GetData("equip")) then
-		item:removeOutfit(item.player)
+		item:RemoveOutfit(item.player)
 	end
 end)
 
@@ -93,7 +93,7 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 	tip = "equipTip",
 	icon = "icon16/cross.png",
 	OnRun = function(item)
-		item:removeOutfit(item.player)
+		item:RemoveOutfit(item.player)
 
 		return false
 	end,
