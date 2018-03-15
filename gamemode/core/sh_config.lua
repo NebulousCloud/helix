@@ -236,6 +236,8 @@ if (CLIENT) then
 								form = "Generic"
 								value = ix.config.Get(k) or value
 							end
+						else
+							value = ix.config.Get(k) or value
 						end
 
 						-- VectorColor currently only exists for DProperties.
