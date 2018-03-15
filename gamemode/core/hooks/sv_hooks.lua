@@ -80,7 +80,7 @@ function GM:PlayerInitialSpawn(client)
 end
 
 function GM:PlayerUse(client, entity)
-	if (client:GetNetVar("restricted") or isfunction(entity.GetEntityMenu)) then
+	if (client:GetNetVar("restricted") or (isfunction(entity.GetEntityMenu) and entity:GetClass() != "ix_item")) then
 		return false
 	end
 
