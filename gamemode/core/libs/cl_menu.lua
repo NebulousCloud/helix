@@ -3,7 +3,11 @@ ix.menu = ix.menu or {}
 ix.menu.list = ix.menu.list or {}
 
 local function MenuSelectCallback(entity, option, callback)
-	local bStatus = isfunction(callback) and callback() or true
+	local bStatus = true
+
+	if (isfunction(callback)) then
+		bStatus = callback()
+	end
 
 	if (bStatus != false) then
 		netstream.Start("ixEntityMenuSelect", entity, option)
