@@ -127,7 +127,7 @@ function ix.plugin.LoadEntities(path)
 		return false
 	end
 
-	local function HandleEntityInclusion(folder, variable, register, default, clientOnly, create)
+	local function HandleEntityInclusion(folder, variable, register, default, clientOnly, create, complete)
 		files, folders = file.Find(path.."/"..folder.."/*", "LUA")
 		default = default or {}
 
@@ -153,6 +153,10 @@ function ix.plugin.LoadEntities(path)
 				end
 			end
 
+			if (isfunction(complete)) then
+				complete(_G[variable])
+			end
+
 			_G[variable] = nil
 		end
 
@@ -175,6 +179,10 @@ function ix.plugin.LoadEntities(path)
 				end
 			else
 				register(_G[variable], niceName)
+			end
+
+			if (isfunction(complete)) then
+				complete(_G[variable])
 			end
 
 			_G[variable] = nil
@@ -203,7 +211,15 @@ function ix.plugin.LoadEntities(path)
 		Type = "anim",
 		Base = "base_gmodentity",
 		Spawnable = true
-	})
+	}, false, nil, function(ent)
+		if (ent.Holdable == true) then
+			local hands = weapons.GetStored("ix_hands")
+
+			if (hands) then
+				hands.allowedHoldableClasses[ent.ClassName] = true
+			end
+		end
+	end)
 
 	-- Include weapons.
 	HandleEntityInclusion("weapons", "SWEP", weapons.Register, {
