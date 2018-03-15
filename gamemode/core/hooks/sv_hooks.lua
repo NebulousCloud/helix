@@ -80,7 +80,7 @@ function GM:PlayerInitialSpawn(client)
 end
 
 function GM:PlayerUse(client, entity)
-	if (client:GetNetVar("restricted")) then
+	if (client:GetNetVar("restricted") or isfunction(entity.GetEntityMenu)) then
 		return false
 	end
 
@@ -772,3 +772,20 @@ function GM:DatabaseConnected()
 		mysql:Think()
 	end)
 end
+
+
+netstream.Hook("ixEntityMenuSelect", function(client, entity, option)
+	if (!IsValid(entity) or !isstring(option) or
+		hook.Run("CanPlayerInteractEntity", client, entity, option) == false or
+		entity:GetPos():Distance(client:GetPos()) > 96) then
+		return
+	end
+
+	hook.Run("OnPlayerInteractEntity", client, entity, option)
+
+	if (entity["OnSelect" .. option]) then
+		entity["OnSelect" .. option](entity, client, option)
+	else
+		entity:OnOptionSelected(client, option)
+	end
+end)

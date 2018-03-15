@@ -2,6 +2,14 @@
 ix.menu = ix.menu or {}
 ix.menu.list = ix.menu.list or {}
 
+local function MenuSelectCallback(entity, option, callback)
+	local bStatus = isfunction(callback) and callback() or true
+
+	if (bStatus != false) then
+		netstream.Start("ixEntityMenuSelect", entity, option)
+	end
+end
+
 -- Adds a new menu to the list of drawn menus.
 function ix.menu.Add(options, position, onRemove)
 	-- Set up the width of the menu.
@@ -187,15 +195,17 @@ function ix.menu.GetActiveMenu()
 
 		if (inRange and inside) then
 			local choice
+			local name
 			local i = 0
 
 			-- Loop through all of the buttons.
-			for _, v2 in SortedPairs(v.options) do
+			for k2, v2 in SortedPairs(v.options) do
 				-- Determine where the button starts.
 				local y = startY + (i * 28)
 
 				-- Check if the button is hovered.
 				if (inside and mY >= y and mY <= (y + 28)) then
+					name = k2
 					choice = v2
 
 					break
@@ -205,7 +215,7 @@ function ix.menu.GetActiveMenu()
 				i = i + 1
 			end
 
-			return k, choice
+			return k, MenuSelectCallback(v.entity, name, choice)
 		end
 	end
 end

@@ -602,20 +602,18 @@ end
 
 function GM:KeyRelease(client, key)
 	if (key == IN_USE) then
-		if (timer.Exists("ixItemUse")) then
-			local menu, callback = ix.menu.GetActiveMenu()
+		local menu, callback = ix.menu.GetActiveMenu()
 
-			if (!menu or !ix.menu.OnButtonPressed(menu, callback)) then
-				local data = {}
-				data.start = client:GetShootPos()
-				data.endpos = data.start + client:GetAimVector() * 96
-				data.filter = client
+		if (!menu or !ix.menu.OnButtonPressed(menu, callback)) then
+			local data = {}
+			data.start = client:GetShootPos()
+			data.endpos = data.start + client:GetAimVector() * 96
+			data.filter = client
 
-				local entity = util.TraceLine(data).Entity
+			local entity = util.TraceLine(data).Entity
 
-				if (IsValid(entity) and entity:GetClass() == "ix_item") then
-					hook.Run("ItemShowEntityMenu", entity)
-				end
+			if (IsValid(entity) and isfunction(entity.GetEntityMenu)) then
+				hook.Run("ShowEntityMenu", entity)
 			end
 		end
 
@@ -641,14 +639,16 @@ function GM:PlayerBindPress(client, bind, pressed)
 
 			local menu, callback = ix.menu.GetActiveMenu()
 
-			if (IsValid(entity) and entity.ShowPlayerInteraction and (!menu or !ix.menu.OnButtonPressed(menu, callback))) then
-				client.ixInteractionTarget = entity
-				client.ixInteractionStartTime = SysTime()
+			if (IsValid(entity)) then
+				if (entity.ShowPlayerInteraction and (!menu or !ix.menu.OnButtonPressed(menu, callback))) then
+					client.ixInteractionTarget = entity
+					client.ixInteractionStartTime = SysTime()
 
-				timer.Create("ixItemUse", pickupTime, 1, function()
-					client.ixInteractionTarget = nil
-					client.ixInteractionStartTime = nil
-				end)
+					timer.Create("ixItemUse", pickupTime, 1, function()
+						client.ixInteractionTarget = nil
+						client.ixInteractionStartTime = nil
+					end)
+				end
 			end
 		end
 	elseif (bind:find("attack") and pressed) then
@@ -673,64 +673,18 @@ function GM:PlayerBindPress(client, bind, pressed)
 end
 
 -- Called when use has been pressed on an item.
-function GM:ItemShowEntityMenu(entity)
+function GM:ShowEntityMenu(entity)
 	for k, v in ipairs(ix.menu.list) do
 		if (v.entity == entity) then
 			table.remove(ix.menu.list, k)
 		end
 	end
 
-	local options = {}
-	local itemTable = entity:GetItemTable()
+	local options = entity:GetEntityMenu(LocalPlayer())
 
-	if (!itemTable) then
-		ix.util.NotifyLocalized("tellAdmin", "wid!xt_cl")
-		return false
-	end
-
-	local function callback(index)
-		if (IsValid(entity)) then
-			netstream.Start("invAct", index, entity)
-		end
-	end
-
-	itemTable.player = LocalPlayer()
-	itemTable.entity = entity
-
-	for k, v in SortedPairs(itemTable.functions) do
-		if (k == "take") then
-			continue
-		end
-
-		if (v.OnCanRun) then
-			if (v.OnCanRun(itemTable) == false) then
-				continue
-			end
-		end
-
-		options[L(v.name or k)] = function()
-			local send = true
-
-			if (v.OnClick) then
-				send = v.OnClick(itemTable)
-			end
-
-			if (v.sound) then
-				surface.PlaySound(v.sound)
-			end
-
-			if (send != false) then
-				callback(k)
-			end
-		end
-	end
-
-	if (table.Count(options) > 0) then
+	if (istable(options) and table.Count(options) > 0) then
 		entity.ixMenuIndex = ix.menu.Add(options, entity)
 	end
-
-	itemTable.player = nil
-	itemTable.entity = nil
 end
 
 local hidden = {}
