@@ -113,7 +113,7 @@ function ix.chat.Parse(client, message, noSend)
 		elseif (type(v.prefix) == "string") then
 			local prefix = v.prefix:lower()
 
-			isChosen = message:sub(1, #prefix + (noSpaceAfter and 1 or 0)):lower() == prefix..(noSpaceAfter and "" or " "):lower()
+			isChosen = message:sub(1, #prefix + (noSpaceAfter and 0 or 1)):lower() == prefix..(noSpaceAfter and "" or " "):lower()
 			chosenPrefix = prefix..(v.noSpaceAfter and "" or " ")
 		end
 
