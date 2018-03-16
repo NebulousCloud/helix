@@ -52,11 +52,17 @@ if (SERVER) then
 			local model = itemTable.OnGetDropModel and itemTable:OnGetDropModel(self) or itemTable.model
 
 			self:SetSkin(itemTable.skin or 0)
+
 			if (itemTable.worldModel) then
 				self:SetModel(itemTable.worldModel == true and "models/props_junk/cardboard_box004a.mdl" or itemTable.worldModel)
 			else
 				self:SetModel(model)
 			end
+
+			if (itemTable.material) then
+				self:SetMaterial(itemTable.material)
+			end
+
 			self:SetModel(model)
 			self:PhysicsInit(SOLID_VPHYSICS)
 			self:SetSolid(SOLID_VPHYSICS)
