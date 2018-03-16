@@ -1,5 +1,5 @@
 --[[
-	mysql - 1.0.2
+	mysql - 1.0.3
 	A simple MySQL wrapper for Garry's Mod.
 
 	Alexander Grist-Hucker
@@ -483,34 +483,18 @@ end;
 
 -- A function to connect to the MySQL database.
 function mysql:Connect(host, username, password, database, port, socket, flags)
-	if (!port) then
-		port = 3306;
-	end;
+	port = port or 3306;
 
-	if (Module == "tmysql4") then
-		if (type(tmysql) != "table") then
-			require("tmysql4");
-		end;
-
-		if (tmysql) then
-			local errorText = nil;
-
-			self.connection, errorText = tmysql.initialize(host, username, password, database, port, socket, flags);
-
-			if (!self.connection) then
-				self:OnConnectionFailed(errorText);
-			else
-				self:OnConnected();
-			end;
-		else
-			ErrorNoHalt(string.format(MODULE_NOT_EXIST, Module));
-		end;
-	elseif (Module == "mysqloo") then
+	if (Module == "mysqloo") then
 		if (type(mysqloo) != "table") then
 			require("mysqloo");
 		end;
 
 		if (mysqloo) then
+			if (self.connection and self.connection:ping()) then
+				return;
+			end;
+
 			local clientFlag = flags or 0;
 
 			if (type(socket) ~= "string") then
@@ -542,25 +526,7 @@ function mysql:RawQuery(query, callback, flags, ...)
 		self:Queue(query);
 	end;
 
-	if (Module == "tmysql4") then
-		local queryFlag = flags or QUERY_FLAG_ASSOC;
-
-		self.connection:Query(query, function(result)
-			local queryStatus = result[1]["status"];
-
-			if (queryStatus) then
-				if (type(callback) == "function") then
-					local bStatus, value = pcall(callback, result[1]["data"], queryStatus, tonumber(result[1]["lastid"]));
-
-					if (!bStatus) then
-						error(string.format("[mysql] MySQL Callback Error!\n%s\n", value));
-					end;
-				end;
-			else
-				ErrorNoHalt(string.format("[mysql] MySQL Query Error!\nQuery: %s\n%s\n", query, result[1]["error"]));
-			end;
-		end, queryFlag, ...);
-	elseif (Module == "mysqloo") then
+	if (Module == "mysqloo") then
 		local queryObj = self.connection:query(query);
 
 		queryObj:setOption(mysqloo.OPTION_NAMED_FIELDS);
@@ -609,9 +575,7 @@ end;
 -- A function to escape a string for MySQL.
 function mysql:Escape(text)
 	if (self.connection) then
-		if (Module == "tmysql4") then
-			return self.connection:Escape(text);
-		elseif (Module == "mysqloo") then
+		if (Module == "mysqloo") then
 			return self.connection:escape(text);
 		end;
 	else
@@ -622,8 +586,8 @@ end;
 -- A function to disconnect from the MySQL database.
 function mysql:Disconnect()
 	if (self.connection) then
-		if (Module == "tmysql4") then
-			return self.connection:Disconnect();
+		if (Module == "mysqloo") then
+			self.connection:disconnect(true);
 		end;
 	end;
 
