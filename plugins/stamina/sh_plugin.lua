@@ -37,6 +37,8 @@ if (SERVER) then
 						offset = offset + 0.25
 					end
 
+					offset = hook.Run("AdjustStaminaOffset", client, offset) or offset
+
 					local current = client:GetLocalVar("stm", 0)
 					local value = math.Clamp(current + offset, 0, 100)
 

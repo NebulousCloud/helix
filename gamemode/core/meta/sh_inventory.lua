@@ -134,6 +134,20 @@ function META:CanItemFit(x, y, w, h, item2)
 	return canFit
 end
 
+function META:GetFilledSlotCount()
+	local count = 0
+
+	for x = 1, self.w do
+		for y = 1, self.h do
+			if ((self.slots[x] or {})[y]) then
+				count = count + 1
+			end
+		end
+	end
+
+	return count
+end
+
 function META:FindEmptySlot(w, h, onlyMain)
 	w = w or 1
 	h = h or 1
