@@ -70,8 +70,16 @@ function ix.bar.Draw(x, y, w, h, value, color, text)
 	if (isstring(text)) then
 		x, y = origX + (w * 0.5), origY + (h * 0.5)
 
-		draw.SimpleText(text, "ixSmallFont", x + 2, y + 2, SHADOW_COLOR, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-		draw.SimpleText(text, "ixSmallFont", x, y, TEXT_COLOR, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		surface.SetFont("ixSmallFont")
+		local textWidth, textHeight = surface.GetTextSize(text)
+
+		surface.SetTextColor(SHADOW_COLOR)
+		surface.SetTextPos(math.max(6, x + 2 - textWidth * 0.5), y + 2 - textHeight * 0.5)
+		surface.DrawText(text)
+
+		surface.SetTextColor(TEXT_COLOR)
+		surface.SetTextPos(math.max(4, x - textWidth * 0.5), y - textHeight * 0.5)
+		surface.DrawText(text)
 	end
 end
 
@@ -132,7 +140,7 @@ function ix.bar.DrawAll()
 		local bar = ix.bar.list[i]
 
 		if (bar) then
-			local realValue = bar.getValue()
+			local realValue, barText = bar.getValue()
 			local value = Approach(deltas[i] or 0, realValue, updateValue)
 
 			deltas[i] = value
@@ -142,7 +150,7 @@ function ix.bar.DrawAll()
 			end
 
 			if (bar.lifeTime >= curTime or bar.visible or ix.option.Get("alwaysShowBars", false) or hook.Run("ShouldBarDraw", bar)) then
-				ix.bar.Draw(x, ix.bar.totalHeight, w, h, value, bar.color, bar.text)
+				ix.bar.Draw(x, ix.bar.totalHeight, w, h, value, bar.color, barText)
 				ix.bar.totalHeight = ix.bar.totalHeight + h + 2
 			end
 		end
