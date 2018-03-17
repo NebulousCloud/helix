@@ -1,238 +1,49 @@
 
+--[[--
+Entity menu manipulation.
+
+The `menu` library allows you to open up a context menu of arbitrary options whose callbacks will be ran when they are selected
+from the panel that shows up for the player.
+
+## Menu options structure
+You'll need to pass a table of options to `ix.menu.Open` to populate the menu. This table consists of strings as its keys and
+functions as its values. These correspond to the text displayed in the menu and the callback to run, respectively.
+
+Example usage:
+	ix.menu.Open({
+		Drink = function()
+			print("Drink option selected!")
+		end,
+		Take = function()
+			print("Take option selected!")
+		end
+	}, ents.GetByIndex(1))
+This opens a menu with the options `"Drink"` and `"Take"` which will print a message when you click on either of the options.
+]]
+-- @module ix.menu
+
 ix.menu = ix.menu or {}
-ix.menu.list = ix.menu.list or {}
 
-local function MenuSelectCallback(entity, option, callback)
-	local bStatus = true
-
-	if (isfunction(callback)) then
-		bStatus = callback()
+--- Opens up a context menu for the given entity.
+-- @client
+-- @table options Options to display - see the **Menu options structure** section
+-- @entity[opt] entity Entity to send commands to
+-- @treturn boolean Whether or not the menu opened successfully. It will fail when there is already a menu open.
+function ix.menu.Open(options, entity)
+	if (IsValid(ix.menu.panel)) then
+		return false
 	end
 
-	if (bStatus != false) then
-		netstream.Start("ixEntityMenuSelect", entity, option)
-	end
+	local panel = vgui.Create("ixEntityMenu")
+	panel:SetEntity(entity)
+	panel:SetOptions(options)
+
+	return true
 end
 
--- Adds a new menu to the list of drawn menus.
-function ix.menu.Add(options, position, onRemove)
-	-- Set up the width of the menu.
-	local width = 0
-	local entity
-
-	-- The font for the buttons.
-	surface.SetFont("ixMediumFont")
-
-	-- Set the width to the longest button width.
-	for k, _ in pairs(options) do
-		width = math.max(width, surface.GetTextSize(tostring(k)))
-	end
-
-	-- If you supply an entity, then the menu will follow the entity.
-	if (type(position) == "Entity") then
-		-- Store the entity in the menu.
-		entity = position
-		-- The position will be the trace hit pos relative to the entity.
-		position = entity:WorldToLocal(LocalPlayer():GetEyeTrace().HitPos)
-	end
-
-	-- Add the new menu to the list.
-	return table.insert(ix.menu.list, {
-		-- Use the specified position or whatever the player is looking at.
-		position = position or LocalPlayer():GetEyeTrace().HitPos,
-		-- Options are the list with button text as keys and their callbacks as values.
-		options = options,
-		-- Add 8 to the width to give it a border.
-		width = width + 8,
-		-- Find how tall the menu is.
-		height = table.Count(options) * 28,
-		-- Store the attached entity if there is one.
-		entity = entity,
-		-- Called after the menu has faded out.
-		OnRemove = onRemove
-	})
-end
-
--- Gradient for subtle effects.
-local gradient = Material("vgui/gradient-u")
-
--- A function to draw all of the active menus or hide them when needed.
-function ix.menu.DrawAll()
-	local frameTime = FrameTime() * 30
-	local mX, mY = ScrW() * 0.5, ScrH() * 0.5
-	local position2 = LocalPlayer():GetPos()
-
-	-- Loop through the current menus.
-	for k, v in ipairs(ix.menu.list) do
-		-- Get their position on the screen.
-		local position
-		local entity = v.entity
-
-		if (entity) then
-			-- Follow the entity.
-			if (IsValid(entity)) then
-				local realPos = entity:LocalToWorld(v.position)
-
-				v.entPos = LerpVector(frameTime * 0.25, v.entPos or realPos, realPos)
-				position = v.entPos:ToScreen()
-			-- The attached entity is gone, remove the menu.
-			else
-				table.remove(ix.menu.list, k)
-
-				if (v.OnRemove) then
-					v:OnRemove()
-				end
-
-				continue
-			end
-		else
-			position = v.position:ToScreen()
-		end
-
-		local width, height = v.width, v.height
-		local startX, startY = position.x - (width * 0.5), position.y
-		local alpha = v.alpha or 0
-		-- Local player is within 96 units of the menu.
-		local inRange = position2:DistToSqr(IsValid(v.entity) and v.entity:GetPos() or v.position) <= 9216
-		-- Check that the center of the screen is within the bounds of the menu.
-		local inside = (mX >= startX and mX <= (startX + width) and mY >= startY and mY <= (startY + height)) and inRange
-
-		-- Make the menu more visible if the center is inside the menu or it hasn't peaked in alpha yet.
-		if (!v.displayed or inside) then
-			v.alpha = math.Approach(alpha or 0, 255, frameTime * 10)
-
-			-- If this is the first time we reach full alpha, store it.
-			if (v.alpha == 255) then
-				v.displayed = true
-			end
-		-- Otherwise the menu should fade away.
-		else
-			v.alpha = math.Approach(alpha or 0, 0, inRange and frameTime or (frameTime * 15))
-
-			-- If it has completely faded away, remove it.
-			if (v.alpha == 0) then
-				-- Remove the menu from being drawn.
-				table.remove(ix.menu.list, k)
-
-				if (v.OnRemove) then
-					v:OnRemove()
-				end
-
-				-- Skip to the next menu, the logic for this one is done.
-				continue
-			end
-		end
-
-		-- Store which button we're on.
-		local i = 0
-		-- Determine the border of the menu.
-		local x2, y2, w2, h2 = startX - 4, startY - 4, width + 8, height + 8
-
-		alpha = v.alpha * 0.9
-
-		-- Draw the dark grey background.
-		surface.SetDrawColor(40, 40, 40, alpha)
-		surface.DrawRect(x2, y2, w2, h2)
-
-		-- Draw a subtle gradient over it.
-		surface.SetDrawColor(250, 250, 250, alpha * 0.025)
-		surface.SetMaterial(gradient)
-		surface.DrawTexturedRect(x2, y2, w2, h2)
-
-		-- Draw an outline around the menu.
-		surface.SetDrawColor(0, 0, 0, alpha * 0.25)
-		surface.DrawOutlinedRect(x2, y2, w2, h2)
-
-		-- Loop through all of the buttons.
-		for k2, _ in SortedPairs(v.options) do
-			-- Determine where the button starts.
-			local y = startY + (i * 28)
-
-			-- Check if the button is hovered.
-			if (inside and mY >= y and mY <= (y + 28)) then
-				-- If so, draw a colored rectangle to indicate it.
-				surface.SetDrawColor(ColorAlpha(ix.config.Get("color"), v.alpha + math.cos(RealTime() * 8) * 40))
-				surface.DrawRect(startX, y, width, 28)
-			end
-
-			-- Draw the button's text.
-			ix.util.DrawText(k2, startX + 4, y, ColorAlpha(color_white, v.alpha), nil, nil, "ixMediumFont")
-
-			-- Make sure we draw the next button in line.
-			i = i + 1
-		end
-	end
-end
-
--- Determines which menu is being looked at
-function ix.menu.GetActiveMenu()
-	local mX, mY = ScrW() * 0.5, ScrH() * 0.5
-	local position2 = LocalPlayer():GetPos()
-
-	-- Loop through the current menus.
-	for k, v in ipairs(ix.menu.list) do
-		-- Get their position on the screen.
-		local position
-		local entity = v.entity
-		local width, height = v.width, v.height
-
-		if (entity) then
-			-- Follow the entity.
-			if (IsValid(entity)) then
-				position = (v.entPos or entity:LocalToWorld(v.position)):ToScreen()
-			-- The attached entity is gone, remove the menu.
-			else
-				table.remove(ix.menu.list, k)
-
-				continue
-			end
-		else
-			position = v.position:ToScreen()
-		end
-
-		-- Get where the menu starts and ends.
-		local startX, startY = position.x - (width * 0.5), position.y
-		-- Local player is within 96 units of the menu.
-		local inRange = position2:Distance(IsValid(v.entity) and v.entity:GetPos() or v.position) <= 96
-		-- Check that the center of the screen is within the bounds of the menu.
-		local inside = (mX >= startX and mX <= (startX + width) and mY >= startY and mY <= (startY + height)) and inRange
-
-		if (inRange and inside) then
-			local choice
-			local name
-			local i = 0
-
-			-- Loop through all of the buttons.
-			for k2, v2 in SortedPairs(v.options) do
-				-- Determine where the button starts.
-				local y = startY + (i * 28)
-
-				-- Check if the button is hovered.
-				if (inside and mY >= y and mY <= (y + 28)) then
-					name = k2
-					choice = v2
-
-					break
-				end
-
-				-- Make sure we draw the next button in line.
-				i = i + 1
-			end
-
-			return k, MenuSelectCallback(v.entity, name, choice)
-		end
-	end
-end
-
--- Handles whenever a button has been pressed.
-function ix.menu.OnButtonPressed(menu, callback)
-	table.remove(ix.menu.list, menu)
-
-	if (callback) then
-		callback()
-
-		return true
-	end
-
-	return false
+--- Checks whether or not an entity menu is currently open.
+-- @client
+-- @treturn boolean Whether or not an entity menu is open
+function ix.menu.IsOpen()
+	return IsValid(ix.menu.panel)
 end

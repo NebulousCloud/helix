@@ -512,7 +512,6 @@ function GM:HUDPaintBackground()
 		ix.util.DrawText(L"restricted", scrW * 0.5, scrH * 0.33, nil, 1, 1, "ixBigFont")
 	end
 
-	ix.menu.DrawAll()
 	ix.hud.DrawAll(false)
 end
 
@@ -601,10 +600,12 @@ function GM:DrawEntityInfo(entity, alpha, position)
 end
 
 function GM:KeyRelease(client, key)
-	if (key == IN_USE) then
-		local menu, callback = ix.menu.GetActiveMenu()
+	if (!IsFirstTimePredicted()) then
+		return
+	end
 
-		if (!menu or !ix.menu.OnButtonPressed(menu, callback)) then
+	if (key == IN_USE) then
+		if (!ix.menu.IsOpen()) then
 			local data = {}
 			data.start = client:GetShootPos()
 			data.endpos = data.start + client:GetAimVector() * 96
@@ -637,25 +638,15 @@ function GM:PlayerBindPress(client, bind, pressed)
 				data.filter = client
 			local entity = util.TraceLine(data).Entity
 
-			local menu, callback = ix.menu.GetActiveMenu()
+			if (IsValid(entity) and entity.ShowPlayerInteraction and !ix.menu.IsOpen()) then
+				client.ixInteractionTarget = entity
+				client.ixInteractionStartTime = SysTime()
 
-			if (IsValid(entity)) then
-				if (entity.ShowPlayerInteraction and (!menu or !ix.menu.OnButtonPressed(menu, callback))) then
-					client.ixInteractionTarget = entity
-					client.ixInteractionStartTime = SysTime()
-
-					timer.Create("ixItemUse", pickupTime, 1, function()
-						client.ixInteractionTarget = nil
-						client.ixInteractionStartTime = nil
-					end)
-				end
+				timer.Create("ixItemUse", pickupTime, 1, function()
+					client.ixInteractionTarget = nil
+					client.ixInteractionStartTime = nil
+				end)
 			end
-		end
-	elseif (bind:find("attack") and pressed) then
-		local menu, callback = ix.menu.GetActiveMenu()
-
-		if (menu and ix.menu.OnButtonPressed(menu, callback)) then
-			return true
 		end
 	elseif (bind:find("jump")) then
 		local entity = Entity(client:GetLocalVar("ragdoll", 0))
@@ -674,16 +665,10 @@ end
 
 -- Called when use has been pressed on an item.
 function GM:ShowEntityMenu(entity)
-	for k, v in ipairs(ix.menu.list) do
-		if (v.entity == entity) then
-			table.remove(ix.menu.list, k)
-		end
-	end
-
 	local options = entity:GetEntityMenu(LocalPlayer())
 
 	if (istable(options) and table.Count(options) > 0) then
-		entity.ixMenuIndex = ix.menu.Add(options, entity)
+		ix.menu.Open(options, entity)
 	end
 end
 
