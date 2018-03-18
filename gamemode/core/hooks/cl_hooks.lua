@@ -247,22 +247,7 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 	client.ixRaisedFrac = Lerp(FrameTime() * 2, client.ixRaisedFrac or 0, value)
 
 	viewModel:SetAngles(eyeAngles)
-
-	if (weapon.GetViewModelPosition) then
-		local position, angles = weapon:GetViewModelPosition(eyePos, eyeAngles)
-
-		oldEyePos = position or oldEyePos
-		eyeAngles = angles or eyeAngles
-	end
-
-	if (weapon.CalcViewModelView) then
-		local position, angles = weapon:CalcViewModelView(viewModel, oldEyePos, oldEyeAngles, eyePos, eyeAngles)
-
-		oldEyePos = position or oldEyePos
-		eyeAngles = angles or eyeAngles
-	end
-
-	return oldEyePos, eyeAngles
+	return self.BaseClass:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos, eyeAngles)
 end
 
 function GM:LoadIntro()
