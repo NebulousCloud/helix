@@ -8,7 +8,7 @@ ix.db = ix.db or {
 		[ix.type.string] = "VARCHAR(255)",
 		[ix.type.text] = "TEXT",
 		[ix.type.number] = "INT(11)",
-		[ix.type.steamid] = "BIGINT(20)",
+		[ix.type.steamid] = "VARCHAR(20)",
 		[ix.type.bool] = "TINYINT(1)"
 	}
 }
@@ -97,7 +97,7 @@ function ix.db.LoadTables()
 	query:Execute()
 
 	query = mysql:Create("ix_players")
-		query:Create("steamid", "BIGINT(20) NOT NULL")
+		query:Create("steamid", "VARCHAR(20) NOT NULL")
 		query:Create("steam_name", "VARCHAR(32) NOT NULL")
 		query:Create("play_time", "INT(11) UNSIGNED DEFAULT NULL")
 		query:Create("address", "VARCHAR(15) DEFAULT NULL")
