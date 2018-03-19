@@ -314,10 +314,10 @@ function ix.command.Add(command, data)
 	if (alias) then
 		if (type(alias) == "table") then
 			for _, v in ipairs(alias) do
-				ix.command.list[v] = data
+				ix.command.list[v:lower()] = data
 			end
 		elseif (type(alias) == "string") then
-			ix.command.list[alias] = data
+			ix.command.list[alias:lower()] = data
 		end
 	end
 
