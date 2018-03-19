@@ -434,7 +434,7 @@ ix.chat.Register("disconnect", {
 
 ix.chat.Register("notice", {
 	OnCanSay = function(self, speaker, text)
-		return false
+		return !IsValid(speaker)
 	end,
 	OnChatAdd = function(self, speaker, text)
 		local icon = ix.util.GetMaterial("icon16/comment.png")
