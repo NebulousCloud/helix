@@ -764,7 +764,7 @@ function GM:PostPlayerDraw(client)
 		local wep = client:GetActiveWeapon()
 		local curClass = ((wep and wep:IsValid()) and wep:GetClass():lower() or "")
 
-		for _, v in ipairs(client:GetWeapons()) do
+		for _, v in pairs(client:GetWeapons()) do
 			if (v and IsValid(v)) then
 				local class = v:GetClass():lower()
 				local drawInfo = HOLSTER_DRAWINFO[class]
