@@ -84,6 +84,10 @@ if (SERVER) then
 		local arg = {...}
 		return L("%s opened a '%s' #%d.", client:Name(), arg[1], arg[2])
 	end)
+	ix.log.AddType("vendorUse", function(client, ...)
+		local arg = {...}
+		return L("%s used the '%s' vendor.", client:Name(), arg[1])
+	end)
 
 	function PLUGIN:PlayerInitialSpawn(client)
 		ix.log.Add(client, "connect")

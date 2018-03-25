@@ -210,6 +210,8 @@ if (SERVER) then
 		end
 
 		netstream.Start(activator, "vendorOpen", self:EntIndex(), unpack(data))
+
+		ix.log.Add(activator, "vendorUse", self:GetNetVar("name"))
 	end
 
 	function ENT:SetMoney(value)
