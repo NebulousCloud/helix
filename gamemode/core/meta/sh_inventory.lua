@@ -216,6 +216,8 @@ function META:Remove(id, noReplication, noDelete)
 			netstream.Start(receiver, "invRm", id, self:GetID(), self.owner)
 		end
 
+		hook.Run("InventoryItemRemoved", self, ix.item.instances[id])
+
 		if (!noDelete) then
 			local item = ix.item.instances[id]
 
@@ -444,6 +446,8 @@ if (SERVER) then
 							query:Execute()
 						end
 
+						hook.Run("InventoryItemAdded", targetInv, item)
+
 						return x, y, targetInv:GetID()
 					else
 						return false, "noFit"
@@ -496,6 +500,8 @@ if (SERVER) then
 						if (!noReplication) then
 							targetInv:SendSlot(x, y, item)
 						end
+
+						hook.Run("InventoryItemAdded", targetInv, item)
 					end)
 
 					return x, y, targetInv:GetID()

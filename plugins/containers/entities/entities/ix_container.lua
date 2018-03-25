@@ -59,6 +59,8 @@ if (SERVER) then
 				entity = self,
 				searchTime = ix.config.Get("containerOpenTime", 0.7)
 			})
+
+			ix.log.Add(activator, "openContainer", definition.name, inventory:GetID())
 		end
 	end
 

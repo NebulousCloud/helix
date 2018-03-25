@@ -72,6 +72,18 @@ if (SERVER) then
 		local arg = {...}
 		return L("%s has killed %s.", arg[1], client:Name())
 	end)
+	ix.log.AddType("inventoryAdd", function(client, ...)
+		local arg = {...}
+		return L("%s has gained a '%s' #%d.", client:Name(), arg[1], arg[2])
+	end)
+	ix.log.AddType("inventoryRemove", function(client, ...)
+		local arg = {...}
+		return L("%s has lost a '%s' #%d.", client:Name(), arg[1], arg[2])
+	end)
+	ix.log.AddType("openContainer", function(client, ...)
+		local arg = {...}
+		return L("%s opened a '%s' #%d.", client:Name(), arg[1], arg[2])
+	end)
 
 	function PLUGIN:PlayerInitialSpawn(client)
 		ix.log.Add(client, "connect")
@@ -123,5 +135,25 @@ if (SERVER) then
 		end
 
 		ix.log.Add(client, "itemAction", action, item)
+	end
+
+	function PLUGIN:InventoryItemAdded(inventory, item)
+		if (!inventory.owner) then
+			return
+		end
+
+		local character = ix.char.loaded[inventory.owner]
+
+		ix.log.Add(character:GetPlayer(), "inventoryAdd", item:GetName(), item:GetID())
+	end
+
+	function PLUGIN:InventoryItemRemoved(inventory, item)
+		if (!inventory.owner) then
+			return
+		end
+
+		local character = ix.char.loaded[inventory.owner]
+
+		ix.log.Add(character:GetPlayer(), "inventoryRemove", item:GetName(), item:GetID())
 	end
 end
