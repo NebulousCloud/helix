@@ -219,12 +219,10 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 
 	if (character) then
 		for _, v in pairs(ix.class.list) do
-			if (v.faction == client:Team()) then
-				if (v.isDefault) then
-					character:SetClass(v.index)
+			if (v.faction == client:Team() and v.isDefault) then
+				character:SetClass(v.index)
 
-					break
-				end
+				break
 			end
 		end
 	end
@@ -236,18 +234,24 @@ function GM:PlayerLoadedChar(client, character, lastChar)
 	end
 
 	local faction = ix.faction.indices[character:GetFaction()]
+	local uniqueID = "ixSalary"..client:UniqueID()
 
 	if (faction and faction.pay and faction.pay > 0) then
-		timer.Create("ixSalary"..client:UniqueID(), faction.payTime or 300, 0, function()
-			if (hook.Run("CanPlayerEarnSalary", client, faction) != false) then
-				local pay = hook.Run("GetSalaryAmount", client, faction) or faction.pay
+		timer.Create(uniqueID, faction.payTime or 300, 0, function()
+			if (IsValid(client)) then
+				if (hook.Run("CanPlayerEarnSalary", client, faction) != false) then
+					local pay = hook.Run("GetSalaryAmount", client, faction) or faction.pay
 
-				character:GiveMoney(pay)
-				client:NotifyLocalized("salary", ix.currency.Get(pay))
+					character:GiveMoney(pay)
+					client:NotifyLocalized("salary", ix.currency.Get(pay))
+				end
+			else
+				timer.Remove(uniqueID)
 			end
 		end)
+	elseif (timer.Exists(uniqueID)) then
+		timer.Remove(uniqueID)
 	end
-
 
 	hook.Run("PlayerLoadout", client)
 end
