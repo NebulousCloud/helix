@@ -45,7 +45,7 @@ function ix.currency.Spawn(pos, amount, angle)
 end
 
 function GM:OnPickupMoney(client, moneyEntity)
-	if (moneyEntity and moneyEntity:IsValid()) then
+	if (IsValid(moneyEntity)) then
 		local amount = moneyEntity:GetAmount()
 
 		client:GetChar():GiveMoney(amount)
@@ -65,6 +65,8 @@ do
 	end
 
 	function character:GiveMoney(amount, noLog)
+		amount = math.abs(amount)
+
 		if (!noLog) then
 			ix.log.Add(self:GetPlayer(), "money", amount)
 		end
@@ -74,10 +76,14 @@ do
 		return true
 	end
 
-	function character:TakeMoney(amount)
-		ix.log.Add(self:GetPlayer(), "money", -amount)
+	function character:TakeMoney(amount, noLog)
 		amount = math.abs(amount)
-		self:GiveMoney(-amount, true)
+
+		if (!noLog) then
+			ix.log.Add(self:GetPlayer(), "money", -amount)
+		end
+
+		self:SetMoney(self:GetMoney() - amount)
 
 		return true
 	end
