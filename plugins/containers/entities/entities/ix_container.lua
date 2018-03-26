@@ -57,7 +57,10 @@ if (SERVER) then
 			ix.storage.Open(activator, inventory, {
 				name = definition.name,
 				entity = self,
-				searchTime = ix.config.Get("containerOpenTime", 0.7)
+				searchTime = ix.config.Get("containerOpenTime", 0.7),
+				OnPlayerClose = function()
+					ix.log.Add(activator, "closeContainer", definition.name, inventory:GetID())
+				end
 			})
 
 			ix.log.Add(activator, "openContainer", definition.name, inventory:GetID())
