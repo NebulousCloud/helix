@@ -512,6 +512,10 @@ function mysql:Connect(host, username, password, database, port, socket, flags)
 			end;
 
 			self.connection:connect();
+
+			timer.Create("mysql.KeepAlive", 300, 0, function()
+				self.connection:ping();
+			end);
 		else
 			ErrorNoHalt(string.format(MODULE_NOT_EXIST, Module));
 		end;
@@ -522,10 +526,6 @@ end;
 
 -- A function to query the MySQL database.
 function mysql:RawQuery(query, callback, flags, ...)
-	if (!self.connection and Module != "sqlite") then
-		self:Queue(query);
-	end;
-
 	if (Module == "mysqloo") then
 		local queryObj = self.connection:query(query);
 
