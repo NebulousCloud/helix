@@ -153,19 +153,20 @@ function GM:CanPlayerInteractItem(client, action, item)
 		return false
 	end
 
+	if (item.ixSteamID and item.ixCharID and item.ixSteamID == client:SteamID() and item.ixCharID != client:GetChar():GetID()) then
+		client:NotifyLocalized("playerCharBelonging")
+		return false
+	end
+
 	return client:Alive()
 end
 
+function GM:CanPlayerDropItem(client, item)
+
+end
+
 function GM:CanPlayerTakeItem(client, item)
-	if (type(item) == "Entity") then
-		local char = client:GetChar()
 
-		if (item.ixSteamID and item.ixSteamID == client:SteamID() and item.ixCharID != char:GetID()) then
-			client:NotifyLocalized("playerCharBelonging")
-
-			return false
-		end
-	end
 end
 
 function GM:PlayerSwitchWeapon(client, oldWeapon, newWeapon)

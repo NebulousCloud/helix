@@ -77,7 +77,12 @@ if (SERVER) then
 				end
 
 				if (drop) then
-					ix.item.Spawn(uniqueID, entity:GetPos() + Vector(0, 0, 16))
+					ix.item.Spawn(uniqueID, entity:GetPos() + Vector(0, 0, 16), function(item, itemEntity)
+						if (IsValid(client)) then
+							itemEntity.ixSteamID = client:SteamID()
+							itemEntity.ixCharID = client:GetChar():GetID()
+						end
+					end)
 				else
 					local status, _ = client:GetCharacter():GetInventory():Add(uniqueID)
 
