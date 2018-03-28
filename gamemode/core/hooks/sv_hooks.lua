@@ -283,8 +283,9 @@ function GM:PlayerSay(client, text)
 	end
 
 	ix.chat.Send(client, chatType, message, anonymous)
-	ix.log.Add(client, "chat", chatType and chatType:upper() or "??", message)
-	--ix.log.Add(client:Name().." said ["..chatType:upper().."] \""..message.."\"")
+	ix.log.Add(client, "chat", chatType and chatType:upper() or "??",
+		hook.Run("PlayerMessageSend", client, chatType, message, anonymous) or message
+	)
 
 	hook.Run("PostPlayerSay", client, message, chatType, anonymous)
 
