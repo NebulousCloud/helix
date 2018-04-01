@@ -457,6 +457,9 @@ ix.command.Add("CharGetUp", {
 		if (IsValid(entity) and entity.ixGrace and entity.ixGrace < CurTime() and
 			entity:GetVelocity():Length2D() < 8 and !entity.ixWakingUp) then
 			entity.ixWakingUp = true
+			entity:CallOnRemove("CharGetUp", function()
+				client:SetAction()
+			end)
 
 			client:SetAction("@gettingUp", 5, function()
 				if (!IsValid(entity)) then
