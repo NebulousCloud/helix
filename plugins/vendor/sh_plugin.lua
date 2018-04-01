@@ -90,6 +90,11 @@ if (SERVER) then
 		return true
 	end
 
+	ix.log.AddType("vendorUse", function(client, ...)
+		local arg = {...}
+		return L("%s used the '%s' vendor.", client:Name(), arg[1])
+	end)
+
 	function PLUGIN:OnCharTradeVendor(client, vendor, x, y, invID, price, isSell)
 	end
 

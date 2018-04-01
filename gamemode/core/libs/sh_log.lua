@@ -30,16 +30,14 @@ if (SERVER) then
 		file.CreateDir("helix/logs")
 	end
 
-	function ix.log.ResetTables()
-	end
-
 	ix.log.types = ix.log.types or {}
-	function ix.log.AddType(logType, func)
-		ix.log.types[logType] = func
+	function ix.log.AddType(logType, format, flag)
+		ix.log.types[logType] = {format = format, flag = flag}
 	end
 
-	function ix.log.GetString(client, logType, ...)
-		local text = ix.log.types[logType]
+	function ix.log.Parse(client, logType, ...)
+		local info = ix.log.types[logType]
+		local text = info.format
 
 		if (text) then
 			if (isfunction(text)) then
@@ -49,7 +47,7 @@ if (SERVER) then
 			text = -1
 		end
 
-		return text
+		return text, info.flag
 	end
 
 	function ix.log.AddRaw(logString, bNoSave)
@@ -63,10 +61,10 @@ if (SERVER) then
 	end
 
 	function ix.log.Add(client, logType, ...)
-		local logString = ix.log.GetString(client, logType, ...)
+		local logString, logFlag = ix.log.Parse(client, logType, ...)
 		if (logString == -1) then return end
 
-		ix.log.Send(ix.util.GetAdmins(), logString)
+		ix.log.Send(ix.util.GetAdmins(), logString, logFlag)
 
 		Msg("[LOG] ", logString .. "\n")
 
@@ -74,17 +72,11 @@ if (SERVER) then
 		file.Append("helix/logs/"..os.date("%x"):gsub("/", "-")..".txt", "["..os.date("%X").."]\t"..logString.."\r\n")
 	end
 
-	function ix.log.Open(client)
-		local logData = {}
-
-		netstream.Hook(client, "ixLogView", logData)
-	end
-
 	function ix.log.Send(client, logString, flag)
 		netstream.Start(client, "ixLogStream", logString, flag)
 	end
 else
 	netstream.Hook("ixLogStream", function(logString, flag)
-		MsgC(consoleColor, "[SERVER] ", color_white, logString .. "\n")
+		MsgC(consoleColor, "[SERVER] ", ix.log.color[flag] or color_white, logString .. "\n")
 	end)
 end
