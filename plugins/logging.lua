@@ -32,9 +32,9 @@ if (SERVER) then
 
 	ix.log.AddType("disconnect", function(client, ...)
 		if (client:IsTimingOut()) then
-			return L("%s has disconnected (Timed out).", client:SteamName()client:SteamID())
+			return L("%s has disconnected (timed out).", client:SteamName()) .. " (" .. client:SteamID() .. ")"
 		else
-			return L("%s has disconnected.", client:SteamName()client:SteamID())
+			return L("%s has disconnected.", client:SteamName()) .. " (" .. client:SteamID() .. ")"
 		end
 	end, FLAG_NORMAL)
 
