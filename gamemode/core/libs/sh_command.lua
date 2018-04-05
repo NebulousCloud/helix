@@ -476,6 +476,10 @@ if (SERVER) then
 	-- @table arguments Array of arguments to be passed to the command
 	-- @usage ix.command.Run(player.GetByID(1), "Roll", {10})
 	function ix.command.Run(client, command, arguments)
+		if ((client.ixCommandCooldown or 0) > RealTime()) then
+			return
+		end
+
 		command = ix.command.list[tostring(command):lower()]
 
 		if (!command) then
@@ -523,6 +527,8 @@ if (SERVER) then
 					print(phrase)
 				end
 			end
+
+			client.ixCommandCooldown = RealTime() + 0.5
 
 			if (IsValid(client)) then
 				ix.log.Add(client, "command", COMMAND_PREFIX .. command.name, argumentsTable and table.concat(argumentsTable, " "))
