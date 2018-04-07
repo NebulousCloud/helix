@@ -257,14 +257,10 @@ local vectorAngle = FindMetaTable("Vector").Angle
 local normalizeAngle = math.NormalizeAngle
 
 function GM:CalcMainActivity(client, velocity)
-	local eyeAngles = client.EyeAngles(client)
-	local yaw = vectorAngle(velocity)[2]
-	local normalized = normalizeAngle(yaw - eyeAngles[2])
-
-	client.SetPoseParameter(client, "move_yaw", normalized)
+	client:SetPoseParameter("move_yaw", normalizeAngle(vectorAngle(velocity)[2] - client:EyeAngles()[2]))
 
 	local oldSeqOverride = client.CalcSeqOverride
-	local seqIdeal, _ = self.BaseClass.CalcMainActivity(self.BaseClass, client, velocity)
+	local seqIdeal = self.BaseClass:CalcMainActivity(client, velocity)
 	--client.CalcSeqOverride is being -1 after this line.
 
 	if (client.ixForceSeq and client:GetSequence() != client.ixForceSeq) then
@@ -277,13 +273,9 @@ end
 local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2
 
 function GM:StartCommand(client, command)
-	local weapon = client:GetActiveWeapon()
+	local isRaised, weapon = client:IsWepRaised()
 
-	if (!client:IsWepRaised()) then
-		if (IsValid(weapon) and weapon.FireWhenLowered) then
-			return
-		end
-
+	if (!isRaised and (!weapon or !weapon.FireWhenLowered)) then
 		command:RemoveKey(KEY_BLACKLIST)
 	end
 end

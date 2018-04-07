@@ -838,32 +838,32 @@ do
 
 		-- Allow the hook to check first.
 		if (override != nil) then
-			return override
+			return override, weapon
 		end
 
 		-- Some weapons may have their own properties.
 		if (IsValid(weapon)) then
 			-- If their weapon is always raised, return true.
 			if (weapon.IsAlwaysRaised or ALWAYS_RAISED[weapon.GetClass(weapon)]) then
-				return true
+				return true, weapon
 			-- Return false if always lowered.
 			elseif (weapon.IsAlwaysLowered or weapon.NeverRaised) then
-				return false
+				return false, weapon
 			end
 		end
 
 		-- If the player has been forced to have their weapon lowered.
 		if (self.GetNetVar(self, "restricted")) then
-			return false
+			return false, weapon
 		end
 
 		-- Let the config decide before actual results.
 		if (ix.config.Get("wepAlwaysRaised")) then
-			return true
+			return true, weapon
 		end
 
 		-- Returns what the gamemode decides.
-		return self.GetNetVar(self, "raised", false)
+		return self.GetNetVar(self, "raised", false), weapon
 	end
 
 	local vectorLength2D = FindMetaTable("Vector").Length2D
