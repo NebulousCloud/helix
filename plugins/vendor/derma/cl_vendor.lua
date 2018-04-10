@@ -89,7 +89,8 @@ function PANEL:addItem(uniqueID, listID)
 	local items = entity.items
 	local data = items[uniqueID]
 
-	if ((!listID or listID == "selling") and !IsValid(self.sellingList[uniqueID])) then
+	if ((!listID or listID == "selling") and !IsValid(self.sellingList[uniqueID])
+	and ix.item.list[uniqueID]) then
 		if (data and data[VENDOR_MODE] and data[VENDOR_MODE] != VENDOR_BUYONLY) then
 			local item = self.sellingItems:Add("ixVendorItem")
 			item:Setup(uniqueID)
@@ -99,8 +100,8 @@ function PANEL:addItem(uniqueID, listID)
 		end
 	end
 
-	if ((!listID or listID == "buying") and !IsValid(self.buyingList[uniqueID]) and
-		LocalPlayer():GetCharacter():GetInventory():HasItem(uniqueID)) then
+	if ((!listID or listID == "buying") and !IsValid(self.buyingList[uniqueID])
+	and LocalPlayer():GetCharacter():GetInventory():HasItem(uniqueID)) then
 		if (data and data[VENDOR_MODE] and data[VENDOR_MODE] != VENDOR_SELLONLY) then
 			local item = self.buyingItems:Add("ixVendorItem")
 			item:Setup(uniqueID)

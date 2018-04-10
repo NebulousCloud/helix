@@ -18,7 +18,7 @@ function PANEL:Init()
 		end
 	end
 
-self.description = self:Add("DTextEntry")
+	self.description = self:Add("DTextEntry")
 	self.description:Dock(TOP)
 	self.description:DockMargin(0, 4, 0, 0)
 	self.description:SetText(entity:GetNetVar("desc", ""))
