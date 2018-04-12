@@ -30,7 +30,7 @@ else
 	-- Move all notices to their proper positions.
 	local function OrganizeNotices()
 		local scrW = ScrW()
-		
+
 		for k, v in ipairs(ix.notices) do
 			v:MoveTo(scrW - (v:GetWide() + 4), (k - 1) * (v:GetTall() + 4) + 4, 0.15, (k / #ix.notices) * 0.25, nil)
 		end
