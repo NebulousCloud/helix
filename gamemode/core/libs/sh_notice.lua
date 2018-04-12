@@ -26,7 +26,16 @@ if (SERVER) then
 else
 	-- List of notice panels.
 	ix.notices = ix.notices or {}
-
+	
+	local scrW = ScrW()
+	
+	-- Move all notices to their proper positions.
+	local function OrganizeNotices()
+		for k, v in ipairs(ix.notices) do
+			v:MoveTo(scrW - (v:GetWide() + 4), (k - 1) * (v:GetTall() + 4) + 4, 0.15, (k / #ix.notices) * 0.25, nil)
+		end
+	end
+	
 	-- Create a notification panel.
 	function ix.util.Notify(message)
 		if (ix.option.Get("chatNotices", false)) then
@@ -36,7 +45,6 @@ else
 
 		local notice = vgui.Create("ixNotice")
 		local i = table.insert(ix.notices, notice)
-		local scrW = ScrW()
 
 		-- Set up information for the notice.
 		notice:SetText(message)
@@ -45,13 +53,6 @@ else
 		notice:SetWide(notice:GetWide() + 16)
 		notice.start = CurTime() + 0.25
 		notice.endTime = CurTime() + 7.75
-
-		-- Move all notices to their proper positions.
-		local function OrganizeNotices()
-			for k, v in ipairs(ix.notices) do
-				v:MoveTo(scrW - (v:GetWide() + 4), (k - 1) * (v:GetTall() + 4) + 4, 0.15, (k / #ix.notices) * 0.25, nil)
-			end
-		end
 
 		-- Add the notice we made to the list.
 		OrganizeNotices()
