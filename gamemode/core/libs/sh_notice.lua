@@ -27,6 +27,15 @@ else
 	-- List of notice panels.
 	ix.notices = ix.notices or {}
 
+	-- Move all notices to their proper positions.
+	local function OrganizeNotices()
+		local scrW = ScrW()
+
+		for k, v in ipairs(ix.notices) do
+			v:MoveTo(scrW - (v:GetWide() + 4), (k - 1) * (v:GetTall() + 4) + 4, 0.15, (k / #ix.notices) * 0.25, nil)
+		end
+	end
+
 	-- Create a notification panel.
 	function ix.util.Notify(message)
 		if (ix.option.Get("chatNotices", false)) then
@@ -40,18 +49,11 @@ else
 
 		-- Set up information for the notice.
 		notice:SetText(message)
-		notice:SetPos(ScrW(), (i - 1) * (notice:GetTall() + 4) + 4)
+		notice:SetPos(scrW, (i - 1) * (notice:GetTall() + 4) + 4)
 		notice:SizeToContentsX()
 		notice:SetWide(notice:GetWide() + 16)
 		notice.start = CurTime() + 0.25
 		notice.endTime = CurTime() + 7.75
-
-		-- Move all notices to their proper positions.
-		local function OrganizeNotices()
-			for k, v in ipairs(ix.notices) do
-				v:MoveTo(scrW - (v:GetWide() + 4), (k - 1) * (v:GetTall() + 4) + 4, 0.15, (k / #ix.notices) * 0.25, nil)
-			end
-		end
 
 		-- Add the notice we made to the list.
 		OrganizeNotices()
@@ -71,7 +73,7 @@ else
 				for k, v in ipairs(ix.notices) do
 					if (v == notice) then
 						-- Move the notice off the screen.
-						notice:MoveTo(ScrW(), notice.y, 0.15, 0.1, nil, function()
+						notice:MoveTo(scrW, notice.y, 0.15, 0.1, nil, function()
 							notice:Remove()
 						end)
 
