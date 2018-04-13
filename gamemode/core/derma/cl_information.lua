@@ -155,7 +155,7 @@ function PANEL:Init()
 						L"description",
 						L"cmdCharDesc",
 						self.description:GetText(),
-						function(desc) RunConsoleCommand("ix", "CharDesc", text) end,
+						function(desc) RunConsoleCommand("ix", "CharDesc", desc) end,
 						nil,
 						L"save",
 						L"close"
