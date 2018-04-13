@@ -77,20 +77,41 @@ if (SERVER) then
 		self:SetData(self.list)
 	end
 else
+	local function CacheMaterial(index)
+		local info = PLUGIN.list[index]
+		local exploded = string.Explode("/", info[6])
+		local filename = exploded[#exploded]
+		local path = "helix/"..Schema.folder.."/"..PLUGIN.uniqueID.."/"
+
+		if (file.Exists(path..filename, "DATA")) then
+			local material = Material("../data/"..path..filename, "noclamp smooth")
+
+			if (!material:IsError()) then
+				info[7] = material
+			end
+		else
+			file.CreateDir(path)
+
+			http.Fetch(info[6], function(body)
+				file.Write(path..filename, body)
+
+				local material = Material("../data/"..path..filename, "noclamp smooth")
+
+				if (!material:IsError()) then
+					info[7] = material
+				end
+			end)
+		end
+	end
+
 	-- Receives new panel objects that need to be drawn.
 	netstream.Hook("panel", function(index, position, angles, w, h, scale, url)
 		-- Check if we are adding or deleting the panel.
 		if (position) then
-			-- Create a VGUI object to display the URL.
-			local object = vgui.Create("DHTML")
-			object:OpenURL(url)
-			object:SetSize(w, h)
-			object:SetKeyboardInputEnabled(false)
-			object:SetMouseInputEnabled(false)
-			object:SetPaintedManually(true)
-
 			-- Add the panel to a list of drawn panel objects.
-			PLUGIN.list[index] = {position, angles, w, h, scale, object}
+			PLUGIN.list[index] = {position, angles, w, h, scale, url}
+
+			CacheMaterial(index)
 		else
 			-- Delete the panel object if we are deleting stuff.
 			PLUGIN.list[index] = nil
@@ -102,19 +123,26 @@ else
 		-- Set the list of panels to the ones provided by the server.
 		PLUGIN.list = values
 
-		-- Loop through the list of panels.
-		for _, v in pairs(PLUGIN.list) do
-			-- Create a VGUI object to display the URL.
-			local object = vgui.Create("DHTML")
-			object:OpenURL(v[6])
-			object:SetSize(v[3], v[4])
-			object:SetKeyboardInputEnabled(false)
-			object:SetMouseInputEnabled(false)
-			object:SetPaintedManually(true)
+		local CacheQueue  = {}
 
-			-- Set the panel to have a markup object to draw.
-			v[6] = object
+		-- Loop through the list of panels.
+		for k, v in pairs(PLUGIN.list) do
+			CacheQueue[#CacheQueue + 1] = k
 		end
+
+		if (#CacheQueue == 0) then
+			return
+		end
+
+		timer.Create("ixCache3DPanels", 1, #CacheQueue, function()
+			if (#CacheQueue > 0) then
+				CacheMaterial(CacheQueue[1])
+
+				table.remove(CacheQueue, 1)
+			else
+				timer.Remove("ixCache3DPanels")
+			end
+		end)
 	end)
 
 	-- Called after all translucent objects are drawn.
@@ -127,14 +155,15 @@ else
 			for _, v in pairs(self.list) do
 				local position = v[1]
 
-				if (ourPosition:DistToSqr(position) <= 4194304) then
-					local panel = v[6]
-
-					-- Start a 3D2D camera at the panel's position and angles.
+				if (v[7] and ourPosition:DistToSqr(position) <= 4194304) then
 					cam.Start3D2D(position, v[2], v[5] or 0.1)
-						panel:SetPaintedManually(false)
-							panel:PaintManual()
-						panel:SetPaintedManually(true)
+						render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+						render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+							surface.SetDrawColor(255, 255, 255)
+							surface.SetMaterial(v[7])
+							surface.DrawTexturedRect(0, 0, v[3], v[4])
+						render.PopFilterMag()
+						render.PopFilterMin()
 					cam.End3D2D()
 				end
 			end
