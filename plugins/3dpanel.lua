@@ -126,7 +126,7 @@ else
 		local CacheQueue  = {}
 
 		-- Loop through the list of panels.
-		for k, v in pairs(PLUGIN.list) do
+		for k, _ in pairs(PLUGIN.list) do
 			CacheQueue[#CacheQueue + 1] = k
 		end
 
