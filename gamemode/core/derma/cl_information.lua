@@ -141,6 +141,11 @@ function PANEL:Init()
 			self.basicInfo:Dock(TOP)
 
 			if (!suppress or !suppress.description) then
+				local lDesc = L"description"
+				local lCmdCharDesc = L"cmdCharDesc"
+				local lSave = L"save"
+				local lClose = L"close"
+
 				self.description = self.basicInfo:Add("DLabel")
 				self.description:SetFont("ixMediumFont")
 				self.description:SetTextColor(color_white)
@@ -151,7 +156,9 @@ function PANEL:Init()
 				self.description:SetMouseInputEnabled(true)
 				self.description:SetCursor("hand")
 				self.description.DoClick = function(this)
-					RunConsoleCommand("ix", "CharDesc")
+					Derma_StringRequest(lDesc, lCmdCharDesc, self.description:GetText(), function(desc)
+							RunConsoleCommand("ix", "CharDesc", desc)
+					end, nil, lSave, lClose)
 				end
 			end
 
