@@ -307,7 +307,7 @@ do
 						local lastOOC = CurTime() - speaker.ixLastOOC
 
 						-- Use this method of checking time in case the oocDelay config changes.
-						if (lastOOC <= delay) then
+						if (lastOOC <= delay and !speaker:IsAdmin()) then
 							speaker:NotifyLocalized("oocDelay", delay - math.ceil(lastOOC))
 
 							return false
@@ -351,7 +351,7 @@ do
 					local lastLOOC = CurTime() - speaker.ixLastLOOC
 
 					-- Use this method of checking time in case the oocDelay config changes.
-					if (lastLOOC <= delay) then
+					if (lastLOOC <= delay and !speaker:IsAdmin()) then
 						speaker:NotifyLocalized("loocDelay", delay - math.ceil(lastLOOC))
 
 						return false
