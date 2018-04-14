@@ -768,6 +768,10 @@ function GM:GetPreferredCarryAngles(entity)
 	end
 end
 
+function GM:PluginShouldLoad(uniqueID)
+	return !ix.plugin.unloaded[uniqueID]
+end
+
 function GM:DatabaseConnected()
 	-- Create the SQL tables if they do not exist.
 	ix.db.LoadTables()

@@ -248,6 +248,8 @@ function ix.plugin.LoadEntities(path)
 end
 
 function ix.plugin.Initialize()
+	ix.plugin.unloaded = ix.data.Get("unloaded", {}, true, true)
+
 	ix.plugin.LoadFromDir("helix/plugins")
 
 	ix.plugin.Load("schema", engine.ActiveGamemode().."/schema")
@@ -273,32 +275,22 @@ function ix.plugin.LoadFromDir(directory)
 	end
 end
 
-function ix.plugin.SetUnloaded(uniqueID, state, noSave)
+function ix.plugin.SetUnloaded(uniqueID, state, bNoSave)
 	local plugin = ix.plugin.list[uniqueID]
 
 	if (state) then
-		if (plugin.OnLoaded) then
-			plugin:OnLoaded()
-		end
-
-		if (ix.plugin.unloaded[uniqueID]) then
-			ix.plugin.list[uniqueID] = ix.plugin.unloaded[uniqueID]
-			ix.plugin.unloaded[uniqueID] = nil
-		else
-			return false
-		end
-	elseif (plugin) then
 		if (plugin.OnUnload) then
 			plugin:OnUnload()
 		end
 
-		ix.plugin.unloaded[uniqueID] = ix.plugin.list[uniqueID]
-		ix.plugin.list[uniqueID] = nil
+		ix.plugin.unloaded[uniqueID] = true
+	elseif (ix.plugin.unloaded[uniqueID]) then
+		ix.plugin.unloaded[uniqueID] = nil
 	else
 		return false
 	end
 
-	if (SERVER and !noSave) then
+	if (SERVER and !bNoSave) then
 		local status
 
 		if (state) then
@@ -310,7 +302,9 @@ function ix.plugin.SetUnloaded(uniqueID, state, noSave)
 		ix.data.Set("unloaded", unloaded, true, true)
 	end
 
-	hook.Run("PluginUnloaded", uniqueID)
+	if (state) then
+		hook.Run("PluginUnloaded", uniqueID)
+	end
 
 	return true
 end
