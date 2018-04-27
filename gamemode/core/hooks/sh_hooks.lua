@@ -337,19 +337,27 @@ function GM:CanProperty(client, property, entity)
 end
 
 function GM:PhysgunPickup(client, entity)
+	local bPickup = false
+
 	if (client:IsSuperAdmin()) then
-		return true
-	end
-
-	if (client:IsAdmin() and !(entity:IsPlayer() and entity:IsSuperAdmin())) then
-		return true
-	end
-
-	if (self.BaseClass:PhysgunPickup(client, entity) == false) then
+		bPickup = true
+	elseif (client:IsAdmin() and !(entity:IsPlayer() and entity:IsSuperAdmin())) then
+		bPickup = true
+	elseif (self.BaseClass:PhysgunPickup(client, entity) == false) then
 		return false
 	end
 
-	return false
+	if (bPickup and entity:IsPlayer()) then
+		entity:SetMoveType(MOVETYPE_NONE)
+	end
+
+	return bPickup
+end
+
+function GM:PhysgunDrop(client, entity)
+	if (entity:IsPlayer()) then
+		entity:SetMoveType(MOVETYPE_WALK)
+	end
 end
 
 local TOOL_SAFE = {}
