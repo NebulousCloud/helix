@@ -229,10 +229,6 @@ function GM:DoAnimationEvent(client, event, data)
 
 				return ACT_INVALID
 			elseif (event == PLAYERANIMEVENT_JUMP) then
-				client.m_bJumping = true
-				client.m_bFistJumpFrame = true
-				client.m_flJumpStartTime = CurTime()
-
 				client:AnimRestartMainSequence()
 
 				return ACT_INVALID
