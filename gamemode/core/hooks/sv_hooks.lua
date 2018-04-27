@@ -154,7 +154,8 @@ function GM:CanPlayerInteractItem(client, action, item)
 	end
 
 	if (type(item) == "Entity" and item.ixSteamID and item.ixCharID
-	and item.ixSteamID == client:SteamID() and item.ixCharID != client:GetChar():GetID()) then
+	and item.ixSteamID == client:SteamID() and item.ixCharID != client:GetChar():GetID() and
+	!item.bAllowSameCharacterInteraction) then
 		client:NotifyLocalized("playerCharBelonging")
 		return false
 	end
