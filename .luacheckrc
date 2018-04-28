@@ -49,8 +49,6 @@ stds.helix.read_globals = {
 
 	"ACT_VM_FISTS_DRAW",
 	"ACT_VM_FISTS_HOLSTER",
-	"ACT_STARTSEQ",
-	"ACT_ENDSEQ",
 
 	"TOOLTIP_GENERIC",
 	"TOOLTIP_ITEM",

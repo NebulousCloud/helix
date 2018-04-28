@@ -21,21 +21,13 @@ local function facingWallBack(client)
 	end
 end
 
--- luacheck: globals ACT_ENDSEQ ACT_STARTSEQ
-ACT_ENDSEQ = 0
-ACT_STARTSEQ = 1
-
 PLUGIN.acts["Sit"] = {
 	["citizen_male"] = {
-		sequence = "sit_ground",
-		untimed = true,
-		transition = {
-			[ACT_STARTSEQ] = "Idle_to_Sit_Ground",
-			[ACT_ENDSEQ] = "Sit_Ground_to_Idle"
-		}
+		sequence = {"Idle_to_Sit_Ground", "Idle_to_Sit_Chair"},
+		untimed = true
 	},
 	["citizen_female"] = {
-		sequence = "sit_ground",
+		sequence = {"Idle_to_Sit_Ground", "Idle_to_Sit_Chair"},
 		untimed = true
 	}
 }
