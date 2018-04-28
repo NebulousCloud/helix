@@ -27,7 +27,7 @@ ACT_STARTSEQ = 1
 
 PLUGIN.acts["Sit"] = {
 	["citizen_male"] = {
-		sequence = "sit_ground",
+		sequence = ("sit_ground","sitcouchknees1")
 		untimed = true,
 		transition = {
 			[ACT_STARTSEQ] = "Idle_to_Sit_Ground",
@@ -35,8 +35,11 @@ PLUGIN.acts["Sit"] = {
 		}
 	},
 	["citizen_female"] = {
-		sequence = "sit_ground",
+		sequence = ("sit_ground","sitcouchknees1")
 		untimed = true
+		transition = {
+			[ACT_STARTSEQ] = "Idle_to_Sit_Ground",
+			[ACT_ENDSEQ] = "Sit_Ground_to_Idle"
 	}
 }
 PLUGIN.acts["Injured"] = {
@@ -99,5 +102,77 @@ PLUGIN.acts["Stand"] = {
 	["metrocop"] = {
 		sequence = "plazathreat2",
 		untimed = true
+	}
+PLUGIN.acts["SitChair"] = {
+	["citizen_male"] = {
+		sequence = ("sit_chair","silo_sit","sitchair1","sitccouchtv1,sitchairtable1,d1_t03_Sit_Bed,d1_t03_Sit_couch,d1_t02_Plaza_Sit02,d1_t01_BreakRoom_WatchClock_Sit")
+		untimed = true,
+		transition = {
+			[ACT_STARTSEQ] = "Idle_to_Sit_Chair",
+			[ACT_ENDSEQ] = "Sit_Chair_to_Idle"
+		}
+	},
+	["citizen_female"] = {
+		sequence = ("sit_chair","silo_sit","sitchair1","sitccouchtv1,sitchairtable1,d1_t02_Plaza_Sit01_Idle,d1_t02_Plaza_Sit02")
+		untimed = true
+		transition = {
+			[ACT_STARTSEQ] = "Idle_to_Sit_Chair",
+			[ACT_ENDSEQ] = "Sit_Chair_to_Idle"
+		}
+}
+PLUGIN.acts["Punctuate"] = {
+	["citizen_male"] = {
+		sequence = {"G_puncuate"},
+	},
+	["citizen_female"] = {
+		sequence = {"G_puncuate"},
+	}
+}
+PLUGIN.acts["Swing"] = {
+	["citizen_male"] = {
+		sequence = "MeleeAttack01"
+	},
+	["citizen_female"] = {
+		sequence = "MeleeAttack01"
+	}
+}
+PLUGIN.acts["Turret"] = {
+	["citizen_male"] = {
+		sequence = "Man_Gun"
+		untimed = true
+	},
+	["citizen_female"] = {
+		sequence = "Man_Gun"
+		untimed = true
+	}
+}
+PLUGIN.acts["Throw"] = {
+	["citizen_male"] = {
+		sequence = "throw1"
+	},
+	["citizen_female"] = {
+		sequence = "throw1"
+	}
+PLUGIN.acts["Floor"] = {
+	["citizen_male"] = {
+		sequence = "arrestidle"
+		untimed = true
+	}
+}
+	PLUGIN.acts["Floor"] = {
+	["citizen_male"] = {
+		sequence = ("sitcouchfeet1","sitcouchknees1")
+		untimed = true
+	}			
+	["citizen_female"] = {
+		sequence = ("sitcouchfeet1","sitcouchknees1")
+		untimed = true
+}	
+	PLUGIN.acts["Scared"] = {
+	["citizen_male"] = {
+		sequence = {"cower,Fear_Reaction"}
+	},
+	["citizen_female"] = {
+		sequence = {"cower,Fear_Reaction"}
 	}
 }
