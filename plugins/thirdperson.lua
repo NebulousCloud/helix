@@ -10,8 +10,13 @@ ix.config.Add("thirdperson", false, "Allow Thirdperson in the server.", nil, {
 })
 
 if (CLIENT) then
-	ix.option.Add("thirdpersonEnabled", ix.type.bool, false)
-	ix.option.Add("thirdpersonClassic", ix.type.bool, false)
+	ix.option.Add("thirdpersonEnabled", ix.type.bool, false, {
+		category = "thirdperson"
+	})
+
+	ix.option.Add("thirdpersonClassic", ix.type.bool, false, {
+		category = "thirdperson"
+	})
 
 	local IX_CVAR_TP_VERT = CreateClientConVar("ix_tp_vertical", 10, true)
 	local IX_CVAR_TP_HORI = CreateClientConVar("ix_tp_horizontal", 0, true)

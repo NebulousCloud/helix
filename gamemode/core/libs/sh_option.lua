@@ -29,10 +29,18 @@ argument.
 
 <ul>
 <li><p>
+`phrase`<br />
+(default: `"opt" .. key`)<br />
+The phrase to use when displaying in the UI. The default value is your option key in UpperCamelCase, prefixed with `"opt"`. For
+example, if your key is `"exampleOption"`, the default phrase will be `"optExampleOption"`.
+</p></li>
+
+<li><p>
 `category`<br />
-(default: `"general"`)<br />
+(default: `"miscellaneous"`)<br />
 The category that this option should reside in. This is purely for aesthetic reasons when displaying the options in the options
-menu.
+menu. When displayed in the UI, it will take the form of `L("category name")`. This means that you must create a language phrase
+for the category name - otherwise it will only show as the string you've specified.
 </p></li>
 
 <li><p>
@@ -67,6 +75,7 @@ An example:<br />
 
 ix.option = ix.option or {}
 ix.option.stored = ix.option.stored or {}
+ix.option.categories = ix.option.categories or {}
 
 --- Creates a client-side configuration option with the given information.
 -- @shared
@@ -79,10 +88,18 @@ function ix.option.Add(key, optionType, default, data)
 
 	data = data or {}
 
+	local categories = ix.option.categories
+	local category = data.category or "miscellaneous"
+
+	categories[category] = categories[category] or {}
+	categories[category][key] = true
+
 	ix.option.stored[key] = {
+		key = key,
+		phrase = "opt" .. key:sub(1, 1):upper() .. key:sub(2),
 		type = optionType,
 		default = default,
-		category = data.category or "general",
+		category = data.category or "miscellaneous",
 		bNetworked = data.bNetworked and true or false,
 		bHidden = data.bHidden and true or false,
 		populate = data.populate or nil
@@ -115,10 +132,45 @@ end
 -- >	bHidden	= false
 -- >	bNetworked = true
 -- >	default = english
--- >	type = 514
+-- >	type = 512
 -- -- etc.
 function ix.option.GetAll()
 	return ix.option.stored
+end
+
+
+--- Returns all of the available options grouped by their categories. The returned table contains category tables, that contain
+-- all the options in that category as an array (this is so you can sort them if you'd like).
+-- @shared
+-- @bool[opt=false] bRemoveHidden Remove entries that are marked as hidden
+-- @treturn table Table of all options
+-- @usage PrintTable(ix.option.GetAllByCategories())
+-- > general:
+-- > 	1:
+-- >		key = language
+-- >		bHidden = false
+-- >		bNetworked = true
+-- >		default = english
+-- >		type = 512
+-- -- etc.
+function ix.option.GetAllByCategories(bRemoveHidden)
+	local result = {}
+
+	for k, v in pairs(ix.option.categories) do
+		for k2, _ in pairs(v) do
+			local option = ix.option.stored[k2]
+
+			if (bRemoveHidden and option.bHidden) then
+				continue
+			end
+
+			-- we create the category table here because it could contain all hidden options which makes the table empty
+			result[k] = result[k] or {}
+			result[k][#result[k] + 1] = option
+		end
+	end
+
+	return result
 end
 
 if (CLIENT) then

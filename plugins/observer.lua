@@ -3,12 +3,16 @@ PLUGIN.name = "Observer"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds on to the no-clip mode to prevent instrusion."
 
-ix.option.Add("observerESP", ix.type.bool, true)
 ix.option.Add("observerTeleportBack", ix.type.bool, true, {
-	bNetworked = true
+	bNetworked = true,
+	category = "observer"
 })
 
 if (CLIENT) then
+	ix.option.Add("observerESP", ix.type.bool, true, {
+		category = "observer"
+	})
+
 	local dimDistance = 1024
 	local aimLength = 128
 	local barHeight = 2
