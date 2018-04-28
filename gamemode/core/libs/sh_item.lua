@@ -144,7 +144,6 @@ function ix.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 
 	if (uniqueID) then
 		ITEM = (isBaseItem and ix.item.base or ix.item.list)[uniqueID] or setmetatable({}, meta)
-			ITEM.description = "noDesc"
 			ITEM.uniqueID = uniqueID
 			ITEM.base = baseID
 			ITEM.isBase = isBaseItem
@@ -238,6 +237,7 @@ function ix.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 				end
 			end
 
+			ITEM.description = ITEM.description or "noDesc"
 			ITEM.width = ITEM.width or 1
 			ITEM.height = ITEM.height or 1
 			ITEM.category = ITEM.category or "misc"
