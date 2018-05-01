@@ -116,10 +116,10 @@ ix.item.LoadFromDir("helix/gamemode/items")
 function GM:Initialize()
 	-- Load all of the Helix plugins.
 	ix.plugin.Initialize()
-	-- Restore the configurations from earlier if applicable.
-	ix.config.Load()
 	-- Restore client options
 	ix.option.Load()
+	-- Restore the configurations from earlier if applicable.
+	ix.config.Load()
 end
 
 -- luacheck: globals IX_RELOADED
