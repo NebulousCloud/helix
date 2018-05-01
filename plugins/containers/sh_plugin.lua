@@ -46,6 +46,8 @@ if (SERVER) then
 			container:Spawn()
 
 			ix.item.NewInv(0, "container" .. data.name, function(inventory)
+				-- we'll technically call this a bag since we don't want other bags to go inside
+				inventory.vars.isBag = true
 				inventory.vars.isContainer = true
 
 				if (IsValid(container)) then
@@ -116,6 +118,7 @@ if (SERVER) then
 					end
 
 					ix.item.RestoreInv(v[3], data2.width, data2.height, function(inventory)
+						inventory.vars.isBag = true
 						inventory.vars.isContainer = true
 
 						if (IsValid(entity)) then
