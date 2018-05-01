@@ -580,10 +580,6 @@ function GM:InitPostEntity()
 		end
 	end
 
-	timer.Simple(0.1, function()
-		hook.Run("LoadData")
-	end)
-
 	timer.Simple(2, function()
 		ix.entityDataLoaded = true
 	end)
