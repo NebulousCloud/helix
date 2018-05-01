@@ -178,6 +178,12 @@ end
 
 function ITEM:OnCanBeTransfered(oldInventory, newInventory)
 	if (newInventory and self:GetData("equip")) then
+		local owner = self:GetOwner()
+
+		if (IsValid(owner)) then
+			owner:NotifyLocalized("equippedWeapon")
+		end
+
 		return false
 	end
 

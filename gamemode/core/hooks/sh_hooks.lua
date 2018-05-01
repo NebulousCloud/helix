@@ -422,8 +422,16 @@ function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 	if (itemObject and itemObject.isBag) then
 		if (inventory.id != 0 and curInv.id != inventory.id) then
 			if (inventory.vars and inventory.vars.isBag) then
+				local owner = itemObject:GetOwner()
+
+				if (IsValid(owner)) then
+					owner:NotifyLocalized("nestedBags")
+				end
+
 				return false
 			end
+		elseif (inventory.id != 0 and curInv.id == inventory.id) then
+			return
 		end
 
 		inventory = ix.item.inventories[itemObject:GetData("id")]
@@ -434,9 +442,7 @@ function GM:CanItemBeTransfered(itemObject, curInv, inventory)
 					local owner = itemObject:GetOwner()
 
 					if (owner and IsValid(owner)) then
-						if (SERVER) then
-							owner:NotifyLocalized("equippedBag")
-						end
+						owner:NotifyLocalized("equippedBag")
 					end
 
 					return false
