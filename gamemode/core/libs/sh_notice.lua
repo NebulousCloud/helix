@@ -93,6 +93,23 @@ else
 		ix.util.Notify(L(message, ...))
 	end
 
+	-- shortcut notify functions
+	do
+		local playerMeta = FindMetaTable("Player")
+
+		function playerMeta:Notify(message)
+			if (self == LocalPlayer()) then
+				ix.util.Notify(message)
+			end
+		end
+
+		function playerMeta:NotifyLocalized(message, ...)
+			if (self == LocalPlayer()) then
+				ix.util.NotifyLocalized(message, ...)
+			end
+		end
+	end
+
 	-- Receives a notification from the server.
 	netstream.Hook("notify", ix.util.Notify)
 
