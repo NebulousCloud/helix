@@ -257,11 +257,6 @@ function ix.plugin.Initialize()
 
 	ix.plugin.LoadFromDir(engine.ActiveGamemode().."/plugins")
 	hook.Run("InitializedPlugins")
-
-	if (SERVER) then
-		hook.Run("LoadData")
-		hook.Run("PostLoadData")
-	end
 end
 
 function ix.plugin.Get(identifier)
