@@ -93,7 +93,7 @@ function ix.config.Load()
 
 	ix.util.Include("helix/gamemode/config/sh_config.lua")
 
-	if (SERVER) then
+	if (SERVER or !IX_RELOADED) then
 		hook.Run("InitializedConfig")
 	end
 end
