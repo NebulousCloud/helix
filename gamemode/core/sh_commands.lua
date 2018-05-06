@@ -587,7 +587,7 @@ ix.command.Add("PlyTransfer", {
 	OnRun = function(self, client, target, name)
 		local faction = ix.faction.teams[name]
 
-		if (!name) then
+		if (!faction) then
 			for _, v in pairs(ix.faction.indices) do
 				if (ix.util.StringMatches(L(v.name, client), name)) then
 					faction = v
