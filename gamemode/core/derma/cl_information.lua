@@ -151,7 +151,9 @@ function PANEL:Init()
 				self.description:SetMouseInputEnabled(true)
 				self.description:SetCursor("hand")
 				self.description.DoClick = function(this)
-					RunConsoleCommand("ix", "CharDesc")
+					Derma_StringRequest(L"description", L"cmdCharDesc", self.description:GetText(),
+						function(desc) RunConsoleCommand("ix", "CharDesc", desc) end,
+						nil, L"save", L"close")
 				end
 			end
 
