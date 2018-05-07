@@ -8,6 +8,7 @@ ENT.Category = "Helix"
 ENT.Spawnable = false
 ENT.ShowPlayerInteraction = true
 ENT.RenderGroup = RENDERGROUP_BOTH
+ENT.bNoPersist = true
 
 if (SERVER) then
 	function ENT:Initialize()

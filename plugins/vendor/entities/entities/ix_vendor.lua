@@ -5,6 +5,7 @@ ENT.Category = "Helix"
 ENT.Spawnable = true
 ENT.AdminOnly = true
 ENT.isVendor = true
+ENT.bNoPersist = true
 
 function ENT:Initialize()
 	if (SERVER) then

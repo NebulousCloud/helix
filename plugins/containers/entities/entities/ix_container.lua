@@ -5,6 +5,7 @@ ENT.Type = "anim"
 ENT.PrintName = "Container"
 ENT.Category = "Helix"
 ENT.Spawnable = false
+ENT.bNoPersist = true
 
 if (SERVER) then
 	function ENT:Initialize()

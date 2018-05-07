@@ -12,7 +12,7 @@ properties.Add("persist", {
 	MenuIcon = "icon16/link.png",
 
 	Filter = function(self, entity, client)
-		if (entity:IsPlayer()) then return false end
+		if (entity:IsPlayer() or entity.bNoPersist) then return false end
 		if (GetConVarString("sbox_persist") == "0") then return false end
 		if (!gamemode.Call("CanProperty", client, "persist", entity)) then return false end
 

@@ -5,6 +5,7 @@ ENT.PrintName = "Money"
 ENT.Category = "Helix"
 ENT.Spawnable = false
 ENT.ShowPlayerInteraction = true
+ENT.bNoPersist = true
 
 if (SERVER) then
 	function ENT:Initialize()

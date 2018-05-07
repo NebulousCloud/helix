@@ -26,12 +26,6 @@ ix.config.Add("containerOpenTime", 0.7, "How long it takes to open a container."
 	category = "Containers"
 })
 
-function PLUGIN:CanProperty(client, property, entity)
-	if (entity:GetClass() == "ix_container" and property == "persist") then
-		return false
-	end
-end
-
 if (SERVER) then
 	function PLUGIN:PlayerSpawnedProp(client, model, entity)
 		local data = self.definitions[model:lower()]
