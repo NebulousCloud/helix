@@ -37,7 +37,7 @@ if (SERVER) then
 
 	function ix.log.Parse(client, logType, ...)
 		local info = ix.log.types[logType]
-		local text = info.format
+		local text = info and info.format
 
 		if (text) then
 			if (isfunction(text)) then
