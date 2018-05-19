@@ -313,8 +313,6 @@ function GM:CanPlayerUseChar(client, char)
 
 	if (banned) then
 		if (type(banned) == "number" and banned < os.time()) then
-			return
-		elseif (type(banned) == "number") then
 			return false, L("charBanned", os.date("%H:%M:%S - %d/%m/%Y", banned))
 		end
 

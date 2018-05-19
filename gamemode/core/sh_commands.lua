@@ -289,7 +289,7 @@ ix.command.Add("CharBan", {
 	OnRun = function(self, client, target, time)
 		ix.util.NotifyLocalized("charBan", nil, client:GetName(), target:GetName())
 
-		target:Ban(time or TRUE)
+		target:Ban(time or true)
 		target:Kick()
 	end
 })
