@@ -303,7 +303,7 @@ end
 function GM:GetDefaultCharName(client, faction)
 	local info = ix.faction.indices[faction]
 
-	if (info and info.GetDefaultName) then	
+	if (info and info.GetDefaultName) then
 		return info:GetDefaultName(client)
 	end
 end
@@ -317,7 +317,7 @@ function GM:CanPlayerUseChar(client, char)
 		elseif (type(banned) == "number") then
 			return false, L("charBanned", os.date("%H:%M:%S - %d/%m/%Y", banned))
 		end
-	
+
 		return false, L("charBanned", "Never")
 	end
 end
