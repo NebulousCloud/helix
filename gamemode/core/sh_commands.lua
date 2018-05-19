@@ -281,12 +281,15 @@ ix.command.Add("CharKick", {
 
 ix.command.Add("CharBan", {
 	description = "@cmdCharBan",
-	arguments = ix.type.character,
+	arguments = {
+		ix.type.character,
+		bit.bor(ix.type.number, ix.type.optional)
+	},
 	adminOnly = true,
-	OnRun = function(self, client, target)
+	OnRun = function(self, client, target, time)
 		ix.util.NotifyLocalized("charBan", nil, client:GetName(), target:GetName())
 
-		target:SetData("banned", true)
+		target:Ban(time or TRUE)
 		target:Kick()
 	end
 })

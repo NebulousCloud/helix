@@ -157,7 +157,7 @@ if (SERVER) then
 
 		if (time) then
 			-- If time is provided, adjust it so it becomes the un-ban time.
-			time = os.time() + math.max(math.ceil(time), 60)
+			time = os.time() + math.ceil(time)
 		end
 
 		-- Mark the character as banned and kick the character back to menu.
