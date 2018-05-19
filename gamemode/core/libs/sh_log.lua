@@ -47,7 +47,7 @@ if (SERVER) then
 			text = -1
 		end
 
-		return text, info.flag
+		return text, info and info.flag
 	end
 
 	function ix.log.AddRaw(logString, bNoSave)
