@@ -18,8 +18,6 @@ ix.config.Add("maxChars", 5, "The maximum number of characters a player can have
 })
 ix.config.Add("color", Color(75, 119, 190), "The main color theme for the framework.", nil, {category = "appearance"})
 ix.config.Add("font", "Impact", "The font used to display titles.", function(oldValue, newValue)
-	newValue.a = 255
-
 	if (CLIENT) then
 		hook.Run("LoadFonts", newValue, ix.config.Get("genericFont"))
 	end
