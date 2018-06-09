@@ -37,7 +37,7 @@ function PANEL:SetItem(itemTable)
 	self.icon:DockMargin(5, 5, 5, 10)
 	self.icon:InvalidateLayout(true)
 	self.icon:SetModel(itemTable.model, itemTable.skin or 0)
-	self.icon:SetToolTip(
+	self.icon:SetTooltip(
 		Format(ix.config.itemFormat,
 		itemTable.GetName and itemTable:GetName() or L(itemTable.name), itemTable:GetDescription() or "")
 	)
@@ -408,7 +408,7 @@ function PANEL:SetCart(items)
 			slot.icon:SetPos(2, 2)
 			slot.icon:SetSize(32, 32)
 			slot.icon:SetModel(itemTable.model)
-			slot.icon:SetToolTip("")
+			slot.icon:SetTooltip("")
 
 			slot.name = slot:Add("DLabel")
 			slot.name:SetPos(40, 2)

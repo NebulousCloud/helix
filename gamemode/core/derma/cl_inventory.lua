@@ -281,9 +281,9 @@ function PANEL:SetInventory(inventory)
 						local newTooltip = hook.Run("OverrideItemTooltip", self, data, item)
 
 						if (newTooltip) then
-							icon:SetToolTip(newTooltip)
+							icon:SetTooltip(newTooltip)
 						else
-							icon:SetToolTip(
+							icon:SetTooltip(
 								Format(ix.config.itemFormat,
 								item.GetName and item:GetName() or L(item.name), item:GetDescription() or "")
 							)

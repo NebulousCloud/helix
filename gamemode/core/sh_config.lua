@@ -260,7 +260,7 @@ if (CLIENT) then
 						local row = properties:CreateRow(category, k)
 						row:Setup(form, v.data and v.data.data or {})
 						row:SetValue(value)
-						row:SetToolTip(v.description)
+						row:SetTooltip(v.description)
 						row.DataChanged = function(this, newValue)
 							timer.Create("ixCfgSend"..k, delay, 1, function()
 								if (IsValid(row)) then

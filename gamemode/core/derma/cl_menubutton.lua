@@ -15,7 +15,7 @@ local PANEL = {}
 		BaseClass.SetText(self, noTranslation and text:upper() or L(text):upper())
 
 		if (!noTranslation) then
-			self:SetToolTip(L(text.."Tip"))
+			self:SetTooltip(L(text.."Tip"))
 		end
 
 		local w, h = surface.GetTextSize(self:GetText())
