@@ -2,14 +2,14 @@
 ix.config = ix.config or {}
 ix.config.stored = ix.config.stored or {}
 
-function ix.config.Add(key, value, desc, callback, data, bNoNetworking, schemaOnly)
+function ix.config.Add(key, value, description, callback, data, bNoNetworking, schemaOnly)
 	local oldConfig = ix.config.stored[key]
 
 	ix.config.stored[key] = {
 		data = data,
 		value = oldConfig and oldConfig.value or value,
 		default = value,
-		desc = desc,
+		description = description,
 		bNoNetworking = bNoNetworking,
 		global = !schemaOnly,
 		callback = callback
