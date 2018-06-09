@@ -124,14 +124,16 @@ function GM:LoadFonts(font, genericFont)
 		font = font,
 		size = math.max(ScreenScale(7), 17),
 		extended = true,
-		weight = 200
+		weight = 600,
+		antialias = true
 	})
 
 	surface.CreateFont("ixChatFontItalics", {
 		font = font,
 		size = math.max(ScreenScale(7), 17),
 		extended = true,
-		weight = 200,
+		weight = 600,
+		antialias = true,
 		italic = true
 	})
 
