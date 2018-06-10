@@ -504,8 +504,8 @@ function PANEL:Init()
 	CreateMainButtons()
 end
 
-function PANEL:Think()
-	if (input.IsKeyDown(KEY_F1) and LocalPlayer():GetChar() and !self.choosing) then
+function PANEL:OnKeyCodePressed(key)
+	if (key == KEY_TAB and LocalPlayer():GetChar() and !self.choosing) then
 		self:Remove()
 	end
 end
