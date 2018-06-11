@@ -40,12 +40,13 @@ if (CLIENT) then
 		end
 
 		local wep = client:GetActiveWeapon()
+		local bShouldDraw = hook.Run("ShouldDrawCrosshair")
 
-		if (wep and wep:IsValid() and (wep.HUDPaint or wep.DrawCrosshair == false)) then
+		if (bShouldDraw != true and wep and wep:IsValid() and (wep.HUDPaint or wep.DrawCrosshair == false)) then
 			return
 		end
 
-		if (hook.Run("ShouldDrawCrosshair") == false or g_ContextMenu:IsVisible() or ix.gui.char:IsVisible()) then
+		if (bShouldDraw == false or g_ContextMenu:IsVisible() or ix.gui.char:IsVisible()) then
 			return
 		end
 
