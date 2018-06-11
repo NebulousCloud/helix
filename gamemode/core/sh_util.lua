@@ -60,6 +60,39 @@ function ix.util.StripRealmPrefix(name)
 	return (prefix == "sh_" or prefix == "sv_" or prefix == "cl_") and name:sub(4) or name
 end
 
+--- Sanitizes an input value with the given type. This function ensures that a valid type is always returned. If a valid value
+-- could not be found, it will return the default value for the type. This only works for simple types - e.g it does not work
+-- for player, character, or Steam ID types.
+-- @shared
+-- @ixtype type Type to check for
+-- @param input Value to sanitize
+-- @return Sanitized value
+-- @see ix.type
+-- @usage print(ix.util.SanitizeType(ix.type.number, "123"))
+-- > 123
+-- print(ix.util.SanitizeType(ix.type.bool, 1))
+-- > true
+function ix.util.SanitizeType(type, input)
+	if (type == ix.type.string) then
+		return tostring(input)
+	elseif (type == ix.type.text) then
+		return tostring(input)
+	elseif (type == ix.type.number) then
+		return tonumber(input or 0) or 0
+	elseif (type == ix.type.bool) then
+		return tobool(input)
+	elseif (type == ix.type.color) then
+		-- avoid creating another color table if possible
+		return (istable(input) and isnumber(input.a) and isnumber(input.g) and isnumber(input.b)) and input or
+			(istable(input) and Color(tonumber(input.a) or 255, tonumber(input.g) or 255, tonumber(input.b) or 255, tonumber(input.a) or 255) or
+			color_white)
+	elseif (type == ix.type.vector) then
+		return isvector(input) and input or vector_origin
+	else
+		error("attempted to sanitize " .. (ix.type[type] and ("invalid type " .. ix.type[type]) or "unknown type " .. type))
+	end
+end
+
 -- Returns the address:port of the server.
 function ix.util.GetAddress()
 	local address = tonumber(GetConVarString("hostip"))

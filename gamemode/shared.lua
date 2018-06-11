@@ -23,6 +23,8 @@
 -- @field steamid A string that matches the Steam ID format of `STEAM_X:X:XXXXXXXX`.
 -- @field character Any player's character that matches the given query string in `ix.util.FindPlayer`.
 -- @field bool A string representation of a bool - `false` and `0` will return `false`, anything else will return `true`.
+-- @field color A color represented by its red/green/blue/alpha values.
+-- @field vector A 3D vector represented by its x/y/z values.
 -- @field optional This is a special type that can be bitwise OR'd with any other type to make it optional. Currently only
 -- supported in `ix.command.Add`.
 -- @field array This is a special type that can be bitwise OR'd with any other type to make it an array of that type. Currently
@@ -37,6 +39,8 @@ ix.type = ix.type or {
 	[32] = "steamid",
 	[64] = "character",
 	[128] = "bool",
+	[1024] = "color",
+	[2048] = "vector",
 
 	string = 2,
 	text = 4,
@@ -45,6 +49,8 @@ ix.type = ix.type or {
 	steamid = 32,
 	character = 64,
 	bool = 128,
+	color = 1024,
+	vector = 2048,
 
 	optional = 256,
 	array = 512
