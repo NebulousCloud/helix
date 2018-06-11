@@ -122,7 +122,7 @@ function PANEL:AddPlayer(client, parent)
 
 		RegisterDermaMenuForClose(menu)
 	end
-	slot.model:SetToolTip(L("sbOptions", client:SteamName()))
+	slot.model:SetTooltip(L("sbOptions", client:SteamName()))
 
 	timer.Simple(0, function()
 		if (!IsValid(slot)) then
@@ -225,7 +225,7 @@ function PANEL:AddPlayer(client, parent)
 
 		if (panel.lastModel != model or panel.lastSkin != skin) then
 			panel.model:SetModel(client:GetModel(), client:GetSkin())
-			panel.model:SetToolTip(L("sbOptions", client:SteamName()))
+			panel.model:SetTooltip(L("sbOptions", client:SteamName()))
 
 			panel.lastModel = model
 			panel.lastSkin = skin

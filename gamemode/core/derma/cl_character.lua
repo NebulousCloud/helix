@@ -77,7 +77,7 @@ function PANEL:Init()
 			</body>
 		</html>
 	]], ix.config.Get("logo", "https://static.miraheze.org/nutscriptwiki/2/26/Nutscript.png")))
-	self.icon:SetToolTip(ix.config.Get("logoURL", "https://nutscript.net"))
+	self.icon:SetTooltip(ix.config.Get("logoURL", "https://nutscript.net"))
 
 	self.icon.click = self.icon:Add("DButton")
 	self.icon.click:Dock(FILL)

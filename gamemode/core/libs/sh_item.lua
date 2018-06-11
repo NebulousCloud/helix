@@ -463,7 +463,7 @@ do
 					local icon = panel.panels[id]
 
 					if (icon) then
-						icon:SetToolTip(
+						icon:SetTooltip(
 							Format(ix.config.itemFormat,
 							item.GetName and item:GetName() or L(item.name), item:GetDescription() or "")
 						)
@@ -501,7 +501,7 @@ do
 						local icon = panel:AddIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
 
 						if (IsValid(icon)) then
-							icon:SetToolTip(
+							icon:SetTooltip(
 								Format(ix.config.itemFormat,
 								item.GetName and item:GetName() or L(item.name), item:GetDescription() or "")
 							)
