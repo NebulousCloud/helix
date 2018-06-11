@@ -448,7 +448,7 @@ function PANEL:Init()
 
 	-- luacheck: globals chat
 	chat.GetChatBoxPos = function()
-		return self:LocalToScreen(0, 0)
+		return self:GetPos()
 	end
 
 	chat.GetChatBoxSize = function()

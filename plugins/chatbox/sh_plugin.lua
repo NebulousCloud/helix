@@ -25,6 +25,7 @@ if (CLIENT) then
 		end
 
 		self.panel = vgui.Create("ixChatBox")
+		hook.Run("OnChatboxCreated")
 	end
 
 	function PLUGIN:InitPostEntity()
