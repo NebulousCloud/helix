@@ -218,7 +218,7 @@ ix.command.Add("CharSetName", {
 	adminOnly = true,
 	arguments = {
 		ix.type.character,
-		ix.type.text
+		bit.bor(ix.type.text, ix.type.optional)
 	},
 	OnRun = function(self, client, target, newName)
 		-- display string request if no name was specified
@@ -557,7 +557,7 @@ ix.command.Add("BecomeClass", {
 
 ix.command.Add("CharDesc", {
 	description = "@cmdCharDesc",
-	arguments = ix.type.text,
+	arguments = bit.bor(ix.type.text, ix.type.optional),
 	OnRun = function(self, client, description)
 		if (!description:find("%S")) then
 			return client:RequestString("@chgDesc", "@chgDescDesc", function(text)
