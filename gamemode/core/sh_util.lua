@@ -83,9 +83,11 @@ function ix.util.SanitizeType(type, input)
 		return tobool(input)
 	elseif (type == ix.type.color) then
 		-- avoid creating another color table if possible
-		return (istable(input) and isnumber(input.a) and isnumber(input.g) and isnumber(input.b)) and input or
-			(istable(input) and Color(tonumber(input.a) or 255, tonumber(input.g) or 255, tonumber(input.b) or 255, tonumber(input.a) or 255) or
-			color_white)
+		return (istable(input) and isnumber(input.a) and isnumber(input.g) and isnumber(input.b)) and input or (
+			istable(input) and
+			Color(tonumber(input.a) or 255, tonumber(input.g) or 255, tonumber(input.b) or 255, tonumber(input.a) or 255) or
+			color_white
+		)
 	elseif (type == ix.type.vector) then
 		return isvector(input) and input or vector_origin
 	else
