@@ -74,11 +74,11 @@ function ix.bar.Draw(x, y, w, h, value, color, text)
 		local textWidth, textHeight = surface.GetTextSize(text)
 
 		surface.SetTextColor(SHADOW_COLOR)
-		surface.SetTextPos(math.max(6, x + 2 - textWidth * 0.5), y + 2 - textHeight * 0.5)
+		surface.SetTextPos(math.max(6, x + 2 - textWidth * 0.5), y + 4 - textHeight * 0.5)
 		surface.DrawText(text)
 
 		surface.SetTextColor(TEXT_COLOR)
-		surface.SetTextPos(math.max(4, x - textWidth * 0.5), y - textHeight * 0.5)
+		surface.SetTextPos(math.max(4, x - textWidth * 0.5), y + 2 - textHeight * 0.5)
 		surface.DrawText(text)
 	end
 end
@@ -141,6 +141,11 @@ function ix.bar.DrawAll()
 
 		if (bar) then
 			local realValue, barText = bar.getValue()
+
+			if (realValue == false) then
+				continue
+			end
+
 			local value = Approach(deltas[i] or 0, realValue, updateValue)
 
 			deltas[i] = value
