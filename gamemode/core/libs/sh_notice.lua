@@ -22,6 +22,14 @@ if (SERVER) then
 		function playerMeta:NotifyLocalized(message, ...)
 			ix.util.NotifyLocalized(message, self, ...)
 		end
+
+		function playerMeta:ChatNotify(message)
+			ix.chat.Send(nil, "notice", message, false, {self})
+		end
+
+		function playerMeta:ChatNotifyLocalized(message, ...)
+			ix.chat.Send(nil, "notice", L(message, self, ...), false, {self})
+		end
 	end
 else
 	-- List of notice panels.
@@ -106,6 +114,18 @@ else
 		function playerMeta:NotifyLocalized(message, ...)
 			if (self == LocalPlayer()) then
 				ix.util.NotifyLocalized(message, ...)
+			end
+		end
+
+		function playerMeta:ChatNotify(message)
+			if (self == LocalPlayer()) then
+				ix.chat.Send(LocalPlayer(), "notice", message)
+			end
+		end
+
+		function playerMeta:ChatNotifyLocalized(message, ...)
+			if (self == LocalPlayer()) then
+				ix.chat.Send(LocalPlayer(), "notice", L(message, ...))
 			end
 		end
 	end
