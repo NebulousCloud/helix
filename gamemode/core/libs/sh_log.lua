@@ -37,6 +37,12 @@ if (SERVER) then
 
 	function ix.log.Parse(client, logType, ...)
 		local info = ix.log.types[logType]
+
+		if (!info) then
+			ErrorNoHalt("attempted to add entry to non-existent log type \"" .. tostring(logType) .. "\"")
+			return
+		end
+
 		local text = info and info.format
 
 		if (text) then
