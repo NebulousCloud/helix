@@ -43,15 +43,15 @@ function ITEM:RemoveOutfit(client)
 
 	self:SetData("equip", false)
 
-	if (character:GetData("oldMdl")) then
-		character:SetModel(character:GetData("oldMdl"))
-		character:SetData("oldMdl", nil)
+	if (character:GetData("oldModel" .. self.outfitCategory)) then
+		character:SetModel(character:GetData("oldModel" .. self.outfitCategory))
+		character:SetData("oldModel" .. self.outfitCategory, nil)
 	end
 
 	if (self.newSkin) then
-		if (character:GetData("oldSkin")) then
-			client:SetSkin(character:GetData("oldSkin"))
-			character:SetData("oldSkin", nil)
+		if (character:GetData("oldSkin" .. self.outfitCategory)) then
+			client:SetSkin(character:GetData("oldSkin" .. self.outfitCategory))
+			character:SetData("oldSkin" .. self.outfitCategory, nil)
 		else
 			client:SetSkin(0)
 		end
@@ -63,11 +63,11 @@ function ITEM:RemoveOutfit(client)
 		if (index > -1) then
 			client:SetBodygroup(index, 0)
 
-			local groups = character:GetData("groups", {})
+			local groups = character:GetData("groups" .. self.outfitCategory, {})
 
 			if (groups[index]) then
 				groups[index] = nil
-				character:SetData("groups", groups)
+				character:SetData("groups" .. self.outfitCategory, groups)
 			end
 		end
 	end
@@ -78,7 +78,32 @@ function ITEM:RemoveOutfit(client)
 		end
 	end
 
+	for k, _ in pairs(self:GetData("outfitAttachments", {})) do
+		self:RemoveAttachment(k, client)
+	end
+
 	self:OnUnequipped()
+end
+
+-- makes another outfit depend on this outfit in terms of requiring this item to be equipped in order to equip the attachment
+-- also unequips the attachment if this item is dropped
+function ITEM:AddAttachment(id)
+	local attachments = self:GetData("outfitAttachments", {})
+	attachments[id] = true
+
+	self:SetData("outfitAttachments", attachments)
+end
+
+function ITEM:RemoveAttachment(id, client)
+	local item = ix.item.instances[id]
+	local attachments = self:GetData("outfitAttachments", {})
+
+	if (item and attachments[id]) then
+		item:OnDetached(client)
+	end
+
+	attachments[id] = nil
+	self:SetData("outfitAttachments", attachments)
 end
 
 ITEM:Hook("drop", function(item)
@@ -123,10 +148,10 @@ ITEM.functions.Equip = {
 		item:SetData("equip", true)
 
 		if (type(item.OnGetReplacement) == "function") then
-			char:SetData("oldMdl", char:GetData("oldMdl", item.player:GetModel()))
+			char:SetData("oldModel" .. item.outfitCategory, char:GetData("oldModel" .. item.outfitCategory, item.player:GetModel()))
 			char:SetModel(item:OnGetReplacement())
 		elseif (item.replacement or item.replacements) then
-			char:SetData("oldMdl", char:GetData("oldMdl", item.player:GetModel()))
+			char:SetData("oldModel" .. item.outfitCategory, char:GetData("oldModel" .. item.outfitCategory, item.player:GetModel()))
 
 			if (type(item.replacements) == "table") then
 				if (#item.replacements == 2 and type(item.replacements[1]) == "string") then
@@ -142,7 +167,7 @@ ITEM.functions.Equip = {
 		end
 
 		if (item.newSkin) then
-			char:SetData("oldSkin", item.player:GetSkin())
+			char:SetData("oldSkin" .. item.outfitCategory, item.player:GetSkin())
 			item.player:SetSkin(item.newSkin)
 		end
 
@@ -179,7 +204,7 @@ ITEM.functions.Equip = {
 		return false
 	end,
 	OnCanRun = function(item)
-		return (!IsValid(item.entity) and item:GetData("equip") != true)
+		return !IsValid(item.entity) and item:GetData("equip") != true and item:CanEquipOutfit()
 	end
 }
 
@@ -195,4 +220,8 @@ function ITEM:OnEquipped()
 end
 
 function ITEM:OnUnequipped()
+end
+
+function ITEM:CanEquipOutfit()
+	return true
 end
