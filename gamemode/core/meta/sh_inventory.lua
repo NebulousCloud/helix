@@ -357,6 +357,28 @@ function META:HasItem(targetID, data)
 	return false
 end
 
+function META:HasItemOfBase(baseID, data)
+	local items = self:GetItems()
+
+	for _, v in pairs(items) do
+		if (v.base == baseID) then
+			if (data) then
+				local itemData = v.data
+
+				for dataKey, dataVal in pairs(data) do
+					if (itemData[dataKey] != dataVal) then
+						return false
+					end
+				end
+			end
+
+			return v
+		end
+	end
+
+	return false
+end
+
 if (SERVER) then
 	function META:SendSlot(x, y, item, receiver)
 		receiver = receiver or self:GetReceiver()
