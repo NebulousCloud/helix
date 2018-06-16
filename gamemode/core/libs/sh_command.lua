@@ -497,7 +497,7 @@ if (SERVER) then
 
 		-- check for group access
 		if (command.OnCheckAccess) then
-			feedback = !command:OnCheckAccess(client) and "@noPerm" or nil
+			feedback = !command:OnCheckAccess(client) and "noPerm" or nil
 		end
 
 		-- check for strict arguments
