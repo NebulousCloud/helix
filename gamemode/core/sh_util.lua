@@ -203,6 +203,20 @@ function ix.util.FormatStringNamed(format, ...)
 	return result
 end
 
+--- Returns a string that is the given input with spaces in between each CamelCase word. This function will ignore any words
+-- that do not begin with a capital letter.
+-- @string input String to expand
+-- @bool[opt=false] bNoUpperFirst Whether or not to avoid capitalizing the first character. This is useful for lowerCamelCase
+-- @treturn string Expanded CamelCase string
+-- @usage print(ix.util.ExpandCamelCase("HelloWorld"))
+-- > Hello World
+function ix.util.ExpandCamelCase(input, bNoUpperFirst)
+	input = bNoUpperFirst and input or input:sub(1, 1):upper() .. input:sub(2)
+
+	-- extra parentheses to select first return value of gsub
+	return string.TrimRight((input:gsub("%u%l+", "%1 ")))
+end
+
 function ix.util.GridVector(vec, gridSize)
 	if (gridSize <= 0) then
 		gridSize = 1

@@ -257,7 +257,7 @@ if (CLIENT) then
 						end
 
 						-- Add a new row for the config to the properties.
-						local row = properties:CreateRow(category, k)
+						local row = properties:CreateRow(category, ix.util.ExpandCamelCase(k))
 						row:Setup(form, v.data and v.data.data or {})
 						row:SetValue(value)
 						row:SetTooltip(v.description)
