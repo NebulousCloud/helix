@@ -205,6 +205,7 @@ end
 
 --- Returns a string that is the given input with spaces in between each CamelCase word. This function will ignore any words
 -- that do not begin with a capital letter.
+-- @shared
 -- @string input String to expand
 -- @bool[opt=false] bNoUpperFirst Whether or not to avoid capitalizing the first character. This is useful for lowerCamelCase
 -- @treturn string Expanded CamelCase string
