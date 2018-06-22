@@ -232,6 +232,37 @@ function ix.util.GridVector(vec, gridSize)
 	return vec
 end
 
+do
+	local i
+	local value
+	local character
+
+	local function iterator(table)
+		repeat
+			i = i + 1
+			value = table[i]
+			character = value and value:GetCharacter()
+		until character or value == nil
+
+		return value, character
+	end
+
+	--- Returns an iterator for characters. The resulting key/values will be a player and their corresponding characters. This
+	-- iterator skips over any players that do not have a valid character loaded.
+	-- @shared
+	-- @treturn Iterator
+	-- @usage for client, character in ix.util.GetCharacters() do
+	-- 		print(client, character)
+	-- end
+	-- > Player [1][Bot01]    character[1]
+	-- > Player [2][Bot02]    character[2]
+	-- -- etc.
+	function ix.util.GetCharacters()
+		i = 0
+		return iterator, player.GetAll()
+	end
+end
+
 function ix.util.GetAllChar()
 	local charTable = {}
 
