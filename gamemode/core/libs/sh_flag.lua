@@ -17,7 +17,7 @@ if (SERVER) then
 
 			for i = 1, #flags do
 				-- Get each individual flag.
-				local flag = flags:sub(i, i)
+				local flag = flags[i]
 				local info = ix.flag.list[flag]
 
 				-- Check if the flag has a callback.
@@ -47,7 +47,7 @@ do
 
 			-- Get the individual flags within the flag string.
 			for i = 1, #flags do
-				local flag = flags:sub(i, i)
+				local flag = flags[i]
 				local info = ix.flag.list[flag]
 
 				if (info) then
@@ -75,7 +75,7 @@ do
 
 			-- Get the individual flags within the flag string.
 			for i = 1, #flags do
-				local flag = flags:sub(i, i)
+				local flag = flags[i]
 				local info = ix.flag.list[flag]
 
 				-- Call the callback if the flag has been registered.
@@ -109,7 +109,7 @@ do
 		local flagList = self:GetFlags()
 
 		for i = 1, #flags do
-			if (flagList:find(flags:sub(i, i), 1, true)) then
+			if (flagList:find(flags[i], 1, true)) then
 				return true
 			end
 		end
