@@ -198,6 +198,7 @@ populate = <span class="keyword">function</span>()
     </ul>
     </ul>
     </ul>
+    </ul>
 
     <h3>Parameters:</h3>
     <ul>
@@ -226,11 +227,16 @@ populate = <span class="keyword">function</span>()
     <dt>
     <a name = "ix.option.Load"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.option.Load()</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L111">View source &raquo;</a>
+    <div class="warning-internal">
+        <h2>This is an internal function</h2>
+        <p>You are able to use this function, but you risk unintended side effects if used incorrectly.</p>
+    </div>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L112">View source &raquo;</a>
     </dt>
     <dd>
-    Loads all saved options from disk.  This is an internal function and shouldn't be used!
+    Loads all saved options from disk.
 
+    </ul>
     </ul>
     </ul>
     </ul>
@@ -244,11 +250,12 @@ populate = <span class="keyword">function</span>()
     <dt>
     <a name = "ix.option.GetAll"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.option.GetAll()</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L137">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L138">View source &raquo;</a>
     </dt>
     <dd>
     Returns all of the available options.  Note that this does contain the actual values of the options, just their properties.
 
+    </ul>
     </ul>
     </ul>
     </ul>
@@ -278,12 +285,13 @@ populate = <span class="keyword">function</span>()
     <dt>
     <a name = "ix.option.GetAllByCategories"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.option.GetAllByCategories([bRemoveHidden=false])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L156">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L157">View source &raquo;</a>
     </dt>
     <dd>
     Returns all of the available options grouped by their categories.  The returned table contains category tables, that contain
  all the options in that category as an array (this is so you can sort them if you'd like).
 
+    </ul>
     </ul>
     </ul>
     </ul>
@@ -323,12 +331,13 @@ populate = <span class="keyword">function</span>()
     <dt>
     <a name = "ix.option.Set"></a>
     <pre><span class="realm client" title="Client"></span> ix.option.Set(key, value[, bNoSave=false])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L185">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L186">View source &raquo;</a>
     </dt>
     <dd>
     Sets an option value for the local player.
  This function will error when an invalid key is passed.
 
+    </ul>
     </ul>
     </ul>
     </ul>
@@ -357,11 +366,12 @@ populate = <span class="keyword">function</span>()
     <dt>
     <a name = "ix.option.Get"></a>
     <pre><span class="realm client" title="Client"></span> ix.option.Get(key, default)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L204">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L205">View source &raquo;</a>
     </dt>
     <dd>
     Retrieves an option value for the local player.  If it is not set, it'll return the default that you've specified.
 
+    </ul>
     </ul>
     </ul>
     </ul>
@@ -390,11 +400,16 @@ populate = <span class="keyword">function</span>()
     <dt>
     <a name = "ix.option.Save"></a>
     <pre><span class="realm client" title="Client"></span> ix.option.Save()</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L222">View source &raquo;</a>
+    <div class="warning-internal">
+        <h2>This is an internal function</h2>
+        <p>You are able to use this function, but you risk unintended side effects if used incorrectly.</p>
+    </div>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L224">View source &raquo;</a>
     </dt>
     <dd>
-    Saves all options to disk.  This is an internal function and shouldn't be used!
+    Saves all options to disk.
 
+    </ul>
     </ul>
     </ul>
     </ul>
@@ -408,11 +423,12 @@ populate = <span class="keyword">function</span>()
     <dt>
     <a name = "ix.option.Sync"></a>
     <pre><span class="realm client" title="Client"></span> ix.option.Sync()</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L228">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L230">View source &raquo;</a>
     </dt>
     <dd>
     Syncs all networked options to the server.
 
+    </ul>
     </ul>
     </ul>
     </ul>
@@ -426,12 +442,13 @@ populate = <span class="keyword">function</span>()
     <dt>
     <a name = "ix.option.Get"></a>
     <pre><span class="realm server" title="Server"></span> ix.option.Get(client, key, default)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L249">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/core/libs/sh_option.lua#L251">View source &raquo;</a>
     </dt>
     <dd>
     Retrieves an option value from the specified player.  If it is not set, it'll return the default that you've specified.
  This function will error when an invalid player is passed.
 
+    </ul>
     </ul>
     </ul>
     </ul>
@@ -468,7 +485,7 @@ populate = <span class="keyword">function</span>()
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2018-06-30 00:30:25 </i>
+<i style="float:right;">Last updated 2018-06-30 01:18:17 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 
