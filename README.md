@@ -19,7 +19,7 @@ If you have questions that can't be answered through the documentation, we'd rec
 We use [LDoc](https://github.com/stevedonovan/LDoc) to build our documentation. The easiest way to start building is through [LuaRocks](https://luarocks.org/).
 ```
 luarocks install ldoc
-ldoc -c docs/config.ld ./
+ldoc .
 ```
 You may not see the syntax highlighting work on your local copy - you'll need to copy the files in `docs/js` and `docs/css` over into the `docs/html` folder after it's done building.
 
