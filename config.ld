@@ -19,7 +19,8 @@ kind_names = {module = "Libraries"}
 custom_tags = {
 	{"shared", hidden = true},
 	{"client", hidden = true},
-	{"server", hidden = true}
+	{"server", hidden = true},
+	{"internal", hidden = true}
 }
 
 custom_display_name_handler = function(item, default_handler)

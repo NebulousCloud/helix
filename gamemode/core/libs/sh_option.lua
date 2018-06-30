@@ -106,8 +106,9 @@ function ix.option.Add(key, optionType, default, data)
 	}
 end
 
---- Loads all saved options from disk. This is an internal function and shouldn't be used!
+--- Loads all saved options from disk.
 -- @shared
+-- @internal
 function ix.option.Load()
 	ix.util.Include("helix/gamemode/config/sh_options.lua")
 
@@ -217,8 +218,9 @@ if (CLIENT) then
 		return default
 	end
 
-	--- Saves all options to disk. This is an internal function and shouldn't be used!
+	--- Saves all options to disk.
 	-- @client
+	-- @internal
 	function ix.option.Save()
 		ix.data.Set("options", ix.option.client, true, true)
 	end

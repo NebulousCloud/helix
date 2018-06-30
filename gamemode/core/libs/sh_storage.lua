@@ -101,8 +101,9 @@ if (SERVER) then
 		return false
 	end
 
-	--- Creates a storage context on the given inventory. This is an internal function and shouldn't be used!
+	--- Creates a storage context on the given inventory.
 	-- @server
+	-- @internal
 	-- @inventory inventory Inventory to create a storage context for
 	-- @table info Information to store on the context
 	function ix.storage.CreateContext(inventory, info)
@@ -140,8 +141,9 @@ if (SERVER) then
 		end
 	end
 
-	--- Removes a storage context from an inventory if it exists. This is an internal function and shouldn't be used!
+	--- Removes a storage context from an inventory if it exists.
 	-- @server
+	-- @internal
 	-- @inventory inventory Inventory to remove a storage context from
 	function ix.storage.RemoveContext(inventory)
 		-- restore old callbacks
@@ -159,8 +161,8 @@ if (SERVER) then
 	end
 
 	--- Synchronizes an inventory with a storage context to the given client.
-	-- This is an internal function and shouldn't be used!
 	-- @server
+	-- @internal
 	-- @player client Player to sync storage for
 	-- @inventory inventory Inventory to sync storage for
 	function ix.storage.Sync(client, inventory)
@@ -170,8 +172,9 @@ if (SERVER) then
 		netstream.Start(client, "StorageOpen", info.id, info.entity, info.name)
 	end
 
-	--- Adds a receiver to a given inventory with a storage context. This is an internal function and shouldn't be used!
+	--- Adds a receiver to a given inventory with a storage context.
 	-- @server
+	-- @internal
 	-- @player client Player to sync storage for
 	-- @inventory inventory Inventory to sync storage for
 	-- @bool bDontSync Whether or not to skip syncing the storage to the client. If this is `true`, the storage panel will not
@@ -214,8 +217,8 @@ if (SERVER) then
 	end
 
 	--- Removes a storage receiver and removes the context if there are no more receivers.
-	-- This is an internal function and shouldn't be used!
 	-- @server
+	-- @internal
 	-- @player client Player to remove from receivers
 	-- @inventory inventory Inventory with storage context to remove receiver from
 	-- @bool bDontRemove Whether or not to skip removing the storage context if there are no more receivers

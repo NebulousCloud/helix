@@ -172,6 +172,12 @@
     <dt>
     <a name = "$(item.name)"></a>
     <pre>$(display_name(item))</pre>
+#   if (item.tags.internal) then
+    <div class="warning-internal">
+        <h2>This is an internal function</h2>
+        <p>You are able to use this function, but you risk unintended side effects if used incorrectly.</p>
+    </div>
+#   end
     <a style="float:right;" href="$(repoReference(item))">View source &raquo;</a>
     </dt>
     <dd>

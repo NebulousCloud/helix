@@ -9,7 +9,7 @@ span.realm {
 	width: 14px;
 	height: 14px;
 	border-radius: 3px;
-	display: inline-block;	
+	display: inline-block;
 }
 span.realm.shared {
 	background: linear-gradient(45deg, #f80 0%, #f80 50%, #08f 51%, #08f 100%);
@@ -205,4 +205,17 @@ ul ol { margin-top: 0px; }
 /* make the target distinct; helps when we're navigating to a function */
 a:target + * {
   background-color: #FF9;
+}
+.warning-internal {
+	background-color: rgb(255, 200, 200);
+	border: 1px solid rgb(200, 100, 100);
+	padding: 12px;
+	margin-bottom: 12px;
+}
+.warning-internal h2 {
+	padding: 0;
+	margin: 0;
+	font-weight: 600;
+	font-size: 18px;
+	color: rgb(200, 100, 100);
 }
