@@ -19,7 +19,7 @@ install:
   - cd $TRAVIS_BUILD_DIR
 
 script:
-  - ldoc -c docs/config.ld ./ --fatalwarnings
+  - ldoc . --fatalwarnings
   - luacheck .
 
 before_deploy:
