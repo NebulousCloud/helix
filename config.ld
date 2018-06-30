@@ -1,7 +1,10 @@
 
 local nameFormat = "<span class=\"realm %s\" title=\"%s\"></span> %s"
 
-file = "./"
+file = {
+	"gamemode",
+	exclude = {"gamemode/core/libs/thirdparty"}
+}
 dir = "docs/html"
 project = "Helix"
 title = "Helix Documentation"
@@ -47,3 +50,4 @@ tparam_alias("entity", "entity")
 
 tparam_alias("ixtype", "ix.type")
 tparam_alias("inventory", "inventory")
+tparam_alias("date", "date")
