@@ -195,6 +195,7 @@ if (SERVER) then
 							end)
 						invQuery:Execute()
 
+						character:SetLastJoinTime(math.floor(os.time()))
 						ix.char.loaded[charID] = character
 					else
 						ErrorNoHalt("[Helix] Attempt to load character with invalid ID '" .. tostring(id) .. "'!")
