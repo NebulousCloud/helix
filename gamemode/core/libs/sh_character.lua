@@ -11,14 +11,17 @@ if (SERVER) then
 		local timeStamp = math.floor(os.time())
 
 		data.money = data.money or ix.config.Get("defMoney", 0)
+		data.schema = Schema and Schema.folder or "helix"
+		data.createTime = timeStamp
+		data.lastJoinTime = timeStamp
 
 		local query = mysql:Insert("ix_characters")
 			query:Insert("name", data.name or "")
 			query:Insert("description", data.description or "")
 			query:Insert("model", data.model or "models/error.mdl")
 			query:Insert("schema", Schema and Schema.folder or "helix")
-			query:Insert("create_time", timeStamp)
-			query:Insert("last_join_time", timeStamp)
+			query:Insert("create_time", data.createTime)
+			query:Insert("last_join_time", data.lastJoinTime)
 			query:Insert("steamid", data.steamID)
 			query:Insert("faction", data.faction or "Unknown")
 			query:Insert("money", data.money)
@@ -35,6 +38,8 @@ if (SERVER) then
 								break
 							end
 						end
+
+						ix.char.RestoreVars(data, data)
 
 						local w, h = ix.config.Get("invW"), ix.config.Get("invH")
 						local character = ix.char.New(data, lastID, client, data.steamID)
@@ -53,6 +58,36 @@ if (SERVER) then
 				invQuery:Execute()
 			end)
 		query:Execute()
+	end
+
+	function ix.char.RestoreVars(data, characterInfo)
+		if (data.queryType) then
+			-- populate query
+			for _, v in pairs(ix.char.vars) do
+				if (v.field and v.fieldType and !v.bSaveLoadInitialOnly) then
+					data:Select(v.field)
+				end
+			end
+		else
+			-- populate character data
+			for k, v in pairs(ix.char.vars) do
+				if (v.field and characterInfo[v.field] and !v.bSaveLoadInitialOnly) then
+					local value = tostring(characterInfo[v.field])
+
+					if (type(v.default) == "number") then
+						value = tonumber(value) or v.default
+					elseif (type(v.default) == "string") then
+						value = value == "NULL" and v.default or tostring(value or v.default)
+					elseif (type(v.default) == "boolean") then
+						value = tobool(value)
+					elseif (type(v.default) == "table") then
+						value = util.JSONToTable(value)
+					end
+
+					data[k] = value
+				end
+			end
+		end
 	end
 
 	function ix.char.Restore(client, callback, noCache, id)
@@ -78,11 +113,7 @@ if (SERVER) then
 		local query = mysql:Select("ix_characters")
 			query:Select("id")
 
-			for _, v in pairs(ix.char.vars) do
-				if (v.field and v.fieldType and !v.bSaveLoadInitialOnly) then
-					query:Select(v.field)
-				end
-			end
+			ix.char.RestoreVars(query)
 
 			query:Where("schema", Schema.folder)
 			query:Where("steamid", steamID64)
@@ -102,23 +133,7 @@ if (SERVER) then
 							steamID = steamID64
 						}
 
-						for k2, v2 in pairs(ix.char.vars) do
-							if (v2.field and v[v2.field] and !v2.bSaveLoadInitialOnly) then
-								local value = tostring(v[v2.field])
-
-								if (type(v2.default) == "number") then
-									value = tonumber(value) or v2.default
-								elseif (type(v2.default) == "string") then
-									value = value == "NULL" and "" or tostring(value or v2.default)
-								elseif (type(v2.default) == "boolean") then
-									value = tobool(value)
-								elseif (type(v2.default) == "table") then
-									value = util.JSONToTable(value)
-								end
-
-								data[k2] = value
-							end
-						end
+						ix.char.RestoreVars(data, v)
 
 						characters[#characters + 1] = charID
 						local character = ix.char.New(data, charID, client)
