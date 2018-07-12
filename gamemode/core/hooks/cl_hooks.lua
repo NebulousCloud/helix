@@ -681,6 +681,10 @@ function GM:ShouldDrawLocalPlayer(client)
 	end
 end
 
+function GM:PostProcessPermitted(class)
+	return false
+end
+
 function GM:OnCharInfoSetup(infoPanel)
 	if (infoPanel.model) then
 		-- Get the F1 ModelPanel.
