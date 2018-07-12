@@ -58,6 +58,8 @@ do
 						attribute.Setup(attrib[key])
 					end
 				end
+
+				self:SetAttributes(attrib)
 			end
 
 			hook.Run("OnCharAttribUpdated", client, self, key, value)
@@ -79,6 +81,8 @@ do
 						attribute.Setup(attrib[key])
 					end
 				end
+
+				self:SetAttributes(attrib)
 			end
 
 			hook.Run("OnCharAttribUpdated", client, self, key, value)
