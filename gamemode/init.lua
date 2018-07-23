@@ -20,7 +20,6 @@ include("shared.lua")
 
 -- Connect to the database using SQLite, mysqloo, or tmysql4.
 timer.Simple(0, function()
-	hook.Run("SetupDatabase")
 	ix.db.Connect()
 end)
 
