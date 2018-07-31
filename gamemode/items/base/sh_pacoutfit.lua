@@ -76,6 +76,8 @@ function ITEM:RemovePart(client)
 			char:RemoveBoost(self.uniqueID, k)
 		end
 	end
+
+	self:OnUnequipped()
 end
 
 -- On item is dropped, Remove a weapon from the player and keep the ammo in the item.
@@ -130,6 +132,7 @@ ITEM.functions.Equip = {
 			end
 		end
 
+		item:OnEquipped()
 		return false
 	end,
 	OnCanRun = function(item)
@@ -154,4 +157,10 @@ function ITEM:OnRemoved()
 			self:RemovePart(receiver)
 		end
 	end
+end
+
+function ITEM:OnEquipped()
+end
+
+function ITEM:OnUnequipped()
 end

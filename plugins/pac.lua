@@ -56,8 +56,6 @@ if (CLIENT) then
 		if (!client:IsSuperAdmin()) then
 			return false
 		end
-
-		return true
 	end
 else
 	-- Reject unauthorized PAC3 submits
