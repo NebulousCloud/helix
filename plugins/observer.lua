@@ -89,11 +89,15 @@ if (CLIENT) then
 	end
 else
 	ix.log.AddType("observerEnter", function(client, ...)
-		return string.format("%s is now in observer.", client:Name())
+		return string.format("%s entered observer.", client:Name())
 	end)
 
 	ix.log.AddType("observerExit", function(client, ...)
-		return string.format("%s is no longer in observer.", client:Name())
+		if (ix.option.Get(client, "observerTeleportBack", true)) then
+			return string.format("%s exited observer.", client:Name())
+		else
+			return string.format("%s exited observer at their location.", client:Name())
+		end
 	end)
 
 	function PLUGIN:PlayerNoClip(client, state)
