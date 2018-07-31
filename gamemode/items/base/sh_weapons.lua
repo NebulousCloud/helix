@@ -249,6 +249,10 @@ hook.Add("PlayerDeath", "ixStripClip", function(client)
 		if (v.isWeapon and v:GetData("equip")) then
 			v:SetData("ammo", nil)
 			v:SetData("equip", nil)
+
+			if (v.pacData) then
+				v:RemovePAC(client)
+			end
 		end
 	end
 end)
