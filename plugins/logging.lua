@@ -99,12 +99,12 @@ if (SERVER) then
 
 	ix.log.AddType("openContainer", function(client, ...)
 		local arg = {...}
-		return L("%s opened a '%s' #%d.", client:Name(), arg[1], arg[2])
+		return L("%s opened the '%s' #%d container.", client:Name(), arg[1], arg[2])
 	end, FLAG_NORMAL)
 
 	ix.log.AddType("closeContainer", function(client, ...)
 		local arg = {...}
-		return L("%s closed a '%s' #%d.", client:Name(), arg[1], arg[2])
+		return L("%s closed the '%s' #%d container.", client:Name(), arg[1], arg[2])
 	end, FLAG_NORMAL)
 
 	function PLUGIN:PlayerInitialSpawn(client)

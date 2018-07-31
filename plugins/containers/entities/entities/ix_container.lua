@@ -55,16 +55,18 @@ if (SERVER) then
 		local inventory = self:GetInventory()
 
 		if (inventory) then
+			local name = self:GetNetVar("name", definition.name)
+
 			ix.storage.Open(activator, inventory, {
-				name = definition.name,
+				name = name,
 				entity = self,
 				searchTime = ix.config.Get("containerOpenTime", 0.7),
 				OnPlayerClose = function()
-					ix.log.Add(activator, "closeContainer", definition.name, inventory:GetID())
+					ix.log.Add(activator, "closeContainer", name, inventory:GetID())
 				end
 			})
 
-			ix.log.Add(activator, "openContainer", definition.name, inventory:GetID())
+			ix.log.Add(activator, "openContainer", name, inventory:GetID())
 		end
 	end
 
