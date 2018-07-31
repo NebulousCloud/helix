@@ -343,8 +343,13 @@ function GM:PhysgunPickup(client, entity)
 		return false
 	end
 
-	if (bPickup and entity:IsPlayer()) then
-		entity:SetMoveType(MOVETYPE_NONE)
+	if (bPickup) then
+		if (entity:IsPlayer()) then
+			entity:SetMoveType(MOVETYPE_NONE)
+		elseif (!entity.ixCollisionGroup) then
+			entity.ixCollisionGroup = entity:GetCollisionGroup()
+			entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+		end
 	end
 
 	return bPickup
@@ -353,6 +358,9 @@ end
 function GM:PhysgunDrop(client, entity)
 	if (entity:IsPlayer()) then
 		entity:SetMoveType(MOVETYPE_WALK)
+	elseif (entity.ixCollisionGroup) then
+		entity:SetCollisionGroup(entity.ixCollisionGroup)
+		entity.ixCollisionGroup = nil
 	end
 end
 
