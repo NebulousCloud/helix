@@ -30,14 +30,7 @@ if (SERVER) then
 				local invQuery = mysql:Insert("ix_inventories")
 					invQuery:Insert("character_id", lastID)
 					invQuery:Callback(function(invResult, invStats, invLastID)
-						local client
-
-						for _, v in ipairs(player.GetAll()) do
-							if (v:SteamID64() == data.steamID) then
-								client = v
-								break
-							end
-						end
+						local client = player.GetBySteamID64(data.steamID)
 
 						ix.char.RestoreVars(data, data)
 
@@ -72,16 +65,16 @@ if (SERVER) then
 			-- populate character data
 			for k, v in pairs(ix.char.vars) do
 				if (v.field and characterInfo[v.field] and !v.bSaveLoadInitialOnly) then
-					local value = tostring(characterInfo[v.field])
+					local value = characterInfo[v.field]
 
 					if (type(v.default) == "number") then
 						value = tonumber(value) or v.default
 					elseif (type(v.default) == "string") then
-						value = value == "NULL" and v.default or tostring(value or v.default)
+						value = tostring(value) == "NULL" and v.default or tostring(value or v.default)
 					elseif (type(v.default) == "boolean") then
 						value = tobool(value)
 					elseif (type(v.default) == "table") then
-						value = util.JSONToTable(value)
+						value = istable(value) and value or util.JSONToTable(value)
 					end
 
 					data[k] = value
