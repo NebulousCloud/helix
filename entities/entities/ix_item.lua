@@ -94,6 +94,15 @@ if (SERVER) then
 		end
 	end
 
+	function ENT:OnDuplicated(entTable)
+		local itemID = entTable.ixItemID
+		local itemTable = ix.item.instances[itemID]
+
+		ix.item.Instance(0, itemTable.uniqueID, itemTable.data, 1, 1, function(item)
+			self:SetItem(item:GetID())
+		end)
+	end
+
 	function ENT:OnRemove()
 		if (!ix.shuttingDown and !self.ixIsSafe and self.ixItemID) then
 			local itemTable = ix.item.instances[self.ixItemID]
