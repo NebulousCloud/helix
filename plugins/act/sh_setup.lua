@@ -41,7 +41,7 @@ PLUGIN.acts["Injured"] = {
 		untimed = true
 	}
 }
-PLUGIN.acts["Arrest"] = {
+PLUGIN.acts["ArrestWall"] = {
 	["citizen_male"] = {
 		sequence = "apcarrestidle",
 		untimed = true,
@@ -49,6 +49,12 @@ PLUGIN.acts["Arrest"] = {
 		offset = function(client)
 			return -client:GetForward() * 23
 		end
+	}
+}
+PLUGIN.acts["Arrest"] = {
+	["citizen_male"] = {
+		sequence = "arrestidle",
+		untimed = true
 	}
 }
 PLUGIN.acts["Cheer"] = {
