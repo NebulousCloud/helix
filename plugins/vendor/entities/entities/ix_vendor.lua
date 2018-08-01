@@ -170,6 +170,8 @@ if (SERVER) then
 		if (!self:CanAccess(activator) or hook.Run("CanPlayerUseVendor", activator) == false) then
 			if (self.messages[VENDOR_NOTRADE]) then
 				activator:ChatPrint(self:GetNetVar("name")..": "..self.messages[VENDOR_NOTRADE])
+			else
+				activator:NotifyLocalized("vendorNoTrade")
 			end
 
 			return
