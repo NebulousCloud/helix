@@ -2,6 +2,10 @@
 ix.config = ix.config or {}
 ix.config.stored = ix.config.stored or {}
 
+if (SERVER) then
+	ix.config.server = ix.yaml.Read("gamemodes/helix/helix.yml")
+end
+
 function ix.config.Add(key, value, description, callback, data, bNoNetworking, schemaOnly)
 	local oldConfig = ix.config.stored[key]
 

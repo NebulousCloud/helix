@@ -598,7 +598,7 @@ do
 	})
 
 	ix.char.RegisterVar("steamID", {
-		field = "steamID",
+		field = "steamid",
 		fieldType = ix.type.steamid,
 		bNoDisplay = true,
 		bNoNetworking = true,
