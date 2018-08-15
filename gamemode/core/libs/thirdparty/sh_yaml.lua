@@ -584,11 +584,11 @@ Parser.parseTimestamp = function (self)
   }
 end
 
-exports.eval = function (str)
+exports.Eval = function (str)
   return Parser:new(exports.tokenize(str)):parse()
 end
 
-exports.read = function(file_name)
+exports.Read = function(file_name)
   if file.Exists(file_name, 'GAME') then
     local local_name = file_name:gsub('%.y([a]?)ml', '.local.y%1ml')
 
@@ -600,6 +600,6 @@ exports.read = function(file_name)
   end
 end
 
-exports.dump = table_print
+exports.Dump = table_print
 
 ix.yaml = exports
