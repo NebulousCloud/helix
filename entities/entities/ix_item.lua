@@ -40,8 +40,8 @@ if (SERVER) then
 		local damage = dmginfo:GetDamage()
 		self:SetHealth(self:Health() - damage)
 
-		if (self:Health() <= 0 and !self.OnBreak) then
-			self.OnBreak = true
+		if (self:Health() <= 0 and !self.ixIsDestroying) then
+			self.ixIsDestroying = true
 			self:Remove()
 		end
 	end
@@ -107,24 +107,24 @@ if (SERVER) then
 		if (!ix.shuttingDown and !self.ixIsSafe and self.ixItemID) then
 			local itemTable = ix.item.instances[self.ixItemID]
 
-			if (self.OnBreak) then
-				self:EmitSound("physics/cardboard/cardboard_box_break"..math.random(1, 3)..".wav")
-				local position = self:LocalToWorld(self:OBBCenter())
-
-				local effect = EffectData()
-					effect:SetStart(position)
-					effect:SetOrigin(position)
-					effect:SetScale(3)
-				util.Effect("GlassImpact", effect)
-
-				if (itemTable.OnDestoryed) then
-					itemTable:OnDestoryed(self)
-				end
-			end
-
 			if (itemTable) then
+				if (self.ixIsDestroying) then
+					self:EmitSound("physics/cardboard/cardboard_box_break"..math.random(1, 3)..".wav")
+					local position = self:LocalToWorld(self:OBBCenter())
+
+					local effect = EffectData()
+						effect:SetStart(position)
+						effect:SetOrigin(position)
+						effect:SetScale(3)
+					util.Effect("GlassImpact", effect)
+
+					if (itemTable.OnDestroyed) then
+						itemTable:OnDestroyed(self)
+					end
+				end
+
 				if (itemTable.OnRemoved) then
-					itemTable:OnRemoved()
+					itemTable:OnRemoved(self)
 				end
 
 				local query = mysql:Delete("ix_items")
