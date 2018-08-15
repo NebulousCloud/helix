@@ -2,7 +2,7 @@
 # local root = ldoc.css:gsub("ldoc.css", "") -- lol
 # local repo = "https://github.com/nebulouscloud/helix/"
 # local function repoReference(item)
-#   return repo .. "tree/master" .. item.file.filename:gsub(item.file.base, "") .. "#L" .. item.lineno
+#   return repo .. "tree/master" .. item.file.filename:gsub(item.file.base, "/gamemode") .. "#L" .. item.lineno
 # end
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
