@@ -778,7 +778,7 @@ function GM:DatabaseConnected()
 	ix.db.LoadTables()
 	ix.log.LoadTables()
 
-	MsgC(Color(0, 255, 0), "Database Type: " .. ix.db.module .. ".\n")
+	MsgC(Color(0, 255, 0), "Database Type: " .. ix.db.config.adapter .. ".\n")
 
 	timer.Create("ixDatabaseThink", 0.5, 0, function()
 		mysql:Think()

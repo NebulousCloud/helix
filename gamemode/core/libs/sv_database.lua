@@ -13,15 +13,15 @@ ix.db = ix.db or {
 	}
 }
 
-ix.util.Include("helix/gamemode/config/sv_database.lua")
+ix.db.config = ix.yaml.read("gamemodes/helix/gamemode/config/database.yml")
 
 function ix.db.Connect()
-	local dbmodule = ix.db.module
-	local hostname = ix.db.hostname
-	local username = ix.db.username
-	local password = ix.db.password
-	local database = ix.db.database
-	local port = ix.db.port
+	local dbmodule = ix.db.config.adapter
+	local hostname = ix.db.config.host
+	local username = ix.db.config.user
+	local password = ix.db.config.password
+	local database = ix.db.config.db
+	local port     = ix.db.config.port
 
 	mysql:SetModule(dbmodule)
 	mysql:Connect(hostname, username, password, database, port)

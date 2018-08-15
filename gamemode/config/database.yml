@@ -1,0 +1,6 @@
+adapter: "sqlite"
+host: "example.com"
+user: "example"
+password: "example"
+db: "helix"
+port: 3306
