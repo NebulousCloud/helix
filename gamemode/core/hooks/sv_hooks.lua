@@ -519,7 +519,7 @@ function GM:GetPlayerPainSound(client)
 end
 
 function GM:PlayerHurt(client, attacker, health, damage)
-	if ((client.ixNextPain or 0) < CurTime()) then
+	if ((client.ixNextPain or 0) < CurTime() and health > 0) then
 		local painSound = hook.Run("GetPlayerPainSound", client) or painSounds[math.random(1, #painSounds)]
 
 		if (client:IsFemale() and !painSound:find("female")) then
