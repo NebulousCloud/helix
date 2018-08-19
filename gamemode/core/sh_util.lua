@@ -1276,7 +1276,11 @@ do
 					if (IsValid(self) and !entity.ixIgnoreDelete) then
 						if (entity.ixWeapons) then
 							for _, v in ipairs(entity.ixWeapons) do
-								self:Give(v)
+								local weapon = self:Give(v.class, true)
+
+								if (v.item) then
+									weapon.ixItem = v.item
+								end
 
 								if (entity.ixAmmo) then
 									for k2, v2 in ipairs(entity.ixAmmo) do
@@ -1290,6 +1294,10 @@ do
 							for _, v in pairs(self:GetWeapons()) do
 								v:SetClip1(0)
 							end
+						end
+
+						if (entity.ixActiveWeapon) then
+							self:SelectWeapon(entity.ixActiveWeapon)
 						end
 
 						if (self:IsStuck()) then
@@ -1328,13 +1336,17 @@ do
 				end
 
 				for _, v in pairs(self:GetWeapons()) do
-					entity.ixWeapons[#entity.ixWeapons + 1] = v:GetClass()
+					entity.ixWeapons[#entity.ixWeapons + 1] = {class = v:GetClass(), item = v.ixItem}
 
 					local clip = v:Clip1()
 					local reserve = self:GetAmmoCount(v:GetPrimaryAmmoType())
 					local ammo = clip + reserve
 
 					entity.ixAmmo[v:GetPrimaryAmmoType()] = {v:GetClass(), ammo}
+				end
+
+				if (IsValid(self:GetActiveWeapon())) then
+					entity.ixActiveWeapon = self:GetActiveWeapon():GetClass()
 				end
 
 				self:GodDisable()
