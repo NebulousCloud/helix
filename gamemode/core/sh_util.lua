@@ -1269,7 +1269,6 @@ do
 
 						self:SetNoDraw(false)
 						self:SetNotSolid(false)
-						self:Freeze(false)
 						self:SetMoveType(MOVETYPE_WALK)
 						self:SetLocalVelocity(IsValid(entity) and entity.ixLastVelocity or vector_origin)
 					end
@@ -1340,7 +1339,7 @@ do
 
 				self:GodDisable()
 				self:StripWeapons()
-				self:Freeze(true)
+				self:SetMoveType(MOVETYPE_OBSERVER)
 				self:SetNoDraw(true)
 				self:SetNotSolid(true)
 
@@ -1348,7 +1347,7 @@ do
 					local uniqueID = "ixUnRagdoll"..self:SteamID()
 
 					timer.Create(uniqueID, 0.33, 0, function()
-						if (IsValid(entity) and IsValid(self)) then
+						if (IsValid(entity) and IsValid(self) and self.ixRagdoll == entity) then
 							local velocity = entity:GetVelocity()
 							entity.ixLastVelocity = velocity
 
