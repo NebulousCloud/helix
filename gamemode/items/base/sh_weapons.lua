@@ -114,7 +114,6 @@ function ITEM:Equip(client)
 
 		client.carryWeapons[self.weaponCategory] = weapon
 		client:SelectWeapon(weapon:GetClass())
-		client:SetActiveWeapon(weapon)
 		client:EmitSound("items/ammo_pickup.wav", 80)
 
 		-- Remove default given ammo.
