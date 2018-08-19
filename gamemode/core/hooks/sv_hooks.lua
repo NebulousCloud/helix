@@ -145,6 +145,11 @@ function GM:CanPlayerInteractItem(client, action, item)
 		return false
 	end
 
+	if (IsValid(client.ixRagdoll)) then
+		client:NotifyLocalized("notNow")
+		return false
+	end
+
 	if (action == "drop" and hook.Run("CanPlayerDropItem", client, item) == false) then
 		return false
 	end
