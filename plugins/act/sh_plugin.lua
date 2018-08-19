@@ -131,6 +131,14 @@ function PLUGIN:ShouldDrawLocalPlayer(client)
 	end
 end
 
+local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2
+
+function PLUGIN:StartCommand(client, command)
+	if (client:GetNetVar("actAng")) then
+		command:RemoveKey(KEY_BLACKLIST)
+	end
+end
+
 local GROUND_PADDING = Vector(0, 0, 8)
 local PLAYER_OFFSET = Vector(0, 0, 72)
 
