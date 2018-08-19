@@ -342,11 +342,17 @@ function META:HasItem(targetID, data)
 		if (v.uniqueID == targetID) then
 			if (data) then
 				local itemData = v.data
+				local bFound = true
 
 				for dataKey, dataVal in pairs(data) do
 					if (itemData[dataKey] != dataVal) then
-						return false
+						bFound = false
+						break
 					end
+				end
+
+				if (!bFound) then
+					continue
 				end
 			end
 
@@ -364,11 +370,17 @@ function META:HasItemOfBase(baseID, data)
 		if (v.base == baseID) then
 			if (data) then
 				local itemData = v.data
+				local bFound = true
 
 				for dataKey, dataVal in pairs(data) do
 					if (itemData[dataKey] != dataVal) then
-						return false
+						bFound = false
+						break
 					end
+				end
+
+				if (!bFound) then
+					continue
 				end
 			end
 
