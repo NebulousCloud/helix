@@ -605,24 +605,6 @@ function GM:ShutDown()
 	end
 end
 
--- luacheck: globals LIMB_GROUPS
-LIMB_GROUPS = {}
-LIMB_GROUPS[HITGROUP_LEFTARM] = true
-LIMB_GROUPS[HITGROUP_RIGHTARM] = true
-LIMB_GROUPS[HITGROUP_LEFTLEG] = true
-LIMB_GROUPS[HITGROUP_RIGHTLEG] = true
-LIMB_GROUPS[HITGROUP_GEAR] = true
-
-function GM:ScalePlayerDamage(client, hitGroup, dmgInfo)
-	dmgInfo:ScaleDamage(1.5)
-
-	if (hitGroup == HITGROUP_HEAD) then
-		dmgInfo:ScaleDamage(7)
-	elseif (LIMB_GROUPS[hitGroup]) then
-		dmgInfo:ScaleDamage(0.5)
-	end
-end
-
 function GM:GetGameDescription()
 	return "IX: "..(Schema and Schema.name or "Unknown")
 end

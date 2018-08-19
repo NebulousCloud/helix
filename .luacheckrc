@@ -30,7 +30,6 @@ stds.helix.read_globals = {
 	"CHAT_CLASS",
 	"HOOKS_CACHE",
 	"HOLSTER_DRAWINFO",
-	"LIMB_GROUPS",
 	"BAR_HEIGHT",
 	"ACCESS_LABELS",
 
