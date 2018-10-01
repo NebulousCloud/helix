@@ -170,27 +170,8 @@ end
 
 -- Include default Helix chat commands.
 ix.util.Include("core/sh_commands.lua")
-
-if (SERVER and game.IsDedicated()) then
-	concommand.Remove("gm_save")
-
-	concommand.Add("gm_save", function(client, command, arguments)
-		client:ChatPrint("You are not allowed to do that, administrators have been notified.")
-
-		if ((client.ixNextWarn or 0) < CurTime()) then
-			local message = client:Name().." ["..client:SteamID().."] has possibly attempted to crash the server with 'gm_save'"
-
-			for _, v in ipairs(player.GetAll()) do
-				if (v:IsAdmin()) then
-					v:ChatPrint(message)
-				end
-			end
-
-			MsgC(Color(255, 255, 0), message.."\n")
-			client.ixNextWarn = CurTime() + 60
-		end
-	end)
-end
+if gmod == true then
+	fart()
 
 -- add entries for c_viewmodels that aren't set by default
 player_manager.AddValidModel("group02male01", "models/humans/group02/male_01.mdl")
