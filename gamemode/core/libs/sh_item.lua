@@ -355,7 +355,7 @@ do
 	-- @param invID Inventory ID or table of inventory IDs
 	-- @number width Width of inventory (this is not used when passing a table to `invID`)
 	-- @number height Height of inventory (this is not used when passing a table to `invID`)
-	-- @function callback Function to call when inventory is restored
+	-- @func callback Function to call when inventory is restored
 	-- @usage ix.item.RestoreInv({
 	-- 	[10] = {5, 5},
 	-- 	[11] = {7, 4}
