@@ -42,6 +42,8 @@
 <h2>Libraries</h2>
 <ul class="nowrap">
   <li><a href="../libraries/ix.command.html">ix.command</a></li>
+  <li><a href="../libraries/ix.date.html">ix.date</a></li>
+  <li><a href="../libraries/ix.item.html">ix.item</a></li>
   <li><a href="../libraries/ix.menu.html">ix.menu</a></li>
   <li><a href="../libraries/ix.option.html">ix.option</a></li>
   <li><strong>ix.storage</strong></li>
@@ -121,6 +123,12 @@ Text to display to the user while opening the inventory. This can be a language 
 (default: <code>nil</code>)<br />
 Called when a player who was accessing the inventory has closed it. The argument passed is the player who closed it.
 </p></li>
+
+<li><p>
+<a href="../libraries/ix.data.html">data</a><br />
+(default: <code>{}</code>)<br />
+Table of arbitrary data to send to the client when the inventory has been opened.
+</p></li>
 </ul>
 
 </p>
@@ -128,10 +136,6 @@ Called when a player who was accessing the inventory has closed it. The argument
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#ix.storage.GetReceivers"><code><span class="realm server" title="Server"></span> ix.storage.GetReceivers(inventory)</code></a></td>
-	<td class="summary">Returns all players that currently looking at the given inventory as a storage.</td>
-	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#ix.storage.InUse"><code><span class="realm server" title="Server"></span> ix.storage.InUse(inventory)</code></a></td>
 	<td class="summary">Returns whether or not the given inventory has a storage context and is being looked at by other players.</td>
@@ -174,41 +178,9 @@ Called when a player who was accessing the inventory has closed it. The argument
 
     <dl class="function">
     <dt>
-    <a name = "ix.storage.GetReceivers"></a>
-    <pre><span class="realm server" title="Server"></span> ix.storage.GetReceivers(inventory)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L74">View source &raquo;</a>
-    </dt>
-    <dd>
-    Returns all players that currently looking at the given inventory as a storage.
-
-    </ul>
-    </ul>
-    </ul>
-    </ul>
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">inventory</span>
-            <span class="types"><span class="type">inventory</span></span>
-         Inventory to get receivers from
-        </li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
-        An array of players that currently have <code>inventory</code> open
-    </ol>
-
-
-
-
-</dd>
-    <dt>
     <a name = "ix.storage.InUse"></a>
     <pre><span class="realm server" title="Server"></span> ix.storage.InUse(inventory)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L92">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L87">View source &raquo;</a>
     </dt>
     <dd>
     Returns whether or not the given inventory has a storage context and is being looked at by other players.
@@ -244,7 +216,7 @@ Called when a player who was accessing the inventory has closed it. The argument
         <h2>This is an internal function</h2>
         <p>You are able to use this function, but you risk unintended side effects if used incorrectly.</p>
     </div>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L109">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L104">View source &raquo;</a>
     </dt>
     <dd>
     Creates a storage context on the given inventory.
@@ -278,7 +250,7 @@ Called when a player who was accessing the inventory has closed it. The argument
         <h2>This is an internal function</h2>
         <p>You are able to use this function, but you risk unintended side effects if used incorrectly.</p>
     </div>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L148">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L129">View source &raquo;</a>
     </dt>
     <dd>
     Removes a storage context from an inventory if it exists.
@@ -308,7 +280,7 @@ Called when a player who was accessing the inventory has closed it. The argument
         <h2>This is an internal function</h2>
         <p>You are able to use this function, but you risk unintended side effects if used incorrectly.</p>
     </div>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L168">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L145">View source &raquo;</a>
     </dt>
     <dd>
     Synchronizes an inventory with a storage context to the given client.
@@ -342,7 +314,7 @@ Called when a player who was accessing the inventory has closed it. The argument
         <h2>This is an internal function</h2>
         <p>You are able to use this function, but you risk unintended side effects if used incorrectly.</p>
     </div>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L182">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L174">View source &raquo;</a>
     </dt>
     <dd>
     Adds a receiver to a given inventory with a storage context.
@@ -381,7 +353,7 @@ Called when a player who was accessing the inventory has closed it. The argument
         <h2>This is an internal function</h2>
         <p>You are able to use this function, but you risk unintended side effects if used incorrectly.</p>
     </div>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L225">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L204">View source &raquo;</a>
     </dt>
     <dd>
     Removes a storage receiver and removes the context if there are no more receivers.
@@ -415,7 +387,7 @@ Called when a player who was accessing the inventory has closed it. The argument
     <dt>
     <a name = "ix.storage.Open"></a>
     <pre><span class="realm server" title="Server"></span> ix.storage.Open(client, inventory, info)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L260">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L236">View source &raquo;</a>
     </dt>
     <dd>
     Makes a player open an inventory that they can interact with.  This can be called multiple times on the same inventory,
@@ -450,7 +422,7 @@ Called when a player who was accessing the inventory has closed it. The argument
     <dt>
     <a name = "ix.storage.Close"></a>
     <pre><span class="realm server" title="Server"></span> ix.storage.Close(inventory)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L301">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L277">View source &raquo;</a>
     </dt>
     <dd>
     Forcefully makes clients close this inventory if they have it open.
@@ -480,7 +452,7 @@ Called when a player who was accessing the inventory has closed it. The argument
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2018-08-19 23:04:29 </i>
+<i style="float:right;">Last updated 2018-10-17 23:18:24 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 

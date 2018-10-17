@@ -1,0 +1,309 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Helix Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../highlight.css">
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Helix</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Libraries</h2>
+<ul class="nowrap">
+  <li><a href="../libraries/ix.command.html">ix.command</a></li>
+  <li><strong>ix.date</strong></li>
+  <li><a href="../libraries/ix.item.html">ix.item</a></li>
+  <li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+  <li><a href="../libraries/ix.option.html">ix.option</a></li>
+  <li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+  <li><a href="../libraries/ix.data.html">ix.data</a></li>
+  <li><a href="../libraries/ix.util.html">ix.util</a></li>
+  <li><a href="../libraries/ix.html">ix</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>ix.date</code></h1>
+<p>Persistent date and time handling.</p>
+<p>All of Lua's time functions are dependent on the Unix epoch, which means we can't have dates that go further than 1970. This
+library remedies this problem. Time/date is represented by a <a href="../libraries/ix.date.html">date</a> object that is queried, instead of relying on the seconds
+since the epoch.</p>
+
+<h2>Futher documentation</h2>
+<p>This library makes use of a third-party date library found at https://github.com/Tieske/date - you can find all documentation
+regarding the <a href="../libraries/ix.date.html">date</a> object and its methods there.</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#ix.date.Initialize"><code><span class="realm server" title="Server"></span> ix.date.Initialize()</code></a></td>
+	<td class="summary">Loads the date from disk.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.date.Send"><code><span class="realm server" title="Server"></span> ix.date.Send(client)</code></a></td>
+	<td class="summary">Sends the current date to a player.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.date.Get"><code><span class="realm shared" title="Shared"></span> ix.date.Get()</code></a></td>
+	<td class="summary">Returns the currently set date.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.date.GetFormatted"><code><span class="realm shared" title="Shared"></span> ix.date.GetFormatted(format[, currentDate=nil])</code></a></td>
+	<td class="summary">Returns a string formatted version of a date.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.date.GetSerialized"><code><span class="realm shared" title="Shared"></span> ix.date.GetSerialized([currentDate=nil])</code></a></td>
+	<td class="summary">Returns a serialized version of a date.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.date.Construct"><code><span class="realm shared" title="Shared"></span> ix.date.Construct(currentDate)</code></a></td>
+	<td class="summary">Returns a date object from a table or serialized date.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "ix.date.Initialize"></a>
+    <pre><span class="realm server" title="Server"></span> ix.date.Initialize()</pre>
+    <div class="warning-internal">
+        <h2>This is an internal function</h2>
+        <p>You are able to use this function, but you risk unintended side effects if used incorrectly.</p>
+    </div>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L26">View source &raquo;</a>
+    </dt>
+    <dd>
+    Loads the date from disk.
+
+    </ul>
+    </ul>
+    </ul>
+    </ul>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.date.Send"></a>
+    <pre><span class="realm server" title="Server"></span> ix.date.Send(client)</pre>
+    <div class="warning-internal">
+        <h2>This is an internal function</h2>
+        <p>You are able to use this function, but you risk unintended side effects if used incorrectly.</p>
+    </div>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L41">View source &raquo;</a>
+    </dt>
+    <dd>
+    Sends the current date to a player.  This is done automatically when the player joins the server.
+
+    </ul>
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">client</span>
+            <span class="types"><span class="type">player</span></span>
+         Player to send the date to
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.date.Get"></a>
+    <pre><span class="realm shared" title="Shared"></span> ix.date.Get()</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L51">View source &raquo;</a>
+    </dt>
+    <dd>
+    Returns the currently set date.
+
+    </ul>
+    </ul>
+    </ul>
+    </ul>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">date</span></span>
+        Current in-game date
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.date.GetFormatted"></a>
+    <pre><span class="realm shared" title="Shared"></span> ix.date.GetFormatted(format[, currentDate=nil])</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L85">View source &raquo;</a>
+    </dt>
+    <dd>
+    Returns a string formatted version of a date.
+
+    </ul>
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">format</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Format string
+        </li>
+        <li><span class="parameter">currentDate</span>
+            <span class="types"><span class="type">date</span></span>
+         Date to format. If nil, it will use the currently set date
+         (<em>default</em> nil)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+        Formatted date
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.date.GetSerialized"></a>
+    <pre><span class="realm shared" title="Shared"></span> ix.date.GetSerialized([currentDate=nil])</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L93">View source &raquo;</a>
+    </dt>
+    <dd>
+    Returns a serialized version of a date.
+
+    </ul>
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">currentDate</span>
+            <span class="types"><span class="type">date</span></span>
+         Date to serialize. If nil, it will use the currently set date
+         (<em>default</em> nil)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+        Serialized date
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.date.Construct"></a>
+    <pre><span class="realm shared" title="Shared"></span> ix.date.Construct(currentDate)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L101">View source &raquo;</a>
+    </dt>
+    <dd>
+    Returns a date object from a table or serialized date.
+
+    </ul>
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">currentDate</span>
+         Date to construct
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">date</span></span>
+        Constructed date object
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2018-10-17 23:18:24 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+
+<script type="text/javascript" src="../highlight.min.js"></script>
+<script type="text/javascript">
+  var elements = document.querySelectorAll("pre, table.function_list td.name")
+
+  hljs.configure({
+    languages: ["lua"]
+  });
+
+  for (var i = 0; i < elements.length; i++)
+  {
+    hljs.highlightBlock(elements[i])
+  }
+</script>
+</body>
+</html>

@@ -42,6 +42,8 @@
 <h2>Libraries</h2>
 <ul class="nowrap">
   <li><a href="../libraries/ix.command.html">ix.command</a></li>
+  <li><a href="../libraries/ix.date.html">ix.date</a></li>
+  <li><a href="../libraries/ix.item.html">ix.item</a></li>
   <li><a href="../libraries/ix.menu.html">ix.menu</a></li>
   <li><a href="../libraries/ix.option.html">ix.option</a></li>
   <li><a href="../libraries/ix.storage.html">ix.storage</a></li>
@@ -68,8 +70,20 @@
 	<td class="summary">Removes the realm prefix from a file name.</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#ix.util.IsColor"><code><span class="realm shared" title="Shared"></span> ix.util.IsColor(input)</code></a></td>
+	<td class="summary">Returns <code>true</code> if the given input is a color table.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.util.DimColor"><code><span class="realm shared" title="Shared"></span> ix.util.DimColor(color, multiplier[, alpha=255])</code></a></td>
+	<td class="summary">Returns a dimmed version of the given color by the given scale.</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#ix.util.SanitizeType"><code><span class="realm shared" title="Shared"></span> ix.util.SanitizeType(type, input)</code></a></td>
 	<td class="summary">Sanitizes an input value with the given type.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.util.GetTypeFromValue"><code><span class="realm shared" title="Shared"></span> ix.util.GetTypeFromValue(value)</code></a></td>
+	<td class="summary">Returns the <a href="../libraries/ix.html#type">ix.type</a> of the given value.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#ix.util.FindPlayer"><code><span class="realm shared" title="Shared"></span> ix.util.FindPlayer(identifier[, bAllowPatterns=false])</code></a></td>
@@ -83,6 +97,10 @@
 	<td class="name" nowrap><a href="#ix.util.GetCharacters"><code><span class="realm shared" title="Shared"></span> ix.util.GetCharacters()</code></a></td>
 	<td class="summary">Returns an iterator for characters.</td>
 	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ix.util.ResetStencilValues"><code><span class="realm client" title="Client"></span> ix.util.ResetStencilValues()</code></a></td>
+	<td class="summary">Resets all stencil values to known good (i.e defaults)</td>
+	</tr>
 </table>
 
 <br/>
@@ -95,7 +113,7 @@
     <dt>
     <a name = "ix.util.StripRealmPrefix"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.util.StripRealmPrefix(name)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L57">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L84">View source &raquo;</a>
     </dt>
     <dd>
     Removes the realm prefix from a file name.  The returned string will be unchanged if there is no prefix found.
@@ -130,9 +148,85 @@
 
 </dd>
     <dt>
+    <a name = "ix.util.IsColor"></a>
+    <pre><span class="realm shared" title="Shared"></span> ix.util.IsColor(input)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L95">View source &raquo;</a>
+    </dt>
+    <dd>
+    Returns <code>true</code> if the given input is a color table.  This is necessary since the engine <a href="../libraries/ix.util.html#ix.util.IsColor">IsColor</a> function only checks for
+ color metatables - which are not used for regular Lua color types.
+
+    </ul>
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">input</span>
+         Input to check
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">bool</span></span>
+        Whether or not the input is a color
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ix.util.DimColor"></a>
+    <pre><span class="realm shared" title="Shared"></span> ix.util.DimColor(color, multiplier[, alpha=255])</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L108">View source &raquo;</a>
+    </dt>
+    <dd>
+    Returns a dimmed version of the given color by the given scale.
+
+    </ul>
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">color</span>
+         Color to dim
+        </li>
+        <li><span class="parameter">multiplier</span>
+            <span class="types"><span class="type">number</span></span>
+         What to multiply the red, green, and blue values by
+        </li>
+        <li><span class="parameter">alpha</span>
+            <span class="types"><span class="type">number</span></span>
+         Alpha to use in dimmed color
+         (<em>default</em> 255)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Dimmed color
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="global">print</span>(ix.util.DimColor(Color(<span class="number">100</span>, <span class="number">100</span>, <span class="number">100</span>, <span class="number">255</span>), <span class="number">0.5</span>))
+ &gt; <span class="number">50</span> <span class="number">50</span> <span class="number">50</span> <span class="number">255</span></pre>
+    </ul>
+
+</dd>
+    <dt>
     <a name = "ix.util.SanitizeType"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.util.SanitizeType(type, input)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L75">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L124">View source &raquo;</a>
     </dt>
     <dd>
     Sanitizes an input value with the given type.  This function ensures that a valid type is always returned. If a valid value
@@ -177,9 +271,49 @@
 
 </dd>
     <dt>
+    <a name = "ix.util.GetTypeFromValue"></a>
+    <pre><span class="realm shared" title="Shared"></span> ix.util.GetTypeFromValue(value)</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L176">View source &raquo;</a>
+    </dt>
+    <dd>
+    Returns the <a href="../libraries/ix.html#type">ix.type</a> of the given value.
+
+    </ul>
+    </ul>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+         Value to get the type of
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">ixtype</span></span>
+        Type of value
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../libraries/ix.html#type">ix.type</a>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="global">print</span>(ix.util.GetTypeFromValue(<span class="string">"hello"</span>))
+ &gt; <span class="number">2</span> <span class="comment">-- i.e the value of ix.type.string</span></pre>
+    </ul>
+
+</dd>
+    <dt>
     <a name = "ix.util.FindPlayer"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.util.FindPlayer(identifier[, bAllowPatterns=false])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L147">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L248">View source &raquo;</a>
     </dt>
     <dd>
     Attempts to find a player by matching their name or Steam ID.
@@ -216,11 +350,12 @@
     <dt>
     <a name = "ix.util.ExpandCamelCase"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.util.ExpandCamelCase(input[, bNoUpperFirst=false])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L214">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L323">View source &raquo;</a>
     </dt>
     <dd>
     Returns a string that is the given input with spaces in between each CamelCase word.  This function will ignore any words
- that do not begin with a capital letter.
+ that do not begin with a capital letter. The words <code>ooc</code>, <code>looc</code>, <code>afk</code>, and <code>url</code> will be automatically transformed
+ into uppercase text.
 
     </ul>
     </ul>
@@ -259,7 +394,7 @@
     <dt>
     <a name = "ix.util.GetCharacters"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.util.GetCharacters()</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L260">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L376">View source &raquo;</a>
     </dt>
     <dd>
     Returns an iterator for characters.  The resulting key/values will be a player and their corresponding characters. This
@@ -293,6 +428,25 @@
     </ul>
 
 </dd>
+    <dt>
+    <a name = "ix.util.ResetStencilValues"></a>
+    <pre><span class="realm client" title="Client"></span> ix.util.ResetStencilValues()</pre>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L598">View source &raquo;</a>
+    </dt>
+    <dd>
+    Resets all stencil values to known good (i.e defaults)
+
+    </ul>
+    </ul>
+    </ul>
+    </ul>
+
+
+
+
+
+
+</dd>
 </dl>
 
 
@@ -300,7 +454,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2018-08-19 23:04:29 </i>
+<i style="float:right;">Last updated 2018-10-17 23:18:24 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 

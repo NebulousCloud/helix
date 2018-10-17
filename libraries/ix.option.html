@@ -42,6 +42,8 @@
 <h2>Libraries</h2>
 <ul class="nowrap">
   <li><a href="../libraries/ix.command.html">ix.command</a></li>
+  <li><a href="../libraries/ix.date.html">ix.date</a></li>
+  <li><a href="../libraries/ix.item.html">ix.item</a></li>
   <li><a href="../libraries/ix.menu.html">ix.menu</a></li>
   <li><strong>ix.option</strong></li>
   <li><a href="../libraries/ix.storage.html">ix.storage</a></li>
@@ -81,7 +83,7 @@ ix.option.Get(player.GetByID(<span class="number">1</span>), <span class="string
 
 <p>This will return the language of the player, or <code>&quot;english&quot;</code> if one isn't found. Note that <code>&quot;language&quot;</code> is a networked option
 that is already defined in the framework, so it will always be available. All options will show up in the options menu on the
-client, unless <code>bHidden</code> is <code>true</code> when using <a href="../libraries/ix.option.html#ix.option.Add">ix.option.Add</a>.</p>
+client, unless <code>hidden</code> returns <code>true</code> when using <a href="../libraries/ix.option.html#ix.option.Add">ix.option.Add</a>.</p>
 
 <p>Note that the labels for each option in the menu will use a language phrase to show the name. For example, if your option is
 named <code>headbob</code>, then you'll need to define a language phrase called <code>optHeadbob</code> that will be used as the option title.</p>
@@ -101,7 +103,7 @@ example, if your key is <code>&quot;exampleOption&quot;</code>, the default phra
 
 <li><p>
 <code>category</code><br />
-(default: <code>&quot;miscellaneous&quot;</code>)<br />
+(default: <code>&quot;misc&quot;</code>)<br />
 The category that this option should reside in. This is purely for aesthetic reasons when displaying the options in the options
 menu. When displayed in the UI, it will take the form of <code>L(&quot;category name&quot;)</code>. This means that you must create a language phrase
 for the category name - otherwise it will only show as the string you've specified.
@@ -114,9 +116,9 @@ Whether or not the server should be aware of this option for each client.
 </p></li>
 
 <li><p>
-<code>bHidden</code><br />
-(default: <code>false</code>)<br />
-Whether or not to hide this option from the options menu.
+<code>hidden</code><br />
+(default: <code>nil</code>)<br />
+The function to check whether the option should be hidden from the options menu.
 </p></li>
 
 <li><p>
@@ -231,7 +233,7 @@ populate = <span class="keyword">function</span>()
         <h2>This is an internal function</h2>
         <p>You are able to use this function, but you risk unintended side effects if used incorrectly.</p>
     </div>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L112">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L118">View source &raquo;</a>
     </dt>
     <dd>
     Loads all saved options from disk.
@@ -250,7 +252,7 @@ populate = <span class="keyword">function</span>()
     <dt>
     <a name = "ix.option.GetAll"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.option.GetAll()</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L138">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L143">View source &raquo;</a>
     </dt>
     <dd>
     Returns all of the available options.  Note that this does contain the actual values of the options, just their properties.
@@ -274,7 +276,6 @@ populate = <span class="keyword">function</span>()
     <ul>
         <pre class="example">PrintTable(ix.option.GetAll())
 &gt; language:
-&gt;	bHidden	= <span class="keyword">false</span>
 &gt;	bNetworked = <span class="keyword">true</span>
 &gt;	default = english
 &gt;	<span class="global">type</span> = <span class="number">512</span>
@@ -285,7 +286,7 @@ populate = <span class="keyword">function</span>()
     <dt>
     <a name = "ix.option.GetAllByCategories"></a>
     <pre><span class="realm shared" title="Shared"></span> ix.option.GetAllByCategories([bRemoveHidden=false])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L157">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L161">View source &raquo;</a>
     </dt>
     <dd>
     Returns all of the available options grouped by their categories.  The returned table contains category tables, that contain
@@ -320,7 +321,6 @@ populate = <span class="keyword">function</span>()
 &gt; general:
 &gt; 	<span class="number">1</span>:
 &gt;		key = language
-&gt;		bHidden = <span class="keyword">false</span>
 &gt;		bNetworked = <span class="keyword">true</span>
 &gt;		default = english
 &gt;		<span class="global">type</span> = <span class="number">512</span>
@@ -331,7 +331,7 @@ populate = <span class="keyword">function</span>()
     <dt>
     <a name = "ix.option.Set"></a>
     <pre><span class="realm client" title="Client"></span> ix.option.Set(key, value[, bNoSave=false])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L186">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L190">View source &raquo;</a>
     </dt>
     <dd>
     Sets an option value for the local player.
@@ -366,7 +366,7 @@ populate = <span class="keyword">function</span>()
     <dt>
     <a name = "ix.option.Get"></a>
     <pre><span class="realm client" title="Client"></span> ix.option.Get(key, default)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L205">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L221">View source &raquo;</a>
     </dt>
     <dd>
     Retrieves an option value for the local player.  If it is not set, it'll return the default that you've specified.
@@ -404,7 +404,7 @@ populate = <span class="keyword">function</span>()
         <h2>This is an internal function</h2>
         <p>You are able to use this function, but you risk unintended side effects if used incorrectly.</p>
     </div>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L224">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L240">View source &raquo;</a>
     </dt>
     <dd>
     Saves all options to disk.
@@ -423,7 +423,7 @@ populate = <span class="keyword">function</span>()
     <dt>
     <a name = "ix.option.Sync"></a>
     <pre><span class="realm client" title="Client"></span> ix.option.Sync()</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L230">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L246">View source &raquo;</a>
     </dt>
     <dd>
     Syncs all networked options to the server.
@@ -442,7 +442,7 @@ populate = <span class="keyword">function</span>()
     <dt>
     <a name = "ix.option.Get"></a>
     <pre><span class="realm server" title="Server"></span> ix.option.Get(client, key, default)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L251">View source &raquo;</a>
+    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L280">View source &raquo;</a>
     </dt>
     <dd>
     Retrieves an option value from the specified player.  If it is not set, it'll return the default that you've specified.
@@ -485,7 +485,7 @@ populate = <span class="keyword">function</span>()
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2018-08-19 23:04:29 </i>
+<i style="float:right;">Last updated 2018-10-17 23:18:24 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 
