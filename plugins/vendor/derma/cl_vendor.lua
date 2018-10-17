@@ -1,6 +1,8 @@
 
 local PANEL = {}
 
+AccessorFunc(PANEL, "bReadOnly", "ReadOnly", FORCE_BOOL)
+
 function PANEL:Init()
 	self:SetSize(ScrW() * 0.45, ScrH() * 0.65)
 	self:SetTitle("")
@@ -22,7 +24,7 @@ function PANEL:Init()
 	self.ourName = header:Add("DLabel")
 	self.ourName:Dock(RIGHT)
 	self.ourName:SetWide(self:GetWide() * 0.5 - 7)
-	self.ourName:SetText(L"you".." ("..ix.currency.Get(LocalPlayer():GetChar():GetMoney())..")")
+	self.ourName:SetText(L"you".." ("..ix.currency.Get(LocalPlayer():GetCharacter():GetMoney())..")")
 	self.ourName:SetTextInset(0, 0)
 	self.ourName:SetTextColor(color_white)
 	self.ourName:SetFont("ixMediumFont")
@@ -40,9 +42,13 @@ function PANEL:Init()
 	-- The text says purchase but the vendor is selling it to us.
 	self.vendorSell:SetText(L"purchase")
 	self.vendorSell:SetTextColor(color_white)
+
 	self.vendorSell.DoClick = function(this)
 		if (IsValid(self.activeSell)) then
-			netstream.Start("vendorTrade", self.activeSell.item)
+			net.Start("ixVendorTrade")
+				net.WriteString(self.activeSell.item)
+				net.WriteBool(false)
+			net.SendToServer()
 		end
 	end
 
@@ -55,7 +61,10 @@ function PANEL:Init()
 	self.vendorBuy:SetTextColor(color_white)
 	self.vendorBuy.DoClick = function(this)
 		if (IsValid(self.activeBuy)) then
-			netstream.Start("vendorTrade", self.activeBuy.item, true)
+			net.Start("ixVendorTrade")
+				net.WriteString(self.activeBuy.item)
+				net.WriteBool(true)
+			net.SendToServer()
 		end
 	end
 
@@ -134,17 +143,21 @@ function PANEL:Setup(entity)
 	self:SetTitle(entity:GetNetVar("name", ""))
 	self.vendorName:SetText(entity:GetNetVar("name", "")..(entity.money and " ("..entity.money..")" or ""))
 
+	self.vendorBuy:SetEnabled(!self:GetReadOnly())
+	self.vendorSell:SetEnabled(!self:GetReadOnly())
+
 	for k, _ in SortedPairs(entity.items) do
 		self:addItem(k, "selling")
 	end
 
-	for _, v in SortedPairs(LocalPlayer():GetChar():GetInv():GetItems()) do
+	for _, v in SortedPairs(LocalPlayer():GetCharacter():GetInventory():GetItems()) do
 		self:addItem(v.uniqueID, "buying")
 	end
 end
 
 function PANEL:OnRemove()
-	netstream.Start("vendorExit")
+	net.Start("ixVendorClose")
+	net.SendToServer()
 
 	if (IsValid(ix.gui.vendorEditor)) then
 		ix.gui.vendorEditor:Remove()
@@ -163,7 +176,7 @@ function PANEL:Think()
 	if ((self.nextUpdate or 0) < CurTime()) then
 		self:SetTitle(self.entity:GetNetVar("name"))
 		self.vendorName:SetText(entity:GetNetVar("name", "")..(entity.money and " ("..ix.currency.Get(entity.money)..")" or ""))
-		self.ourName:SetText(L"you".." ("..ix.currency.Get(LocalPlayer():GetChar():GetMoney())..")")
+		self.ourName:SetText(L"you".." ("..ix.currency.Get(LocalPlayer():GetCharacter():GetMoney())..")")
 
 		self.nextUpdate = CurTime() + 0.25
 	end
@@ -226,9 +239,9 @@ function PANEL:Setup(uniqueID)
 
 	if (item) then
 		self.item = uniqueID
-		self.icon:SetModel(item.model, item.skin or 0)
-		self.name:SetText(L(item.name))
-		self.itemName = L(item.name)
+		self.icon:SetModel(item:GetModel(), item:GetSkin())
+		self.name:SetText(item:GetName())
+		self.itemName = item:GetName()
 	end
 end
 
@@ -239,7 +252,7 @@ function PANEL:Think()
 
 		if (entity) then
 			if (self.isLocal) then
-				local count = LocalPlayer():GetChar():GetInv():GetItemCount(self.item)
+				local count = LocalPlayer():GetCharacter():GetInventory():GetItemCount(self.item)
 
 				if (count == 0) then
 					self:Remove()

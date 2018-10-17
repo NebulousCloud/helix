@@ -2,6 +2,9 @@ local playerMeta = FindMetaTable("Player")
 
 -- Player data (outside of characters) handling.
 do
+	util.AddNetworkString("ixData")
+	util.AddNetworkString("ixDataSync")
+
 	function playerMeta:LoadData(callback)
 		local name = self:SteamName()
 		local steamID64 = self:SteamID64()
@@ -45,7 +48,7 @@ do
 	end
 
 	function playerMeta:SaveData()
-		local name = self:Name()
+		local name = self:SteamName()
 		local steamID64 = self:SteamID64()
 
 		local query = mysql:Update("ix_players")
@@ -61,7 +64,10 @@ do
 		self.ixData[key] = value
 
 		if (!bNoNetworking) then
-			netstream.Start(self, "ixData", key, value)
+			net.Start("ixData")
+				net.WriteString(key)
+				net.WriteType(value)
+			net.Send(self)
 		end
 	end
 end
@@ -87,5 +93,19 @@ do
 		end
 
 		return false
+	end
+end
+
+do
+	playerMeta.ixGive = playerMeta.ixGive or playerMeta.Give
+
+	function playerMeta:Give(className, bNoAmmo)
+		local weapon
+
+		self.ixWeaponGive = true
+			weapon = self:ixGive(className, bNoAmmo)
+		self.ixWeaponGive = nil
+
+		return weapon
 	end
 end

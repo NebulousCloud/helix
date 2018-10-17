@@ -15,8 +15,8 @@ do
 			local recognized = self:GetData("rgn", "")
 
 			if (recognized != "" and recognized:find(","..id..",")) then
-				return false;
-			end;
+				return false
+			end
 
 			self:SetData("rgn", recognized..","..id..",")
 
@@ -29,28 +29,28 @@ do
 			id = id:GetID()
 		end
 
-		return hook.Run("IsCharRecognized", self, id) != false
+		return hook.Run("IsCharacterRecognized", self, id)
 	end
 
-	function PLUGIN:IsCharRecognized(char, id)
+	function PLUGIN:IsCharacterRecognized(char, id)
+		if (char.id == id) then
+			return true
+		end
+
 		local other = ix.char.loaded[id]
 
 		if (other) then
 			local faction = ix.faction.indices[other:GetFaction()]
 
 			if (faction and faction.isGloballyRecognized) then
-				return
+				return true
 			end
 		end
 
 		local recognized = char:GetData("rgn", "")
 
-		if (recognized == "") then
-			return false
-		end
-
-		if (!recognized:find(","..id..",")) then
-			return false
+		if (recognized != "" and recognized:find(","..id..",")) then
+			return true
 		end
 	end
 end
@@ -66,7 +66,7 @@ if (CLIENT) then
 		return CHAT_RECOGNIZED[chatType]
 	end
 
-	function PLUGIN:GetDisplayedDescription(client)
+	function PLUGIN:GetCharacterDescription(client)
 		if (client:GetCharacter() and client != LocalPlayer() and LocalPlayer():GetCharacter() and
 			!LocalPlayer():GetCharacter():DoesRecognize(client:GetCharacter()) and !hook.Run("IsPlayerRecognized", client)) then
 			return L"noRecog"
@@ -79,10 +79,10 @@ if (CLIENT) then
 		end
 	end
 
-	function PLUGIN:GetDisplayedName(client, chatType)
+	function PLUGIN:GetCharacterName(client, chatType)
 		if (client != LocalPlayer()) then
-			local character = client:GetChar()
-			local ourCharacter = LocalPlayer():GetChar()
+			local character = client:GetCharacter()
+			local ourCharacter = LocalPlayer():GetCharacter()
 
 			if (ourCharacter and character and !ourCharacter:DoesRecognize(character) and !hook.Run("IsPlayerRecognized", client)) then
 				if (chatType and hook.Run("IsRecognizedChatType", chatType)) then
@@ -100,79 +100,97 @@ if (CLIENT) then
 		end
 	end
 
-	netstream.Hook("rgnMenu", function()
+	local function Recognize(level)
+		net.Start("ixRecognize")
+			net.WriteUInt(level, 2)
+		net.SendToServer()
+	end
+
+	net.Receive("ixRecognizeMenu", function(length)
 		local menu = DermaMenu()
 			menu:AddOption(L"rgnLookingAt", function()
-				netstream.Start("rgn", 1)
+				Recognize(1)
 			end)
 			menu:AddOption(L"rgnWhisper", function()
-				netstream.Start("rgn", 2)
+				Recognize(2)
 			end)
 			menu:AddOption(L"rgnTalk", function()
-				netstream.Start("rgn", 3)
+				Recognize(3)
 			end)
 			menu:AddOption(L"rgnYell", function()
-				netstream.Start("rgn", 4)
+				Recognize(4)
 			end)
 		menu:Open()
 		menu:MakePopup()
 		menu:Center()
 	end)
 
-	netstream.Hook("rgnDone", function()
-		hook.Run("OnCharRecognized")
+	net.Receive("ixRecognizeDone", function(length)
+		hook.Run("CharacterRecognized")
 	end)
 
-	function PLUGIN:OnCharRecognized(client, recogCharID)
+	function PLUGIN:CharacterRecognized(client, recogCharID)
 		surface.PlaySound("buttons/button17.wav")
 	end
 else
+	util.AddNetworkString("ixRecognize")
+	util.AddNetworkString("ixRecognizeMenu")
+	util.AddNetworkString("ixRecognizeDone")
+
 	function PLUGIN:ShowSpare1(client)
-		if (client:GetChar()) then
-			netstream.Start(client, "rgnMenu")
+		if (client:GetCharacter()) then
+			net.Start("ixRecognizeMenu")
+			net.Send(client)
 		end
 	end
 
-	netstream.Hook("rgn", function(client, level)
-		local targets = {}
+	net.Receive("ixRecognize", function(length, client)
+		local level = net.ReadUInt(2)
 
-		if (level < 2) then
-			local entity = client:GetEyeTraceNoCursor().Entity
+		if (isnumber(level)) then
+			local targets = {}
 
-			if (IsValid(entity) and entity:IsPlayer() and entity:GetChar() and ix.chat.classes.ic:OnCanHear(client, entity)) then
-				targets[1] = entity
-			end
-		else
-			local class = "w"
+			if (level < 2) then
+				local entity = client:GetEyeTraceNoCursor().Entity
 
-			if (level == 3) then
-				class = "ic"
-			elseif (level == 4) then
-				class = "y"
-			end
-
-			class = ix.chat.classes[class]
-
-			for _, v in ipairs(player.GetAll()) do
-				if (client != v and v:GetChar() and class:OnCanHear(client, v)) then
-					targets[#targets + 1] = v
+				if (IsValid(entity) and entity:IsPlayer() and entity:GetCharacter()
+				and ix.chat.classes.ic:CanHear(client, entity)) then
+					targets[1] = entity
 				end
-			end
-		end
+			else
+				local class = "w"
 
-		if (#targets > 0) then
-			local id = client:GetCharacter():GetID()
-			local i = 0
+				if (level == 3) then
+					class = "ic"
+				elseif (level == 4) then
+					class = "y"
+				end
 
-			for _, v in ipairs(targets) do
-				if (v:GetCharacter():Recognize(id)) then
-					i = i + 1
+				class = ix.chat.classes[class]
+
+				for _, v in ipairs(player.GetAll()) do
+					if (client != v and v:GetCharacter() and class:CanHear(client, v)) then
+						targets[#targets + 1] = v
+					end
 				end
 			end
 
-			if (i > 0) then
-				netstream.Start(client, "rgnDone")
-				hook.Run("OnCharRecognized", client, id)
+			if (#targets > 0) then
+				local id = client:GetCharacter():GetID()
+				local i = 0
+
+				for _, v in ipairs(targets) do
+					if (v:GetCharacter():Recognize(id)) then
+						i = i + 1
+					end
+				end
+
+				if (i > 0) then
+					net.Start("ixRecognizeDone")
+					net.Send(client)
+
+					hook.Run("CharacterRecognized", client, id)
+				end
 			end
 		end
 	end)

@@ -1,4 +1,6 @@
 
+local PLUGIN = PLUGIN
+
 PLUGIN.name = "3D Panels"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds web panels that can be placed on the map."
@@ -6,15 +8,24 @@ PLUGIN.description = "Adds web panels that can be placed on the map."
 -- List of available panel dislays.
 PLUGIN.list = PLUGIN.list or {}
 
-local PLUGIN = PLUGIN
-
 if (SERVER) then
+	util.AddNetworkString("ixPanelList")
+	util.AddNetworkString("ixPanelAdd")
+	util.AddNetworkString("ixPanelRemove")
+
 	-- Called when the player is sending client info.
 	function PLUGIN:PlayerInitialSpawn(client)
 		-- Send the list of panel displays.
 		timer.Simple(1, function()
 			if (IsValid(client)) then
-				netstream.Start(client, "panelList", self.list)
+				local json = util.TableToJSON(self.list)
+				local compressed = util.Compress(json)
+				local length = compressed:len()
+
+				net.Start("ixPanelList")
+					net.WriteUInt(length, 32)
+					net.WriteData(compressed, length)
+				net.Send(client)
 			end
 		end)
 	end
@@ -30,8 +41,17 @@ if (SERVER) then
 
 		-- Add the panel to the list so it can be sent and saved.
 		self.list[index] = {position, angles, w, h, scale, url}
+
 		-- Send the panel information to the players.
-		netstream.Start(nil, "panel", index, position, angles, w, h, scale, url)
+		net.Start("ixPanelAdd")
+			net.WriteUInt(index, 32)
+			net.WriteVector(position)
+			net.WriteAngle(angles)
+			net.WriteUInt(w, 16)
+			net.WriteUInt(h, 16)
+			net.WriteFloat(scale)
+			net.WriteString(url)
+		net.Broadcast()
 
 		-- Save the plugin data.
 		self:SavePanels()
@@ -50,8 +70,11 @@ if (SERVER) then
 			if (v[1]:Distance(position) <= radius) then
 				-- Remove the panel from the list of panels.
 				self.list[k] = nil
+
 				-- Tell the players to stop showing the panel.
-				netstream.Start(nil, "panel", k)
+				net.Start("ixPanelRemove")
+					net.WriteUInt(k, 32)
+				net.Broadcast()
 
 				-- Increase the number of deleted panels by one.
 				i = i + 1
@@ -105,23 +128,40 @@ else
 	end
 
 	-- Receives new panel objects that need to be drawn.
-	netstream.Hook("panel", function(index, position, angles, w, h, scale, url)
-		-- Check if we are adding or deleting the panel.
-		if (position) then
-			-- Add the panel to a list of drawn panel objects.
+	net.Receive("ixPanelAdd", function()
+		local index = net.ReadUInt(32)
+		local position = net.ReadVector()
+		local angles = net.ReadAngle()
+		local w, h = net.ReadUInt(16), net.ReadUInt(16)
+		local scale = net.ReadFloat()
+		local url = net.ReadString()
+
+		if (url != "") then
 			PLUGIN.list[index] = {position, angles, w, h, scale, url}
 
 			CacheMaterial(index)
-		else
-			-- Delete the panel object if we are deleting stuff.
-			PLUGIN.list[index] = nil
 		end
 	end)
 
+	net.Receive("ixPanelRemove", function()
+		local index = net.ReadUInt(32)
+
+		table.remove(PLUGIN.list, index)
+	end)
+
 	-- Receives a full update on ALL panels.
-	netstream.Hook("panelList", function(values)
+	net.Receive("ixPanelList", function()
+		local length = net.ReadUInt(32)
+		local data = net.ReadData(length)
+		local uncompressed = util.Decompress(data)
+
+		if (!uncompressed) then
+			ErrorNoHalt("[Helix] Unable to decompress panel data!\n")
+			return
+		end
+
 		-- Set the list of panels to the ones provided by the server.
-		PLUGIN.list = values
+		PLUGIN.list = util.JSONToTable(uncompressed)
 
 		local CacheQueue  = {}
 

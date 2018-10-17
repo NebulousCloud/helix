@@ -18,7 +18,7 @@ language a client is using, you can simply do the following:
 
 This will return the language of the player, or `"english"` if one isn't found. Note that `"language"` is a networked option
 that is already defined in the framework, so it will always be available. All options will show up in the options menu on the
-client, unless `bHidden` is `true` when using `ix.option.Add`.
+client, unless `hidden` returns `true` when using `ix.option.Add`.
 
 Note that the labels for each option in the menu will use a language phrase to show the name. For example, if your option is
 named `headbob`, then you'll need to define a language phrase called `optHeadbob` that will be used as the option title.
@@ -37,7 +37,7 @@ example, if your key is `"exampleOption"`, the default phrase will be `"optExamp
 
 <li><p>
 `category`<br />
-(default: `"miscellaneous"`)<br />
+(default: `"misc"`)<br />
 The category that this option should reside in. This is purely for aesthetic reasons when displaying the options in the options
 menu. When displayed in the UI, it will take the form of `L("category name")`. This means that you must create a language phrase
 for the category name - otherwise it will only show as the string you've specified.
@@ -50,9 +50,9 @@ Whether or not the server should be aware of this option for each client.
 </p></li>
 
 <li><p>
-`bHidden`<br />
-(default: `false`)<br />
-Whether or not to hide this option from the options menu.
+`hidden`<br />
+(default: `nil`)<br />
+The function to check whether the option should be hidden from the options menu.
 </p></li>
 
 <li><p>
@@ -89,20 +89,26 @@ function ix.option.Add(key, optionType, default, data)
 	data = data or {}
 
 	local categories = ix.option.categories
-	local category = data.category or "miscellaneous"
+	local category = data.category or "misc"
+	local upperName = key:sub(1, 1):upper() .. key:sub(2)
 
 	categories[category] = categories[category] or {}
 	categories[category][key] = true
 
 	ix.option.stored[key] = {
 		key = key,
-		phrase = "opt" .. key:sub(1, 1):upper() .. key:sub(2),
+		phrase = "opt" .. upperName,
+		description = "optd" .. upperName,
 		type = optionType,
 		default = default,
-		category = data.category or "miscellaneous",
+		min = data.min or 0,
+		max = data.max or 10,
+		decimals = data.decimals or 0,
+		category = data.category or "misc",
 		bNetworked = data.bNetworked and true or false,
-		bHidden = data.bHidden and true or false,
-		populate = data.populate or nil
+		hidden = data.hidden or nil,
+		populate = data.populate or nil,
+		OnChanged = data.OnChanged or nil
 	}
 end
 
@@ -130,7 +136,6 @@ end
 -- @treturn table Table of all options
 -- @usage PrintTable(ix.option.GetAll())
 -- > language:
--- >	bHidden	= false
 -- >	bNetworked = true
 -- >	default = english
 -- >	type = 512
@@ -149,7 +154,6 @@ end
 -- > general:
 -- > 	1:
 -- >		key = language
--- >		bHidden = false
 -- >		bNetworked = true
 -- >		default = english
 -- >		type = 512
@@ -161,7 +165,7 @@ function ix.option.GetAllByCategories(bRemoveHidden)
 		for k2, _ in pairs(v) do
 			local option = ix.option.stored[k2]
 
-			if (bRemoveHidden and option.bHidden) then
+			if (bRemoveHidden and isfunction(option.hidden) and option.hidden()) then
 				continue
 			end
 
@@ -186,14 +190,26 @@ if (CLIENT) then
 	function ix.option.Set(key, value, bNoSave)
 		local option = assert(ix.option.stored[key], "expected valid option key")
 
+		if (option.type == ix.type.number) then
+			value = math.Clamp(math.Round(value, option.decimals), option.min, option.max)
+		end
+
+		local oldValue = ix.option.client[key]
 		ix.option.client[key] = value
 
 		if (option.bNetworked) then
-			netstream.Start("ixOptionSet", key, value)
+			net.Start("ixOptionSet")
+				net.WriteString(key)
+				net.WriteType(value)
+			net.SendToServer()
 		end
 
 		if (!bNoSave) then
 			ix.option.Save()
+		end
+
+		if (isfunction(option.OnChanged)) then
+			option.OnChanged(oldValue, value)
 		end
 	end
 
@@ -232,13 +248,26 @@ if (CLIENT) then
 
 		for k, v in pairs(ix.option.stored) do
 			if (v.bNetworked) then
-				options[k] = ix.option.client[k]
+				options[#options + 1] = {k, ix.option.client[k]}
 			end
 		end
 
-		netstream.Start("ixOptionSync", options)
+		if (#options > 0) then
+			net.Start("ixOptionSync")
+			net.WriteUInt(#options, 8)
+
+			for _, v in ipairs(options) do
+				net.WriteString(v[1])
+				net.WriteType(v[2])
+			end
+
+			net.SendToServer()
+		end
 	end
 else
+	util.AddNetworkString("ixOptionSet")
+	util.AddNetworkString("ixOptionSync")
+
 	ix.option.clients = ix.option.clients or {}
 
 	--- Retrieves an option value from the specified player. If it is not set, it'll return the default that you've specified.
@@ -271,7 +300,10 @@ else
 	end
 
 	-- sent whenever a client's networked option has changed
-	netstream.Hook("ixOptionSet", function(client, key, value)
+	net.Receive("ixOptionSet", function(length, client)
+		local key = net.ReadString()
+		local value = net.ReadType()
+
 		local steamID = client:SteamID64()
 		local option = ix.option.stored[key]
 
@@ -286,7 +318,14 @@ else
 	end)
 
 	-- sent on first load to sync all networked option values
-	netstream.Hook("ixOptionSync", function(client, data)
+	net.Receive("ixOptionSync", function(length, client)
+		local indices = net.ReadUInt(8)
+		local data = {}
+
+		for _ = 1, indices do
+			data[net.ReadString()] = net.ReadType()
+		end
+
 		local steamID = client:SteamID64()
 		ix.option.clients[steamID] = ix.option.clients[steamID] or {}
 

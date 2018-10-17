@@ -48,6 +48,45 @@ if (CLIENT) then
 	function ix.menu.IsOpen()
 		return IsValid(ix.menu.panel)
 	end
+
+	--- Notifies the server of an option that was chosen for the given entity.
+	-- @client
+	-- @entity entity Entity to call option on
+	-- @string choice Option that was chosen
+	-- @param data Extra data to send to the entity
+	function ix.menu.NetworkChoice(entity, choice, data)
+		if (IsValid(entity)) then
+			net.Start("ixEntityMenuSelect")
+				net.WriteEntity(entity)
+				net.WriteString(choice)
+				net.WriteType(data)
+			net.SendToServer()
+		end
+	end
+else
+	util.AddNetworkString("ixEntityMenuSelect")
+
+	net.Receive("ixEntityMenuSelect", function(length, client)
+		local entity = net.ReadEntity()
+		local option = net.ReadString()
+		local data = net.ReadType()
+
+		if (!IsValid(entity) or !isstring(option) or
+			hook.Run("CanPlayerInteractEntity", client, entity, option, data) == false or
+			entity:GetPos():Distance(client:GetPos()) > 96) then
+			return
+		end
+
+		hook.Run("PlayerInteractEntity", client, entity, option, data)
+
+		local callbackName = "OnSelect" .. option:gsub("%s", "")
+
+		if (entity[callbackName]) then
+			entity[callbackName](entity, client, data)
+		else
+			entity:OnOptionSelected(client, option, data)
+		end
+	end)
 end
 
 do

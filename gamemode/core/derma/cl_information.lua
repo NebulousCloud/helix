@@ -1,305 +1,300 @@
 
 local PANEL = {}
 
-AccessorFunc(PANEL, "titleBackground", "TitleBackground") -- set to nil to default to config color
-
 function PANEL:Init()
-	self.titleBar = vgui.Create("Panel", self)
-	self.titleBar:Dock(TOP)
+	local parent = self:GetParent()
 
-	self.title = vgui.Create("DLabel", self.titleBar)
-	self.title:SetText("Title")
-	self.title:SetColor(color_white)
-	self.title:SetExpensiveShadow(1, color_black)
-	self.title:SetContentAlignment(4)
-	self.title:SizeToContents()
-	self.title:DockMargin(4, 0, 0, 0)
-	self.title:Dock(LEFT)
+	self:SetSize(parent:GetWide() * 0.6, parent:GetTall())
+	self:Dock(RIGHT)
+	self:DockMargin(0, ScrH() * 0.05, 0, 0)
 
-	self.subTitle = vgui.Create("DLabel", self.titleBar)
-	self.subTitle:SetText("Subtitle")
-	self.subTitle:SetColor(color_white)
-	self.subTitle:SetExpensiveShadow(1, color_black)
-	self.subTitle:SetContentAlignment(4)
-	self.subTitle:SizeToContents()
-	self.subTitle:DockMargin(0, 0, 4, 0)
-	self.subTitle:Dock(RIGHT)
+	self.VBar:SetWide(0)
 
-	self.canvas = vgui.Create("Panel", self)
-	self.canvas:DockMargin(4, 4, 4, 0)
-	self.canvas:Dock(FILL)
+	-- entry setup
+	local suppress = {}
+	hook.Run("CanCreateCharacterInfo", suppress)
 
-	self:SetFont("ixMediumFont")
-	self:SetTitle("Info")
-	self:SetSubtitle("")
-	self:SetTitleBackground(nil)
-end
+	if (!suppress.time) then
+		local format = "%A, %B %d, %Y. %H:%M:%S"
 
-function PANEL:SizeToContents()
-	self.canvas:InvalidateLayout(true)
-	self:InvalidateLayout(true)
-
-	self.canvas:SizeToChildren(true, true)
-	self:SizeToChildren(true, true)
-
-	-- dock padding
-	self:SetSize(self:GetWide(), self:GetTall() + 4)
-end
-
-function PANEL:Add(name)
-	return self.canvas:Add(name)
-end
-
-function PANEL:SetTitle(text)
-	self.title:SetText(text)
-	self.title:SizeToContents()
-end
-
-function PANEL:SetSubtitle(text)
-	self.subTitle:SetText(text)
-	self.subTitle:SizeToContents()
-end
-
-function PANEL:SetFont(font)
-	self.title:SetFont(font)
-	self.subTitle:SetFont(font)
-end
-
-function PANEL:GetTitle()
-	return self.title:GetText()
-end
-
-function PANEL:Paint(width, height)
-	local titleBackground = self.titleBackground
-
-	if (!IsColor(titleBackground)) then
-		titleBackground = ix.config.Get("color")
+		self.time = self:Add("DLabel")
+		self.time:SetFont("ixMediumFont")
+		self.time:SetTall(28)
+		self.time:SetContentAlignment(5)
+		self.time:Dock(TOP)
+		self.time:SetTextColor(color_white)
+		self.time:SetExpensiveShadow(1, Color(0, 0, 0, 150))
+		self.time:DockMargin(0, 0, 0, 32)
+		self.time:SetText(ix.date.GetFormatted(format))
+		self.time.Think = function(this)
+			if ((this.nextTime or 0) < CurTime()) then
+				this:SetText(ix.date.GetFormatted(format))
+				this.nextTime = CurTime() + 0.5
+			end
+		end
 	end
 
-	-- background
-	ix.util.DrawBlur(self, 10)
+	if (!suppress.name) then
+		-- container panel so we can center the label horizontally without colouring the entire background
+		local namePanel = self:Add("Panel")
+		namePanel:Dock(TOP)
+		namePanel:DockMargin(0, 0, 0, 8)
+		namePanel.PerformLayout = function(_, width, height)
+			self.name:SetPos(width * 0.5 - self.name:GetWide() * 0.5, height * 0.5 - self.name:GetTall() * 0.5)
+		end
 
-	surface.SetDrawColor(30, 30, 30, 100)
-	surface.DrawRect(0, 0, width, height)
+		self.name = namePanel:Add("DLabel")
+		self.name.backgroundColor = Color(0, 0, 0, 150)
+		self.name:SetFont("ixMenuButtonHugeFont")
+		self.name:SetContentAlignment(5)
+		self.name:SetTextColor(color_white)
+		self.name.Paint = function(this, width, height)
+			surface.SetDrawColor(this.backgroundColor)
+			surface.DrawRect(0, 0, width, height)
+		end
 
-	-- title bar
-	surface.SetDrawColor(titleBackground)
-	surface.DrawRect(0, 0, width, self.title:GetTall())
+		self.name.SizeToContents = function(this)
+			local width, height = this:GetContentSize()
+			width = width + 16
+			height = height + 16
 
-	-- outline
-	surface.SetDrawColor(0, 0, 0, 150)
-	surface.DrawOutlinedRect(0, 0, width, height)
-end
-
-vgui.Register("ixInfoPanel", PANEL, "EditablePanel")
-
-PANEL = {}
-function PANEL:Init()
-	if (IsValid(ix.gui.info)) then
-		ix.gui.info:Remove()
+			this:SetSize(width, height)
+			namePanel:SetTall(height)
+		end
 	end
 
-	ix.gui.info = self
-
-	self:Dock(FILL)
-	self:Center()
-
-	local suppress = hook.Run("CanCreateCharInfo", self)
-
-	if (!suppress or (suppress and !suppress.all)) then
-		if (!suppress or !suppress.model) then
-			self.model = self:Add("ixModelPanel")
-			self.model:SetWide(ScrW() * 0.25)
-			self.model:Dock(LEFT)
-			self.model:SetFOV(50)
-			self.model.enableHook = true
-			self.model.copyLocalSequence = true
-		end
-
-		if (!suppress or !suppress.info) then
-			self.info = self:Add("DPanel")
-			self.info:SetWide(ScrW() * 0.4)
-			self.info:Dock(RIGHT)
-			self.info:SetDrawBackground(false)
-			self.info:DockMargin(0, ScrH() * 0.15, 0, 0)
-		end
-
-		if (!suppress or !suppress.time) then
-			self.time = self.info:Add("DLabel")
-			self.time:SetFont("ixMediumFont")
-			self.time:SetTall(28)
-			self.time:SetContentAlignment(5)
-			self.time:Dock(TOP)
-			self.time:SetTextColor(color_white)
-			self.time:SetExpensiveShadow(1, Color(0, 0, 0, 150))
-			self.time:DockMargin(0, 0, 0, 16)
-		end
-
-		if (!suppress or !suppress.basicInfo) then
-			self.basicInfo = self.info:Add("ixInfoPanel")
-			self.basicInfo:SetTitle(L("you"))
-			self.basicInfo:Dock(TOP)
-
-			if (!suppress or !suppress.description) then
-				self.description = self.basicInfo:Add("DLabel")
-				self.description:SetFont("ixMediumFont")
-				self.description:SetTextColor(color_white)
-				self.description:SetExpensiveShadow(1, Color(0, 0, 0, 150))
-				self.description:SetWide(self.info:GetWide())
-				self.description:SetContentAlignment(5)
-				self.description:Dock(TOP)
-				self.description:SetMouseInputEnabled(true)
-				self.description:SetCursor("hand")
-				self.description.DoClick = function(this)
-					RunConsoleCommand("ix", "CharDesc")
-				end
+	if (!suppress.description) then
+		local descriptionPanel = self:Add("Panel")
+		descriptionPanel:Dock(TOP)
+		descriptionPanel:DockMargin(0, 0, 0, 8)
+		descriptionPanel.PerformLayout = function(_, width, height)
+			if (!self.description.bWrap) then
+				self.description:SetPos(width * 0.5 - self.description:GetWide() * 0.5, height * 0.5 - self.description:GetTall() * 0.5)
 			end
+		end
 
-			if (!suppress or !suppress.money) then
-				self.money = self.basicInfo:Add("DLabel")
-				self.money:SetFont("ixMediumFont")
-				self.money:SetTextColor(color_white)
-				self.money:SetExpensiveShadow(1, Color(0, 0, 0, 150))
-				self.money:DockMargin(0, 8, 0, 0)
-				self.money:Dock(TOP)
-			end
+		self.description = descriptionPanel:Add("DLabel")
+		self.description:SetFont("ixMenuButtonFont")
+		self.description:SetTextColor(color_white)
+		self.description:SetContentAlignment(5)
+		self.description:SetMouseInputEnabled(true)
+		self.description:SetCursor("hand")
 
-			if (!suppress or !suppress.class) then
-				local class = ix.class.list[LocalPlayer():GetChar():GetClass()]
+		self.description.Paint = function(this, width, height)
+			surface.SetDrawColor(0, 0, 0, 150)
+			surface.DrawRect(0, 0, width, height)
+		end
 
-				if (class) then
-					self.class = self.basicInfo:Add("DLabel")
-					self.class:Dock(TOP)
-					self.class:SetFont("ixMediumFont")
-					self.class:SetTextColor(color_white)
-					self.class:SetExpensiveShadow(1, Color(0, 0, 0, 150))
+		self.description.OnMousePressed = function(this, code)
+			if (code == MOUSE_LEFT) then
+				ix.command.Send("CharDesc")
+
+				if (IsValid(ix.gui.menu)) then
+					ix.gui.menu:Remove()
 				end
 			end
 		end
 
-		hook.Run("CreateCharInfoText", self)
+		self.description.SizeToContents = function(this)
+			if (this.bWrap) then
+				-- sizing contents after initial wrapping does weird things so we'll just ignore (lol)
+				return
+			end
 
-		if (!suppress or !suppress.attrib) then
-			self.attribInfo = self.info:Add("ixInfoPanel")
-			self.attribInfo:SetTitle(L"attributes")
-			self.attribInfo:DockMargin(0, 16, 0, 0)
-			self.attribInfo:Dock(TOP)
+			local width, height = this:GetContentSize()
+
+			if (width > self:GetWide()) then
+				this:SetWide(self:GetWide())
+				this:SetTextInset(16, 8)
+				this:SetWrap(true)
+				this:SizeToContentsY()
+				this:SetTall(this:GetTall() + 16) -- eh
+
+				-- wrapping doesn't like middle alignment so we'll do top-center
+				self.description:SetContentAlignment(8)
+				this.bWrap = true
+			else
+				this:SetSize(width + 16, height + 16)
+			end
+
+			descriptionPanel:SetTall(this:GetTall())
 		end
 	end
 
-	hook.Run("CreateCharInfo", self)
-end
+	if (!suppress.characterInfo) then
+		self.characterInfo = self:Add("Panel")
+		self.characterInfo.list = {}
+		self.characterInfo:Dock(TOP) -- no dock margin because this is handled by ixListRow
+		self.characterInfo.SizeToContents = function(this)
+			local height = 0
 
-function PANEL:Setup()
-	local char = LocalPlayer():GetChar()
-	local factionName = team.GetName(LocalPlayer():Team())
+			for _, v in ipairs(this:GetChildren()) do
+				if (IsValid(v) and v:IsVisible()) then
+					local _, top, _, bottom = v:GetDockMargin()
+					height = height + v:GetTall() + top + bottom
+				end
+			end
 
-	if (self.basicInfo) then
-		if (self.description) then
-			self.description:SetText(char:GetDescription())
-			self.description:SizeToContents()
+			this:SetTall(height)
 		end
 
-		if (self.money) then
-			self.money:SetText(L("charMoney", char:GetMoney()))
+		if (!suppress.faction) then
+			self.faction = self.characterInfo:Add("ixListRow")
+			self.faction:SetList(self.characterInfo.list)
+			self.faction:Dock(TOP)
+		end
+
+		if (!suppress.class) then
+			self.class = self.characterInfo:Add("ixListRow")
+			self.class:SetList(self.characterInfo.list)
+			self.class:Dock(TOP)
+		end
+
+		if (!suppress.money) then
+			self.money = self.characterInfo:Add("ixListRow")
+			self.money:SetList(self.characterInfo.list)
+			self.money:Dock(TOP)
 			self.money:SizeToContents()
 		end
 
-		if (self.time) then
-			local format = "%A, %B %d, %Y. %X"
-
-			self.time:SetText(os.date(format, ix.date.Get()))
-			self.time.Think = function(this)
-				if ((this.nextTime or 0) < CurTime()) then
-					this:SetText(os.date(format, ix.date.Get()))
-					this.nextTime = CurTime() + 0.5
-				end
-			end
-		end
-
-		if (self.class) then
-			local class = ix.class.list[char:GetClass()]
-
-			-- don't show class label if the class is the same name as the faction
-			if (class and class.name != factionName) then
-				self.class:SetText(L("charClass", L(class.name)))
-			else
-				self.class:SetVisible(false)
-			end
-
-			self.class:SizeToContents()
-		end
-
-		if (self.model) then
-			self.model:SetModel(LocalPlayer():GetModel())
-			self.model.Entity:SetSkin(LocalPlayer():GetSkin())
-
-			for _, v in ipairs(LocalPlayer():GetBodyGroups()) do
-				self.model.Entity:SetBodygroup(v.id, LocalPlayer():GetBodygroup(v.id))
-			end
-
-			local ent = self.model.Entity
-
-			if (ent and IsValid(ent)) then
-				local mats = LocalPlayer():GetMaterials()
-
-				for k, _ in pairs(mats) do
-					ent:SetSubMaterial(k - 1, LocalPlayer():GetSubMaterial(k - 1))
-				end
-			end
-		end
-
-		self.basicInfo:SetTitle(LocalPlayer():GetName())
-		self.basicInfo:SetSubtitle(team.GetName(LocalPlayer():Team()))
-		self.basicInfo:SetTitleBackground(team.GetColor(LocalPlayer():Team()))
-		self.basicInfo:SizeToContents()
+		hook.Run("CreateCharacterInfo", self.characterInfo)
+		self.characterInfo:SizeToContents()
 	end
 
-	if (self.attribInfo) then
-		local boost = char:GetBoosts()
+	-- no need to update since we aren't showing the attributes panel
+	if (!suppress.attributes) then
+		local character = LocalPlayer().GetCharacter and LocalPlayer():GetCharacter()
 
-		for k, v in SortedPairsByMemberValue(ix.attributes.list, "name") do
-			local attribBoost = 0
-			if (boost[k]) then
-				for _, bValue in pairs(boost[k]) do
-					attribBoost = attribBoost + bValue
+		if (character) then
+			self.attributes = self:Add("ixCategoryPanel")
+			self.attributes:SetText(L("attributes"))
+			self.attributes:Dock(TOP)
+			self.attributes:DockMargin(0, 0, 0, 8)
+
+			local boost = character:GetBoosts()
+			local bFirst = true
+
+			for k, v in SortedPairsByMemberValue(ix.attributes.list, "name") do
+				local attributeBoost = 0
+
+				if (boost[k]) then
+					for _, bValue in pairs(boost[k]) do
+						attributeBoost = attributeBoost + bValue
+					end
+				end
+
+				local bar = self.attributes:Add("ixAttributeBar")
+				bar:Dock(TOP)
+
+				if (!bFirst) then
+					bar:DockMargin(0, 3, 0, 0)
+				else
+					bFirst = false
+				end
+
+				local value = character:GetAttribute(k, 0)
+
+				if (attributeBoost) then
+					bar:SetValue(value - attributeBoost or 0)
+				else
+					bar:SetValue(value)
+				end
+
+				local maximum = v.maxValue or ix.config.Get("maxAttributes", 30)
+				bar:SetMax(maximum)
+				bar:SetReadOnly()
+				bar:SetText(Format("%s [%.1f/%.1f] (%.1f%%)", L(v.name), value, maximum, value / maximum * 100))
+
+				if (attributeBoost) then
+					bar:SetBoost(attributeBoost)
 				end
 			end
 
-			local bar = self.attribInfo:Add("ixAttribBar")
-			bar:Dock(TOP)
-			bar:DockMargin(0, 0, 0, 3)
-
-			local attribValue = char:GetAttrib(k, 0)
-			if (attribBoost) then
-				bar:SetValue(attribValue - attribBoost or 0)
-			else
-				bar:SetValue(attribValue)
-			end
-
-			local maximum = v.maxValue or ix.config.Get("maxAttributes", 30)
-			bar:SetMax(maximum)
-			bar:SetReadOnly()
-			bar:SetText(Format("%s [%.1f/%.1f] (%.1f", L(v.name), attribValue, maximum, attribValue/maximum*100) .. "%)")
-
-			if (attribBoost) then
-				bar:SetBoost(attribBoost)
-			end
+			self.attributes:SizeToContents()
 		end
-
-		self.attribInfo:SizeToContents()
 	end
 
-	hook.Run("OnCharInfoSetup", self)
+	hook.Run("CreateCharacterInfoCategory", self)
 end
 
-vgui.Register("ixCharInfo", PANEL, "EditablePanel")
+function PANEL:Update(character)
+	if (!character) then
+		return
+	end
+
+	local faction = ix.faction.indices[character:GetFaction()]
+	local class = ix.class.list[character:GetClass()]
+
+	if (self.name) then
+		self.name:SetText(character:GetName())
+
+		if (faction) then
+			self.name.backgroundColor = ColorAlpha(faction.color, 150) or Color(0, 0, 0, 150)
+		end
+
+		self.name:SizeToContents()
+	end
+
+	if (self.description) then
+		self.description:SetText(character:GetDescription())
+		self.description:SizeToContents()
+	end
+
+	if (self.faction) then
+		self.faction:SetLabelText(L("faction"))
+		self.faction:SetText(faction.name)
+		self.faction:SizeToContents()
+	end
+
+	if (self.class) then
+		-- don't show class label if the class is the same name as the faction
+		if (class and class.name != faction.name) then
+			self.class:SetLabelText(L("class"))
+			self.class:SetText(L(class.name))
+			self.class:SizeToContents()
+		else
+			self.class:SetVisible(false)
+		end
+	end
+
+	if (self.money) then
+		self.money:SetLabelText(L("money"))
+		self.money:SetText(ix.currency.Get(character:GetMoney()))
+		self.money:SizeToContents()
+	end
+
+	hook.Run("UpdateCharacterInfo", self.characterInfo, character)
+
+	self.characterInfo:SizeToContents()
+
+	hook.Run("UpdateCharacterInfoCategory", self, character)
+end
+
+function PANEL:OnSubpanelRightClick()
+	properties.OpenEntityMenu(LocalPlayer())
+end
+
+vgui.Register("ixCharacterInfo", PANEL, "DScrollPanel")
 
 hook.Add("CreateMenuButtons", "ixCharInfo", function(tabs)
-	tabs["you"] = function(panel, button, menu)
-		menu.title:SetVisible(false)
+	tabs["you"] = {
+		bHideBackground = true,
+		buttonColor = team.GetColor(LocalPlayer():Team()),
+		Create = function(info, container)
+			container.infoPanel = container:Add("ixCharacterInfo")
 
-		local info = panel:Add("ixCharInfo")
-		info:Setup()
-	end
+			container.OnMouseReleased = function(this, key)
+				if (key == MOUSE_RIGHT) then
+					this.infoPanel:OnSubpanelRightClick()
+				end
+			end
+		end,
+		OnSelected = function(info, container)
+			container.infoPanel:Update(LocalPlayer():GetCharacter())
+			ix.gui.menu:SetCharacterOverview(true)
+		end,
+		OnDeselected = function(info, container)
+			ix.gui.menu:SetCharacterOverview(false)
+		end
+	}
 end)

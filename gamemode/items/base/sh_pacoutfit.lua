@@ -66,7 +66,7 @@ if (CLIENT) then
 end
 
 function ITEM:RemovePart(client)
-	local char = client:GetChar()
+	local char = client:GetCharacter()
 
 	self:SetData("equip", false)
 	client:RemovePart(self.uniqueID)
@@ -98,7 +98,10 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 		return false
 	end,
 	OnCanRun = function(item)
-		return (!IsValid(item.entity) and item:GetData("equip") == true)
+		local client = item.player
+
+		return !IsValid(item.entity) and IsValid(client) and item:GetData("equip") == true and
+			hook.Run("CanPlayerUnequipItem", client, item) != false and item.invID == client:GetCharacter():GetInventory():GetID()
 	end
 }
 
@@ -108,8 +111,8 @@ ITEM.functions.Equip = {
 	tip = "equipTip",
 	icon = "icon16/tick.png",
 	OnRun = function(item)
-		local char = item.player:GetChar()
-		local items = char:GetInv():GetItems()
+		local char = item.player:GetCharacter()
+		local items = char:GetInventory():GetItems()
 
 		for _, v in pairs(items) do
 			if (v.id != item.id) then
@@ -136,11 +139,14 @@ ITEM.functions.Equip = {
 		return false
 	end,
 	OnCanRun = function(item)
-		return (!IsValid(item.entity) and item:GetData("equip") != true)
+		local client = item.player
+
+		return !IsValid(item.entity) and IsValid(client) and item:GetData("equip") != true and
+			hook.Run("CanPlayerEquipItem", client, item) != false and item.invID == client:GetCharacter():GetInventory():GetID()
 	end
 }
 
-function ITEM:OnCanBeTransfered(oldInventory, newInventory)
+function ITEM:CanTransfer(oldInventory, newInventory)
 	if (newInventory and self:GetData("equip")) then
 		return false
 	end
@@ -150,11 +156,11 @@ end
 
 function ITEM:OnRemoved()
 	local inventory = ix.item.inventories[self.invID]
-	local receiver = inventory.GetReceiver and inventory:GetReceiver()
+	local owner = inventory.GetOwner and inventory:GetOwner()
 
-	if (IsValid(receiver) and receiver:IsPlayer()) then
+	if (IsValid(owner) and owner:IsPlayer()) then
 		if (self:GetData("equip")) then
-			self:RemovePart(receiver)
+			self:RemovePart(owner)
 		end
 	end
 end

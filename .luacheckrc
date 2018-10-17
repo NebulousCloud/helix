@@ -29,7 +29,6 @@ stds.helix.read_globals = {
 	"IX_RELOADED",
 	"CHAT_CLASS",
 	"HOOKS_CACHE",
-	"HOLSTER_DRAWINFO",
 	"BAR_HEIGHT",
 	"ACCESS_LABELS",
 

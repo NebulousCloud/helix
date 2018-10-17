@@ -77,8 +77,11 @@ if (SERVER) then
 				end
 			end
 
-			netstream.Start(self.player, "charInfo", data, self:GetID())
-		-- Send public character information to the receiver.
+			net.Start("ixCharacterInfo")
+				net.WriteTable(data)
+				net.WriteUInt(self:GetID(), 32)
+				net.WriteEntity(self.player)
+			net.Send(self.player)
 		else
 			local data = {}
 
@@ -88,7 +91,11 @@ if (SERVER) then
 				end
 			end
 
-			netstream.Start(receiver, "charInfo", data, self:GetID(), self.player)
+			net.Start("ixCharacterInfo")
+				net.WriteTable(data)
+				net.WriteUInt(self:GetID(), 32)
+				net.WriteEntity(self.player)
+			net.Send(receiver)
 		end
 	end
 
@@ -98,9 +105,11 @@ if (SERVER) then
 
 		if (IsValid(client)) then
 			-- Set the faction, model, and character index for the player.
-			client:SetModel(self:GetModel())
-			client:SetTeam(self:GetFaction())
+			local model = self:GetModel()
+
 			client:SetNetVar("char", self:GetID())
+			client:SetTeam(self:GetFaction())
+			client:SetModel(istable(model) and model[1] or model)
 
 			-- Apply saved body groups.
 			for k, v in pairs(self:GetData("groups", {})) do
@@ -110,12 +119,19 @@ if (SERVER) then
 			-- Apply a saved skin.
 			client:SetSkin(self:GetData("skin", 0))
 
-			-- Synchronize the character if we should.
+			-- Synchronize the character if we should.`
 			if (!bNoNetworking) then
-				self:Sync()
+				if (client:IsBot()) then
+					timer.Simple(0.33, function()
+						self:Sync()
+					end)
+				else
+					self:Sync()
+				end
 
-				for _, v in ipairs(self:GetInv(true)) do
+				for _, v in ipairs(self:GetInventory(true)) do
 					if (type(v) == "table") then
+						v:AddReceiver(client)
 						v:Sync(client)
 					end
 				end
@@ -124,7 +140,10 @@ if (SERVER) then
 			local id = self:GetID()
 
 			hook.Run("CharacterLoaded", ix.char.loaded[id])
-			netstream.Start(client, "charLoaded", id)
+
+			net.Start("ixCharacterLoaded")
+				net.WriteUInt(id, 32)
+			net.Send(client)
 
 			self.firstTimeLoaded = true
 		end
@@ -142,7 +161,9 @@ if (SERVER) then
 
 		-- Return the player to the character menu.
 		if (self and self.steamID == steamID) then
-			netstream.Start(client, "charKick", id, isCurrentChar)
+			net.Start("ixCharacterKick")
+				net.WriteBool(isCurrentChar)
+			net.Send(client)
 
 			if (isCurrentChar) then
 				client:SetNetVar("char", nil)
@@ -211,27 +232,30 @@ function ix.char.RegisterVar(key, data)
 			-- If the variable is a local one, only send the variable to the local player.
 			elseif (data.isLocal) then
 				CHAR["Set"..upperName] = function(self, value)
-					local curChar = self:GetPlayer() and self:GetPlayer():GetChar()
-					local sendID = true
-
-					if (curChar and curChar == self) then
-						sendID = false
-					end
-
 					local oldVar = self.vars[key]
-						self.vars[key] = value
-					netstream.Start(self.player, "charSet", key, value, sendID and self:GetID() or nil)
+					self.vars[key] = value
 
-					hook.Run("OnCharVarChanged", self, key, oldVar, value)
+					net.Start("ixCharacterVarChanged")
+						net.WriteUInt(self:GetID(), 32)
+						net.WriteString(key)
+						net.WriteType(value)
+					net.Send(self.player)
+
+					hook.Run("CharacterVarChanged", self, key, oldVar, value)
 				end
 			-- Otherwise network the variable to everyone.
 			else
 				CHAR["Set"..upperName] = function(self, value)
 					local oldVar = self.vars[key]
-						self.vars[key] = value
-					netstream.Start(nil, "charSet", key, value, self:GetID())
+					self.vars[key] = value
 
-					hook.Run("OnCharVarChanged", self, key, oldVar, value)
+					net.Start("ixCharacterVarChanged")
+						net.WriteUInt(self:GetID(), 32)
+						net.WriteString(key)
+						net.WriteType(value)
+					net.Broadcast()
+
+					hook.Run("CharacterVarChanged", self, key, oldVar, value)
 				end
 			end
 		end
@@ -262,14 +286,14 @@ function ix.char.RegisterVar(key, data)
 	local alias = data.alias
 
 	if (alias) then
-		if (type(alias) == "table") then
+		if (istable(alias)) then
 			for _, v in ipairs(alias) do
 				local aliasName = v:sub(1, 1):upper()..v:sub(2)
 
 				CHAR["Get"..aliasName] = CHAR["Get"..upperName]
 				CHAR["Set"..aliasName] = CHAR["Set"..upperName]
 			end
-		elseif (type(alias) == "string") then
+		elseif (isstring(alias)) then
 			local aliasName = alias:sub(1, 1):upper()..alias:sub(2)
 
 			CHAR["Get"..aliasName] = CHAR["Get"..upperName]

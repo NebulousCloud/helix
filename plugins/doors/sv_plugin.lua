@@ -1,4 +1,7 @@
 
+util.AddNetworkString("ixDoorMenu")
+util.AddNetworkString("ixDoorPermission")
+
 -- Variables for door data.
 local variables = {
 	-- Whether or not the door will be disabled.
@@ -7,14 +10,14 @@ local variables = {
 	"name",
 	-- Price of the door.
 	"price",
-	-- If the door is unownable.
-	"noSell",
+	-- If the door is ownable.
+	"ownable",
 	-- The faction that owns a door.
 	"faction",
 	-- The class that owns a door.
 	"class",
 	-- Whether or not the door will be hidden.
-	"hidden"
+	"visible"
 }
 
 function PLUGIN:CallOnDoorChildren(entity, callback)
@@ -166,7 +169,7 @@ function PLUGIN:CanPlayerAccessDoor(client, door, access)
 
 	-- If the door has a faction set which the client is a member of, allow access.
 	local classData = ix.class.list[class]
-	local charClass = client:GetChar():GetClass()
+	local charClass = client:GetCharacter():GetClass()
 	local classData2 = ix.class.list[charClass]
 
 	if (class and classData and classData2) then
@@ -191,7 +194,7 @@ end
 function PLUGIN:ShowTeam(client)
 	local data = {}
 		data.start = client:GetShootPos()
-		data.endpos = data.start + client:GetAimVector()*96
+		data.endpos = data.start + client:GetAimVector() * 96
 		data.filter = client
 	local trace = util.TraceLine(data)
 	local entity = trace.Entity
@@ -204,7 +207,11 @@ function PLUGIN:ShowTeam(client)
 				door = door.ixParent
 			end
 
-			netstream.Start(client, "doorMenu", door, door.ixAccess, entity)
+			net.Start("ixDoorMenu")
+				net.WriteEntity(door)
+				net.WriteTable(door.ixAccess)
+				net.WriteEntity(entity)
+			net.Send(client)
 		elseif (!IsValid(entity:GetDTEntity(0))) then
 			ix.command.Run(client, "doorbuy")
 		else
@@ -215,20 +222,42 @@ function PLUGIN:ShowTeam(client)
 	end
 end
 
-function PLUGIN:PlayerDisconnected(client)
-	for _, v in ipairs(ents.GetAll()) do
-		if (v == client) then
-			return
+function PLUGIN:PlayerLoadedCharacter(client, curChar, prevChar)
+	if (prevChar) then
+		local doors = prevChar:GetVar("doors") or {}
+
+		for _, v in ipairs(doors) do
+			if (IsValid(v) and v:IsDoor() and v:GetDTEntity(0) == client) then
+				v:RemoveDoorAccessData()
+			end
 		end
 
-		if (v.IsDoor and v:IsDoor() and v:GetDTEntity(0) == client) then
-			v:RemoveDoorAccessData()
-		end
+		prevChar:SetVar("doors", nil)
 	end
 end
 
-netstream.Hook("doorPerm", function(client, door, target, access)
-	if (IsValid(target) and target:GetChar() and door.ixAccess and door:GetDTEntity(0) == client and target != client) then
+function PLUGIN:PlayerDisconnected(client)
+	local character = client:GetCharacter()
+
+	if (character) then
+		local doors = character:GetVar("doors") or {}
+
+		for _, v in ipairs(doors) do
+			if (IsValid(v) and v:IsDoor() and v:GetDTEntity(0) == client) then
+				v:RemoveDoorAccessData()
+			end
+		end
+
+		character:SetVar("doors", nil)
+	end
+end
+
+net.Receive("ixDoorPermission", function(length, client)
+	local door = net.ReadEntity()
+	local target = net.ReadEntity()
+	local access = net.ReadUInt(4)
+
+	if (IsValid(target) and target:GetCharacter() and door.ixAccess and door:GetDTEntity(0) == client and target != client) then
 		access = math.Clamp(access or 0, DOOR_NONE, DOOR_TENANT)
 
 		if (access == door.ixAccess[target]) then
@@ -246,7 +275,11 @@ netstream.Hook("doorPerm", function(client, door, target, access)
 		end
 
 		if (#recipient > 0) then
-			netstream.Start(recipient, "doorPerm", door, target, access)
+			net.Start("ixDoorPermission")
+				net.WriteEntity(door)
+				net.WriteEntity(target)
+				net.WriteUInt(access, 4)
+			net.Send(recipient)
 		end
 	end
 end)

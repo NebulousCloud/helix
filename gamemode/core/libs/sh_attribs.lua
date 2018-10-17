@@ -26,12 +26,12 @@ function ix.attributes.LoadFromDir(directory)
 end
 
 function ix.attributes.Setup(client)
-	local character = client:GetChar()
+	local character = client:GetCharacter()
 
 	if (character) then
 		for k, v in pairs(ix.attributes.list) do
 			if (v.OnSetup) then
-				v:OnSetup(client, character:GetAttrib(k, 0))
+				v:OnSetup(client, character:GetAttribute(k, 0))
 			end
 		end
 	end
@@ -42,6 +42,8 @@ do
 	local charMeta = ix.meta.character
 
 	if (SERVER) then
+		util.AddNetworkString("ixAttributeUpdate")
+
 		function charMeta:UpdateAttrib(key, value)
 			local attribute = ix.attributes.list[key]
 			local client = self:GetPlayer()
@@ -52,7 +54,11 @@ do
 				attrib[key] = math.min((attrib[key] or 0) + value, attribute.maxValue or ix.config.Get("maxAttributes", 30))
 
 				if (IsValid(client)) then
-					netstream.Start(client, "attrib", self:GetID(), key, attrib[key])
+					net.Start("ixAttributeUpdate")
+						net.WriteUInt(self:GetID(), 32)
+						net.WriteString(key)
+						net.WriteFloat(attrib[key])
+					net.Send(client)
 
 					if (attribute.Setup) then
 						attribute.Setup(attrib[key])
@@ -62,7 +68,7 @@ do
 				self:SetAttributes(attrib)
 			end
 
-			hook.Run("OnCharAttribUpdated", client, self, key, value)
+			hook.Run("CharacterAttributeUpdated", client, self, key, value)
 		end
 
 		function charMeta:SetAttrib(key, value)
@@ -75,7 +81,11 @@ do
 				attrib[key] = value
 
 				if (IsValid(client)) then
-					netstream.Start(client, "attrib", self:GetID(), key, attrib[key])
+					net.Start("ixAttributeUpdate")
+						net.WriteUInt(self:GetID(), 32)
+						net.WriteString(key)
+						net.WriteFloat(attrib[key])
+					net.Send(client)
 
 					if (attribute.Setup) then
 						attribute.Setup(attrib[key])
@@ -85,7 +95,7 @@ do
 				self:SetAttributes(attrib)
 			end
 
-			hook.Run("OnCharAttribUpdated", client, self, key, value)
+			hook.Run("CharacterAttributeUpdated", client, self, key, value)
 		end
 
 		function charMeta:AddBoost(boostID, attribID, boostAmount)
@@ -94,7 +104,7 @@ do
 			boosts[attribID] = boosts[attribID] or {}
 			boosts[attribID][boostID] = boostAmount
 
-			hook.Run("OnCharAttribBoosted", self:GetPlayer(), self, attribID, boostID, boostAmount)
+			hook.Run("CharacterAttributeBoosted", self:GetPlayer(), self, attribID, boostID, boostAmount)
 
 			return self:SetVar("boosts", boosts, nil, self:GetPlayer())
 		end
@@ -105,15 +115,19 @@ do
 			boosts[attribID] = boosts[attribID] or {}
 			boosts[attribID][boostID] = nil
 
-			hook.Run("OnCharAttribBoosted", self:GetPlayer(), self, attribID, boostID, true)
+			hook.Run("CharacterAttributeBoosted", self:GetPlayer(), self, attribID, boostID, true)
 
 			return self:SetVar("boosts", boosts, nil, self:GetPlayer())
 		end
 	else
-		netstream.Hook("attrib", function(id, key, value)
+		net.Receive("ixAttributeUpdate", function()
+			local id = net.ReadUInt(32)
 			local character = ix.char.loaded[id]
 
 			if (character) then
+				local key = net.ReadString()
+				local value = net.ReadFloat()
+
 				character:GetAttributes()[key] = value
 			end
 		end)
@@ -129,7 +143,7 @@ do
 		return self:GetVar("boosts", {})
 	end
 
-	function charMeta:GetAttrib(key, default)
+	function charMeta:GetAttribute(key, default)
 		local att = self:GetAttributes()[key] or default
 		local boosts = self:GetBoosts()[key]
 

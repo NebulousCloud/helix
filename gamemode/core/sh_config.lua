@@ -3,20 +3,33 @@ ix.config = ix.config or {}
 ix.config.stored = ix.config.stored or {}
 
 if (SERVER) then
-	ix.config.server = ix.yaml.Read("gamemodes/helix/helix.yml")
+	util.AddNetworkString("ixConfigList")
+	util.AddNetworkString("ixConfigSet")
+
+	ix.config.server = ix.yaml.Read("gamemodes/helix/helix.yml") or {}
 end
 
 function ix.config.Add(key, value, description, callback, data, bNoNetworking, schemaOnly)
 	local oldConfig = ix.config.stored[key]
+	local type = data.type or ix.util.GetTypeFromValue(value)
+
+	if (!type) then
+		ErrorNoHalt("attempted to add config with invalid type\n")
+		return
+	end
+
+	data.type = nil
 
 	ix.config.stored[key] = {
+		type = type,
 		data = data,
 		value = oldConfig and oldConfig.value or value,
 		default = value,
 		description = description,
 		bNoNetworking = bNoNetworking,
 		global = !schemaOnly,
-		callback = callback
+		callback = callback,
+		hidden = data.hidden or nil
 	}
 end
 
@@ -49,7 +62,10 @@ function ix.config.Set(key, value)
 
 		if (SERVER) then
 			if (!config.bNoNetworking) then
-				netstream.Start(nil, "cfgSet", key, value)
+				net.Start("ixConfigSet")
+					net.WriteString(key)
+					net.WriteType(value)
+				net.Broadcast()
 			end
 
 			if (config.callback) then
@@ -116,7 +132,9 @@ if (SERVER) then
 	end
 
 	function ix.config.Send(client)
-		netstream.Start(client, "cfgList", ix.config.GetChangedValues())
+		net.Start("ixConfigList")
+			net.WriteTable(ix.config.GetChangedValues())
+		net.Send(client)
 	end
 
 	function ix.config.Save()
@@ -136,22 +154,31 @@ if (SERVER) then
 		ix.data.Set("config", data, false, true)
 	end
 
-	netstream.Hook("cfgSet", function(client, key, value)
-		-- NEED TO ADD HOOK: CanPlayerModifyConfig
-		if (client:IsSuperAdmin() and type(ix.config.stored[key].default) == type(value)) then
+	net.Receive("ixConfigSet", function(length, client)
+		local key = net.ReadString()
+		local value = net.ReadType()
+
+		if (hook.Run("CanPlayerModifyConfig", client, key) != false
+		and type(ix.config.stored[key].default) == type(value)) then
 			ix.config.Set(key, value)
 
-			if (type(value) == "table") then
+			if (ix.util.IsColor(value)) then
+				value = string.format("[%d, %d, %d]", value.r, value.g, value.b)
+			elseif (istable(value)) then
 				local value2 = "["
 				local count = table.Count(value)
 				local i = 1
 
 				for _, v in SortedPairs(value) do
-					value2 = value2..v..(i == count and "]" or ", ")
+					value2 = value2 .. v .. (i == count and "]" or ", ")
 					i = i + 1
 				end
 
 				value = value2
+			elseif (isstring(value)) then
+				value = string.format("\"%s\"", tostring(value))
+			elseif (isbool(value)) then
+				value = string.format("[%s]", tostring(value))
 			end
 
 			ix.util.NotifyLocalized("cfgSet", nil, client:Name(), key, tostring(value))
@@ -159,7 +186,9 @@ if (SERVER) then
 		end
 	end)
 else
-	netstream.Hook("cfgList", function(data)
+	net.Receive("ixConfigList", function()
+		local data = net.ReadTable()
+
 		for k, v in pairs(data) do
 			if (ix.config.stored[k]) then
 				ix.config.stored[k].value = v
@@ -169,7 +198,9 @@ else
 		hook.Run("InitializedConfig", data)
 	end)
 
-	netstream.Hook("cfgSet", function(key, value)
+	net.Receive("ixConfigSet", function()
+		local key = net.ReadString()
+		local value = net.ReadType()
 		local config = ix.config.stored[key]
 
 		if (config) then
@@ -198,97 +229,106 @@ end
 
 if (CLIENT) then
 	hook.Add("CreateMenuButtons", "ixConfig", function(tabs)
-		if (LocalPlayer():IsSuperAdmin() and hook.Run("CanPlayerUseConfig", LocalPlayer()) != false) then
-			tabs["config"] = function(panel)
-				local scroll = panel:Add("DScrollPanel")
-				scroll:Dock(FILL)
+		if (!LocalPlayer():IsSuperAdmin() or hook.Run("CanPlayerUseConfig", LocalPlayer()) == false) then
+			return
+		end
 
-				local properties = scroll:Add("DProperties")
-				properties:SetSize(panel:GetSize())
+		tabs["config"] = {
+			Create = function(info, container)
+				local settings = container:Add("ixSettings")
+				settings:SetSearchEnabled(true)
 
-				ix.gui.properties = properties
-
-				-- We're about to store the categories in this buffer.
-				local buffer = {}
+				-- gather categories
+				local categories = {}
+				local categoryIndices = {}
 
 				for k, v in pairs(ix.config.stored) do
-					-- Get the category name.
 					local index = v.data and v.data.category or "misc"
 
-					-- Insert the config into the category list.
-					buffer[index] = buffer[index] or {}
-					buffer[index][k] = v
+					categories[index] = categories[index] or {}
+					categories[index][k] = v
 				end
 
-				-- Loop through the categories in alphabetical order.
-				for category, configs in SortedPairs(buffer) do
-					category = L(category)
+				-- sort by category phrase
+				for k, _ in pairs(categories) do
+					categoryIndices[#categoryIndices + 1] = k
+				end
 
-					-- Ditto, except we're looping through configs.
-					for k, v in SortedPairs(configs) do
-						-- Determine which type of panel to create.
-						local form = v.data and v.data.form
-						local value = ix.config.stored[k].default
+				table.sort(categoryIndices, function(a, b)
+					return L(a) < L(b)
+				end)
 
-						if (!form) then
-							local formType = type(value)
+				-- add panels
+				for _, category in ipairs(categoryIndices) do
+					local categoryPhrase = L(category)
+					settings:AddCategory(categoryPhrase)
 
-							if (formType == "number") then
-								form = "Int"
-								value = tonumber(ix.config.Get(k)) or value
-							elseif (formType == "boolean") then
-								form = "Boolean"
-								value = util.tobool(ix.config.Get(k))
-							else
-								form = "Generic"
-								value = ix.config.Get(k) or value
-							end
-						else
-							value = ix.config.Get(k) or value
+					-- we can use sortedpairs since configs don't have phrases to account for
+					for k, v in SortedPairs(categories[category]) do
+						if (isfunction(v.hidden) and v.hidden()) then
+							continue
 						end
 
-						-- VectorColor currently only exists for DProperties.
-						if (form == "Generic" and type(value) == "table" and value.r and value.g and value.b) then
-							-- Convert the color to a vector.
-							value = Vector(value.r / 255, value.g / 255, value.b / 255)
-							form = "VectorColor"
+						local data = v.data.data
+						local type = v.type
+						local value = ix.util.SanitizeType(type, ix.config.Get(k))
+
+						-- @todo check ix.gui.properties
+						local row = settings:AddRow(type, categoryPhrase)
+						row:SetText(ix.util.ExpandCamelCase(k))
+
+						-- type-specific properties
+						if (type == ix.type.number) then
+							row:SetMin(data and data.min or 0)
+							row:SetMax(data and data.max or 1)
+							row:SetDecimals(data and data.decimals or 0)
 						end
 
-						local delay = 1
+						row:SetValue(value, true)
+						row:SetShowReset(value != v.default, k, v.default)
 
-						if (form == "Boolean") then
-							delay = 0
+						row.OnValueChanged = function(panel)
+							local newValue = ix.util.SanitizeType(type, panel:GetValue())
+
+							panel:SetShowReset(newValue != v.default, k, v.default)
+
+							net.Start("ixConfigSet")
+								net.WriteString(k)
+								net.WriteType(newValue)
+							net.SendToServer()
 						end
 
-						-- Add a new row for the config to the properties.
-						local row = properties:CreateRow(category, ix.util.ExpandCamelCase(k))
-						row:Setup(form, v.data and v.data.data or {})
-						row:SetValue(value)
-						row:SetTooltip(v.description)
-						row.DataChanged = function(this, newValue)
-							timer.Create("ixCfgSend"..k, delay, 1, function()
-								if (IsValid(row)) then
-									if (form == "VectorColor") then
-										local vector = Vector(newValue)
+						row.OnResetClicked = function(panel)
+							panel:SetValue(v.default, true)
+							panel:SetShowReset(false)
 
-										newValue = Color(math.floor(vector.x * 255), math.floor(vector.y * 255), math.floor(vector.z * 255))
-									elseif (form == "Int" or form == "Float") then
-										newValue = tonumber(newValue)
-
-										if (form == "Int") then
-											newValue = math.Round(newValue)
-										end
-									elseif (form == "Boolean") then
-										newValue = tobool(newValue)
-									end
-
-									netstream.Start("cfgSet", k, newValue)
-								end
-							end)
+							net.Start("ixConfigSet")
+								net.WriteString(k)
+								net.WriteType(v.default)
+							net.SendToServer()
 						end
+
+						row:GetLabel():SetHelixTooltip(function(tooltip)
+							local title = tooltip:AddRow("name")
+							title:SetImportant()
+							title:SetText(k)
+							title:SizeToContents()
+							title:SetMaxWidth(math.max(title:GetMaxWidth(), ScrW() * 0.5))
+
+							local description = tooltip:AddRow("description")
+							description:SetText(v.description)
+							description:SizeToContents()
+						end)
 					end
 				end
+
+				settings:SizeToContents()
+				container.panel = settings
+			end,
+
+			OnSelected = function(info, container)
+				container.panel.searchEntry:RequestFocus()
 			end
-		end
+		}
 	end)
 end

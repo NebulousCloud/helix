@@ -2,10 +2,12 @@
 local PLUGIN = PLUGIN
 
 PLUGIN.name = "Chatbox"
-PLUGIN.author = "Chessnut"
-PLUGIN.description = "Adds a chatbox that replaces the default one."
+PLUGIN.author = "`impulse"
+PLUGIN.description = "Replaces the chatbox to enable customization, autocomplete, and useful info."
 
 if (CLIENT) then
+	ix.chat.history = ix.chat.history or {} -- array of strings the player has entered into the chatbox
+
 	ix.option.Add("chatNotices", ix.type.bool, false, {
 		category = "chat"
 	})
@@ -14,18 +16,69 @@ if (CLIENT) then
 		category = "chat"
 	})
 
-	ix.option.Add("chatFilter", ix.type.string, "", {
-		bHidden = true,
+	ix.option.Add("chatFontScale", ix.type.number, 1, {
+		category = "chat", min = 0.1, max = 2, decimals = 1,
+		OnChanged = function()
+			hook.Run("LoadFonts", ix.config.Get("font"), ix.config.Get("genericFont"))
+			PLUGIN:CreateChat()
+		end
+	})
+
+	ix.option.Add("chatOutline", ix.type.bool, false, {
 		category = "chat"
+	})
+
+	-- tabs and their respective filters
+	ix.option.Add("chatTabs", ix.type.string, "", {
+		category = "chat",
+		hidden = function()
+			return true
+		end
+	})
+
+	-- chatbox size and position
+	ix.option.Add("chatPosition", ix.type.string, "", {
+		category = "chat",
+		hidden = function()
+			return true
+		end
 	})
 
 	function PLUGIN:CreateChat()
 		if (IsValid(self.panel)) then
-			return
+			self.panel:Remove()
 		end
 
-		self.panel = vgui.Create("ixChatBox")
-		hook.Run("OnChatboxCreated")
+		self.panel = vgui.Create("ixChatbox")
+		self.panel:SetupTabs(util.JSONToTable(ix.option.Get("chatTabs", "")))
+		self.panel:SetupPosition(util.JSONToTable(ix.option.Get("chatPosition", "")))
+
+		hook.Run("ChatboxCreated")
+	end
+
+	function PLUGIN:TabExists(id)
+		if (!IsValid(self.panel)) then
+			return false
+		end
+
+		return self.panel.tabs:GetTabs()[id] != nil
+	end
+
+	function PLUGIN:SaveTabs()
+		local tabs = {}
+
+		for id, panel in pairs(self.panel.tabs:GetTabs()) do
+			tabs[id] = panel:GetFilter()
+		end
+
+		ix.option.Set("chatTabs", util.TableToJSON(tabs))
+	end
+
+	function PLUGIN:SavePosition()
+		local x, y = self.panel:GetPos()
+		local width, height = self.panel:GetSize()
+
+		ix.option.Set("chatPosition", util.TableToJSON({x, y, width, height}))
 	end
 
 	function PLUGIN:InitPostEntity()
@@ -48,40 +101,50 @@ if (CLIENT) then
 		end
 	end
 
-	-- luacheck: globals chat
-	chat.ixAddText = chat.ixAddText or chat.AddText
-
-	function chat.AddText(...)
-		local show = true
-
-		if (IsValid(PLUGIN.panel)) then
-			show = PLUGIN.panel:AddText(...)
-		end
-
-		if (show) then
-			chat.ixAddText(...)
-			chat.PlaySound()
-		end
+	function PLUGIN:ScreenResolutionChanged(oldWidth, oldHeight)
+		self:CreateChat()
 	end
 
 	function PLUGIN:ChatText(index, name, text, messageType)
 		if (messageType == "none" and IsValid(self.panel)) then
-			self.panel:AddText(text)
-			chat.PlaySound()
+			self.panel:AddMessage(text)
 		end
 	end
 
-	concommand.Add("fixchatplz", function()
+	-- luacheck: globals chat
+	chat.ixAddText = chat.ixAddText or chat.AddText
+
+	function chat.AddText(...)
 		if (IsValid(PLUGIN.panel)) then
-			PLUGIN.panel:Remove()
-			PLUGIN:CreateChat()
+			PLUGIN.panel:AddMessage(...)
 		end
-	end)
+
+		-- log chat message to console
+		local text = {}
+
+		for _, v in ipairs({...}) do
+			if (istable(v) or isstring(v)) then
+				text[#text + 1] = v
+			elseif (isentity(v) and v:IsPlayer()) then
+				text[#text + 1] = team.GetColor(v:Team())
+				text[#text + 1] = v:Name()
+			elseif (type(v) != "IMaterial") then
+				text[#text + 1] = tostring(v)
+			end
+		end
+
+		text[#text + 1] = "\n"
+		MsgC(unpack(text))
+	end
 else
-	netstream.Hook("msg", function(client, text)
-		if ((client.ixNextChat or 0) < CurTime() and text:find("%S")) then
+	util.AddNetworkString("ixChatMessage")
+
+	net.Receive("ixChatMessage", function(length, client)
+		local text = net.ReadString()
+
+		if ((client.ixNextChat or 0) < CurTime() and isstring(text) and text:find("%S")) then
 			hook.Run("PlayerSay", client, text)
-			client.ixNextChat = CurTime() + math.max(#text / 250, 0.4)
+			client.ixNextChat = CurTime() + 0.5
 		end
 	end)
 end

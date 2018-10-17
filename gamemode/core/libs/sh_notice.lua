@@ -1,13 +1,31 @@
 
 if (SERVER) then
+	util.AddNetworkString("ixNotify")
+	util.AddNetworkString("ixNotifyLocalized")
+
 	-- Sends a notification to a specified recipient.
 	function ix.util.Notify(message, recipient)
-		netstream.Start(recipient, "notify", message)
+		net.Start("ixNotify")
+		net.WriteString(message)
+
+		if (recipient == nil) then
+			net.Broadcast()
+		else
+			net.Send(recipient)
+		end
 	end
 
 	-- Sends a translated notification.
 	function ix.util.NotifyLocalized(message, recipient, ...)
-		netstream.Start(recipient, "notifyL", message, ...)
+		net.Start("ixNotifyLocalized")
+		net.WriteString(message)
+		net.WriteTable({...})
+
+		if (recipient == nil) then
+			net.Broadcast()
+		else
+			net.Send(recipient)
+		end
 	end
 
 	do
@@ -32,68 +50,21 @@ if (SERVER) then
 		end
 	end
 else
-	-- List of notice panels.
-	ix.notices = ix.notices or {}
-
-	-- Move all notices to their proper positions.
-	local function OrganizeNotices()
-		local scrW = ScrW()
-
-		for k, v in ipairs(ix.notices) do
-			v:MoveTo(scrW - (v:GetWide() + 4), (k - 1) * (v:GetTall() + 4) + 4, 0.15, (k / #ix.notices) * 0.25, nil)
-		end
-	end
-
 	-- Create a notification panel.
 	function ix.util.Notify(message)
 		if (ix.option.Get("chatNotices", false)) then
-			ix.chat.Send(LocalPlayer(), "notice", message)
+			ix.chat.Send(LocalPlayer(), "notice", message, false, {
+				bError = message:sub(#message, #message) == "!"
+			})
+
 			return
 		end
 
-		local notice = vgui.Create("ixNotice")
-		local i = table.insert(ix.notices, notice)
-		local scrW = ScrW()
+		if (IsValid(ix.gui.notices)) then
+			ix.gui.notices:AddNotice(message)
+		end
 
-		-- Set up information for the notice.
-		notice:SetText(message)
-		notice:SetPos(scrW, (i - 1) * (notice:GetTall() + 4) + 4)
-		notice:SizeToContentsX()
-		notice:SetWide(notice:GetWide() + 16)
-		notice.start = CurTime() + 0.25
-		notice.endTime = CurTime() + 7.75
-
-		-- Add the notice we made to the list.
-		OrganizeNotices()
-
-		-- Show the notification in the console.
-		MsgC(Color(0, 255, 255), message.."\n")
-
-		-- Once the notice appears, make a sound and message.
-		timer.Simple(0.15, function()
-			surface.PlaySound("buttons/button14.wav")
-		end)
-
-		-- After the notice has displayed for 7.5 seconds, remove it.
-		timer.Simple(7.75, function()
-			if (IsValid(notice)) then
-				-- Search for the notice to remove.
-				for k, v in ipairs(ix.notices) do
-					if (v == notice) then
-						-- Move the notice off the screen.
-						notice:MoveTo(scrW, notice.y, 0.15, 0.1, nil, function()
-							notice:Remove()
-						end)
-
-						-- Remove the notice from the list and move other notices.
-						table.remove(ix.notices, k)
-						OrganizeNotices()
-
-						break
-					end
-				end
-			end
-		end)
+		MsgC(Color(0, 255, 255), message .. "\n")
 	end
 
 	-- Creates a translated notification.
@@ -131,8 +102,12 @@ else
 	end
 
 	-- Receives a notification from the server.
-	netstream.Hook("notify", ix.util.Notify)
+	net.Receive("ixNotify", function()
+		ix.util.Notify(net.ReadString())
+	end)
 
 	-- Receives a notification from the server.
-	netstream.Hook("notifyL", ix.util.NotifyLocalized)
+	net.Receive("ixNotifyLocalized", function()
+		ix.util.NotifyLocalized(net.ReadString(), unpack(net.ReadTable()))
+	end)
 end

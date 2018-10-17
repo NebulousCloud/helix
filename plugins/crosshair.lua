@@ -29,7 +29,7 @@ if (CLIENT) then
 	-- luacheck: globals g_ContextMenu
 	function PLUGIN:PostDrawHUD()
 		local client = LocalPlayer()
-		if (!client:GetChar() or !client:Alive()) then
+		if (!client:GetCharacter() or !client:Alive()) then
 			return
 		end
 
@@ -40,13 +40,15 @@ if (CLIENT) then
 		end
 
 		local wep = client:GetActiveWeapon()
-		local bShouldDraw = hook.Run("ShouldDrawCrosshair")
+		local bShouldDraw = hook.Run("ShouldDrawCrosshair", client, wep)
 
-		if (bShouldDraw != true and wep and wep:IsValid() and (wep.HUDPaint or wep.DrawCrosshair == false)) then
+		if (bShouldDraw != true and wep and wep:IsValid() and
+			(wep.HUDPaint or wep.DoDrawCrosshair or wep.DrawCrosshair == false)) then
 			return
 		end
 
-		if (bShouldDraw == false or g_ContextMenu:IsVisible() or ix.gui.char:IsVisible()) then
+		if (bShouldDraw == false or g_ContextMenu:IsVisible() or
+			(IsValid(ix.gui.characterMenu) and !ix.gui.characterMenu:IsClosing())) then
 			return
 		end
 

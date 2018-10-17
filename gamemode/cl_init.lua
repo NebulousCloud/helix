@@ -1,6 +1,38 @@
--- Include features from the Sandbox gamemode.
+
+-- unix systems are case-sensitive, are missing fonts, or use different naming conventions
+if (!system.IsWindows()) then
+	local fontOverrides = {
+		["Roboto"] = "Roboto Regular",
+		["Roboto Th"] = "Roboto Thin",
+		["Roboto Lt"] = "Roboto Light",
+		["Roboto Bk"] = "Roboto Black",
+		["coolvetica"] = "Coolvetica",
+		["tahoma"] = "Tahoma",
+		["Harmonia Sans Pro Cyr"] = "Roboto Regular",
+		["Harmonia Sans Pro Cyr Light"] = "Roboto Light",
+		["Century Gothic"] = "Roboto Regular"
+	}
+
+	if (system.IsOSX()) then
+		fontOverrides["Consolas"] = "Monaco"
+	else
+		fontOverrides["Consolas"] = "Courier New"
+	end
+
+	local ixCreateFont = surface.CreateFont
+
+	function surface.CreateFont(name, info) -- luacheck: globals surface
+		local font = info.font
+
+		if (font and fontOverrides[font]) then
+			info.font = fontOverrides[font]
+		end
+
+		ixCreateFont(name, info)
+	end
+end
+
 DeriveGamemode("sandbox")
--- Define a global shared table to store Helix information.
 ix = ix or {util = {}, gui = {}, meta = {}}
 
 -- Include core files.

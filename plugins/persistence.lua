@@ -25,15 +25,17 @@ properties.Add("persist", {
 		self:MsgEnd()
 	end,
 
-	Receive = function(self, length, player)
+	Receive = function(self, length, client)
 		local entity = net.ReadEntity()
 
 		if (!IsValid(entity)) then return end
-		if (!self:Filter(entity, player)) then return end
+		if (!self:Filter(entity, client)) then return end
 
 		PLUGIN.stored[#PLUGIN.stored + 1] = entity
 
 		entity:SetNetVar("Persistent", true)
+
+		ix.log.Add(client, "persist", entity:GetClass() == "prop_physics" and entity:GetModel() or entity, true)
 	end
 })
 
@@ -55,11 +57,11 @@ properties.Add("persist_end", {
 		self:MsgEnd()
 	end,
 
-	Receive = function(self, length, player)
+	Receive = function(self, length, client)
 		local entity = net.ReadEntity()
 
 		if (!IsValid(entity)) then return end
-		if (!self:Filter(entity, player)) then return end
+		if (!self:Filter(entity, client)) then return end
 
 		for k, v in ipairs(PLUGIN.stored) do
 			if (v == entity) then
@@ -70,6 +72,8 @@ properties.Add("persist_end", {
 		end
 
 		entity:SetNetVar("Persistent", false)
+
+		ix.log.Add(client, "persist", entity:GetClass() == "prop_physics" and entity:GetModel() or entity, false)
 	end
 })
 
@@ -126,4 +130,9 @@ if (SERVER) then
 
 		self:SetData(entities)
 	end
+
+	ix.log.AddType("persist", function(client, ...)
+		local arg = {...}
+		return string.format("%s has %s persistence for '%s'.", client:Name(), arg[2] and "enabled" or "disabled", arg[1])
+	end)
 end

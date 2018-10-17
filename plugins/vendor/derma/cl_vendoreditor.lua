@@ -247,7 +247,10 @@ function PANEL:OnRemove()
 end
 
 function PANEL:updateVendor(key, value)
-	netstream.Start("vendorEdit", key, value)
+	net.Start("ixVendorEdit")
+		net.WriteString(key)
+		net.WriteType(value)
+	net.SendToServer()
 end
 
 vgui.Register("ixVendorEditor", PANEL, "DFrame")

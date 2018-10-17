@@ -66,6 +66,12 @@ function ix.faction.LoadFromDir(directory)
 				end
 			end
 
+			if (!FACTION.GetModels) then
+				function FACTION:GetModels(client)
+					return self.models
+				end
+			end
+
 			ix.faction.indices[FACTION.index] = FACTION
 			ix.faction.teams[niceName] = FACTION
 		FACTION = nil

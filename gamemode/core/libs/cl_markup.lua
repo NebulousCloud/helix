@@ -221,15 +221,13 @@ function MarkupObject:draw(xOffset, yOffset, halign, valign, alphaoverride)
 		local blk = self.blocks[i]
 
 		if (blk.texture) then
-			local y = yOffset + (blk.h - blk.thisY) + blk.offset.y
+			local y = yOffset + blk.offset.y
 			local x = xOffset + blk.offset.x
 
-			if (halign == TEXT_ALIGN_CENTER) then		x = x - (self.totalWidth / 2)
-			elseif (halign == TEXT_ALIGN_RIGHT) then	x = x - (self.totalWidth)
-			end
-
-			if (valign == TEXT_ALIGN_CENTER) then
-				y = y - (blk.h / 2)
+			if (halign == TEXT_ALIGN_CENTER) then
+				x = x - (self.totalWidth * 0.5)
+			elseif (halign == TEXT_ALIGN_RIGHT) then
+				x = x - (self.totalWidth)
 			end
 
 			surface.SetDrawColor(blk.colour.r, blk.colour.g, blk.colour.b, alphaoverride or blk.colour.a or 255)
@@ -276,6 +274,8 @@ end
    Usage: markup.Parse("<font=Default>changed font</font>\n<colour=255,0,255,255>changed colour</colour>")
 ]]
 function ix.markup.Parse(ml, maxwidth)
+
+	ml = utf8.force(ml)
 
 	colour_stack = { {r=255,g=255,b=255,a=255} }
 	font_stack = { "DermaDefault" }
@@ -405,7 +405,7 @@ function ix.markup.Parse(ml, maxwidth)
 							end
 
 							local m = 1
-							while string.utf8sub(ch, m, m) == " " do
+							while string.utf8sub(ch, m, m) == " " and m <= string.utf8len(ch) do
 								m = m + 1
 							end
 							ch = string.utf8sub(ch, m)
@@ -475,10 +475,10 @@ function ix.markup.Parse(ml, maxwidth)
 			local newBlock = table.Copy(block)
 				newBlock.colour = block.colour or {r = 255, g = 255, b = 255, a = 255}
 				newBlock.thisX = block.w
-				newBlock.thisY = block.h - 3
+				newBlock.thisY = block.h
 				newBlock.offset = {
 					x = xOffset,
-					y = yOffset
+					y = lineHeight * 0.5 - block.h * 0.5
 				}
 
 			table.insert(new_block_list, newBlock)

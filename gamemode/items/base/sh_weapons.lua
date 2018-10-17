@@ -7,6 +7,7 @@ ITEM.class = "weapon_pistol"
 ITEM.width = 2
 ITEM.height = 2
 ITEM.isWeapon = true
+ITEM.isGrenade = false
 ITEM.weaponCategory = "sidearm"
 
 -- Inventory drawing
@@ -17,26 +18,57 @@ if (CLIENT) then
 			surface.DrawRect(w - 14, h - 14, 8, 8)
 		end
 	end
+
+	function ITEM:PopulateTooltip(tooltip)
+		if (self:GetData("equip")) then
+			local name = tooltip:GetRow("name")
+			name:SetBackgroundColor(derma.GetColor("Success", tooltip))
+		end
+	end
 end
 
 -- On item is dropped, Remove a weapon from the player and keep the ammo in the item.
 ITEM:Hook("drop", function(item)
+	local inventory = ix.item.inventories[item.invID]
+
+	if (!inventory) then
+		return
+	end
+
+	-- the item could have been dropped by someone else (i.e someone searching this player), so we find the real owner
+	local owner
+
+	for client, character in ix.util.GetCharacters() do
+		if (character:GetID() == inventory.owner) then
+			owner = client
+			break
+		end
+	end
+
+	if (!IsValid(owner)) then
+		return
+	end
+
 	if (item:GetData("equip")) then
 		item:SetData("equip", nil)
 
-		item.player.carryWeapons = item.player.carryWeapons or {}
+		owner.carryWeapons = owner.carryWeapons or {}
 
-		local weapon = item.player.carryWeapons[item.weaponCategory]
+		local weapon = owner.carryWeapons[item.weaponCategory]
+
+		if (!IsValid(weapon)) then
+			weapon = owner:GetWeapon(item.class)
+		end
 
 		if (IsValid(weapon)) then
 			item:SetData("ammo", weapon:Clip1())
 
-			item.player:StripWeapon(item.class)
-			item.player.carryWeapons[item.weaponCategory] = nil
-			item.player:EmitSound("items/ammo_pickup.wav", 80)
+			owner:StripWeapon(item.class)
+			owner.carryWeapons[item.weaponCategory] = nil
+			owner:EmitSound("items/ammo_pickup.wav", 80)
 		end
 
-		item:RemovePAC(item.player)
+		item:RemovePAC(owner)
 	end
 end)
 
@@ -50,7 +82,10 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 		return false
 	end,
 	OnCanRun = function(item)
-		return (!IsValid(item.entity) and item:GetData("equip") == true)
+		local client = item.player
+
+		return !IsValid(item.entity) and IsValid(client) and item:GetData("equip") == true and
+			hook.Run("CanPlayerUnequipItem", client, item) != false and item.invID == client:GetCharacter():GetInventory():GetID()
 	end
 }
 
@@ -64,7 +99,10 @@ ITEM.functions.Equip = {
 		return false
 	end,
 	OnCanRun = function(item)
-		return (!IsValid(item.entity) and item:GetData("equip") != true)
+		local client = item.player
+
+		return !IsValid(item.entity) and IsValid(client) and item:GetData("equip") != true and
+			hook.Run("CanPlayerEquipItem", client, item) != false and item.invID == client:GetCharacter():GetInventory():GetID()
 	end
 }
 
@@ -81,7 +119,7 @@ function ITEM:RemovePAC(client)
 end
 
 function ITEM:Equip(client)
-	local items = client:GetChar():GetInventory():GetItems()
+	local items = client:GetCharacter():GetInventory():GetItems()
 
 	client.carryWeapons = client.carryWeapons or {}
 
@@ -95,7 +133,7 @@ function ITEM:Equip(client)
 				return false
 			else
 				if (itemTable.isWeapon and client.carryWeapons[self.weaponCategory] and itemTable:GetData("equip")) then
-					client:NotifyLocalized("weaponSlotFilled")
+					client:NotifyLocalized("weaponSlotFilled", self.weaponCategory)
 
 					return false
 				end
@@ -107,7 +145,7 @@ function ITEM:Equip(client)
 		client:StripWeapon(self.class)
 	end
 
-	local weapon = client:Give(self.class, true)
+	local weapon = client:Give(self.class, !self.isGrenade)
 
 	if (IsValid(weapon)) then
 		local ammoType = weapon:GetPrimaryAmmoType()
@@ -129,7 +167,13 @@ function ITEM:Equip(client)
 
 		self:SetData("equip", true)
 
-		weapon:SetClip1(self:GetData("ammo", 0))
+		if (self.isGrenade) then
+			weapon:SetClip1(1)
+			client:SetAmmo(0, ammoType)
+		else
+			weapon:SetClip1(self:GetData("ammo", 0))
+		end
+
 		weapon.ixItem = self
 
 		if (self.OnEquipWeapon) then
@@ -175,7 +219,7 @@ function ITEM:Unequip(client, bPlaySound, bRemoveItem)
 	end
 end
 
-function ITEM:OnCanBeTransfered(oldInventory, newInventory)
+function ITEM:CanTransfer(oldInventory, newInventory)
 	if (newInventory and self:GetData("equip")) then
 		local owner = self:GetOwner()
 
@@ -218,33 +262,23 @@ end
 
 function ITEM:OnRemoved()
 	local inventory = ix.item.inventories[self.invID]
-	local receiver = inventory.GetReceiver and inventory:GetReceiver()
+	local owner = inventory.GetOwner and inventory:GetOwner()
 
-	if (IsValid(receiver) and receiver:IsPlayer()) then
-		local weapon = receiver:GetWeapon(self.class)
+	if (IsValid(owner) and owner:IsPlayer()) then
+		local weapon = owner:GetWeapon(self.class)
 
 		if (IsValid(weapon)) then
 			weapon:Remove()
 		end
 
-		self:RemovePAC(receiver)
-	end
-end
-
--- luacheck: globals HOLSTER_DRAWINFO
-HOLSTER_DRAWINFO = {}
-
--- Called after the item is registered into the item tables.
-function ITEM:OnRegistered()
-	if (self.holsterDrawInfo) then
-		HOLSTER_DRAWINFO[self.class] = self.holsterDrawInfo
+		self:RemovePAC(owner)
 	end
 end
 
 hook.Add("PlayerDeath", "ixStripClip", function(client)
 	client.carryWeapons = {}
 
-	for _, v in pairs(client:GetChar():GetInv():GetItems()) do
+	for _, v in pairs(client:GetCharacter():GetInventory():GetItems()) do
 		if (v.isWeapon and v:GetData("equip")) then
 			v:SetData("ammo", nil)
 			v:SetData("equip", nil)

@@ -5,12 +5,17 @@ local playerMeta = FindMetaTable("Player")
 ix.net = ix.net or {}
 ix.net.globals = ix.net.globals or {}
 
+util.AddNetworkString("ixGlobalVarSet")
+util.AddNetworkString("ixLocalVarSet")
+util.AddNetworkString("ixNetVarSet")
+util.AddNetworkString("ixNetVarDelete")
+
 -- Check if there is an attempt to send a function. Can't send those.
 local function CheckBadType(name, object)
 	local objectType = type(object)
 
 	if (objectType == "function") then
-		ErrorNoHalt("Net var '"..name.."' contains a bad object type!")
+		ErrorNoHalt("Net var '" .. name .. "' contains a bad object type!")
 
 		return true
 	elseif (objectType == "table") then
@@ -28,30 +33,63 @@ function SetNetVar(key, value, receiver) -- luacheck: globals SetNetVar
 	if (GetNetVar(key) == value) then return end
 
 	ix.net.globals[key] = value
-	netstream.Start(receiver, "gVar", key, value)
+
+	net.Start("ixGlobalVarSet")
+	net.WriteString(key)
+	net.WriteType(value)
+
+	if (receiver == nil) then
+		net.Broadcast()
+	else
+		net.Send(receiver)
+	end
 end
 
 function playerMeta:SyncVars()
 	for entity, data in pairs(ix.net) do
 		if (entity == "globals") then
 			for k, v in pairs(data) do
-				netstream.Start(self, "gVar", k, v)
+				net.Start("ixGlobalVarSet")
+					net.WriteString(k)
+					net.WriteType(v)
+				net.Send(self)
 			end
 		elseif (IsValid(entity)) then
 			for k, v in pairs(data) do
-				netstream.Start(self, "nVar", entity:EntIndex(), k, v)
+				net.Start("ixNetVarSet")
+					net.WriteUInt(entity:EntIndex(), 16)
+					net.WriteString(k)
+					net.WriteType(v)
+				net.Send(self)
 			end
 		end
 	end
 end
 
 function entityMeta:SendNetVar(key, receiver)
-	netstream.Start(receiver, "nVar", self:EntIndex(), key, ix.net[self] and ix.net[self][key])
+	net.Start("ixNetVarSet")
+	net.WriteUInt(self:EntIndex(), 16)
+	net.WriteString(key)
+	net.WriteType(ix.net[self] and ix.net[self][key])
+
+	if (receiver == nil) then
+		net.Broadcast()
+	else
+		net.Send(receiver)
+	end
 end
 
 function entityMeta:ClearNetVars(receiver)
 	ix.net[self] = nil
-	netstream.Start(receiver, "nDel", self:EntIndex())
+
+	net.Start("ixNetVarDelete")
+	net.WriteUInt(self:EntIndex(), 16)
+
+	if (receiver == nil) then
+		net.Broadcast()
+	else
+		net.Send(receiver)
+	end
 end
 
 function entityMeta:SetNetVar(key, value, receiver)
@@ -80,7 +118,10 @@ function playerMeta:SetLocalVar(key, value)
 	ix.net[self] = ix.net[self] or {}
 	ix.net[self][key] = value
 
-	netstream.Start(self, "nLcl", key, value)
+	net.Start("ixLocalVarSet")
+		net.WriteString(key)
+		net.WriteType(value)
+	net.Send(self)
 end
 
 playerMeta.GetLocalVar = entityMeta.GetNetVar
@@ -90,11 +131,3 @@ function GetNetVar(key, default) -- luacheck: globals GetNetVar
 
 	return value != nil and value or default
 end
-
-hook.Add("EntityRemoved", "nCleanUp", function(entity)
-	entity:ClearNetVars()
-end)
-
-hook.Add("PlayerInitialSpawn", "nSync", function(client)
-	client:SyncVars()
-end)

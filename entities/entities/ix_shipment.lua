@@ -34,10 +34,14 @@ if (SERVER) then
 
 	function ENT:Use(activator)
 		activator:PerformInteraction(ix.config.Get("itemPickupTime", 0.5), self, function(client)
-			if (client:GetChar() and client:GetChar():GetID() == self:GetNetVar("owner", 0) and
-				hook.Run("PlayerCanOpenShipment", client, self) != false) then
+			if (client:GetCharacter() and client:GetCharacter():GetID() == self:GetNetVar("owner", 0)
+			and hook.Run("CanPlayerOpenShipment", client, self) != false) then
 				client.ixShipment = self
-				netstream.Start(client, "openShp", self, self.items)
+
+				net.Start("ixShipmentOpen")
+					net.WriteEntity(self)
+					net.WriteTable(self.items)
+				net.Send(client)
 			end
 		end)
 	end
@@ -67,12 +71,13 @@ if (SERVER) then
 			effect:SetScale(3)
 		util.Effect("GlassImpact", effect)
 	end
-else
-	ENT.DrawEntityInfo = true
 
-	local toScreen = FindMetaTable("Vector").ToScreen
-	local colorAlpha = ColorAlpha
-	local drawText = ix.util.DrawText
+	function ENT:UpdateTransmitState()
+		return TRANSMIT_PVS
+	end
+else
+	ENT.PopulateEntityInfo = true
+
 	local size = 150
 	local tempMat = Material("particle/warp1_warp", "alphatest")
 
@@ -108,18 +113,18 @@ else
 		cam.End3D2D()
 	end
 
-	function ENT:OnDrawEntityInfo(alpha)
-		local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
-		local x, y = position.x, position.y
-		local owner = ix.char.loaded[self.GetNetVar(self, "owner", 0)]
+	function ENT:OnPopulateEntityInfo(container)
+		local owner = ix.char.loaded[self:GetNetVar("owner", 0)]
 
-		drawText(L"shipment", x, y, colorAlpha(ix.config.Get("color"), alpha), 1, 1, nil, alpha * 0.65)
+		local name = container:AddRow("name")
+		name:SetImportant()
+		name:SetText(L("shipment"))
+		name:SizeToContents()
 
 		if (owner) then
-			drawText(
-				L("shipmentDesc", owner.GetName(owner)),
-				x, y + 16, colorAlpha(color_white, alpha), 1, 1, "ixSmallFont", alpha * 0.65
-			)
+			local description = container:AddRow("description")
+			description:SetText(L("shipmentDesc", owner:GetName()))
+			description:SizeToContents()
 		end
 	end
 end

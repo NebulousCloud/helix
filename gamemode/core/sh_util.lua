@@ -2,6 +2,33 @@
 --- Various useful helper functions.
 -- @module ix.util
 
+ix.type = ix.type or {
+	[2] = "string",
+	[4] = "text",
+	[8] = "number",
+	[16] = "player",
+	[32] = "steamid",
+	[64] = "character",
+	[128] = "bool",
+	[1024] = "color",
+	[2048] = "vector",
+
+	string = 2,
+	text = 4,
+	number = 8,
+	player = 16,
+	steamid = 32,
+	character = 64,
+	bool = 128,
+	color = 1024,
+	vector = 2048,
+
+	optional = 256,
+	array = 512
+}
+
+ix.blurRenderQueue = {}
+
 -- Includes a file from the prefix.
 function ix.util.Include(fileName, state)
 	if (!fileName) then
@@ -60,6 +87,28 @@ function ix.util.StripRealmPrefix(name)
 	return (prefix == "sh_" or prefix == "sv_" or prefix == "cl_") and name:sub(4) or name
 end
 
+--- Returns `true` if the given input is a color table. This is necessary since the engine `IsColor` function only checks for
+-- color metatables - which are not used for regular Lua color types.
+-- @shared
+-- @param input Input to check
+-- @treturn bool Whether or not the input is a color
+function ix.util.IsColor(input)
+	return istable(input) and
+		isnumber(input.a) and isnumber(input.g) and isnumber(input.b) and (input.a and isnumber(input.a) or input.a == nil)
+end
+
+--- Returns a dimmed version of the given color by the given scale.
+-- @shared
+-- @param color Color to dim
+-- @number multiplier What to multiply the red, green, and blue values by
+-- @number[opt=255] alpha Alpha to use in dimmed color
+-- @return Dimmed color
+-- @usage print(ix.util.DimColor(Color(100, 100, 100, 255), 0.5))
+-- > 50 50 50 255
+function ix.util.DimColor(color, multiplier, alpha)
+	return Color(color.r * multiplier, color.g * multiplier, color.b * multiplier, alpha or 255)
+end
+
 --- Sanitizes an input value with the given type. This function ensures that a valid type is always returned. If a valid value
 -- could not be found, it will return the default value for the type. This only works for simple types - e.g it does not work
 -- for player, character, or Steam ID types.
@@ -82,16 +131,68 @@ function ix.util.SanitizeType(type, input)
 	elseif (type == ix.type.bool) then
 		return tobool(input)
 	elseif (type == ix.type.color) then
-		-- avoid creating another color table if possible
-		return (istable(input) and isnumber(input.a) and isnumber(input.g) and isnumber(input.b)) and input or (
-			istable(input) and
-			Color(tonumber(input.a) or 255, tonumber(input.g) or 255, tonumber(input.b) or 255, tonumber(input.a) or 255) or
+		return istable(input) and
+			Color(tonumber(input.r) or 255, tonumber(input.g) or 255, tonumber(input.b) or 255, tonumber(input.a) or 255) or
 			color_white
-		)
 	elseif (type == ix.type.vector) then
 		return isvector(input) and input or vector_origin
+	elseif (type == ix.type.array) then
+		return input
 	else
 		error("attempted to sanitize " .. (ix.type[type] and ("invalid type " .. ix.type[type]) or "unknown type " .. type))
+	end
+end
+
+do
+	local typeMap = {
+		string = ix.type.string,
+		number = ix.type.number,
+		Player = ix.type.player,
+		boolean = ix.type.bool,
+		Vector = ix.type.vector
+	}
+
+	local tableMap = {
+		[ix.type.character] = function(value)
+			return getmetatable(value) == ix.meta.character
+		end,
+
+		[ix.type.color] = function(value)
+			return ix.util.IsColor(value)
+		end,
+
+		[ix.type.steamid] = function(value)
+			return isstring(value) and (value:match("STEAM_(%d+):(%d+):(%d+)")) != nil
+		end
+	}
+
+	--- Returns the `ix.type` of the given value.
+	-- @shared
+	-- @param value Value to get the type of
+	-- @treturn ixtype Type of value
+	-- @see ix.type
+	-- @usage print(ix.util.GetTypeFromValue("hello"))
+	-- > 2 -- i.e the value of ix.type.string
+	function ix.util.GetTypeFromValue(value)
+		local result = typeMap[type(value)]
+
+		if (result) then
+			return result
+		end
+
+		if (istable(value)) then
+			for k, v in pairs(tableMap) do
+				if (v(value)) then
+					return k
+				end
+			end
+		end
+	end
+end
+
+function ix.util.Bind(self, callback)
+	return function(_, ...)
+		return callback(self, ...)
 	end
 end
 
@@ -203,19 +304,34 @@ function ix.util.FormatStringNamed(format, ...)
 	return result
 end
 
---- Returns a string that is the given input with spaces in between each CamelCase word. This function will ignore any words
--- that do not begin with a capital letter.
--- @shared
--- @string input String to expand
--- @bool[opt=false] bNoUpperFirst Whether or not to avoid capitalizing the first character. This is useful for lowerCamelCase
--- @treturn string Expanded CamelCase string
--- @usage print(ix.util.ExpandCamelCase("HelloWorld"))
--- > Hello World
-function ix.util.ExpandCamelCase(input, bNoUpperFirst)
-	input = bNoUpperFirst and input or input:sub(1, 1):upper() .. input:sub(2)
+do
+	local upperMap = {
+		["ooc"] = true,
+		["looc"] = true,
+		["afk"] = true,
+		["url"] = true
+	}
+	--- Returns a string that is the given input with spaces in between each CamelCase word. This function will ignore any words
+	-- that do not begin with a capital letter. The words `ooc`, `looc`, `afk`, and `url` will be automatically transformed
+	-- into uppercase text.
+	-- @shared
+	-- @string input String to expand
+	-- @bool[opt=false] bNoUpperFirst Whether or not to avoid capitalizing the first character. This is useful for lowerCamelCase
+	-- @treturn string Expanded CamelCase string
+	-- @usage print(ix.util.ExpandCamelCase("HelloWorld"))
+	-- > Hello World
+	function ix.util.ExpandCamelCase(input, bNoUpperFirst)
+		input = bNoUpperFirst and input or input:sub(1, 1):upper() .. input:sub(2)
 
-	-- extra parentheses to select first return value of gsub
-	return string.TrimRight((input:gsub("%u%l+", "%1 ")))
+		-- extra parentheses to select first return value of gsub
+		return string.TrimRight((input:gsub("%u%l+", function(word)
+			if (upperMap[word:lower()]) then
+				word = word:upper()
+			end
+
+			return word .. " "
+		end)))
+	end
 end
 
 function ix.util.GridVector(vec, gridSize)
@@ -263,33 +379,21 @@ do
 	end
 end
 
-function ix.util.GetAllChar()
-	local charTable = {}
-
-	for _, v in ipairs(player.GetAll()) do
-		if (v:GetChar()) then
-			table.insert(charTable, v:GetChar():GetID())
-		end
-	end
-
-	return charTable
-end
-
 if (CLIENT) then
 	local blur = ix.util.GetMaterial("pp/blurscreen")
 	local surface = surface
 
 	-- Draws a blurred material over the screen, to blur things.
-	function ix.util.DrawBlur(panel, amount, passes)
+	function ix.util.DrawBlur(panel, amount, passes, alpha)
 		-- Intensity of the blur.
 		amount = amount or 5
 
 		if (ix.option.Get("cheapBlur", false)) then
-			surface.SetDrawColor(50, 50, 50, amount * 20)
+			surface.SetDrawColor(50, 50, 50, alpha or (amount * 20))
 			surface.DrawRect(0, 0, panel:GetWide(), panel:GetTall())
 		else
 			surface.SetMaterial(blur)
-			surface.SetDrawColor(255, 255, 255)
+			surface.SetDrawColor(255, 255, 255, alpha or 255)
 
 			local x, y = panel:LocalToScreen(0, 0)
 
@@ -305,7 +409,7 @@ if (CLIENT) then
 		end
 	end
 
-	function ix.util.DrawBlurAt(x, y, w, h, amount, passes)
+	function ix.util.DrawBlurAt(x, y, w, h, amount, passes, maxAlpha, alpha)
 		-- Intensity of the blur.
 		amount = amount or 5
 
@@ -314,7 +418,7 @@ if (CLIENT) then
 			surface.DrawRect(x, y, w, h)
 		else
 			surface.SetMaterial(blur)
-			surface.SetDrawColor(255, 255, 255)
+			surface.SetDrawColor(255, 255, 255, alpha or 255)
 
 			local scrW, scrH = ScrW(), ScrH()
 			local x2, y2 = x / scrW, y / scrH
@@ -328,6 +432,10 @@ if (CLIENT) then
 				surface.DrawTexturedRectUV(x, y, w, h, x2, y2, w2, h2)
 			end
 		end
+	end
+
+	function ix.util.PushBlur(drawFunc)
+		ix.blurRenderQueue[#ix.blurRenderQueue + 1] = drawFunc
 	end
 
 	-- Draw a text with a shadow.
@@ -345,61 +453,66 @@ if (CLIENT) then
 	end
 
 	-- Wraps text so it does not pass a certain width.
-	function ix.util.WrapText(text, width, font)
+	function ix.util.WrapText(text, maxWidth, font)
 		font = font or "ixChatFont"
 		surface.SetFont(font)
 
-		local exploded = string.Explode("%s", text, true)
-		local line = ""
+		local words = string.Explode("%s", text, true)
 		local lines = {}
-		local w = surface.GetTextSize(text)
-		local maxW = 0
+		local line = ""
+		local lineWidth = 0 -- luacheck: ignore 231
 
-		if (w <= width) then
-			return {(text:gsub("%s", " "))}, w
+		-- we don't need to calculate wrapping if we're under the max width
+		if (surface.GetTextSize(text) <= maxWidth) then
+			return {text}
 		end
 
-		for i = 1, #exploded do
-			local word = exploded[i]
+		for i = 1, #words do
+			local word = words[i]
 			local wordWidth = surface.GetTextSize(word)
 
-			if (wordWidth > width) then
-				if (#lines ~= 0 and line ~= "") then
-					lines[#lines + 1] = line
-					line = ""
-				end
+			-- this word is very long so we have to split it by character
+			if (wordWidth > maxWidth) then
+				local newWidth
 
 				for i2 = 1, string.len(word) do
-					local currentCharacter = string.sub(word, i2, i2)
-					local newWidth = surface.GetTextSize(line..currentCharacter)
+					local character = word[i2]
+					newWidth = surface.GetTextSize(line .. character)
 
-					if (newWidth > width) then
+					-- if current line + next character is too wide, we'll shove the next character onto the next line
+					if (newWidth > maxWidth) then
 						lines[#lines + 1] = line
 						line = ""
 					end
 
-					line = line..currentCharacter
+					line = line .. character
 				end
+
+				lineWidth = newWidth
+				continue
 			end
 
-			line = line.." "..word
-			w = surface.GetTextSize(line)
+			local newLine = line .. " " .. word
+			local newWidth = surface.GetTextSize(newLine)
 
-			if (w > width) then
+			if (newWidth > maxWidth) then
+				-- adding this word will bring us over the max width
 				lines[#lines + 1] = line
-				line = ""
 
-				if (w > maxW) then
-					maxW = w
-				end
+				line = word
+				lineWidth = wordWidth
+			else
+				-- otherwise we tack on the new word and continue
+				line = newLine
+				lineWidth = newWidth
 			end
 		end
 
-		if (line ~= "") then
+		if (line != "") then
 			lines[#lines + 1] = line
 		end
 
-		return lines, maxW
+		return lines
 	end
 
 	local cos, sin, abs, rad1, log, pow = math.cos, math.sin, math.abs, math.rad, math.log, math.pow
@@ -480,6 +593,50 @@ if (CLIENT) then
 		return quadarc
 	end
 
+	--- Resets all stencil values to known good (i.e defaults)
+	-- @client
+	function ix.util.ResetStencilValues()
+		render.SetStencilWriteMask(0xFF)
+		render.SetStencilTestMask(0xFF)
+		render.SetStencilReferenceValue(0)
+		render.SetStencilCompareFunction(STENCIL_ALWAYS)
+		render.SetStencilPassOperation(STENCIL_KEEP)
+		render.SetStencilFailOperation(STENCIL_KEEP)
+		render.SetStencilZFailOperation(STENCIL_KEEP)
+		render.ClearStencil()
+	end
+
+	-- luacheck: globals derma
+	-- Alternative to SkinHook that allows you to pass more arguments to skin methods
+	function derma.SkinFunc(name, panel, a, b, c, d, e, f, g)
+		local skin = (ispanel(panel) and IsValid(panel)) and panel:GetSkin() or derma.GetDefaultSkin()
+
+		if (!skin) then
+			return
+		end
+
+		local func = skin[name]
+
+		if (!func) then
+			return
+		end
+
+		return func(skin, panel, a, b, c, d, e, f, g)
+	end
+
+	-- Alternative to Color that retrieves from the SKIN.Colours table
+	function derma.GetColor(name, panel, default)
+		default = default or ix.config.Get("color")
+
+		local skin = panel:GetSkin()
+
+		if (!skin) then
+			return default
+		end
+
+		return skin.Colours[name] or default
+	end
+
 	local LAST_WIDTH = ScrW()
 	local LAST_HEIGHT = ScrH()
 
@@ -553,7 +710,7 @@ do
 	-- Whether or not a vehicle is a chair by checking its model with the chair list.
 	function entityMeta:IsChair()
 		-- Micro-optimization in-case this gets used a lot.
-		return CHAIR_CACHE[self.GetModel(self)]
+		return CHAIR_CACHE[self:GetModel()]
 	end
 
 	if (SERVER) then
@@ -568,13 +725,13 @@ do
 				local datatable = self:GetSaveTable()
 
 				if (datatable) then
-					return (datatable.VehicleLocked)
+					return datatable.VehicleLocked
 				end
 			else
 				local datatable = self:GetSaveTable()
 
 				if (datatable) then
-					return (datatable.m_bLocked)
+					return datatable.m_bLocked
 				end
 			end
 
@@ -585,7 +742,7 @@ do
 		function entityMeta:GetBlocker()
 			local datatable = self:GetSaveTable()
 
-			return (datatable.pBlocker)
+			return datatable.pBlocker
 		end
 	else
 		-- Returns the door's slave entity.
@@ -914,44 +1071,18 @@ do
 
 	-- Returns whether or not the player has their weapon raised.
 	function playerMeta:IsWepRaised()
-		local weapon = self.GetActiveWeapon(self)
-		local override = hook.Run("ShouldWeaponBeRaised", self, weapon)
+		return self:GetNetVar("raised", false)
+	end
 
-		-- Allow the hook to check first.
-		if (override != nil) then
-			return override, weapon
-		end
-
-		-- Some weapons may have their own properties.
-		if (IsValid(weapon)) then
-			-- If their weapon is always raised, return true.
-			if (weapon.IsAlwaysRaised or ALWAYS_RAISED[weapon.GetClass(weapon)]) then
-				return true, weapon
-			-- Return false if always lowered.
-			elseif (weapon.IsAlwaysLowered or weapon.NeverRaised) then
-				return false, weapon
-			end
-		end
-
-		-- If the player has been forced to have their weapon lowered.
-		if (self.GetNetVar(self, "restricted")) then
-			return false, weapon
-		end
-
-		-- Let the config decide before actual results.
-		if (ix.config.Get("wepAlwaysRaised")) then
-			return true, weapon
-		end
-
-		-- Returns what the gamemode decides.
-		return self.GetNetVar(self, "raised", false), weapon
+	function playerMeta:CanShootWeapon()
+		return self:GetNetVar("canShoot", true)
 	end
 
 	local vectorLength2D = FindMetaTable("Vector").Length2D
 
 	-- Checks if the player is running by seeing if the speed is faster than walking.
 	function playerMeta:IsRunning()
-		return vectorLength2D(self.GetVelocity(self)) > (self.GetWalkSpeed(self) + 10)
+		return vectorLength2D(self:GetVelocity()) > (self:GetWalkSpeed() + 10)
 	end
 
 	-- Checks if the player has a female model.
@@ -1021,25 +1152,34 @@ do
 	end
 
 	if (SERVER) then
-		-- Sets whether or not the weapon is raised.
-		function playerMeta:SetWepRaised(state)
-			-- Sets the networked variable for being raised.
-			self:SetNetVar("raised", state)
+		util.AddNetworkString("ixActionBar")
+		util.AddNetworkString("ixActionBarReset")
+		util.AddNetworkString("ixStringRequest")
 
-			-- Delays any weapon shooting.
-			local weapon = self:GetActiveWeapon()
+		-- Sets whether or not the weapon is raised.
+		function playerMeta:SetWepRaised(state, weapon)
+			weapon = weapon or self:GetActiveWeapon()
 
 			if (IsValid(weapon)) then
-				weapon:SetNextPrimaryFire(CurTime() + 1)
-				weapon:SetNextSecondaryFire(CurTime() + 1)
+				local bCanShoot = !state and weapon.FireWhenLowered or state
+
+				self:SetNetVar("raised", state)
+				self:SetNetVar("canShoot", bCanShoot)
+
+				-- delay shooting while we're doing the raising animation, otherwise make sure we can't shoot
+				weapon:SetNextPrimaryFire(bCanShoot and (CurTime() + 1) or math.huge)
+				weapon:SetNextSecondaryFire(bCanShoot and (CurTime() + 1) or math.huge)
+			else
+				self:SetNetVar("raised", false)
+				self:SetNetVar("canShoot", false)
 			end
 		end
 
 		-- Inverts whether or not the weapon is raised.
 		function playerMeta:ToggleWepRaised()
-			self:SetWepRaised(!self:IsWepRaised())
-
 			local weapon = self:GetActiveWeapon()
+
+			self:SetWepRaised(!self:IsWepRaised(), weapon)
 
 			if (IsValid(weapon)) then
 				if (self:IsWepRaised() and weapon.OnRaised) then
@@ -1051,8 +1191,13 @@ do
 		end
 
 		-- Performs a delayed action that requires the user to hold use on an entity.
-		-- The callback will be ran right away if the time is zero.
+		-- The callback will be ran right away if the time is zero. Return false in the callback to not mark this interaction
+		-- as dirty if you're managing the interaction state manually.
 		function playerMeta:PerformInteraction(time, entity, callback)
+			if (!IsValid(entity) or entity.ixInteractionDirty) then
+				return
+			end
+
 			if (time > 0) then
 				self.ixInteractionTarget = entity
 				self.ixInteractionCharacter = self:GetCharacter():GetID()
@@ -1066,13 +1211,17 @@ do
 							data.filter = self
 						local traceEntity = util.TraceLine(data).Entity
 
-						if (IsValid(traceEntity) and traceEntity == self.ixInteractionTarget) then
-							callback(self)
+						if (IsValid(traceEntity) and traceEntity == self.ixInteractionTarget and !traceEntity.ixInteractionDirty) then
+							if (callback(self) != false) then
+								traceEntity.ixInteractionDirty = true
+							end
 						end
 					end
 				end)
 			else
-				callback(self)
+				if (callback(self) != false) then
+					entity.ixInteractionDirty = true
+				end
 			end
 		end
 
@@ -1093,13 +1242,23 @@ do
 
 			if (text == false) then
 				timer.Remove("ixAct"..self:UniqueID())
-				netstream.Start(self, "actBar")
+
+				net.Start("ixActionBarReset")
+				net.Send(self)
 
 				return
 			end
 
-			-- Tell the player to draw a bar for the action.
-			netstream.Start(self, "actBar", startTime, finishTime, text)
+			if (!text) then
+				net.Start("ixActionBarReset")
+				net.Send(self)
+			else
+				net.Start("ixActionBar")
+					net.WriteFloat(startTime)
+					net.WriteFloat(finishTime)
+					net.WriteString(text)
+				net.Send(self)
+			end
 
 			-- If we have provided a callback, run it delayed.
 			if (callback) then
@@ -1120,7 +1279,12 @@ do
 			self.ixStrReqs = self.ixStrReqs or {}
 			self.ixStrReqs[time] = callback
 
-			netstream.Start(self, "strReq", time, title, subTitle, default)
+			net.Start("ixStringRequest")
+				net.WriteUInt(time, 32)
+				net.WriteString(title)
+				net.WriteString(subTitle)
+				net.WriteString(default)
+			net.Send(self)
 		end
 
 		-- Removes a player's weapon and restricts interactivity.
@@ -1283,9 +1447,9 @@ do
 								end
 
 								if (entity.ixAmmo) then
-									for k2, v2 in ipairs(entity.ixAmmo) do
-										if v == v2[1] then
-											self:SetAmmo(v2[2], tostring(k2))
+									for k2, v2 in pairs(entity.ixAmmo) do
+										if (v.class == v2[1]) then
+											self:SetAmmo(v2[2], k2)
 										end
 									end
 								end
@@ -1389,11 +1553,11 @@ do
 				end
 
 				self:SetLocalVar("ragdoll", entity:EntIndex())
-				hook.Run("OnCharFallover", self, entity, true)
+				hook.Run("OnCharacterFallover", self, entity, true)
 			elseif (IsValid(self.ixRagdoll)) then
 				self.ixRagdoll:Remove()
 
-				hook.Run("OnCharFallover", self, nil, false)
+				hook.Run("OnCharacterFallover", self, nil, false)
 			end
 		end
 	end

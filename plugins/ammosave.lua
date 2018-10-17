@@ -58,14 +58,14 @@ function PLUGIN:CharacterPreSave(character)
 end
 
 -- Called after the player's loadout has been set.
-function PLUGIN:PlayerLoadedChar(client)
+function PLUGIN:PlayerLoadedCharacter(client)
 	timer.Simple(0.25, function()
 		if (!IsValid(client)) then
 			return
 		end
 
 		-- Get the saved ammo table from the character data.
-		local character = client:GetChar()
+		local character = client:GetCharacter()
 
 		if (!character) then
 			return

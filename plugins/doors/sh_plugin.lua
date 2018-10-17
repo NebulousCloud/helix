@@ -1,4 +1,6 @@
 
+local PLUGIN = PLUGIN
+
 PLUGIN.name = "Doors"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "A simple door system."
@@ -42,15 +44,24 @@ do
 
 	if (SERVER) then
 		function entityMeta:RemoveDoorAccessData()
-			-- Don't ask why. This happened with 60 player servers.
-			if (IsValid(self)) then
-				for k, _ in pairs(self.ixAccess or {}) do
-					netstream.Start(k, "doorMenu")
-				end
+			local receivers = {}
 
-				self.ixAccess = {}
-				self:SetDTEntity(0, nil)
+			for k, _ in pairs(self.ixAccess or {}) do
+				receivers[#receivers + 1] = k
 			end
+
+			if (#receivers > 0) then
+				net.Start("ixDoorMenu")
+				net.Send(receivers)
+			end
+
+			self.ixAccess = {}
+			self:SetDTEntity(0, nil)
+
+			-- Remove door information on child doors
+			PLUGIN:CallOnDoorChildren(self, function(child)
+				child:SetDTEntity(0, nil)
+			end)
 		end
 	end
 end
@@ -61,12 +72,10 @@ ix.config.Add("doorCost", 10, "The price to purchase a door.", nil, {
 	category = "dConfigName"
 })
 ix.config.Add("doorSellRatio", 0.5, "How much of the door price is returned when selling a door.", nil, {
-	form = "Float",
-	data = {min = 0, max = 1.0},
+	data = {min = 0, max = 1.0, decimals = 1},
 	category = "dConfigName"
 })
 ix.config.Add("doorLockTime", 1, "How long it takes to (un)lock a door.", nil, {
-	form = "Float",
-	data = {min = 0, max = 10.0},
+	data = {min = 0, max = 10.0, decimals = 1},
 	category = "dConfigName"
 })

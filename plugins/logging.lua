@@ -14,7 +14,7 @@ if (SERVER) then
 	ix.log.AddType("command", function(client, ...)
 		local arg = {...}
 
-		if (#arg[2] > 0) then
+		if (arg[2] and #arg[2] > 0) then
 			return L("%s used command '%s %s'.", client:Name(), arg[1], arg[2])
 		else
 			return L("%s used command '%s'.", client:Name(), arg[1])
@@ -56,7 +56,7 @@ if (SERVER) then
 	ix.log.AddType("itemAction", function(client, ...)
 		local arg = {...}
 		local item = arg[2]
-		return L("%s ran '%s' on item '%s' (#%s)", client:Name(), arg[1], item.name, item.id)
+		return L("%s ran '%s' on item '%s' (#%s)", client:Name(), arg[1], item:GetName(), item:GetID())
 	end, FLAG_NORMAL)
 
 	ix.log.AddType("shipmentTake", function(client, ...)
@@ -74,7 +74,11 @@ if (SERVER) then
 	end, FLAG_SUCCESS)
 
 	ix.log.AddType("buydoor", function(client, ...)
-		return L("%s purchased the door", client:Name())
+		return L("%s has purchased a door.", client:Name())
+	end, FLAG_SUCCESS)
+
+	ix.log.AddType("selldoor", function(client, ...)
+		return L("%s has sold a door.", client:Name())
 	end, FLAG_SUCCESS)
 
 	ix.log.AddType("playerHurt", function(client, ...)
@@ -84,28 +88,32 @@ if (SERVER) then
 
 	ix.log.AddType("playerDeath", function(client, ...)
 		local arg = {...}
-		return L("%s has killed %s.", arg[1], client:Name())
+		return L("%s has killed %s%s.", arg[1], client:Name(), arg[2] and (" with " .. arg[2]) or "")
 	end, FLAG_DANGER)
 
-	ix.log.AddType("inventoryAdd", function(client, ...)
-		local arg = {...}
-		return L("%s has gained a '%s' #%d.", client:Name(), arg[1], arg[2])
+	ix.log.AddType("inventoryAdd", function(client, characterName, itemName, itemID)
+		return L("%s has gained a '%s' #%d.", characterName, itemName, itemID)
 	end, FLAG_WARNING)
 
-	ix.log.AddType("inventoryRemove", function(client, ...)
-		local arg = {...}
-		return L("%s has lost a '%s' #%d.", client:Name(), arg[1], arg[2])
+	ix.log.AddType("inventoryRemove", function(client, characterName, itemName, itemID)
+		return L("%s has lost a '%s' #%d.", characterName, itemName, itemID)
 	end, FLAG_WARNING)
 
-	ix.log.AddType("openContainer", function(client, ...)
-		local arg = {...}
-		return L("%s opened the '%s' #%d container.", client:Name(), arg[1], arg[2])
-	end, FLAG_NORMAL)
+	ix.log.AddType("storageMoneyTake", function(client, entity, amount, total)
+		local name = entity.GetDisplayName and entity:GetDisplayName() or entity:GetName()
 
-	ix.log.AddType("closeContainer", function(client, ...)
-		local arg = {...}
-		return L("%s closed the '%s' #%d container.", client:Name(), arg[1], arg[2])
-	end, FLAG_NORMAL)
+		return string.format("%s has taken %d %s from '%s' #%d (%d %s left).",
+			client:GetName(), amount, ix.currency.plural, name,
+			entity:GetInventory():GetID(), total, ix.currency.plural)
+	end)
+
+	ix.log.AddType("storageMoneyGive", function(client, entity, amount, total)
+		local name = entity.GetDisplayName and entity:GetDisplayName() or entity:GetName()
+
+		return string.format("%s has given %d %s to '%s' #%d (%d %s left).",
+			client:GetName(), amount, ix.currency.plural, name,
+			entity:GetInventory():GetID(), total, ix.currency.plural)
+	end)
 
 	function PLUGIN:PlayerInitialSpawn(client)
 		ix.log.Add(client, "connect")
@@ -115,7 +123,7 @@ if (SERVER) then
 		ix.log.Add(client, "disconnect")
 	end
 
-	function PLUGIN:OnCharCreated(client, character)
+	function PLUGIN:OnCharacterCreated(client, character)
 		ix.log.Add(client, "charCreate", character:GetName())
 	end
 
@@ -124,23 +132,23 @@ if (SERVER) then
 		ix.log.Add(client, "charLoad", character:GetName())
 	end
 
-	function PLUGIN:PreCharDelete(client, character)
+	function PLUGIN:PreCharacterDeleted(client, character)
 		ix.log.Add(client, "charDelete", character:GetName())
 	end
 
-	function PLUGIN:OnTakeShipmentItem(client, itemClass, amount)
+	function PLUGIN:ShipmentItemTaken(client, itemClass, amount)
 		local itemTable = ix.item.list[itemClass]
-		ix.log.Add(client, "shipmentTake", itemTable.name)
+		ix.log.Add(client, "shipmentTake", itemTable:GetName())
 	end
 
-	function PLUGIN:OnCreateShipment(client, shipmentEntity)
+	function PLUGIN:CreateShipment(client, shipmentEntity)
 		ix.log.Add(client, "shipmentOrder")
 	end
 
-	function PLUGIN:OnCharTradeVendor(client, vendor, x, y, invID, price, isSell)
+	function PLUGIN:CharacterVendorTraded(client, vendor, x, y, invID, price, isSell)
 	end
 
-	function PLUGIN:OnPlayerInteractItem(client, action, item)
+	function PLUGIN:PlayerInteractItem(client, action, item)
 		if (type(item) == "Entity") then
 			if (IsValid(item)) then
 				local itemID = item.ixItemID
@@ -159,14 +167,26 @@ if (SERVER) then
 		ix.log.Add(client, "itemAction", action, item)
 	end
 
-	function PLUGIN:InventoryItemAdded(inventory, item)
-		if (!inventory.owner) then
+	function PLUGIN:InventoryItemAdded(oldInv, inventory, item)
+		if (!inventory.owner or (oldInv and oldInv.owner == inventory.owner)) then
 			return
 		end
 
 		local character = ix.char.loaded[inventory.owner]
 
-		ix.log.Add(character:GetPlayer(), "inventoryAdd", item:GetName(), item:GetID())
+		ix.log.Add(character:GetPlayer(), "inventoryAdd", character:GetName(), item:GetName(), item:GetID())
+
+		if (item.isBag) then
+			local bagInventory = item:GetInventory()
+
+			if (!bagInventory) then
+				return
+			end
+
+			for _, v in pairs(bagInventory:GetItems()) do
+				ix.log.Add(character:GetPlayer(), "inventoryAdd", character:GetName(), v:GetName(), v:GetID())
+			end
+		end
 	end
 
 	function PLUGIN:InventoryItemRemoved(inventory, item)
@@ -176,6 +196,12 @@ if (SERVER) then
 
 		local character = ix.char.loaded[inventory.owner]
 
-		ix.log.Add(character:GetPlayer(), "inventoryRemove", item:GetName(), item:GetID())
+		ix.log.Add(character:GetPlayer(), "inventoryRemove", character:GetName(), item:GetName(), item:GetID())
+
+		if (item.isBag) then
+			for _, v in pairs(item:GetInventory():GetItems()) do
+				ix.log.Add(character:GetPlayer(), "inventoryRemove", character:GetName(), v:GetName(), v:GetID())
+			end
+		end
 	end
 end

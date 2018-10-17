@@ -1,74 +1,43 @@
 
 local PLUGIN = PLUGIN
 
-PLUGIN.name = "New Fancy Third Person"
+PLUGIN.name = "Third Person"
 PLUGIN.author = "Black Tea"
-PLUGIN.description = "Third Person plugin."
+PLUGIN.description = "Enables third person camera usage."
 
 ix.config.Add("thirdperson", false, "Allow Thirdperson in the server.", nil, {
 	category = "server"
 })
 
 if (CLIENT) then
+	local function isHidden()
+		return !ix.config.Get("thirdperson")
+	end
+
 	ix.option.Add("thirdpersonEnabled", ix.type.bool, false, {
-		category = "thirdperson"
+		category = "thirdperson",
+		hidden = isHidden
 	})
 
 	ix.option.Add("thirdpersonClassic", ix.type.bool, false, {
-		category = "thirdperson"
+		category = "thirdperson",
+		hidden = isHidden
 	})
 
-	local IX_CVAR_TP_VERT = CreateClientConVar("ix_tp_vertical", 10, true)
-	local IX_CVAR_TP_HORI = CreateClientConVar("ix_tp_horizontal", 0, true)
-	local IX_CVAR_TP_DIST = CreateClientConVar("ix_tp_distance", 50, true)
+	ix.option.Add("thirdpersonVertical", ix.type.number, 10, {
+		category = "thirdperson", min = 0, max = 30,
+		hidden = isHidden
+	})
 
-	local PANEL = {}
+	ix.option.Add("thirdpersonHorizontal", ix.type.number, 0, {
+		category = "thirdperson", min = -30, max = 30,
+		hidden = isHidden
+	})
 
-	local maxValues = {
-		height = 30,
-		horizontal = 30,
-		distance = 100
-	}
-
-	function PANEL:Init()
-		self:SetTitle(L("thirdpersonConfig"))
-		self:SetSize(300, 140)
-		self:Center()
-		self:MakePopup()
-
-		self.list = self:Add("DPanel")
-		self.list:Dock(FILL)
-		self.list:DockMargin(0, 0, 0, 0)
-
-		local cfg = self.list:Add("DNumSlider")
-		cfg:Dock(TOP)
-		cfg:SetText("Height") -- Set the text above the slider
-		cfg:SetMin(0)				 -- Set the minimum number you can slide to
-		cfg:SetMax(30)				-- Set the maximum number you can slide to
-		cfg:SetDecimals(0)			 -- Decimal places - zero for whole number
-		cfg:SetConVar("ix_tp_vertical") -- Changes the ConVar when you slide
-		cfg:DockMargin(10, 0, 0, 5)
-
-		cfg = self.list:Add("DNumSlider")
-		cfg:Dock(TOP)
-		cfg:SetText("Horizontal") -- Set the text above the slider
-		cfg:SetMin(-30)				 -- Set the minimum number you can slide to
-		cfg:SetMax(30)				-- Set the maximum number you can slide to
-		cfg:SetDecimals(0)			 -- Decimal places - zero for whole number
-		cfg:SetConVar("ix_tp_horizontal") -- Changes the ConVar when you slide
-		cfg:DockMargin(10, 0, 0, 5)
-
-		cfg = self.list:Add("DNumSlider")
-		cfg:Dock(TOP)
-		cfg:SetText("Distance") -- Set the text above the slider
-		cfg:SetMin(0)				 -- Set the minimum number you can slide to
-		cfg:SetMax(100)				-- Set the maximum number you can slide to
-		cfg:SetDecimals(0)			 -- Decimal places - zero for whole number
-		cfg:SetConVar("ix_tp_distance") -- Changes the ConVar when you slide
-		cfg:DockMargin(10, 0, 0, 5)
-	end
-
-	vgui.Register("ixTPConfig", PANEL, "DFrame")
+	ix.option.Add("thirdpersonDistance", ix.type.number, 50, {
+		category = "thirdperson", min = 0, max = 100,
+		hidden = isHidden
+	})
 
 	local function isAllowed()
 		return ix.config.Get("thirdperson")
@@ -79,13 +48,20 @@ if (CLIENT) then
 	function playerMeta:CanOverrideView()
 		local entity = Entity(self:GetLocalVar("ragdoll", 0))
 
-		if ((ix.gui.char and !ix.gui.char:IsVisible()) and
-			ix.option.Get("thirdpersonEnabled", false) and
+		if (IsValid(ix.gui.characterMenu) and !ix.gui.characterMenu:IsClosing() and ix.gui.characterMenu:IsVisible()) then
+			return false
+		end
+
+		if (IsValid(ix.gui.menu) and ix.gui.menu:GetCharacterOverview()) then
+			return false
+		end
+
+		if (ix.option.Get("thirdpersonEnabled", false) and
 			!IsValid(self:GetVehicle()) and
 			isAllowed() and
 			IsValid(self) and
-			self:GetChar() and
-			!self:GetNetVar("actAng") and
+			self:GetCharacter() and
+			!self:GetNetVar("actEnterAngle") and
 			!IsValid(entity) and
 			LocalPlayer():Alive()
 			) then
@@ -96,10 +72,13 @@ if (CLIENT) then
 	local view, traceData, traceData2, aimOrigin, crouchFactor, ft, curAng, owner
 	local clmp = math.Clamp
 	crouchFactor = 0
+
 	function PLUGIN:CalcView(client, origin, angles, fov)
 		ft = FrameTime()
 
 		if (client:CanOverrideView() and LocalPlayer():GetViewEntity() == LocalPlayer()) then
+			local bNoclip = LocalPlayer():GetMoveType() == MOVETYPE_NOCLIP
+
 			if ((client:OnGround() and client:KeyDown(IN_DUCK)) or client:Crouching()) then
 				crouchFactor = Lerp(ft*5, crouchFactor, 1)
 			else
@@ -110,12 +89,15 @@ if (CLIENT) then
 			view = {}
 			traceData = {}
 				traceData.start = 	client:GetPos() + client:GetViewOffset() +
-									curAng:Up() * clmp(IX_CVAR_TP_VERT:GetInt(), 0, maxValues.height) +
-									curAng:Right() * clmp(IX_CVAR_TP_HORI:GetInt(), -maxValues.horizontal, maxValues.horizontal) -
-									client:GetViewOffsetDucked()*.5 * crouchFactor
-				traceData.endpos = traceData.start - curAng:Forward() * clmp(IX_CVAR_TP_DIST:GetInt(), 0, maxValues.distance)
+									curAng:Up() * ix.option.Get("thirdpersonVertical", 10) +
+									curAng:Right() * ix.option.Get("thirdpersonHorizontal", 0) -
+									client:GetViewOffsetDucked() * .5 * crouchFactor
+				traceData.endpos = traceData.start - curAng:Forward() * ix.option.Get("thirdpersonDistance", 50)
 				traceData.filter = client
-			view.origin = util.TraceLine(traceData).HitPos
+				traceData.ignoreworld = bNoclip
+				traceData.mins = Vector(-10, -10, -10)
+				traceData.maxs = Vector(10, 10, 10)
+			view.origin = util.TraceHull(traceData).HitPos
 			aimOrigin = view.origin
 			view.angles = curAng + client:GetViewPunchAngles()
 
@@ -123,10 +105,18 @@ if (CLIENT) then
 				traceData2.start = 	aimOrigin
 				traceData2.endpos = aimOrigin + curAng:Forward() * 65535
 				traceData2.filter = client
+				traceData2.ignoreworld = bNoclip
 
-			if ((ix.option.Get("thirdpersonClassic", false) or owner:IsWepRaised() or
-				(owner:KeyDown(bit.bor(IN_FORWARD, IN_BACK, IN_MOVELEFT, IN_MOVERIGHT)) and owner:GetVelocity():Length() >= 10)) ) then
+			local bClassic = ix.option.Get("thirdpersonClassic", false)
+
+			if (bClassic or owner:IsWepRaised() or
+				(owner:KeyDown(bit.bor(IN_FORWARD, IN_BACK, IN_MOVELEFT, IN_MOVERIGHT)) and owner:GetVelocity():Length() >= 10)) then
 				client:SetEyeAngles((util.TraceLine(traceData2).HitPos - client:GetShootPos()):Angle())
+			else
+				local currentAngles = client:EyeAngles()
+				currentAngles.pitch = (util.TraceLine(traceData2).HitPos - client:GetShootPos()):Angle().pitch
+
+				client:SetEyeAngles(currentAngles)
 			end
 
 			return view
@@ -142,26 +132,25 @@ if (CLIENT) then
 			fm = cmd:GetForwardMove()
 			sm = cmd:GetSideMove()
 			diff = (owner:EyeAngles() - (owner.camAng or Angle(0, 0, 0)))[2] or 0
-			diff = diff/90
+			diff = diff / 90
 
-			cmd:SetForwardMove(fm + sm*diff)
-			cmd:SetSideMove(sm + fm*diff)
+			cmd:SetForwardMove(fm + sm * diff)
+			cmd:SetSideMove(sm + fm * diff)
 			return false
 		end
 	end
 
 	function PLUGIN:InputMouseApply(cmd, x, y, ang)
-		owner = LocalPlayer( )
+		owner = LocalPlayer()
 
 		if (!owner.camAng) then
-		    owner.camAng = Angle( 0, 0, 0 )
+			owner.camAng = Angle(0, 0, 0)
 		end
 
-	    if (owner:CanOverrideView() and LocalPlayer():GetViewEntity() == LocalPlayer()) then
+		owner.camAng.p = clmp(math.NormalizeAngle(owner.camAng.p + y / 50), -85, 85)
+		owner.camAng.y = math.NormalizeAngle(owner.camAng.y - x / 50)
 
-		    owner.camAng.p = clmp(math.NormalizeAngle( owner.camAng.p + y / 50 ), -85, 85)
-		    owner.camAng.y = math.NormalizeAngle( owner.camAng.y - x / 50 )
-
+		if (owner:CanOverrideView() and LocalPlayer():GetViewEntity() == LocalPlayer()) then
 			return true
 		end
 	end

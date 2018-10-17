@@ -9,39 +9,58 @@ function PANEL:Init()
 	self:SetCursor("none")
 end
 
-function PANEL:SetModel(model)
-	BaseClass.SetModel(self, model)
-
-	local entity = self.Entity
-
-	if (IsValid(entity)) then
-		local sequence = entity:SelectWeightedSequence(ACT_IDLE)
-
-		if (sequence <= 0) then
-			sequence = entity:LookupSequence("idle_unarmed")
-		end
-
-		if (sequence > 0) then
-			entity:ResetSequence(sequence)
-		else
-			local found = false
-
-			for _, v in ipairs(entity:GetSequenceList()) do
-				if ((v:lower():find("idle") or v:lower():find("fly")) and v != "idlenoise") then
-					entity:ResetSequence(v)
-					found = true
-
-					break
-				end
-			end
-
-			if (!found) then
-				entity:ResetSequence(4)
-			end
-		end
-
-		entity:SetIK(false)
+function PANEL:SetModel(model, skin, bodygroups)
+	if (IsValid(self.Entity)) then
+		self.Entity:Remove()
+		self.Entity = nil
 	end
+
+	if (!ClientsideModel) then
+		return
+	end
+
+	local entity = ClientsideModel(model, RENDERGROUP_OPAQUE)
+
+	if (!IsValid(entity)) then
+		return
+	end
+
+	entity:SetIK(false)
+
+	if (skin) then
+		entity:SetSkin(skin)
+	end
+
+	if (isstring(bodygroups)) then
+		entity:SetBodyGroups(bodygroups)
+	end
+
+	local sequence = entity:LookupSequence("idle_unarmed")
+
+	if (sequence <= 0) then
+		sequence = entity:SelectWeightedSequence(ACT_IDLE)
+	end
+
+	if (sequence > 0) then
+		entity:ResetSequence(sequence)
+	else
+		local found = false
+
+		for _, v in ipairs(entity:GetSequenceList()) do
+			if ((v:lower():find("idle") or v:lower():find("fly")) and v != "idlenoise") then
+				entity:ResetSequence(v)
+				found = true
+
+				break
+			end
+		end
+
+		if (!found) then
+			entity:ResetSequence(4)
+		end
+	end
+
+	self.Entity = entity
 end
 
 function PANEL:LayoutEntity()
@@ -69,6 +88,9 @@ function PANEL:DrawModel()
 	local brightness = self.brightness * 0.4
 	local brightness2 = self.brightness * 1.5
 
+	render.SetStencilEnable(false)
+	render.SetColorMaterial()
+	render.SetColorModulation(1, 1, 1)
 	render.SetModelLighting(0, brightness2, brightness2, brightness2)
 
 	for i = 1, 4 do

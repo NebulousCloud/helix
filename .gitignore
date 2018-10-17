@@ -1,3 +1,7 @@
+
 *.sublime-*
 gamemode/config/sv_database.lua
 docs/html
+.vscode/*
+.DS_Store
+helix.yml

@@ -50,34 +50,39 @@ local TEXT_COLOR = Color(240, 240, 240)
 local SHADOW_COLOR = Color(20, 20, 20)
 
 function ix.bar.Draw(x, y, w, h, value, color, text)
-	local origX, origY = x, y
+	local menu = IsValid(ix.gui.menu) and ix.gui.menu
+	local fraction = menu and 1 - menu.currentAlpha / 255 or 1
 
-	ix.util.DrawBlurAt(x, y, w, h)
+	if (menu and fraction <= 0) then
+		return
+	end
 
-	surface.SetDrawColor(255, 255, 255, 15)
+	local origX, origY, origW = x, y, w
+
+	surface.SetDrawColor(230, 230, 230, 15 * fraction)
 	surface.DrawRect(x, y, w, h)
 	surface.DrawOutlinedRect(x, y, w, h)
 
 	x, y, w, h = origX + 2, origY + 2, (w - 4) * math.min(value, 1), h - 4
 
-	surface.SetDrawColor(color.r, color.g, color.b, 250)
+	surface.SetDrawColor(color.r, color.g, color.b, 250 * fraction)
 	surface.DrawRect(x, y, w, h)
 
-	surface.SetDrawColor(255, 255, 255, 8)
+	surface.SetDrawColor(230, 230, 230, 8 * fraction)
 	surface.SetMaterial(gradientU)
 	surface.DrawTexturedRect(x, y, w, h)
 
 	if (isstring(text)) then
-		x, y = origX + (w * 0.5), origY + (h * 0.5)
+		x, y = origW * 0.5, origY + (h * 0.5)
 
 		surface.SetFont("ixSmallFont")
 		local textWidth, textHeight = surface.GetTextSize(text)
 
-		surface.SetTextColor(SHADOW_COLOR)
+		surface.SetTextColor(ColorAlpha(SHADOW_COLOR, 255 * fraction))
 		surface.SetTextPos(math.max(6, x + 2 - textWidth * 0.5), y + 4 - textHeight * 0.5)
 		surface.DrawText(text)
 
-		surface.SetTextColor(TEXT_COLOR)
+		surface.SetTextColor(ColorAlpha(TEXT_COLOR, 255 * fraction))
 		surface.SetTextPos(math.max(4, x - textWidth * 0.5), y + 2 - textHeight * 0.5)
 		surface.DrawText(text)
 	end
@@ -174,17 +179,21 @@ do
 	end, Color(30, 70, 180), nil, "armor")
 end
 
-netstream.Hook("actBar", function(start, finish, text)
-	if (!text) then
-		ix.bar.actionStart = 0
-		ix.bar.actionEnd = 0
-	else
-		if (text:sub(1, 1) == "@") then
-			text = L2(text:sub(2)) or text
-		end
+net.Receive("ixActionBar", function()
+	local start, finish = net.ReadFloat(), net.ReadFloat()
+	local text = net.ReadString()
 
-		ix.bar.actionStart = start
-		ix.bar.actionEnd = finish
-		ix.bar.actionText = text:upper()
+	if (text:sub(1, 1) == "@") then
+		text = L2(text:sub(2)) or text
 	end
+
+	ix.bar.actionStart = start
+	ix.bar.actionEnd = finish
+	ix.bar.actionText = text:upper()
+end)
+
+net.Receive("ixActionBarReset", function()
+	ix.bar.actionStart = 0
+	ix.bar.actionEnd = 0
+	ix.bar.actionText = ""
 end)

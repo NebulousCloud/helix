@@ -10,7 +10,7 @@ if (SERVER) then
 	function ix.char.Create(data, callback)
 		local timeStamp = math.floor(os.time())
 
-		data.money = data.money or ix.config.Get("defMoney", 0)
+		data.money = data.money or ix.config.Get("defaultMoney", 0)
 		data.schema = Schema and Schema.folder or "helix"
 		data.createTime = timeStamp
 		data.lastJoinTime = timeStamp
@@ -25,7 +25,7 @@ if (SERVER) then
 			query:Insert("steamid", data.steamID)
 			query:Insert("faction", data.faction or "Unknown")
 			query:Insert("money", data.money)
-			query:Insert("data", util.TableToJSON(data.data))
+			query:Insert("data", util.TableToJSON(data.data or {}))
 			query:Callback(function(result, status, lastID)
 				local invQuery = mysql:Insert("ix_inventories")
 					invQuery:Insert("character_id", lastID)
@@ -34,7 +34,7 @@ if (SERVER) then
 
 						ix.char.RestoreVars(data, data)
 
-						local w, h = ix.config.Get("invW"), ix.config.Get("invH")
+						local w, h = ix.config.Get("inventoryWidth"), ix.config.Get("inventoryHeight")
 						local character = ix.char.New(data, lastID, client, data.steamID)
 						local inventory = ix.item.CreateInv(w, h, invLastID)
 
@@ -83,11 +83,11 @@ if (SERVER) then
 		end
 	end
 
-	function ix.char.Restore(client, callback, noCache, id)
+	function ix.char.Restore(client, callback, bNoCache, id)
 		local steamID64 = client:SteamID64()
 		local cache = ix.char.cache[steamID64]
 
-		if (cache and !noCache) then
+		if (cache and !bNoCache) then
 			for _, v in ipairs(cache) do
 				local character = ix.char.loaded[v]
 
@@ -147,13 +147,15 @@ if (SERVER) then
 							invQuery:Where("character_id", charID)
 							invQuery:Callback(function(info)
 								if (istable(info) and #info > 0) then
+									local inventories = {}
+
 									for _, v2 in pairs(info) do
 										if (v2.inventory_type and isstring(v2.inventory_type) and v2.inventory_type == "NULL") then
 											v2.inventory_type = nil
 										end
 
 										if (hook.Run("ShouldRestoreInventory", charID, v2.inventory_id, v2.inventory_type) != false) then
-											local w, h = ix.config.Get("invW"), ix.config.Get("invH")
+											local w, h = ix.config.Get("inventoryWidth"), ix.config.Get("inventoryHeight")
 											local invType
 
 											if (v2.inventory_type) then
@@ -164,23 +166,27 @@ if (SERVER) then
 												end
 											end
 
-											ix.item.RestoreInv(tonumber(v2.inventory_id), w, h, function(inventory)
-												if (v2.inventory_type) then
-													inventory.vars.isBag = v2.inventory_type
-													table.insert(character.vars.inv, inventory)
-												else
-													character.vars.inv[1] = inventory
-												end
-
-												inventory:SetOwner(charID)
-											end, true)
+											inventories[tonumber(v2.inventory_id)] = {w, h, v2.inventory_type}
 										end
 									end
+
+									ix.item.RestoreInv(inventories, nil, nil, function(inventory)
+										local inventoryType = inventories[inventory:GetID()][3]
+
+										if (inventoryType) then
+											inventory.vars.isBag = inventoryType
+											table.insert(character.vars.inv, inventory)
+										else
+											character.vars.inv[1] = inventory
+										end
+
+										inventory:SetOwner(charID)
+									end, true)
 								else
 									local insertQuery = mysql:Insert("ix_inventories")
 										insertQuery:Insert("character_id", charID)
 										insertQuery:Callback(function(_, status, lastID)
-											local w, h = ix.config.Get("invW"), ix.config.Get("invH")
+											local w, h = ix.config.Get("inventoryWidth"), ix.config.Get("inventoryHeight")
 											local inventory = ix.item.CreateInv(w, h, lastID)
 											inventory:SetOwner(charID)
 
@@ -248,11 +254,13 @@ do
 		fieldType = ix.type.string,
 		default = "John Doe",
 		index = 1,
-		OnValidate = function(value, data, client)
-			local minLength = ix.config.Get("minNameLen", 4)
-			local maxLength = ix.config.Get("maxNameLen", 32)
+		OnValidate = function(self, value, payload, client)
+			value = string.Trim((tostring(value):gsub("\r\n", ""):gsub("\n", "")))
 
-			if (!value or #value:gsub("%s", "") < minLength) then
+			local minLength = ix.config.Get("minNameLength", 4)
+			local maxLength = ix.config.Get("maxNameLength", 32)
+
+			if (#value < minLength) then
 				return false, "nameMinLen", minLength
 			elseif (!value:find("%S")) then
 				return false, "invalid", "name"
@@ -260,20 +268,23 @@ do
 				return false, "nameMaxLen", maxLength
 			end
 
-			return hook.Run("GetDefaultCharName", client, data.faction) or value:sub(1, 70)
+			return hook.Run("GetDefaultCharacterName", client, payload.faction) or value:sub(1, 70)
 		end,
-		OnPostSetup = function(panel, faction, payload)
-			local name, disabled = hook.Run("GetDefaultCharName", LocalPlayer(), faction)
+		OnPostSetup = function(self, panel, payload)
+			local faction = ix.faction.indices[payload.faction]
+			local name, disabled = hook.Run("GetDefaultCharacterName", LocalPlayer(), payload.faction)
 
 			if (name) then
 				panel:SetText(name)
-				payload.name = name
+				payload:Set("name", name)
 			end
 
 			if (disabled) then
 				panel:SetDisabled(true)
 				panel:SetEditable(false)
 			end
+
+			panel:SetBackgroundColor(faction.color or Color(255, 255, 255, 25))
 		end
 	})
 
@@ -282,27 +293,39 @@ do
 		fieldType = ix.type.text,
 		default = "",
 		index = 2,
-		OnValidate = function(value, data)
-			local minLength = ix.config.Get("minDescLen", 16)
+		OnValidate = function(self, value, payload)
+			value = string.Trim((tostring(value):gsub("\r\n", ""):gsub("\n", "")))
+			local minLength = ix.config.Get("minDescriptionLength", 16)
 
-			if (!value or #value:gsub("%s", "") < minLength) then
+			if (#value < minLength) then
 				return false, "descMinLen", minLength
 			elseif (!value:find("%s+") or !value:find("%S")) then
 				return false, "invalid", "description"
 			end
+
+			return value
+		end,
+		OnPostSetup = function(self, panel, payload)
+			panel:SetMultiline(true)
+			panel:SetFont("ixMenuButtonFont")
+			panel:SetTall(panel:GetTall() * 2 + 6) -- add another line
+			panel.AllowInput = function(_, character)
+				if (character == "\n" or character == "\r") then
+					return true
+				end
+			end
 		end
 	})
-
-	local gradient = ix.util.GetMaterial("vgui/gradient-d")
 
 	ix.char.RegisterVar("model", {
 		field = "model",
 		fieldType = ix.type.string,
 		default = "models/error.mdl",
+		index = 3,
 		OnSet = function(character, value)
 			local client = character:GetPlayer()
 
-			if (IsValid(client) and client:GetChar() == character) then
+			if (IsValid(client) and client:GetCharacter() == character) then
 				client:SetModel(value)
 			end
 
@@ -311,42 +334,40 @@ do
 		OnGet = function(character, default)
 			return character.vars.model or default
 		end,
-		index = 3,
-		OnDisplay = function(panel, y)
-			local scroll = panel:Add("DScrollPanel")
-			scroll:SetSize(panel:GetWide(), 260)
-			scroll:SetPos(0, y)
+		OnDisplay = function(self, container, payload)
+			local scroll = container:Add("DScrollPanel")
+			scroll:Dock(FILL) -- TODO: don't fill so we can allow other panels
+			scroll.Paint = function(panel, width, height)
+				derma.SkinFunc("DrawImportantBackground", 0, 0, width, height, Color(255, 255, 255, 25))
+			end
 
 			local layout = scroll:Add("DIconLayout")
 			layout:Dock(FILL)
 			layout:SetSpaceX(1)
 			layout:SetSpaceY(1)
 
-			local faction = ix.faction.indices[panel.faction]
+			local faction = ix.faction.indices[payload.faction]
 
 			if (faction) then
-				for k, v in SortedPairs(faction.models) do
+				local models = faction:GetModels(LocalPlayer())
+
+				for k, v in SortedPairs(models) do
 					local icon = layout:Add("SpawnIcon")
 					icon:SetSize(64, 128)
 					icon:InvalidateLayout(true)
 					icon.DoClick = function(this)
-						panel.payload.model = k
+						payload:Set("model", k)
 					end
 					icon.PaintOver = function(this, w, h)
-						if (panel.payload.model == k) then
+						if (payload.model == k) then
 							local color = ix.config.Get("color", color_white)
 
 							surface.SetDrawColor(color.r, color.g, color.b, 200)
 
 							for i = 1, 3 do
 								local i2 = i * 2
-
 								surface.DrawOutlinedRect(i, i, w - i2, h - i2)
 							end
-
-							surface.SetDrawColor(color.r, color.g, color.b, 75)
-							surface.SetMaterial(gradient)
-							surface.DrawTexturedRect(0, 0, w, h)
 						end
 					end
 
@@ -360,32 +381,46 @@ do
 
 			return scroll
 		end,
-		OnValidate = function(value, data)
-			local faction = ix.faction.indices[data.faction]
+		OnValidate = function(self, value, payload, client)
+			local faction = ix.faction.indices[payload.faction]
 
 			if (faction) then
-				if (!data.model or !faction.models[data.model]) then
+				local models = faction:GetModels(client)
+
+				if (!payload.model or !models[payload.model]) then
 					return false, "needModel"
 				end
 			else
 				return false, "needModel"
 			end
 		end,
-		OnAdjust = function(client, data, value, newData)
+		OnAdjust = function(self, client, data, value, newData)
 			local faction = ix.faction.indices[data.faction]
 
 			if (faction) then
-				local model = faction.models[value]
+				local model = faction:GetModels(client)[value]
 
 				if (type(model) == "string") then
 					newData.model = model
 				elseif (type(model) == "table") then
 					newData.model = model[1]
+
+					-- save skin/bodygroups to character data
+					local bodygroups = {}
+
+					for i = 1, 9 do
+						bodygroups[i - 1] = tonumber(model[3][i]) or 0
+					end
+
 					newData.data = newData.data or {}
 					newData.data.skin = model[2] or 0
-					newData.data.bodyGroups = model[3]
+					newData.data.groups = bodygroups
 				end
 			end
+		end,
+		ShouldDisplay = function(self, container, payload)
+			local faction = ix.faction.indices[payload.faction]
+			return #faction:GetModels(LocalPlayer()) > 1
 		end
 	})
 
@@ -397,29 +432,36 @@ do
 		field = "faction",
 		fieldType = ix.type.string,
 		default = "Citizen",
-		OnSet = function(character, value)
-			local client = character:GetPlayer()
+		bNoDisplay = true,
+		OnSet = function(self, value)
+			local client = self:GetPlayer()
 
 			if (IsValid(client)) then
+				self.vars.faction = ix.faction.indices[value] and ix.faction.indices[value].uniqueID
+
 				client:SetTeam(value)
+
+				-- @todo refactor networking of character vars so this doesn't need to be repeated on every OnSet override
+				net.Start("ixCharacterVarChanged")
+					net.WriteUInt(self:GetID(), 32)
+					net.WriteString("faction")
+					net.WriteType(self.vars.faction)
+				net.Broadcast()
 			end
 		end,
-		OnGet = function(character, default)
-			local faction = ix.faction.teams[character.vars.faction]
+		OnGet = function(self, default)
+			local faction = ix.faction.teams[self.vars.faction]
 
 			return faction and faction.index or 0
 		end,
-		bNoDisplay = true,
-		OnValidate = function(value, data, client)
-			if (value) then
-				if (client:HasWhitelist(value)) then
-					return true
-				end
+		OnValidate = function(self, index, data, client)
+			if (index and client:HasWhitelist(index)) then
+				return true
 			end
 
 			return false
 		end,
-		OnAdjust = function(client, data, value, newData)
+		OnAdjust = function(self, client, data, value, newData)
 			newData.faction = ix.faction.indices[value].uniqueID
 		end
 	})
@@ -428,47 +470,64 @@ do
 		field = "attributes",
 		fieldType = ix.type.text,
 		default = {},
-		isLocal = true,
 		index = 4,
-		OnDisplay = function(panel, y)
-			local container = panel:Add("DPanel")
-			container:SetPos(0, y)
-			container:SetWide(panel:GetWide() - 16)
+		category = "attributes",
+		isLocal = true,
+		OnDisplay = function(self, container, payload)
+			local maximum = hook.Run("GetDefaultAttributePoints", LocalPlayer(), payload) or ix.config.Get("maxAttributes", 30)
 
-			local y2 = 0
+			if (maximum < 1) then
+				return
+			end
+
+			local attributes = container:Add("DPanel")
+			attributes:Dock(TOP)
+
+			local y = 0
 			local total = 0
-			local maximum = hook.Run("GetStartAttribPoints", LocalPlayer(), panel.payload) or ix.config.Get("maxAttributes", 30)
 
-			panel.payload.attributes = {}
+			payload.attributes = {}
+
+			-- total spendable attribute points
+			local totalBar = attributes:Add("ixAttributeBar")
+			totalBar:SetMax(maximum)
+			totalBar:SetValue(maximum)
+			totalBar:Dock(TOP)
+			totalBar:DockMargin(2, 2, 2, 2)
+			totalBar:SetText(L("attribPointsLeft"))
+			totalBar:SetReadOnly(true)
+			totalBar:SetColor(Color(20, 120, 20, 255))
 
 			for k, v in SortedPairsByMemberValue(ix.attributes.list, "name") do
-				panel.payload.attributes[k] = 0
+				payload.attributes[k] = 0
 
-				local bar = container:Add("ixAttribBar")
+				local bar = attributes:Add("ixAttributeBar")
 				bar:SetMax(maximum)
 				bar:Dock(TOP)
 				bar:DockMargin(2, 2, 2, 2)
 				bar:SetText(L(v.name))
-				bar.onChanged = function(this, difference)
+				bar.OnChanged = function(this, difference)
 					if ((total + difference) > maximum) then
 						return false
 					end
 
 					total = total + difference
-					panel.payload.attributes[k] = panel.payload.attributes[k] + difference
+					payload.attributes[k] = payload.attributes[k] + difference
+
+					totalBar:SetValue(totalBar.value - difference)
 				end
 
 				if (v.noStartBonus) then
 					bar:SetReadOnly()
 				end
 
-				y2 = y2 + bar:GetTall() + 4
+				y = y + bar:GetTall() + 4
 			end
 
-			container:SetTall(y2)
-			return container
+			attributes:SetTall(y)
+			return attributes
 		end,
-		OnValidate = function(value, data, client)
+		OnValidate = function(self, value, data, client)
 			if (value != nil) then
 				if (type(value) == "table") then
 					local count = 0
@@ -477,7 +536,7 @@ do
 						count = count + v
 					end
 
-					if (count > (hook.Run("GetStartAttribPoints", client, count) or ix.config.Get("maxAttributes", 30))) then
+					if (count > (hook.Run("GetDefaultAttributePoints", client, count) or ix.config.Get("maxAttributes", 30))) then
 						return false, "unknownError"
 					end
 				else
@@ -485,7 +544,9 @@ do
 				end
 			end
 		end,
-		shouldDisplay = function(panel) return table.Count(ix.attributes.list) > 0 end
+		ShouldDisplay = function(self, container, payload)
+			return table.Count(ix.attributes.list) > 0
+		end
 	})
 
 	ix.char.RegisterVar("money", {
@@ -509,7 +570,11 @@ do
 			data[key] = value
 
 			if (!noReplication and IsValid(client)) then
-				netstream.Start(receiver or client, "charData", character:GetID(), key, value)
+				net.Start("ixCharacterData")
+					net.WriteUInt(character:GetID(), 32)
+					net.WriteString(key)
+					net.WriteType(value)
+				net.Send(receiver or client)
 			end
 
 			character.vars.data = data
@@ -543,13 +608,17 @@ do
 			if (!noReplication and IsValid(client)) then
 				local id
 
-				if (client:GetChar() and client:GetChar():GetID() == character:GetID()) then
-					id = client:GetChar():GetID()
+				if (client:GetCharacter() and client:GetCharacter():GetID() == character:GetID()) then
+					id = client:GetCharacter():GetID()
 				else
 					id = character:GetID()
 				end
 
-				netstream.Start(receiver or client, "charVar", key, value, id)
+				net.Start("ixCharacterVar")
+					net.WriteUInt(id, 32)
+					net.WriteString(key)
+					net.WriteType(value)
+				net.Send(receiver or client)
 			end
 
 			character.vars.vars = data
@@ -610,107 +679,154 @@ end
 -- Networking information here.
 do
 	if (SERVER) then
-		netstream.Hook("charChoose", function(client, id)
-			if (client:GetChar() and client:GetChar():GetID() == id) then
-				netstream.Start(client, "charLoaded", id)
+		util.AddNetworkString("ixCharacterMenu")
+		util.AddNetworkString("ixCharacterChoose")
+		util.AddNetworkString("ixCharacterCreate")
+		util.AddNetworkString("ixCharacterDelete")
+		util.AddNetworkString("ixCharacterLoaded")
+		util.AddNetworkString("ixCharacterLoadFailure")
 
-				return client:NotifyLocalized("usingChar")
+		util.AddNetworkString("ixCharacterAuthed")
+		util.AddNetworkString("ixCharacterAuthFailed")
+
+		util.AddNetworkString("ixCharacterInfo")
+		util.AddNetworkString("ixCharacterData")
+		util.AddNetworkString("ixCharacterKick")
+		util.AddNetworkString("ixCharacterSet")
+		util.AddNetworkString("ixCharacterVar")
+		util.AddNetworkString("ixCharacterVarChanged")
+
+		net.Receive("ixCharacterChoose", function(length, client)
+			local id = net.ReadUInt(32)
+
+			if (client:GetCharacter() and client:GetCharacter():GetID() == id) then
+				net.Start("ixCharacterLoadFailure")
+					net.WriteString("@usingChar")
+				net.Send(client)
+				return
 			end
 
 			local character = ix.char.loaded[id]
 
 			if (character and character:GetPlayer() == client) then
-				local status, result = hook.Run("CanPlayerUseChar", client, character)
+				local status, result = hook.Run("CanPlayerUseCharacter", client, character)
 
 				if (status == false) then
-					if (result) then
-						if (result:sub(1, 1) == "@") then
-							client:NotifyLocalized(result:sub(2))
-						else
-							client:Notify(result)
-						end
-					end
-
-					netstream.Start(client, "charMenu")
-
+					net.Start("ixCharacterLoadFailure")
+						net.WriteString(result or "")
+					net.Send(client)
 					return
 				end
 
-				local currentChar = client:GetChar()
+				local currentChar = client:GetCharacter()
 
 				if (currentChar) then
 					currentChar:Save()
+
+					for _, v in ipairs(currentChar:GetInventory(true)) do
+						if (type(v) == "table") then
+							v:RemoveReceiver(client)
+						end
+					end
 				end
 
-				hook.Run("PrePlayerLoadedChar", client, character, currentChar)
+				hook.Run("PrePlayerLoadedCharacter", client, character, currentChar)
 				character:Setup()
 				client:Spawn()
 
-				hook.Run("PlayerLoadedChar", client, character, currentChar)
+				hook.Run("PlayerLoadedCharacter", client, character, currentChar)
 			else
-				ErrorNoHalt("[Helix] Attempt to load invalid character '"..id.."'\n")
+				net.Start("ixCharacterLoadFailure")
+					net.WriteString("@unknownError")
+				net.Send(client)
+
+				ErrorNoHalt("[Helix] Attempt to load invalid character '" .. id .. "'\n")
 			end
 		end)
 
-		netstream.Hook("charCreate", function(client, data)
-			local newData = {}
+		net.Receive("ixCharacterCreate", function(length, client)
+			local payload = net.ReadTable()
+			local newPayload = {}
 
-			local maxChars = hook.Run("GetMaxPlayerCharacter", client) or ix.config.Get("maxChars", 5)
+			local maxChars = hook.Run("GetMaxPlayerCharacter", client) or ix.config.Get("maxCharacters", 5)
 			local charList = client.ixCharList
 			local charCount = table.Count(charList)
 
 			if (charCount >= maxChars) then
-				return netstream.Start(client, "charAuthed", "maxCharacters")
+				net.Start("ixCharacterAuthFailed")
+					net.WriteString("maxCharacters")
+					net.WriteTable({})
+				net.Send(client)
+				return
 			end
 
-			for k, _ in pairs(data) do
+			for k, _ in pairs(payload) do
 				local info = ix.char.vars[k]
 
 				if (!info or (!info.OnValidate and info.bNoDisplay)) then
-					data[k] = nil
+					payload[k] = nil
 				end
 			end
 
 			for k, v in SortedPairsByMemberValue(ix.char.vars, "index") do
-				local value = data[k]
+				local value = payload[k]
 
 				if (v.OnValidate) then
-					local result = {v.OnValidate(value, data, client)}
+					local result = {v:OnValidate(value, payload, client)}
 
 					if (result[1] == false) then
-						return netstream.Start(client, "charAuthed", unpack(result, 2))
+						local fault = result[2]
+
+						table.remove(result, 2)
+						table.remove(result, 1)
+
+						net.Start("ixCharacterAuthFailed")
+							net.WriteString(fault)
+							net.WriteTable(result)
+						net.Send(client)
+						return
 					else
 						if (result[1] != nil) then
-							data[k] = result[1]
+							payload[k] = result[1]
 						end
 
 						if (v.OnAdjust) then
-							v.OnAdjust(client, data, value, newData)
+							v:OnAdjust(client, payload, value, newPayload)
 						end
 					end
 				end
 			end
 
-			data.steamID = client:SteamID64()
-				hook.Run("AdjustCreationData", client, data, newData)
-			data = table.Merge(data, newData)
+			payload.steamID = client:SteamID64()
+				hook.Run("AdjustCreationPayload", client, payload, newPayload)
+			payload = table.Merge(payload, newPayload)
 
-			ix.char.Create(data, function(id)
+			ix.char.Create(payload, function(id)
 				if (IsValid(client)) then
 					ix.char.loaded[id]:Sync(client)
 
-					netstream.Start(client, "charAuthed", client.ixCharList)
-					MsgN("Created character '"..id.."' for "..client:SteamName()..".")
-					hook.Run("OnCharCreated", client, ix.char.loaded[id])
+					net.Start("ixCharacterAuthed")
+					net.WriteUInt(id, 32)
+					net.WriteUInt(#client.ixCharList, 6)
+
+					for _, v in ipairs(client.ixCharList) do
+						net.WriteUInt(v, 32)
+					end
+
+					net.Send(client)
+
+					MsgN("Created character '" .. id .. "' for " .. client:SteamName() .. ".")
+					hook.Run("OnCharacterCreated", client, ix.char.loaded[id])
 				end
 			end)
 
 		end)
 
-		netstream.Hook("charDel", function(client, id)
+		net.Receive("ixCharacterDelete", function(length, client)
+			local id = net.ReadUInt(32)
 			local character = ix.char.loaded[id]
 			local steamID = client:SteamID64()
-			local isCurrentChar = client:GetChar() and client:GetChar():GetID() == id
+			local isCurrentChar = client:GetCharacter() and client:GetCharacter():GetID() == id
 
 			if (character and character.steamID == steamID) then
 				for k, v in ipairs(client.ixCharList or {}) do
@@ -719,9 +835,12 @@ do
 					end
 				end
 
-				hook.Run("PreCharDelete", client, character)
+				hook.Run("PreCharacterDeleted", client, character)
 				ix.char.loaded[id] = nil
-				netstream.Start(nil, "charDel", id)
+
+				net.Start("ixCharacterDelete")
+					net.WriteUInt(id, 32)
+				net.Broadcast()
 
 				-- remove character from database
 				local query = mysql:Delete("ix_characters")
@@ -746,57 +865,94 @@ do
 							end
 						end
 
-					local invQuery = mysql:Delete("ix_inventories")
-						invQuery:Where("character_id", id)
-					invQuery:Execute()
-				end)
+						local invQuery = mysql:Delete("ix_inventories")
+							invQuery:Where("character_id", id)
+						invQuery:Execute()
+					end)
+				query:Execute()
 
 				-- other plugins might need to deal with deleted characters.
-				hook.Run("OnCharDelete", client, id, isCurrentChar)
+				hook.Run("CharacterDeleted", client, id, isCurrentChar)
 
 				if (isCurrentChar) then
 					client:SetNetVar("char", nil)
-					client:Spawn()
+					client:KillSilent()
+					client:StripAmmo()
 				end
 			end
 		end)
 	else
-		netstream.Hook("charInfo", function(data, id, client)
-			ix.char.loaded[id] = ix.char.New(data, id, client == nil and LocalPlayer() or client)
+		net.Receive("ixCharacterInfo", function()
+			local data = net.ReadTable()
+			local id = net.ReadUInt(32)
+			local client = net.ReadEntity()
+
+			ix.char.loaded[id] = ix.char.New(data, id, client)
 		end)
 
-		netstream.Hook("charSet", function(key, value, id)
-			id = id or (LocalPlayer():GetChar() and LocalPlayer():GetChar().id)
-
+		net.Receive("ixCharacterVarChanged", function()
+			local id = net.ReadUInt(32)
 			local character = ix.char.loaded[id]
 
 			if (character) then
+				local key = net.ReadString()
+				local value = net.ReadType()
+
 				character.vars[key] = value
 			end
 		end)
 
-		netstream.Hook("charVar", function(key, value, id)
-			id = id or (LocalPlayer():GetChar() and LocalPlayer():GetChar().id)
-
+		-- Used for setting random access vars on the "var" character var (really stupid).
+		-- Clean this up someday.
+		net.Receive("ixCharacterVar", function()
+			local id = net.ReadUInt(32)
 			local character = ix.char.loaded[id]
 
 			if (character) then
+				local key = net.ReadString()
+				local value = net.ReadType()
 				local oldVar = character:GetVar()[key]
 				character:GetVar()[key] = value
 
-				hook.Run("OnCharVarChanged", character, key, oldVar, value)
+				hook.Run("CharacterVarChanged", character, key, oldVar, value)
 			end
 		end)
 
-		netstream.Hook("charMenu", function(data, openNext)
-			if (data) then
-				ix.characters = data
+		net.Receive("ixCharacterMenu", function()
+			local indices = net.ReadUInt(6)
+			local charList = {}
+
+			for _ = 1, indices do
+				charList[#charList + 1] = net.ReadUInt(32)
+			end
+
+			if (charList) then
+				ix.characters = charList
 			end
 
 			vgui.Create("ixCharMenu")
 		end)
 
-		netstream.Hook("charData", function(id, key, value)
+		net.Receive("ixCharacterLoadFailure", function()
+			local message = net.ReadString()
+
+			if (isstring(message) and message:sub(1, 1) == "@") then
+				message = L(message:sub(2))
+			end
+
+			message = message != "" and message or L("unknownError")
+
+			if (IsValid(ix.gui.characterMenu)) then
+				ix.gui.characterMenu:OnCharacterLoadFailed(message)
+			else
+				ix.util.Notify(message)
+			end
+		end)
+
+		net.Receive("ixCharacterData", function()
+			local id = net.ReadUInt(32)
+			local key = net.ReadString()
+			local value = net.ReadType()
 			local character = ix.char.loaded[id]
 
 			if (character) then
@@ -805,8 +961,10 @@ do
 			end
 		end)
 
-		netstream.Hook("charDel", function(id)
-			local isCurrentChar = LocalPlayer():GetChar() and LocalPlayer():GetChar():GetID() == id
+		net.Receive("ixCharacterDelete", function()
+			local id = net.ReadUInt(32)
+			local isCurrentChar = LocalPlayer():GetCharacter() and LocalPlayer():GetCharacter():GetID() == id
+			local character = ix.char.loaded[id]
 
 			ix.char.loaded[id] = nil
 
@@ -814,29 +972,38 @@ do
 				if (v == id) then
 					table.remove(ix.characters, k)
 
-					if (IsValid(ix.gui.char) and ix.gui.char.setupCharList) then
-						ix.gui.char:SetupCharList()
+					if (IsValid(ix.gui.characterMenu)) then
+						ix.gui.characterMenu:OnCharacterDeleted(character)
 					end
 				end
 			end
 
-			if (isCurrentChar and !IsValid(ix.gui.char)) then
+			if (isCurrentChar and !IsValid(ix.gui.characterMenu)) then
 				vgui.Create("ixCharMenu")
 			end
 		end)
 
-		netstream.Hook("charKick", function(id, isCurrentChar)
+		net.Receive("ixCharacterKick", function()
+			local isCurrentChar = net.ReadBool()
+
 			if (ix.gui.menu and ix.gui.menu:IsVisible()) then
 				ix.gui.menu:Remove()
 			end
 
-			if (isCurrentChar and !IsValid(ix.gui.char)) then
+			if (!IsValid(ix.gui.characterMenu)) then
 				vgui.Create("ixCharMenu")
+			elseif (ix.gui.characterMenu:IsClosing()) then
+				ix.gui.characterMenu:Remove()
+				vgui.Create("ixCharMenu")
+			end
+
+			if (isCurrentChar) then
+				ix.gui.characterMenu.mainPanel:UpdateReturnButton(false)
 			end
 		end)
 
-		netstream.Hook("charLoaded", function(id)
-			hook.Run("CharacterLoaded", ix.char.loaded[id])
+		net.Receive("ixCharacterLoaded", function()
+			hook.Run("CharacterLoaded", ix.char.loaded[net.ReadUInt(32)])
 		end)
 	end
 end
@@ -847,7 +1014,7 @@ do
 	playerMeta.SteamName = playerMeta.SteamName or playerMeta.Name
 
 	function playerMeta:GetCharacter()
-		return ix.char.loaded[self.GetNetVar(self, "char")]
+		return ix.char.loaded[self:GetNetVar("char")]
 	end
 
 	playerMeta.GetChar = playerMeta.GetCharacter

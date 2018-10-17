@@ -48,8 +48,7 @@ function GM:OnPickupMoney(client, moneyEntity)
 	if (IsValid(moneyEntity)) then
 		local amount = moneyEntity:GetAmount()
 
-		client:GetChar():GiveMoney(amount)
-		client:NotifyLocalized("moneyTaken", ix.currency.Get(amount))
+		client:GetCharacter():GiveMoney(amount)
 	end
 end
 

@@ -67,27 +67,32 @@ if (SERVER) then
 	end
 
 	function PLUGIN:PhysgunPickup(client, entity)
-		if (entity:GetCreator() == client) then
-			return true
+		local characterID = client:GetCharacter():GetID()
+
+		if (!client:IsAdmin() and entity:GetNetVar("owner", 0) != characterID) then
+			return false
 		end
 	end
 
 	function PLUGIN:CanProperty(client, property, entity)
-		if (entity:GetCreator() == client and (property == "remover" or property == "collision")) then
+		local characterID = client:GetCharacter():GetID()
+
+		if (entity:GetNetVar("owner", 0) == characterID and (property == "remover" or property == "collision")) then
 			return true
 		end
 	end
 
 	function PLUGIN:CanTool(client, trace, tool)
 		local entity = trace.Entity
+		local characterID = client:GetCharacter():GetID()
 
-		if (IsValid(entity) and entity:GetCreator() == client) then
+		if (IsValid(entity) and entity:GetNetVar("owner", 0) == characterID) then
 			return true
 		end
 	end
 
 	function PLUGIN:PlayerSpawnedEntity(client, entity)
-		entity:SetCreator(client)
+		entity:SetNetVar("owner", client:GetCharacter():GetID())
 	end
 
 	function PLUGIN:PlayerSpawnedProp(client, model, entity)
@@ -108,4 +113,27 @@ if (SERVER) then
 	PLUGIN.PlayerSpawnedSWEP = PLUGIN.PlayerSpawnedNPC
 	PLUGIN.PlayerSpawnedSENT = PLUGIN.PlayerSpawnedNPC
 	PLUGIN.PlayerSpawnedVehicle = PLUGIN.PlayerSpawnedNPC
+else
+	function PLUGIN:PhysgunPickup(client, entity)
+		if (!client:IsAdmin() and entity:GetNetVar("owner", 0) != client:GetCharacter():GetID()) then
+			return false
+		end
+	end
+
+	function PLUGIN:CanProperty(client, property, entity)
+		local characterID = client:GetCharacter():GetID()
+
+		if (entity:GetNetVar("owner", 0) == characterID and (property == "remover" or property == "collision")) then
+			return true
+		end
+	end
+
+	function PLUGIN:CanTool(client, trace, tool)
+		local entity = trace.Entity
+		local characterID = client:GetCharacter():GetID()
+
+		if (IsValid(entity) and entity:GetNetVar("owner", 0) == characterID) then
+			return true
+		end
+	end
 end

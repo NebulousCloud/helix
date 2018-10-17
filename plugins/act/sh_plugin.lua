@@ -30,7 +30,7 @@ for k, v in pairs(PLUGIN.acts) do
 
 	function COMMAND:OnRun(client, index)
 		if (client.ixSeqUntimed) then
-			client:SetNetVar("actAng")
+			client:SetNetVar("actEnterAngle")
 			client:LeaveSequence()
 			client.ixSeqUntimed = nil
 
@@ -39,7 +39,8 @@ for k, v in pairs(PLUGIN.acts) do
 
 		if (!client:Alive() or
 			client:SetLocalVar("ragdoll") or
-			client:WaterLevel() > 0) then
+			client:WaterLevel() > 0 or
+			!client:IsOnGround()) then
 			return
 		end
 
@@ -69,7 +70,7 @@ for k, v in pairs(PLUGIN.acts) do
 
 				client.ixSeqUntimed = info.untimed
 				client.ixNextAct = CurTime() + (info.untimed and 4 or duration) + 1
-				client:SetNetVar("actAng", client:GetAngles())
+				client:SetNetVar("actEnterAngle", client:GetAngles())
 
 				if (info.offset) then
 					client.ixOldPosition = client:GetPos()
@@ -85,86 +86,146 @@ for k, v in pairs(PLUGIN.acts) do
 end
 
 function PLUGIN:UpdateAnimation(client, moveData)
-	local angles = client:GetNetVar("actAng")
+	local angles = client:GetNetVar("actEnterAngle")
 
 	if (angles) then
 		client:SetRenderAngles(angles)
 	end
 end
 
-function PLUGIN:OnPlayerLeaveSequence(client)
-	client:SetNetVar("actAng")
-
-	if (client.ixOldPosition) then
-		client:SetPos(client.ixOldPosition)
-		client.ixOldPosition = nil
-	end
-end
-
-function PLUGIN:PlayerDeath(client)
-	if (client.ixSeqUntimed) then
-		client:SetNetVar("actAng")
-		client:LeaveSequence()
-		client.ixSeqUntimed = nil
-	end
-end
-
-function PLUGIN:PlayerSpawn(client)
-	if (client.ixSeqUntimed) then
-		client:SetNetVar("actAng")
-		client:LeaveSequence()
-		client.ixSeqUntimed = nil
-	end
-end
-
-function PLUGIN:OnCharFallover(client)
-	if (client.ixSeqUntimed) then
-		client:SetNetVar("actAng")
-		client:LeaveSequence()
-		client.ixSeqUntimed = nil
-	end
-end
-
-function PLUGIN:ShouldDrawLocalPlayer(client)
-	if (client:GetNetVar("actAng")) then
-		return true
-	end
-end
-
 local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2
 
 function PLUGIN:StartCommand(client, command)
-	if (client:GetNetVar("actAng")) then
+	if (client:GetNetVar("actEnterAngle")) then
 		command:RemoveKey(KEY_BLACKLIST)
 	end
 end
 
-local GROUND_PADDING = Vector(0, 0, 8)
-local PLAYER_OFFSET = Vector(0, 0, 72)
+if (SERVER) then
+	function PLUGIN:PlayerLeaveSequence(client)
+		client:SetNetVar("actEnterAngle")
 
-function PLUGIN:CalcView(client, origin, angles, fov)
-	if (client:GetNetVar("actAng")) then
-		local view = {}
-			local data = {}
-				data.start = client:GetPos() + PLAYER_OFFSET
-				data.endpos = data.start - client:EyeAngles():Forward() * 72
-				data.mins = Vector(-10, -10, -10)
-				data.maxs = Vector(10, 10, 10)
-				data.filter = client
-			view.origin = util.TraceHull(data).HitPos + GROUND_PADDING
-			view.angles = client:EyeAngles()
+		if (client.ixOldPosition) then
+			client:SetPos(client.ixOldPosition)
+			client.ixOldPosition = nil
+		end
+	end
+
+	function PLUGIN:PlayerDeath(client)
+		if (client.ixSeqUntimed) then
+			client:SetNetVar("actEnterAngle")
+			client:LeaveSequence()
+			client.ixSeqUntimed = nil
+		end
+	end
+
+	function PLUGIN:PlayerSpawn(client)
+		if (client.ixSeqUntimed) then
+			client:SetNetVar("actEnterAngle")
+			client:LeaveSequence()
+			client.ixSeqUntimed = nil
+		end
+	end
+
+	function PLUGIN:OnCharacterFallover(client)
+		if (client.ixSeqUntimed) then
+			client:SetNetVar("actEnterAngle")
+			client:LeaveSequence()
+			client.ixSeqUntimed = nil
+		end
+	end
+else
+	local function GetHeadBone(client)
+		local head
+
+		for i = 1, client:GetBoneCount() do
+			local name = client:GetBoneName(i)
+
+			if (string.find(name:lower(), "head")) then
+				head = i
+				break
+			end
+		end
+
+		return head
+	end
+
+	function PLUGIN:PlayerEnterSequence(client)
+		if (client != LocalPlayer()) then
+			return
+		end
+
+		local head = GetHeadBone(client)
+
+		if (head) then
+			client:ManipulateBoneScale(head, vector_origin)
+		end
+	end
+
+	function PLUGIN:PlayerLeaveSequence(client)
+		if (client != LocalPlayer()) then
+			return
+		end
+
+		local head = GetHeadBone(client)
+
+		if (head) then
+			client:ManipulateBoneScale(head, Vector(1, 1, 1))
+		end
+	end
+
+	function PLUGIN:ShouldDrawLocalPlayer(client)
+		if (client:GetNetVar("actEnterAngle")) then
+			return true
+		end
+	end
+
+	function PLUGIN:CalcView(client, origin)
+		local enterAngle = client:GetNetVar("actEnterAngle")
+
+		if (!enterAngle) then
+			return
+		end
+
+		local view = {
+			angles = client:EyeAngles()
+		}
+
+		local head = GetHeadBone(client)
+
+		if (head) then
+			local forward = enterAngle:Forward()
+			local position = client:GetBonePosition(head) + forward * 2 + Vector(0, 0, 3.5)
+
+			local data = {
+				start = position,
+				endpos = position + forward * 5,
+				mins = Vector(-2, -2, -2),
+				maxs = Vector(2, 2, 2),
+				filter = client
+			}
+
+			if (util.TraceHull(data).Hit) then
+				view.origin = origin
+			else
+				view.origin = position
+			end
+		else
+			view.origin = origin
+		end
+
 		return view
 	end
-end
 
-function PLUGIN:PlayerBindPress(client, bind, pressed)
-	if (client:GetNetVar("actAng")) then
-		bind = bind:lower()
+	function PLUGIN:PlayerBindPress(client, bind, pressed)
+		if (client:GetNetVar("actEnterAngle")) then
+			bind = bind:lower()
 
-		if (bind:find("+jump") and pressed) then
-			ix.command.Send("actsit")
+			if (bind:find("+jump") and pressed) then
+				ix.command.Send("actsit")
 
-			return true
+				return true
+			end
 		end
 	end
 end

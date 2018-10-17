@@ -1,6 +1,6 @@
 
 ix.chat = ix.chat or {}
-ix.chat.classes = ix.char.classes or {}
+ix.chat.classes = ix.chat.classes or {}
 
 if (!ix.command) then
 	include("sh_command.lua")
@@ -8,25 +8,28 @@ end
 
 -- Registers a new chat type with the information provided.
 function ix.chat.Register(chatType, data)
-	if (!data.OnCanHear) then
+	chatType = string.lower(chatType)
+
+	if (!data.CanHear) then
 		-- Have a substitute if the canHear property is not found.
-		function data:OnCanHear(speaker, listener)
+		function data:CanHear(speaker, listener)
 			-- The speaker will be heard by everyone.
 			return true
 		end
-	elseif (type(data.OnCanHear) == "number") then
+	elseif (type(data.CanHear) == "number") then
 		-- Use the value as a range and create a function to compare distances.
-		local range = data.OnCanHear * data.OnCanHear
+		local range = data.CanHear * data.CanHear
+		data.range = range
 
-		function data:OnCanHear(speaker, listener)
+		function data:CanHear(speaker, listener)
 			-- Length2DSqr is faster than Length2D, so just check the squares.
 			return (speaker:GetPos() - listener:GetPos()):LengthSqr() <= range
 		end
 	end
 
 	-- Allow players to use this chat type by default.
-	if (!data.OnCanSay) then
-		function data:OnCanSay(speaker, text)
+	if (!data.CanSay) then
+		function data:CanSay(speaker, text)
 			if (!self.deadCanChat and !speaker:Alive()) then
 				speaker:NotifyLocalized("noPerm")
 
@@ -46,11 +49,11 @@ function ix.chat.Register(chatType, data)
 		function data:OnChatAdd(speaker, text, anonymous, info)
 			local color = self.color
 			local name = anonymous and
-				L"someone" or hook.Run("GetDisplayedName", speaker, chatType) or
+				L"someone" or hook.Run("GetCharacterName", speaker, chatType) or
 				(IsValid(speaker) and speaker:Name() or "Console")
 
-			if (self.OnGetColor) then
-				color = self:OnGetColor(speaker, text)
+			if (self.GetColor) then
+				color = self:GetColor(speaker, text, info)
 			end
 
 			local translated = L2(chatType.."Format", name, text)
@@ -65,24 +68,31 @@ function ix.chat.Register(chatType, data)
 				if (v:sub(1, 1) == "/") then
 					ix.command.Add(v:sub(2), {
 						description = data.description,
-						syntax = "<text message>",
-						OnRun = function() end
+						arguments = ix.type.text,
+						indicator = data.indicator,
+						bNoIndicator = data.bNoIndicator,
+						chatClass = data,
+						OnRun = function(self, client, message) end
 					})
 				end
 			end
 		else
-			ix.command.Add(chatType, {
+			ix.command.Add(isstring(data.prefix) and data.prefix:sub(2) or chatType, {
 				description = data.description,
-				syntax = "<text message>",
-				OnRun = function() end
+				arguments = ix.type.text,
+				indicator = data.indicator,
+				bNoIndicator = data.bNoIndicator,
+				chatClass = data,
+				OnRun = function(self, client, message) end
 			})
 		end
 	end
 
 	data.filter = data.filter or "ic"
+	data.uniqueID = chatType
 
 	-- Add the chat type to the list of classes.
-	ix.chat.classes[string.lower(chatType)] = data
+	ix.chat.classes[chatType] = data
 end
 
 -- Identifies which chat mode should be used.
@@ -150,16 +160,20 @@ function ix.chat.Parse(client, message, noSend)
 end
 
 if (SERVER) then
+	util.AddNetworkString("ixChatMessage")
+
 	-- Send a chat message using the specified chat type.
-	function ix.chat.Send(speaker, chatType, text, anonymous, receivers)
+	function ix.chat.Send(speaker, chatType, text, anonymous, receivers, data)
+		data = data or {}
+
 		local class = ix.chat.classes[chatType]
 
-		if (class and class:OnCanSay(speaker, text) != false) then
-			if (class.OnCanHear and !receivers) then
+		if (class and class:CanSay(speaker, text, data) != false) then
+			if (class.CanHear and !receivers) then
 				receivers = {}
 
 				for _, v in ipairs(player.GetAll()) do
-					if (v:GetChar() and class:OnCanHear(speaker, v) != false) then
+					if (v:GetCharacter() and class:CanHear(speaker, v, data) != false) then
 						receivers[#receivers + 1] = v
 					end
 				end
@@ -187,10 +201,17 @@ if (SERVER) then
 				text = text:sub(1, 1):upper() .. text:sub(2)
 			end
 
-			netstream.Start(receivers, "cMsg", speaker, chatType,
-				hook.Run("PlayerMessageSend", speaker, chatType, text, anonymous, receivers, rawText) or text,
-				anonymous or false
-			)
+			text = hook.Run("PlayerMessageSend", speaker, chatType, text, anonymous, receivers, rawText) or text
+
+			net.Start("ixChatMessage")
+				net.WriteEntity(speaker)
+				net.WriteString(chatType)
+				net.WriteString(text)
+				net.WriteBool(anonymous or false)
+				net.WriteTable(data or {})
+			net.Send(receivers)
+
+			return text
 		end
 	end
 else
@@ -206,19 +227,25 @@ else
 	end
 
 	-- Call OnChatAdd for the appropriate chatType.
-	netstream.Hook("cMsg", function(client, chatType, text, anonymous)
+	net.Receive("ixChatMessage", function()
+		local client = net.ReadEntity()
+		local chatType = net.ReadString()
+		local text = net.ReadString()
+		local anonymous = net.ReadBool()
+		local data = net.ReadTable()
+
 		if (IsValid(client)) then
 			local info = {
 				chatType = chatType,
 				text = text,
 				anonymous = anonymous,
-				data = {}
+				data = data
 			}
 
-			hook.Run("OnChatReceived", client, info)
-			ix.chat.Send(client, info.chatType or chatType, info.text or text, info.anonymous or anonymous, info.data or {})
+			hook.Run("MessageReceived", client, info)
+			ix.chat.Send(client, info.chatType or chatType, info.text or text, info.anonymous or anonymous, info.data)
 		else
-			ix.chat.Send(nil, chatType, text, anonymous, {})
+			ix.chat.Send(nil, chatType, text, anonymous, data)
 		end
 	end)
 end
@@ -230,7 +257,8 @@ do
 		-- The default in-character chat.
 		ix.chat.Register("ic", {
 			format = "%s says \"%s\"",
-			OnGetColor = function(self, speaker, text)
+			indicator = "chatTalking",
+			GetColor = function(self, speaker, text)
 				-- If you are looking at the speaker, make it greener to easier identify who is talking.
 				if (LocalPlayer():GetEyeTrace().Entity == speaker) then
 					return ix.config.Get("chatListenColor")
@@ -239,17 +267,17 @@ do
 				-- Otherwise, use the normal chat color.
 				return ix.config.Get("chatColor")
 			end,
-			OnCanHear = ix.config.Get("chatRange", 280)
+			CanHear = ix.config.Get("chatRange", 280)
 		})
 
 		-- Actions and such.
 		ix.chat.Register("me", {
 			format = "** %s %s",
-			OnGetColor = ix.chat.classes.ic.OnGetColor,
-			OnCanHear = ix.config.Get("chatRange", 280),
+			GetColor = ix.chat.classes.ic.GetColor,
+			CanHear = ix.config.Get("chatRange", 280),
 			prefix = {"/Me", "/Action"},
 			description = "@cmdMe",
-			filter = "actions",
+			indicator = "chatPerforming",
 			deadCanChat = true
 		})
 
@@ -258,44 +286,46 @@ do
 			OnChatAdd = function(self, speaker, text)
 				chat.AddText(ix.config.Get("chatColor"), "** "..text)
 			end,
-			OnCanHear = ix.config.Get("chatRange", 280),
+			CanHear = ix.config.Get("chatRange", 280),
 			prefix = {"/It"},
 			description = "@cmdIt",
-			filter = "actions",
+			indicator = "chatPerforming",
 			deadCanChat = true
 		})
 
 		-- Whisper chat.
 		ix.chat.Register("w", {
 			format = "%s whispers \"%s\"",
-			OnGetColor = function(self, speaker, text)
-				local color = ix.chat.classes.ic:OnGetColor(speaker, text)
+			GetColor = function(self, speaker, text)
+				local color = ix.chat.classes.ic:GetColor(speaker, text)
 
 				-- Make the whisper chat slightly darker than IC chat.
 				return Color(color.r - 35, color.g - 35, color.b - 35)
 			end,
-			OnCanHear = ix.config.Get("chatRange", 280) * 0.25,
+			CanHear = ix.config.Get("chatRange", 280) * 0.25,
 			prefix = {"/W", "/Whisper"},
-			description = "@cmdW"
+			description = "@cmdW",
+			indicator = "chatWhispering"
 		})
 
 		-- Yelling out loud.
 		ix.chat.Register("y", {
 			format = "%s yells \"%s\"",
-			OnGetColor = function(self, speaker, text)
-				local color = ix.chat.classes.ic:OnGetColor(speaker, text)
+			GetColor = function(self, speaker, text)
+				local color = ix.chat.classes.ic:GetColor(speaker, text)
 
 				-- Make the yell chat slightly brighter than IC chat.
 				return Color(color.r + 35, color.g + 35, color.b + 35)
 			end,
-			OnCanHear = ix.config.Get("chatRange", 280) * 2,
+			CanHear = ix.config.Get("chatRange", 280) * 2,
 			prefix = {"/Y", "/Yell"},
-			description = "@cmdY"
+			description = "@cmdY",
+			indicator = "chatYelling"
 		})
 
 		-- Out of character.
 		ix.chat.Register("ooc", {
-			OnCanSay = function(self, speaker, text)
+			CanSay = function(self, speaker, text)
 				if (!ix.config.Get("allowGlobalOOC")) then
 					speaker:NotifyLocalized("Global OOC is disabled on this server.")
 					return false
@@ -319,6 +349,11 @@ do
 				end
 			end,
 			OnChatAdd = function(self, speaker, text)
+				-- @todo remove and fix actual cause of speaker being nil
+				if (!IsValid(speaker)) then
+					return
+				end
+
 				local icon = "icon16/user.png"
 
 				if (speaker:IsSuperAdmin()) then
@@ -337,13 +372,12 @@ do
 			end,
 			prefix = {"//", "/OOC"},
 			description = "@cmdOOC",
-			noSpaceAfter = true,
-			filter = "ooc"
+			noSpaceAfter = true
 		})
 
 		-- Local out of character.
 		ix.chat.Register("looc", {
-			OnCanSay = function(self, speaker, text)
+			CanSay = function(self, speaker, text)
 				local delay = ix.config.Get("loocDelay", 0)
 
 				-- Only need to check the time if they have spoken in OOC chat before.
@@ -364,20 +398,23 @@ do
 			OnChatAdd = function(self, speaker, text)
 				chat.AddText(Color(255, 50, 50), "[LOOC] ", ix.config.Get("chatColor"), speaker:Name()..": "..text)
 			end,
-			OnCanHear = ix.config.Get("chatRange", 280),
+			CanHear = ix.config.Get("chatRange", 280),
 			prefix = {".//", "[[", "/LOOC"},
 			description = "@cmdLOOC",
-			noSpaceAfter = true,
-			filter = "ooc"
+			noSpaceAfter = true
 		})
 
 		-- Roll information in chat.
 		ix.chat.Register("roll", {
-			format = "%s has rolled %s.",
+			format = "** %s has rolled %s out of %s.",
 			color = Color(155, 111, 176),
-			filter = "actions",
-			OnCanHear = ix.config.Get("chatRange", 280),
-			deadCanChat = true
+			CanHear = ix.config.Get("chatRange", 280),
+			deadCanChat = true,
+			OnChatAdd = function(self, speaker, text, bAnonymous, data)
+				chat.AddText(self.color, string.format(self.format,
+					speaker:GetName(), text, data.max or 100
+				))
+			end
 		})
 
 		-- run a hook after we add the basic chat classes so schemas/plugins can access their info as soon as possible if needed
@@ -387,27 +424,35 @@ end
 
 -- Private messages between players.
 ix.chat.Register("pm", {
-	format = "[PM] %s: %s",
-	color = Color(249, 211, 89),
-	filter = "pm",
-	deadCanChat = true
+	format = "[PM] %s -> %s: %s",
+	color = Color(125, 150, 75, 255),
+	deadCanChat = true,
+
+	OnChatAdd = function(self, speaker, text, bAnonymous, data)
+		chat.AddText(self.color, string.format(self.format, speaker:GetName(), data.target:GetName(), text))
+
+		if (LocalPlayer() != speaker) then
+			surface.PlaySound("hl1/fvox/bell.wav")
+		end
+	end
 })
 
 -- Global events.
 ix.chat.Register("event", {
-	OnCanSay = function(self, speaker, text)
+	CanSay = function(self, speaker, text)
 		return speaker:IsAdmin()
 	end,
-	OnCanHear = 1000000,
+	CanHear = 1000000,
 	OnChatAdd = function(self, speaker, text)
 		chat.AddText(Color(255, 150, 0), text)
 	end,
 	prefix = {"/Event"},
-	description = "@cmdEvent"
+	description = "@cmdEvent",
+	indicator = "chatPerforming"
 })
 
 ix.chat.Register("connect", {
-	OnCanSay = function(self, speaker, text)
+	CanSay = function(self, speaker, text)
 		return !IsValid(speaker)
 	end,
 	OnChatAdd = function(self, speaker, text)
@@ -415,12 +460,11 @@ ix.chat.Register("connect", {
 
 		chat.AddText(icon, Color(150, 150, 200), L("playerConnected", text))
 	end,
-	noSpaceAfter = true,
-	filter = "ooc"
+	noSpaceAfter = true
 })
 
 ix.chat.Register("disconnect", {
-	OnCanSay = function(self, speaker, text)
+	CanSay = function(self, speaker, text)
 		return !IsValid(speaker)
 	end,
 	OnChatAdd = function(self, speaker, text)
@@ -428,20 +472,18 @@ ix.chat.Register("disconnect", {
 
 		chat.AddText(icon, Color(200, 150, 200), L("playerDisconnected", text))
 	end,
-	noSpaceAfter = true,
-	filter = "ooc"
+	noSpaceAfter = true
 })
 
 ix.chat.Register("notice", {
-	OnCanSay = function(self, speaker, text)
+	CanSay = function(self, speaker, text)
 		return !IsValid(speaker)
 	end,
-	OnChatAdd = function(self, speaker, text)
-		local icon = ix.util.GetMaterial("icon16/comment.png")
-		chat.AddText(icon, Color(175, 200, 255), text)
+	OnChatAdd = function(self, speaker, text, bAnonymous, data)
+		local icon = ix.util.GetMaterial(data.bError and "icon16/comment_delete.png" or "icon16/comment.png")
+		chat.AddText(icon, data.bError and Color(200, 175, 200, 255) or Color(175, 200, 255), text)
 	end,
-	noSpaceAfter = true,
-	filter = "ooc"
+	noSpaceAfter = true
 })
 
 -- Why does ULX even have a /me command?

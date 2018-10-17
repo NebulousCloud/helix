@@ -1,6 +1,14 @@
 
 local PANEL = {}
 
+local function DoorSetPermission(door, target, permission)
+	net.Start("ixDoorPermission")
+		net.WriteEntity(door)
+		net.WriteEntity(target)
+		net.WriteUInt(permission, 4)
+	net.SendToServer()
+end
+
 function PANEL:Init()
 	self:SetSize(280, 240)
 	self:SetTitle(L"doorSettings")
@@ -16,17 +24,17 @@ function PANEL:Init()
 			local menu = DermaMenu()
 				menu:AddOption(L"tenant", function()
 					if (self.accessData and self.accessData[line.player] != DOOR_TENANT) then
-						netstream.Start("doorPerm", self.door, line.player, DOOR_TENANT)
+						DoorSetPermission(self.door, line.player, DOOR_TENANT)
 					end
 				end):SetImage("icon16/user_add.png")
 				menu:AddOption(L"guest", function()
 					if (self.accessData and self.accessData[line.player] != DOOR_GUEST) then
-						netstream.Start("doorPerm", self.door, line.player, DOOR_GUEST)
+						DoorSetPermission(self.door, line.player, DOOR_GUEST)
 					end
 				end):SetImage("icon16/user_green.png")
 				menu:AddOption(L"none", function()
 					if (self.accessData and self.accessData[line.player] != DOOR_NONE) then
-						netstream.Start("doorPerm", self.door, line.player, DOOR_NONE)
+						DoorSetPermission(self.door, line.player, DOOR_NONE)
 					end
 				end):SetImage("icon16/user_red.png")
 			menu:Open()
@@ -41,7 +49,7 @@ function PANEL:SetDoor(door, access, door2)
 	self.door = door
 
 	for _, v in ipairs(player.GetAll()) do
-		if (v != LocalPlayer() and v:GetChar()) then
+		if (v != LocalPlayer() and v:GetCharacter()) then
 			self.access:AddLine(v:Name(), L(ACCESS_LABELS[access[v] or 0])).player = v
 		end
 	end

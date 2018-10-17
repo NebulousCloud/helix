@@ -11,6 +11,8 @@ ENT.RenderGroup = RENDERGROUP_BOTH
 ENT.bNoPersist = true
 
 if (SERVER) then
+	util.AddNetworkString("ixItemEntityAction")
+
 	function ENT:Initialize()
 		self:SetModel("models/props_junk/watermelon01.mdl")
 		self:SetSolid(SOLID_VPHYSICS)
@@ -29,10 +31,22 @@ if (SERVER) then
 	end
 
 	function ENT:Use(activator, caller)
-		if (IsValid(caller) and caller:IsPlayer() and caller:GetChar() and self.ixItemID) then
-			caller:PerformInteraction(ix.config.Get("itemPickupTime", 0.5), self, function(client)
-				ix.item.PerformInventoryAction(client, "take", self)
-			end)
+		local itemTable = self:GetItemTable()
+
+		if (IsValid(caller) and caller:IsPlayer() and caller:GetCharacter() and itemTable) then
+			itemTable.player = caller
+			itemTable.entity = self
+
+			if (itemTable.functions.take.OnCanRun(itemTable)) then
+				caller:PerformInteraction(ix.config.Get("itemPickupTime", 0.5), self, function(client)
+					if (!ix.item.PerformInventoryAction(client, "take", self)) then
+						return false -- do not mark dirty if interaction fails
+					end
+				end)
+			end
+
+			itemTable.player = nil
+			itemTable.entity = nil
 		end
 	end
 
@@ -50,21 +64,15 @@ if (SERVER) then
 		local itemTable = ix.item.instances[itemID]
 
 		if (itemTable) then
-			local model = itemTable.OnGetDropModel and itemTable:OnGetDropModel(self) or itemTable.model
+			local material = itemTable:GetMaterial(self)
 
-			self:SetSkin(itemTable.skin or 0)
+			self:SetSkin(itemTable:GetSkin())
+			self:SetModel(itemTable:GetModel())
 
-			if (itemTable.worldModel) then
-				self:SetModel(itemTable.worldModel == true and "models/props_junk/cardboard_box004a.mdl" or itemTable.worldModel)
-			else
-				self:SetModel(model)
+			if (material) then
+				self:SetMaterial(material)
 			end
 
-			if (itemTable.material) then
-				self:SetMaterial(itemTable.material)
-			end
-
-			self:SetModel(model)
 			self:PhysicsInit(SOLID_VPHYSICS)
 			self:SetSolid(SOLID_VPHYSICS)
 			self:SetNetVar("id", itemTable.uniqueID)
@@ -124,7 +132,7 @@ if (SERVER) then
 				end
 
 				if (itemTable.OnRemoved) then
-					itemTable:OnRemoved(self)
+					itemTable:OnRemoved()
 				end
 
 				local query = mysql:Delete("ix_items")
@@ -143,78 +151,79 @@ if (SERVER) then
 
 		return true
 	end
-else
-	ENT.DrawEntityInfo = true
 
-	local toScreen = FindMetaTable("Vector").ToScreen
-	local colorAlpha = ColorAlpha
+	function ENT:UpdateTransmitState()
+		return TRANSMIT_PVS
+	end
+
+	net.Receive("ixItemEntityAction", function(length, client)
+		ix.item.PerformInventoryAction(client, net.ReadString(), net.ReadEntity())
+	end)
+else
+	ENT.PopulateEntityInfo = true
+
 	local shadeColor = Color(0, 0, 0, 200)
 	local blockSize = 4
 	local blockSpacing = 2
 
-	function ENT:DrawItemSize(itemTable, x, y, alpha)
-		local width = itemTable.width - 1
-		local height = itemTable.height - 1
-		local heightDifference = ((height + 1) * blockSize + blockSpacing * height)
+	function ENT:OnPopulateEntityInfo(container)
+		local item = self:GetItemTable()
 
-		x = x - (width * blockSize + blockSpacing * width) * 0.5
-		y = y - heightDifference * 0.5
-
-		for i = 0, height do
-			for j = 0, width do
-				local blockX, blockY = x + j * blockSize + j * blockSpacing, y + i * blockSize + i * blockSpacing
-				local blockAlpha = Lerp(alpha / 255, 0, 255 + (i + j) * 100)
-
-				surface.SetDrawColor(ColorAlpha(shadeColor, blockAlpha))
-				surface.DrawRect(blockX + 1, blockY + 1, blockSize, blockSize)
-
-				surface.SetDrawColor(ColorAlpha(ix.config.Get("color"), blockAlpha))
-				surface.DrawRect(blockX, blockY, blockSize, blockSize)
-			end
+		if (!item) then
+			return
 		end
 
-		return heightDifference + 4
-	end
+		local oldData = item.data
 
-	function ENT:OnDrawEntityInfo(alpha)
-		local itemTable = self:GetItemTable()
+		item.data = self:GetNetVar("data", {})
+		item.entity = self
 
-		if (itemTable) then
-			local oldData = itemTable.data
+		ix.hud.PopulateItemTooltip(container, item)
 
-			itemTable.data = self.GetNetVar(self, "data", {})
-			itemTable.entity = self
+		local name = container:GetRow("name")
+		local color = name and name:GetBackgroundColor() or ix.config.Get("color")
 
-			local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
-			local x, y = position.x, position.y
-			local description = itemTable.GetDescription(itemTable)
+		-- set the arrow to be the same colour as the title/name row
+		container:SetArrowColor(color)
 
-			if (description != self.description) then
-				self.description = description
-				self.markup = ix.markup.Parse("<font=ixItemDescFont>" .. description .. "</font>", ScrW() * 0.7)
+		if ((item.width > 1 or item.height > 1) and
+			hook.Run("ShouldDrawItemSize", item) != false) then
+
+			local size = container:Add("Panel")
+			size:Dock(BOTTOM)
+
+			size.Paint = function(sizePanel, width, height)
+				surface.SetDrawColor(ColorAlpha(shadeColor, 60))
+				surface.DrawRect(0, 0, width, height)
+
+				local x, y = width * 0.5 - 1, height * 0.5 - 1
+				local itemWidth = item.width - 1
+				local itemHeight = item.height - 1
+				local heightDifference = ((itemHeight + 1) * blockSize + blockSpacing * itemHeight)
+
+				x = x - (itemWidth * blockSize + blockSpacing * itemWidth) * 0.5
+				y = y - heightDifference * 0.5
+
+				for i = 0, itemHeight do
+					for j = 0, itemWidth do
+						local blockX, blockY = x + j * blockSize + j * blockSpacing, y + i * blockSize + i * blockSpacing
+
+						surface.SetDrawColor(shadeColor)
+						surface.DrawRect(blockX + 1, blockY + 1, blockSize, blockSize)
+
+						surface.SetDrawColor(color)
+						surface.DrawRect(blockX, blockY, blockSize, blockSize)
+					end
+				end
 			end
 
-			if ((itemTable.width > 1 or itemTable.height > 1) and
-				hook.Run("ShouldDrawItemSize", itemTable) != false) then
-				y = y + self:DrawItemSize(itemTable, x, y, alpha)
-			end
-
-			ix.util.DrawText(
-				itemTable.GetName and itemTable:GetName() or L(itemTable.name),
-				x, y, colorAlpha(ix.config.Get("color"), alpha), 1, 1, nil, alpha * 0.65
-			)
-
-			y = y + 12
-
-			if (self.markup) then
-				self.markup:draw(x, y, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, alpha)
-			end
-
-			hook.Run("DrawItemDescription", self, x, y, colorAlpha(color_white, alpha), alpha * 0.65)
-
-			itemTable.entity = nil
-			itemTable.data = oldData
+			container:SizeToContents()
+			size:SetWide(container:GetWide())
+			size:SetTall(item.height * blockSize + item.height * blockSpacing + 8)
 		end
+
+		item.entity = nil
+		item.data = oldData
 	end
 
 	function ENT:DrawTranslucent()
@@ -263,7 +272,10 @@ function ENT:GetEntityMenu(client)
 			end
 
 			if (send != false) then
-				netstream.Start("invAct", k, self)
+				net.Start("ixItemEntityAction")
+					net.WriteString(k)
+					net.WriteEntity(self)
+				net.SendToServer()
 			end
 
 			-- don't run callbacks since we're handling it manually

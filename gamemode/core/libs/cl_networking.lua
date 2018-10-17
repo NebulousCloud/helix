@@ -5,22 +5,24 @@ local playerMeta = FindMetaTable("Player")
 ix.net = ix.net or {}
 ix.net.globals = ix.net.globals or {}
 
-netstream.Hook("nVar", function(index, key, value)
+net.Receive("ixGlobalVarSet", function()
+	ix.net.globals[net.ReadString()] = net.ReadType()
+end)
+
+net.Receive("ixNetVarSet", function()
+	local index = net.ReadUInt(16)
+
 	ix.net[index] = ix.net[index] or {}
-	ix.net[index][key] = value
+	ix.net[index][net.ReadString()] = net.ReadType()
 end)
 
-netstream.Hook("nDel", function(index)
-	ix.net[index] = nil
+net.Receive("ixNetVarDelete", function()
+	ix.net[net.ReadUInt(16)] = nil
 end)
 
-netstream.Hook("nLcl", function(key, value)
+net.Receive("ixLocalVarSet", function()
 	ix.net[LocalPlayer():EntIndex()] = ix.net[LocalPlayer():EntIndex()] or {}
-	ix.net[LocalPlayer():EntIndex()][key] = value
-end)
-
-netstream.Hook("gVar", function(key, value)
-	ix.net.globals[key] = value
+	ix.net[LocalPlayer():EntIndex()][net.ReadString()] = net.ReadType()
 end)
 
 function GetNetVar(key, default) -- luacheck: globals GetNetVar

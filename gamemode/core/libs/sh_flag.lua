@@ -11,9 +11,9 @@ if (SERVER) then
 	-- Called to apply flags when a player has spawned.
 	function ix.flag.OnSpawn(client)
 		-- Check if they have a valid character.
-		if (client:GetChar()) then
+		if (client:GetCharacter()) then
 			-- Get all of the character's flags.
-			local flags = client:GetChar():GetFlags()
+			local flags = client:GetCharacter():GetFlags()
 
 			for i = 1, #flags do
 				-- Get each individual flag.
@@ -51,7 +51,7 @@ do
 				local info = ix.flag.list[flag]
 
 				if (info) then
-					if (!character:HasFlags(flag)) then
+					if (!self:HasFlags(flag)) then
 						addedFlags = addedFlags..flag
 					end
 

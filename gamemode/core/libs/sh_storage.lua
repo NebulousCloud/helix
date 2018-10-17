@@ -60,6 +60,12 @@ Text to display to the user while opening the inventory. This can be a language 
 (default: `nil`)<br />
 Called when a player who was accessing the inventory has closed it. The argument passed is the player who closed it.
 </p></li>
+
+<li><p>
+`data`<br />
+(default: `{}`)<br />
+Table of arbitrary data to send to the client when the inventory has been opened.
+</p></li>
 </ul>
 ]]
 -- @module ix.storage
@@ -67,23 +73,12 @@ Called when a player who was accessing the inventory has closed it. The argument
 ix.storage = ix.storage or {}
 
 if (SERVER) then
-	--- Returns all players that currently looking at the given inventory as a storage.
-	-- @server
-	-- @inventory inventory Inventory to get receivers from
-	-- @treturn table An array of players that currently have `inventory` open
-	function ix.storage.GetReceivers(inventory)
-		local result = {}
-
-		if (inventory.storageInfo) then
-			for k, _ in pairs(inventory.storageInfo.receivers) do
-				if (IsValid(k) and k:IsPlayer()) then
-					result[#result + 1] = k
-				end
-			end
-		end
-
-		return result
-	end
+	util.AddNetworkString("ixStorageOpen")
+	util.AddNetworkString("ixStorageClose")
+	util.AddNetworkString("ixStorageExpired")
+	util.AddNetworkString("ixStorageMoneyTake")
+	util.AddNetworkString("ixStorageMoneyGive")
+	util.AddNetworkString("ixStorageMoneyUpdate")
 
 	--- Returns whether or not the given inventory has a storage context and is being looked at by other players.
 	-- @server
@@ -91,8 +86,8 @@ if (SERVER) then
 	-- @treturn bool Whether or not `inventory` is in use
 	function ix.storage.InUse(inventory)
 		if (inventory.storageInfo) then
-			for k, _ in pairs(inventory.storageInfo.receivers) do
-				if (IsValid(k) and k:IsPlayer()) then
+			for _, v in pairs(inventory:GetReceivers()) do
+				if (IsValid(v) and v:IsPlayer() and v != inventory.storageInfo.entity) then
 					return true
 				end
 			end
@@ -115,29 +110,15 @@ if (SERVER) then
 		info.bMultipleUsers = info.bMultipleUsers == nil and false or info.bMultipleUsers
 		info.searchTime = tonumber(info.searchTime) or 0
 		info.searchText = info.searchText or "@storageSearching"
-		info.receivers = info.receivers or {}
+		info.data = info.data or {}
 
-		-- store old copies of inventory methods so we can restore them after we're done
-		inventory.oldOnAuthorizeTransfer = inventory.OnAuthorizeTransfer
-		inventory.oldGetReceiver = inventory.GetReceiver
 		inventory.storageInfo = info
 
-		if (info.entity:IsPlayer()) then
-			inventory.oldCheckAccess = inventory.CheckAccess
-
-			function inventory:OnCheckAccess(client)
-				return self.storageInfo.receivers[client] == true
+		-- remove context from any bags this inventory might have
+		for _, v in pairs(inventory:GetItems()) do
+			if (v.isBag and v:GetInventory()) then
+				ix.storage.CreateContext(v:GetInventory(), table.Copy(info))
 			end
-		end
-
-		function inventory:OnAuthorizeTransfer(inventoryClient, oldInventory, item)
-			return IsValid(inventoryClient) and IsValid(self.storageInfo.entity) and self.storageInfo.receivers[inventoryClient] != nil
-		end
-
-		function inventory:GetReceiver()
-			local result = ix.storage.GetReceivers(self)
-
-			return #result > 0 and (#result == 1 and result[1] or result) or nil
 		end
 	end
 
@@ -146,18 +127,14 @@ if (SERVER) then
 	-- @internal
 	-- @inventory inventory Inventory to remove a storage context from
 	function ix.storage.RemoveContext(inventory)
-		-- restore old callbacks
-		inventory.OnAuthorizeTransfer = inventory.oldOnAuthorizeTransfer
-		inventory.GetReceiver = inventory.oldGetReceiver
-
-		if (inventory.oldCheckAccess) then
-			inventory.CheckAccess = inventory.oldCheckAccess
-			inventory.oldCheckAccess = nil
-		end
-
-		inventory.oldOnAuthorizeTransfer = nil
-		inventory.oldGetReceiver = nil
 		inventory.storageInfo = nil
+
+		-- remove context from any bags this inventory might have
+		for _, v in pairs(inventory:GetItems()) do
+			if (v.isBag and v:GetInventory()) then
+				ix.storage.RemoveContext(v:GetInventory())
+			end
+		end
 	end
 
 	--- Synchronizes an inventory with a storage context to the given client.
@@ -168,8 +145,23 @@ if (SERVER) then
 	function ix.storage.Sync(client, inventory)
 		local info = inventory.storageInfo
 
+		-- we'll retrieve the money value as we're syncing because it may have changed while
+		-- we were waiting for the timer to finish
+		if (info.entity.GetMoney) then
+			info.data.money = info.entity:GetMoney()
+		elseif (info.entity:IsPlayer() and info.entity:GetCharacter()) then
+			info.data.money = info.entity:GetCharacter():GetMoney()
+		end
+
+		-- bags are automatically sync'd when the owning inventory is sync'd
 		inventory:Sync(client)
-		netstream.Start(client, "StorageOpen", info.id, info.entity, info.name)
+
+		net.Start("ixStorageOpen")
+			net.WriteUInt(info.id, 32)
+			net.WriteEntity(info.entity)
+			net.WriteString(info.name)
+			net.WriteTable(info.data)
+		net.Send(client)
 	end
 
 	--- Adds a receiver to a given inventory with a storage context.
@@ -182,29 +174,16 @@ if (SERVER) then
 	function ix.storage.AddReceiver(client, inventory, bDontSync)
 		local info = inventory.storageInfo
 
-		if (info and !info.receivers[client]) then
-			if (info.entity:IsPlayer()) then
-				if (client:GetCharacter() and client:GetCharacter():GetInventory()) then
-					local receiverInventory = client:GetCharacter():GetInventory()
+		if (info) then
+			inventory:AddReceiver(client)
+			client.ixOpenStorage = inventory
 
-					-- do not override OnAuthorizeTransfer if the client's inventory
-					-- is currently interacting with something
-					if (receiverInventory.oldOnAuthorizeTransfer) then
-						return false
-					end
-
-					function receiverInventory:OnAuthorizeTransfer(inventoryClient, oldInventory, item)
-						if (oldInventory == inventory) then
-							return true
-						end
-
-						receiverInventory:oldOnAuthorizeTransfer(inventoryClient, oldInventory, item)
-					end
+			-- update receivers for any bags this inventory might have
+			for _, v in pairs(inventory:GetItems()) do
+				if (v.isBag and v:GetInventory()) then
+					v:GetInventory():AddReceiver(client)
 				end
 			end
-
-			info.receivers[client] = true
-			client.ixOpenStorage = inventory
 
 			if (!bDontSync) then
 				ix.storage.Sync(client, inventory)
@@ -224,17 +203,14 @@ if (SERVER) then
 	-- @bool bDontRemove Whether or not to skip removing the storage context if there are no more receivers
 	function ix.storage.RemoveReceiver(client, inventory, bDontRemove)
 		if (inventory.storageInfo) then
-			-- restore old OnAuthorizeTransfer callback if it exists
-			if (client:GetCharacter() and client:GetCharacter():GetInventory()) then
-				local clientInventory = client:GetCharacter():GetInventory()
+			inventory:RemoveReceiver(client)
 
-				if (clientInventory.oldOnAuthorizeTransfer) then
-					clientInventory.OnAuthorizeTransfer = clientInventory.oldOnAuthorizeTransfer
-					clientInventory.oldOnAuthorizeTransfer = nil
+			-- update receivers for any bags this inventory might have
+			for _, v in pairs(inventory:GetItems()) do
+				if (v.isBag and v:GetInventory()) then
+					v:GetInventory():RemoveReceiver(client)
 				end
 			end
-
-			inventory.storageInfo.receivers[client] = nil
 
 			if (isfunction(inventory.storageInfo.OnPlayerClose)) then
 				inventory.storageInfo.OnPlayerClose(client)
@@ -299,24 +275,137 @@ if (SERVER) then
 	-- @server
 	-- @inventory inventory Inventory to close
 	function ix.storage.Close(inventory)
-		local receivers = ix.storage.GetReceivers(inventory)
+		local receivers = inventory:GetReceivers()
 
 		if (#receivers > 0) then
-			netstream.Start(receivers, "StorageExpired", inventory.storageInfo.id)
+			net.Start("ixStorageExpired")
+				net.WriteUInt(inventory.storageInfo.id, 32)
+			net.Send(receivers)
 		end
 
 		ix.storage.RemoveContext(inventory)
 	end
 
-	netstream.Hook("StorageClose", function(client)
+	net.Receive("ixStorageClose", function(length, client)
 		local inventory = client.ixOpenStorage
 
 		if (inventory) then
 			ix.storage.RemoveReceiver(client, inventory)
 		end
 	end)
+
+	net.Receive("ixStorageMoneyTake", function(length, client)
+		if (CurTime() < (client.ixStorageMoneyTimer or 0)) then
+			return
+		end
+
+		local character = client:GetCharacter()
+
+		if (!character) then
+			return
+		end
+
+		local storageID = net.ReadUInt(32)
+		local amount = net.ReadUInt(32)
+
+		local inventory = client.ixOpenStorage
+
+		if (!inventory or !inventory.storageInfo or storageID != inventory:GetID()) then
+			return
+		end
+
+		local entity = inventory.storageInfo.entity
+
+		if (!IsValid(entity) or
+			(!entity:IsPlayer() and (!isfunction(entity.GetMoney) or !isfunction(entity.SetMoney))) or
+			(entity:IsPlayer() and !entity:GetCharacter())) then
+			return
+		end
+
+		entity = entity:IsPlayer() and entity:GetCharacter() or entity
+		amount = math.Clamp(math.Round(tonumber(amount) or 0), 0, entity:GetMoney())
+
+		if (amount == 0) then
+			return
+		end
+
+		character:SetMoney(character:GetMoney() + amount)
+
+		local total = entity:GetMoney() - amount
+		entity:SetMoney(total)
+
+		net.Start("ixStorageMoneyUpdate")
+			net.WriteUInt(storageID, 32)
+			net.WriteUInt(total, 32)
+		net.Send(inventory:GetReceivers())
+
+		ix.log.Add(client, "storageMoneyTake", entity, amount, total)
+
+		client.ixStorageMoneyTimer = CurTime() + 0.5
+	end)
+
+	net.Receive("ixStorageMoneyGive", function(length, client)
+		if (CurTime() < (client.ixStorageMoneyTimer or 0)) then
+			return
+		end
+
+		local character = client:GetCharacter()
+
+		if (!character) then
+			return
+		end
+
+		local storageID = net.ReadUInt(32)
+		local amount = net.ReadUInt(32)
+
+		local inventory = client.ixOpenStorage
+
+		if (!inventory or !inventory.storageInfo or storageID != inventory:GetID()) then
+			return
+		end
+
+		local entity = inventory.storageInfo.entity
+
+		if (!IsValid(entity) or
+			(!entity:IsPlayer() and (!isfunction(entity.GetMoney) or !isfunction(entity.SetMoney))) or
+			(entity:IsPlayer() and !entity:GetCharacter())) then
+			return
+		end
+
+		entity = entity:IsPlayer() and entity:GetCharacter() or entity
+		amount = math.Clamp(math.Round(tonumber(amount) or 0), 0, character:GetMoney())
+
+		if (amount == 0) then
+			return
+		end
+
+		character:SetMoney(character:GetMoney() - amount)
+
+		local total = entity:GetMoney() + amount
+		entity:SetMoney(total)
+
+		net.Start("ixStorageMoneyUpdate")
+			net.WriteUInt(storageID, 32)
+			net.WriteUInt(total, 32)
+		net.Send(inventory:GetReceivers())
+
+		ix.log.Add(client, "storageMoneyGive", entity, amount, total)
+
+		client.ixStorageMoneyTimer = CurTime() + 0.5
+	end)
 else
-	netstream.Hook("StorageOpen", function(id, entity, name)
+	net.Receive("ixStorageOpen", function()
+		if (IsValid(ix.gui.menu)) then
+			net.Start("ixStorageClose")
+			net.SendToServer()
+			return
+		end
+
+		local id = net.ReadUInt(32)
+		local entity = net.ReadEntity()
+		local name = net.ReadString()
+		local data = net.ReadTable()
+
 		local inventory = ix.item.inventories[id]
 
 		if (IsValid(entity) and inventory and inventory.slots) then
@@ -327,18 +416,43 @@ else
 				panel:SetLocalInventory(localInventory)
 			end
 
+			panel:SetStorageID(id)
 			panel:SetStorageTitle(name)
 			panel:SetStorageInventory(inventory)
+
+			if (data.money) then
+				if (localInventory) then
+					panel:SetLocalMoney(LocalPlayer():GetCharacter():GetMoney())
+				end
+
+				panel:SetStorageMoney(data.money)
+			end
 		end
 	end)
 
-	netstream.Hook("StorageExpired", function(id)
+	net.Receive("ixStorageExpired", function()
 		if (IsValid(ix.gui.openedStorage)) then
 			ix.gui.openedStorage:Remove()
 		end
 
+		local id = net.ReadUInt(32)
+
 		if (id != 0) then
 			ix.item.inventories[id] = nil
 		end
+	end)
+
+	net.Receive("ixStorageMoneyUpdate", function()
+		local storageID = net.ReadUInt(32)
+		local amount = net.ReadUInt(32)
+
+		local panel = ix.gui.openedStorage
+
+		if (!IsValid(panel) or panel:GetStorageID() != storageID) then
+			return
+		end
+
+		panel:SetStorageMoney(amount)
+		panel:SetLocalMoney(LocalPlayer():GetCharacter():GetMoney())
 	end)
 end

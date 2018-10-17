@@ -1,283 +1,343 @@
+local rowPaintFunctions = {
+	function(width, height)
+	end,
 
+	function(width, height)
+		surface.SetDrawColor(30, 30, 30, 25)
+		surface.DrawRect(0, 0, width, height)
+	end
+}
+
+-- character icon
+-- we can't customize the rendering of ModelImage so we have to do it ourselves
 local PANEL = {}
-local paintFunctions = {}
 
-paintFunctions[0] = function(this, w, h)
-	surface.SetDrawColor(0, 0, 0, 50)
-	surface.DrawRect(0, 0, w, h)
-end
-
-paintFunctions[1] = function(this, w, h)
-end
+AccessorFunc(PANEL, "model", "Model", FORCE_STRING)
+AccessorFunc(PANEL, "bHidden", "Hidden", FORCE_BOOL)
 
 function PANEL:Init()
-	if (IsValid(ix.gui.score)) then
-		ix.gui.score:Remove()
+	self:SetSize(64, 64)
+	self.nextIconCheck = SysTime() + 1
+	self.bodygroups = "000000000"
+end
+
+function PANEL:SetModel(model, skin, bodygroups)
+	model = model:gsub("\\", "/")
+
+	if (isstring(bodygroups) and bodygroups:len() != 9) then
+		self.bodygroups = "000000000"
 	end
 
-	ix.gui.score = self
-	self:Dock(FILL)
+	self.model = model
+	self.skin = skin
+	self.path = "materials/spawnicons/" ..
+		model:sub(1, #model - 4) .. -- remove extension
+		((isnumber(skin) and skin > 0) and ("_skin" .. tostring(skin)) or "") .. -- skin number
+		(self.bodygroups != "000000000" and ("_" .. self.bodygroups) or "") .. -- bodygroups
+		".png"
 
-	self.scroll = self:Add("DScrollPanel")
-	self.scroll:Dock(FILL)
-	self.scroll:DockMargin(1, 0, 1, 0)
-	self.scroll.VBar:SetWide(0)
+	local material = Material(self.path, "smooth")
 
-	self.layout = self.scroll:Add("DListLayout")
-	self.layout:Dock(TOP)
+	-- we don't have a cached spawnicon texture, so we need to forcefully generate one
+	if (material:IsError()) then
+		self.id = "ixScoreboardIcon" .. self.path
+		self.renderer = self:Add("ModelImage")
+		self.renderer:SetVisible(false)
+		self.renderer:SetModel(model, skin, self.bodygroups)
+		self.renderer:RebuildSpawnIcon()
 
-	self.teams = {}
-	self.slots = {}
-	self.i = {}
+		-- this is the only way to get a callback for generated spawn icons, it's bad but it's only done once
+		hook.Add("SpawniconGenerated", self.id, function(lastModel, filePath, modelsLeft)
+			filePath = filePath:gsub("\\", "/"):lower()
 
-	for k, v in ipairs(ix.faction.indices) do
-		local color = team.GetColor(k)
-		local r, g, b = color.r, color.g, color.b
+			if (filePath == self.path) then
+				hook.Remove("SpawniconGenerated", self.id)
 
-		local list = self.layout:Add("DListLayout")
-		list:Dock(TOP)
-		list:SetTall(28)
-		list.Think = function(this)
-			for _, v2 in ipairs(team.GetPlayers(k)) do
-				if (!IsValid(v2.ixScoreSlot) or v2.ixScoreSlot:GetParent() != this) then
-					if (IsValid(v2.ixPlayerSlot)) then
-						v2.ixPlayerSlot:SetParent(this)
-					else
-						self:AddPlayer(v2, this)
-					end
-				end
+				self.material = Material(filePath, "smooth")
+				self.renderer:Remove()
 			end
+		end)
+	else
+		self.material = material
+	end
+end
+
+function PANEL:SetBodygroup(k, v)
+	if (k < 0 or k > 9 or v < 0 or v > 9) then
+		return
+	end
+
+	self.bodygroups = self.bodygroups:SetChar(k + 1, v)
+end
+
+function PANEL:GetModel()
+	return self.model or "models/error.mdl"
+end
+
+function PANEL:GetSkin()
+	return self.skin or 1
+end
+
+function PANEL:DoClick()
+end
+
+function PANEL:DoRightClick()
+end
+
+function PANEL:OnMouseReleased(key)
+	if (key == MOUSE_LEFT) then
+		self:DoClick()
+	elseif (key == MOUSE_RIGHT) then
+		self:DoRightClick()
+	end
+end
+
+function PANEL:Paint(width, height)
+	if (!self.material) then
+		return
+	end
+
+	surface.SetMaterial(self.material)
+	surface.SetDrawColor(self.bHidden and color_black or color_white)
+	surface.DrawTexturedRect(0, 0, width, height)
+end
+
+function PANEL:Remove()
+	if (self.id) then
+		hook.Remove("SpawniconGenerated", self.id)
+	end
+end
+
+vgui.Register("ixScoreboardIcon", PANEL, "Panel")
+
+-- player row
+PANEL = {}
+
+AccessorFunc(PANEL, "paintFunction", "BackgroundPaintFunction")
+
+function PANEL:Init()
+	self:SetTall(64)
+
+	self.icon = self:Add("ixScoreboardIcon")
+	self.icon:Dock(LEFT)
+	self.icon.DoRightClick = function()
+		local client = self.player
+
+		if (!IsValid(client)) then
+			return
 		end
 
-		local header = list:Add("DLabel")
-		header:Dock(TOP)
-		header:SetText(L(v.name))
-		header:SetTextInset(3, 0)
-		header:SetFont("ixMediumFont")
-		header:SetTextColor(color_white)
-		header:SetExpensiveShadow(1, color_black)
-		header:SetTall(28)
-		header.Paint = function(this, w, h)
-			surface.SetDrawColor(r, g, b, 20)
-			surface.DrawRect(0, 0, w, h)
-		end
+		local menu = DermaMenu()
 
-		self.teams[k] = list
+		menu:AddOption(L("viewProfile"), function()
+			client:ShowProfile()
+		end)
+
+		menu:AddOption(L("copySteamID"), function()
+			SetClipboardText(client:IsBot() and client:EntIndex() or client:SteamID())
+		end)
+
+		hook.Run("PopulateScoreboardPlayerMenu", client, menu)
+		menu:Open()
+	end
+
+	self.icon:SetHelixTooltip(function(tooltip)
+		local client = self.player
+
+		if (IsValid(self) and IsValid(client)) then
+			ix.hud.PopulatePlayerTooltip(tooltip, client)
+		end
+	end)
+
+	self.name = self:Add("DLabel")
+	self.name:DockMargin(4, 4, 0, 0)
+	self.name:Dock(TOP)
+	self.name:SetTextColor(color_white)
+	self.name:SetFont("ixGenericFont")
+
+	self.description = self:Add("DLabel")
+	self.description:DockMargin(5, 0, 0, 0)
+	self.description:Dock(TOP)
+	self.description:SetTextColor(color_white)
+	self.description:SetFont("ixSmallFont")
+
+	self.paintFunction = rowPaintFunctions[1]
+	self.nextThink = CurTime() + 1
+end
+
+function PANEL:Update()
+	local client = self.player
+	local model = client:GetModel()
+	local skin = client:GetSkin()
+	local name = client:GetName()
+	local description = hook.Run("GetCharacterDescription", client) or
+		(client:GetCharacter() and client:GetCharacter():GetDescription()) or ""
+
+	local bRecognize = false
+	local localCharacter = LocalPlayer():GetCharacter()
+	local character = IsValid(self.player) and self.player:GetCharacter()
+
+	if (localCharacter and character) then
+		bRecognize = hook.Run("IsCharacterRecognized", localCharacter, character:GetID())
+			or hook.Run("IsPlayerRecognized", self.player)
+	end
+
+	self.icon:SetHidden(!bRecognize)
+
+	-- no easy way to check bodygroups so we'll just set them anyway
+	-- @todo bodygroups will not render correctly in a ModelImage for certain models, see
+	-- https://github.com/Facepunch/garrysmod-issues/issues/3628
+	for _, v in pairs(client:GetBodyGroups()) do
+		self.icon:SetBodygroup(v.id, client:GetBodygroup(v.id))
+	end
+
+	if (self.icon:GetModel() != model or self.icon:GetSkin() != skin) then
+		self.icon:SetModel(model, skin)
+		self.icon:SetTooltip(nil)
+	end
+
+	if (self.name:GetText() != name) then
+		self.name:SetText(name)
+		self.name:SizeToContents()
+	end
+
+	if (self.description:GetText() != description) then
+		self.description:SetText(description)
+		self.description:SizeToContents()
 	end
 end
 
 function PANEL:Think()
-	if ((self.nextUpdate or 0) < CurTime()) then
-		local visible, amount
+	if (CurTime() >= self.nextThink) then
+		local client = self.player
 
-		for k, v in ipairs(self.teams) do
-			visible, amount = v:IsVisible(), team.NumPlayers(k)
-
-			if (visible and amount == 0) then
-				v:SetVisible(false)
-				self.layout:InvalidateLayout()
-			elseif (!visible and amount > 0) then
-				v:SetVisible(true)
-			end
+		if (!IsValid(client) or !client:GetCharacter() or self.character != client:GetCharacter() or self.team != client:Team()) then
+			self:Remove()
+			self:GetParent():SizeToContents()
 		end
 
-		for _, v in pairs(self.slots) do
-			if (IsValid(v)) then
-				v:Update()
-			end
-		end
-
-		self.nextUpdate = CurTime() + 0.1
+		self.nextThink = CurTime() + 1
 	end
 end
 
-function PANEL:AddPlayer(client, parent)
-	if (!client:GetChar() or !IsValid(parent)) then
-		return
+function PANEL:SetPlayer(client)
+	self.player = client
+	self.team = client:Team()
+	self.character = client:GetCharacter()
+
+	self:Update()
+end
+
+function PANEL:Paint(width, height)
+	self.paintFunction(width, height)
+end
+
+vgui.Register("ixScoreboardRow", PANEL, "EditablePanel")
+
+-- faction grouping
+PANEL = {}
+
+AccessorFunc(PANEL, "faction", "Faction")
+
+function PANEL:Init()
+	self:DockMargin(0, 0, 0, 16)
+	self:SetTall(32)
+
+	self.nextThink = 0
+end
+
+function PANEL:AddPlayer(client, index)
+	if (!IsValid(client) or !client:GetCharacter() or hook.Run("ShouldShowPlayerOnScoreboard", client) == false) then
+		return false
 	end
 
-	local slot = parent:Add("DPanel")
-	slot:Dock(TOP)
-	slot:SetTall(64)
-	slot:DockMargin(0, 0, 0, 1)
-	slot.character = client:GetChar()
+	local id = index % 2 == 0 and 1 or 2
+	local panel = self:Add("ixScoreboardRow")
+	panel:SetPlayer(client)
+	panel:Dock(TOP)
+	panel:SetBackgroundPaintFunction(rowPaintFunctions[id])
 
-	client.ixScoreSlot = slot
+	self:SizeToContents()
+	client.ixScoreboardSlot = panel
 
-	slot.model = slot:Add("ixSpawnIcon")
-	slot.model:SetModel(client:GetModel(), client:GetSkin())
-	slot.model:SetSize(64, 64)
-	slot.model.DoClick = function()
-		local menu = DermaMenu()
-			local options = {}
+	return true
+end
 
-			hook.Run("ShowPlayerOptions", client, options)
+function PANEL:SetFaction(faction)
+	self:SetColor(faction.color)
+	self:SetText(faction.name)
 
-			if (table.Count(options) > 0) then
-				for k, v in SortedPairs(options) do
-					menu:AddOption(L(k), v[2]):SetImage(v[1])
+	self.faction = faction
+end
+
+function PANEL:Update()
+	local faction = self.faction
+
+	if (team.NumPlayers(faction.index) == 0) then
+		self:SetVisible(false)
+		self:GetParent():InvalidateLayout()
+	else
+		local bHasPlayers
+
+		for k, v in ipairs(team.GetPlayers(faction.index)) do
+			if (!IsValid(v.ixScoreboardSlot)) then
+				if (self:AddPlayer(v, k)) then
+					bHasPlayers = true
 				end
+			else
+				v.ixScoreboardSlot:Update()
+				bHasPlayers = true
 			end
-		menu:Open()
+		end
 
-		RegisterDermaMenuForClose(menu)
+		self:SetVisible(bHasPlayers)
 	end
-	slot.model:SetTooltip(L("sbOptions", client:SteamName()))
-
-	timer.Simple(0, function()
-		if (!IsValid(slot)) then
-			return
-		end
-
-		local entity = slot.model.Entity
-
-		if (IsValid(entity)) then
-			for _, v in ipairs(client:GetBodyGroups()) do
-				entity:SetBodygroup(v.id, client:GetBodygroup(v.id))
-			end
-
-			for k, _ in ipairs(client:GetMaterials()) do
-				entity:SetSubMaterial(k - 1, client:GetSubMaterial(k - 1))
-			end
-		end
-	end)
-
-	slot.name = slot:Add("DLabel")
-	slot.name:SetText(client:Name())
-	slot.name:Dock(TOP)
-	slot.name:DockMargin(65, 0, 48, 0)
-	slot.name:SetTall(18)
-	slot.name:SetFont("ixGenericFont")
-	slot.name:SetTextColor(color_white)
-	slot.name:SetExpensiveShadow(1, color_black)
-
-	slot.ping = slot:Add("DLabel")
-	slot.ping:SetPos(self:GetWide() - 48, 0)
-	slot.ping:SetSize(48, 64)
-	slot.ping:SetText("0")
-	slot.ping.Think = function(this)
-		if (IsValid(client)) then
-			this:SetText(client:Ping())
-		end
-	end
-	slot.ping:SetFont("ixGenericFont")
-	slot.ping:SetContentAlignment(6)
-	slot.ping:SetTextColor(color_white)
-	slot.ping:SetTextInset(16, 0)
-	slot.ping:SetExpensiveShadow(1, color_black)
-
-	slot.description = slot:Add("DLabel")
-	slot.description:Dock(FILL)
-	slot.description:DockMargin(65, 0, 48, 0)
-	slot.description:SetWrap(true)
-	slot.description:SetContentAlignment(7)
-	slot.description:SetText(
-		hook.Run("GetDisplayedDescription", client) or (client:GetChar() and client:GetChar():GetDescription()) or ""
-	)
-	slot.description:SetTextColor(color_white)
-	slot.description:SetExpensiveShadow(1, Color(0, 0, 0, 100))
-	slot.description:SetFont("ixSmallFont")
-
-	local oldTeam = client:Team()
-
-	slot.Update = function(panel)
-		if (!IsValid(client) or !client:GetCharacter() or
-			!panel.character or panel.character != client:GetCharacter() or
-			oldTeam != client:Team()) then
-			panel:Remove()
-
-			local i = 0
-
-			for _, v in ipairs(parent:GetChildren()) do
-				if (IsValid(v.model) and v != panel) then
-					i = i + 1
-					v.Paint = paintFunctions[i % 2]
-				end
-			end
-
-			return
-		end
-
-		local overrideName = hook.Run("ShouldAllowScoreboardOverride", client, "name") and hook.Run("GetDisplayedName", client)
-		local name = overrideName or client:Name()
-		local model = client:GetModel()
-		local skin = client:GetSkin()
-		local desc = hook.Run("ShouldAllowScoreboardOverride", client, "description") and
-		hook.Run("GetDisplayedDescription", client) or (client:GetChar() and client:GetChar():GetDescription()) or ""
-
-		panel.model:SetHidden(overrideName)
-
-		if (panel.lastName != name) then
-			panel.name:SetText(name)
-			panel.lastName = name
-		end
-
-		local entity = panel.model.Entity
-
-		if (panel.lastDesc != desc) then
-			panel.description:SetText(desc)
-			panel.lastDesc = desc
-		end
-
-		if (!IsValid(entity)) then
-			return
-		end
-
-		if (panel.lastModel != model or panel.lastSkin != skin) then
-			panel.model:SetModel(client:GetModel(), client:GetSkin())
-			panel.model:SetTooltip(L("sbOptions", client:SteamName()))
-
-			panel.lastModel = model
-			panel.lastSkin = skin
-		end
-
-		timer.Simple(0, function()
-			if (!IsValid(entity) or !IsValid(client)) then
-				return
-			end
-
-			for _, v in ipairs(client:GetBodyGroups()) do
-				entity:SetBodygroup(v.id, client:GetBodygroup(v.id))
-			end
-		end)
-	end
-
-	self.slots[#self.slots + 1] = slot
-
-	parent:SetVisible(true)
-	parent:SizeToChildren(false, true)
-	parent:InvalidateLayout(true)
-
-	local i = 0
-
-	for _, v in ipairs(parent:GetChildren()) do
-		if (IsValid(v.model)) then
-			i = i + 1
-			v.Paint = paintFunctions[i % 2]
-		end
-	end
-
-	return slot
 end
 
-function PANEL:OnRemove()
-	CloseDermaMenus()
+vgui.Register("ixScoreboardFaction", PANEL, "ixCategoryPanel")
+
+-- main scoreboard panel
+PANEL = {}
+
+function PANEL:Init()
+	if (IsValid(ix.gui.scoreboard)) then
+		ix.gui.scoreboard:Remove()
+	end
+
+	self:Dock(FILL)
+
+	self.factions = {}
+	self.nextThink = 0
+
+	for i = 1, #ix.faction.indices do
+		local faction = ix.faction.indices[i]
+
+		local panel = self:Add("ixScoreboardFaction")
+		panel:SetFaction(faction)
+		panel:Dock(TOP)
+
+		self.factions[i] = panel
+	end
+
+	ix.gui.scoreboard = self
 end
 
-function PANEL:Paint(w, h)
-	ix.util.DrawBlur(self, 10)
+function PANEL:Think()
+	if (CurTime() >= self.nextThink) then
+		for i = 1, #self.factions do
+			local factionPanel = self.factions[i]
 
-	surface.SetDrawColor(30, 30, 30, 100)
-	surface.DrawRect(0, 0, w, h)
+			factionPanel:Update()
+		end
 
-	surface.SetDrawColor(0, 0, 0, 150)
-	surface.DrawOutlinedRect(0, 0, w, h)
+		self.nextThink = CurTime() + 0.5
+	end
 end
 
-vgui.Register("ixScoreboard", PANEL, "EditablePanel")
+vgui.Register("ixScoreboard", PANEL, "DScrollPanel")
 
 hook.Add("CreateMenuButtons", "ixScoreboard", function(tabs)
-	tabs["scoreboard"] = function(panel)
-		panel:Add("ixScoreboard")
+	tabs["scoreboard"] = function(container)
+		container:Add("ixScoreboard")
 	end
 end)

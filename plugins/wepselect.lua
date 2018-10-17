@@ -11,6 +11,21 @@ if (CLIENT) then
 	PLUGIN.alphaDelta = PLUGIN.alphaDelta or PLUGIN.alpha
 	PLUGIN.fadeTime = PLUGIN.fadeTime or 0
 
+	function PLUGIN:LoadFonts(font, genericFont)
+		surface.CreateFont("ixWeaponSelectFont", {
+			font = font,
+			size = ScreenScale(16),
+			extended = true,
+			weight = 1000
+		})
+	end
+
+	function PLUGIN:HUDShouldDraw(name)
+		if (name == "CHudWeaponSelection") then
+			return false
+		end
+	end
+
 	function PLUGIN:HUDPaint()
 		local frameTime = FrameTime()
 
@@ -24,6 +39,7 @@ if (CLIENT) then
 			local x, y = ScrW() * 0.5, ScrH() * 0.5
 			local spacing = math.pi * 0.85
 			local radius = 240 * self.alphaDelta
+			local shiftX = ScrW() * .02
 			local i = 1
 
 			self.deltaIndex = Lerp(frameTime * 12, self.deltaIndex, self.index)
@@ -42,7 +58,6 @@ if (CLIENT) then
 				)
 
 				local lastY = 0
-				local shiftX = ScrW()*.02
 
 				if (self.markup and (i < self.index or i == 1)) then
 					if (self.index != 1) then
@@ -56,7 +71,7 @@ if (CLIENT) then
 					end
 				end
 
-				surface.SetFont("ixSubTitleFont")
+				surface.SetFont("ixWeaponSelectFont")
 				local _, ty = surface.GetTextSize(v:GetPrintName():upper())
 				local scale = (1 - math.abs(theta*2))
 
@@ -68,7 +83,7 @@ if (CLIENT) then
 				matrix:Scale(Vector(1, 1, 0) * scale)
 
 				cam.PushModelMatrix(matrix)
-					ix.util.DrawText(v:GetPrintName():upper(), 2, ty/2, color, 0, 1, "ixSubTitleFont")
+					ix.util.DrawText(v:GetPrintName():upper(), 2, ty/2, color, 0, 1, "ixWeaponSelectFont")
 				cam.PopModelMatrix()
 
 				i = i + 1
@@ -118,23 +133,21 @@ if (CLIENT) then
 			bind = bind:lower()
 
 			if (bind:find("invprev") and pressed) then
-				self.index = self.index + 1
+				local oldIndex = self.index
+				self.index = math.min(self.index + 1, table.Count(client:GetWeapons()))
 
-				if (self.index > table.Count(client:GetWeapons())) then
-					self.index = 1
+				if (self.alpha == 0 or oldIndex != self.index) then
+					self:OnIndexChanged()
 				end
-
-				self:OnIndexChanged()
 
 				return true
 			elseif (bind:find("invnext") and pressed) then
-				self.index = self.index - 1
+				local oldIndex = self.index
+				self.index = math.max(self.index - 1, 1)
 
-				if (self.index < 1) then
-					self.index = table.Count(client:GetWeapons())
+				if (self.alpha == 0 or oldIndex != self.index) then
+					self:OnIndexChanged()
 				end
-
-				self:OnIndexChanged()
 
 				return true
 			elseif (bind:find("slot") and pressed) then
@@ -154,6 +167,12 @@ if (CLIENT) then
 
 				return true
 			end
+		end
+	end
+
+	function PLUGIN:ShouldPopulateEntityInfo(entity)
+		if (self.alpha > 0) then
+			return false
 		end
 	end
 end

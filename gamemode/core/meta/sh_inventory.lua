@@ -5,6 +5,7 @@ META.slots = META.slots or {}
 META.w = META.w or 4
 META.h = META.h or 4
 META.vars = META.vars or {}
+META.receivers = META.receivers or {}
 
 function META:GetID()
 	return self.id or 0
@@ -80,6 +81,14 @@ function META:PrintAll()
 	print("------------------------")
 end
 
+function META:GetOwner()
+	for _, v in ipairs(player.GetAll()) do
+		if (v:GetCharacter() and v:GetCharacter().id == self.owner) then
+			return v
+		end
+	end
+end
+
 function META:SetOwner(owner, fullUpdate)
 	if (type(owner) == "Player" and owner:GetNetVar("char")) then
 		owner = owner:GetNetVar("char")
@@ -105,6 +114,19 @@ function META:SetOwner(owner, fullUpdate)
 	end
 
 	self.owner = owner
+end
+
+function META:OnCheckAccess(client)
+	local bAccess = false
+
+	for _, v in ipairs(self:GetReceivers()) do
+		if (v == client) then
+			bAccess = true
+			break
+		end
+	end
+
+	return bAccess
 end
 
 function META:CanItemFit(x, y, w, h, item2)
@@ -189,7 +211,7 @@ function META:GetItemAt(x, y)
 	end
 end
 
-function META:Remove(id, noReplication, noDelete)
+function META:Remove(id, bNoReplication, bNoDelete, bTransferring)
 	local x2, y2
 
 	for x = 1, self.w do
@@ -207,18 +229,22 @@ function META:Remove(id, noReplication, noDelete)
 		end
 	end
 
-	if (SERVER and !noReplication) then
-		local receiver = self:GetReceiver()
+	if (SERVER and !bNoReplication) then
+		local receivers = self:GetReceivers()
 
-		if (type(receiver) == "Player" and IsValid(receiver)) then
-			netstream.Start(receiver, "invRm", id, self:GetID())
-		else
-			netstream.Start(receiver, "invRm", id, self:GetID(), self.owner)
+		if (istable(receivers)) then
+			net.Start("ixInventoryRemove")
+				net.WriteUInt(id, 32)
+				net.WriteUInt(self:GetID(), 32)
+			net.Send(receivers)
 		end
 
-		hook.Run("InventoryItemRemoved", self, ix.item.instances[id])
+		-- we aren't removing the item - we're transferring it to another inventory
+		if (!bTransferring) then
+			hook.Run("InventoryItemRemoved", self, ix.item.instances[id])
+		end
 
-		if (!noDelete) then
+		if (!bNoDelete) then
 			local item = ix.item.instances[id]
 
 			if (item and item.OnRemoved) then
@@ -236,12 +262,26 @@ function META:Remove(id, noReplication, noDelete)
 	return x2, y2
 end
 
-function META:GetReceiver()
-	for _, v in ipairs(player.GetAll()) do
-		if (v:GetChar() and v:GetChar().id == self.owner) then
-			return v
+function META:AddReceiver(client)
+	self.receivers[client] = true
+end
+
+function META:RemoveReceiver(client)
+	self.receivers[client] = nil
+end
+
+function META:GetReceivers()
+	local result = {}
+
+	if (self.receivers) then
+		for k, _ in pairs(self.receivers) do
+			if (IsValid(k) and k:IsPlayer()) then
+				result[#result + 1] = k
+			end
 		end
 	end
+
+	return result
 end
 
 function META:GetItemCount(uniqueID, onlyMain)
@@ -261,7 +301,19 @@ function META:GetItemsByUniqueID(uniqueID, onlyMain)
 
 	for _, v in pairs(self:GetItems(onlyMain)) do
 		if (v.uniqueID == uniqueID) then
-			table.insert(items, v)
+			items[#items + 1] = v
+		end
+	end
+
+	return items
+end
+
+function META:GetItemsByBase(baseID, bOnlyMain)
+	local items = {}
+
+	for _, v in pairs(self:GetItems(bOnlyMain)) do
+		if (v.base == baseID) then
+			items[#items + 1] = v
 		end
 	end
 
@@ -281,7 +333,7 @@ function META:GetItemsByID(id, onlyMain)
 
 	for _, v in pairs(self:GetItems(onlyMain)) do
 		if (v.id == id) then
-			table.insert(items, v)
+			items[#items + 1] = v
 		end
 	end
 
@@ -294,7 +346,7 @@ function META:GetItems(onlyMain)
 
 	for _, v in pairs(self.slots) do
 		for _, v2 in pairs(v) do
-			if (v2 and !items[v2.id]) then
+			if (istable(v2) and !items[v2.id]) then
 				items[v2.id] = v2
 
 				v2.data = v2.data or {}
@@ -325,7 +377,7 @@ function META:GetBags()
 
 				if (!table.HasValue(invs, isBag)) then
 					if (isBag and isBag != self:GetID()) then
-						table.insert(invs, isBag)
+						invs[#invs + 1] = isBag
 					end
 				end
 			end
@@ -363,6 +415,25 @@ function META:HasItem(targetID, data)
 	return false
 end
 
+function META:HasItems(targetIDs)
+	local items = self:GetItems()
+	local count = #targetIDs -- assuming array
+	targetIDs = table.Copy(targetIDs)
+
+	for _, v in pairs(items) do
+		for k, targetID in ipairs(targetIDs) do
+			if (v.uniqueID == targetID) then
+				table.remove(targetIDs, k)
+				count = count - 1
+
+				break
+			end
+		end
+	end
+
+	return count <= 0, targetIDs
+end
+
 function META:HasItemOfBase(baseID, data)
 	local items = self:GetItems()
 
@@ -392,25 +463,23 @@ function META:HasItemOfBase(baseID, data)
 end
 
 if (SERVER) then
-	function META:SendSlot(x, y, item, receiver)
-		receiver = receiver or self:GetReceiver()
-		local sendData = item and item.data and table.Count(item.data) > 0 and item.data or nil
+	function META:SendSlot(x, y, item)
+		local receivers = self:GetReceivers()
+		local sendData = item and item.data and table.Count(item.data) > 0 and item.data or {}
 
-		if (type(receiver) == "Player" and IsValid(receiver)) then
-			netstream.Start(receiver, "invSet",
-				self:GetID(), x, y, item and item.uniqueID or nil, item and item.id or nil, nil, sendData, sendData and 1 or nil)
-		else
-			netstream.Start(receiver, "invSet",
-				self:GetID(), x, y, item and item.uniqueID or nil, item and item.id or nil, self.owner, sendData, sendData and 1 or nil)
-		end
+		net.Start("ixInventorySet")
+			net.WriteUInt(self:GetID(), 32)
+			net.WriteUInt(x, 6)
+			net.WriteUInt(y, 6)
+			net.WriteString(item and item.uniqueID or "")
+			net.WriteUInt(item and item.id or 0, 32)
+			net.WriteUInt(self.owner or 0, 32)
+			net.WriteTable(sendData)
+		net.Send(receivers)
 
 		if (item) then
-			if (type(receiver) == "table") then
-				for _, v in pairs(receiver) do
-					item:Call("OnSendData", v)
-				end
-			elseif (IsValid(receiver)) then
-				item:Call("OnSendData", receiver)
+			for _, v in pairs(receivers) do
+				item:Call("OnSendData", v)
 			end
 		end
 	end
@@ -418,133 +487,147 @@ if (SERVER) then
 	function META:Add(uniqueID, quantity, data, x, y, noReplication)
 		quantity = quantity or 1
 
-		if (quantity > 0) then
-			if (type(uniqueID) != "number" and quantity > 1) then
-				for _ = 1, quantity do
-					local bSuccess, error = self:Add(uniqueID, 1, data)
+		if (quantity < 1) then
+			return false, "noOwner"
+		end
 
-					if (!bSuccess) then
-						return false, error
-					end
+		if (!isnumber(uniqueID) and quantity > 1) then
+			for _ = 1, quantity do
+				local bSuccess, error = self:Add(uniqueID, 1, data)
+
+				if (!bSuccess) then
+					return false, error
 				end
-
-				return true
 			end
 
-			local targetInv = self
-			local bagInv
+			return true
+		end
 
-			if (type(uniqueID) == "number") then
-				local item = ix.item.instances[uniqueID]
+		local client = self.GetOwner and self:GetOwner() or nil
+		local item = isnumber(uniqueID) and ix.item.instances[uniqueID] or ix.item.list[uniqueID]
+		local targetInv = self
+		local bagInv
 
-				if (item) then
-					if (!x and !y) then
-						x, y, bagInv = self:FindEmptySlot(item.width, item.height)
+		if (!item) then
+			return false, "invalidItem"
+		end
+
+		if (isnumber(uniqueID)) then
+			local oldInvID = item.invID
+
+			if (!x and !y) then
+				x, y, bagInv = self:FindEmptySlot(item.width, item.height)
+			end
+
+			if (bagInv) then
+				targetInv = bagInv
+			end
+
+			-- we need to check for owner since the item instance already exists
+			if (!item.bAllowMultiCharacterInteraction and IsValid(client) and client:GetCharacter() and
+				item:GetPlayerID() == client:SteamID64() and item:GetCharacterID() != client:GetCharacter():GetID()) then
+				return false, "itemOwned"
+			end
+
+			if (hook.Run("CanTransferItem", item, ix.item.inventories[0], targetInv) == false) then
+				return false, "notAllowed"
+			end
+
+			if (x and y) then
+				targetInv.slots[x] = targetInv.slots[x] or {}
+				targetInv.slots[x][y] = true
+
+				item.gridX = x
+				item.gridY = y
+				item.invID = targetInv:GetID()
+
+				for x2 = 0, item.width - 1 do
+					local index = x + x2
+
+					for y2 = 0, item.height - 1 do
+						targetInv.slots[index] = targetInv.slots[index] or {}
+						targetInv.slots[index][y + y2] = item
 					end
-
-					if (bagInv) then
-						targetInv = bagInv
-					end
-
-					if (hook.Run("CanItemBeTransfered", item, ix.item.inventories[0], targetInv) == false) then
-						return false, "notAllowed"
-					end
-
-					if (x and y) then
-						targetInv.slots[x] = targetInv.slots[x] or {}
-						targetInv.slots[x][y] = true
-
-						item.gridX = x
-						item.gridY = y
-						item.invID = targetInv:GetID()
-
-						for x2 = 0, item.width - 1 do
-							local index = x + x2
-
-							for y2 = 0, item.height - 1 do
-								targetInv.slots[index] = targetInv.slots[index] or {}
-								targetInv.slots[index][y + y2] = item
-							end
-						end
-
-						if (!noReplication) then
-							targetInv:SendSlot(x, y, item)
-						end
-
-						if (!self.noSave) then
-							local query = mysql:Update("ix_items")
-								query:Update("inventory_id", targetInv:GetID())
-								query:Update("x", x)
-								query:Update("y", y)
-								query:Where("item_id", item.id)
-							query:Execute()
-						end
-
-						hook.Run("InventoryItemAdded", targetInv, item)
-
-						return x, y, targetInv:GetID()
-					else
-						return false, "noFit"
-					end
-				else
-					return false, "invalidIndex"
 				end
+
+				if (!noReplication) then
+					targetInv:SendSlot(x, y, item)
+				end
+
+				if (!self.noSave) then
+					local query = mysql:Update("ix_items")
+						query:Update("inventory_id", targetInv:GetID())
+						query:Update("x", x)
+						query:Update("y", y)
+						query:Where("item_id", item.id)
+					query:Execute()
+				end
+
+				hook.Run("InventoryItemAdded", ix.item.inventories[oldInvID], targetInv, item)
+
+				return x, y, targetInv:GetID()
 			else
-				local itemTable = ix.item.list[uniqueID]
-
-				if (!itemTable) then
-					return false, "invalidItem"
-				end
-
-				if (!x and !y) then
-					x, y, bagInv = self:FindEmptySlot(itemTable.width, itemTable.height)
-				end
-
-				if (bagInv) then
-					targetInv = bagInv
-				end
-
-				if (hook.Run("CanItemBeTransfered", itemTable, ix.item.inventories[0], targetInv) == false) then
-					return false, "notAllowed"
-				end
-
-				if (x and y) then
-					for x2 = 0, itemTable.width - 1 do
-						local index = x + x2
-
-						for y2 = 0, itemTable.height - 1 do
-							targetInv.slots[index] = targetInv.slots[index] or {}
-							targetInv.slots[index][y + y2] = true
-						end
-					end
-
-					ix.item.Instance(targetInv:GetID(), uniqueID, data, x, y, function(item)
-						item.gridX = x
-						item.gridY = y
-
-						for x2 = 0, item.width - 1 do
-							local index = x + x2
-
-							for y2 = 0, item.height - 1 do
-								targetInv.slots[index] = targetInv.slots[index] or {}
-								targetInv.slots[index][y + y2] = item
-							end
-						end
-
-						if (!noReplication) then
-							targetInv:SendSlot(x, y, item)
-						end
-
-						hook.Run("InventoryItemAdded", targetInv, item)
-					end)
-
-					return x, y, targetInv:GetID()
-				else
-					return false, "noFit"
-				end
+				return false, "noFit"
 			end
 		else
-			return false, "noOwner"
+			if (!x and !y) then
+				x, y, bagInv = self:FindEmptySlot(item.width, item.height)
+			end
+
+			if (bagInv) then
+				targetInv = bagInv
+			end
+
+			if (hook.Run("CanTransferItem", item, ix.item.inventories[0], targetInv) == false) then
+				return false, "notAllowed"
+			end
+
+			if (x and y) then
+				for x2 = 0, item.width - 1 do
+					local index = x + x2
+
+					for y2 = 0, item.height - 1 do
+						targetInv.slots[index] = targetInv.slots[index] or {}
+						targetInv.slots[index][y + y2] = true
+					end
+				end
+
+				local characterID
+				local playerID
+
+				if (self.owner) then
+					local character = ix.char.loaded[self.owner]
+
+					if (character) then
+						characterID = character.id
+						playerID = character.steamID
+					end
+				end
+
+				ix.item.Instance(targetInv:GetID(), uniqueID, data, x, y, function(newItem)
+					newItem.gridX = x
+					newItem.gridY = y
+
+					for x2 = 0, newItem.width - 1 do
+						local index = x + x2
+
+						for y2 = 0, newItem.height - 1 do
+							targetInv.slots[index] = targetInv.slots[index] or {}
+							targetInv.slots[index][y + y2] = newItem
+						end
+					end
+
+					if (!noReplication) then
+						targetInv:SendSlot(x, y, newItem)
+					end
+
+					hook.Run("InventoryItemAdded", nil, targetInv, newItem)
+				end, characterID, playerID)
+
+				return x, y, targetInv:GetID()
+			else
+				return false, "noFit"
+			end
 		end
 	end
 
@@ -553,14 +636,20 @@ if (SERVER) then
 
 		for x, items in pairs(self.slots) do
 			for y, item in pairs(items) do
-				if (item.gridX == x and item.gridY == y) then
+				if (istable(item) and item.gridX == x and item.gridY == y) then
 					slots[#slots + 1] = {x, y, item.uniqueID, item.id, item.data}
 				end
 			end
 		end
 
-		netstream.Start(receiver, "inv",
-			slots, self:GetID(), self.w, self.h, (receiver == nil or fullUpdate) and self.owner or nil, self.vars or {})
+		net.Start("ixInventorySync")
+			net.WriteTable(slots)
+			net.WriteUInt(self:GetID(), 32)
+			net.WriteUInt(self.w, 6)
+			net.WriteUInt(self.h, 6)
+			net.WriteType((receiver == nil or fullUpdate) and self.owner or nil)
+			net.WriteTable(self.vars or {})
+		net.Send(receiver)
 
 		for _, v in pairs(self:GetItems()) do
 			v:Call("OnSendData", receiver)

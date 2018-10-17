@@ -1,12 +1,19 @@
 
 if (SERVER) then
-	netstream.Hook("bizBuy", function(client, items)
+	util.AddNetworkString("ixBusinessBuy")
+	util.AddNetworkString("ixBusinessResponse")
+	util.AddNetworkString("ixShipmentUse")
+	util.AddNetworkString("ixShipmentOpen")
+
+	net.Receive("ixBusinessBuy", function(length, client)
+		local items = net.ReadTable()
+
 		if (client.ixNextBusiness and client.ixNextBusiness > CurTime()) then
 			client:NotifyLocalized("businessTooFast")
 			return
 		end
 
-		local char = client:GetChar()
+		local char = client:GetCharacter()
 
 		if (!char) then
 			return
@@ -51,14 +58,19 @@ if (SERVER) then
 			table.insert(shipments, entity)
 			char:SetVar("charEnts", shipments, true)
 
-			netstream.Start(client, "bizResp")
-			hook.Run("OnCreateShipment", client, entity)
+			net.Start("ixBusinessResponse")
+			net.Send(client)
+
+			hook.Run("CreateShipment", client, entity)
 
 			client.ixNextBusiness = CurTime() + 0.5
 		end
 	end)
 
-	netstream.Hook("shpUse", function(client, uniqueID, drop)
+	net.Receive("ixShipmentUse", function(length, client)
+		local uniqueID = net.ReadString()
+		local drop = net.ReadBool()
+
 		local entity = client.ixShipment
 		local itemTable = ix.item.list[uniqueID]
 
@@ -80,7 +92,7 @@ if (SERVER) then
 					ix.item.Spawn(uniqueID, entity:GetPos() + Vector(0, 0, 16), function(item, itemEntity)
 						if (IsValid(client)) then
 							itemEntity.ixSteamID = client:SteamID()
-							itemEntity.ixCharID = client:GetChar():GetID()
+							itemEntity.ixCharID = client:GetCharacter():GetID()
 						end
 					end)
 				else
@@ -91,7 +103,7 @@ if (SERVER) then
 					end
 				end
 
-				hook.Run("OnTakeShipmentItem", client, uniqueID, amount)
+				hook.Run("ShipmentItemTaken", client, uniqueID, amount)
 
 				entity.items[uniqueID] = entity.items[uniqueID] - 1
 
@@ -103,23 +115,11 @@ if (SERVER) then
 		end
 	end)
 else
-	netstream.Hook("openShp", function(entity, items)
+	net.Receive("ixShipmentOpen", function()
+		local entity = net.ReadEntity()
+		local items = net.ReadTable()
+
 		ix.gui.shipment = vgui.Create("ixShipment")
 		ix.gui.shipment:SetItems(entity, items)
-	end)
-
-	netstream.Hook("takeShp", function(name, amount)
-		if (ix.gui.shipment and ix.gui.shipment:IsVisible()) then
-			local item = ix.gui.shipment.itemPanel[name]
-
-			if (item) then
-				item.amount = item.amount - 1
-				item:Update(item.amount)
-
-				if (item.amount <= 0) then
-					item:Remove()
-				end
-			end
-		end
 	end)
 end

@@ -28,6 +28,28 @@ function ITEM:GetDescription()
 	return L(self.description or "noDesc")
 end
 
+function ITEM:GetModel()
+	return self.model
+end
+
+function ITEM:GetSkin()
+	return self.skin or 0
+end
+
+function ITEM:GetMaterial()
+	return nil
+end
+
+-- returns the ID of the owning character if there is one
+function ITEM:GetCharacterID()
+	return self.characterID
+end
+
+-- returns the steamid64 of the owning player if there is one
+function ITEM:GetPlayerID()
+	return self.playerID
+end
+
 -- Dev Buddy. You don't have to print the item data with PrintData();
 function ITEM:Print(detail)
 	if (detail == true) then
@@ -69,7 +91,7 @@ function ITEM:GetOwner()
 	local inventory = ix.item.inventories[self.invID]
 
 	if (inventory) then
-		return (inventory.GetReceiver and inventory:GetReceiver())
+		return inventory.GetOwner and inventory:GetOwner()
 	end
 
 	local id = self:GetID()
@@ -100,10 +122,12 @@ function ITEM:SetData(key, value, receivers, noSave, noCheckEntity)
 		end
 	end
 
-	if (receivers != false) then
-		if (receivers or self:GetOwner()) then
-			netstream.Start(receivers or self:GetOwner(), "invData", self:GetID(), key, value)
-		end
+	if (receivers != false and (receivers or self:GetOwner())) then
+		net.Start("ixInventoryData")
+			net.WriteUInt(self:GetID(), 32)
+			net.WriteString(key)
+			net.WriteType(value)
+		net.Send(receivers or self:GetOwner())
 	end
 
 	if (!noSave and ix.db) then
@@ -214,14 +238,13 @@ function ITEM:Remove(bNoReplication, bNoDelete)
 			entity:Remove()
 		end
 
-		local receiver = inv.GetReceiver and inv:GetReceiver()
+		local receivers = inv.GetReceivers and inv:GetReceivers()
 
-		if (self.invID != 0) then
-			if (IsValid(receiver) and receiver:GetChar() and inv.owner == receiver:GetChar():GetID()) then
-				netstream.Start(receiver, "invRm", self.id, inv:GetID())
-			else
-				netstream.Start(receiver, "invRm", self.id, inv:GetID(), inv.owner)
-			end
+		if (self.invID != 0 and istable(receivers)) then
+			net.Start("ixInventoryRemove")
+				net.WriteUInt(self.id, 32)
+				net.WriteUInt(self.invID, 32)
+			net.Send(receivers)
 		end
 
 		if (!bNoDelete) then
@@ -276,7 +299,7 @@ if (SERVER) then
 
 			if (IsValid(client)) then
 				entity.ixSteamID = client:SteamID()
-				entity.ixCharID = client:GetChar():GetID()
+				entity.ixCharID = client:GetCharacter():GetID()
 			end
 
 			-- Return the newly created entity.
@@ -295,21 +318,45 @@ if (SERVER) then
 		local inventory = ix.item.inventories[invID]
 		local curInv = ix.item.inventories[self.invID or 0]
 
-		if (hook.Run("CanItemBeTransfered", self, curInv, inventory) == false) then
+		if (curInv and !IsValid(client)) then
+			client = curInv.GetOwner and curInv:GetOwner() or nil
+		end
+
+		-- check if this item doesn't belong to another one of this player's characters
+		local itemPlayerID = self:GetPlayerID()
+		local itemCharacterID = self:GetCharacterID()
+
+		if (!self.bAllowMultiCharacterInteraction and IsValid(client) and client:GetCharacter()) then
+			local playerID = client:SteamID64()
+			local characterID = client:GetCharacter():GetID()
+
+			if (itemPlayerID and itemCharacterID) then
+				if (itemPlayerID == playerID and itemCharacterID != characterID) then
+					return false, "itemOwned"
+				end
+			else
+				self.characterID = characterID
+				self.playerID = playerID
+
+				local query = mysql:Update("ix_items")
+					query:Update("character_id", characterID)
+					query:Update("player_id", playerID)
+					query:Where("item_id", self:GetID())
+				query:Execute()
+			end
+		end
+
+		if (hook.Run("CanTransferItem", self, curInv, inventory) == false) then
 			return false, "notAllowed"
 		end
 
 		local authorized = false
 
-		if (curInv and !IsValid(client)) then
-			client = (curInv.GetReceiver and curInv:GetReceiver() or nil)
-		end
-
 		if (inventory and inventory.OnAuthorizeTransfer and inventory:OnAuthorizeTransfer(client, curInv, self)) then
 			authorized = true
 		end
 
-		if (!authorized and self.OnCanBeTransfered and self:OnCanBeTransfered(curInv, inventory) == false) then
+		if (!authorized and self.CanTransfer and self:CanTransfer(curInv, inventory) == false) then
 			return false, "notAllowed"
 		end
 
@@ -335,31 +382,32 @@ if (SERVER) then
 
 				if (status) then
 					if (self.invID > 0 and prevID != 0) then
-						curInv:Remove(self.id, false, true)
+						-- we are transferring this item from one inventory to another
+						curInv:Remove(self.id, false, true, true)
 						self.invID = invID
 
-						if (self.OnTransfered) then
-							self:OnTransfered(curInv, inventory)
+						if (self.OnTransferred) then
+							self:OnTransferred(curInv, inventory)
 						end
-						hook.Run("OnItemTransfered", self, curInv, inventory)
 
+						hook.Run("OnItemTransferred", self, curInv, inventory)
 						return true
 					elseif (self.invID > 0 and prevID == 0) then
-						inventory = ix.item.inventories[0]
-						inventory[self.id] = nil
+						-- we are transferring this item from the world to an inventory
+						ix.item.inventories[0][self.id] = nil
 
-						if (self.OnTransfered) then
-							self:OnTransfered(curInv, inventory)
+						if (self.OnTransferred) then
+							self:OnTransferred(curInv, inventory)
 						end
 
-						hook.Run("OnItemTransfered", self, curInv, inventory)
-
+						hook.Run("OnItemTransferred", self, curInv, inventory)
 						return true
 					end
 				else
 					return false, result
 				end
 			elseif (IsValid(client)) then
+				-- we are transferring this item from an inventory to the world
 				self.invID = 0
 				curInv:Remove(self.id, false, true)
 
@@ -368,19 +416,20 @@ if (SERVER) then
 					query:Where("item_id", self.id)
 				query:Execute()
 
-				if (isLogical != true) then
-					return self:Spawn(client)
-				else
-					inventory = ix.item.inventories[0]
-					inventory[self:GetID()] = self
+				inventory = ix.item.inventories[0]
+				inventory[self:GetID()] = self
 
-					if (self.OnTransfered) then
-						self:OnTransfered(curInv, inventory)
-					end
-					hook.Run("OnItemTransfered", self, curInv, inventory)
-
-					return true
+				if (self.OnTransferred) then
+					self:OnTransferred(curInv, inventory)
 				end
+
+				hook.Run("OnItemTransferred", self, curInv, inventory)
+
+				if (!isLogical) then
+					return self:Spawn(client)
+				end
+
+				return true
 			else
 				return false, "noOwner"
 			end

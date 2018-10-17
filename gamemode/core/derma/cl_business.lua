@@ -36,12 +36,11 @@ function PANEL:SetItem(itemTable)
 	self.icon:Dock(FILL)
 	self.icon:DockMargin(5, 5, 5, 10)
 	self.icon:InvalidateLayout(true)
-	self.icon:SetModel(itemTable.model, itemTable.skin or 0)
-	self.icon:SetTooltip(
-		Format(ix.config.itemFormat,
-		itemTable.GetName and itemTable:GetName() or L(itemTable.name), itemTable:GetDescription() or "")
-	)
-	self.icon.itemID = true
+	self.icon:SetModel(itemTable:GetModel(), itemTable:GetSkin())
+	self.icon:SetHelixTooltip(function(tooltip)
+		ix.hud.PopulateItemTooltip(tooltip, itemTable)
+	end)
+	self.icon.itemTable = itemTable
 	self.icon.DoClick = function(this)
 		if (!IsValid(ix.gui.checkout) and (this.nextClick or 0) < CurTime()) then
 			local parent = ix.gui.business
@@ -281,9 +280,11 @@ function PANEL:Init()
 			return surface.PlaySound("buttons/button11.wav")
 		end
 
-		netstream.Start("bizBuy", self.itemData)
-		self.itemData = {}
+		net.Start("ixBusinessBuy")
+			net.WriteTable(self.itemData)
+		net.SendToServer()
 
+		self.itemData = {}
 		self.items:Remove()
 		self.data:Remove()
 		self.buy:Remove()
@@ -301,7 +302,7 @@ function PANEL:Init()
 		self.text:SetText(L"purchasing")
 		self.text:SetFont("ixMediumFont")
 
-		netstream.Hook("bizResp", function()
+		net.Receive("ixBusinessResponse", function()
 			if (IsValid(self)) then
 				self.text:SetText(L"buyGood")
 				self.done = true
@@ -372,7 +373,7 @@ end
 
 function PANEL:OnQuantityChanged()
 	local price = 0
-	local money = LocalPlayer():GetChar():GetMoney()
+	local money = LocalPlayer():GetCharacter():GetMoney()
 	local valid = 0
 
 	for k, v in pairs(self.itemData) do
@@ -407,8 +408,8 @@ function PANEL:SetCart(items)
 			slot.icon = slot:Add("SpawnIcon")
 			slot.icon:SetPos(2, 2)
 			slot.icon:SetSize(32, 32)
-			slot.icon:SetModel(itemTable.model)
-			slot.icon:SetTooltip("")
+			slot.icon:SetModel(itemTable:GetModel())
+			slot.icon:SetTooltip()
 
 			slot.name = slot:Add("DLabel")
 			slot.name:SetPos(40, 2)
@@ -461,8 +462,8 @@ vgui.Register("ixBusinessCheckout", PANEL, "DFrame")
 
 hook.Add("CreateMenuButtons", "ixBusiness", function(tabs)
 	if (hook.Run("BuildBusinessMenu", tabs) != false) then
-		tabs["business"] = function(panel)
-			panel:Add("ixBusiness")
+		tabs["business"] = function(container)
+			container:Add("ixBusiness")
 		end
 	end
 end)

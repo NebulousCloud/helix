@@ -46,6 +46,7 @@ function PLUGIN:LoadData()
 					query:Callback(function(result)
 						if (istable(result)) then
 							local loadedItems = {}
+							local bagInventories = {}
 
 							for _, v in ipairs(result) do
 								local itemID = tonumber(v.item_id)
@@ -60,8 +61,19 @@ function PLUGIN:LoadData()
 									item:Spawn(position).ixItemID = itemID
 
 									item.invID = 0
-									table.insert(loadedItems, item)
+									loadedItems[#loadedItems + 1] = item
+
+									if (item.isBag) then
+										local invType = ix.item.inventoryTypes[uniqueID]
+										bagInventories[item:GetData("id")] = {invType.w, invType.h}
+									end
 								end
+							end
+
+							-- we need to manually restore bag inventories in the world since they don't have a current owner
+							-- that it can automatically restore along with the character when it's loaded
+							if (table.Count(bagInventories) > 0) then
+								ix.item.RestoreInv(bagInventories)
 							end
 
 							hook.Run("OnSavedItemLoaded", loadedItems) -- when you have something in the dropped item.

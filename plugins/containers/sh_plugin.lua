@@ -10,7 +10,7 @@ ix.util.Include("sh_definitions.lua")
 
 for k, v in pairs(PLUGIN.definitions) do
 	if (v.name and v.width and v.height) then
-		ix.item.RegisterInv("container" .. v.name, v.width, v.height)
+		ix.item.RegisterInv("container:" .. k:lower(), v.width, v.height)
 	else
 		ErrorNoHalt("[Helix] Container for '"..k.."' is missing all inventory information!\n")
 		PLUGIN.definitions[k] = nil
@@ -27,7 +27,10 @@ ix.config.Add("containerOpenTime", 0.7, "How long it takes to open a container."
 })
 
 if (SERVER) then
+	util.AddNetworkString("ixContainerPassword")
+
 	function PLUGIN:PlayerSpawnedProp(client, model, entity)
+		model = tostring(model):lower()
 		local data = self.definitions[model:lower()]
 
 		if (data) then
@@ -39,7 +42,7 @@ if (SERVER) then
 			container:SetModel(model)
 			container:Spawn()
 
-			ix.item.NewInv(0, "container" .. data.name, function(inventory)
+			ix.item.NewInv(0, "container:" .. model, function(inventory)
 				-- we'll technically call this a bag since we don't want other bags to go inside
 				inventory.vars.isBag = true
 				inventory.vars.isContainer = true
@@ -63,8 +66,18 @@ if (SERVER) then
 
 		for _, v in ipairs(ents.FindByClass("ix_container")) do
 			if (hook.Run("CanSaveContainer", v, v:GetInventory()) != false) then
-				if (v:GetInventory()) then
-					data[#data + 1] = {v:GetPos(), v:GetAngles(), v:GetNetVar("id"), v:GetModel(), v.password}
+				local inventory = v:GetInventory()
+
+				if (inventory) then
+					data[#data + 1] = {
+						v:GetPos(),
+						v:GetAngles(),
+						inventory:GetID(),
+						v:GetModel(),
+						v.password,
+						v.name,
+						v:GetMoney()
+					}
 				end
 			else
 				local index = v:GetNetVar("id")
@@ -86,7 +99,7 @@ if (SERVER) then
 		self:SaveContainer()
 	end
 
-	function PLUGIN:ContainerItemRemoved(entity, inventory)
+	function PLUGIN:ContainerRemoved(entity, inventory)
 		self:SaveContainer()
 	end
 
@@ -109,6 +122,16 @@ if (SERVER) then
 					if (v[5]) then
 						entity.password = v[5]
 						entity:SetNetVar("locked", true)
+						entity.Sessions = {}
+					end
+
+					if (v[6]) then
+						entity.name = v[6]
+						entity:SetNetVar("name", v[6])
+					end
+
+					if (v[7]) then
+						entity:SetMoney(v[7])
 					end
 
 					ix.item.RestoreInv(v[3], data2.width, data2.height, function(inventory)
@@ -130,10 +153,12 @@ if (SERVER) then
 		end
 	end
 
-	netstream.Hook("invLock", function(client, entity, password)
-		local dist = entity:GetPos():Distance(client:GetPos())
+	net.Receive("ixContainerPassword", function(length, client)
+		local entity = net.ReadEntity()
+		local password = net.ReadString()
+		local dist = entity:GetPos():DistToSqr(client:GetPos())
 
-		if (dist < 128 and password) then
+		if (dist < 16384 and password) then
 			if (entity.password and entity.password == password) then
 				entity:OpenInventory(client)
 			else
@@ -141,41 +166,143 @@ if (SERVER) then
 			end
 		end
 	end)
+
+	ix.log.AddType("containerPassword", function(client, ...)
+		local arg = {...}
+		return string.format("%s has %s the password for '%s'.", client:Name(), arg[3] and "set" or "removed", arg[1], arg[2])
+	end)
+
+	ix.log.AddType("containerName", function(client, ...)
+		local arg = {...}
+
+		if (arg[3]) then
+			return string.format("%s has set container %d name to '%s'.", client:Name(), arg[2], arg[1])
+		else
+			return string.format("%s has removed container %d name.", client:Name(), arg[2])
+		end
+	end)
+
+	ix.log.AddType("openContainer", function(client, ...)
+		local arg = {...}
+		return string.format("%s opened the '%s' #%d container.", client:Name(), arg[1], arg[2])
+	end, FLAG_NORMAL)
+
+	ix.log.AddType("closeContainer", function(client, ...)
+		local arg = {...}
+		return string.format("%s closed the '%s' #%d container.", client:Name(), arg[1], arg[2])
+	end, FLAG_NORMAL)
 else
-	netstream.Hook("invLock", function(entity)
+	net.Receive("ixContainerPassword", function(length)
+		local entity = net.ReadEntity()
+
 		Derma_StringRequest(
 			L("containerPasswordWrite"),
 			L("containerPasswordWrite"),
 			"",
 			function(val)
-				netstream.Start("invLock", entity, val)
+				net.Start("ixContainerPassword")
+					net.WriteEntity(entity)
+					net.WriteString(val)
+				net.SendToServer()
 			end
 		)
 	end)
 end
 
-ix.command.Add("ContainerSetPassword", {
-	description = "@cmdContainerSetPassword",
-	adminOnly = true,
-	arguments = ix.type.text,
-	OnRun = function(self, client, password)
-		local trace = client:GetEyeTraceNoCursor()
-		local ent = trace.Entity
+properties.Add("container_setpassword", {
+	MenuLabel = "Set Password",
+	Order = 400,
+	MenuIcon = "icon16/lock_edit.png",
 
-		if (ent and ent:IsValid()) then
-			if (password:len() != 0) then
-				ent:SetNetVar("locked", true)
-				ent.password = password
+	Filter = function(self, entity, client)
+		if (entity:GetClass() != "ix_container") then return false end
+		if (!gamemode.Call("CanProperty", client, "container_setpassword", entity)) then return false end
 
-				return "@containerPassword", password
-			else
-				ent:SetNetVar("locked", nil)
-				ent.password = nil
+		return true
+	end,
 
-				return "@containerPasswordRemove"
-			end
+	Action = function(self, entity)
+		Derma_StringRequest(L("containerPasswordWrite"), "", "", function(text)
+			self:MsgStart()
+				net.WriteEntity(entity)
+				net.WriteString(text)
+			self:MsgEnd()
+		end)
+	end,
+
+	Receive = function(self, length, client)
+		local entity = net.ReadEntity()
+
+		if (!IsValid(entity)) then return end
+		if (!self:Filter(entity, client)) then return end
+
+		local password = net.ReadString()
+
+		entity.Sessions = {}
+
+		if (password:len() != 0) then
+			entity:SetNetVar("locked", true)
+			entity.password = password
+
+			client:NotifyLocalized("containerPassword", password)
 		else
-			return "@invalid", "Entity"
+			entity:SetNetVar("locked", nil)
+			entity.password = nil
+
+			client:NotifyLocalized("containerPasswordRemove")
 		end
+
+		local definition = PLUGIN.definitions[entity:GetModel():lower()]
+		local name = entity:GetNetVar("name", definition.name)
+		local inventory = entity:GetInventory()
+
+		ix.log.Add(client, "containerPassword", name, inventory:GetID(), password:len() != 0)
+	end
+})
+
+properties.Add("container_setname", {
+	MenuLabel = "Set Name",
+	Order = 400,
+	MenuIcon = "icon16/tag_blue_edit.png",
+
+	Filter = function(self, entity, client)
+		if (entity:GetClass() != "ix_container") then return false end
+		if (!gamemode.Call("CanProperty", client, "container_setname", entity)) then return false end
+
+		return true
+	end,
+
+	Action = function(self, entity)
+		Derma_StringRequest(L("containerNameWrite"), "", "", function(text)
+			self:MsgStart()
+				net.WriteEntity(entity)
+				net.WriteString(text)
+			self:MsgEnd()
+		end)
+	end,
+
+	Receive = function(self, length, client)
+		local entity = net.ReadEntity()
+
+		if (!IsValid(entity)) then return end
+		if (!self:Filter(entity, client)) then return end
+
+		local name = net.ReadString()
+
+		if (name:len() != 0) then
+			entity:SetNetVar("name", name)
+			entity.name = name
+
+			client:NotifyLocalized("containerName", name)
+		else
+			entity:SetNetVar("name", nil)
+			entity.name = nil
+
+			client:NotifyLocalized("containerNameRemove")
+		end
+
+		local inventory = entity:GetInventory()
+
+		ix.log.Add(client, "containerName", name, inventory:GetID(), name:len() != 0)
 	end
 })

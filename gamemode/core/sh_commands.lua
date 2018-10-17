@@ -3,7 +3,11 @@ ix.command.Add("Roll", {
 	description = "@cmdRoll",
 	arguments = bit.bor(ix.type.number, ix.type.optional),
 	OnRun = function(self, client, maximum)
-		ix.chat.Send(client, "roll", math.random(0, math.min(maximum or 100, 100)))
+		maximum = math.Clamp(maximum or 100, 0, 1000000)
+
+		ix.chat.Send(client, "roll", tostring(math.random(0, maximum)), nil, nil, {
+			max = maximum
+		})
 	end
 })
 
@@ -21,7 +25,7 @@ ix.command.Add("PM", {
 		end
 
 		if ((client.ixNextPM or 0) < CurTime()) then
-			ix.chat.Send(client, "pm", message, false, {client, target})
+			ix.chat.Send(client, "pm", message, false, {client, target}, {target = target})
 
 			client.ixNextPM = CurTime() + 0.5
 			target.ixLastPM = client
@@ -36,7 +40,7 @@ ix.command.Add("Reply", {
 		local target = client.ixLastPM
 
 		if (IsValid(target) and (client.ixNextPM or 0) < CurTime()) then
-			ix.chat.Send(client, "pm", message, false, {client, target})
+			ix.chat.Send(client, "pm", message, false, {client, target}, {target = target})
 			client.ixNextPM = CurTime() + 0.5
 		end
 	end
@@ -44,9 +48,9 @@ ix.command.Add("Reply", {
 
 ix.command.Add("SetVoicemail", {
 	description = "@cmdSetVoicemail",
-	arguments = ix.type.text,
+	arguments = bit.bor(ix.type.text, ix.type.optional),
 	OnRun = function(self, client, message)
-		if (message:find("%S")) then
+		if (isstring(message) or message:find("%S")) then
 			client:SetData("vm", message:sub(1, 240))
 			return "@vmSet"
 		else
@@ -58,7 +62,7 @@ ix.command.Add("SetVoicemail", {
 
 ix.command.Add("CharGiveFlag", {
 	description = "@cmdCharGiveFlag",
-	adminOnly = true,
+	superAdminOnly = true,
 	arguments = {
 		ix.type.character,
 		bit.bor(ix.type.string, ix.type.optional)
@@ -87,7 +91,7 @@ ix.command.Add("CharGiveFlag", {
 
 ix.command.Add("CharTakeFlag", {
 	description = "@cmdCharTakeFlag",
-	adminOnly = true,
+	superAdminOnly = true,
 	arguments = {
 		ix.type.character,
 		bit.bor(ix.type.string, ix.type.optional)
@@ -108,7 +112,7 @@ ix.command.Add("ToggleRaise", {
 	description = "@cmdToggleRaise",
 	OnRun = function(self, client, arguments)
 		if (!timer.Exists("ixToggleRaise" .. client:SteamID())) then
-			timer.Create("ixToggleRaise" .. client:SteamID(), ix.config.Get("wepRaiseTime"), 1, function()
+			timer.Create("ixToggleRaise" .. client:SteamID(), ix.config.Get("weaponRaiseTime"), 1, function()
 				client:ToggleWepRaised()
 			end)
 		end
@@ -117,7 +121,7 @@ ix.command.Add("ToggleRaise", {
 
 ix.command.Add("CharSetModel", {
 	description = "@cmdCharSetModel",
-	adminOnly = true,
+	superAdminOnly = true,
 	arguments = {
 		ix.type.character,
 		ix.type.string
@@ -189,7 +193,7 @@ ix.command.Add("CharSetAttribute", {
 			end
 		end
 
-		return "@attributeNotFound", attributeName
+		return "@attributeNotFound"
 	end
 })
 
@@ -209,7 +213,7 @@ ix.command.Add("CharAddAttribute", {
 			end
 		end
 
-		return "@attributeNotFound", attributeName
+		return "@attributeNotFound"
 	end
 })
 
@@ -235,7 +239,7 @@ ix.command.Add("CharSetName", {
 
 ix.command.Add("CharGiveItem", {
 	description = "@cmdCharGiveItem",
-	adminOnly = true,
+	superAdminOnly = true,
 	arguments = {
 		ix.type.character,
 		ix.type.string,
@@ -346,85 +350,98 @@ ix.command.Add("CharUnban", {
 	end
 })
 
-ix.command.Add("GiveMoney", {
-	description = "@cmdGiveMoney",
-	arguments = ix.type.number,
-	OnRun = function(self, client, amount)
-		amount = math.floor(amount)
+do
+	hook.Add("InitializedConfig", "ixMoneyCommands", function()
+		local MONEY_NAME = string.gsub(ix.util.ExpandCamelCase(ix.currency.plural), "%s", "")
 
-		if (amount <= 0) then
-			return L("invalidArg", client, 1)
-		end
+		ix.command.Add("Give" .. MONEY_NAME, {
+			alias = {"GiveMoney"},
+			description = "@cmdGiveMoney",
+			arguments = ix.type.number,
+			OnRun = function(self, client, amount)
+				amount = math.floor(amount)
 
-		local data = {}
-			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector() * 96
-			data.filter = client
-		local target = util.TraceLine(data).Entity
+				if (amount <= 0) then
+					return L("invalidArg", client, 1)
+				end
 
-		if (IsValid(target) and target:IsPlayer() and target:GetCharacter()) then
-			if (!client:GetCharacter():HasMoney(amount)) then
-				return
+				local data = {}
+					data.start = client:GetShootPos()
+					data.endpos = data.start + client:GetAimVector() * 96
+					data.filter = client
+				local target = util.TraceLine(data).Entity
+
+				if (IsValid(target) and target:IsPlayer() and target:GetCharacter()) then
+					if (!client:GetCharacter():HasMoney(amount)) then
+						return
+					end
+
+					target:GetCharacter():GiveMoney(amount)
+					client:GetCharacter():TakeMoney(amount)
+
+					target:NotifyLocalized("moneyTaken", ix.currency.Get(amount))
+					client:NotifyLocalized("moneyGiven", ix.currency.Get(amount))
+				end
 			end
+		})
 
-			target:GetCharacter():GiveMoney(amount)
-			client:GetCharacter():TakeMoney(amount)
+		ix.command.Add("CharSet" .. MONEY_NAME, {
+			alias = {"CharSetMoney"},
+			description = "@cmdCharSetMoney",
+			superAdminOnly = true,
+			arguments = {
+				ix.type.character,
+				ix.type.number
+			},
+			OnRun = function(self, client, target, amount)
+				amount = math.Round(amount)
 
-			target:NotifyLocalized("moneyTaken", ix.currency.Get(amount))
-			client:NotifyLocalized("moneyGiven", ix.currency.Get(amount))
-		end
-	end
-})
+				if (amount <= 0) then
+					return "@invalidArg", 2
+				end
 
-ix.command.Add("CharSetMoney", {
-	description = "@cmdCharSetMoney",
-	adminOnly = true,
-	arguments = {
-		ix.type.character,
-		ix.type.number
-	},
-	OnRun = function(self, client, target, amount)
-		if (amount <= 0) then
-			return "@invalidArg", 2
-		end
+				target:SetMoney(amount)
+				client:NotifyLocalized("setMoney", target:GetName(), ix.currency.Get(amount))
+			end
+		})
 
-		amount = math.Round(amount)
+		ix.command.Add("Drop" .. MONEY_NAME, {
+			alias = {"DropMoney"},
+			description = "@cmdDropMoney",
+			arguments = ix.type.number,
+			OnRun = function(self, client, amount)
+				amount = math.Round(amount)
 
-		target:SetMoney(amount)
-		client:NotifyLocalized("setMoney", target:GetName(), ix.currency.Get(amount))
-	end
-})
+				if (amount <= 0) then
+					return "@invalidArg", 1
+				end
 
-ix.command.Add("DropMoney", {
-	description = "@cmdDropMoney",
-	arguments = ix.type.number,
-	OnRun = function(self, client, amount)
-		if (amount <= 0) then
-			return "@invalidArg", 1
-		end
+				if (!client:GetCharacter():HasMoney(amount)) then
+					return "@insufficientMoney"
+				end
 
-		amount = math.Round(amount)
+				client:GetCharacter():TakeMoney(amount)
 
-		if (!client:GetCharacter():HasMoney(amount)) then
-			return
-		end
-
-		client:GetCharacter():TakeMoney(amount)
-
-		local money = ix.currency.Spawn(client, amount)
-		money.client = client
-		money.charID = client:GetChar():GetID()
-	end
-})
+				local money = ix.currency.Spawn(client, amount)
+				money.ixCharID = client:GetCharacter():GetID()
+				money.ixSteamID = client:SteamID()
+			end
+		})
+	end)
+end
 
 ix.command.Add("PlyWhitelist", {
 	description = "@cmdPlyWhitelist",
-	adminOnly = true,
+	superAdminOnly = true,
 	arguments = {
 		ix.type.player,
 		ix.type.text
 	},
 	OnRun = function(self, client, target, name)
+		if (name == "") then
+			return "@invalidArg", 2
+		end
+
 		local faction = ix.faction.teams[name]
 
 		if (!faction) then
@@ -474,9 +491,9 @@ ix.command.Add("CharGetUp", {
 
 ix.command.Add("PlyUnwhitelist", {
 	description = "@cmdPlyUnwhitelist",
-	adminOnly = true,
+	superAdminOnly = true,
 	arguments = {
-		ix.type.player,
+		ix.type.string,
 		ix.type.text
 	},
 	OnRun = function(self, client, target, name)
@@ -493,10 +510,40 @@ ix.command.Add("PlyUnwhitelist", {
 		end
 
 		if (faction) then
-			if (target:SetWhitelisted(faction.index, false)) then
+			local targetPlayer = ix.util.FindPlayer(target)
+
+			if (IsValid(targetPlayer) and targetPlayer:SetWhitelisted(faction.index, false)) then
 				for _, v in ipairs(player.GetAll()) do
-					v:NotifyLocalized("unwhitelist", client:GetName(), target:GetName(), L(faction.name, v))
+					v:NotifyLocalized("unwhitelist", client:GetName(), targetPlayer:GetName(), L(faction.name, v))
 				end
+			else
+				local steamID64 = util.SteamIDTo64(target)
+				local query = mysql:Select("ix_players")
+					query:Select("data")
+					query:Where("steamid", steamID64)
+					query:Limit(1)
+					query:Callback(function(result)
+						if (istable(result) and #result > 0) then
+							local data = util.JSONToTable(result[1].data or "[]")
+							local whitelists = data.whitelists and data.whitelists[Schema.folder]
+
+							if (!whitelists or !whitelists[faction.uniqueID]) then
+								return
+							end
+
+							whitelists[faction.uniqueID] = nil
+
+							local updateQuery = mysql:Update("ix_players")
+								updateQuery:Update("data", util.TableToJSON(data))
+								updateQuery:Where("steamid", steamID64)
+							updateQuery:Execute()
+
+							for _, v in ipairs(player.GetAll()) do
+								v:NotifyLocalized("unwhitelist", client:GetName(), target, L(faction.name, v))
+							end
+						end
+					end)
+				query:Execute()
 			end
 		else
 			return "@invalidFaction"
@@ -508,6 +555,10 @@ ix.command.Add("CharFallOver", {
 	description = "@cmdCharFallOver",
 	arguments = bit.bor(ix.type.number, ix.type.optional),
 	OnRun = function(self, client, time)
+		if (client:GetMoveType() == MOVETYPE_NOCLIP) then
+			return "@notNow"
+		end
+
 		if (time and time > 0) then
 			time = math.Clamp(time, 1, 60)
 		end
@@ -520,7 +571,6 @@ ix.command.Add("CharFallOver", {
 
 ix.command.Add("BecomeClass", {
 	description = "@cmdBecomeClass",
-	syntax = "<string class>",
 	arguments = ix.type.text,
 	OnRun = function(self, client, class)
 		local character = client:GetCharacter()
@@ -560,13 +610,13 @@ ix.command.Add("CharDesc", {
 	arguments = bit.bor(ix.type.text, ix.type.optional),
 	OnRun = function(self, client, description)
 		if (!description:find("%S")) then
-			return client:RequestString("@chgDesc", "@chgDescDesc", function(text)
+			return client:RequestString("@cmdCharDescTitle", "@cmdCharDescDescription", function(text)
 				ix.command.Run(client, "CharDesc", {text})
 			end, client:GetCharacter():GetDescription())
 		end
 
 		local info = ix.char.vars.description
-		local result, fault, count = info.OnValidate(description)
+		local result, fault, count = info:OnValidate(description)
 
 		if (result == false) then
 			return "@" .. fault, count
@@ -601,8 +651,8 @@ ix.command.Add("PlyTransfer", {
 			target.vars.faction = faction.uniqueID
 			target:SetFaction(faction.index)
 
-			if (faction.OnTransfered) then
-				faction:OnTransfered(target)
+			if (faction.OnTransferred) then
+				faction:OnTransferred(target)
 			end
 
 			for _, v in ipairs(player.GetAll()) do
@@ -632,15 +682,16 @@ ix.command.Add("CharSetClass", {
 
 		if (classTable) then
 			local oldClass = target:GetClass()
+			local targetPlayer = target:GetPlayer()
 
-			if (target:GetPlayer():Team() == classTable.faction) then
+			if (targetPlayer:Team() == classTable.faction) then
 				target:SetClass(classTable.index)
-				hook.Run("OnPlayerJoinClass", client, classTable.index, oldClass)
+				hook.Run("PlayerJoinedClass", client, classTable.index, oldClass)
 
-				target:NotifyLocalized("becomeClass", L(classTable.name, target))
+				targetPlayer:NotifyLocalized("becomeClass", L(classTable.name, targetPlayer))
 
 				-- only send second notification if the character isn't setting their own class
-				if (client != target) then
+				if (client != targetPlayer) then
 					return "@setClass", target:GetName(), L(classTable.name, client)
 				end
 			else

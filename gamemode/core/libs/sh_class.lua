@@ -1,4 +1,8 @@
 
+if (SERVER) then
+	util.AddNetworkString("ixClassUpdate")
+end
+
 ix.class = ix.class or {}
 ix.class.list = {}
 
@@ -48,8 +52,8 @@ function ix.class.LoadFromDir(directory)
 			end
 
 			-- Allow classes to be joinable by default.
-			if (!CLASS.OnCanBe) then
-				CLASS.OnCanBe = function(client)
+			if (!CLASS.CanSwitchTo) then
+				CLASS.CanSwitchTo = function(client)
 					return true
 				end
 			end
@@ -62,7 +66,7 @@ function ix.class.LoadFromDir(directory)
 end
 
 -- Determines if a player is allowed to join a specific class.
-function ix.class.CanBe(client, class)
+function ix.class.CanSwitchTo(client, class)
 	-- Get the class table by its numeric identifier.
 	local info = ix.class.list[class]
 
@@ -76,7 +80,7 @@ function ix.class.CanBe(client, class)
 		return false, "not correct team"
 	end
 
-	if (client:GetChar():GetClass() == class) then
+	if (client:GetCharacter():GetClass() == class) then
 		return false, "same class request"
 	end
 
@@ -91,7 +95,7 @@ function ix.class.CanBe(client, class)
 	end
 
 	-- See if the class allows the player to join it.
-	return info:OnCanBe(client)
+	return info:CanSwitchTo(client)
 end
 
 function ix.class.Get(identifier)
@@ -102,7 +106,7 @@ function ix.class.GetPlayers(class)
 	local players = {}
 
 	for _, v in ipairs(player.GetAll()) do
-		local char = v:GetChar()
+		local char = v:GetCharacter()
 
 		if (char and char:GetClass() == class) then
 			table.insert(players, v)
@@ -122,9 +126,9 @@ function charMeta:JoinClass(class)
 	local oldClass = self:GetClass()
 	local client = self:GetPlayer()
 
-	if (ix.class.CanBe(client, class)) then
+	if (ix.class.CanSwitchTo(client, class)) then
 		self:SetClass(class)
-		hook.Run("OnPlayerJoinClass", client, class, oldClass)
+		hook.Run("PlayerJoinedClass", client, class, oldClass)
 
 		return true
 	else
@@ -148,10 +152,10 @@ function charMeta:KickClass()
 
 	self:JoinClass(goClass)
 
-	hook.Run("OnPlayerJoinClass", client, goClass)
+	hook.Run("PlayerJoinedClass", client, goClass)
 end
 
-function GM:OnPlayerJoinClass(client, class, oldClass)
+function GM:PlayerJoinedClass(client, class, oldClass)
 	local info = ix.class.list[class]
 	local info2 = ix.class.list[oldClass]
 
@@ -163,5 +167,7 @@ function GM:OnPlayerJoinClass(client, class, oldClass)
 		info2:OnLeave(client)
 	end
 
-	netstream.Start(nil, "classUpdate", client)
+	net.Start("ixClassUpdate")
+		net.WriteEntity(client)
+	net.Broadcast()
 end

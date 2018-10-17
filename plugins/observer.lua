@@ -5,12 +5,18 @@ PLUGIN.description = "Adds on to the no-clip mode to prevent instrusion."
 
 ix.option.Add("observerTeleportBack", ix.type.bool, true, {
 	bNetworked = true,
-	category = "observer"
+	category = "observer",
+	hidden = function()
+		return !LocalPlayer():IsAdmin() and !LocalPlayer():IsUserGroup("operator")
+	end
 })
 
 if (CLIENT) then
 	ix.option.Add("observerESP", ix.type.bool, true, {
-		category = "observer"
+		category = "observer",
+		hidden = function()
+			return !LocalPlayer():IsAdmin() and !LocalPlayer():IsUserGroup("operator")
+		end
 	})
 
 	local dimDistance = 1024
@@ -78,13 +84,25 @@ if (CLIENT) then
 		end
 	end
 
-	function PLUGIN:ShouldDrawEntityInfo(entity)
+	function PLUGIN:ShouldPopulateEntityInfo(entity)
 		if (IsValid(entity)) then
 			if (entity:IsPlayer() or IsValid(entity:GetNetVar("player"))) then
 				if (entity.IsAdmin and entity:IsAdmin() and entity:GetMoveType() == MOVETYPE_NOCLIP) then
 					return false
 				end
 			end
+		end
+	end
+
+	function PLUGIN:DrawPhysgunBeam(client, physgun, enabled, target, bone, hitPos)
+		if (client != LocalPlayer() and client:GetMoveType() == MOVETYPE_NOCLIP) then
+			return false
+		end
+	end
+
+	function PLUGIN:PrePlayerDraw(client)
+		if (client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle()) then
+			return true
 		end
 	end
 else
@@ -100,22 +118,25 @@ else
 		end
 	end)
 
-	function PLUGIN:PlayerNoClip(client, state)
-		-- Observer mode is reserved for administrators.
+	function PLUGIN:CanPlayerEnterObserver(client)
 		if (client:IsAdmin()) then
-			-- Check if they are entering noclip.
+			return true
+		end
+	end
+
+	function PLUGIN:PlayerNoClip(client, state)
+		if (hook.Run("CanPlayerEnterObserver", client)) then
 			if (state) then
-				-- Store their old position and looking		 at angle.
 				client.ixObsData = {client:GetPos(), client:EyeAngles()}
+
 				-- Hide them so they are not visible.
 				client:SetNoDraw(true)
 				client:SetNotSolid(true)
 				client:DrawWorldModel(false)
 				client:DrawShadow(false)
-				-- Don't allow the player to get hurt.
 				client:GodEnable()
-				-- Don't allow npcs to target the player.
 				client:SetNoTarget(true)
+
 				hook.Run("OnPlayerObserve", client, state)
 			else
 				if (client.ixObsData) then
@@ -127,12 +148,10 @@ else
 						timer.Simple(0, function()
 							client:SetPos(position)
 							client:SetEyeAngles(angles)
-							-- Make sure they stay still when they get back.
 							client:SetVelocity(Vector(0, 0, 0))
 						end)
 					end
 
-					-- Delete the old data.
 					client.ixObsData = nil
 				end
 
@@ -141,10 +160,9 @@ else
 				client:SetNotSolid(false)
 				client:DrawWorldModel(true)
 				client:DrawShadow(true)
-				-- Let the player take damage again.
 				client:GodDisable()
-				-- Let npcs target the player again.
 				client:SetNoTarget(false)
+
 				hook.Run("OnPlayerObserve", client, state)
 			end
 		end

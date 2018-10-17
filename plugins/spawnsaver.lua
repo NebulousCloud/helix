@@ -9,13 +9,18 @@ function PLUGIN:CharacterPreSave(character)
 
 	-- Check to see if we can get the player's position.
 	if (IsValid(client)) then
+		local position, eyeAngles = client:GetPos(), client:EyeAngles()
+		-- Use pre-observer position to prevent spawning in the air.
+		if (client.ixObsData) then
+			position, eyeAngles = client.ixObsData[1], client.ixObsData[2]
+		end
 		-- Store the position in the character's data.
-		character:SetData("pos", {client:GetPos(), client:EyeAngles(), game.GetMap()})
+		character:SetData("pos", {position, eyeAngles, game.GetMap()})
 	end
 end
 
 -- Called after the player's loadout has been set.
-function PLUGIN:PlayerLoadedChar(client, character, lastChar)
+function PLUGIN:PlayerLoadedCharacter(client, character, lastChar)
 	timer.Simple(0, function()
 		if (IsValid(client)) then
 			-- Get the saved position from the character data.

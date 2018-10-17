@@ -35,21 +35,22 @@ PLAYER_HOLDTYPE_TRANSLATOR["knife"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["duel"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["bugbait"] = "normal"
 
-local getModelClass = ix.anim.GetModelClass
-local IsValid = IsValid
-local string = string
-local type = type
-
 local PLAYER_HOLDTYPE_TRANSLATOR = PLAYER_HOLDTYPE_TRANSLATOR
 local HOLDTYPE_TRANSLATOR = HOLDTYPE_TRANSLATOR
 
 function GM:TranslateActivity(client, act)
-	local model = string.lower(client.GetModel(client))
-	local modelClass = getModelClass(model) or "player"
-	local weapon = client.GetActiveWeapon(client)
+	local clientInfo = client:GetTable()
+	local modelClass = clientInfo.ixAnimModelClass or "player"
+	local bRaised = client:IsWepRaised()
 
 	if (modelClass == "player") then
-		if (!ix.config.Get("wepAlwaysRaised") and IsValid(weapon) and !client.IsWepRaised(client) and client.OnGround(client)) then
+		local weapon = client:GetActiveWeapon()
+		local bAlwaysRaised = ix.config.Get("weaponAlwaysRaised")
+		weapon = IsValid(weapon) and weapon or nil
+
+		if (!bAlwaysRaised and weapon and !bRaised and client:OnGround()) then
+			local model = string.lower(client:GetModel())
+
 			if (string.find(model, "zombie")) then
 				local tree = ix.anim.zombie
 
@@ -62,17 +63,17 @@ function GM:TranslateActivity(client, act)
 				end
 			end
 
-			local holdType = IsValid(weapon) and (weapon.HoldType or weapon.GetHoldType(weapon)) or "normal"
+			local holdType = weapon and (weapon.HoldType or weapon:GetHoldType()) or "normal"
 
-			if (!ix.config.Get("wepAlwaysRaised") and IsValid(weapon) and !client.IsWepRaised(client) and client:OnGround()) then
+			if (!bAlwaysRaised and weapon and !bRaised and client:OnGround()) then
 				holdType = PLAYER_HOLDTYPE_TRANSLATOR[holdType] or "passive"
 			end
 
 			local tree = ix.anim.player[holdType]
 
 			if (tree and tree[act]) then
-				if (type(tree[act]) == "string") then
-					client.CalcSeqOverride = client.LookupSequence(client, tree[act])
+				if (isstring(tree[act])) then
+					clientInfo.CalcSeqOverride = client:LookupSequence(tree[act])
 
 					return
 				else
@@ -81,62 +82,44 @@ function GM:TranslateActivity(client, act)
 			end
 		end
 
-		return self.BaseClass.TranslateActivity(self.BaseClass, client, act)
+		return self.BaseClass:TranslateActivity(client, act)
 	end
 
-	local tree = ix.anim[modelClass]
+	if (clientInfo.ixAnimTable) then
+		local glide = clientInfo.ixAnimGlide
 
-	if (tree) then
-		local subClass = "normal"
+		if (client:InVehicle()) then
+			act = clientInfo.ixAnimTable[1]
 
-		if (client.InVehicle(client)) then
-			local vehicle = client.GetVehicle(client)
-			local vehicleClass = vehicle:IsChair() and "chair" or vehicle:GetClass()
+			local fixVector = clientInfo.ixAnimTable[2]
 
-			if (tree.vehicle and tree.vehicle[vehicleClass]) then
-				act = tree.vehicle[vehicleClass][1]
-				local fixvec = tree.vehicle[vehicleClass][2]
+			if (isvector(fixVector)) then
+				client:SetLocalPos(Vector(16.5438, -0.1642, -20.5493))
+			end
 
-				if (fixvec) then
-					client:SetLocalPos(Vector(16.5438, -0.1642, -20.5493))
-				end
-
-				if (type(act) == "string") then
-					client.CalcSeqOverride = client.LookupSequence(client, act)
-					return
-				else
-					return act
-				end
+			if (isstring(act)) then
+				clientInfo.CalcSeqOverride = client:LookupSequence(act)
 			else
-				act = tree.normal[ACT_MP_CROUCH_IDLE][1]
+				return act
+			end
+		elseif (client:OnGround()) then
+			client:ManipulateBonePosition(0, vector_origin)
 
-				if (type(act) == "string") then
-					client.CalcSeqOverride = client:LookupSequence(act)
+			if (clientInfo.ixAnimTable[act]) then
+				local act2 = clientInfo.ixAnimTable[act][bRaised and 2 or 1]
+
+				if (isstring(act2)) then
+					clientInfo.CalcSeqOverride = client:LookupSequence(act2)
+				else
+					return act2
 				end
-
-				return
 			end
-		elseif (client.OnGround(client)) then
-			client.ManipulateBonePosition(client, 0, vector_origin)
-
-			if (IsValid(weapon)) then
-				subClass = weapon.HoldType or weapon.GetHoldType(weapon)
-				subClass = HOLDTYPE_TRANSLATOR[subClass] or subClass
+		elseif (glide) then
+			if (isstring(glide)) then
+				clientInfo.CalcSeqOverride = client:LookupSequence(glide)
+			else
+				return clientInfo.ixAnimGlide
 			end
-
-			if (tree[subClass] and tree[subClass][act]) then
-				local act2 = tree[subClass][act][client.IsWepRaised(client) and 2 or 1]
-
-				if (type(act2) == "string") then
-					client.CalcSeqOverride = client.LookupSequence(client, act2)
-
-					return
-				end
-
-				return act2
-			end
-		elseif (tree.glide) then
-			return tree.glide
 		end
 	end
 end
@@ -144,7 +127,7 @@ end
 function GM:CanPlayerUseBusiness(client, uniqueID)
 	local itemTable = ix.item.list[uniqueID]
 
-	if (!client:GetChar()) then
+	if (!client:GetCharacter()) then
 		return false
 	end
 
@@ -177,13 +160,13 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 
 		if (type(itemTable.classes) == "table") then
 			for _, v in pairs(itemTable.classes) do
-				if (client:GetChar():GetClass() == v) then
+				if (client:GetCharacter():GetClass() == v) then
 					allowed = true
 
 					break
 				end
 			end
-		elseif (client:GetChar():GetClass() == itemTable.classes) then
+		elseif (client:GetCharacter():GetClass() == itemTable.classes) then
 			allowed = true
 		end
 
@@ -193,7 +176,7 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 	end
 
 	if (itemTable.flag) then
-		if (!client:GetChar():HasFlags(itemTable.flag)) then
+		if (!client:GetCharacter():HasFlags(itemTable.flag)) then
 			return false
 		end
 	end
@@ -202,8 +185,7 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 end
 
 function GM:DoAnimationEvent(client, event, data)
-	local model = client:GetModel():lower()
-	local class = ix.anim.GetModelClass(model)
+	local class = client.ixAnimModelClass
 
 	if (class == "player") then
 		return self.BaseClass:DoAnimationEvent(client, event, data)
@@ -211,10 +193,7 @@ function GM:DoAnimationEvent(client, event, data)
 		local weapon = client:GetActiveWeapon()
 
 		if (IsValid(weapon)) then
-			local holdType = weapon.HoldType or weapon:GetHoldType()
-			holdType = HOLDTYPE_TRANSLATOR[holdType] or holdType
-
-			local animation = ix.anim[class][holdType]
+			local animation = client.ixAnimTable
 
 			if (event == PLAYERANIMEVENT_ATTACK_PRIMARY) then
 				client:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, animation.attack or ACT_GESTURE_RANGE_ATTACK_SMG1, true)
@@ -249,34 +228,163 @@ function GM:EntityEmitSound(data)
 	end
 end
 
-local vectorAngle = FindMetaTable("Vector").Angle
-local normalizeAngle = math.NormalizeAngle
+function GM:EntityRemoved(entity)
+	if (SERVER) then
+		entity:ClearNetVars()
+	elseif (entity:IsWeapon()) then
+		local owner = entity:GetOwner()
 
-function GM:CalcMainActivity(client, velocity)
-	client:SetPoseParameter("move_yaw", normalizeAngle(vectorAngle(velocity)[2] - client:EyeAngles()[2]))
-
-	local oldSeqOverride = client.CalcSeqOverride
-	local seqIdeal = self.BaseClass:CalcMainActivity(client, velocity)
-	--client.CalcSeqOverride is being -1 after this line.
-
-	if (client.ixForceSeq and client:GetSequence() != client.ixForceSeq) then
-		client:SetCycle(0)
-	end
-
-	return seqIdeal, client.ixForceSeq or oldSeqOverride or client.CalcSeqOverride
-end
-
-local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2
-
-function GM:StartCommand(client, command)
-	local isRaised, weapon = client:IsWepRaised()
-
-	if (!isRaised and (!weapon or !weapon.FireWhenLowered)) then
-		command:RemoveKey(KEY_BLACKLIST)
+		-- GetActiveWeapon is the player's new weapon at this point so we'll assume
+		-- that the player switched away from this weapon
+		if (IsValid(owner) and owner:IsPlayer()) then
+			hook.Run("PlayerWeaponChanged", owner, owner:GetActiveWeapon())
+		end
 	end
 end
 
-function GM:OnCharVarChanged(char, varName, oldVar, newVar)
+local function UpdatePlayerHoldType(client, weapon)
+	weapon = weapon or client:GetActiveWeapon()
+	local holdType = "normal"
+
+	if (IsValid(weapon)) then
+		holdType = weapon.HoldType or weapon:GetHoldType()
+		holdType = HOLDTYPE_TRANSLATOR[holdType] or holdType
+	end
+
+	client.ixAnimHoldType = holdType
+end
+
+local function UpdateAnimationTable(client, vehicle)
+	local baseTable = ix.anim[client.ixAnimModelClass] or {}
+
+	if (IsValid(client) and IsValid(vehicle)) then
+		local vehicleClass = vehicle:IsChair() and "chair" or vehicle:GetClass()
+
+		if (baseTable.vehicle and baseTable.vehicle[vehicleClass]) then
+			client.ixAnimTable = baseTable.vehicle[vehicleClass]
+		else
+			client.ixAnimTable = baseTable.normal[ACT_MP_CROUCH_IDLE]
+		end
+	else
+		client.ixAnimTable = baseTable[client.ixAnimHoldType]
+	end
+
+	client.ixAnimGlide = baseTable["glide"]
+end
+
+function GM:PlayerWeaponChanged(client, weapon)
+	UpdatePlayerHoldType(client, weapon)
+	UpdateAnimationTable(client)
+
+	if (CLIENT) then
+		return
+	end
+
+	-- update weapon raise state
+	if (weapon.IsAlwaysRaised or ALWAYS_RAISED[weapon:GetClass()]) then
+		client:SetWepRaised(true, weapon)
+		return
+	elseif (weapon.IsAlwaysLowered or weapon.NeverRaised) then
+		client:SetWepRaised(false, weapon)
+		return
+	end
+
+	-- If the player has been forced to have their weapon lowered.
+	if (client:GetNetVar("restricted")) then
+		client:SetWepRaised(false, weapon)
+		return
+	end
+
+	-- Let the config decide before actual results.
+	if (ix.config.Get("weaponAlwaysRaised")) then
+		client:SetWepRaised(true, weapon)
+		return
+	end
+
+	client:SetWepRaised(false, weapon)
+end
+
+function GM:PlayerSwitchWeapon(client, oldWeapon, weapon)
+	if (!IsFirstTimePredicted()) then
+		return
+	end
+
+	-- the player switched weapon themself (i.e not through SelectWeapon), so we have to network it here
+	if (SERVER) then
+		net.Start("PlayerSelectWeapon")
+			net.WriteEntity(client)
+			net.WriteString(weapon:GetClass())
+		net.Broadcast()
+	end
+
+	hook.Run("PlayerWeaponChanged", client, weapon)
+end
+
+function GM:PlayerModelChanged(client, model)
+	client.ixAnimModelClass = ix.anim.GetModelClass(model)
+
+	UpdateAnimationTable(client)
+end
+
+do
+	local vectorAngle = FindMetaTable("Vector").Angle
+	local normalizeAngle = math.NormalizeAngle
+
+	function GM:CalcMainActivity(client, velocity)
+		local clientInfo = client:GetTable()
+		local forcedSequence = client:GetNetVar("forcedSequence")
+
+		if (forcedSequence) then
+			if (client:GetSequence() != forcedSequence) then
+				client:SetCycle(0)
+			end
+
+			return -1, forcedSequence
+		end
+
+		client:SetPoseParameter("move_yaw", normalizeAngle(vectorAngle(velocity)[2] - client:EyeAngles()[2]))
+
+		local sequenceOverride = clientInfo.CalcSeqOverride
+		clientInfo.CalcSeqOverride = -1
+		clientInfo.CalcIdeal = ACT_MP_STAND_IDLE
+
+		-- we could call the baseclass function, but it's faster to do it this way
+		local BaseClass = self.BaseClass
+
+		if (BaseClass:HandlePlayerNoClipping(client, velocity) or
+			BaseClass:HandlePlayerDriving(client) or
+			BaseClass:HandlePlayerVaulting(client, velocity) or
+			BaseClass:HandlePlayerJumping(client, velocity) or
+			BaseClass:HandlePlayerSwimming(client, velocity) or
+			BaseClass:HandlePlayerDucking(client, velocity)) then -- luacheck: ignore 542
+		else
+			local length = velocity:Length2DSqr()
+
+			if (length > 22500) then
+				clientInfo.CalcIdeal = ACT_MP_RUN
+			elseif (length > 0.25) then
+				clientInfo.CalcIdeal = ACT_MP_WALK
+			end
+		end
+
+		clientInfo.m_bWasOnGround = client:OnGround()
+		clientInfo.m_bWasNoclipping = (client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle())
+
+		return clientInfo.CalcIdeal, sequenceOverride or clientInfo.CalcSeqOverride or -1
+	end
+end
+
+do
+	local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2
+
+	function GM:StartCommand(client, command)
+		if (!client:CanShootWeapon()) then
+			command:RemoveKey(KEY_BLACKLIST)
+		end
+	end
+end
+
+function GM:CharacterVarChanged(char, varName, oldVar, newVar)
 	if (ix.char.varHooks[varName]) then
 		for _, v in pairs(ix.char.varHooks[varName]) do
 			v(char, oldVar, newVar)
@@ -292,15 +400,15 @@ function GM:CanPlayerThrowPunch(client)
 	return true
 end
 
-function GM:OnCharCreated(client, character)
+function GM:OnCharacterCreated(client, character)
 	local faction = ix.faction.Get(character:GetFaction())
 
-	if (faction and faction.OnCharCreated) then
-		faction:OnCharCreated(client, character)
+	if (faction and faction.OnCharacterCreated) then
+		faction:OnCharacterCreated(client, character)
 	end
 end
 
-function GM:GetDefaultCharName(client, faction)
+function GM:GetDefaultCharacterName(client, faction)
 	local info = ix.faction.indices[faction]
 
 	if (info and info.GetDefaultName) then
@@ -308,8 +416,8 @@ function GM:GetDefaultCharName(client, faction)
 	end
 end
 
-function GM:CanPlayerUseChar(client, char)
-	local banned = char:GetData("banned")
+function GM:CanPlayerUseCharacter(client, character)
+	local banned = character:GetData("banned")
 
 	if (banned) then
 		if (type(banned) == "number" and banned < os.time()) then
@@ -317,6 +425,12 @@ function GM:CanPlayerUseChar(client, char)
 		end
 
 		return false, "@charBanned"
+	end
+
+	local bHasWhitelist = client:HasWhitelist(character:GetFaction())
+
+	if (!bHasWhitelist) then
+		return false, "@noWhitelist"
 	end
 end
 
@@ -339,8 +453,10 @@ function GM:PhysgunPickup(client, entity)
 		bPickup = true
 	elseif (client:IsAdmin() and !(entity:IsPlayer() and entity:IsSuperAdmin())) then
 		bPickup = true
-	elseif (self.BaseClass:PhysgunPickup(client, entity) == false) then
-		return false
+	end
+
+	if (!bPickup) then
+		bPickup = self.BaseClass:PhysgunPickup(client, entity)
 	end
 
 	if (bPickup) then
@@ -364,40 +480,42 @@ function GM:PhysgunDrop(client, entity)
 	end
 end
 
-local TOOL_SAFE = {}
-TOOL_SAFE["lamp"] = true
-TOOL_SAFE["camera"] = true
+do
+	local TOOL_SAFE = {}
+	TOOL_SAFE["lamp"] = true
+	TOOL_SAFE["camera"] = true
 
-local TOOL_DANGEROUS = {}
-TOOL_DANGEROUS["dynamite"] = true
+	local TOOL_DANGEROUS = {}
+	TOOL_DANGEROUS["dynamite"] = true
 
-function GM:CanTool(client, trace, tool)
-	if (client:IsAdmin()) then
-		return true
-	end
-
-	if (TOOL_DANGEROUS[tool]) then
-		return false
-	end
-
-	local entity = trace.Entity
-
-	if (IsValid(entity)) then
-		if (TOOL_SAFE[tool]) then
+	function GM:CanTool(client, trace, tool)
+		if (client:IsAdmin()) then
 			return true
 		end
-	else
-		return true
-	end
 
-	return false
+		if (TOOL_DANGEROUS[tool]) then
+			return false
+		end
+
+		local entity = trace.Entity
+
+		if (IsValid(entity)) then
+			if (TOOL_SAFE[tool]) then
+				return true
+			end
+		else
+			return true
+		end
+
+		return false
+	end
 end
 
 function GM:Move(client, moveData)
-	local char = client:GetChar()
+	local char = client:GetCharacter()
 
 	if (char) then
-		if (client:GetNetVar("actAng")) then
+		if (client:GetNetVar("actEnterAngle")) then
 			moveData:SetForwardSpeed(0)
 			moveData:SetSideSpeed(0)
 			moveData:SetVelocity(Vector(0, 0, 0))
@@ -426,37 +544,75 @@ function GM:Move(client, moveData)
 	end
 end
 
-function GM:CanItemBeTransfered(itemObject, curInv, inventory)
-	if (itemObject and itemObject.isBag) then
-		if (inventory.id != 0 and curInv.id != inventory.id) then
-			if (inventory.vars and inventory.vars.isBag) then
+function GM:CanTransferItem(itemObject, curInv, inventory)
+	if (SERVER) then
+		local client = itemObject.GetOwner and itemObject:GetOwner() or nil
+
+		if (IsValid(client) and curInv.GetReceivers) then
+			local bAuthorized = false
+
+			for _, v in ipairs(curInv:GetReceivers()) do
+				if (client == v) then
+					bAuthorized = true
+					break
+				end
+			end
+
+			if (!bAuthorized) then
+				return false
+			end
+		end
+	end
+
+	-- we can transfer anything that isn't a bag
+	if (!itemObject or !itemObject.isBag) then
+		return
+	end
+
+	-- don't allow bags to be put inside bags
+	if (inventory.id != 0 and curInv.id != inventory.id) then
+		if (inventory.vars and inventory.vars.isBag) then
+			local owner = itemObject:GetOwner()
+
+			if (IsValid(owner)) then
+				owner:NotifyLocalized("nestedBags")
+			end
+
+			return false
+		end
+	elseif (inventory.id != 0 and curInv.id == inventory.id) then
+		-- we are simply moving items around if we're transferring to the same inventory
+		return
+	end
+
+	inventory = ix.item.inventories[itemObject:GetData("id")]
+
+	-- don't allow transferring items that are in use
+	if (inventory) then
+		for _, v in pairs(inventory:GetItems()) do
+			if (v:GetData("equip") == true) then
 				local owner = itemObject:GetOwner()
 
-				if (IsValid(owner)) then
-					owner:NotifyLocalized("nestedBags")
+				if (owner and IsValid(owner)) then
+					owner:NotifyLocalized("equippedBag")
 				end
 
 				return false
 			end
-		elseif (inventory.id != 0 and curInv.id == inventory.id) then
-			return
 		end
+	end
+end
 
-		inventory = ix.item.inventories[itemObject:GetData("id")]
+function GM:OnItemTransferred(item, curInv, inventory)
+	local bagInventory = item.GetInventory and item:GetInventory()
 
-		if (inventory) then
-			for _, v in pairs(inventory:GetItems()) do
-				if (v:GetData("equip") == true) then
-					local owner = itemObject:GetOwner()
+	if (!bagInventory) then
+		return
+	end
 
-					if (owner and IsValid(owner)) then
-						owner:NotifyLocalized("equippedBag")
-					end
-
-					return false
-				end
-			end
-		end
+	-- we need to retain the receiver if the owner changed while viewing as storage
+	if (inventory.storageInfo and isfunction(curInv.GetOwner)) then
+		bagInventory:AddReceiver(curInv:GetOwner())
 	end
 end
 
@@ -472,4 +628,36 @@ function GM:PostGamemodeLoaded()
 	baseclass.Set("ix_character", ix.meta.character)
 	baseclass.Set("ix_inventory", ix.meta.inventory)
 	baseclass.Set("ix_item", ix.meta.item)
+end
+
+if (SERVER) then
+	util.AddNetworkString("PlayerVehicle")
+
+	function GM:PlayerEnteredVehicle(client, vehicle, role)
+		UpdateAnimationTable(client)
+
+		net.Start("PlayerVehicle")
+			net.WriteEntity(client)
+			net.WriteEntity(vehicle)
+			net.WriteBool(true)
+		net.Broadcast()
+	end
+
+	function GM:PlayerLeaveVehicle(client, vehicle)
+		UpdateAnimationTable(client)
+
+		net.Start("PlayerVehicle")
+			net.WriteEntity(client)
+			net.WriteEntity(vehicle)
+			net.WriteBool(false)
+		net.Broadcast()
+	end
+else
+	net.Receive("PlayerVehicle", function(length)
+		local client = net.ReadEntity()
+		local vehicle = net.ReadEntity()
+		local bEntered = net.ReadBool()
+
+		UpdateAnimationTable(client, bEntered and vehicle or false)
+	end)
 end

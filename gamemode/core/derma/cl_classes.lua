@@ -9,10 +9,10 @@ function PANEL:Init()
 			self.pressing = -1
 			self:OnClick()
 		end
+
 		panel.OnMouseReleased = function()
 			if (self.pressing) then
 				self.pressing = nil
-				--self:OnClick()
 			end
 		end
 	end
@@ -23,23 +23,6 @@ function PANEL:Init()
 	self.icon:InvalidateLayout(true)
 	self.icon:Dock(LEFT)
 	self.icon.PaintOver = function(this, w, h)
-		--[[
-		if (panel.payload.model == k) then
-			local color = ix.config.Get("color", color_white)
-
-			surface.SetDrawColor(color.r, color.g, color.b, 200)
-
-			for i = 1, 3 do
-				local i2 = i * 2
-
-				surface.DrawOutlinedRect(i, i, w - i2, h - i2)
-			end
-
-			surface.SetDrawColor(color.r, color.g, color.b, 75)
-			surface.SetMaterial(gradient)
-			surface.DrawTexturedRect(0, 0, w, h)
-		end
-		]]--
 	end
 	AssignClick(self.icon)
 
@@ -86,7 +69,7 @@ function PANEL:SetClass(data)
 
 		self.icon:SetModel(model)
 	else
-		local char = LocalPlayer():GetChar()
+		local char = LocalPlayer():GetCharacter()
 		local model = LocalPlayer():GetModel()
 
 		if (char) then
@@ -102,9 +85,11 @@ function PANEL:SetClass(data)
 
 	self:SetNumber(#ix.class.GetPlayers(data.index))
 end
+
 vgui.Register("ixClassPanel", PANEL, "DPanel")
 
 PANEL = {}
+
 function PANEL:Init()
 	ix.gui.classes = self
 
@@ -124,7 +109,7 @@ function PANEL:LoadClasses()
 	self.list:Clear()
 
 	for k, v in ipairs(ix.class.list) do
-		local no, why = ix.class.CanBe(LocalPlayer(), k)
+		local no, why = ix.class.CanSwitchTo(LocalPlayer(), k)
 		local itsFull = ("class is full" == why)
 
 		if (no or itsFull) then
@@ -145,11 +130,11 @@ hook.Add("CreateMenuButtons", "ixClasses", function(tabs)
 	if (cnt <= 1) then return end
 
 	for k, _ in ipairs(ix.class.list) do
-		if (!ix.class.CanBe(LocalPlayer(), k)) then
+		if (!ix.class.CanSwitchTo(LocalPlayer(), k)) then
 			continue
 		else
-			tabs["classes"] = function(panel)
-				panel:Add("ixClasses")
+			tabs["classes"] = function(container)
+				container:Add("ixClasses")
 			end
 
 			return
@@ -157,9 +142,11 @@ hook.Add("CreateMenuButtons", "ixClasses", function(tabs)
 	end
 end)
 
-netstream.Hook("classUpdate", function(joinedClient)
+net.Receive("ixClassUpdate", function()
+	local client = net.ReadEntity()
+
 	if (ix.gui.classes and ix.gui.classes:IsVisible()) then
-		if (joinedClient == LocalPlayer()) then
+		if (client == LocalPlayer()) then
 			ix.gui.classes:LoadClasses()
 		else
 			for _, v in ipairs(ix.gui.classes.classPanels) do

@@ -6,47 +6,31 @@
 
 PLUGIN.name = "PAC3 Integration"
 PLUGIN.author = "Black Tea"
-PLUGIN.description = "More Upgraded, More well organized PAC3 Integration made by Black Tea"
+PLUGIN.description = "PAC3 integration for item parts."
 
 if (!pace) then return end
 
 ix.pac = ix.pac or {}
 ix.pac.list = ix.pac.list or {}
 
-local meta = FindMetaTable("Player")
-
 -- this stores pac3 part information to plugin's table'
-function ix.pac.registerPart(id, outfit)
+function ix.pac.RegisterPart(id, outfit)
 	ix.pac.list[id] = outfit
 end
 
 -- Fixing the PAC3's default stuffs to fit on Helix.
 if (CLIENT) then
-	-- fixpac command. you can fix the PAC3 errors with this.
-	ix.command.Add("FixPAC", {
-		description = "@cmdFixPAC",
-		OnRun = function(self, client, arguments)
-			RunConsoleCommand("pac_restart")
-		end
-	})
-
-	-- Disable few features of PAC3's feature.
-	function PLUGIN:InitializedPlugins()
-		-- remove useless PAC3 shits
-
-		hook.Remove("HUDPaint", "pac_InPAC3Editor")
-		hook.Remove("InitPostEntity", "pace_autoload_parts")
-	end
+	-- Disable the "in editor" HUD element.
+	hook.Add("InitializedPlugins", "PAC3Fixer", function()
+		hook.Remove("HUDPaint", "pac_in_editor")
+	end)
 
 	-- Remove PAC3 LoadParts
-	function pace.LoadParts(name, clear, override_part)
-		-- fuck your loading, pay me money bitch
-	end
+	function pace.LoadParts(name, clear, override_part) end
 
 	-- Prohibits players from deleting their own PAC3 outfit.
 	concommand.Add("pac_clear_parts", function()
 		RunConsoleCommand("pac_restart")
-		--STOP BREAKING STUFFS!
 	end)
 
 	-- You should be admin to access PAC3 editor.
@@ -57,18 +41,15 @@ if (CLIENT) then
 			return false
 		end
 	end
-else
-	-- Reject unauthorized PAC3 submits
-	net.Receive("pac_submit", function(_, ply)
-		if (!ply) then return end -- ???
-		if (!ply:IsSuperAdmin()) then
-			ply:NotifyLocalized("illegalAccess")
-		return end
-
-		local data = pace.net.DeserializeTable()
-		pace.HandleReceivedData(ply, data)
-	end)
 end
+
+function PLUGIN:pac_CanWearParts(client)
+	if (!client:IsSuperAdmin()) then
+		return false
+	end
+end
+
+local meta = FindMetaTable("Player")
 
 -- Get Player's PAC3 Parts.
 function meta:GetParts()
@@ -78,28 +59,38 @@ function meta:GetParts()
 end
 
 if (SERVER) then
-	function meta:AddPart(uid, item)
-		if (!pac) then
-			ErrorNoHalt("NO PAC3!\n")
-		return end
+	util.AddNetworkString("ixPartWear")
+	util.AddNetworkString("ixPartRemove")
+	util.AddNetworkString("ixPartReset")
+
+	function meta:AddPart(uniqueID, item)
+		if (!pac) then return end
 
 		local curParts = self:GetParts()
 
 		-- wear the parts.
-		netstream.Start(player.GetAll(), "partWear", self, uid)
-		curParts[uid] = true
+		net.Start("ixPartWear")
+			net.WriteEntity(self)
+			net.WriteString(uniqueID)
+		net.Broadcast()
+
+		curParts[uniqueID] = true
 
 		self:SetNetVar("parts", curParts)
 	end
 
-	function meta:RemovePart(uid)
+	function meta:RemovePart(uniqueID)
 		if (!pac) then return end
 
 		local curParts = self:GetParts()
 
 		-- remove the parts.
-		netstream.Start(player.GetAll(), "partRemove", self, uid)
-		curParts[uid] = nil
+		net.Start("ixPartRemove")
+			net.WriteEntity(self)
+			net.WriteString(uniqueID)
+		net.Broadcast()
+
+		curParts[uniqueID] = nil
 
 		self:SetNetVar("parts", curParts)
 	end
@@ -107,13 +98,19 @@ if (SERVER) then
 	function meta:ResetParts()
 		if (!pac) then return end
 
-		netstream.Start(player.GetAll(), "partReset", self, self:GetParts())
+		net.Start("ixPartReset")
+			net.WriteEntity(self)
+			net.WriteTable(self:GetParts())
+		net.Broadcast()
+
 		self:SetNetVar("parts", {})
 	end
 
-	function PLUGIN:PlayerLoadedChar(client, curChar, prevChar)
-		-- If player is changing the char and the character ID is differs from the current char ID.
-		if (prevChar and curChar:GetID() != prevChar:GetID()) then
+	function PLUGIN:PlayerLoadedCharacter(client, curChar, prevChar)
+		-- Reset the characters parts.
+		local curParts = client:GetParts()
+
+		if (curParts) then
 			client:ResetParts()
 		end
 
@@ -129,10 +126,6 @@ if (SERVER) then
 		end
 	end
 
-	function PLUGIN:PlayerInitialSpawn(client)
-		netstream.Start(client, "updatePAC")
-	end
-
 	function PLUGIN:PlayerSwitchWeapon(client, oldWeapon, newWeapon)
 		local oldItem = IsValid(oldWeapon) and oldWeapon.ixItem
 		local newItem = IsValid(newWeapon) and newWeapon.ixItem
@@ -146,26 +139,36 @@ if (SERVER) then
 		end
 	end
 else
-	netstream.Hook("updatePAC", function()
-		if (!pac) then return end
+	hook.Add("Think", "ix_pacupdate", function()
+		if (!pac) then
+			hook.Remove("Think", "ix_pacupdate")
+			return
+		end
 
-		for _, v in ipairs(player.GetAll()) do
-			local character = v:GetCharacter()
+		if (IsValid(pac.LocalPlayer)) then
+			local parts = LocalPlayer():GetParts()
 
-			if (character) then
-				local parts = LocalPlayer():GetParts()
+			for _, v in ipairs(player.GetAll()) do
+				local character = v:GetCharacter()
 
-				for k, _ in pairs(parts) do
-					if (ix.pac.list[k]) then
-						v:AttachPACPart(ix.pac.list[k])
+				if (character) then
+					for k, _ in pairs(parts) do
+						if (isfunction(v.AttachPACPart) and ix.pac.list[k]) then
+							v:AttachPACPart(ix.pac.list[k])
+						end
 					end
 				end
 			end
+
+			hook.Remove("Think", "ix_pacupdate")
 		end
 	end)
 
-	netstream.Hook("partWear", function(wearer, uid)
+	net.Receive("ixPartWear", function(length)
 		if (!pac) then return end
+
+		local wearer = net.ReadEntity()
+		local uid = net.ReadString()
 
 		if (!wearer.pac_owner) then
 			pac.SetupENT(wearer)
@@ -188,16 +191,17 @@ else
 				timer.Simple(0.1, function()
 					if (IsValid(wearer) and wearer.AttachPACPart) then
 						wearer:AttachPACPart(newPac)
-					else
-						print("alright, no more PAC3 for you. Go away.")
 					end
 				end)
 			end
 		end
 	end)
 
-	netstream.Hook("partRemove", function(wearer, uid)
+	net.Receive("ixPartRemove", function(length)
 		if (!pac) then return end
+
+		local wearer = net.ReadEntity()
+		local uid = net.ReadString()
 
 		if (!wearer.pac_owner) then
 			pac.SetupENT(wearer)
@@ -212,9 +216,22 @@ else
 		end
 	end)
 
-	netstream.Hook("partReset", function(wearer, uidList)
+	net.Receive("ixPartReset", function(length)
+		if (!pac) then return end
+
+		local wearer = net.ReadEntity()
+		local uidList = net.ReadTable()
+
+		if (!wearer.pac_owner) then
+			pac.SetupENT(wearer)
+		end
+
 		for k, _ in pairs(uidList) do
-			wearer:RemovePACPart(ix.pac.list[k])
+			if (wearer.RemovePACPart) then
+				wearer:RemovePACPart(ix.pac.list[k])
+			else
+				pac.SetupENT(wearer)
+			end
 		end
 	end)
 
@@ -226,7 +243,7 @@ else
 				if ply.pac_parts then
 					for _, part in pairs(ply.pac_parts) do
 						if part.last_owner and part.last_owner:IsValid() then
-							hook.Run("OnPAC3PartTransfered", part)
+							hook.Run("OnPAC3PartTransferred", part)
 							part:SetOwner(entity)
 							part.last_owner = entity
 						end
@@ -271,39 +288,25 @@ else
 		end)
 	end
 
-	function PLUGIN:OnCharInfoSetup(infoPanel)
-		if (pac and infoPanel.model) then
-			-- Get the F1 ModelPanel.
-			local mdl = infoPanel.model
-			local ent = mdl.Entity
+	function PLUGIN:DrawCharacterOverview()
+		if (!pac) then
+			return
+		end
 
-			-- If the ModelPanel's Entity is valid, setup PAC3 Function Table.
-			if (ent and IsValid(ent)) then
-				-- Setup function table.
-				pac.SetupENT(ent)
-
-				local parts = LocalPlayer():GetParts()
-
-				-- Wear current player's PAC3 Outfits on the ModelPanel's Clientside Model Entity.
-				for k, _ in pairs(parts) do
-					if (ix.pac.list[k]) then
-						ent:AttachPACPart(ix.pac.list[k])
-					end
-				end
-
-				-- Overrride Model Drawing function of ModelPanel. (Function revision: 2015/01/05)
-				-- by setting ent.forcedraw true, The PAC3 outfit will drawn on the model even if it's NoDraw Status is true.
-				ent.forceDraw = true
-			end
+		if (LocalPlayer().pac_outfits) then
+			pac.RenderOverride(LocalPlayer(), "opaque")
+			pac.RenderOverride(LocalPlayer(), "translucent", true)
 		end
 	end
 
 	function PLUGIN:DrawHelixModelView(panel, ent)
-		if (LocalPlayer():GetChar()) then
-			if (pac) then
-				pac.RenderOverride(ent, "opaque")
-				pac.RenderOverride(ent, "translucent", true)
-			end
+		if (!pac) then
+			return
+		end
+
+		if (LocalPlayer():GetCharacter()) then
+			pac.RenderOverride(ent, "opaque")
+			pac.RenderOverride(ent, "translucent", true)
 		end
 	end
 end

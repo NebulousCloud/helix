@@ -6,9 +6,11 @@ PLUGIN.description = "Spawn points for factions and classes."
 PLUGIN.author = "Chessnut"
 PLUGIN.spawns = PLUGIN.spawns or {}
 
-function PLUGIN:PostPlayerLoadout(client)
-	if (self.spawns and table.Count(self.spawns) > 0 and client:GetChar()) then
-		local class = client:GetChar():GetClass()
+function PLUGIN:PlayerLoadout(client)
+	local character = client:GetCharacter()
+
+	if (self.spawns and table.Count(self.spawns) > 0 and character) then
+		local class = character:GetClass()
 		local points
 		local className = ""
 
@@ -53,7 +55,7 @@ ix.command.Add("SpawnAdd", {
 	adminOnly = true,
 	arguments = {
 		ix.type.string,
-		ix.type.text
+		bit.bor(ix.type.text, ix.type.optional)
 	},
 	OnRun = function(self, client, name, class)
 		local info = ix.faction.indices[name:lower()]

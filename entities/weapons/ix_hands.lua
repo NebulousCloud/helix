@@ -38,7 +38,7 @@ SWEP.WorldModel = ""
 
 SWEP.UseHands = false
 SWEP.LowerAngles = Angle(0, 5, -14)
-SWEP.LowerAngles2 = Angle(0, 5, -42)
+SWEP.LowerAngles2 = Angle(0, 5, -19)
 
 SWEP.FireWhenLowered = true
 SWEP.HoldType = "fist"
@@ -181,7 +181,7 @@ function SWEP:CanHoldObject(entity)
 		(physics:GetMass() <= ix.config.Get("maxHoldWeight", 100) and physics:IsMoveable()) and
 		!self:IsHoldingObject() and
 		!IsValid(entity.ixHeldOwner) and
-		self.allowedHoldableClasses[entity:GetClass()])
+		(self.allowedHoldableClasses[entity:GetClass()] or hook.Run("CanPlayerHoldObject", self.Owner, entity)))
 end
 
 function SWEP:IsHoldingObject()
@@ -330,7 +330,7 @@ function SWEP:PrimaryAttack()
 		if (IsValid(self) and IsValid(self.Owner)) then
 			local damage = self.Primary.Damage
 			local context = {damage = damage}
-			local result = hook.Run("PlayerGetFistDamage", self.Owner, damage, context)
+			local result = hook.Run("GetPlayerPunchDamage", self.Owner, damage, context)
 
 			if (result != nil) then
 				damage = result
@@ -382,7 +382,7 @@ function SWEP:SecondaryAttack()
 
 	if (SERVER and IsValid(entity)) then
 		if (entity:IsDoor()) then
-			if (hook.Run("PlayerCanKnock", self.Owner, entity) == false) then
+			if (hook.Run("CanPlayerKnock", self.Owner, entity) == false) then
 				return
 			end
 
@@ -393,7 +393,15 @@ function SWEP:SecondaryAttack()
 			self:DoPunchAnimation()
 			self:SetNextSecondaryFire(CurTime() + 0.4)
 			self:SetNextPrimaryFire(CurTime() + 1)
-		elseif (!entity:IsPlayer() and !entity:IsNPC() and self:CanHoldObject(entity)) then
+		elseif (entity:IsPlayer() and ix.config.Get("allowPush", true)) then
+			local direction = self.Owner:GetAimVector() * (300 + (self.Owner:GetCharacter():GetAttribute("str", 0) * 3))
+				direction.z = 0
+			entity:SetVelocity(direction)
+
+			self.Owner:EmitSound("Weapon_Crossbow.BoltHitBody")
+			self:SetNextSecondaryFire(CurTime() + 1.5)
+			self:SetNextPrimaryFire(CurTime() + 1.5)
+		elseif (!entity:IsNPC() and self:CanHoldObject(entity)) then
 			self:PickupObject(entity)
 			self:PlayPickupSound(trace.SurfaceProps)
 			self:SetNextSecondaryFire(CurTime() + self.Secondary.Delay)

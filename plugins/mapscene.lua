@@ -1,4 +1,6 @@
 
+local PLUGIN = PLUGIN
+
 PLUGIN.name = "Map Scenes"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds areas of the map that are visible during character selection."
@@ -15,7 +17,8 @@ if (CLIENT) then
 	function PLUGIN:CalcView(client, origin, angles, fov)
 		local scenes = self.scenes
 
-		if (IsValid(ix.gui.char) and table.Count(scenes) > 0) then
+		if (IsValid(ix.gui.characterMenu) and !IsValid(ix.gui.menu) and !ix.gui.characterMenu:IsClosing() and
+			table.Count(scenes) > 0) then
 			local key = self.index
 			local value = scenes[self.index]
 
@@ -24,7 +27,7 @@ if (CLIENT) then
 				self.index = key
 			end
 
-			if (self.orderedIndex or type(key) == "Vector") then
+			if (self.orderedIndex or isvector(key)) then
 				local curTime = CurTime()
 
 				self.orderedIndex = self.orderedIndex or 1
@@ -62,7 +65,7 @@ if (CLIENT) then
 						local keys = {}
 
 						for k, _ in pairs(scenes) do
-							if (type(k) == "Vector") then
+							if (isvector(k)) then
 								keys[#keys + 1] = k
 							end
 						end
@@ -89,27 +92,36 @@ if (CLIENT) then
 		end
 	end
 
-	local HIDE_WEAPON = Vector(0, 0, -100000)
-	local HIDE_ANGLE = Angle(0, 0, 0)
-
-	function PLUGIN:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos, eyeAngles)
-		if (IsValid(ix.gui.char)) then
-			return HIDE_WEAPON, HIDE_ANGLE
+	function PLUGIN:PreDrawViewModel(viewModel, client, weapon)
+		if (IsValid(ix.gui.characterMenu) and !ix.gui.characterMenu:IsClosing()) then
+			return true
 		end
 	end
 
-	local PLUGIN = PLUGIN
+	net.Receive("ixMapSceneAdd", function()
+		local data = net.ReadTable()
 
-	netstream.Hook("mapScn", function(data, origin)
-		if (type(origin) == "Vector") then
-			PLUGIN.scenes[origin] = data
-			table.insert(PLUGIN.ordered, {origin, data})
-		else
-			PLUGIN.scenes[#PLUGIN.scenes + 1] = data
-		end
+		PLUGIN.scenes[#PLUGIN.scenes + 1] = data
 	end)
 
-	netstream.Hook("mapScnDel", function(key)
+	net.Receive("ixMapSceneRemove", function()
+		local index = net.ReadUInt(16)
+
+		PLUGIN.scenes[index] = nil
+	end)
+
+	net.Receive("ixMapSceneAddPair", function()
+		local data = net.ReadTable()
+		local origin = net.ReadVector()
+
+		PLUGIN.scenes[origin] = data
+
+		table.insert(PLUGIN.ordered, {origin, data})
+	end)
+
+	net.Receive("ixMapSceneRemovePair", function()
+		local key = net.ReadVector()
+
 		PLUGIN.scenes[key] = nil
 
 		for k, v in ipairs(PLUGIN.ordered) do
@@ -121,16 +133,33 @@ if (CLIENT) then
 		end
 	end)
 
-	netstream.Hook("mapScnInit", function(scenes)
-		PLUGIN.scenes = scenes
+	net.Receive("ixMapSceneSync", function()
+		local length = net.ReadUInt(32)
+		local data = net.ReadData(length)
+		local uncompressed = util.Decompress(data)
 
-		for k, v in pairs(scenes) do
-			if (type(k) == "Vector") then
+		if (!uncompressed) then
+			ErrorNoHalt("[Helix] Unable to decompress map scene data!\n")
+			return
+		end
+
+		-- Set the list of texts to the ones provided by the server.
+		PLUGIN.scenes = util.JSONToTable(uncompressed)
+
+		for k, v in pairs(PLUGIN.scenes) do
+			if (isvector(k)) then
 				table.insert(PLUGIN.ordered, {k, v})
 			end
 		end
 	end)
 else
+	util.AddNetworkString("ixMapSceneSync")
+	util.AddNetworkString("ixMapSceneAdd")
+	util.AddNetworkString("ixMapSceneRemove")
+
+	util.AddNetworkString("ixMapSceneAddPair")
+	util.AddNetworkString("ixMapSceneRemovePair")
+
 	function PLUGIN:SaveScenes()
 		self:SetData(self.scenes)
 	end
@@ -140,7 +169,14 @@ else
 	end
 
 	function PLUGIN:PlayerInitialSpawn(client)
-		netstream.Start(client, "mapScnInit", self.scenes)
+		local json = util.TableToJSON(self.scenes)
+		local compressed = util.Compress(json)
+		local length = compressed:len()
+
+		net.Start("ixMapSceneSync")
+			net.WriteUInt(length, 32)
+			net.WriteData(compressed, length)
+		net.Send(client)
 	end
 
 	function PLUGIN:AddScene(position, angles, position2, angles2)
@@ -149,17 +185,23 @@ else
 		if (position2) then
 			data = {position2, angles, angles2}
 			self.scenes[position] = data
+
+			net.Start("ixMapSceneAddPair")
+				net.WriteTable(data)
+				net.WriteVector(position)
+			net.Broadcast()
 		else
 			data = {position, angles}
 			self.scenes[#self.scenes + 1] = data
+
+			net.Start("ixMapSceneAdd")
+				net.WriteTable(data)
+			net.Broadcast()
 		end
 
-		netstream.Start(nil, "mapScn", data, position2 and position or nil)
 		self:SaveScenes()
 	end
 end
-
-local PLUGIN = PLUGIN
 
 ix.command.Add("MapSceneAdd", {
 	description = "@cmdMapSceneAdd",
@@ -169,7 +211,7 @@ ix.command.Add("MapSceneAdd", {
 		local position, angles = client:EyePos(), client:EyeAngles()
 
 		-- This scene is in a pair for moving scenes.
-		if (util.tobool(bIsPair) and !client.ixScnPair) then
+		if (tobool(bIsPair) and !client.ixScnPair) then
 			client.ixScnPair = {position, angles}
 
 			return "@mapRepeat"
@@ -199,7 +241,7 @@ ix.command.Add("MapSceneRemove", {
 		for k, v in pairs(PLUGIN.scenes) do
 			local delete = false
 
-			if (type(k) == "Vector") then
+			if (isvector(k)) then
 				if (k:Distance(position) <= radius or v[1]:Distance(position) <= radius) then
 					delete = true
 				end
@@ -208,7 +250,16 @@ ix.command.Add("MapSceneRemove", {
 			end
 
 			if (delete) then
-				netstream.Start(nil, "mapScnDel", k)
+				if (isvector(k)) then
+					net.Start("ixMapSceneRemovePair")
+						net.WriteVector(k)
+					net.Broadcast()
+				else
+					net.Start("ixMapSceneRemove")
+						net.WriteString(k)
+					net.Broadcast()
+				end
+
 				PLUGIN.scenes[k] = nil
 
 				i = i + 1

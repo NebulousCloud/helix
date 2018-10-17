@@ -42,10 +42,6 @@ function ENT:Initialize()
 end
 
 function ENT:CanAccess(client)
-	if (client:IsAdmin()) then
-		return true
-	end
-
 	local allowed = false
 	local uniqueID = ix.faction.indices[client:Team()].uniqueID
 
@@ -58,7 +54,7 @@ function ENT:CanAccess(client)
 	end
 
 	if (allowed and self.classes and table.Count(self.classes) > 0) then
-		local class = ix.class.list[client:GetChar():GetClass()]
+		local class = ix.class.list[client:GetCharacter():GetClass()]
 		local classID = class and class.uniqueID
 
 		if (!self.classes[classID]) then
@@ -89,7 +85,7 @@ end
 function ENT:CanSellToPlayer(client, uniqueID)
 	local data = self.items[uniqueID]
 
-	if (!data or !client:GetChar() or !ix.item.list[uniqueID]) then
+	if (!data or !client:GetCharacter() or !ix.item.list[uniqueID]) then
 		return false
 	end
 
@@ -97,7 +93,7 @@ function ENT:CanSellToPlayer(client, uniqueID)
 		return false
 	end
 
-	if (!client:GetChar():HasMoney(self:GetPrice(uniqueID))) then
+	if (!client:GetCharacter():HasMoney(self:GetPrice(uniqueID))) then
 		return false
 	end
 
@@ -111,7 +107,7 @@ end
 function ENT:CanBuyFromPlayer(client, uniqueID)
 	local data = self.items[uniqueID]
 
-	if (!data or !client:GetChar() or !ix.item.list[uniqueID]) then
+	if (!data or !client:GetCharacter() or !ix.item.list[uniqueID]) then
 		return false
 	end
 
@@ -194,17 +190,6 @@ if (SERVER) then
 
 		self.scale = self.scale or 0.5
 
-		local data = {}
-		data[1] = items
-		data[2] = self.money
-		data[3] = self.scale
-
-		if (activator:IsAdmin()) then
-			data[4] = self.messages
-			data[5] = self.factions
-			data[6] = self.classes
-		end
-
 		activator.ixVendor = self
 
 		-- force sync to prevent outdated inventories while buying/selling
@@ -212,7 +197,12 @@ if (SERVER) then
 			character:GetInventory():Sync(activator, true)
 		end
 
-		netstream.Start(activator, "vendorOpen", self:EntIndex(), unpack(data))
+		net.Start("ixVendorOpen")
+			net.WriteEntity(self)
+			net.WriteUInt(self.money or 0, 16)
+			net.WriteTable(items)
+			net.WriteFloat(self.scale or 0.5)
+		net.Send(activator)
 
 		ix.log.Add(activator, "vendorUse", self:GetNetVar("name"))
 	end
@@ -220,7 +210,9 @@ if (SERVER) then
 	function ENT:SetMoney(value)
 		self.money = value
 
-		netstream.Start(self.receivers, "vendorMoney", value)
+		net.Start("ixVendorMoney")
+			net.WriteUInt(value and value or -1, 16)
+		net.Send(self.receivers)
 	end
 
 	function ENT:GiveMoney(value)
@@ -243,7 +235,10 @@ if (SERVER) then
 		self.items[uniqueID] = self.items[uniqueID] or {}
 		self.items[uniqueID][VENDOR_STOCK] = math.min(value, self.items[uniqueID][VENDOR_MAXSTOCK])
 
-		netstream.Start(self.receivers, "vendorStock", uniqueID, value)
+		net.Start("ixVendorStock")
+			net.WriteString(uniqueID)
+			net.WriteUInt(value, 16)
+		net.Send(self.receivers)
 	end
 
 	function ENT:AddStock(uniqueID, value)
@@ -306,23 +301,20 @@ else
 		end
 	end
 
-	local TEXT_OFFSET = Vector(0, 0, 20)
-	local toScreen = FindMetaTable("Vector").ToScreen
-	local colorAlpha = ColorAlpha
-	local drawText = ix.util.DrawText
-	local configGet = ix.config.Get
+	ENT.PopulateEntityInfo = true
 
-	ENT.DrawEntityInfo = true
+	function ENT:OnPopulateEntityInfo(container)
+		local name = container:AddRow("name")
+		name:SetImportant()
+		name:SetText(self:GetNetVar("name", "John Doe"))
+		name:SizeToContents()
 
-	function ENT:OnDrawEntityInfo(alpha)
-		local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)) + TEXT_OFFSET)
-		local x, y = position.x, position.y
-		local desc = self.GetNetVar(self, "desc")
+		local descriptionText = self:GetNetVar("desc", "")
 
-		drawText(self.GetNetVar(self, "name", "John Doe"), x, y, colorAlpha(configGet("color"), alpha), 1, 1, nil, alpha * 0.65)
-
-		if (desc) then
-			drawText(desc, x, y + 16, colorAlpha(color_white, alpha), 1, 1, "ixSmallFont", alpha * 0.65)
+		if (descriptionText != "") then
+			local description = container:AddRow("description")
+			description:SetText(self:GetNetVar("desc"))
+			description:SizeToContents()
 		end
 	end
 end

@@ -13,9 +13,11 @@ ix.db = ix.db or {
 	}
 }
 
-ix.db.config = ix.config.server.database
+ix.db.config = ix.config.server.database or {}
 
 function ix.db.Connect()
+	ix.db.config.adapter = ix.db.config.adapter or "sqlite"
+
 	local dbmodule = ix.db.config.adapter
 	local hostname = ix.db.config.hostname
 	local username = ix.db.config.username
@@ -67,7 +69,7 @@ function ix.db.LoadTables()
 	local query
 
 	query = mysql:Create("ix_schema")
-		query:Create("table", "VARCHAR(255) NOT NULL")
+		query:Create("table", "VARCHAR(64) NOT NULL")
 		query:Create("columns", "TEXT NOT NULL")
 		query:PrimaryKey("table")
 	query:Execute()
@@ -90,6 +92,8 @@ function ix.db.LoadTables()
 		query:Create("item_id", "INT(11) UNSIGNED NOT NULL AUTO_INCREMENT")
 		query:Create("inventory_id", "INT(11) UNSIGNED NOT NULL")
 		query:Create("unique_id", "VARCHAR(60) NOT NULL")
+		query:Create("character_id", "INT(11) UNSIGNED DEFAULT NULL")
+		query:Create("player_id", "VARCHAR(20) DEFAULT NULL")
 		query:Create("data", "VARCHAR(500) DEFAULT NULL")
 		query:Create("x", "SMALLINT(4) NOT NULL")
 		query:Create("y", "SMALLINT(4) NOT NULL")

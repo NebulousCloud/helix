@@ -31,35 +31,13 @@
 -- only supported in `ix.option.Add`.
 -- @see ix.command.Add
 -- @see ix.option.Add
-ix.type = ix.type or {
-	[2] = "string",
-	[4] = "text",
-	[8] = "number",
-	[16] = "player",
-	[32] = "steamid",
-	[64] = "character",
-	[128] = "bool",
-	[1024] = "color",
-	[2048] = "vector",
-
-	string = 2,
-	text = 4,
-	number = 8,
-	player = 16,
-	steamid = 32,
-	character = 64,
-	bool = 128,
-	color = 1024,
-	vector = 2048,
-
-	optional = 256,
-	array = 512
-}
+ix.type = ix.type or {} -- so the docs can pick up on its existence
 
 -- Define gamemode information.
-GM.Name = "Helix 1.2"
+GM.Name = "Helix"
 GM.Author = "nebulous.cloud"
 GM.Website = "https://nebulous.cloud"
+GM.Version = "β"
 
 -- Fix for client:SteamID64() returning nil when in single-player.
 do
@@ -138,8 +116,8 @@ function GM:OnReloaded()
 		hook.Run("LoadFonts", ix.config.Get("font"), ix.config.Get("genericFont"))
 
 		-- Reload the scoreboard.
-		if (IsValid(ix.gui.score)) then
-			ix.gui.score:Remove()
+		if (IsValid(ix.gui.scoreboard)) then
+			ix.gui.scoreboard:Remove()
 		end
 	else
 		-- Reconnect the database if needed.
@@ -157,14 +135,14 @@ function GM:OnReloaded()
 	end
 
 	if (!IX_RELOADED) then
+		IX_RELOADED = true
+
 		-- Load all of the Helix plugins.
 		ix.plugin.Initialize()
 		-- Restore the configurations from earlier if applicable.
 		ix.config.Load()
 		-- Restore client options
 		ix.option.Load()
-
-		IX_RELOADED = true
 	end
 end
 

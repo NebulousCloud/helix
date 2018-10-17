@@ -46,6 +46,7 @@ local Replacements = {
 	sqlite = {
 		Create = {
 			{"UNSIGNED ", ""},
+			{"NOT NULL AUTO_INCREMENT", ""}, -- assuming primary key
 			{"AUTO_INCREMENT", ""},
 			{"INT%(%d*%)", "INTEGER"},
 			{"INT ", "INTEGER"}
@@ -481,6 +482,8 @@ function mysql:Alter(tableName)
 	return QUERY_CLASS:New(tableName, "ALTER");
 end;
 
+local UTF8MB4 = "ALTER DATABASE %s CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci"
+
 -- A function to connect to the MySQL database.
 function mysql:Connect(host, username, password, database, port, socket, flags)
 	port = port or 3306;
@@ -497,13 +500,22 @@ function mysql:Connect(host, username, password, database, port, socket, flags)
 
 			local clientFlag = flags or 0;
 
-			if (type(socket) ~= "string") then
+			if (type(socket) != "string") then
 				self.connection = mysqloo.connect(host, username, password, database, port);
 			else
 				self.connection = mysqloo.connect(host, username, password, database, port, socket, clientFlag);
 			end;
 
-			self.connection.onConnected = function(database)
+			self.connection.onConnected = function(connection)
+		        local success, error_message = connection:setCharacterSet("utf8mb4")
+
+		        if (!success) then
+					ErrorNoHalt("Failed to set MySQL encoding!\n")
+					ErrorNoHalt(error_message .. "\n")
+				else
+					self:RawQuery(string.format(UTF8MB4, database))
+		        end
+
 				mysql:OnConnected();
 			end;
 

@@ -108,7 +108,7 @@ end
 
 ITEM:Hook("drop", function(item)
 	if (item:GetData("equip")) then
-		item:RemoveOutfit(item.player)
+		item:RemoveOutfit(item:GetOwner())
 	end
 end)
 
@@ -121,7 +121,10 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 		return false
 	end,
 	OnCanRun = function(item)
-		return (!IsValid(item.entity) and item:GetData("equip") == true)
+		local client = item.player
+
+		return !IsValid(item.entity) and IsValid(client) and item:GetData("equip") == true and
+			hook.Run("CanPlayerUnequipItem", client, item) != false and item.invID == client:GetCharacter():GetInventory():GetID()
 	end
 }
 
@@ -204,16 +207,27 @@ ITEM.functions.Equip = {
 		return false
 	end,
 	OnCanRun = function(item)
-		return !IsValid(item.entity) and item:GetData("equip") != true and item:CanEquipOutfit()
+		local client = item.player
+
+		return !IsValid(item.entity) and IsValid(client) and item:GetData("equip") != true and item:CanEquipOutfit() and
+			hook.Run("CanPlayerEquipItem", client, item) != false and item.invID == client:GetCharacter():GetInventory():GetID()
 	end
 }
 
-function ITEM:OnCanBeTransfered(oldInventory, newInventory)
+function ITEM:CanTransfer(oldInventory, newInventory)
 	if (newInventory and self:GetData("equip")) then
 		return false
 	end
 
 	return true
+end
+
+function ITEM:OnRemoved()
+	if (self.invID != 0 and self:GetData("equip")) then
+		self.player = self:GetOwner()
+			self:RemoveOutfit(self.player)
+		self.player = nil
+	end
 end
 
 function ITEM:OnEquipped()

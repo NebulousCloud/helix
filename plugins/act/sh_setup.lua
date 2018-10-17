@@ -29,6 +29,24 @@ PLUGIN.acts["Sit"] = {
 	["citizen_female"] = {
 		sequence = {"Idle_to_Sit_Ground", "Idle_to_Sit_Chair"},
 		untimed = true
+	},
+	["vortigaunt"] = {
+		sequence = "chess_wait",
+		untimed = true
+	}
+}
+PLUGIN.acts["Lean"] = {
+	["citizen_male"] = {
+		sequence = "idle_to_lean_back",
+		untimed = true
+	},
+	["citizen_female"] = {
+		sequence = "idle_to_lean_back",
+		untimed = true
+	},
+	["metrocop"] = {
+		sequence = {"busyidle2", "idle_baton"},
+		untimed = true
 	}
 }
 PLUGIN.acts["Injured"] = {
@@ -55,6 +73,11 @@ PLUGIN.acts["Arrest"] = {
 	["citizen_male"] = {
 		sequence = "arrestidle",
 		untimed = true
+	}
+}
+PLUGIN.acts["Threat"] = {
+	["metrocop"] = {
+		sequence = {"plazathreat1", "plazathreat2"}
 	}
 }
 PLUGIN.acts["Cheer"] = {

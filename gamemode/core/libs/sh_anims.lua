@@ -67,9 +67,9 @@ ix.anim.citizen_male = {
 
 ix.anim.citizen_female = {
 	normal = {
-		[ACT_MP_STAND_IDLE] = {ACT_IDLE, ACT_IDLE_MANNEDGUN},
+		[ACT_MP_STAND_IDLE] = {ACT_IDLE, ACT_IDLE_ANGRY_SMG1},
 		[ACT_MP_CROUCH_IDLE] = {ACT_COVER_LOW, ACT_COVER_LOW},
-		[ACT_MP_WALK] = {ACT_WALK, ACT_RANGE_AIM_SMG1_LOW},
+		[ACT_MP_WALK] = {ACT_WALK, ACT_WALK_AIM_RIFLE_STIMULATED},
 		[ACT_MP_CROUCHWALK] = {ACT_WALK_CROUCH, ACT_WALK_CROUCH_AIM_RIFLE},
 		[ACT_MP_RUN] = {ACT_RUN, ACT_RUN_AIM_RIFLE_STIMULATED},
 		[ACT_LAND] = {ACT_RESET, ACT_RESET}
@@ -237,56 +237,66 @@ ix.anim.overwatch = {
 	},
 	glide = ACT_GLIDE
 }
-ix.anim.vort = {
-	normal = {
-		[ACT_MP_STAND_IDLE] = {ACT_IDLE, "actionidle"},
+ix.anim.vortigaunt = {
+	melee = {
+		["attack"] = ACT_MELEE_ATTACK1,
+		[ACT_MP_STAND_IDLE] = {ACT_IDLE, "ActionIdle"},
 		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
-		[ACT_MP_WALK] = {ACT_WALK, "walk_all_holdgun"},
-		[ACT_MP_CROUCHWALK] = {ACT_WALK, "walk_all_holdgun"},
-		[ACT_MP_RUN] = {ACT_RUN, ACT_RUN},
-		[ACT_LAND] = {ACT_RESET, ACT_RESET}
-	},
-	pistol = {
-		[ACT_MP_STAND_IDLE] = {ACT_IDLE, "tcidle"},
-		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
-		[ACT_MP_WALK] = {ACT_WALK, "walk_all_holdgun"},
-		[ACT_MP_CROUCHWALK] = {ACT_WALK, "walk_all_holdgun"},
-		[ACT_MP_RUN] = {ACT_RUN, "run_all_tc"},
-		[ACT_LAND] = {ACT_RESET, ACT_RESET}
-	},
-	smg = {
-		[ACT_MP_STAND_IDLE] = {ACT_IDLE, "tcidle"},
-		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
-		[ACT_MP_WALK] = {ACT_WALK, "walk_all_holdgun"},
-		[ACT_MP_CROUCHWALK] = {ACT_WALK, "walk_all_holdgun"},
-		[ACT_MP_RUN] = {ACT_RUN, "run_all_tc"},
-		[ACT_LAND] = {ACT_RESET, ACT_RESET}
-	},
-	shotgun = {
-		[ACT_MP_STAND_IDLE] = {ACT_IDLE, "tcidle"},
-		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
-		[ACT_MP_WALK] = {ACT_WALK, "walk_all_holdgun"},
-		[ACT_MP_CROUCHWALK] = {ACT_WALK, "walk_all_holdgun"},
-		[ACT_MP_RUN] = {ACT_RUN, "run_all_tc"},
-		[ACT_LAND] = {ACT_RESET, ACT_RESET}
+		[ACT_MP_RUN] = {ACT_RUN, ACT_RUN_AIM},
+		[ACT_MP_CROUCHWALK] = {ACT_WALK, ACT_WALK},
+		[ACT_MP_WALK] = {ACT_WALK, ACT_WALK_AIM},
 	},
 	grenade = {
-		[ACT_MP_STAND_IDLE] = {ACT_IDLE, "tcidle"},
+		["attack"] = ACT_MELEE_ATTACK1,
+		[ACT_MP_STAND_IDLE] = {ACT_IDLE, "ActionIdle"},
 		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
-		[ACT_MP_WALK] = {ACT_WALK, "walk_all_holdgun"},
-		[ACT_MP_CROUCHWALK] = {ACT_WALK, "walk_all_holdgun"},
-		[ACT_MP_RUN] = {ACT_RUN, "run_all_tc"},
-		[ACT_LAND] = {ACT_RESET, ACT_RESET}
+		[ACT_MP_RUN] = {ACT_RUN, ACT_RUN},
+		[ACT_MP_CROUCHWALK] = {ACT_WALK, ACT_WALK},
+		[ACT_MP_WALK] = {ACT_WALK, ACT_WALK}
 	},
-	melee = {
-		[ACT_MP_STAND_IDLE] = {ACT_IDLE, "tcidle"},
+	normal = {
+		[ACT_MP_STAND_IDLE] = {ACT_IDLE, ACT_IDLE_ANGRY},
 		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
-		[ACT_MP_WALK] = {ACT_WALK, "walk_all_holdgun"},
-		[ACT_MP_CROUCHWALK] = {ACT_WALK, "walk_all_holdgun"},
-		[ACT_MP_RUN] = {ACT_RUN, "run_all_tc"},
-		[ACT_LAND] = {ACT_RESET, ACT_RESET}
+		[ACT_MP_RUN] = {ACT_RUN, ACT_RUN_AIM},
+		[ACT_MP_CROUCHWALK] = {ACT_WALK, ACT_WALK},
+		[ACT_MP_WALK] = {ACT_WALK, ACT_WALK_AIM},
+		["attack"] = ACT_MELEE_ATTACK1
 	},
-	glide = ACT_GLIDE
+	pistol = {
+		[ACT_MP_STAND_IDLE] = {ACT_IDLE, "TCidlecombat"},
+		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
+		["reload"] = ACT_IDLE,
+		[ACT_MP_RUN] = {ACT_RUN, "run_all_TC"},
+		[ACT_MP_CROUCHWALK] = {ACT_WALK, ACT_WALK},
+		[ACT_MP_WALK] = {ACT_WALK, "Walk_all_TC"}
+	},
+	shotgun = {
+		[ACT_MP_STAND_IDLE] = {ACT_IDLE, "TCidlecombat"},
+		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
+		["reload"] = ACT_IDLE,
+		[ACT_MP_RUN] = {ACT_RUN, "run_all_TC"},
+		[ACT_MP_CROUCHWALK] = {ACT_WALK, ACT_WALK},
+		[ACT_MP_WALK] = {ACT_WALK, "Walk_all_TC"}
+	},
+	smg = {
+		[ACT_MP_STAND_IDLE] = {ACT_IDLE, "TCidlecombat"},
+		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
+		["reload"] = ACT_IDLE,
+		[ACT_MP_RUN] = {ACT_RUN, "run_all_TC"},
+		[ACT_MP_CROUCHWALK] = {ACT_WALK, ACT_WALK},
+		[ACT_MP_WALK] = {ACT_WALK, "Walk_all_TC"}
+	},
+	beam = {
+		[ACT_MP_STAND_IDLE] = {ACT_IDLE, ACT_IDLE_ANGRY},
+		[ACT_MP_CROUCH_IDLE] = {"crouchidle", "crouchidle"},
+		[ACT_MP_RUN] = {ACT_RUN, ACT_RUN_AIM},
+		[ACT_MP_CROUCHWALK] = {ACT_WALK, ACT_WALK},
+		[ACT_MP_WALK] = {ACT_WALK, ACT_WALK_AIM},
+		["attack"] = ACT_GESTURE_RANGE_ATTACK1,
+		["reload"] = ACT_IDLE,
+		["glide"] = {ACT_RUN, ACT_RUN}
+	},
+	glide = "jump_holding_glide"
 }
 ix.anim.player = {
 	normal = {
@@ -325,7 +335,7 @@ local translations = {}
 
 function ix.anim.SetModelClass(model, class)
 	if (!ix.anim[class]) then
-		error("'"..tostring(class).."' is not a valid animation class!")
+		error("'" .. tostring(class) .. "' is not a valid animation class!")
 	end
 
 	translations[model:lower()] = class
@@ -359,19 +369,26 @@ ix.anim.SetModelClass("models/police.mdl", "metrocop")
 ix.anim.SetModelClass("models/combine_super_soldier.mdl", "overwatch")
 ix.anim.SetModelClass("models/combine_soldier_prisonGuard.mdl", "overwatch")
 ix.anim.SetModelClass("models/combine_soldier.mdl", "overwatch")
-ix.anim.SetModelClass("models/vortigaunt.mdl", "vort")
-ix.anim.SetModelClass("models/vortigaunt_blue.mdl", "vort")
-ix.anim.SetModelClass("models/vortigaunt_doctor.mdl", "vort")
-ix.anim.SetModelClass("models/vortigaunt_slave.mdl", "vort")
+ix.anim.SetModelClass("models/vortigaunt.mdl", "vortigaunt")
+ix.anim.SetModelClass("models/vortigaunt_blue.mdl", "vortigaunt")
+ix.anim.SetModelClass("models/vortigaunt_doctor.mdl", "vortigaunt")
+ix.anim.SetModelClass("models/vortigaunt_slave.mdl", "vortigaunt")
 
-do
+if (SERVER) then
+	util.AddNetworkString("ixSequenceSet")
+	util.AddNetworkString("ixSequenceReset")
+
 	local playerMeta = FindMetaTable("Player")
 
 	function playerMeta:ForceSequence(sequence, callback, time, noFreeze)
-		hook.Run("OnPlayerEnterSequence", self, sequence, callback, time, noFreeze)
+		hook.Run("PlayerEnterSequence", self, sequence, callback, time, noFreeze)
 
 		if (!sequence) then
-			return netstream.Start(nil, "seqSet", self)
+			net.Start("ixSequenceReset")
+				net.WriteEntity(self)
+			net.Broadcast()
+
+			return
 		end
 
 		sequence = self:LookupSequence(sequence)
@@ -379,8 +396,10 @@ do
 		if (sequence and sequence > 0) then
 			time = time or self:SequenceDuration(sequence)
 
+			self.ixCouldShoot = self:GetNetVar("canShoot", false)
+			self:SetNetVar("forcedSequence", sequence)
+			self:SetNetVar("canShoot", false)
 			self.ixSeqCallback = callback
-			self.ixForceSeq = sequence
 
 			if (!noFreeze) then
 				self:SetMoveType(MOVETYPE_NONE)
@@ -394,7 +413,9 @@ do
 				end)
 			end
 
-			netstream.Start(nil, "seqSet", self, sequence)
+			net.Start("ixSequenceSet")
+				net.WriteEntity(self)
+			net.Broadcast()
 
 			return time
 		end
@@ -403,31 +424,38 @@ do
 	end
 
 	function playerMeta:LeaveSequence()
-		hook.Run("OnPlayerLeaveSequence", self)
+		hook.Run("PlayerLeaveSequence", self)
 
-		netstream.Start(nil, "seqSet", self)
+		net.Start("ixSequenceReset")
+			net.WriteEntity(self)
+		net.Broadcast()
 
+		self:SetNetVar("canShoot", self.ixCouldShoot)
+		self:SetNetVar("forcedSequence", nil)
 		self:SetMoveType(MOVETYPE_WALK)
-		self.ixForceSeq = nil
+		self.ixCouldShoot = nil
 
 		if (self.ixSeqCallback) then
 			self:ixSeqCallback()
 		end
 	end
+else
+	net.Receive("ixSequenceSet", function()
+		local entity = net.ReadEntity()
 
-	if (CLIENT) then
-		netstream.Hook("seqSet", function(entity, sequence)
-			if (IsValid(entity)) then
-				if (!sequence) then
-					entity.ixForceSeq = nil
+		if (IsValid(entity)) then
+			entity:SetCycle(0)
+			entity:SetPlaybackRate(1)
 
-					return
-				end
+			hook.Run("PlayerEnterSequence", entity)
+		end
+	end)
 
-				entity:SetCycle(0)
-				entity:SetPlaybackRate(1)
-				entity.ixForceSeq = sequence
-			end
-		end)
-	end
+	net.Receive("ixSequenceReset", function()
+		local entity = net.ReadEntity()
+
+		if (IsValid(entity)) then
+			hook.Run("PlayerLeaveSequence", entity)
+		end
+	end)
 end

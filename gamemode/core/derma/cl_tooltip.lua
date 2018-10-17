@@ -1,152 +1,348 @@
 
-if (SERVER) then return end
+local animationTime = 1
 
--- luacheck: globals TOOLTIP_GENERIC TOOLTIP_ITEM
-TOOLTIP_GENERIC = 0
-TOOLTIP_ITEM = 1
+-- panel meta
+do
+	local PANEL = FindMetaTable("Panel")
+	local ixChangeTooltip = ChangeTooltip
+	local ixRemoveTooltip = RemoveTooltip
+	local tooltip
+	local lastHover
 
-local tooltip_delay = 0.01
+	function PANEL:SetHelixTooltip(callback)
+		self:SetMouseInputEnabled(true)
+		self.ixTooltip = callback
+	end
 
-local PANEL = {}
-
-function PANEL:Init()
-
-	self:SetDrawOnTop( true )
-	self.DeleteContentsOnClose = false
-	self:SetText( "" )
-	self:SetFont( "ixToolTipText" )
-
-end
-
-function PANEL:UpdateColours( skin )
-	return self:SetTextStyleColor(color_black)
-end
-
-function PANEL:SetContents( panel, bDelete )
-	panel:SetParent( self )
-
-	self.Contents = panel
-	self.DeleteContentsOnClose = bDelete or false
-	self.Contents:SizeToContents()
-	self:InvalidateLayout( true )
-
-	self.Contents:SetVisible( false )
-end
-
-function PANEL:PerformLayout()
-	if (self.iconMode != TOOLTIP_ITEM) then
-		if ( self.Contents ) then
-			self:SetWide( self.Contents:GetWide() + 8 )
-			self:SetTall( self.Contents:GetTall() + 8 )
-			self.Contents:SetPos( 4, 4 )
-		else
-			local w, h = self:GetContentSize()
-			self:SetSize( w + 8, h + 6 )
-			self:SetContentAlignment( 5 )
+	function ChangeTooltip(panel, ...) -- luacheck: globals ChangeTooltip
+		if (!panel.ixTooltip) then
+			return ixChangeTooltip(panel, ...)
 		end
+
+		RemoveTooltip()
+
+		timer.Create("ixTooltip", 0.1, 1, function()
+			if (!IsValid(panel) or lastHover != panel) then
+				return
+			end
+
+			tooltip = vgui.Create("ixTooltip")
+			panel.ixTooltip(tooltip)
+			tooltip:SizeToContents()
+		end)
+
+		lastHover = panel
+	end
+
+	function RemoveTooltip() -- luacheck: globals RemoveTooltip
+		if (IsValid(tooltip)) then
+			tooltip:Remove()
+			tooltip = nil
+		end
+
+		timer.Remove("ixTooltip")
+		lastHover = nil
+
+		return ixRemoveTooltip()
 	end
 end
 
-local Mat = Material( "vgui/arrow" )
+-- tooltip row
+DEFINE_BASECLASS("DLabel")
+local PANEL = {}
 
-function PANEL:DrawArrow( x, y )
-	self.Contents:SetVisible( true )
+AccessorFunc(PANEL, "backgroundColor", "BackgroundColor")
+AccessorFunc(PANEL, "maxWidth", "MaxWidth", FORCE_NUMBER)
 
-	surface.SetMaterial( Mat )
-	surface.DrawTexturedRect( self.ArrowPosX + x, self.ArrowPosY + y, self.ArrowWide, self.ArrowTall )
+function PANEL:Init()
+	self:SetFont("ixSmallFont")
+	self:SetText(L("unknown"))
+	self:SetTextColor(color_white)
+	self:SetTextInset(4, 0)
+	self:SetContentAlignment(4)
+	self:Dock(TOP)
+
+	self.maxWidth = ScrW() * 0.2
 end
 
-local itemWidth = ScrW()*.15
-function PANEL:PositionTooltip()
-	if ( !IsValid( self.TargetPanel ) ) then
+-- changes font and background color to reduce repetition for titles
+function PANEL:SetImportant()
+	self:SetFont("ixSmallTitleFont")
+	self:SetExpensiveShadow(1, color_black)
+	self:SetBackgroundColor(ix.config.Get("color"))
+end
+
+function PANEL:SetBackgroundColor(color)
+	color = table.Copy(color)
+	color.a = math.min(color.a, 100)
+
+	self.backgroundColor = color
+end
+
+function PANEL:SizeToContents()
+	local contentWidth, contentHeight = self:GetContentSize()
+	contentWidth = contentWidth + 4
+	contentHeight = contentHeight + 4
+
+	if (contentWidth > self.maxWidth) then
+		self:SetWide(self.maxWidth)
+		self:SetTextInset(4, 0)
+		self:SetWrap(true)
+
+		self:SizeToContentsY()
+		self:SetWide(self:GetContentSize())
+	else
+		self:SetSize(contentWidth, contentHeight)
+	end
+end
+
+function PANEL:SizeToContentsY()
+	BaseClass.SizeToContentsY(self)
+	self:SetTall(self:GetTall() + 4)
+end
+
+-- easy method in case paint is overridden
+function PANEL:PaintBackground(width, height)
+	if (self.backgroundColor) then
+		derma.SkinFunc("DrawImportantBackground", 0, 0, width, height, self.backgroundColor)
+	end
+end
+
+function PANEL:Paint(width, height)
+	self:PaintBackground(width, height)
+end
+
+vgui.Register("ixTooltipRow", PANEL, "DLabel")
+
+-- tooltip
+DEFINE_BASECLASS("Panel")
+PANEL = {}
+
+AccessorFunc(PANEL, "entity", "Entity")
+AccessorFunc(PANEL, "mousePadding", "MousePadding", FORCE_NUMBER)
+AccessorFunc(PANEL, "bDrawArrow", "DrawArrow", FORCE_BOOL)
+AccessorFunc(PANEL, "arrowColor", "ArrowColor")
+AccessorFunc(PANEL, "bHideArrowWhenRaised", "HideArrowWhenRaised", FORCE_BOOL)
+AccessorFunc(PANEL, "bArrowFollowEntity", "ArrowFollowEntity", FORCE_BOOL)
+
+function PANEL:Init()
+	self.fraction = 0
+	self.mousePadding = 16
+	self.arrowColor = ix.config.Get("color")
+	self.bHideArrowWhenRaised = true
+	self.bArrowFollowEntity = true
+
+	self.lastX, self.lastY = self:GetCursorPosition()
+	self.arrowX, self.arrowY = ScrW() * 0.5, ScrH() * 0.5
+
+	self:SetAlpha(0)
+	self:SetSize(0, 0)
+	self:SetDrawOnTop(true)
+
+	self:CreateAnimation(animationTime, {
+		target = {fraction = 1},
+		easing = "outQuint",
+
+		Think = function(animation, panel)
+			panel:SetAlpha(panel.fraction * 255)
+		end
+	})
+end
+
+-- ensure all children are painted manually
+function PANEL:Add(...)
+	local panel = BaseClass.Add(self, ...)
+	panel:SetPaintedManually(true)
+
+	return panel
+end
+
+function PANEL:AddRow(id)
+	local panel = self:Add("ixTooltipRow")
+	panel.id = id
+	panel:SetZPos(#self:GetChildren() * 10)
+
+	return panel
+end
+
+function PANEL:AddRowAfter(after, id)
+	local panel = self:AddRow(id)
+	after = self:GetRow(after)
+
+	if (!IsValid(after)) then
+		return panel
+	end
+
+	panel:SetZPos(after:GetZPos() + 1)
+
+	return panel
+end
+
+function PANEL:SetEntity(entity)
+	if (!IsValid(entity)) then
+		self.bEntity = false
+		return
+	end
+
+	-- don't show entity tooltips if we have an entity menu open
+	if (IsValid(ix.menu.panel)) then
 		self:Remove()
 		return
 	end
 
-	self:PerformLayout()
+	if (entity:IsPlayer()) then
+		local character = entity:GetCharacter()
 
-	local x, y = input.GetCursorPos()
-	local w, h = self:GetSize()
-	local _, ly = self.TargetPanel:LocalToScreen( 0, 0 )
-
-	y = y - 50
-
-	y = math.min( y, ly - h * 1.5 )
-	if ( y < 2 ) then y = 2 end
-
-	-- Fixes being able to be drawn off screen
-	self:SetPos( math.Clamp( x - w * 0.5, 0, ScrW() - self:GetWide() ), math.Clamp( y, 0, ScrH() - self:GetTall() ) )
-end
-
-function PANEL:Paint( w, h )
-	self:PositionTooltip()
-
-	if (self.iconMode == TOOLTIP_ITEM) then
-		ix.util.DrawBlur(self, 10)
-		surface.SetDrawColor(55, 55, 55, 120)
-		surface.DrawRect(0, 0, w, h)
-		surface.SetDrawColor(255, 255, 255, 120)
-		surface.DrawOutlinedRect(1, 1, w - 2, h - 2)
-
-		if (self.markupObject) then
-			self.markupObject:draw(15, 10)
+		if (character) then
+			-- we want to group things that will most likely have backgrounds (e.g name/health status)
+			hook.Run("PopulateImportantCharacterInfo", entity, character, self)
+			hook.Run("PopulateCharacterInfo", entity, character, self)
 		end
 	else
-		derma.SkinHook( "Paint", "Tooltip", self, w, h )
+		if (entity.OnPopulateEntityInfo) then
+			entity:OnPopulateEntityInfo(self)
+		else
+			hook.Run("PopulateEntityInfo", entity, self)
+		end
+	end
+
+	self:SizeToContents()
+
+	self.entity = entity
+	self.bEntity = true
+end
+
+function PANEL:PaintUnder(width, height)
+end
+
+function PANEL:Paint(width, height)
+	self:PaintUnder()
+
+	-- directional arrow
+	self.bRaised = LocalPlayer():IsWepRaised()
+
+	if (!self.bClosing) then
+		if (self.bEntity and IsValid(self.entity) and self.bArrowFollowEntity) then
+			local entity = self.entity
+			local position = select(1, entity:GetBonePosition(entity:LookupBone("ValveBiped.Bip01_Spine") or -1)) or
+				entity:LocalToWorld(entity:OBBCenter())
+
+			position = position:ToScreen()
+			self.arrowX = math.Clamp(position.x, 0, ScrW())
+			self.arrowY = math.Clamp(position.y, 0, ScrH())
+		end
+	end
+
+	-- arrow
+	if (self.bDrawArrow or (self.bDrawArrow and self.bRaised and !self.bHideArrowWhenRaised)) then
+		local x, y = self:ScreenToLocal(self.arrowX, self.arrowY)
+
+		DisableClipping(true)
+			surface.SetDrawColor(self.arrowColor)
+			surface.DrawLine(0, 0, x * self.fraction, y * self.fraction)
+			surface.DrawRect((x - 2) * self.fraction, (y - 2) * self.fraction, 4, 4)
+		DisableClipping(false)
+	end
+
+	-- contents
+	local x, y = self:GetPos()
+
+	render.SetScissorRect(x, y, x + width * self.fraction, y + height, true)
+		derma.SkinFunc("PaintTooltipBackground", self, width, height)
+
+		for _, v in ipairs(self:GetChildren()) do
+			if (IsValid(v)) then
+				v:PaintManual()
+			end
+		end
+	render.SetScissorRect(0, 0, 0, 0, false)
+end
+
+function PANEL:GetCursorPosition()
+	local width, height = self:GetSize()
+	local mouseX, mouseY = gui.MousePos()
+
+	return math.Clamp(mouseX + self.mousePadding, 0, ScrW() - width), math.Clamp(mouseY, 0, ScrH() - height)
+end
+
+function PANEL:Think()
+	if (!self.bEntity) then
+		if (!vgui.CursorVisible()) then
+			self:SetPos(self.lastX, self.lastY)
+
+			-- if the cursor isn't visible then we don't really need the tooltip to be shown
+			if (!self.bClosing) then
+				self:Remove()
+			end
+		else
+			local newX, newY = self:GetCursorPosition()
+
+			self:SetPos(newX, newY)
+			self.lastX, self.lastY = newX, newY
+		end
+
+		self:MoveToFront() -- dragging a panel w/ tooltip will push the tooltip beneath even the menu panel(???)
+	elseif (IsValid(self.entity) and !self.bClosing) then
+		if (self.bRaised) then
+			self:SetPos(
+				ScrW() * 0.5 - self:GetWide() * 0.5,
+				math.min(ScrH() * 0.5 + self:GetTall() + 32, ScrH() - self:GetTall())
+			)
+		else
+			local entity = self.entity
+			local min, max = entity:GetRotatedAABB(entity:OBBMins() * 0.5, entity:OBBMaxs() * 0.5)
+			min = entity:LocalToWorld(min):ToScreen().x
+			max = entity:LocalToWorld(max):ToScreen().x
+
+			self:SetPos(
+				math.Clamp(math.max(min, max), ScrW() * 0.5 + 32, ScrW() * 0.66 - self:GetWide()),
+				ScrH() * 0.5 - self:GetTall() * 0.5
+			)
+		end
 	end
 end
 
-function PANEL:OpenForPanel( panel )
-	self.TargetPanel = panel
-	self:PositionTooltip()
-
-	if (panel.itemTable) then
-		self.iconMode = TOOLTIP_ITEM
+function PANEL:GetRow(id)
+	for _, v in ipairs(self:GetChildren()) do
+		if (IsValid(v) and v.id == id) then
+			return v
+		end
 	end
-
-	if (self.iconMode == TOOLTIP_ITEM) then
-		self.markupObject = ix.markup.Parse(self:GetText(), itemWidth)
-		self:SetText("")
-		self:SetWide(math.max(itemWidth, 200) + 15)
-		self:SetHeight(self.markupObject:GetHeight() + 20)
-	end
-
-	if ( tooltip_delay > 0 ) then
-
-		self:SetVisible( false )
-		timer.Simple( tooltip_delay, function()
-			if ( !IsValid( self ) ) then return end
-			if ( !IsValid( panel ) ) then return end
-
-			self:PositionTooltip()
-			self:SetVisible( true )
-		end )
-	end
-
 end
 
-function PANEL:Close()
+function PANEL:SizeToContents()
+	local height = 0
+	local width = 0
 
-	if ( !self.DeleteContentsOnClose and self.Contents ) then
+	for _, v in ipairs(self:GetChildren()) do
+		if (v:GetWide() > width) then
+			width = v:GetWide()
+		end
 
-		self.Contents:SetVisible( false )
-		self.Contents:SetParent( nil )
-
+		height = height + v:GetTall()
 	end
 
-	self:Remove()
-
+	self:SetSize(width, height)
 end
 
-function PANEL:GenerateExample( ClassName, PropertySheet, Width, Height )
+function PANEL:Remove()
+	if (self.bClosing) then
+		return
+	end
 
-	local ctrl = vgui.Create( "DButton" )
-	ctrl:SetText( "Hover me" )
-	ctrl:SetWide( 200 )
-	ctrl:SetTooltip( "This is a tooltip" )
+	self.bClosing = true
+	self:CreateAnimation(animationTime * 0.5, {
+		target = {fraction = 0},
+		easing = "outQuint",
 
-	PropertySheet:AddSheet( ClassName, ctrl, nil, true, true )
+		Think = function(animation, panel)
+			panel:SetAlpha(panel.fraction * 255)
+		end,
 
+		OnComplete = function(animation, panel)
+			BaseClass.Remove(panel)
+		end
+	})
 end
 
-derma.DefineControl( "DTooltip", "", PANEL, "DLabel" )
+vgui.Register("ixTooltip", PANEL, "Panel")

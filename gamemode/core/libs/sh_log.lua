@@ -18,16 +18,15 @@ ix.log.color = {
 }
 local consoleColor = Color(50, 200, 50)
 
--- TODO: Creating MYSQL/SQLLite Query for the logging.
--- SUGG: Do I have to get Seperated Database? For ChatLog, For EventLog.
-
 if (SERVER) then
 	if (!ix.db) then
 		include("sv_database.lua")
 	end
 
+	util.AddNetworkString("ixLogStream")
+
 	function ix.log.LoadTables()
-		file.CreateDir("helix/logs")
+		ix.log.CallHandler("Load")
 	end
 
 	ix.log.types = ix.log.types or {}
@@ -53,7 +52,7 @@ if (SERVER) then
 			text = -1
 		end
 
-		return text, info and info.flag
+		return text, info.flag
 	end
 
 	function ix.log.AddRaw(logString, bNoSave)
@@ -62,7 +61,7 @@ if (SERVER) then
 		Msg("[LOG] ", logString .. "\n")
 
 		if (!bNoSave) then
-			file.Append("helix/logs/"..os.date("%x"):gsub("/", "-")..".txt", "["..os.date("%X").."]\t"..logString.."\r\n")
+			ix.log.CallHandler("Write", nil, logString)
 		end
 	end
 
@@ -74,15 +73,53 @@ if (SERVER) then
 
 		Msg("[LOG] ", logString .. "\n")
 
-		-- @todo maybe check for bNoSave?
-		file.Append("helix/logs/"..os.date("%x"):gsub("/", "-")..".txt", "["..os.date("%X").."]\t"..logString.."\r\n")
+		ix.log.CallHandler("Write", client, logString, logFlag)
 	end
 
 	function ix.log.Send(client, logString, flag)
-		netstream.Start(client, "ixLogStream", logString, flag)
+		net.Start("ixLogStream")
+			net.WriteString(logString)
+			net.WriteUInt(flag or 0, 4)
+		net.Send(client)
+	end
+
+	ix.log.handlers = ix.log.handlers or {}
+	function ix.log.CallHandler(event, ...)
+		for _, v in pairs(ix.log.handlers) do
+			if (isfunction(v[event])) then
+				v[event](...)
+			end
+		end
+	end
+
+	function ix.log.RegisterHandler(name, data)
+		data.name = string.gsub(name, "%s", "")
+			name = name:lower()
+		data.uniqueID = name
+
+		ix.log.handlers[name] = data
+	end
+
+	do
+		local HANDLER = {}
+
+		function HANDLER.Load()
+			file.CreateDir("helix/logs")
+		end
+
+		function HANDLER.Write(client, message)
+			file.Append("helix/logs/" .. os.date("%x"):gsub("/", "-") .. ".txt", "[" .. os.date("%X") .. "]\t" .. message .. "\r\n")
+		end
+
+		ix.log.RegisterHandler("File", HANDLER)
 	end
 else
-	netstream.Hook("ixLogStream", function(logString, flag)
-		MsgC(consoleColor, "[SERVER] ", ix.log.color[flag] or color_white, logString .. "\n")
+	net.Receive("ixLogStream", function(length)
+		local logString = net.ReadString()
+		local flag = net.ReadUInt(4)
+
+		if (isstring(logString) and isnumber(flag)) then
+			MsgC(consoleColor, "[SERVER] ", ix.log.color[flag], logString .. "\n")
+		end
 	end)
 end

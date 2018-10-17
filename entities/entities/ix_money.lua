@@ -28,15 +28,12 @@ if (SERVER) then
 	end
 
 	function ENT:Use(activator)
-		if (self.client and self.charID) then
-			local char = activator:GetChar()
+		if (self.ixSteamID and self.ixCharID) then
+			local char = activator:GetCharacter()
 
-			if (char) then
-				if (self.charID != char:GetID() and self.client == activator) then
-					activator:NotifyLocalized("logged")
-
-					return false
-				end
+			if (char and self.ixCharID != char:GetID() and self.ixSteamID == activator:SteamID()) then
+				activator:NotifyLocalized("itemOwned")
+				return false
 			end
 		end
 
@@ -46,19 +43,18 @@ if (SERVER) then
 			end
 		end)
 	end
+
+	function ENT:UpdateTransmitState()
+		return TRANSMIT_PVS
+	end
 else
-	ENT.DrawEntityInfo = true
+	ENT.PopulateEntityInfo = true
 
-	local toScreen = FindMetaTable("Vector").ToScreen
-	local colorAlpha = ColorAlpha
-	local drawText = ix.util.DrawText
-	local configGet = ix.config.Get
-
-	function ENT:OnDrawEntityInfo(alpha)
-		local position = toScreen(self.LocalToWorld(self, self.OBBCenter(self)))
-		local x, y = position.x, position.y
-
-		drawText(ix.currency.Get(self.GetAmount(self)), x, y, colorAlpha(configGet("color"), alpha), 1, 1, nil, alpha * 0.65)
+	function ENT:OnPopulateEntityInfo(container)
+		local text = container:AddRow("name")
+		text:SetImportant()
+		text:SetText(ix.currency.Get(self:GetAmount()))
+		text:SizeToContents()
 	end
 end
 

@@ -1,3 +1,7 @@
+--[[--
+Item/inventory manipulation and helper functions.
+]]
+-- @module ix.item
 
 ix.item = ix.item or {}
 ix.item.list = ix.item.list or {}
@@ -12,8 +16,13 @@ ix.util.Include("helix/gamemode/core/meta/sh_item.lua")
 
 -- Declare some supports for logic inventory
 local zeroInv = ix.item.inventories[0]
+
 function zeroInv:GetID()
 	return 0
+end
+
+function zeroInv:OnCheckAccess(client)
+	return true
 end
 
 -- WARNING: You have to manually sync the data to client if you're trying to use item in the logical inventory in the vgui.
@@ -47,7 +56,7 @@ function zeroInv:Add(uniqueID, quantity, data, x, y)
 	end
 end
 
-function ix.item.Instance(index, uniqueID, itemData, x, y, callback)
+function ix.item.Instance(index, uniqueID, itemData, x, y, callback, characterID, playerID)
 	if (!uniqueID or ix.item.list[uniqueID]) then
 		local query = mysql:Insert("ix_items")
 			query:Insert("inventory_id", index)
@@ -55,12 +64,23 @@ function ix.item.Instance(index, uniqueID, itemData, x, y, callback)
 			query:Insert("data", util.TableToJSON(itemData))
 			query:Insert("x", x)
 			query:Insert("y", y)
+
+			if (characterID) then
+				query:Insert("character_id", characterID)
+			end
+
+			if (playerID) then
+				query:Insert("player_id", playerID)
+			end
+
 			query:Callback(function(result, status, lastID)
 				local item = ix.item.New(uniqueID, lastID)
 
 				if (item) then
-					item.data = itemData or {}
+					item.data = istable(itemData) and table.Copy(itemData) or {}
 					item.invID = index
+					item.characterID = characterID
+					item.playerID = playerID
 
 					if (callback) then
 						callback(item)
@@ -100,14 +120,14 @@ function ix.item.NewInv(owner, invType, callback)
 				inventory.vars.isBag = invType
 			end
 
-			if (owner and owner > 0) then
-				for _, v in ipairs(player.GetAll()) do
-					if (v:GetChar() and v:GetChar():GetID() == owner) then
-						inventory:SetOwner(owner)
-						inventory:Sync(v)
+			if (isnumber(owner) and owner > 0) then
+				local character = ix.char.loaded[owner]
+				local client = character:GetPlayer()
 
-						break
-					end
+				inventory:SetOwner(owner)
+
+				if (IsValid(client)) then
+					inventory:Sync(client)
 				end
 			end
 
@@ -145,7 +165,7 @@ function ix.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 	if (uniqueID) then
 		ITEM = (isBaseItem and ix.item.base or ix.item.list)[uniqueID] or setmetatable({}, meta)
 			ITEM.uniqueID = uniqueID
-			ITEM.base = baseID
+			ITEM.base = baseID or ITEM.base
 			ITEM.isBase = isBaseItem
 			ITEM.hooks = ITEM.hooks or {}
 			ITEM.postHooks = ITEM.postHooks or {}
@@ -154,13 +174,18 @@ function ix.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 				tip = "dropTip",
 				icon = "icon16/world.png",
 				OnRun = function(item)
-					item:Transfer()
-					item.player:EmitSound("npc/zombie/foot_slide" .. math.random(1, 3) .. ".wav", 75, math.random(90, 120), 1)
+					local bSuccess, error = item:Transfer(nil, nil, nil, item.player)
+
+					if (!bSuccess and isstring(error)) then
+						item.player:NotifyLocalized(error)
+					else
+						item.player:EmitSound("npc/zombie/foot_slide" .. math.random(1, 3) .. ".wav", 75, math.random(90, 120), 1)
+					end
 
 					return false
 				end,
 				OnCanRun = function(item)
-					return (!IsValid(item.entity) and !item.noDrop)
+					return !IsValid(item.entity) and !item.noDrop
 				end
 			}
 			ITEM.functions.take = ITEM.functions.take or {
@@ -168,11 +193,10 @@ function ix.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 				icon = "icon16/box.png",
 				OnRun = function(item)
 					local client = item.player
-					local status, result = client:GetChar():GetInv():Add(item.id)
+					local bSuccess, error = item:Transfer(client:GetCharacter():GetInventory():GetID(), nil, nil, client)
 
-					if (!status) then
-						client:NotifyLocalized(result)
-
+					if (!bSuccess) then
+						client:NotifyLocalized(error or "unknownError")
 						return false
 					else
 						client:EmitSound("npc/zombie/foot_slide" .. math.random(1, 3) .. ".wav", 75, math.random(90, 120), 1)
@@ -183,6 +207,8 @@ function ix.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 							end
 						end
 					end
+
+					return true
 				end,
 				OnCanRun = function(item)
 					return IsValid(item.entity)
@@ -247,6 +273,15 @@ function ix.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 			end
 
 			(isBaseItem and ix.item.base or ix.item.list)[ITEM.uniqueID] = ITEM
+
+			if (IX_RELOADED) then
+				-- we don't know which item was actually edited, so we'll refresh all of them
+				for _, v in pairs(ix.item.instances) do
+					if (v.uniqueID == uniqueID) then
+						table.Merge(v, ITEM)
+					end
+				end
+			end
 		if (luaGenerated) then
 			return ITEM
 		else
@@ -256,7 +291,6 @@ function ix.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 		ErrorNoHalt("[Helix] You tried to register an item without uniqueID!\n")
 	end
 end
-
 
 function ix.item.LoadFromDir(directory)
 	local files, folders
@@ -308,51 +342,95 @@ do
 	ix.util.Include("helix/gamemode/core/meta/sh_inventory.lua")
 
 	function ix.item.CreateInv(w, h, id)
-		local inventory = setmetatable({w = w, h = h, id = id, slots = {}, vars = {}}, ix.meta.inventory)
+		local inventory = setmetatable({w = w, h = h, id = id, slots = {}, vars = {}, receivers = {}}, ix.meta.inventory)
 			ix.item.inventories[id] = inventory
 
 		return inventory
 	end
 
-	function ix.item.RestoreInv(invID, w, h, callback)
-		if (type(invID) != "number" or invID < 0) then
-			error("Attempt to restore inventory with an invalid ID!")
-		end
+	--- Loads an inventory and associated items from the database into memory. If you are passing a table into `invID`, it
+	-- requires a table where the key is the inventory ID, and the value is a table of the width and height values. See below
+	-- for an example.
+	-- @server
+	-- @param invID Inventory ID or table of inventory IDs
+	-- @number width Width of inventory (this is not used when passing a table to `invID`)
+	-- @number height Height of inventory (this is not used when passing a table to `invID`)
+	-- @function callback Function to call when inventory is restored
+	-- @usage ix.item.RestoreInv({
+	-- 	[10] = {5, 5},
+	-- 	[11] = {7, 4}
+	-- })
+	-- -- inventories 10 and 11 with sizes (5, 5) and (7, 4) will be loaded
+	function ix.item.RestoreInv(invID, width, height, callback)
+		local inventories = {}
 
-		local inventory = ix.item.CreateInv(w, h, invID)
+		if (!istable(invID)) then
+			if (!isnumber(invID) or invID < 0) then
+				error("Attempt to restore inventory with an invalid ID!")
+			end
+
+			inventories[invID] = {width, height}
+			ix.item.CreateInv(width, height, invID)
+		else
+			for k, v in pairs(invID) do
+				inventories[k] = {v[1], v[2]}
+				ix.item.CreateInv(v[1], v[2], k)
+			end
+		end
 
 		local query = mysql:Select("ix_items")
 			query:Select("item_id")
+			query:Select("inventory_id")
 			query:Select("unique_id")
 			query:Select("data")
+			query:Select("character_id")
+			query:Select("player_id")
 			query:Select("x")
 			query:Select("y")
-			query:Where("inventory_id", invID)
+			query:WhereIn("inventory_id", table.GetKeys(inventories))
 			query:Callback(function(result)
 				local badItemsUniqueID = {}
 
 				if (istable(result) and #result > 0) then
-					local slots = {}
+					local invSlots = {}
 					local badItems = {}
 
 					for _, item in ipairs(result) do
+						local itemInvID = tonumber(item.inventory_id)
+						local invInfo = inventories[itemInvID]
+
+						if (!itemInvID or !invInfo) then
+							badItemsUniqueID[#badItemsUniqueID + 1] = item.unique_id
+							badItems[#badItems + 1] = tonumber(item.item_id)
+
+							continue
+						end
+
+						local inventory = ix.item.inventories[itemInvID]
 						local x, y = tonumber(item.x), tonumber(item.y)
 						local itemID = tonumber(item.item_id)
 						local data = util.JSONToTable(item.data or "[]")
+						local characterID, playerID = tonumber(item.character_id), tostring(item.player_id)
 
 						if (x and y and itemID) then
-							if (x <= w and x > 0 and y <= h and y > 0) then
+							if (x <= inventory.w and x > 0 and y <= inventory.h and y > 0) then
 								local item2 = ix.item.New(item.unique_id, itemID)
 
 								if (item2) then
+									invSlots[itemInvID] = invSlots[itemInvID] or {}
+									local slots = invSlots[itemInvID]
+
 									item2.data = {}
+
 									if (data) then
 										item2.data = data
 									end
 
 									item2.gridX = x
 									item2.gridY = y
-									item2.invID = invID
+									item2.invID = itemInvID
+									item2.characterID = characterID
+									item2.playerID = (playerID == "" or playerID == "NULL") and nil or playerID
 
 									for x2 = 0, item2.width - 1 do
 										for y2 = 0, item2.height - 1 do
@@ -362,7 +440,7 @@ do
 									end
 
 									if (item2.OnRestored) then
-										item2:OnRestored(item2, invID)
+										item2:OnRestored(item2, itemInvID)
 									end
 								else
 									badItemsUniqueID[#badItemsUniqueID + 1] = item.unique_id
@@ -375,7 +453,9 @@ do
 						end
 					end
 
-					inventory.slots = slots
+					for k, v in pairs(invSlots) do
+						ix.item.inventories[k].slots = v
+					end
 
 					if (table.Count(badItems) > 0) then
 						local deleteQuery = mysql:Delete("ix_items")
@@ -385,32 +465,23 @@ do
 				end
 
 				if (callback) then
-					callback(inventory, badItemsUniqueID)
+					for k, _ in pairs(inventories) do
+						callback(ix.item.inventories[k], badItemsUniqueID)
+					end
 				end
 			end)
 		query:Execute()
 	end
 
 	if (CLIENT) then
-		netstream.Hook("item", function(uniqueID, id, data, invID)
-			local item = ix.item.New(uniqueID, id)
-			item.data = {}
+		net.Receive("ixInventorySync", function()
+			local slots = net.ReadTable()
+			local id = net.ReadUInt(32)
+			local w, h = net.ReadUInt(6), net.ReadUInt(6)
+			local owner = net.ReadType()
+			local vars = net.ReadTable()
 
-			if (data) then
-				item.data = data
-			end
-
-			item.invID = invID or 0
-		end)
-
-		netstream.Hook("inv", function(slots, id, w, h, owner, vars)
-			local character
-
-			if (owner) then
-				character = ix.char.loaded[owner]
-			else
-				character = LocalPlayer():GetChar()
-			end
+			local character = owner and ix.char.loaded[owner] or LocalPlayer():GetCharacter()
 
 			if (character) then
 				local inventory = ix.item.CreateInv(w, h, id)
@@ -438,9 +509,9 @@ do
 
 				character.vars.inv = character.vars.inv or {}
 
-				for k, v in ipairs(character:GetInv(true)) do
+				for k, v in ipairs(character:GetInventory(true)) do
 					if (v:GetID() == id) then
-						character:GetInv(true)[k] = inventory
+						character:GetInventory(true)[k] = inventory
 
 						return
 					end
@@ -450,44 +521,50 @@ do
 			end
 		end)
 
-		netstream.Hook("invData", function(id, key, value)
+		net.Receive("ixInventoryData", function()
+			local id = net.ReadUInt(32)
 			local item = ix.item.instances[id]
 
 			if (item) then
+				local key = net.ReadString()
+				local value = net.ReadType()
+
 				item.data = item.data or {}
 				item.data[key] = value
 
-				local panel = item.invID and ix.gui["inv"..item.invID] or ix.gui.inv1
+				local invID = item.invID == LocalPlayer():GetCharacter():GetInventory():GetID() and 1 or item.invID
+				local panel = ix.gui["inv" .. invID]
 
 				if (panel and panel.panels) then
 					local icon = panel.panels[id]
 
 					if (icon) then
-						icon:SetTooltip(
-							Format(ix.config.itemFormat,
-							item.GetName and item:GetName() or L(item.name), item:GetDescription() or "")
-						)
+						icon:SetHelixTooltip(function(tooltip)
+							ix.hud.PopulateItemTooltip(tooltip, item)
+						end)
 					end
 				end
 			end
 		end)
 
-		netstream.Hook("invSet", function(invID, x, y, uniqueID, id, owner, data, a)
-			local character = LocalPlayer():GetChar()
+		net.Receive("ixInventorySet", function()
+			local invID = net.ReadUInt(32)
+			local x, y = net.ReadUInt(6), net.ReadUInt(6)
+			local uniqueID = net.ReadString()
+			local id = net.ReadUInt(32)
+			local owner = net.ReadUInt(32)
+			local data = net.ReadTable()
 
-			if (owner) then
-				character = ix.char.loaded[owner]
-			end
+			local character = owner != 0 and ix.char.loaded[owner] or LocalPlayer():GetCharacter()
 
 			if (character) then
 				local inventory = ix.item.inventories[invID]
 
 				if (inventory) then
-					local item = uniqueID and id and ix.item.New(uniqueID, id) or nil
+					local item = (uniqueID != "" and id != 0) and ix.item.New(uniqueID, id) or nil
 					item.invID = invID
-
 					item.data = {}
-					-- Let's just be sure about it kk?
+
 					if (data) then
 						item.data = data
 					end
@@ -495,18 +572,21 @@ do
 					inventory.slots[x] = inventory.slots[x] or {}
 					inventory.slots[x][y] = item
 
-					local panel = ix.gui["inv"..invID] or ix.gui.inv1
+					invID = invID == LocalPlayer():GetCharacter():GetInventory():GetID() and 1 or invID
+
+					local panel = ix.gui["inv" .. invID]
 
 					if (IsValid(panel)) then
-						local icon = panel:AddIcon(item.model or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height)
+						local icon = panel:AddIcon(
+							item:GetModel() or "models/props_junk/popcan01a.mdl", x, y, item.width, item.height, item:GetSkin()
+						)
 
 						if (IsValid(icon)) then
-							icon:SetTooltip(
-								Format(ix.config.itemFormat,
-								item.GetName and item:GetName() or L(item.name), item:GetDescription() or "")
-							)
-							icon.itemID = item.id
+							icon:SetHelixTooltip(function(tooltip)
+								ix.hud.PopulateItemTooltip(tooltip, item)
+							end)
 
+							icon.itemID = item.id
 							panel.panels[item.id] = icon
 						end
 					end
@@ -514,56 +594,106 @@ do
 			end
 		end)
 
-		netstream.Hook("invMv", function(invID, itemID, x, y)
+		net.Receive("ixInventoryMove", function()
+			local invID = net.ReadUInt(32)
 			local inventory = ix.item.inventories[invID]
-			local panel = ix.gui["inv"..invID]
 
-			if (inventory and IsValid(panel)) then
+			if (!inventory) then
+				return
+			end
+
+			local itemID = net.ReadUInt(32)
+			local oldX = net.ReadUInt(6)
+			local oldY = net.ReadUInt(6)
+			local x = net.ReadUInt(6)
+			local y = net.ReadUInt(6)
+
+			invID = invID == LocalPlayer():GetCharacter():GetInventory():GetID() and 1 or invID
+
+			local item = ix.item.instances[itemID]
+			local panel = ix.gui["inv" .. invID]
+
+			-- update inventory UI if it's open
+			if (IsValid(panel)) then
 				local icon = panel.panels[itemID]
 
 				if (IsValid(icon)) then
-					icon:move({x2 = x, y2 = y}, panel, true)
+					icon:Move(x, y, panel, true)
 				end
+			end
+
+			-- update inventory slots
+			if (item) then
+				inventory.slots[oldX][oldY] = nil
+
+				inventory.slots[x] = inventory.slots[x] or {}
+				inventory.slots[x][y] = item
 			end
 		end)
 
-		netstream.Hook("invRm", function(id, invID, owner)
-			local character = LocalPlayer():GetChar()
+		net.Receive("ixInventoryRemove", function()
+			local id = net.ReadUInt(32)
+			local invID = net.ReadUInt(32)
 
-			if (owner) then
-				character = ix.char.loaded[owner]
+			local inventory = ix.item.inventories[invID]
+
+			if (!inventory) then
+				return
 			end
 
-			if (character) then
-				local inventory = ix.item.inventories[invID]
+			inventory:Remove(id)
 
-				if (inventory) then
-					inventory:Remove(id)
+			invID = invID == LocalPlayer():GetCharacter():GetInventory():GetID() and 1 or invID
+			local panel = ix.gui["inv" .. invID]
 
-					local panel = ix.gui["inv"..invID] or ix.gui.inv1
+			if (IsValid(panel)) then
+				local icon = panel.panels[id]
 
-					if (IsValid(panel)) then
-						local icon = panel.panels[id]
-
-						if (IsValid(icon)) then
-							for _, v in ipairs(icon.slots or {}) do
-								if (v.item == icon) then
-									v.item = nil
-								end
-							end
-
-							icon:Remove()
+				if (IsValid(icon)) then
+					for _, v in ipairs(icon.slots or {}) do
+						if (v.item == icon) then
+							v.item = nil
 						end
+					end
+
+					icon:Remove()
+				end
+			end
+
+			local item = ix.item.instances[id]
+
+			if (!item) then
+				return
+			end
+
+			-- we need to close any bag windows that are open because of this item
+			if (item.isBag) then
+				local itemInv = item:GetInventory()
+
+				if (itemInv) then
+					local frame = ix.gui["inv" .. itemInv:GetID()]
+
+					if (IsValid(frame)) then
+						frame:Remove()
 					end
 				end
 			end
 		end)
 	else
+		util.AddNetworkString("ixInventorySync")
+		util.AddNetworkString("ixInventorySet")
+		util.AddNetworkString("ixInventoryMove")
+		util.AddNetworkString("ixInventoryRemove")
+		util.AddNetworkString("ixInventoryData")
+		util.AddNetworkString("ixInventoryAction")
+
 		function ix.item.LoadItemByID(itemIndex, recipientFilter)
 			local query = mysql:Select("ix_items")
 				query:Select("item_id")
 				query:Select("unique_id")
 				query:Select("data")
+				query:Select("character_id")
+				query:Select("player_id")
 				query:WhereIn("item_id", itemIndex)
 				query:Callback(function(result)
 					if (istable(result)) then
@@ -572,12 +702,16 @@ do
 							local data = util.JSONToTable(v.data or "[]")
 							local uniqueID = v.unique_id
 							local itemTable = ix.item.list[uniqueID]
+							local characterID = tonumber(v.character_id)
+							local playerID = tostring(v.player_id)
 
 							if (itemTable and itemID) then
 								local item = ix.item.New(uniqueID, itemID)
 
 								item.data = data or {}
 								item.invID = 0
+								item.characterID = characterID
+								item.playerID = (playerID == "" or playerID == "NULL") and nil or playerID
 							end
 						end
 					end
@@ -586,21 +720,19 @@ do
 		end
 
 		function ix.item.PerformInventoryAction(client, action, item, invID, data)
-			local character = client:GetChar()
+			local character = client:GetCharacter()
 
 			if (!character) then
 				return
 			end
 
-			local inventory = ix.item.inventories[invID]
-
-			if (type(item) != "Entity") then
-				if (!inventory or !inventory.owner or inventory.owner != character:GetID()) then
-					return
-				end
-			end
+			local inventory = ix.item.inventories[invID or 0]
 
 			if (hook.Run("CanPlayerInteractItem", client, action, item, data) == false) then
+				return
+			end
+
+			if (!inventory:OnCheckAccess(client)) then
 				return
 			end
 
@@ -637,7 +769,23 @@ do
 				return
 			end
 
+			if (!item.bAllowMultiCharacterInteraction and IsValid(client) and client:GetCharacter()) then
+				local itemPlayerID = item:GetPlayerID()
+				local itemCharacterID = item:GetCharacterID()
+				local playerID = client:SteamID64()
+				local characterID = client:GetCharacter():GetID()
+
+				if (itemPlayerID and itemCharacterID and itemPlayerID == playerID and itemCharacterID != characterID) then
+					client:NotifyLocalized("itemOwned")
+
+					item.player = nil
+					item.entity = nil
+					return
+				end
+			end
+
 			local callback = item.functions[action]
+
 			if (callback) then
 				if (callback.OnCanRun and callback.OnCanRun(item, data) == false) then
 					item.entity = nil
@@ -645,6 +793,8 @@ do
 
 					return
 				end
+
+				hook.Run("PlayerInteractItem", client, action, item)
 
 				local entity = item.entity
 				local result
@@ -662,8 +812,6 @@ do
 					item.postHooks[action](item, result, data)
 				end
 
-				hook.Run("OnPlayerInteractItem", client, action, item, result, data)
-
 				if (result != false) then
 					if (IsValid(entity)) then
 						entity.ixIsSafe = true
@@ -675,14 +823,27 @@ do
 
 				item.entity = nil
 				item.player = nil
+
+				return result != false
 			end
 		end
 
-		netstream.Hook("invMv", function(client, oldX, oldY, x, y, invID, newInvID)
-			oldX, oldY, x, y, invID = tonumber(oldX), tonumber(oldY), tonumber(x), tonumber(y), tonumber(invID)
-			if (!oldX or !oldY or !x or !y or !invID) then return end
+		local function NetworkInventoryMove(receiver, invID, itemID, oldX, oldY, x, y)
+			net.Start("ixInventoryMove")
+				net.WriteUInt(invID, 32)
+				net.WriteUInt(itemID, 32)
+				net.WriteUInt(oldX, 6)
+				net.WriteUInt(oldY, 6)
+				net.WriteUInt(x, 6)
+				net.WriteUInt(y, 6)
+			net.Send(receiver)
+		end
 
-			local character = client:GetChar()
+		net.Receive("ixInventoryMove", function(length, client)
+			local oldX, oldY, x, y = net.ReadUInt(6), net.ReadUInt(6), net.ReadUInt(6), net.ReadUInt(6)
+			local invID, newInvID = net.ReadUInt(32), net.ReadUInt(32)
+
+			local character = client:GetCharacter()
 
 			if (character) then
 				local inventory = ix.item.inventories[invID]
@@ -691,9 +852,8 @@ do
 					inventory:Sync(client)
 				end
 
-				if ((!inventory.owner or
-					(inventory.owner and inventory.owner == character:GetID())) or
-					(inventory.OnCheckAccess and inventory:OnCheckAccess(client))) then
+				if ((!inventory.owner or (inventory.owner and inventory.owner == character:GetID())) or
+					inventory:OnCheckAccess(client)) then
 					local item = inventory:GetItemAt(oldX, oldY)
 
 					if (item) then
@@ -701,7 +861,15 @@ do
 							local inventory2 = ix.item.inventories[newInvID]
 
 							if (inventory2) then
-								item:Transfer(newInvID, x, y, client)
+								local bStatus, error = item:Transfer(newInvID, x, y, client)
+
+								if (!bStatus) then
+									NetworkInventoryMove(
+										client, item.invID, item:GetID(), item.gridX, item.gridY, item.gridX, item.gridY
+									)
+
+									client:NotifyLocalized(error or "unknownError")
+								end
 							end
 
 							return
@@ -728,13 +896,21 @@ do
 								end
 							end
 
-							local receiver = inventory:GetReceiver()
+							local receivers = inventory:GetReceivers()
 
-							if (receiver and type(receiver) == "table") then
-								for _, v in ipairs(receiver) do
+							if (istable(receivers)) then
+								local filtered = {}
+
+								for _, v in ipairs(receivers) do
 									if (v != client) then
-										netstream.Start(v, "invMv", invID, item:GetID(), x, y)
+										filtered[#filtered + 1] = v
 									end
+								end
+
+								if (#filtered > 0) then
+									NetworkInventoryMove(
+										filtered, invID, item:GetID(), oldX, oldY, x, y
+									)
 								end
 							end
 
@@ -745,14 +921,26 @@ do
 									query:Where("item_id", item.id)
 								query:Execute()
 							end
+						else
+							NetworkInventoryMove(
+								client, item.invID, item:GetID(), item.gridX, item.gridY, item.gridX, item.gridY
+							)
 						end
+					end
+				else
+					local item = inventory:GetItemAt(oldX, oldY)
+
+					if (item) then
+						NetworkInventoryMove(
+							client, item.invID, item.invID, item:GetID(), item.gridX, item.gridY, item.gridX, item.gridY
+						)
 					end
 				end
 			end
 		end)
 
-		netstream.Hook("invAct", function(client, action, item, invID, data)
-			ix.item.PerformInventoryAction(client, action, item, invID, data)
+		net.Receive("ixInventoryAction", function(length, client)
+			ix.item.PerformInventoryAction(client, net.ReadString(), net.ReadUInt(32), net.ReadUInt(32), net.ReadTable())
 		end)
 	end
 

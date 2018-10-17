@@ -1,4 +1,8 @@
 
+if (SERVER) then
+	util.AddNetworkString("ixBagDrop")
+end
+
 ITEM.name = "Bag"
 ITEM.description = "A bag to hold items."
 ITEM.model = "models/props_c17/suitcase001a.mdl"
@@ -11,22 +15,32 @@ ITEM.isBag = true
 ITEM.functions.View = {
 	icon = "icon16/briefcase.png",
 	OnClick = function(item)
-		local index = item:GetData("id")
+		local index = item:GetData("id", "")
 
 		if (index) then
 			local panel = ix.gui["inv"..index]
-			local parent = item.invID and ix.gui["inv"..item.invID] or nil
 			local inventory = ix.item.inventories[index]
+			local parent = IsValid(ix.gui.menuInventoryContainer) and ix.gui.menuInventoryContainer or ix.gui.openedStorage
 
 			if (IsValid(panel)) then
 				panel:Remove()
 			end
 
 			if (inventory and inventory.slots) then
-				panel = vgui.Create("ixInventory", parent)
+				panel = vgui.Create("ixInventory", IsValid(parent) and parent or nil)
 				panel:SetInventory(inventory)
 				panel:ShowCloseButton(true)
 				panel:SetTitle(item.GetName and item:GetName() or L(item.name))
+
+				if (parent != ix.gui.menuInventoryContainer) then
+					panel:Center()
+
+					if (parent == ix.gui.openedStorage) then
+						panel:MakePopup()
+					end
+				else
+					panel:MoveToFront()
+				end
 
 				ix.gui["inv"..index] = panel
 			else
@@ -37,27 +51,51 @@ ITEM.functions.View = {
 		return false
 	end,
 	OnCanRun = function(item)
-		return !IsValid(item.entity) and item:GetData("id")
+		return !IsValid(item.entity) and item:GetData("id") and !IsValid(ix.gui["inv" .. item:GetData("id", "")])
 	end
 }
+
+if (CLIENT) then
+	function ITEM:PaintOver(item, width, height)
+		local panel = ix.gui["inv" .. item:GetData("id", "")]
+
+		if (!IsValid(panel)) then
+			return
+		end
+
+		if (vgui.GetHoveredPanel() == self) then
+			panel:SetHighlighted(true)
+		else
+			panel:SetHighlighted(false)
+		end
+	end
+end
 
 -- Called when a new instance of this item has been made.
 function ITEM:OnInstanced(invID, x, y)
 	local inventory = ix.item.inventories[invID]
 
 	ix.item.NewInv(inventory and inventory.owner or 0, self.uniqueID, function(inv)
+		local client = inv:GetOwner()
+
 		inv.vars.isBag = self.uniqueID
 		self:SetData("id", inv:GetID())
+
+		if (IsValid(client)) then
+			inv:AddReceiver(client)
+		end
 	end)
 end
 
-function ITEM:GetInv()
+function ITEM:GetInventory()
 	local index = self:GetData("id")
 
 	if (index) then
 		return ix.item.inventories[index]
 	end
 end
+
+ITEM.GetInv = ITEM.GetInventory
 
 -- Called when the item first appears for a client.
 function ITEM:OnSendData()
@@ -69,12 +107,24 @@ function ITEM:OnSendData()
 		if (inventory) then
 			inventory.vars.isBag = self.uniqueID
 			inventory:Sync(self.player)
+			inventory:AddReceiver(self.player)
 		else
 			local owner = self.player:GetCharacter():GetID()
 
 			ix.item.RestoreInv(self:GetData("id"), self.invWidth, self.invHeight, function(inv)
 				inv.vars.isBag = self.uniqueID
 				inv:SetOwner(owner, true)
+
+				if (!inv.owner) then
+					return
+				end
+
+				for client, character in ix.util.GetCharacters() do
+					if (character:GetID() == inv.owner) then
+						inv:AddReceiver(client)
+						break
+					end
+				end
 			end)
 		end
 	else
@@ -92,11 +142,14 @@ ITEM.postHooks.drop = function(item, result)
 		query:Where("inventory_id", index)
 	query:Execute()
 
-	netstream.Start(item.player, "ixBagDrop", index)
+	net.Start("ixBagDrop")
+		net.WriteUInt(index, 32)
+	net.Send(item.player)
 end
 
 if (CLIENT) then
-	netstream.Hook("ixBagDrop", function(index)
+	net.Receive("ixBagDrop", function()
+		local index = net.ReadUInt(32)
 		local panel = ix.gui["inv"..index]
 
 		if (panel and panel:IsVisible()) then
@@ -121,7 +174,7 @@ function ITEM:OnRemoved()
 end
 
 -- Called when the item should tell whether or not it can be transfered between inventories.
-function ITEM:OnCanBeTransfered(oldInventory, newInventory)
+function ITEM:CanTransfer(oldInventory, newInventory)
 	local index = self:GetData("id")
 
 	if (newInventory) then
@@ -135,7 +188,7 @@ function ITEM:OnCanBeTransfered(oldInventory, newInventory)
 			return false
 		end
 
-		for _, v in pairs(self:GetInv():GetItems()) do
+		for _, v in pairs(self:GetInventory():GetItems()) do
 			if (v:GetData("id") == index2) then
 				return false
 			end
@@ -143,6 +196,30 @@ function ITEM:OnCanBeTransfered(oldInventory, newInventory)
 	end
 
 	return !newInventory or newInventory:GetID() != oldInventory:GetID() or newInventory.vars.isBag
+end
+
+function ITEM:OnTransferred(curInv, inventory)
+	local bagInventory = self:GetInventory()
+
+	if (isfunction(curInv.GetOwner)) then
+		local owner = curInv:GetOwner()
+
+		if (IsValid(owner)) then
+			bagInventory:RemoveReceiver(owner)
+		end
+	end
+
+	if (isfunction(inventory.GetOwner)) then
+		local owner = inventory:GetOwner()
+
+		if (IsValid(owner)) then
+			bagInventory:AddReceiver(owner)
+			bagInventory:SetOwner(owner)
+		end
+	else
+		-- it's not in a valid inventory so nobody owns this bag
+		bagInventory:SetOwner(nil)
+	end
 end
 
 -- Called after the item is registered into the item tables.

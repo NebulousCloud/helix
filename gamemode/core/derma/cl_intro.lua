@@ -1,147 +1,337 @@
-local gradient = ix.util.GetMaterial("vgui/gradient-r.vtf")
-local glow = surface.GetTextureID("particle/Particle_Glow_04_Additive")
+
+local waveSegments = 32
+local helixSegments = 76
+local helixHeight = 64
+
+DEFINE_BASECLASS("EditablePanel")
 
 local PANEL = {}
-	function PANEL:Init()
 
-		if (IsValid(ix.gui.intro)) then
-			ix.gui.intro:Remove()
-		end
+function PANEL:Init()
+	if (IsValid(ix.gui.intro)) then
+		ix.gui.intro:Remove()
+	end
 
-		ix.gui.intro = self
+	ix.gui.intro = self
 
-		self:SetSize(ScrW(), ScrH())
-		self:SetZPos(9999)
+	self:SetSize(ScrW(), ScrH())
+	self:SetPos(0, 0)
+	self:SetZPos(99999)
+	self:MakePopup()
 
-		timer.Simple(0.1, function()
-			if (!IsValid(self)) then
-				return
-			end
+	-- animation parameters
+	self.bBackground = true
+	self.volume = 1
+	self.sunbeamOffset = 0
+	self.textOne = 0
+	self.textTwo = 0
+	self.kickTarget = 0
+	self.helix = 0
+	self.helixAlpha = 0
+	self.continueText = 0
+	self.pulse = 0
 
-			self.sound = CreateSound(LocalPlayer(), "music/hl1_song20.mp3")
-			self.sound:Play()
-			self.sound:ChangePitch(80, 0)
-		end)
+	self.waves = {
+		{1.1, 0},
+		{1.1, math.pi},
+		{1.1, math.pi * 1.6},
+		{1.1, math.pi * 0.5}
+	}
+end
 
-		self.authors = self:Add("DLabel")
-		self.authors:SetText(GAMEMODE.Author.." Presents")
-		self.authors:SetFont("ixIntroMediumFont")
-		self.authors:SetTextColor(color_white)
-		self.authors:SetAlpha(0)
-		self.authors:AlphaTo(255, 5, 1.5, function()
-			self.authors:AlphaTo(0, 5, 3, function()
-				self.authors:SetText("In collaboration with "..Schema.author)
-				self.authors:SizeToContents()
-				self.authors:CenterHorizontal()
+-- @todo h a c k
+function PANEL:Think()
+	if (IsValid(LocalPlayer())) then
+		self:BeginIntro()
+		self.Think = nil
+	end
+end
 
-				self.authors:AlphaTo(255, 3, 0.5, function()
-					if (self.sound) then
-						self.sound:FadeOut(8)
-						self.sound:FadeOut(8)
-					end
+function PANEL:BeginIntro()
+	self:MoveToFront()
+	self:RequestFocus()
 
-					self.authors:AlphaTo(0, 3, 1, function()
-						LocalPlayer():EmitSound("music/hl2_song10.mp3", 150, 70)
+	sound.PlayFile("sound/buttons/combine_button2.wav", "", function()
+		timer.Create("ixIntroStart", 2, 1, function()
+			sound.PlayFile("sound/helix/intro.mp3", "", function(channel, status, error)
+				if (IsValid(channel)) then
+					channel:SetVolume(self.volume)
+					self.channel = channel
+				end
 
-						self.cover:MoveTo(self.name:GetWide(), 0, 7.5, 5, nil, function()
-							self.glow = true
-							self.delta = 0
-
-							self.schema:AlphaTo(255, 5, 1)
-						end)
-					end)
-				end)
+				self:BeginAnimation()
 			end)
 		end)
-		self.authors:SizeToContents()
-		self.authors:Center()
-		self.authors:SetZPos(99)
+	end)
 
-		self.name = self:Add("DLabel")
-		self.name:SetText(GAMEMODE.Name)
-		self.name:SetFont("ixIntroTitleFont")
-		self.name:SetTextColor(color_white)
-		self.name:SizeToContents()
-		self.name:Center()
-		self.name:SetPos(self.name.x, ScrH() * 0.4)
-		self.name:SetExpensiveShadow(2, color_black)
+	ix.option.Set("showIntro", false)
+end
 
-		self.schema = self:Add("DLabel")
-		self.schema:SetText(Schema.introName and L(Schema.introName) or L(Schema.name))
-		self.schema:SetFont("ixIntroBigFont")
-		self.schema:SizeToContents()
-		self.schema:Center()
-		self.schema:MoveBelow(self.name, 10)
-		self.schema:SetAlpha(0)
-		self.schema:SetExpensiveShadow(2, color_black)
+function PANEL:AnimateWaves(target, bReverse)
+	for i = bReverse and #self.waves or 1,
+		bReverse and 1 or #self.waves,
+		bReverse and -1 or 1 do
 
-		self.cover = self.name:Add("DPanel")
-		self.cover:SetSize(ScrW(), self.name:GetTall())
-		self.cover.Paint = function(this, w, h)
-			surface.SetDrawColor(0, 0, 0)
-			surface.SetMaterial(gradient)
-			surface.DrawTexturedRect(0, 0, 100, h)
+		local animation = self:CreateAnimation(2, {
+			index = 20 + (bReverse and (#self.waves - i) or i),
+			bAutoFire = false,
+			target = {
+				waves = {
+					[i] = {target}
+				}
+			},
+			easing = bReverse and "inQuart" or "outQuint"
+		})
 
-			surface.DrawRect(100, 0, ScrW(), h)
+		timer.Simple((bReverse and (#self.waves - i) or i) * 0.1, function()
+			if (IsValid(self) and animation) then
+				animation:Fire()
+			end
+		end)
+
+		-- return last animation that plays
+		if ((bReverse and i == 1) or (!bReverse and i == #self.waves)) then
+			return animation
 		end
-		self.cover:SetPos(-100, 0)
+	end
+end
 
-		timer.Simple(5, function()
-			if (IsValid(self)) then
-				self:AddContinue()
+function PANEL:BeginAnimation()
+	self:CreateAnimation(2, {
+			target = {textOne = 1},
+			easing = "inQuint",
+			bIgnoreConfig = true
+		})
+		:CreateAnimation(2, {
+			target = {textOne = 0},
+			easing = "inQuint",
+			bIgnoreConfig = true
+		})
+		:CreateAnimation(2, {
+			target = {textTwo = 1},
+			easing = "inQuint",
+			bIgnoreConfig = true,
+			OnComplete = function(animation, panel)
+				self:AnimateWaves(0)
 			end
-		end)
+		})
+		:CreateAnimation(2, {
+			target = {textTwo = 0},
+			easing = "inQuint",
+			bIgnoreConfig = true
+		})
+		:CreateAnimation(4, {
+			target = {sunbeamOffset = 1},
+			bIgnoreConfig = true,
+			OnComplete = function()
+				self:CreateAnimation(2,{
+					target = {helixAlpha = 1},
+					easing = "inCubic"
+				})
+			end
+		})
+		:CreateAnimation(2, {
+			target = {helix = 1},
+			easing = "outQuart",
+			bIgnoreConfig = true
+		})
+		:CreateAnimation(2, {
+			target = {continueText = 1},
+			easing = "linear",
+			bIgnoreConfig = true
+		})
+end
+
+function PANEL:PaintCurve(y, width, offset, scale)
+	offset = offset or 1
+	scale = scale or 32
+
+	local points = {
+		[1] = {
+			x = 0,
+			y = ScrH()
+		}
+	}
+
+	for i = 0, waveSegments do
+		local angle = math.rad((i / waveSegments) * -360)
+
+		points[#points + 1] = {
+			x = (width / waveSegments) * i,
+			y = y + (math.sin(angle * 0.5 + offset) - 1) * scale
+		}
 	end
 
-	function PANEL:AddContinue()
-		self.info = self:Add("DLabel")
-		self.info:Dock(BOTTOM)
-		self.info:SetTall(36)
-		self.info:DockMargin(0, 0, 0, 32)
-		self.info:SetText("Press Space to continue...")
-		self.info:SetFont("ixIntroSmallFont")
-		self.info:SetContentAlignment(2)
-		self.info:SetAlpha(0)
-		self.info:AlphaTo(255, 1, 0, function()
-			self.info.Paint = function(this)
-				this:SetAlpha(math.abs(math.cos(RealTime() * 0.8) * 255))
-			end
-		end)
-		self.info:SetExpensiveShadow(1, color_black)
+	points[#points + 1] = {
+		x = width,
+		y = ScrH()
+	}
+
+	draw.NoTexture()
+	surface.DrawPoly(points)
+end
+
+function PANEL:Paint(width, height)
+	local time = SysTime()
+	local text = L("helix"):lower()
+	local centerY = height * self.waves[#self.waves][1] + height * 0.5
+	local textWidth, textHeight
+	local fft
+
+	-- background
+	if (self.bBackground) then
+		surface.SetDrawColor(Color(0, 0, 0, 255))
+		surface.DrawRect(0, 0, width, height)
 	end
 
-	function PANEL:Think()
-		if (IsValid(self.info) and input.IsKeyDown(KEY_SPACE) and !self.closing) then
-			self.closing = true
-			self:AlphaTo(0, 2.5, 0, function()
-				self:Remove()
+	if (self.sunbeamOffset == 1) then
+		fft = {}
+
+		if (IsValid(self.channel)) then
+			self.channel:FFT(fft, FFT_2048)
+
+			local kick = (fft[4] or 0) * 8192
+			self.kickTarget = math.Approach(self.kickTarget, kick, 8 * math.abs(kick - self.kickTarget) * FrameTime())
+		end
+	end
+
+	-- waves
+	for i = 1, #self.waves do
+		local wave = self.waves[i]
+		local ratio = i / #self.waves
+		local color = ratio * 33
+
+		surface.SetDrawColor(Color(color, color, color, self.bBackground and 255 or ratio * 320))
+		self:PaintCurve(height * wave[1], width, wave[2])
+	end
+
+	-- helix
+	if (self.helix > 0) then
+		derma.SkinFunc("DrawHelixCurved",
+			width * 0.5, centerY,
+			math.min(ScreenScale(72), 128) * 2, -- font sizes are clamped to 128
+			helixSegments * self.helix, helixHeight, self.helix,
+			ColorAlpha(ix.config.Get("color"), self.helixAlpha * 255)
+		)
+	end
+
+	-- title text glow
+	surface.SetTextColor(Color(255, 255, 255,
+		self.sunbeamOffset == 1 and self.kickTarget or math.sin(math.pi * self.sunbeamOffset) * 255
+	))
+	surface.SetFont("ixIntroTitleBlurFont")
+
+	local logoTextWidth, logoTextHeight = surface.GetTextSize(text)
+	surface.SetTextPos(width * 0.5 - logoTextWidth * 0.5, centerY - logoTextHeight * 0.5)
+	surface.DrawText(text)
+
+	-- title text
+	surface.SetTextColor(Color(255, 255, 255, self.sunbeamOffset * 255))
+	surface.SetFont("ixIntroTitleFont")
+
+	logoTextWidth, logoTextHeight = surface.GetTextSize(text)
+	surface.SetTextPos(width * 0.5 - logoTextWidth * 0.5, centerY - logoTextHeight * 0.5)
+	surface.DrawText(text)
+
+	-- text one
+	surface.SetFont("ixIntroSubtitleFont")
+	text = L("introTextOne"):lower()
+	textWidth = surface.GetTextSize(text)
+
+	surface.SetTextColor(Color(255, 255, 255, self.textOne * 255))
+	surface.SetTextPos(width * 0.5 - textWidth * 0.5, height * 0.66)
+	surface.DrawText(text)
+
+	-- text two
+	text = L("introTextTwo", Schema.author or "nebulous"):lower()
+	textWidth = surface.GetTextSize(text)
+
+	surface.SetTextColor(Color(255, 255, 255, self.textTwo * 255))
+	surface.SetTextPos(width * 0.5 - textWidth * 0.5, height * 0.66)
+	surface.DrawText(text)
+
+	-- continue text
+	surface.SetFont("ixIntroSmallFont")
+	text = L("introContinue"):lower()
+	textWidth, textHeight = surface.GetTextSize(text)
+
+	if (self.continueText == 1) then
+		self.pulse = self.pulse + 6 * FrameTime()
+
+		if (self.pulse >= 360) then
+			self.pulse = 0
+		end
+	end
+
+	surface.SetTextColor(Color(255, 255, 255, self.continueText * 255 - (math.sin(self.pulse) * 100), 0))
+	surface.SetTextPos(width * 0.5 - textWidth * 0.5, centerY * 2 - textHeight * 2)
+	surface.DrawText(text)
+
+	-- sunbeams
+	if (self.sunbeamOffset > 0 and self.sunbeamOffset != 1) then
+		DrawSunbeams(0.25, 0.1, 0.02,
+			(((width * 0.5 - logoTextWidth * 0.5) - 32) / width) + ((logoTextWidth + 64) / width) * self.sunbeamOffset,
+			0.5 + math.sin(time * 2) * 0.01
+		)
+	end
+end
+
+function PANEL:OnKeyCodePressed(key)
+	if (key == KEY_SPACE and self.continueText > 0.25) then
+		self:Remove()
+	end
+end
+
+function PANEL:OnRemove()
+	timer.Remove("ixIntroStart")
+
+	if (IsValid(self.channel)) then
+		self.channel:Stop()
+	end
+
+	if (IsValid(ix.gui.characterMenu)) then
+		ix.gui.characterMenu:PlayMusic()
+	end
+end
+
+function PANEL:Remove(bForce)
+	if (bForce) then
+		BaseClass.Remove(self)
+		return
+	end
+
+	if (self.bClosing) then
+		return
+	end
+
+	self.bClosing = true
+	self.bBackground = nil
+
+	-- waves
+	local animation = self:AnimateWaves(1.1, true)
+
+	animation.OnComplete = function(anim, panel)
+		panel:SetMouseInputEnabled(false)
+		panel:SetKeyboardInputEnabled(false)
+	end
+
+	-- audio
+	self:CreateAnimation(4.5, {
+		index = 1,
+		target = {volume = 0},
+
+		Think = function(anim, panel)
+			if (IsValid(panel.channel)) then
+				panel.channel:SetVolume(panel.volume)
+			end
+		end,
+
+		OnComplete = function()
+			timer.Simple(0, function()
+				BaseClass.Remove(self)
 			end)
 		end
-	end
+	})
+end
 
-	function PANEL:OnRemove()
-		if (self.sound) then
-			self.sound:Stop()
-			self.sound = nil
-
-			if (IsValid(ix.gui.char)) then
-				ix.gui.char:PlayMusic()
-			end
-		end
-	end
-
-	function PANEL:Paint(w, h)
-		surface.SetDrawColor(0, 0, 0)
-		surface.DrawRect(0, 0, w, h)
-
-		if (self.glow) then
-			self.delta = math.Approach(self.delta, 100, FrameTime() * 10)
-
-			local x, y = ScrW()*0.5 - 700, ScrH()*0.5 - 340
-
-			surface.SetDrawColor(self.delta, self.delta, self.delta, self.delta + math.sin(RealTime() * 0.7)*10)
-			surface.SetTexture(glow)
-			surface.DrawTexturedRect(x, y, 1400, 680)
-		end
-	end
 vgui.Register("ixIntro", PANEL, "EditablePanel")

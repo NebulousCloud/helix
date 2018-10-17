@@ -26,6 +26,15 @@ end)
 -- Resources that are required for players to download are here.
 resource.AddFile("materials/helix/gui/vignette.png")
 resource.AddFile("resource/fonts/fontello.ttf")
+resource.AddFile("sound/helix/intro.mp3")
+resource.AddFile("sound/helix/ui/press.wav")
+resource.AddFile("sound/helix/ui/rollover.wav")
+resource.AddFile("sound/helix/ui/whoosh1.wav")
+resource.AddFile("sound/helix/ui/whoosh2.wav")
+resource.AddFile("sound/helix/ui/whoosh3.wav")
+resource.AddFile("sound/helix/ui/whoosh4.wav")
+resource.AddFile("sound/helix/ui/whoosh5.wav")
+resource.AddFile("sound/helix/ui/whoosh6.wav")
 
 cvars.AddChangeCallback("sbox_persist", function(name, old, new)
 	-- A timer in case someone tries to rapily change the convar, such as addons with "live typing" or whatever

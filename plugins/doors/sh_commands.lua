@@ -7,7 +7,7 @@ ix.command.Add("DoorSell", {
 		-- Get the entity 96 units infront of the player.
 		local data = {}
 			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector()*96
+			data.endpos = data.start + client:GetAimVector() * 96
 			data.filter = client
 		local trace = util.TraceLine(data)
 		local entity = trace.Entity
@@ -16,19 +16,27 @@ ix.command.Add("DoorSell", {
 		if (IsValid(entity) and entity:IsDoor() and !entity:GetNetVar("disabled")) then
 			-- Check if the player owners the door.
 			if (client == entity:GetDTEntity(0)) then
+				entity = IsValid(entity.ixParent) and entity.ixParent or entity
+
 				-- Get the price that the door is sold for.
 				local price = math.Round(entity:GetNetVar("price", ix.config.Get("doorCost")) * ix.config.Get("doorSellRatio"))
+				local character = client:GetCharacter()
 
 				-- Remove old door information.
 				entity:RemoveDoorAccessData()
 
-				-- Remove door information on child doors
-				PLUGIN:CallOnDoorChildren(entity, function(child)
-					child:RemoveDoorAccessData()
-				end)
+				local doors = character:GetVar("doors") or {}
+
+				for k, v in ipairs(doors) do
+					if (v == entity) then
+						table.remove(doors, k)
+					end
+				end
+
+				character:SetVar("doors", doors, true)
 
 				-- Take their money and notify them.
-				client:GetCharacter():GiveMoney(price)
+				character:GiveMoney(price)
 				hook.Run("OnPlayerPurchaseDoor", client, entity, false, PLUGIN.CallOnDoorChildren)
 
 				ix.log.Add(client, "selldoor")
@@ -50,14 +58,14 @@ ix.command.Add("DoorBuy", {
 		-- Get the entity 96 units infront of the player.
 		local data = {}
 			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector()*96
+			data.endpos = data.start + client:GetAimVector() * 96
 			data.filter = client
 		local trace = util.TraceLine(data)
 		local entity = trace.Entity
 
 		-- Check if the entity is a valid door.
 		if (IsValid(entity) and entity:IsDoor() and !entity:GetNetVar("disabled")) then
-			if (entity:GetNetVar("noSell") or entity:GetNetVar("faction") or entity:GetNetVar("class")) then
+			if (!entity:GetNetVar("ownable") or entity:GetNetVar("faction") or entity:GetNetVar("class")) then
 				return "@dNotAllowedToOwn"
 			end
 
@@ -65,11 +73,14 @@ ix.command.Add("DoorBuy", {
 				return "@dOwnedBy", entity:GetDTEntity(0):Name()
 			end
 
+			entity = IsValid(entity.ixParent) and entity.ixParent or entity
+
 			-- Get the price that the door is bought for.
 			local price = entity:GetNetVar("price", ix.config.Get("doorCost"))
+			local character = client:GetCharacter()
 
 			-- Check if the player can actually afford it.
-			if (client:GetCharacter():HasMoney(price)) then
+			if (character:HasMoney(price)) then
 				-- Set the door to be owned by this player.
 				entity:SetDTEntity(0, client)
 				entity.ixAccess = {
@@ -80,8 +91,12 @@ ix.command.Add("DoorBuy", {
 					child:SetDTEntity(0, client)
 				end)
 
+				local doors = character:GetVar("doors") or {}
+					doors[#doors + 1] = entity
+				character:SetVar("doors", doors, true)
+
 				-- Take their money and notify them.
-				client:GetCharacter():TakeMoney(price)
+				character:TakeMoney(price)
 				hook.Run("OnPlayerPurchaseDoor", client, entity, true, PLUGIN.CallOnDoorChildren)
 
 				ix.log.Add(client, "buydoor")
@@ -108,7 +123,7 @@ ix.command.Add("DoorSetUnownable", {
 		-- Validate it is a door.
 		if (IsValid(entity) and entity:IsDoor() and !entity:GetNetVar("disabled")) then
 			-- Set it so it is unownable.
-			entity:SetNetVar("noSell", true)
+			entity:SetNetVar("ownable", nil)
 
 			-- Change the name of the door if needed.
 			if (name:find("%S")) then
@@ -116,7 +131,7 @@ ix.command.Add("DoorSetUnownable", {
 			end
 
 			PLUGIN:CallOnDoorChildren(entity, function(child)
-				child:SetNetVar("noSell", true)
+				child:SetNetVar("ownable", nil)
 
 				if (name:find("%S")) then
 					child:SetNetVar("name", name)
@@ -144,7 +159,8 @@ ix.command.Add("DoorSetOwnable", {
 		-- Validate it is a door.
 		if (IsValid(entity) and entity:IsDoor() and !entity:GetNetVar("disabled")) then
 			-- Set it so it is ownable.
-			entity:SetNetVar("noSell", nil)
+			entity:SetNetVar("ownable", true)
+			entity:SetNetVar("visible", true)
 
 			-- Update the name.
 			if (name:find("%S")) then
@@ -152,7 +168,8 @@ ix.command.Add("DoorSetOwnable", {
 			end
 
 			PLUGIN:CallOnDoorChildren(entity, function(child)
-				child:SetNetVar("noSell", nil)
+				child:SetNetVar("ownable", true)
+				child:SetNetVar("visible", true)
 
 				if (name:find("%S")) then
 					child:SetNetVar("name", name)
@@ -259,7 +276,7 @@ ix.command.Add("DoorSetTitle", {
 		-- Get the door infront of the player.
 		local data = {}
 			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector()*96
+			data.endpos = data.start + client:GetAimVector() * 96
 			data.filter = client
 		local trace = util.TraceLine(data)
 		local entity = trace.Entity
@@ -278,6 +295,8 @@ ix.command.Add("DoorSetTitle", {
 				server closes while someone owns the door, it doesn't save THEIR
 				title, which could lead to unwanted things.
 			--]]
+
+			name = name:sub(1, 24)
 
 			-- Check if they are allowed to change the door's name.
 			if (entity:CheckDoorAccess(client, DOOR_TENANT)) then
@@ -400,10 +419,10 @@ ix.command.Add("DoorSetHidden", {
 
 		-- Validate it is a door.
 		if (IsValid(entity) and entity:IsDoor()) then
-			entity:SetNetVar("hidden", bHidden)
+			entity:SetNetVar("visible", !bHidden)
 
 			PLUGIN:CallOnDoorChildren(entity, function(child)
-				child:SetNetVar("hidden", bHidden)
+				child:SetNetVar("visible", !bHidden)
 			end)
 
 			PLUGIN:SaveDoorData()

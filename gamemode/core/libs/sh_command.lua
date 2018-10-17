@@ -106,7 +106,7 @@ local function ArgumentCheckStub(command, client, given)
 	local result = {}
 
 	for i = 1, #arguments do
-		local bOptional = bit.band(arguments[i], ix.type.optional) > 0
+		local bOptional = bit.band(arguments[i], ix.type.optional) == ix.type.optional
 		local argType = bOptional and bit.bxor(arguments[i], ix.type.optional) or arguments[i]
 		local argument = given[i]
 
@@ -132,15 +132,16 @@ local function ArgumentCheckStub(command, client, given)
 
 			result[#result + 1] = value
 		elseif (argType == ix.type.player or argType == ix.type.character) then
-			local value = ix.command.FindPlayer(client, argument)
+			local bPlayer = argType == ix.type.player
+			local value = ix.util.FindPlayer(argument)
 
 			-- FindPlayer emits feedback for us
 			if (!value and !bOptional) then
-				return
+				return L(bPlayer and "plyNoExist" or "charNoExist", client)
 			end
 
 			-- check for the character if we're using the character type
-			if (argType == ix.type.character) then
+			if (!bPlayer) then
 				local character = value:GetCharacter()
 
 				if (!character) then
@@ -242,7 +243,9 @@ function ix.command.Add(command, data)
 	if (data.arguments) then
 		local bFirst = true
 		local bLastOptional = false
-		data.syntax = ""
+
+		data.syntax = "" -- @todo deprecate this in favour of argumentNames
+		data.argumentNames = {} -- extra metadata for external use
 
 		-- if one argument is supplied by itself, put it into a table
 		if (!istable(data.arguments)) then
@@ -291,9 +294,11 @@ function ix.command.Add(command, data)
 
 			-- text is always optional and will return an empty string if nothing is specified, rather than nil
 			if (argument == ix.type.text) then
+				data.arguments[i] = bit.bor(ix.type.text, ix.type.optional)
 				bOptional = true
 			end
 
+			data.argumentNames[i] = argumentName
 			data.syntax = data.syntax .. (bFirst and "" or " ") ..
 				string.format((bOptional and "[%s %s]" or "<%s %s>"), ix.type[argument], argumentName)
 
@@ -330,7 +335,7 @@ end
 -- @string command Name of the command to check access for
 -- @treturn bool Whether or not the player is allowed to run the command
 function ix.command.HasAccess(client, command)
-	command = ix.command.list[command]
+	command = ix.command.list[command:lower()]
 
 	if (command) then
 		if (command.OnCheckAccess) then
@@ -430,6 +435,10 @@ function ix.command.FindAll(identifier, bSorted, bReorganize, bRemoveDupes)
 		end
 	end
 
+	if (bReorganize and fullMatch and fullMatch != 1) then
+		result[1], result[fullMatch] = result[fullMatch], result[1]
+	end
+
 	if (bRemoveDupes) then
 		local commandNames = {}
 
@@ -443,14 +452,12 @@ function ix.command.FindAll(identifier, bSorted, bReorganize, bRemoveDupes)
 		end
 	end
 
-	if (bReorganize and fullMatch and fullMatch != 1) then
-		result[1], result[fullMatch] = result[fullMatch], result[1]
-	end
-
 	return result
 end
 
 if (SERVER) then
+	util.AddNetworkString("ixCommand")
+
 	--- Attempts to find a player by an identifier. If unsuccessful, a notice will be displayed to the specified player. The
 	-- search criteria is derived from `ix.util.FindPlayer`.
 	-- @server
@@ -497,7 +504,7 @@ if (SERVER) then
 
 		-- check for group access
 		if (command.OnCheckAccess) then
-			feedback = !command:OnCheckAccess(client) and "noPerm" or nil
+			feedback = !command:OnCheckAccess(client) and L("noPerm", client) or nil
 		end
 
 		-- check for strict arguments
@@ -596,22 +603,36 @@ if (SERVER) then
 		ix.command.Parse(client, nil, command or "", arguments)
 	end)
 
-	netstream.Hook("cmd", function(client, command, arguments)
+	net.Receive("ixCommand", function(length, client)
 		if ((client.ixNextCmd or 0) < CurTime()) then
-			local arguments2 = {}
+			local command = net.ReadString()
+			local indices = net.ReadUInt(4)
+			local arguments = {}
 
-			for _, v in ipairs(arguments) do
-				if (isstring(v) or isnumber(v)) then
-					arguments2[#arguments2 + 1] = tostring(v)
+			for _ = 1, indices do
+				local value = net.ReadType()
+
+				if (isstring(value) or isnumber(value)) then
+					arguments[#arguments + 1] = tostring(value)
 				end
 			end
 
-			ix.command.Parse(client, nil, command, arguments2)
+			ix.command.Parse(client, nil, command, arguments)
 			client.ixNextCmd = CurTime() + 0.2
 		end
 	end)
 else
 	function ix.command.Send(command, ...)
-		netstream.Start("cmd", command, {...})
+		local arguments =  {...}
+
+		net.Start("ixCommand")
+		net.WriteString(command)
+		net.WriteUInt(#arguments, 4)
+
+		for _, v in ipairs(arguments) do
+			net.WriteType(v)
+		end
+
+		net.SendToServer()
 	end
 end
