@@ -291,7 +291,9 @@ ix.command.Add("CharBan", {
 		ix.util.NotifyLocalized("charBan", nil, client:GetName(), target:GetName())
 
 		target:SetData("banned", true)
-		target:Kick()
+		target:Save(function()
+			target:Kick()
+		end)
 	end
 })
 
