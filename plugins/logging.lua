@@ -91,6 +91,12 @@ if (SERVER) then
 		return L("%s has killed %s%s.", arg[1], client:Name(), arg[2] and (" with " .. arg[2]) or "")
 	end, FLAG_DANGER)
 
+	ix.log.AddType("money", function(client, amount)
+		if (amount != 0) then
+			return L("%s has %s %s.", client:Name(), amount < 0 and "lost" or "gained", ix.currency.Get(math.abs(amount)))
+		end
+	end, FLAG_SUCCESS)
+
 	ix.log.AddType("inventoryAdd", function(client, characterName, itemName, itemID)
 		return L("%s has gained a '%s' #%d.", characterName, itemName, itemID)
 	end, FLAG_WARNING)
