@@ -92,9 +92,7 @@ if (SERVER) then
 	end, FLAG_DANGER)
 
 	ix.log.AddType("money", function(client, amount)
-		if (amount != 0) then
-			return L("%s has %s %s.", client:Name(), amount < 0 and "lost" or "gained", ix.currency.Get(math.abs(amount)))
-		end
+		return L("%s has %s %s.", client:Name(), amount < 0 and "lost" or "gained", ix.currency.Get(math.abs(amount)))
 	end, FLAG_SUCCESS)
 
 	ix.log.AddType("inventoryAdd", function(client, characterName, itemName, itemID)

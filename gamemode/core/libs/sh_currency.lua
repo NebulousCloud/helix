@@ -63,10 +63,10 @@ do
 		return self:GetMoney() >= amount
 	end
 
-	function character:GiveMoney(amount, noLog)
+	function character:GiveMoney(amount, bNoLog)
 		amount = math.abs(amount)
 
-		if (!noLog) then
+		if (!bNoLog) then
 			ix.log.Add(self:GetPlayer(), "money", amount)
 		end
 
@@ -75,10 +75,10 @@ do
 		return true
 	end
 
-	function character:TakeMoney(amount, noLog)
+	function character:TakeMoney(amount, bNoLog)
 		amount = math.abs(amount)
 
-		if (!noLog) then
+		if (!bNoLog) then
 			ix.log.Add(self:GetPlayer(), "money", -amount)
 		end
 
