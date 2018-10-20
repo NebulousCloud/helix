@@ -22,54 +22,6 @@ client, unless `hidden` returns `true` when using `ix.option.Add`.
 
 Note that the labels for each option in the menu will use a language phrase to show the name. For example, if your option is
 named `headbob`, then you'll need to define a language phrase called `optHeadbob` that will be used as the option title.
-
-## Option structure
-You can specify additional optional arguments for `ix.option.Add` by passing in a table of specific fields as the fourth
-argument.
-
-<ul>
-<li><p>
-`phrase`<br />
-(default: `"opt" .. key`)<br />
-The phrase to use when displaying in the UI. The default value is your option key in UpperCamelCase, prefixed with `"opt"`. For
-example, if your key is `"exampleOption"`, the default phrase will be `"optExampleOption"`.
-</p></li>
-
-<li><p>
-`category`<br />
-(default: `"misc"`)<br />
-The category that this option should reside in. This is purely for aesthetic reasons when displaying the options in the options
-menu. When displayed in the UI, it will take the form of `L("category name")`. This means that you must create a language phrase
-for the category name - otherwise it will only show as the string you've specified.
-</p></li>
-
-<li><p>
-`bNetworked`<br />
-(default: `false`)<br />
-Whether or not the server should be aware of this option for each client.
-</p></li>
-
-<li><p>
-`hidden`<br />
-(default: `nil`)<br />
-The function to check whether the option should be hidden from the options menu.
-</p></li>
-
-<li><p>
-`populate`<br />
-(default: `nil`)<br />
-The function to run when the option needs to be added to the menu. This is a required field for any array options. It should
-return a table of entries where the key is the value to set in `ix.option.Set`, and the value is the display name for the entry.
-An example:<br />
-	populate = function()
-		return {
-			["english"] = "English",
-			["french"] = "French",
-			["spanish"] = "Spanish"
-		}
-	end
-</p></li>
-</ul>
 ]]
 -- @module ix.option
 
@@ -78,11 +30,18 @@ ix.option.stored = ix.option.stored or {}
 ix.option.categories = ix.option.categories or {}
 
 --- Creates a client-side configuration option with the given information.
--- @shared
+-- @realm shared
 -- @string key Unique ID for this option
 -- @ixtype optionType Type of this option
 -- @param default Default value that this option will have - this can be nil if needed
--- @table data Additional settings for this option - see the **Option structure** section
+-- @tab data Additional settings for this option
+-- @see OptionStructure
+-- @usage ix.option.Add("animationScale", ix.type.number, 1, {
+-- 	category = "appearance",
+-- 	min = 0.3,
+-- 	max = 2,
+-- 	decimals = 1
+-- })
 function ix.option.Add(key, optionType, default, data)
 	assert(isstring(key) and key:find("%S"), "expected a non-empty string for the key")
 
@@ -95,6 +54,39 @@ function ix.option.Add(key, optionType, default, data)
 	categories[category] = categories[category] or {}
 	categories[category][key] = true
 
+	--- You can specify additional optional arguments for `ix.option.Add` by passing in a table of specific fields as the fourth
+	-- argument.
+	-- @table OptionStructure
+	-- @realm shared
+	-- @field[type=string,opt="opt" .. key] phrase The phrase to use when displaying in the UI. The default value is your option
+	-- key in UpperCamelCase, prefixed with `"opt"`. For example, if your key is `"exampleOption"`, the default phrase will be
+	-- `"optExampleOption"`.
+	-- @field[type=string,opt="optd" .. key] description The phrase to use in the tooltip when hovered in the UI. The default
+	-- value is your option key in UpperCamelCase, prefixed with `"optd"`. For example, if your key is `"exampleOption"`, the
+	-- default phrase will be `"optdExampleOption"`.
+	-- @field[type=string,opt="misc"] category The category that this option should reside in. This is purely for
+	-- aesthetic reasons when displaying the options in the options menu. When displayed in the UI, it will take the form of
+	-- `L("category name")`. This means that you must create a language phrase for the category name - otherwise it will only
+	-- show as the exact string you've specified. If no category is set, it will default to `"misc"`.
+	-- @field[type=number,opt=0] min The minimum allowed amount when setting this option. This field is not
+	-- applicable to any type other than `ix.type.number`.
+	-- @field[type=number,opt=10] max The maximum allowed amount when setting this option. This field is not
+	-- applicable to any type other than `ix.type.number`.
+	-- @field[type=number,opt=0] decimals How many decimals to constrain to when using a number type. This field is not
+	-- applicable to any type other than `ix.type.number`.
+	-- @field[type=boolean,opt=false] bNetworked Whether or not the server should be aware of this option for each client.
+	-- @field[type=function,opt] hidden The function to check whether the option should be hidden from the options menu.
+	-- @field[type=function,opt] populate The function to run when the option needs to be added to the menu. This is a required
+	-- field for any array options. It should return a table of entries where the key is the value to set in `ix.option.Set`,
+	-- and the value is the display name for the entry. An example:
+	--
+	-- 	populate = function()
+	-- 		return {
+	-- 			["english"] = "English",
+	-- 			["french"] = "French",
+	-- 			["spanish"] = "Spanish"
+	-- 		}
+	-- 	end
 	ix.option.stored[key] = {
 		key = key,
 		phrase = "opt" .. upperName,
@@ -113,7 +105,7 @@ function ix.option.Add(key, optionType, default, data)
 end
 
 --- Loads all saved options from disk.
--- @shared
+-- @realm shared
 -- @internal
 function ix.option.Load()
 	ix.util.Include("helix/gamemode/config/sh_options.lua")
@@ -132,7 +124,7 @@ function ix.option.Load()
 end
 
 --- Returns all of the available options. Note that this does contain the actual values of the options, just their properties.
--- @shared
+-- @realm shared
 -- @treturn table Table of all options
 -- @usage PrintTable(ix.option.GetAll())
 -- > language:
@@ -147,12 +139,12 @@ end
 
 --- Returns all of the available options grouped by their categories. The returned table contains category tables, that contain
 -- all the options in that category as an array (this is so you can sort them if you'd like).
--- @shared
+-- @realm shared
 -- @bool[opt=false] bRemoveHidden Remove entries that are marked as hidden
 -- @treturn table Table of all options
 -- @usage PrintTable(ix.option.GetAllByCategories())
 -- > general:
--- > 	1:
+-- >	1:
 -- >		key = language
 -- >		bNetworked = true
 -- >		default = english
@@ -183,7 +175,7 @@ if (CLIENT) then
 
 	--- Sets an option value for the local player.
 	-- This function will error when an invalid key is passed.
-	-- @client
+	-- @realm client
 	-- @string key Unique ID of the option
 	-- @param value New value to assign to the option
 	-- @bool[opt=false] bNoSave Whether or not to avoid saving
@@ -214,10 +206,11 @@ if (CLIENT) then
 	end
 
 	--- Retrieves an option value for the local player. If it is not set, it'll return the default that you've specified.
-	-- @client
+	-- @realm client
 	-- @string key Unique ID of the option
 	-- @param default Default value to return if the option is not set
-	-- @return Value associated with the key, or the default that was given if it doesn't exists
+	-- @return[1] Value associated with the key
+	-- @return[2] The given default if the option is not set
 	function ix.option.Get(key, default)
 		local option = ix.option.stored[key]
 
@@ -235,14 +228,14 @@ if (CLIENT) then
 	end
 
 	--- Saves all options to disk.
-	-- @client
+	-- @realm client
 	-- @internal
 	function ix.option.Save()
 		ix.data.Set("options", ix.option.client, true, true)
 	end
 
 	--- Syncs all networked options to the server.
-	-- @client
+	-- @realm client
 	function ix.option.Sync()
 		local options = {}
 
@@ -272,11 +265,12 @@ else
 
 	--- Retrieves an option value from the specified player. If it is not set, it'll return the default that you've specified.
 	-- This function will error when an invalid player is passed.
-	-- @server
+	-- @realm server
 	-- @player client Player to retrieve option value from
 	-- @string key Unique ID of the option
 	-- @param default Default value to return if the option is not set
-	-- @return Value associated with the key, or the default that was given if it doesn't exists
+	-- @return[1] Value associated with the key
+	-- @return[2] The given default if the option is not set
 	function ix.option.Get(client, key, default)
 		assert(IsValid(client) and client:IsPlayer(), "expected valid player for argument #1")
 

@@ -9,7 +9,7 @@ ix.data.stored = ix.data.stored or {}
 file.CreateDir("helix")
 
 --- Populates a file in the `data/helix` folder with some serialized data.
--- @shared
+-- @realm shared
 -- @string key Name of the file to save
 -- @param value Some sort of data to save
 -- @bool[opt=false] bGlobal Whether or not to write directly to the `data/helix` folder, or the `data/helix/schema` folder,
@@ -37,7 +37,7 @@ function ix.data.Set(key, value, bGlobal, bIgnoreMap)
 end
 
 --- Retrieves the contents of a saved file in the `data/helix` folder.
--- @shared
+-- @realm shared
 -- @string key Name of the file to load
 -- @param default Value to return if the file could not be loaded successfully
 -- @bool[opt=false] bGlobal Whether or not the data is in the `data/helix` folder, or the `data/helix/schema` folder,
@@ -83,7 +83,7 @@ function ix.data.Get(key, default, bGlobal, bIgnoreMap, bRefresh)
 end
 
 --- Deletes the contents of a saved file in the `data/helix` folder.
--- @shared
+-- @realm shared
 -- @string key Name of the file to delete
 -- @bool[opt=false] bGlobal Whether or not the data is in the `data/helix` folder, or the `data/helix/schema` folder,
 -- where `schema` is the name of the current schema.

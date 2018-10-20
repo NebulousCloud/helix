@@ -76,7 +76,7 @@ function ix.util.IncludeDir(directory, fromLua)
 end
 
 --- Removes the realm prefix from a file name. The returned string will be unchanged if there is no prefix found.
--- @shared
+-- @realm shared
 -- @string name String to strip prefix from
 -- @treturn string String stripped of prefix
 -- @usage print(ix.util.StripRealmPrefix("sv_init.lua"))
@@ -89,7 +89,7 @@ end
 
 --- Returns `true` if the given input is a color table. This is necessary since the engine `IsColor` function only checks for
 -- color metatables - which are not used for regular Lua color types.
--- @shared
+-- @realm shared
 -- @param input Input to check
 -- @treturn bool Whether or not the input is a color
 function ix.util.IsColor(input)
@@ -98,11 +98,11 @@ function ix.util.IsColor(input)
 end
 
 --- Returns a dimmed version of the given color by the given scale.
--- @shared
--- @param color Color to dim
+-- @realm shared
+-- @color color Color to dim
 -- @number multiplier What to multiply the red, green, and blue values by
 -- @number[opt=255] alpha Alpha to use in dimmed color
--- @return Dimmed color
+-- @treturn color Dimmed color
 -- @usage print(ix.util.DimColor(Color(100, 100, 100, 255), 0.5))
 -- > 50 50 50 255
 function ix.util.DimColor(color, multiplier, alpha)
@@ -112,7 +112,7 @@ end
 --- Sanitizes an input value with the given type. This function ensures that a valid type is always returned. If a valid value
 -- could not be found, it will return the default value for the type. This only works for simple types - e.g it does not work
 -- for player, character, or Steam ID types.
--- @shared
+-- @realm shared
 -- @ixtype type Type to check for
 -- @param input Value to sanitize
 -- @return Sanitized value
@@ -167,7 +167,7 @@ do
 	}
 
 	--- Returns the `ix.type` of the given value.
-	-- @shared
+	-- @realm shared
 	-- @param value Value to get the type of
 	-- @treturn ixtype Type of value
 	-- @see ix.type
@@ -241,7 +241,7 @@ function ix.util.GetMaterial(materialPath)
 end
 
 --- Attempts to find a player by matching their name or Steam ID.
--- @shared
+-- @realm shared
 -- @string identifier Search query
 -- @bool[opt=false] bAllowPatterns Whether or not to accept Lua patterns in `identifier`
 -- @treturn player Player that matches the given search query - this will be `nil` if a player could not be found
@@ -314,7 +314,7 @@ do
 	--- Returns a string that is the given input with spaces in between each CamelCase word. This function will ignore any words
 	-- that do not begin with a capital letter. The words `ooc`, `looc`, `afk`, and `url` will be automatically transformed
 	-- into uppercase text.
-	-- @shared
+	-- @realm shared
 	-- @string input String to expand
 	-- @bool[opt=false] bNoUpperFirst Whether or not to avoid capitalizing the first character. This is useful for lowerCamelCase
 	-- @treturn string Expanded CamelCase string
@@ -365,10 +365,10 @@ do
 
 	--- Returns an iterator for characters. The resulting key/values will be a player and their corresponding characters. This
 	-- iterator skips over any players that do not have a valid character loaded.
-	-- @shared
+	-- @realm shared
 	-- @treturn Iterator
 	-- @usage for client, character in ix.util.GetCharacters() do
-	-- 		print(client, character)
+	-- 	print(client, character)
 	-- end
 	-- > Player [1][Bot01]    character[1]
 	-- > Player [2][Bot02]    character[2]
@@ -594,7 +594,7 @@ if (CLIENT) then
 	end
 
 	--- Resets all stencil values to known good (i.e defaults)
-	-- @client
+	-- @realm client
 	function ix.util.ResetStencilValues()
 		render.SetStencilWriteMask(0xFF)
 		render.SetStencilTestMask(0xFF)

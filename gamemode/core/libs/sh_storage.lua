@@ -14,61 +14,24 @@ Example usage:
 		searchText = "Rummaging...",
 		searchTime = 4
 	})
-
-## Storage info structure
-There are some parameters you can customize when opening an inventory as a storage object with `ix.storage.Open`.
-<ul>
-<li><p>
-`id`<br />
-(default: id of inventory passed into `ix.storage.Open`)<br />
-The ID of the inventory.
-</p></li>
-
-<li><p>
-`name`<br />
-(default: `"Storage"`)<br />
-Title to display in the UI when the inventory is open.
-</p></li>
-
-<li><p>
-`entity`<br />
-(required)<br />
-Entity to "attach" the inventory to. This is used to provide a location for the inventory for things like making sure the player
-doesn't move too far away from the inventory, etc. This can also be a player.
-</p></li>
-
-<li><p>
-`bMultipleUsers`<br />
-(default: `false`)<br />
-Whether or not multiple players are allowed to view this inventory at the same time.
-</p></li>
-
-<li><p>
-`searchTime`<br />
-(default: `0`)<br />
-How long the player has to wait before the inventory is opened.
-</p></li>
-
-<li><p>
-`searchText`<br />
-(default: `"@storageSearching"`)<br />
-Text to display to the user while opening the inventory. This can be a language phrase.
-</p></li>
-
-<li><p>
-`OnPlayerClose`<br />
-(default: `nil`)<br />
-Called when a player who was accessing the inventory has closed it. The argument passed is the player who closed it.
-</p></li>
-
-<li><p>
-`data`<br />
-(default: `{}`)<br />
-Table of arbitrary data to send to the client when the inventory has been opened.
-</p></li>
-</ul>
 ]]
 -- @module ix.storage
+
+--- There are some parameters you can customize when opening an inventory as a storage object with `ix.storage.Open`.
+-- @realm server
+-- @table StorageInfoStructure
+-- @field[type=entity] entity Entity to "attach" the inventory to. This is used to provide a location for the inventory for
+-- things like making sure the player doesn't move too far away from the inventory, etc. This can also be a `player` object.
+-- @field[type=number,opt=inventory id] id The ID of the nventory. This defaults to the inventory passed into `ix.Storage.Open`.
+-- @field[type=string,opt="Storage"] name Title to display in the UI when the inventory is open.
+-- @field[type=boolean,opt=false] bMultipleUsers Whether or not multiple players are allowed to view this inventory at the
+-- same time.
+-- @field[type=number,opt=0] searchTime How long the player has to wait before the inventory is opened.
+-- @field[type=string,opt="@storageSearching"] text Text to display to the user while opening the inventory. If prefixed with
+-- `"@"`, it will display a language phrase.
+-- @field[type=function,opt] OnPlayerClose Called when a player who was accessing the inventory has closed it. The
+-- argument passed to the callback is the player who closed it.
+-- @field[type=table,opt={}] data Table of arbitrary data to send to the client when the inventory has been opened.
 
 ix.storage = ix.storage or {}
 
@@ -81,7 +44,7 @@ if (SERVER) then
 	util.AddNetworkString("ixStorageMoneyUpdate")
 
 	--- Returns whether or not the given inventory has a storage context and is being looked at by other players.
-	-- @server
+	-- @realm server
 	-- @inventory inventory Inventory to check
 	-- @treturn bool Whether or not `inventory` is in use
 	function ix.storage.InUse(inventory)
@@ -97,10 +60,10 @@ if (SERVER) then
 	end
 
 	--- Creates a storage context on the given inventory.
-	-- @server
+	-- @realm server
 	-- @internal
 	-- @inventory inventory Inventory to create a storage context for
-	-- @table info Information to store on the context
+	-- @tab info Information to store on the context
 	function ix.storage.CreateContext(inventory, info)
 		info = info or {}
 
@@ -123,7 +86,7 @@ if (SERVER) then
 	end
 
 	--- Removes a storage context from an inventory if it exists.
-	-- @server
+	-- @realm server
 	-- @internal
 	-- @inventory inventory Inventory to remove a storage context from
 	function ix.storage.RemoveContext(inventory)
@@ -138,7 +101,7 @@ if (SERVER) then
 	end
 
 	--- Synchronizes an inventory with a storage context to the given client.
-	-- @server
+	-- @realm server
 	-- @internal
 	-- @player client Player to sync storage for
 	-- @inventory inventory Inventory to sync storage for
@@ -165,7 +128,7 @@ if (SERVER) then
 	end
 
 	--- Adds a receiver to a given inventory with a storage context.
-	-- @server
+	-- @realm server
 	-- @internal
 	-- @player client Player to sync storage for
 	-- @inventory inventory Inventory to sync storage for
@@ -196,7 +159,7 @@ if (SERVER) then
 	end
 
 	--- Removes a storage receiver and removes the context if there are no more receivers.
-	-- @server
+	-- @realm server
 	-- @internal
 	-- @player client Player to remove from receivers
 	-- @inventory inventory Inventory with storage context to remove receiver from
@@ -229,10 +192,10 @@ if (SERVER) then
 
 	--- Makes a player open an inventory that they can interact with. This can be called multiple times on the same inventory,
 	-- if the info passed allows for multiple users.
-	-- @server
+	-- @realm server
 	-- @player client Player to open the inventory for
 	-- @inventory inventory Inventory to open
-	-- @table info Storage info (see <strong>Storage info structure</strong> for usage)
+	-- @tab info `StorageInfoStructure` describing the storage properties
 	function ix.storage.Open(client, inventory, info)
 		assert(IsValid(client) and client:IsPlayer(), "expected valid player")
 		assert(getmetatable(inventory) == ix.meta.inventory, "expected valid inventory")
@@ -272,7 +235,7 @@ if (SERVER) then
 	end
 
 	--- Forcefully makes clients close this inventory if they have it open.
-	-- @server
+	-- @realm server
 	-- @inventory inventory Inventory to close
 	function ix.storage.Close(inventory)
 		local receivers = inventory:GetReceivers()

@@ -351,7 +351,7 @@ do
 	--- Loads an inventory and associated items from the database into memory. If you are passing a table into `invID`, it
 	-- requires a table where the key is the inventory ID, and the value is a table of the width and height values. See below
 	-- for an example.
-	-- @server
+	-- @realm server
 	-- @param invID Inventory ID or table of inventory IDs
 	-- @number width Width of inventory (this is not used when passing a table to `invID`)
 	-- @number height Height of inventory (this is not used when passing a table to `invID`)
