@@ -39,6 +39,13 @@ if (CLIENT) then
 		hidden = isHidden
 	})
 
+
+	concommand.Add("ix_togglethirdperson", function()
+		local bEnabled = !ix.option.Get("thirdpersonEnabled", false)
+
+		ix.option.Set("thirdpersonEnabled", bEnabled)
+	end)
+
 	local function isAllowed()
 		return ix.config.Get("thirdperson")
 	end
