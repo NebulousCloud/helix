@@ -1,227 +1,240 @@
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+
 <html>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<head>
-    <title>Helix Documentation</title>
-    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
-    <link rel="stylesheet" href="../highlight.css">
-</head>
-<body>
+	<head>
+		<title>Helix Documentation</title>
 
-<div id="container">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
+		<link rel="stylesheet" href="../ldoc.css" />
+		<link rel="stylesheet" href="../highlight.css" />
+	</head>
 
-<div id="product">
-	<div id="product_logo"></div>
-	<div id="product_name"><big><b></b></big></div>
-	<div id="product_description"></div>
-</div> <!-- id="product" -->
+	<body>
+		<aside>
+			<h1>Helix</h1>
 
+			<!-- project contents -->
+			<section>
+						<h2>Libraries</h2>
 
-<div id="main">
+						<ul>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
+								<li><a href="../libraries/ix.html">ix</a></li>
+						</ul>
+			</section>
+		</aside>
 
+		<!-- library functions -->
+		<article>
+				<header>
+					<h1>ix.menu</h1>
+					<h2>Entity menu manipulation.</h2>
+				</header>
 
-<!-- Menu -->
+				<!-- summary -->
+				<details>
+					<summary>Reference</summary>
 
-<div id="navigation">
-<br/>
-<h1>Helix</h1>
+					<div class="contents">
+							<h2>Functions</h2>
+							<ul>
+									<li><span class="realm client"></span><a href="#ix.menu.Open">ix.menu.Open(options[, entity])</a></li>
+									<li><span class="realm client"></span><a href="#ix.menu.IsOpen">ix.menu.IsOpen()</a></li>
+									<li><span class="realm client"></span><a href="#ix.menu.NetworkChoice">ix.menu.NetworkChoice(entity, choice, data)</a></li>
+							</ul>
+							<h2>Tables</h2>
+							<ul>
+									<li><span class="realm client"></span><a href="#MenuOptionsStructure">MenuOptionsStructure</a></li>
+							</ul>
+					</div>
+				</details>
 
-<ul>
-  <li><a href="../index.html">Index</a></li>
-</ul>
-
-<h2>Contents</h2>
-<ul>
-<li><a href="#Functions">Functions</a></li>
-</ul>
-
-
-<h2>Libraries</h2>
-<ul class="nowrap">
-  <li><a href="../libraries/ix.command.html">ix.command</a></li>
-  <li><a href="../libraries/ix.date.html">ix.date</a></li>
-  <li><a href="../libraries/ix.item.html">ix.item</a></li>
-  <li><strong>ix.menu</strong></li>
-  <li><a href="../libraries/ix.option.html">ix.option</a></li>
-  <li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-  <li><a href="../libraries/ix.data.html">ix.data</a></li>
-  <li><a href="../libraries/ix.util.html">ix.util</a></li>
-  <li><a href="../libraries/ix.html">ix</a></li>
-</ul>
-
-</div>
-
-<div id="content">
-
-<h1>Module <code>ix.menu</code></h1>
-<p>Entity menu manipulation.</p>
-<p>The <a href="../libraries/ix.menu.html">menu</a> library allows you to open up a context menu of arbitrary options whose callbacks will be ran when they are selected
+				<!-- description -->
+				<p>The <a href="../libraries/ix.menu.html">menu</a> library allows you to open up a context menu of arbitrary options whose callbacks will be ran when they are selected
 from the panel that shows up for the player.</p>
 
-<h2>Menu options structure</h2>
-<p>You'll need to pass a table of options to <a href="../libraries/ix.menu.html#ix.menu.Open">ix.menu.Open</a> to populate the menu. This table consists of strings as its keys and
-functions as its values. These correspond to the text displayed in the menu and the callback to run, respectively.</p>
+				<!-- methods -->
+					<h1 class="title">Functions</h1>
 
-<p>Example usage:</p>
-
-<pre>
-ix.menu.Open({
-    Drink = <span class="keyword">function</span>()
-        <span class="global">print</span>(<span class="string">"Drink option selected!"</span>)
-    <span class="keyword">end</span>,
-    Take = <span class="keyword">function</span>()
-        <span class="global">print</span>(<span class="string">"Take option selected!"</span>)
-    <span class="keyword">end</span>
-}, ents.GetByIndex(<span class="number">1</span>))
-</pre>
-
-<p>This opens a menu with the options <code>&quot;Drink&quot;</code> and <code>&quot;Take&quot;</code> which will print a message when you click on either of the options.</p>
+						<section class="method">
+							<header><a name="ix.menu.Open"></a>
+								<h1><span class="realm client"></span>ix.menu.Open(options[, entity])</h1>
 
 
-<h2><a href="#Functions">Functions</a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#ix.menu.Open"><code><span class="realm client" title="Client"></span> ix.menu.Open(options[, entity])</code></a></td>
-	<td class="summary">Opens up a context menu for the given entity.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#ix.menu.IsOpen"><code><span class="realm client" title="Client"></span> ix.menu.IsOpen()</code></a></td>
-	<td class="summary">Checks whether or not an entity menu is currently open.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#ix.menu.NetworkChoice"><code><span class="realm client" title="Client"></span> ix.menu.NetworkChoice(entity, choice, data)</code></a></td>
-	<td class="summary">Notifies the server of an option that was chosen for the given entity.</td>
-	</tr>
-</table>
-
-<br/>
-<br/>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_menu.lua#L34">View source &raquo;</a>
+								<p>Opens up a context menu for the given entity.</p>
+							</header>
 
 
-    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+									<h3>Parameters</h3>
 
-    <dl class="function">
-    <dt>
-    <a name = "ix.menu.Open"></a>
-    <pre><span class="realm client" title="Client"></span> ix.menu.Open(options[, entity])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_menu.lua#L33">View source &raquo;</a>
-    </dt>
-    <dd>
-    Opens up a context menu for the given entity.
 
-    </ul>
-    </ul>
-    </ul>
-    </ul>
+									<ul>
 
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">options</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
-         Options to display - see the <strong>Menu options structure</strong> section
-        </li>
-        <li><span class="parameter">entity</span>
-            <span class="types"><span class="type">entity</span></span>
-         Entity to send commands to
-         (<em>optional</em>)
-        </li>
-    </ul>
+											<li>
+												<span class="tag parameter">options</span>
 
-    <h3>Returns:</h3>
-    <ol>
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
 
-           <span class="types"><span class="type">boolean</span></span>
-        Whether or not the menu opened successfully. It will fail when there is already a menu open.
-    </ol>
+
+												<p> A <a href="../libraries/ix.menu.html#MenuOptionsStructure">MenuOptionsStructure</a> to describe what options to display</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+													<span class="tag"><span class="type">entity</span></span>
+
+													<span class="tag default">optional</span>
+
+												<p> Entity to send commands to</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">boolean</span>
+
+												<p>Whether or not the menu opened successfully. It will fail when there is already a menu open.</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ix.menu.IsOpen"></a>
+								<h1><span class="realm client"></span>ix.menu.IsOpen()</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_menu.lua#L49">View source &raquo;</a>
+								<p>Checks whether or not an entity menu is currently open.</p>
+							</header>
 
 
 
+								<h3>Returns</h3>
+								<ul>
 
-</dd>
-    <dt>
-    <a name = "ix.menu.IsOpen"></a>
-    <pre><span class="realm client" title="Client"></span> ix.menu.IsOpen()</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_menu.lua#L48">View source &raquo;</a>
-    </dt>
-    <dd>
-    Checks whether or not an entity menu is currently open.
+											<li>
+													<span class="type">boolean</span>
 
-    </ul>
-    </ul>
-    </ul>
-    </ul>
+												<p>Whether or not an entity menu is open</p>
+											</li>
 
+								</ul>
 
-    <h3>Returns:</h3>
-    <ol>
-
-           <span class="types"><span class="type">boolean</span></span>
-        Whether or not an entity menu is open
-    </ol>
+						</section>
+						<section class="method">
+							<header><a name="ix.menu.NetworkChoice"></a>
+								<h1><span class="realm client"></span>ix.menu.NetworkChoice(entity, choice, data)</h1>
 
 
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_menu.lua#L58">View source &raquo;</a>
+								<p>Notifies the server of an option that was chosen for the given entity.</p>
+							</header>
 
 
-</dd>
-    <dt>
-    <a name = "ix.menu.NetworkChoice"></a>
-    <pre><span class="realm client" title="Client"></span> ix.menu.NetworkChoice(entity, choice, data)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_menu.lua#L57">View source &raquo;</a>
-    </dt>
-    <dd>
-    Notifies the server of an option that was chosen for the given entity.
+									<h3>Parameters</h3>
 
-    </ul>
-    </ul>
-    </ul>
-    </ul>
 
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">entity</span>
-            <span class="types"><span class="type">entity</span></span>
-         Entity to call option on
-        </li>
-        <li><span class="parameter">choice</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         Option that was chosen
-        </li>
-        <li><span class="parameter">data</span>
-         Extra data to send to the entity
-        </li>
-    </ul>
+									<ul>
 
+											<li>
+												<span class="tag parameter">entity</span>
+
+													<span class="tag"><span class="type">entity</span></span>
+
+
+												<p> Entity to call option on</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">choice</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Option that was chosen</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">data</span>
 
 
 
+												<p> Extra data to send to the entity</p>
+											</li>
+									</ul>
 
-</dd>
-</dl>
+
+						</section>
+					<h1 class="title">Tables</h1>
+
+						<section class="method">
+							<header><a name="MenuOptionsStructure"></a>
+								<h1><span class="realm client"></span>MenuOptionsStructure</h1>
 
 
-</div> <!-- id="content" -->
-</div> <!-- id="main" -->
-<div id="about">
-<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2018-10-18 19:47:15 </i>
-</div> <!-- id="about" -->
-</div> <!-- id="container" -->
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_menu.lua#L26">View source &raquo;</a>
+								<p>You'll need to pass a table of options to <a href="../libraries/ix.menu.html#ix.menu.Open">ix.menu.Open</a> to populate the menu.  This table consists of strings as its keys
+ and functions as its values. These correspond to the text displayed in the menu and the callback to run, respectively.</p>
 
-<script type="text/javascript" src="../highlight.min.js"></script>
-<script type="text/javascript">
-  var elements = document.querySelectorAll("pre, table.function_list td.name")
+<p> Example usage:</p>
+<pre><code>ix.menu.Open({
+    Drink = function()
+        print("Drink option selected!")
+    end,
+    Take = function()
+        print("Take option selected!")
+    end
+}, ents.GetByIndex(1))
+</code></pre>
+<p> This opens a menu with the options <code>&quot;Drink&quot;</code> and <code>&quot;Take&quot;</code> which will print a message when you click on either of the options.</p>
+							</header>
 
-  hljs.configure({
-    languages: ["lua"]
-  });
 
-  for (var i = 0; i < elements.length; i++)
-  {
-    hljs.highlightBlock(elements[i])
-  }
-</script>
-</body>
+
+						</section>
+		</article>
+
+		<footer>
+			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
+			<p>Last updated: <span class="timestamp">2018-10-18 04:36:26</span></p>
+		</footer>
+
+		<script type="text/javascript" src="../highlight.min.js"></script>
+		<script type="text/javascript">
+		var elements = document.querySelectorAll("aside code, pre code")
+
+		hljs.configure({
+			languages: ["lua"]
+		});
+
+		for (var i = 0; i < elements.length; i++)
+		{
+			hljs.highlightBlock(elements[i]);
+		}
+		</script>
+	</body>
 </html>

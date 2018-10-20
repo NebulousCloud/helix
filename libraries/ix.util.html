@@ -1,475 +1,505 @@
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+
 <html>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<head>
-    <title>Helix Documentation</title>
-    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
-    <link rel="stylesheet" href="../highlight.css">
-</head>
-<body>
+	<head>
+		<title>Helix Documentation</title>
 
-<div id="container">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
+		<link rel="stylesheet" href="../ldoc.css" />
+		<link rel="stylesheet" href="../highlight.css" />
+	</head>
 
-<div id="product">
-	<div id="product_logo"></div>
-	<div id="product_name"><big><b></b></big></div>
-	<div id="product_description"></div>
-</div> <!-- id="product" -->
+	<body>
+		<aside>
+			<h1>Helix</h1>
 
+			<!-- project contents -->
+			<section>
+						<h2>Libraries</h2>
 
-<div id="main">
+						<ul>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
+								<li><a href="../libraries/ix.html">ix</a></li>
+						</ul>
+			</section>
+		</aside>
 
+		<!-- library functions -->
+		<article>
+				<header>
+					<h1>ix.util</h1>
+					<h2>Various useful helper functions.</h2>
+				</header>
 
-<!-- Menu -->
+				<!-- summary -->
+				<details>
+					<summary>Reference</summary>
 
-<div id="navigation">
-<br/>
-<h1>Helix</h1>
+					<div class="contents">
+							<h2>Functions</h2>
+							<ul>
+									<li><span class="realm shared"></span><a href="#ix.util.StripRealmPrefix">ix.util.StripRealmPrefix(name)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.util.IsColor">ix.util.IsColor(input)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.util.DimColor">ix.util.DimColor(color, multiplier[, alpha=255])</a></li>
+									<li><span class="realm shared"></span><a href="#ix.util.SanitizeType">ix.util.SanitizeType(type, input)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.util.GetTypeFromValue">ix.util.GetTypeFromValue(value)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.util.FindPlayer">ix.util.FindPlayer(identifier[, bAllowPatterns=false])</a></li>
+									<li><span class="realm shared"></span><a href="#ix.util.ExpandCamelCase">ix.util.ExpandCamelCase(input[, bNoUpperFirst=false])</a></li>
+									<li><span class="realm shared"></span><a href="#ix.util.GetCharacters">ix.util.GetCharacters()</a></li>
+									<li><span class="realm client"></span><a href="#ix.util.ResetStencilValues">ix.util.ResetStencilValues()</a></li>
+							</ul>
+					</div>
+				</details>
 
-<ul>
-  <li><a href="../index.html">Index</a></li>
-</ul>
-
-<h2>Contents</h2>
-<ul>
-<li><a href="#Functions">Functions</a></li>
-</ul>
-
-
-<h2>Libraries</h2>
-<ul class="nowrap">
-  <li><a href="../libraries/ix.command.html">ix.command</a></li>
-  <li><a href="../libraries/ix.date.html">ix.date</a></li>
-  <li><a href="../libraries/ix.item.html">ix.item</a></li>
-  <li><a href="../libraries/ix.menu.html">ix.menu</a></li>
-  <li><a href="../libraries/ix.option.html">ix.option</a></li>
-  <li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-  <li><a href="../libraries/ix.data.html">ix.data</a></li>
-  <li><strong>ix.util</strong></li>
-  <li><a href="../libraries/ix.html">ix</a></li>
-</ul>
-
-</div>
-
-<div id="content">
-
-<h1>Module <code>ix.util</code></h1>
-<p>Various useful helper functions.</p>
-<p>
+				<!-- description -->
+				<p>
 
 </p>
 
+				<!-- methods -->
+					<h1 class="title">Functions</h1>
 
-<h2><a href="#Functions">Functions</a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#ix.util.StripRealmPrefix"><code><span class="realm shared" title="Shared"></span> ix.util.StripRealmPrefix(name)</code></a></td>
-	<td class="summary">Removes the realm prefix from a file name.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#ix.util.IsColor"><code><span class="realm shared" title="Shared"></span> ix.util.IsColor(input)</code></a></td>
-	<td class="summary">Returns <code>true</code> if the given input is a color table.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#ix.util.DimColor"><code><span class="realm shared" title="Shared"></span> ix.util.DimColor(color, multiplier[, alpha=255])</code></a></td>
-	<td class="summary">Returns a dimmed version of the given color by the given scale.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#ix.util.SanitizeType"><code><span class="realm shared" title="Shared"></span> ix.util.SanitizeType(type, input)</code></a></td>
-	<td class="summary">Sanitizes an input value with the given type.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#ix.util.GetTypeFromValue"><code><span class="realm shared" title="Shared"></span> ix.util.GetTypeFromValue(value)</code></a></td>
-	<td class="summary">Returns the <a href="../libraries/ix.html#type">ix.type</a> of the given value.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#ix.util.FindPlayer"><code><span class="realm shared" title="Shared"></span> ix.util.FindPlayer(identifier[, bAllowPatterns=false])</code></a></td>
-	<td class="summary">Attempts to find a player by matching their name or Steam ID.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#ix.util.ExpandCamelCase"><code><span class="realm shared" title="Shared"></span> ix.util.ExpandCamelCase(input[, bNoUpperFirst=false])</code></a></td>
-	<td class="summary">Returns a string that is the given input with spaces in between each CamelCase word.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#ix.util.GetCharacters"><code><span class="realm shared" title="Shared"></span> ix.util.GetCharacters()</code></a></td>
-	<td class="summary">Returns an iterator for characters.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#ix.util.ResetStencilValues"><code><span class="realm client" title="Client"></span> ix.util.ResetStencilValues()</code></a></td>
-	<td class="summary">Resets all stencil values to known good (i.e defaults)</td>
-	</tr>
-</table>
-
-<br/>
-<br/>
+						<section class="method">
+								<aside>
+										<code>print(ix.util.StripRealmPrefix("sv_init.lua"))
+ > init.lua
+</code>
+								</aside>
+							<header><a name="ix.util.StripRealmPrefix"></a>
+								<h1><span class="realm shared"></span>ix.util.StripRealmPrefix(name)</h1>
 
 
-    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L84">View source &raquo;</a>
+								<p>Removes the realm prefix from a file name.  The returned string will be unchanged if there is no prefix found.</p>
+							</header>
 
-    <dl class="function">
-    <dt>
-    <a name = "ix.util.StripRealmPrefix"></a>
-    <pre><span class="realm shared" title="Shared"></span> ix.util.StripRealmPrefix(name)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L84">View source &raquo;</a>
-    </dt>
-    <dd>
-    Removes the realm prefix from a file name.  The returned string will be unchanged if there is no prefix found.
 
-    </ul>
-    </ul>
-    </ul>
-    </ul>
+									<h3>Parameters</h3>
 
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">name</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         String to strip prefix from
-        </li>
-    </ul>
 
-    <h3>Returns:</h3>
-    <ol>
+									<ul>
 
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-        String stripped of prefix
-    </ol>
+											<li>
+												<span class="tag parameter">name</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> String to strip prefix from</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>String stripped of prefix</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ix.util.IsColor"></a>
+								<h1><span class="realm shared"></span>ix.util.IsColor(input)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L95">View source &raquo;</a>
+								<p>Returns <code>true</code> if the given input is a color table.  This is necessary since the engine <a href="../libraries/ix.util.html#ix.util.IsColor">IsColor</a> function only checks for
+ color metatables - which are not used for regular Lua color types.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">input</span>
 
 
 
-    <h3>Usage:</h3>
-    <ul>
-        <pre class="example"><span class="global">print</span>(ix.util.StripRealmPrefix(<span class="string">"sv_init.lua"</span>))
- &gt; init.lua</pre>
-    </ul>
-
-</dd>
-    <dt>
-    <a name = "ix.util.IsColor"></a>
-    <pre><span class="realm shared" title="Shared"></span> ix.util.IsColor(input)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L95">View source &raquo;</a>
-    </dt>
-    <dd>
-    Returns <code>true</code> if the given input is a color table.  This is necessary since the engine <a href="../libraries/ix.util.html#ix.util.IsColor">IsColor</a> function only checks for
- color metatables - which are not used for regular Lua color types.
-
-    </ul>
-    </ul>
-    </ul>
-    </ul>
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">input</span>
-         Input to check
-        </li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-           <span class="types"><span class="type">bool</span></span>
-        Whether or not the input is a color
-    </ol>
+												<p> Input to check</p>
+											</li>
+									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not the input is a color</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+								<aside>
+										<code>print(ix.util.DimColor(Color(100, 100, 100, 255), 0.5))
+ > 50 50 50 255
+</code>
+								</aside>
+							<header><a name="ix.util.DimColor"></a>
+								<h1><span class="realm shared"></span>ix.util.DimColor(color, multiplier[, alpha=255])</h1>
 
 
-</dd>
-    <dt>
-    <a name = "ix.util.DimColor"></a>
-    <pre><span class="realm shared" title="Shared"></span> ix.util.DimColor(color, multiplier[, alpha=255])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L108">View source &raquo;</a>
-    </dt>
-    <dd>
-    Returns a dimmed version of the given color by the given scale.
-
-    </ul>
-    </ul>
-    </ul>
-    </ul>
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">color</span>
-         Color to dim
-        </li>
-        <li><span class="parameter">multiplier</span>
-            <span class="types"><span class="type">number</span></span>
-         What to multiply the red, green, and blue values by
-        </li>
-        <li><span class="parameter">alpha</span>
-            <span class="types"><span class="type">number</span></span>
-         Alpha to use in dimmed color
-         (<em>default</em> 255)
-        </li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-        Dimmed color
-    </ol>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L108">View source &raquo;</a>
+								<p>Returns a dimmed version of the given color by the given scale.</p>
+							</header>
 
 
+									<h3>Parameters</h3>
 
-    <h3>Usage:</h3>
-    <ul>
-        <pre class="example"><span class="global">print</span>(ix.util.DimColor(Color(<span class="number">100</span>, <span class="number">100</span>, <span class="number">100</span>, <span class="number">255</span>), <span class="number">0.5</span>))
- &gt; <span class="number">50</span> <span class="number">50</span> <span class="number">50</span> <span class="number">255</span></pre>
-    </ul>
 
-</dd>
-    <dt>
-    <a name = "ix.util.SanitizeType"></a>
-    <pre><span class="realm shared" title="Shared"></span> ix.util.SanitizeType(type, input)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L124">View source &raquo;</a>
-    </dt>
-    <dd>
-    Sanitizes an input value with the given type.  This function ensures that a valid type is always returned. If a valid value
+									<ul>
+
+											<li>
+												<span class="tag parameter">color</span>
+
+													<span class="tag"><span class="type">color</span></span>
+
+
+												<p> Color to dim</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">multiplier</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> What to multiply the red, green, and blue values by</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">alpha</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: 255</span>
+
+												<p> Alpha to use in dimmed color</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">color</span>
+
+												<p>Dimmed color</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+								<aside>
+										<code>print(ix.util.SanitizeType(ix.type.number, "123"))
+> 123
+print(ix.util.SanitizeType(ix.type.bool, 1))
+> true
+</code>
+								</aside>
+							<header><a name="ix.util.SanitizeType"></a>
+								<h1><span class="realm shared"></span>ix.util.SanitizeType(type, input)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L124">View source &raquo;</a>
+								<p>Sanitizes an input value with the given type.  This function ensures that a valid type is always returned. If a valid value
  could not be found, it will return the default value for the type. This only works for simple types - e.g it does not work
- for player, character, or Steam ID types.
-
-    </ul>
-    </ul>
-    </ul>
-    </ul>
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">type</span>
-            <span class="types"><a class="type" href="../libraries/ix.html#type">ix.type</a></span>
-         Type to check for
-        </li>
-        <li><span class="parameter">input</span>
-         Value to sanitize
-        </li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-        Sanitized value
-    </ol>
+ for player, character, or Steam ID types.</p>
+							</header>
 
 
-    <h3>See also:</h3>
-    <ul>
-         <a href="../libraries/ix.html#type">ix.type</a>
-    </ul>
-
-    <h3>Usage:</h3>
-    <ul>
-        <pre class="example"><span class="global">print</span>(ix.util.SanitizeType(ix.<span class="global">type</span>.number, <span class="string">"123"</span>))
-&gt; <span class="number">123</span>
-<span class="global">print</span>(ix.util.SanitizeType(ix.<span class="global">type</span>.bool, <span class="number">1</span>))
-&gt; <span class="keyword">true</span></pre>
-    </ul>
-
-</dd>
-    <dt>
-    <a name = "ix.util.GetTypeFromValue"></a>
-    <pre><span class="realm shared" title="Shared"></span> ix.util.GetTypeFromValue(value)</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L176">View source &raquo;</a>
-    </dt>
-    <dd>
-    Returns the <a href="../libraries/ix.html#type">ix.type</a> of the given value.
-
-    </ul>
-    </ul>
-    </ul>
-    </ul>
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">value</span>
-         Value to get the type of
-        </li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-           <span class="types"><span class="type">ixtype</span></span>
-        Type of value
-    </ol>
+									<h3>Parameters</h3>
 
 
-    <h3>See also:</h3>
-    <ul>
-         <a href="../libraries/ix.html#type">ix.type</a>
-    </ul>
+									<ul>
 
-    <h3>Usage:</h3>
-    <ul>
-        <pre class="example"><span class="global">print</span>(ix.util.GetTypeFromValue(<span class="string">"hello"</span>))
- &gt; <span class="number">2</span> <span class="comment">-- i.e the value of ix.type.string</span></pre>
-    </ul>
+											<li>
+												<span class="tag parameter">type</span>
 
-</dd>
-    <dt>
-    <a name = "ix.util.FindPlayer"></a>
-    <pre><span class="realm shared" title="Shared"></span> ix.util.FindPlayer(identifier[, bAllowPatterns=false])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L248">View source &raquo;</a>
-    </dt>
-    <dd>
-    Attempts to find a player by matching their name or Steam ID.
+													<span class="tag"><a class="type" href="../libraries/ix.html#type">ix.type</a></span>
 
-    </ul>
-    </ul>
-    </ul>
-    </ul>
 
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">identifier</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         Search query
-        </li>
-        <li><span class="parameter">bAllowPatterns</span>
-            <span class="types"><span class="type">boolean</span></span>
-         Whether or not to accept Lua patterns in <code>identifier</code>
-         (<em>default</em> false)
-        </li>
-    </ul>
+												<p> Type to check for</p>
+											</li>
+									</ul>
 
-    <h3>Returns:</h3>
-    <ol>
+									<ul>
 
-           <span class="types"><span class="type">player</span></span>
-        Player that matches the given search query - this will be <code>nil</code> if a player could not be found
-    </ol>
+											<li>
+												<span class="tag parameter">input</span>
 
 
 
+												<p> Value to sanitize</p>
+											</li>
+									</ul>
 
-</dd>
-    <dt>
-    <a name = "ix.util.ExpandCamelCase"></a>
-    <pre><span class="realm shared" title="Shared"></span> ix.util.ExpandCamelCase(input[, bNoUpperFirst=false])</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L323">View source &raquo;</a>
-    </dt>
-    <dd>
-    Returns a string that is the given input with spaces in between each CamelCase word.  This function will ignore any words
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="tag type">any</span>
+
+												<p>Sanitized value</p>
+											</li>
+
+								</ul>
+
+								<h3>See Also</h3>
+								<ul>
+										<li><a href="../libraries/ix.html#type">ix.type</a></li>
+								</ul>
+						</section>
+						<section class="method">
+								<aside>
+										<code>print(ix.util.GetTypeFromValue("hello"))
+ > 2 -- i.e the value of ix.type.string
+</code>
+								</aside>
+							<header><a name="ix.util.GetTypeFromValue"></a>
+								<h1><span class="realm shared"></span>ix.util.GetTypeFromValue(value)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L176">View source &raquo;</a>
+								<p>Returns the <a href="../libraries/ix.html#type">ix.type</a> of the given value.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+
+
+												<p> Value to get the type of</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">ixtype</span>
+
+												<p>Type of value</p>
+											</li>
+
+								</ul>
+
+								<h3>See Also</h3>
+								<ul>
+										<li><a href="../libraries/ix.html#type">ix.type</a></li>
+								</ul>
+						</section>
+						<section class="method">
+							<header><a name="ix.util.FindPlayer"></a>
+								<h1><span class="realm shared"></span>ix.util.FindPlayer(identifier[, bAllowPatterns=false])</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L248">View source &raquo;</a>
+								<p>Attempts to find a player by matching their name or Steam ID.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">identifier</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Search query</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bAllowPatterns</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether or not to accept Lua patterns in <code>identifier</code></p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">player</span>
+
+												<p>Player that matches the given search query - this will be <code>nil</code> if a player could not be found</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+								<aside>
+										<code>print(ix.util.ExpandCamelCase("HelloWorld"))
+ > Hello World
+</code>
+								</aside>
+							<header><a name="ix.util.ExpandCamelCase"></a>
+								<h1><span class="realm shared"></span>ix.util.ExpandCamelCase(input[, bNoUpperFirst=false])</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L323">View source &raquo;</a>
+								<p>Returns a string that is the given input with spaces in between each CamelCase word.  This function will ignore any words
  that do not begin with a capital letter. The words <code>ooc</code>, <code>looc</code>, <code>afk</code>, and <code>url</code> will be automatically transformed
- into uppercase text.
-
-    </ul>
-    </ul>
-    </ul>
-    </ul>
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">input</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         String to expand
-        </li>
-        <li><span class="parameter">bNoUpperFirst</span>
-            <span class="types"><span class="type">boolean</span></span>
-         Whether or not to avoid capitalizing the first character. This is useful for lowerCamelCase
-         (<em>default</em> false)
-        </li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-        Expanded CamelCase string
-    </ol>
+ into uppercase text.</p>
+							</header>
 
 
-
-    <h3>Usage:</h3>
-    <ul>
-        <pre class="example"><span class="global">print</span>(ix.util.ExpandCamelCase(<span class="string">"HelloWorld"</span>))
- &gt; Hello World</pre>
-    </ul>
-
-</dd>
-    <dt>
-    <a name = "ix.util.GetCharacters"></a>
-    <pre><span class="realm shared" title="Shared"></span> ix.util.GetCharacters()</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L376">View source &raquo;</a>
-    </dt>
-    <dd>
-    Returns an iterator for characters.  The resulting key/values will be a player and their corresponding characters. This
- iterator skips over any players that do not have a valid character loaded.
-
-    </ul>
-    </ul>
-    </ul>
-    </ul>
+									<h3>Parameters</h3>
 
 
-    <h3>Returns:</h3>
-    <ol>
+									<ul>
 
-           <span class="types"><span class="type">Iterator</span></span>
+											<li>
+												<span class="tag parameter">input</span>
 
-
-
-    </ol>
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
+												<p> String to expand</p>
+											</li>
+									</ul>
 
-    <h3>Usage:</h3>
-    <ul>
-        <pre class="example"><span class="keyword">for</span> client, character <span class="keyword">in</span> ix.util.GetCharacters() <span class="keyword">do</span>
-		<span class="global">print</span>(client, character)
-<span class="keyword">end</span>
-&gt; Player [<span class="number">1</span>][Bot01]    character[<span class="number">1</span>]
-&gt; Player [<span class="number">2</span>][Bot02]    character[<span class="number">2</span>]
-<span class="comment">-- etc.</span></pre>
-    </ul>
+									<ul>
 
-</dd>
-    <dt>
-    <a name = "ix.util.ResetStencilValues"></a>
-    <pre><span class="realm client" title="Client"></span> ix.util.ResetStencilValues()</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L598">View source &raquo;</a>
-    </dt>
-    <dd>
-    Resets all stencil values to known good (i.e defaults)
+											<li>
+												<span class="tag parameter">bNoUpperFirst</span>
 
-    </ul>
-    </ul>
-    </ul>
-    </ul>
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether or not to avoid capitalizing the first character. This is useful for lowerCamelCase</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>Expanded CamelCase string</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+								<aside>
+										<code>for client, character in ix.util.GetCharacters() do
+	print(client, character)
+end
+> Player [1][Bot01]    character[1]
+> Player [2][Bot02]    character[2]
+-- etc.
+</code>
+								</aside>
+							<header><a name="ix.util.GetCharacters"></a>
+								<h1><span class="realm shared"></span>ix.util.GetCharacters()</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L376">View source &raquo;</a>
+								<p>Returns an iterator for characters.  The resulting key/values will be a player and their corresponding characters. This
+ iterator skips over any players that do not have a valid character loaded.</p>
+							</header>
 
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">Iterator</span>
+
+												<p>
+
+</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ix.util.ResetStencilValues"></a>
+								<h1><span class="realm client"></span>ix.util.ResetStencilValues()</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L598">View source &raquo;</a>
+								<p>Resets all stencil values to known good (i.e defaults)</p>
+							</header>
 
 
 
-</dd>
-</dl>
+						</section>
+		</article>
 
+		<footer>
+			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
+			<p>Last updated: <span class="timestamp">2018-10-18 04:36:26</span></p>
+		</footer>
 
-</div> <!-- id="content" -->
-</div> <!-- id="main" -->
-<div id="about">
-<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2018-10-18 19:47:15 </i>
-</div> <!-- id="about" -->
-</div> <!-- id="container" -->
+		<script type="text/javascript" src="../highlight.min.js"></script>
+		<script type="text/javascript">
+		var elements = document.querySelectorAll("aside code, pre code")
 
-<script type="text/javascript" src="../highlight.min.js"></script>
-<script type="text/javascript">
-  var elements = document.querySelectorAll("pre, table.function_list td.name")
+		hljs.configure({
+			languages: ["lua"]
+		});
 
-  hljs.configure({
-    languages: ["lua"]
-  });
-
-  for (var i = 0; i < elements.length; i++)
-  {
-    hljs.highlightBlock(elements[i])
-  }
-</script>
-</body>
+		for (var i = 0; i < elements.length; i++)
+		{
+			hljs.highlightBlock(elements[i]);
+		}
+		</script>
+	</body>
 </html>

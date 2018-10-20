@@ -1,181 +1,242 @@
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+
 <html>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<head>
-    <title>Helix Documentation</title>
-    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
-    <link rel="stylesheet" href="../highlight.css">
-</head>
-<body>
+	<head>
+		<title>Helix Documentation</title>
 
-<div id="container">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
+		<link rel="stylesheet" href="../ldoc.css" />
+		<link rel="stylesheet" href="../highlight.css" />
+	</head>
 
-<div id="product">
-	<div id="product_logo"></div>
-	<div id="product_name"><big><b></b></big></div>
-	<div id="product_description"></div>
-</div> <!-- id="product" -->
+	<body>
+		<aside>
+			<h1>Helix</h1>
 
+			<!-- project contents -->
+			<section>
+						<h2>Libraries</h2>
 
-<div id="main">
+						<ul>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
+								<li><a href="../libraries/ix.html">ix</a></li>
+						</ul>
+			</section>
+		</aside>
 
+		<!-- library functions -->
+		<article>
+				<header>
+					<h1>ix</h1>
+					<h2>Top-level library containing all Helix libraries.</h2>
+				</header>
 
-<!-- Menu -->
+				<!-- summary -->
+				<details>
+					<summary>Reference</summary>
 
-<div id="navigation">
-<br/>
-<h1>Helix</h1>
+					<div class="contents">
+							<h2>Tables</h2>
+							<ul>
+									<li><span class="realm shared"></span><a href="#type">type</a></li>
+							</ul>
+					</div>
+				</details>
 
-<ul>
-  <li><a href="../index.html">Index</a></li>
-</ul>
-
-<h2>Contents</h2>
-<ul>
-<li><a href="#Fields">Fields</a></li>
-</ul>
-
-
-<h2>Libraries</h2>
-<ul class="nowrap">
-  <li><a href="../libraries/ix.command.html">ix.command</a></li>
-  <li><a href="../libraries/ix.date.html">ix.date</a></li>
-  <li><a href="../libraries/ix.item.html">ix.item</a></li>
-  <li><a href="../libraries/ix.menu.html">ix.menu</a></li>
-  <li><a href="../libraries/ix.option.html">ix.option</a></li>
-  <li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-  <li><a href="../libraries/ix.data.html">ix.data</a></li>
-  <li><a href="../libraries/ix.util.html">ix.util</a></li>
-  <li><strong>ix</strong></li>
-</ul>
-
-</div>
-
-<div id="content">
-
-<h1>Module <code>ix</code></h1>
-<p>Top-level library containing all Helix libraries.</p>
-<p> A large majority of the framework is split into respective libraries that
+				<!-- description -->
+				<p> A large majority of the framework is split into respective libraries that
  reside within <a href="../libraries/ix.html#">ix</a>.</p>
 
+				<!-- methods -->
+					<h1 class="title">Tables</h1>
 
-<h2><a href="#Fields">Fields</a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#type"><code><span class="realm shared" title="Shared"></span> ix.type</code></a></td>
-	<td class="summary">A table of variable types that are used throughout the framework.</td>
-	</tr>
-</table>
+						<section class="method">
+								<aside>
+										<code>-- checking if type exists
+print(ix.type[2] != nil)
+> true
 
-<br/>
-<br/>
+-- getting name of type
+print(ix.type[ix.type.string])
+> "string"
+</code>
+								</aside>
+							<header><a name="type"></a>
+								<h1><span class="realm shared"></span>type</h1>
 
 
-    <h2 class="section-header "><a name="Fields"></a>Fields</h2>
-
-    <dl class="function">
-    <dt>
-    <a name = "type"></a>
-    <pre><span class="realm shared" title="Shared"></span> ix.type</pre>
-    <a style="float:right;" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/shared.lua#L34">View source &raquo;</a>
-    </dt>
-    <dd>
-
-<p>A table of variable types that are used throughout the framework.  It represents types as a table with the keys being the
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/shared.lua#L37">View source &raquo;</a>
+								<p>A table of variable types that are used throughout the framework.  It represents types as a table with the keys being the
  name of the type, and the values being some number value. <strong>You should never directly use these number values!</strong> Using the
  values from this table will ensure backwards compatibility if the values in this table change.</p>
 
 <p> This table also contains the numerical values of the types as keys. This means that if you need to check if a type exists, or
  if you need to get the name of a type, you can do a table lookup with a numerical value. Note that special types are not
  included since they are not real types that can be compared with.</p>
-<pre><code>print(ix.type[2] != nil)
-&gt; true
-
-print(ix.type[ix.type.string])
-&gt; "string"
-</code></pre>
+							</header>
 
 
+									<h3>Fields</h3>
 
-    </ul>
-    </ul>
-    </ul>
-    </ul>
 
-    <ul>
-        <li><span class="parameter">string</span>
-         A regular string. In the case of <a href="../libraries/ix.command.html#ix.command.Add">ix.command.Add</a>, this represents one word.
-        </li>
-        <li><span class="parameter">text</span>
-         A regular string. In the case of <a href="../libraries/ix.command.html#ix.command.Add">ix.command.Add</a>, this represents all words concatenated into a string.
-        </li>
-        <li><span class="parameter">number</span>
-         Any number.
-        </li>
-        <li><span class="parameter">player</span>
-         Any player that matches the given query string in <a href="../libraries/ix.util.html#ix.util.FindPlayer">ix.util.FindPlayer</a>.
-        </li>
-        <li><span class="parameter">steamid</span>
-         A string that matches the Steam ID format of <code>STEAM_X:X:XXXXXXXX</code>.
-        </li>
-        <li><span class="parameter">character</span>
-         Any player's character that matches the given query string in <a href="../libraries/ix.util.html#ix.util.FindPlayer">ix.util.FindPlayer</a>.
-        </li>
-        <li><span class="parameter">bool</span>
-         A string representation of a bool - <code>false</code> and <code>0</code> will return <code>false</code>, anything else will return <code>true</code>.
-        </li>
-        <li><span class="parameter">color</span>
-         A color represented by its red/green/blue/alpha values.
-        </li>
-        <li><span class="parameter">vector</span>
-         A 3D vector represented by its x/y/z values.
-        </li>
-        <li><span class="parameter">optional</span>
-         This is a special type that can be bitwise OR'd with any other type to make it optional. Currently only
- supported in <a href="../libraries/ix.command.html#ix.command.Add">ix.command.Add</a>.
-        </li>
-        <li><span class="parameter">array</span>
-         This is a special type that can be bitwise OR'd with any other type to make it an array of that type. Currently
- only supported in <a href="../libraries/ix.option.html#ix.option.Add">ix.option.Add</a>.
-        </li>
-    </ul>
+									<ul>
+
+											<li>
+												<span class="tag parameter">string</span>
 
 
 
-    <h3>See also:</h3>
-    <ul>
-         <li><a href="../libraries/ix.command.html#ix.command.Add">ix.command.Add</a></li>
-         <li><a href="../libraries/ix.option.html#ix.option.Add">ix.option.Add</a></li>
-    </ul>
+												<p> A regular string. In the case of <a href="../libraries/ix.command.html#ix.command.Add">ix.command.Add</a>, this represents one word.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">text</span>
 
 
-</dd>
-</dl>
+
+												<p> A regular string. In the case of <a href="../libraries/ix.command.html#ix.command.Add">ix.command.Add</a>, this represents all words concatenated into a string.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">number</span>
 
 
-</div> <!-- id="content" -->
-</div> <!-- id="main" -->
-<div id="about">
-<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2018-10-18 19:47:15 </i>
-</div> <!-- id="about" -->
-</div> <!-- id="container" -->
 
-<script type="text/javascript" src="../highlight.min.js"></script>
-<script type="text/javascript">
-  var elements = document.querySelectorAll("pre, table.function_list td.name")
+												<p> Any number.</p>
+											</li>
+									</ul>
 
-  hljs.configure({
-    languages: ["lua"]
-  });
+									<ul>
 
-  for (var i = 0; i < elements.length; i++)
-  {
-    hljs.highlightBlock(elements[i])
-  }
-</script>
-</body>
+											<li>
+												<span class="tag parameter">player</span>
+
+
+
+												<p> Any player that matches the given query string in <a href="../libraries/ix.util.html#ix.util.FindPlayer">ix.util.FindPlayer</a>.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">steamid</span>
+
+
+
+												<p> A string that matches the Steam ID format of <code>STEAM_X:X:XXXXXXXX</code>.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p> Any player's character that matches the given query string in <a href="../libraries/ix.util.html#ix.util.FindPlayer">ix.util.FindPlayer</a>.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bool</span>
+
+
+
+												<p> A string representation of a bool - <code>false</code> and <code>0</code> will return <code>false</code>, anything else will return <code>true</code>.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">color</span>
+
+
+
+												<p> A color represented by its red/green/blue/alpha values.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">vector</span>
+
+
+
+												<p> A 3D vector represented by its x/y/z values.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">optional</span>
+
+
+
+												<p> This is a special type that can be bitwise OR'd with any other type to make it optional. Currently only
+ supported in <a href="../libraries/ix.command.html#ix.command.Add">ix.command.Add</a>.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">array</span>
+
+
+
+												<p> This is a special type that can be bitwise OR'd with any other type to make it an array of that type. Currently
+ only supported in <a href="../libraries/ix.option.html#ix.option.Add">ix.option.Add</a>.</p>
+											</li>
+									</ul>
+
+
+								<h3>See Also</h3>
+								<ul>
+										<li><a href="../libraries/ix.command.html#ix.command.Add">ix.command.Add</a></li>
+										<li><a href="../libraries/ix.option.html#ix.option.Add">ix.option.Add</a></li>
+								</ul>
+						</section>
+		</article>
+
+		<footer>
+			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
+			<p>Last updated: <span class="timestamp">2018-10-18 04:36:26</span></p>
+		</footer>
+
+		<script type="text/javascript" src="../highlight.min.js"></script>
+		<script type="text/javascript">
+		var elements = document.querySelectorAll("aside code, pre code")
+
+		hljs.configure({
+			languages: ["lua"]
+		});
+
+		for (var i = 0; i < elements.length; i++)
+		{
+			hljs.highlightBlock(elements[i]);
+		}
+		</script>
+	</body>
 </html>
