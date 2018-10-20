@@ -3,98 +3,64 @@
 Registration, parsing, and handling of commands.
 
 Commands can be ran through the chat with slash commands or they can be executed through the console.
-
-## Command structure
-When registering commands with `ix.command.Add`, you'll need to pass in a valid command structure. This is simply a table with
-various fields defined. The fields you can specify are as follows:
-
-<ul>
-<li><p>
-`description`<br />
-(default: `"@noDesc"`)<br />
-The help text that appears when the user types in the command.
-</p></li>
-
-<li><p>
-`syntax`<br />
-(default: `"[none]"`)<br />
-The arguments that your command accepts. This field is automatically populated when using the arguments field. Syntax strings
-generally take the form of `"<type argumentName> [type optionalName]"` - it is recommended to stick to this format to keep
-consistent with other commands.
-</p></li>
-
-<li><p>
-`arguments`<br />
-(optional)<br />
-If this field is defined, then additional checks will be performed to ensure that the arguments given to the command are valid.
-This removes extra boilerplate code since all the passed arguments are guaranteed to be valid. See the <strong>Command arguments
-structure</strong> section for more information.
-</p></li>
-
-<li><p>
-`adminOnly`<br />
-(default: `false`)<br />
-Provides an additional check to see if the user is an admin before running.
-</p></li>
-
-<li><p>
-`superAdminOnly`<br />
-(default: `false`)<br />
-Provides an additional check to see if the user is a superadmin before running.
-</p></li>
-
-<li><p>
-`group`<br />
-(default: `nil`)<br />
-Provides an additional check to see if the user is part of the specified usergroup before running. This can be a string or
-table of strings for allowing multiple groups to use the command.
-</p></li>
-
-<li><p>
-`OnRun`<br />
-(required)<br />
-This function is called when the command has passed all the checks and can execute. The first two arguments will be the running
-command table and the calling player. If the arguments field has been specified, the arguments will be passed as regular
-function parameters rather than in a table.
-When the `arguments` field is defined:
-	OnRun(self, client, target, length, message)
-When the `arguments` field is NOT defined:
-	OnRun(self, client, arguments)
-</p></li>
-</ul>
-
-## Command arguments structure
-Rather than checking the validity for arguments in your command's `OnRun` function, you can have Helix do it for you to reduce
-the amount of boilerplate code that needs to be written. This can be done by populating the `arguments` field.
-
-When using the `arguments` field in your command, you are specifying specific types that you expect to receive when the command
-is ran successfully. This means that before `OnRun` is called, the arguments passed to the command from a user will be verified
-to be valid. Each argument is an `ix.type` entry that specifies the expected type for that argument. Optional arguments can be
-specified by using a bitwise OR with the special `ix.type.optional` type. When specified as optional, the argument can be `nil`
-if the user has not entered anything for that argument - otherwise it will be valid.
-
-Note that optional arguments must always be at the end of a list of arguments - or rather, they must not follow a required
-argument. The `syntax` field will be automatically populated when using strict arguments, which means you shouldn't fill out the
-`syntax` field yourself. The arguments you specify will have the same names as the arguments in your OnRun function.
-
-Here is an example command:
-	ix.command.Add("CharSlap", {
-		description = "Slaps a character with a large trout.",
-		adminOnly = true,
-		arguments = {
-			ix.type.character,
-			bit.bor(ix.type.number, ix.type.optional)
-		},
-		OnRun = function(self, client, target, damage)
-			-- WHAM!
-		end
-	})
-Here, we've specified the first argument called `target` to be of type `character`, and the second argument called `damage` to
-be of type `number`. The `damage` argument is optional, meaning that the command will still run if the user has not specified
-any value for the damage. In this case, we'll need to check if it was specified by doing a simple `if (damage) then`. The syntax
-field will be automatically populated with the value `"<character target> [number damage]"`.
 ]]
 -- @module ix.command
+
+--- When registering commands with `ix.command.Add`, you'll need to pass in a valid command structure. This is simply a table
+-- with various fields defined to describe the functionality of the command.
+-- @realm shared
+-- @table CommandStructure
+-- @field[type=function] OnRun This function is called when the command has passed all the checks and can execute. The first two
+-- arguments will be the running command table and the calling player. If the arguments field has been specified, the arguments
+-- will be passed as regular function parameters rather than in a table.
+--
+-- When the arguments field is defined: `OnRun(self, client, target, length, message)`
+--
+-- When the arguments field is NOT defined: `OnRun(self, client, arguments)`
+-- @field[type=string,opt="@noDesc"] description The help text that appears when the user types in the command. If the string is
+-- prefixed with `"@"`, it will use a language phrase.
+-- @field[type=string,opt="none"] syntax The arguments that your command accepts. This field is automatically populated when
+-- using the arguments field. Syntax strings generally take the form of `"<argumentName: type> [optionalName: type]"` - it is
+-- recommended to stick to this format to keep consistent with other commands.
+-- @field[type=table,opt] arguments If this field is defined, then additional checks will be performed to ensure that the
+-- arguments given to the command are valid. This removes extra boilerplate code since all the passed arguments are guaranteed
+-- to be valid. See `CommandArgumentsStructure` for more information.
+-- @field[type=boolean,opt=false] adminOnly Provides an additional check to see if the user is an admin before running.
+-- @field[type=boolean,opt=false] superAdminOnly Provides an additional check to see if the user is a superadmin before running.
+-- @field[type=any,opt] group Provides an additional check to see if the user is part of the specified usergroup before running.
+-- This can be a string or table of strings for allowing multiple groups to use the command.
+
+--- Rather than checking the validity for arguments in your command's `OnRun` function, you can have Helix do it for you to
+-- reduce the amount of boilerplate code that needs to be written. This can be done by populating the `arguments` field.
+--
+-- When using the `arguments` field in your command, you are specifying specific types that you expect to receive when the
+-- command is ran successfully. This means that before `OnRun` is called, the arguments passed to the command from a user will
+-- be verified to be valid. Each argument is an `ix.type` entry that specifies the expected type for that argument. Optional
+-- arguments can be specified by using a bitwise OR with the special `ix.type.optional` type. When specified as optional, the
+-- argument can be `nil` if the user has not entered anything for that argument - otherwise it will be valid.
+--
+-- Note that optional arguments must always be at the end of a list of arguments - or rather, they must not follow a required
+-- argument. The `syntax` field will be automatically populated when using strict arguments, which means you shouldn't fill out
+-- the `syntax` field yourself. The arguments you specify will have the same names as the arguments in your OnRun function.
+--
+-- Consider this example command:
+-- 	ix.command.Add("CharSlap", {
+-- 		description = "Slaps a character with a large trout.",
+-- 		adminOnly = true,
+-- 		arguments = {
+-- 			ix.type.character,
+-- 			bit.bor(ix.type.number, ix.type.optional)
+-- 		},
+-- 		OnRun = function(self, client, target, damage)
+-- 			-- WHAM!
+-- 		end
+-- 	})
+-- Here, we've specified the first argument called `target` to be of type `character`, and the second argument called `damage`
+-- to be of type `number`. The `damage` argument is optional, meaning that the command will still run if the user has not
+-- specified any value for the damage. In this case, we'll need to check if it was specified by doing a simple
+-- `if (damage) then`. The syntax field will be automatically populated with the value `"<target: character> [damage: number]"`.
+-- @realm shared
+-- @table CommandArgumentsStructure
 
 ix.command = ix.command or {}
 ix.command.list = ix.command.list or {}
@@ -173,9 +139,9 @@ local function ArgumentCheckStub(command, client, given)
 end
 
 --- Creates a new command.
--- @shared
+-- @realm shared
 -- @string command Name of the command (recommended in UpperCamelCase)
--- @table data Command structure (see above)
+-- @tab data A `CommandStructure` describing the command
 function ix.command.Add(command, data)
 	data.name = string.gsub(command, "%s", "")
 	data.description = data.description or ""
@@ -300,17 +266,17 @@ function ix.command.Add(command, data)
 
 			data.argumentNames[i] = argumentName
 			data.syntax = data.syntax .. (bFirst and "" or " ") ..
-				string.format((bOptional and "[%s %s]" or "<%s %s>"), ix.type[argument], argumentName)
+				string.format((bOptional and "[%s: %s]" or "<%s: %s>"), argumentName, ix.type[argument])
 
 			bFirst = false
 			bLastOptional = bOptional
 		end
 
 		if (data.syntax:len() == 0) then
-			data.syntax = "[none]"
+			data.syntax = "<none>"
 		end
 	else
-		data.syntax = data.syntax or "[none]"
+		data.syntax = data.syntax or "<none>"
 	end
 
 	-- Add the command to the list of commands.
@@ -330,7 +296,7 @@ function ix.command.Add(command, data)
 end
 
 --- Returns true if a player is allowed to run a certain command.
--- @shared
+-- @realm shared
 -- @player client Player to check access for
 -- @string command Name of the command to check access for
 -- @treturn bool Whether or not the player is allowed to run the command
@@ -351,7 +317,7 @@ end
 --- Returns a table of arguments from a given string.
 -- Words separated by spaces will be considered one argument. To have an argument containing multiple words, they must be
 -- contained within quotation marks.
--- @shared
+-- @realm shared
 -- @string text String to extract arguments from
 -- @treturn table Arguments extracted from string
 -- @usage PrintTable(ix.command.ExtractArgs("these are \"some arguments\""))
@@ -400,7 +366,7 @@ end
 --- Returns an array of potential commands by unique id.
 -- When bSorted is true, the commands will be sorted by name. When bReorganize is true, it will move any exact match to the top
 -- of the array. When bRemoveDupes is true, it will remove any commands that have the same NAME.
--- @shared
+-- @realm shared
 -- @string identifier Search query
 -- @bool[opt=false] bSorted Whether or not to sort the commands by name
 -- @bool[opt=false] bReorganize Whether or not any exact match will be moved to the top of the array
@@ -460,10 +426,11 @@ if (SERVER) then
 
 	--- Attempts to find a player by an identifier. If unsuccessful, a notice will be displayed to the specified player. The
 	-- search criteria is derived from `ix.util.FindPlayer`.
-	-- @server
+	-- @realm server
 	-- @player client Player to give a notification to if the player could not be found
 	-- @string name Search query
-	-- @treturn player Player that matches the given search query - this will be `nil` if a player could not be found
+	-- @treturn[1] player Player that matches the given search query
+	-- @treturn[2] nil If a player could not be found
 	-- @see ix.util.FindPlayer
 	function ix.command.FindPlayer(client, name)
 		local target = type(name) == "string" and ix.util.FindPlayer(name) or NULL
@@ -476,11 +443,11 @@ if (SERVER) then
 	end
 
 	--- Forces a player to execute a command by name.
-	-- @server
+	-- @realm server
 	-- @player client Player who is executing the command
 	-- @string command Full name of the command to be executed. This string gets lowered, but it's good practice to stick with
 	-- the exact name of the command
-	-- @table arguments Array of arguments to be passed to the command
+	-- @tab arguments Array of arguments to be passed to the command
 	-- @usage ix.command.Run(player.GetByID(1), "Roll", {10})
 	function ix.command.Run(client, command, arguments)
 		if ((client.ixCommandCooldown or 0) > RealTime()) then
@@ -547,12 +514,12 @@ if (SERVER) then
 
 	--- Parses a chat string and runs the command if one is found. Specifically, it checks for commands in a string with the
 	-- format `/CommandName some arguments`
-	-- @server
+	-- @realm server
 	-- @player client Player who is executing the command
 	-- @string text Input string to search for the command format
 	-- @string[opt] realCommand Specific command to check for. If this is specified, it will not try to run any command that's
 	-- found at the beginning - only if it matches `realCommand`
-	-- @table[opt] arguments Array of arguments to pass to the command. If not specified, it will try to extract it from the
+	-- @tab[opt] arguments Array of arguments to pass to the command. If not specified, it will try to extract it from the
 	-- string specified in `text` using `ix.command.ExtractArgs`
 	-- @treturn bool Whether or not a command has been found
 	-- @usage ix.command.Parse(player.GetByID(1), "/roll 10")
@@ -622,6 +589,11 @@ if (SERVER) then
 		end
 	end)
 else
+	--- Request the server to run a command. This mimics similar functionality to the client typing `/CommandName` in the chatbox.
+	-- @realm client
+	-- @string command Unique ID of the command
+	-- @param ... Arguments to pass to the command
+	-- @usage ix.command.Send("roll", 10)
 	function ix.command.Send(command, ...)
 		local arguments =  {...}
 

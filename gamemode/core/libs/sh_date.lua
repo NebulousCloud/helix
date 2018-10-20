@@ -21,7 +21,7 @@ if (SERVER) then
 	util.AddNetworkString("ixDateSync")
 
 	--- Loads the date from disk.
-	-- @server
+	-- @realm server
 	-- @internal
 	function ix.date.Initialize()
 		local startDate = ix.data.Get("date", nil, false, true)
@@ -35,7 +35,7 @@ if (SERVER) then
 	end
 
 	--- Sends the current date to a player. This is done automatically when the player joins the server.
-	-- @server
+	-- @realm server
 	-- @internal
 	-- @player client Player to send the date to
 	function ix.date.Send(client)
@@ -46,7 +46,7 @@ if (SERVER) then
 	end
 
 	--- Returns the currently set date.
-	-- @shared
+	-- @realm shared
 	-- @treturn date Current in-game date
 	function ix.date.Get()
 		local currentDate = ix.date.lib()
@@ -78,7 +78,7 @@ else
 end
 
 --- Returns a string formatted version of a date.
--- @shared
+-- @realm shared
 -- @string format Format string
 -- @date[opt=nil] currentDate Date to format. If nil, it will use the currently set date
 -- @treturn string Formatted date
@@ -87,7 +87,7 @@ function ix.date.GetFormatted(format, currentDate)
 end
 
 --- Returns a serialized version of a date.
--- @shared
+-- @realm shared
 -- @date[opt=nil] currentDate Date to serialize. If nil, it will use the currently set date
 -- @treturn table Serialized date
 function ix.date.GetSerialized(currentDate)
@@ -95,7 +95,7 @@ function ix.date.GetSerialized(currentDate)
 end
 
 --- Returns a date object from a table or serialized date.
--- @shared
+-- @realm shared
 -- @param currentDate Date to construct
 -- @treturn date Constructed date object
 function ix.date.Construct(currentDate)

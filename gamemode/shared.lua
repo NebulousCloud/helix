@@ -10,12 +10,8 @@
 -- This table also contains the numerical values of the types as keys. This means that if you need to check if a type exists, or
 -- if you need to get the name of a type, you can do a table lookup with a numerical value. Note that special types are not
 -- included since they are not real types that can be compared with.
--- 	print(ix.type[2] != nil)
--- 	> true
---
--- 	print(ix.type[ix.type.string])
--- 	> "string"
--- @shared
+-- @table ix.type
+-- @realm shared
 -- @field string A regular string. In the case of `ix.command.Add`, this represents one word.
 -- @field text A regular string. In the case of `ix.command.Add`, this represents all words concatenated into a string.
 -- @field number Any number.
@@ -31,7 +27,14 @@
 -- only supported in `ix.option.Add`.
 -- @see ix.command.Add
 -- @see ix.option.Add
-ix.type = ix.type or {} -- so the docs can pick up on its existence
+-- @usage -- checking if type exists
+-- print(ix.type[2] != nil)
+-- > true
+--
+-- -- getting name of type
+-- print(ix.type[ix.type.string])
+-- > "string"
+ix.type = ix.type or {}
 
 -- Define gamemode information.
 GM.Name = "Helix"
