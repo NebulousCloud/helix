@@ -77,6 +77,12 @@ properties.Add("persist_end", {
 	end
 })
 
+function PLUGIN:PhysgunPickup(client, entity)
+	if (entity:GetNetVar("Persistent", false)) then
+		return false
+	end
+end
+
 if (SERVER) then
 	function PLUGIN:LoadData()
 		local entities = self:GetData() or {}
