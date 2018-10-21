@@ -31,10 +31,12 @@ if (CLIENT) then
 			local scrW, scrH = ScrW(), ScrH()
 
 			for _, v in ipairs(player.GetAll()) do
-				if (v == client or !v:GetCharacter()) then continue end
+				if (v == client or !v:GetCharacter() or client:GetAimVector():Dot((v:GetPos() - client:GetPos()):GetNormal()) < 0.65) then
+					continue
+				end
 
 				local screenPosition = v:GetPos():ToScreen()
-				local aimPosition = (v:GetPos() + v:GetForward() * aimLength):ToScreen()
+				local aimPosition = (v:GetPos() + v:GetAimVector() * aimLength):ToScreen()
 
 				local marginX, marginY = scrH * .1, scrH * .1
 				local x, y = math.Clamp(screenPosition.x, marginX, scrW - marginX), math.Clamp(screenPosition.y, marginY, scrH - marginY)
