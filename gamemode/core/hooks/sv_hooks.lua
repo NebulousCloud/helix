@@ -241,8 +241,10 @@ function GM:EntityTakeDamage(entity, dmgInfo)
 end
 
 function GM:PrePlayerLoadedCharacter(client, character, lastChar)
+	-- Reset all bodygroups
+	client:ResetBodygroups()
+
 	-- Remove all skins
-	client:SetBodyGroups("000000000")
 	client:SetSkin(0)
 end
 

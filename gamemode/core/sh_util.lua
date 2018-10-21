@@ -1151,6 +1151,12 @@ do
 		end)
 	end
 
+	function playerMeta:ResetBodygroups()
+		for i = 0, (self:GetNumBodyGroups() - 1) do
+			self:SetBodygroup(i, 0)
+		end
+	end
+
 	if (SERVER) then
 		util.AddNetworkString("ixActionBar")
 		util.AddNetworkString("ixActionBarReset")
