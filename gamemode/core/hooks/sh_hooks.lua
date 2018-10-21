@@ -447,16 +447,10 @@ function GM:CanProperty(client, property, entity)
 end
 
 function GM:PhysgunPickup(client, entity)
-	local bPickup = false
+	local bPickup = self.BaseClass:PhysgunPickup(client, entity)
 
-	if (client:IsSuperAdmin()) then
+	if (!bPickup and entity:IsPlayer() and (client:IsSuperAdmin() or client:IsAdmin() and !entity:IsSuperAdmin())) then
 		bPickup = true
-	elseif (client:IsAdmin() and !(entity:IsPlayer() and entity:IsSuperAdmin())) then
-		bPickup = true
-	end
-
-	if (!bPickup) then
-		bPickup = self.BaseClass:PhysgunPickup(client, entity)
 	end
 
 	if (bPickup) then
