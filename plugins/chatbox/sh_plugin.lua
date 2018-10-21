@@ -7,6 +7,8 @@ PLUGIN.description = "Replaces the chatbox to enable customization, autocomplete
 
 if (CLIENT) then
 	ix.chat.history = ix.chat.history or {} -- array of strings the player has entered into the chatbox
+	ix.chat.currentCommand = ""
+	ix.chat.currentArguments = {}
 
 	ix.option.Add("chatNotices", ix.type.bool, false, {
 		category = "chat"

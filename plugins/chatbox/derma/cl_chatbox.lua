@@ -431,6 +431,8 @@ function PANEL:SetCommand(command)
 	-- fade out animation
 	if (command == "") then
 		self.command = ""
+		ix.chat.currentCommand = ""
+
 		return
 	end
 
@@ -443,10 +445,13 @@ function PANEL:SetCommand(command)
 	self.command = command
 	self.commandTable = commandTable
 	self.arguments = {}
+
+	ix.chat.currentCommand = command:lower()
 end
 
 function PANEL:UpdateArguments(text)
 	if (self.command == "") then
+		ix.chat.currentArguments = {}
 		return
 	end
 
@@ -467,6 +472,7 @@ function PANEL:UpdateArguments(text)
 	end
 
 	self.arguments = arguments
+	ix.chat.currentArguments = table.Copy(arguments)
 end
 
 -- returns the target SetVisible value
@@ -837,6 +843,7 @@ function PANEL:SetActive(bActive)
 		self.autocomplete:SetVisible(false)
 		self.preview:SetVisible(false)
 		self.entry:SetText("")
+		self.preview:SetCommand("")
 
 		CloseDermaMenus()
 		gui.EnableScreenClicker(false)
