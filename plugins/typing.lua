@@ -71,20 +71,18 @@ if (CLIENT) then
 				return !ix.chat.classes[chatType].bNoIndicator and chatType or nil
 			end
 
-			if (prefix == "/") then
+			-- some commands will have their own typing indicator, so we'll make sure we're actually typing out a command first
+			local start, _, commandName = text:find("(/(%w+)%s.)")
+
+			if (prefix == "/" and start == 1) then
+				commandName = commandName:sub(2, #commandName - 2):lower()
+
 				for uniqueID, command in pairs(ix.command.list) do
 					if (command.bNoIndicator) then
 						continue
 					end
 
-					local start, finish = text:lower():find("/" .. string.PatternSafe(uniqueID) .. "%s")
-
-					-- we haven't typed out a full command yet
-					if (start != 1) then
-						continue
-					end
-
-					if (text:sub(2, finish - 1):lower() == uniqueID) then
+					if (commandName == uniqueID) then
 						return command.indicator and "@" .. command.indicator or "ooc"
 					end
 				end
@@ -176,19 +174,16 @@ if (CLIENT) then
 		end
 
 		local newClass = net.ReadString()
+		local chatClass = ix.chat.classes[newClass]
 		local text
 		local range
 
-		if (newClass and newClass:sub(1, 1) == "@") then
+		if (chatClass) then
+			text = L(chatClass.indicator or "chatTyping")
+			range = chatClass.range or math.pow(ix.config.Get("chatRange", 280), 2)
+		elseif (newClass and newClass:sub(1, 1) == "@") then
 			text = L(newClass:sub(2))
 			range = math.pow(ix.config.Get("chatRange", 280), 2)
-		else
-			local chatClass = ix.chat.classes[newClass]
-
-			if (chatClass) then
-				text = L(chatClass.indicator or "chatTyping")
-				range = chatClass.range or math.pow(ix.config.Get("chatRange", 280), 2)
-			end
 		end
 
 		if (ix.option.Get("disableAnimations", false)) then
