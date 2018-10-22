@@ -55,10 +55,11 @@ function ENT:CanAccess(client)
 
 	if (allowed and self.classes and table.Count(self.classes) > 0) then
 		local class = ix.class.list[client:GetCharacter():GetClass()]
-		local classID = class and class.uniqueID
-
-		if (!self.classes[classID]) then
-			return false
+		if class then
+			local classID = self.classes[class.uniqueID]
+			if (!classID) then
+				return false
+			end
 		end
 	end
 
