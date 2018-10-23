@@ -26,8 +26,8 @@ if (CLIENT) then
 	function PLUGIN:HUDPaint()
 		local client = LocalPlayer()
 
-		if (client:IsAdmin() and client:GetMoveType() == MOVETYPE_NOCLIP and
-			!client:InVehicle() and ix.option.Get("observerESP", true)) then
+		if (ix.option.Get("observerESP", true) and client:GetMoveType() == MOVETYPE_NOCLIP and
+			!client:InVehicle() and (client:IsAdmin() or client:IsUserGroup("operator"))) then
 			local scrW, scrH = ScrW(), ScrH()
 
 			for _, v in ipairs(player.GetAll()) do
