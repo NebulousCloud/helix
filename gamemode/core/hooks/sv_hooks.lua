@@ -36,8 +36,9 @@ function GM:PlayerInitialSpawn(client)
 	client:LoadData(function(data)
 		if (!IsValid(client)) then return end
 
-		local address = client:IPAddress():match("%d+%.%d+%.%d+%.%d+")
-		local noCache = client:GetData("lastIP", address) != address
+		-- Don't use the character cache if they've connected to another server using the same database
+		local address = ix.util.GetAddress()
+		local bNoCache = client:GetData("lastIP", address) != address
 		client:SetData("lastIP", address)
 
 		net.Start("ixDataSync")
@@ -74,7 +75,7 @@ function GM:PlayerInitialSpawn(client)
 			client.ixLoaded = true
 
 			client:SetData("intro", true)
-		end, noCache)
+		end, bNoCache)
 
 		ix.chat.Send(nil, "connect", client:SteamName())
 	end)

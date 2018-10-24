@@ -279,7 +279,10 @@ ix.command.Add("CharKick", {
 	arguments = ix.type.character,
 	OnRun = function(self, client, target)
 		ix.util.NotifyLocalized("charKick", nil, client:GetName(), target:GetName())
-		target:Kick()
+
+		target:Save(function()
+			target:Kick()
+		end)
 	end
 })
 
