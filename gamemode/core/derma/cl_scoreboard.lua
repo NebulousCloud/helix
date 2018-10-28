@@ -185,8 +185,6 @@ function PANEL:Update()
 	self.icon:SetHidden(!bRecognize)
 
 	-- no easy way to check bodygroups so we'll just set them anyway
-	-- @todo bodygroups will not render correctly in a ModelImage for certain models, see
-	-- https://github.com/Facepunch/garrysmod-issues/issues/3628
 	for _, v in pairs(client:GetBodyGroups()) do
 		self.icon:SetBodygroup(v.id, client:GetBodygroup(v.id))
 	end
