@@ -1,4 +1,14 @@
 
+--[[--
+Holds items within a grid layout.
+
+Inventories are an object that contains `Item`s in a grid layout. Every `Character` will have exactly one inventory attached to
+it, which is the only inventory that is allowed to hold bags - any item that has its own inventory (i.e a suitcase). Inventories
+can be owned by a character, or it can be individually interacted with as a standalone object. For example, the container plugin
+attaches inventories to props, allowing for items to be stored outside of any character inventories and remain "in the world".
+]]
+-- @classmod Inventory
+
 local META = ix.meta.inventory or {}
 META.__index = META
 META.slots = META.slots or {}
@@ -7,19 +17,36 @@ META.h = META.h or 4
 META.vars = META.vars or {}
 META.receivers = META.receivers or {}
 
-function META:GetID()
-	return self.id or 0
-end
-
-function META:SetSize(w, h)
-	self.w = w
-	self.h = h
-end
-
+--- Returns a string representation of this inventory
+-- @realm shared
+-- @treturn string String representation
+-- @usage print(ix.item.inventories[1])
+-- > "inventory[1]"
 function META:__tostring()
 	return "inventory["..(self.id or 0).."]"
 end
 
+--- Returns this inventory's database ID. This is guaranteed to be unique.
+-- @realm shared
+-- @treturn number Unique ID of inventory
+function META:GetID()
+	return self.id or 0
+end
+
+--- Sets the grid size of this inventory.
+-- @internal
+-- @realm shared
+-- @number width New width of inventory
+-- @number height New height of inventory
+function META:SetSize(width, height)
+	self.w = width
+	self.h = height
+end
+
+--- Returns the grid size of this inventory.
+-- @realm shared
+-- @treturn number Width of inventory
+-- @treturn number Height of inventory
 function META:GetSize()
 	return self.w, self.h
 end
@@ -81,6 +108,10 @@ function META:PrintAll()
 	print("------------------------")
 end
 
+--- Returns the player that owns this inventory.
+-- @realm shared
+-- @treturn[1] player Owning player
+-- @treturn[2] nil If no connected player owns this inventory
 function META:GetOwner()
 	for _, v in ipairs(player.GetAll()) do
 		if (v:GetCharacter() and v:GetCharacter().id == self.owner) then

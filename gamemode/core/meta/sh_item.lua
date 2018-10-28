@@ -1,4 +1,17 @@
 
+--[[--
+Interactable entities that can be held in inventories.
+
+Items are objects that are contained inside of an `Inventory`, or as standalone entities if they are dropped in the world. They
+usually have functionality that provides more gameplay aspects to the schema. For example, the zipties in the HL2 RP schema
+allow a player to tie up and search a player.
+
+For an item to have an actual presence, they need to be instanced (usually with `ix.item.Instance`). Items describe the
+properties, while instances are a clone of these properties that can have their own unique data (e.g an ID card will have the
+same name but different numerical IDs). You can think of items as the class, while instances are objects of the `Item` class.
+]]
+-- @classmod Item
+
 local ITEM = ix.meta.item or {}
 ITEM.__index = ITEM
 ITEM.name = "Undefined"
@@ -6,14 +19,28 @@ ITEM.description = ITEM.description or "An item that is undefined."
 ITEM.id = ITEM.id or 0
 ITEM.uniqueID = "undefined"
 
-function ITEM:__eq(other)
-	return self:GetID() == other:GetID()
-end
-
+--- Returns a string representation of this item.
+-- @realm shared
+-- @treturn string String representation
+-- @usage print(ix.item.instances[1])
+-- > "item[1]"
 function ITEM:__tostring()
 	return "item["..self.uniqueID.."]["..self.id.."]"
 end
 
+--- Returns true if this item is equal to another item. Internally, this checks item IDs.
+-- @realm shared
+-- @item other Item to compare to
+-- @treturn bool Whether or not this item is equal to the given item
+-- @usage print(ix.item.instances[1] == ix.item.instances[2])
+-- > false
+function ITEM:__eq(other)
+	return self:GetID() == other:GetID()
+end
+
+--- Returns this item's database ID. This is guaranteed to be unique.
+-- @realm shared
+-- @treturn number Unique ID of item
 function ITEM:GetID()
 	return self.id
 end

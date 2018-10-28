@@ -20,7 +20,17 @@ custom_tags = {
 	{"internal", hidden = true}
 }
 
-new_type("player", "Players", true)
+custom_display_name_handler = function(item, default_handler)
+	if (item.type == "function" and item.module and item.module.type == "classmod") then
+		return item.module.mod_name .. default_handler(item):gsub(".+:", ":")
+	end
+
+	return default_handler(item)
+end
+
+tparam_alias("char", "Character")
+tparam_alias("inv", "Inventory")
+tparam_alias("item", "Item")
 
 tparam_alias("string", "string")
 tparam_alias("bool", "boolean")

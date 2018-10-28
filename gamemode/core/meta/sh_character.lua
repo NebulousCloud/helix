@@ -1,32 +1,63 @@
 
--- Create the character metatable.
+--[[--
+Contains information about a player's current game state.
+
+Characters are a fundamental object type in Helix. They are distinct from players, where players are the representation of a
+person's existence in the server that owns a character, and their character is their currently selected persona. All the
+characters that a player owns will be loaded into memory once they connect to the server. Characters are saved during a regular
+interval, and during specific events (e.g when the owning player switches away from one character to another).
+
+They contain all information that is not persistent with the player; names, descriptions, model, currency, etc. For the most
+part, you'll want to keep all information stored on the character since it will probably be different or change if the
+player switches to another character. An easy way to do this is to use `ix.char.RegisterVar` to easily create accessor functions
+for variables that automatically save to the character object.
+]]
+-- @classmod Character
+
 local CHAR = ix.meta.character or {}
 CHAR.__index = CHAR
 CHAR.id = CHAR.id or 0
 CHAR.vars = CHAR.vars or {}
 
--- TODO: not this
+-- @todo not this
 if (!ix.db) then
 	ix.util.Include("../libs/sv_database.lua")
 end
 
--- Called when the character is being printed as a string.
+--- Returns a string representation of this character
+-- @realm shared
+-- @treturn string String representation
+-- @usage print(ix.char.loaded[1])
+-- > "character[1]"
 function CHAR:__tostring()
 	return "character["..(self.id or 0).."]"
 end
 
--- Checks if two character objects represent the same character.
+--- Returns true if this character is equal to another character. Internally, this checks character IDs.
+-- @realm shared
+-- @char other Character to compare to
+-- @treturn bool Whether or not this character is equal to the given character
+-- @usage print(ix.char.loaded[1] == ix.char.loaded[2])
+-- > false
 function CHAR:__eq(other)
 	return self:GetID() == other:GetID()
 end
 
--- Returns the character index from the database.
+--- Returns this character's database ID. This is guaranteed to be unique.
+-- @realm shared
+-- @treturn number Unique ID of character
 function CHAR:GetID()
 	return self.id
 end
 
 if (SERVER) then
-	-- Saves the character to the database and calls the callback if provided.
+	--- Saves this character's info to the database.
+	-- @realm server
+	-- @func[opt=nil] callback Function to call when the save has completed.
+	-- @usage ix.char.loaded[1]:Save(function()
+	-- 	print("done!")
+	-- end)
+	-- > done! -- after a moment
 	function CHAR:Save(callback)
 		-- Do not save if the character is for a bot.
 		if (self.isBot) then
@@ -60,7 +91,12 @@ if (SERVER) then
 		end
 	end
 
-	-- Sends character information to the receiver.
+	--- Networks this character's information to make the given player aware of this character's existence. If the receiver is
+	-- not the owner of this character, it will only be sent a limited amount of data (as it does not need anything else).
+	-- This is done automatically by the framework.
+	-- @internal
+	-- @realm server
+	-- @player[opt=nil] receiver Player to send the information to. This will sync to all connected players if set to `nil`.
 	function CHAR:Sync(receiver)
 		-- Broadcast the character information if receiver is not set.
 		if (receiver == nil) then
