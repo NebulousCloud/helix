@@ -1235,7 +1235,3 @@ function PANEL:AddMessage(...)
 end
 
 vgui.Register("ixChatbox", PANEL, "EditablePanel")
-
-if (IsValid(ix.gui.chat)) then
-	PLUGIN:CreateChat()
-end
