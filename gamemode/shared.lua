@@ -123,8 +123,6 @@ function GM:OnReloaded()
 			ix.gui.scoreboard:Remove()
 		end
 	else
-		-- Reconnect the database if needed.
-		ix.db.Connect()
 		-- Auto-reload support for faction pay timers.
 		for index, faction in ipairs(ix.faction.indices) do
 			for _, v in ipairs(team.GetPlayers(index)) do

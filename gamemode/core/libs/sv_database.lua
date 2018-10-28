@@ -35,7 +35,7 @@ function ix.db.AddToSchema(schemaType, field, fieldType)
 		return
 	end
 
-	if (!mysql:IsConnected()) then
+	if (!mysql:IsConnected() or !ix.db.schema[schemaType]) then
 		ix.db.schemaQueue[#ix.db.schemaQueue + 1] = {schemaType, field, fieldType}
 		return
 	end
