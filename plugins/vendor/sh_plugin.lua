@@ -50,7 +50,7 @@ if (SERVER) then
 			for _, v in ipairs(ents.FindByClass("ix_vendor")) do
 				data[#data + 1] = {
 					name = v:GetNetVar("name"),
-					desc = v:GetNetVar("desc"),
+					description = v:GetNetVar("description"),
 					pos = v:GetPos(),
 					angles = v:GetAngles(),
 					model = v:GetModel(),
@@ -74,7 +74,7 @@ if (SERVER) then
 			entity:SetModel(v.model)
 			entity:SetNetVar("noBubble", v.bubble)
 			entity:SetNetVar("name", v.name)
-			entity:SetNetVar("desc", v.description)
+			entity:SetNetVar("description", v.description)
 
 			entity.items = v.items or {}
 			entity.factions = v.factions or {}
@@ -144,8 +144,8 @@ if (SERVER) then
 
 		if (key == "name") then
 			entity:SetNetVar("name", data)
-		elseif (key == "desc") then
-			entity:SetNetVar("desc", data)
+		elseif (key == "description") then
+			entity:SetNetVar("description", data)
 		elseif (key == "bubble") then
 			entity:SetNetVar("noBubble", data)
 		elseif (key == "mode") then
@@ -492,8 +492,8 @@ else
 
 		if (key == "name") then
 			editor.name:SetText(entity:GetNetVar("name"))
-		elseif (key == "desc") then
-			editor.description:SetText(entity:GetNetVar("desc"))
+		elseif (key == "description") then
+			editor.description:SetText(entity:GetNetVar("description"))
 		elseif (key == "bubble") then
 			editor.bubble.noSend = true
 			editor.bubble:SetValue(data and 1 or 0)

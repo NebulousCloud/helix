@@ -21,10 +21,10 @@ function PANEL:Init()
 	self.description = self:Add("DTextEntry")
 	self.description:Dock(TOP)
 	self.description:DockMargin(0, 4, 0, 0)
-	self.description:SetText(entity:GetNetVar("desc", ""))
+	self.description:SetText(entity:GetNetVar("description", ""))
 	self.description.OnEnter = function(this)
-		if (entity:GetNetVar("desc") != this:GetText()) then
-			self:updateVendor("desc", this:GetText())
+		if (entity:GetNetVar("description") != this:GetText()) then
+			self:updateVendor("description", this:GetText())
 		end
 	end
 

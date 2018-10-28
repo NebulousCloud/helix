@@ -22,7 +22,7 @@ function ENT:Initialize()
 		self.classes = {}
 
 		self:SetNetVar("name", "John Doe")
-		self:SetNetVar("desc", "")
+		self:SetNetVar("description", "")
 
 		self.receivers = {}
 
@@ -309,11 +309,11 @@ else
 		name:SetText(self:GetNetVar("name", "John Doe"))
 		name:SizeToContents()
 
-		local descriptionText = self:GetNetVar("desc", "")
+		local descriptionText = self:GetNetVar("description", "")
 
 		if (descriptionText != "") then
 			local description = container:AddRow("description")
-			description:SetText(self:GetNetVar("desc"))
+			description:SetText(self:GetNetVar("description"))
 			description:SizeToContents()
 		end
 	end
