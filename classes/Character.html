@@ -1,0 +1,261 @@
+
+
+
+
+<html>
+	<head>
+		<title>Helix Documentation</title>
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
+		<link rel="stylesheet" href="../ldoc.css" />
+		<link rel="stylesheet" href="../highlight.css" />
+	</head>
+
+	<body>
+		<aside>
+			<h1>Helix</h1>
+
+			<!-- project contents -->
+			<section>
+						<h2>Classes</h2>
+
+						<ul>
+								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Inventory.html">Inventory</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
+						</ul>
+						<h2>Libraries</h2>
+
+						<ul>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
+								<li><a href="../libraries/ix.html">ix</a></li>
+						</ul>
+			</section>
+		</aside>
+
+		<!-- library functions -->
+		<article>
+				<header>
+					<h1>Character</h1>
+					<h2>Contains information about a player's current game state.</h2>
+				</header>
+
+				<!-- summary -->
+				<details>
+					<summary>Reference</summary>
+
+					<div class="contents">
+							<h2>Functions</h2>
+							<ul>
+									<li><span class="realm shared"></span><a href="#CHAR:__tostring">Character:__tostring()</a></li>
+									<li><span class="realm shared"></span><a href="#CHAR:__eq">Character:__eq(other)</a></li>
+									<li><span class="realm shared"></span><a href="#CHAR:GetID">Character:GetID()</a></li>
+									<li><span class="realm server"></span><a href="#CHAR:Save">Character:Save([callback=nil])</a></li>
+									<li><span class="realm server"></span><a href="#CHAR:Sync">Character:Sync([receiver=nil])</a></li>
+							</ul>
+					</div>
+				</details>
+
+				<!-- description -->
+				<p>Characters are a fundamental object type in Helix. They are distinct from players, where players are the representation of a
+person's existence in the server that owns a character, and their character is their currently selected persona. All the
+characters that a player owns will be loaded into memory once they connect to the server. Characters are saved during a regular
+interval, and during specific events (e.g when the owning player switches away from one character to another).</p>
+
+<p>They contain all information that is not persistent with the player; names, descriptions, model, currency, etc. For the most
+part, you'll want to keep all information stored on the character since it will probably be different or change if the
+player switches to another character. An easy way to do this is to use <code>ix.char.RegisterVar</code> to easily create accessor functions
+for variables that automatically save to the character object.</p>
+
+				<!-- methods -->
+					<h1 class="title">Functions</h1>
+
+						<section class="method">
+								<aside>
+										<code>print(ix.char.loaded[1])
+ > "character[1]"
+</code>
+								</aside>
+							<header><a name="CHAR:__tostring"></a>
+								<h1><span class="realm shared"></span>Character:__tostring()</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L32">View source &raquo;</a>
+								<p>Returns a string representation of this character</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>String representation</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+								<aside>
+										<code>print(ix.char.loaded[1] == ix.char.loaded[2])
+ > false
+</code>
+								</aside>
+							<header><a name="CHAR:__eq"></a>
+								<h1><span class="realm shared"></span>Character:__eq(other)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L42">View source &raquo;</a>
+								<p>Returns true if this character is equal to another character.  Internally, this checks character IDs.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">other</span>
+
+													<span class="tag"><a class="type" href="../classes/Character.html#">Character</a></span>
+
+
+												<p> Character to compare to</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not this character is equal to the given character</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="CHAR:GetID"></a>
+								<h1><span class="realm shared"></span>Character:GetID()</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L49">View source &raquo;</a>
+								<p>Returns this character's database ID.  This is guaranteed to be unique.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>Unique ID of character</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+								<aside>
+										<code>ix.char.loaded[1]:Save(function()
+	print("done!")
+end)
+> done! -- after a moment
+</code>
+								</aside>
+							<header><a name="CHAR:Save"></a>
+								<h1><span class="realm server"></span>Character:Save([callback=nil])</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L61">View source &raquo;</a>
+								<p>Saves this character's info to the database.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">callback</span>
+
+													<span class="tag"><span class="type">function</span></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> Function to call when the save has completed.</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CHAR:Sync"></a>
+								<h1><span class="realm server"></span>Character:Sync([receiver=nil])</h1>
+
+									<div class="internal"></div>
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L100">View source &raquo;</a>
+								<p>Networks this character's information to make the given player aware of this character's existence.  If the receiver is
+ not the owner of this character, it will only be sent a limited amount of data (as it does not need anything else).
+ This is done automatically by the framework.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">receiver</span>
+
+													<span class="tag"><span class="type">player</span></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> Player to send the information to. This will sync to all connected players if set to <code>nil</code>.</p>
+											</li>
+									</ul>
+
+
+						</section>
+		</article>
+
+		<footer>
+			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
+			<p>Last updated: <span class="timestamp">2018-10-18 04:36:26</span></p>
+		</footer>
+
+		<script type="text/javascript" src="../highlight.min.js"></script>
+		<script type="text/javascript">
+		var elements = document.querySelectorAll("aside code, pre code")
+
+		hljs.configure({
+			languages: ["lua"]
+		});
+
+		for (var i = 0; i < elements.length; i++)
+		{
+			hljs.highlightBlock(elements[i]);
+		}
+		</script>
+	</body>
+</html>
