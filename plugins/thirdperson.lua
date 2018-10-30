@@ -16,7 +16,10 @@ if (CLIENT) then
 
 	ix.option.Add("thirdpersonEnabled", ix.type.bool, false, {
 		category = "thirdperson",
-		hidden = isHidden
+		hidden = isHidden,
+		OnChanged = function(oldValue, value)
+			hook.Run("ThirdPersonToggled", oldValue, value)
+		end
 	})
 
 	ix.option.Add("thirdpersonClassic", ix.type.bool, false, {
