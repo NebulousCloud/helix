@@ -355,7 +355,7 @@ function SWEP:PrimaryAttack()
 							damageInfo:SetDamage(damage)
 							damageInfo:SetDamageType(DMG_SLASH)
 							damageInfo:SetDamagePosition(trace.HitPos)
-							damageInfo:SetDamageForce(self.Owner:GetAimVector()*10000)
+							damageInfo:SetDamageForce(self.Owner:GetAimVector() * 1024)
 						entity:DispatchTraceAttack(damageInfo, data.start, data.endpos)
 
 						self.Owner:EmitSound("physics/body/body_medium_impact_hard"..math.random(1, 6)..".wav", 80)
