@@ -56,11 +56,11 @@ LANGUAGE = {
 	faction = "Facción",
 	skills = "Habilidades",
 	choose = "Escoger",
-	chooseFaction = "Escoge una Facción",
+	chooseFaction = "Escoge una Faccion", -- Without an accent, due to the font not having the capitalized accent on the menu
 	chooseDescription = "Define tu Narrativa",
 	chooseSkills = "Afina tus Habilidades",
 	name = "Nombre",
-	description = "Descripción",
+	description = "Descripcion", -- Without an accent, due to the font not having the capitalized accent on the menu
 	model = "Modelo",
 	attributes = "Atributos",
 	attribPointsLeft = "Puntos restantes",
@@ -304,7 +304,6 @@ LANGUAGE = {
 	wrongPassword = "Has introducido una contraseña errónea.",
 	respawning = "Reapareciendo...",
 
-	
 	scoreboard = "Scoreboard",
 	ping = "Ping: %d",
 	viewProfile = "Ver el perfil de Steam.",
