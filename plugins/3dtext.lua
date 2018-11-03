@@ -107,13 +107,13 @@ else
 
 		object.onDrawText = function(surfaceText, font, x, y, color, alignX, alignY, alpha)
 			-- shadow
-			surface.SetTextPos(x+1, y+1)
+			surface.SetTextPos(x + 1, y + 1)
 			surface.SetTextColor(0, 0, 0, alpha)
 			surface.SetFont(font)
 			surface.DrawText(surfaceText)
 
 			surface.SetTextPos(x, y)
-			surface.SetTextColor(color.r, color.g, color.b, alpha)
+			surface.SetTextColor(color.r or 255, color.g or 255, color.b or 255, alpha)
 			surface.SetFont(font)
 			surface.DrawText(surfaceText)
 		end
