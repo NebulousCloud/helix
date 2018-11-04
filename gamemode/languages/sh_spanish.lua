@@ -9,7 +9,7 @@ LANGUAGE = {
 	introContinue = "pulsa espacio para continuar",
 
 	helpIdle = "Selecciona una categoría",
-	helpCommands = "Los parámetros de comandos con <flechas> son requeridos, mientras que los [corchetes] son opcionales.",
+	helpCommands = "Los parámetros de comando con <flechas> son requeridos, mientras que con [corchetes] son opcionales.",
 	helpFlags = "Las Flags con un fondo verde son accesibles por este personaje.",
 
 	creditSpecial = "Muchas Gracias",
