@@ -13,7 +13,7 @@ LANGUAGE = {
 	helpFlags = "Las Flags con un fondo verde son accesibles por este personaje.",
 
 	creditSpecial = "Muchas Gracias",
-	creditLeadDeveloper = "Desarrollador Principál",
+	creditLeadDeveloper = "Desarrollador Principal",
 	creditUIDesigner = "Diseñador de interfaz de Usuario",
 	creditManager = "Gerente del Proyecto",
 	creditTester = "Tester Principal",
