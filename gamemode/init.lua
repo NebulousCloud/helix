@@ -18,11 +18,6 @@ include("core/sh_util.lua")
 include("core/sh_data.lua")
 include("shared.lua")
 
--- Connect to the database using SQLite, mysqloo, or tmysql4.
-timer.Simple(0, function()
-	ix.db.Connect()
-end)
-
 -- Resources that are required for players to download are here.
 resource.AddFile("materials/helix/gui/vignette.png")
 resource.AddFile("resource/fonts/fontello.ttf")

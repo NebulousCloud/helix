@@ -687,6 +687,7 @@ end
 
 function GM:InitializedSchema()
 	ix.date.Initialize()
+
 	game.ConsoleCommand("sbox_persist ix_"..Schema.folder.."\n")
 end
 
