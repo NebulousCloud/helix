@@ -341,7 +341,7 @@ function PANEL:Populate()
 			if (ix.faction.HasWhitelist(v.index)) then
 				local button = self.factionButtonsPanel:Add("ixMenuSelectionButton")
 				button:SetBackgroundColor(v.color or color_white)
-				button:SetText(v.name:upper())
+				button:SetText(L(v.name):upper())
 				button:Dock(BOTTOM)
 				button:SetButtonList(self.factionButtons)
 				button.faction = v.index
