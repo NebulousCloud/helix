@@ -117,3 +117,10 @@ PLUGIN.definitions["models/Items/item_item_crate.mdl"] = {
 	width = 5,
 	height = 3
 }
+
+PLUGIN.definitions["models/props_c17/cashregister01a.mdl"] = {
+	name = "Cash Register",
+	description = "A register with some buttons and a drawer.",
+	width = 2,
+	height = 1
+}
