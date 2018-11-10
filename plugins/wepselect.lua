@@ -127,46 +127,54 @@ if (CLIENT) then
 
 	function PLUGIN:PlayerBindPress(client, bind, pressed)
 		local currentWeapon = client:GetActiveWeapon()
+		local bValid = IsValid(currentWeapon)
+		local bTool
 
-		if (!client:InVehicle() and
-			(!IsValid(currentWeapon) or currentWeapon:GetClass() != "weapon_physgun" or !client:KeyDown(IN_ATTACK))) then
-			bind = bind:lower()
+		if (client:InVehicle() or (bValid and currentWeapon:GetClass() == "weapon_physgun" and client:KeyDown(IN_ATTACK))) then
+			return
+		end
 
-			if (bind:find("invprev") and pressed) then
-				local oldIndex = self.index
-				self.index = math.min(self.index + 1, table.Count(client:GetWeapons()))
+		if (bValid and currentWeapon:GetClass() == "gmod_tool") then
+			local tool = client:GetTool()
+			bTool = tool and (tool.Scroll != nil)
+		end
 
-				if (self.alpha == 0 or oldIndex != self.index) then
-					self:OnIndexChanged()
-				end
+		bind = bind:lower()
 
-				return true
-			elseif (bind:find("invnext") and pressed) then
-				local oldIndex = self.index
-				self.index = math.max(self.index - 1, 1)
+		if (bind:find("invprev") and pressed and !bTool) then
+			local oldIndex = self.index
+			self.index = math.min(self.index + 1, table.Count(client:GetWeapons()))
 
-				if (self.alpha == 0 or oldIndex != self.index) then
-					self:OnIndexChanged()
-				end
-
-				return true
-			elseif (bind:find("slot") and pressed) then
-				self.index = math.Clamp(tonumber(bind:match("slot(%d)")) or 1, 1, table.Count(LocalPlayer():GetWeapons()))
+			if (self.alpha == 0 or oldIndex != self.index) then
 				self:OnIndexChanged()
-
-				return true
-			elseif (bind:find("attack") and pressed and self.alpha > 0) then
-				local weapon = LocalPlayer():GetWeapons()[self.index]
-
-				if (IsValid(weapon)) then
-					LocalPlayer():EmitSound(hook.Run("WeaponSelectSound", weapon) or "HL2Player.Use")
-
-					input.SelectWeapon(weapon)
-					self.alpha = 0
-				end
-
-				return true
 			end
+
+			return true
+		elseif (bind:find("invnext") and pressed and !bTool) then
+			local oldIndex = self.index
+			self.index = math.max(self.index - 1, 1)
+
+			if (self.alpha == 0 or oldIndex != self.index) then
+				self:OnIndexChanged()
+			end
+
+			return true
+		elseif (bind:find("slot") and pressed) then
+			self.index = math.Clamp(tonumber(bind:match("slot(%d)")) or 1, 1, table.Count(LocalPlayer():GetWeapons()))
+			self:OnIndexChanged()
+
+			return true
+		elseif (bind:find("attack") and pressed and self.alpha > 0) then
+			local weapon = LocalPlayer():GetWeapons()[self.index]
+
+			if (IsValid(weapon)) then
+				LocalPlayer():EmitSound(hook.Run("WeaponSelectSound", weapon) or "HL2Player.Use")
+
+				input.SelectWeapon(weapon)
+				self.alpha = 0
+			end
+
+			return true
 		end
 	end
 
