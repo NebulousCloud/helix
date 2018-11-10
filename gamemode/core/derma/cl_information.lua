@@ -242,7 +242,7 @@ function PANEL:Update(character)
 
 	if (self.faction) then
 		self.faction:SetLabelText(L("faction"))
-		self.faction:SetText(faction.name)
+		self.faction:SetText(L(faction.name))
 		self.faction:SizeToContents()
 	end
 
