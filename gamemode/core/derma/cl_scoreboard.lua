@@ -182,6 +182,7 @@ function PANEL:Update()
 	end
 
 	self.icon:SetHidden(!bRecognize)
+	self:SetZPos(bRecognize and 1 or 2)
 
 	-- no easy way to check bodygroups so we'll just set them anyway
 	for _, v in pairs(client:GetBodyGroups()) do
@@ -252,6 +253,7 @@ function PANEL:AddPlayer(client, index)
 	local panel = self:Add("ixScoreboardRow")
 	panel:SetPlayer(client)
 	panel:Dock(TOP)
+	panel:SetZPos(2)
 	panel:SetBackgroundPaintFunction(rowPaintFunctions[id])
 
 	self:SizeToContents()
