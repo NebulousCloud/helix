@@ -17,7 +17,6 @@ AccessorFunc(PANEL, "bHidden", "Hidden", FORCE_BOOL)
 
 function PANEL:Init()
 	self:SetSize(64, 64)
-	self.nextIconCheck = SysTime() + 1
 	self.bodygroups = "000000000"
 end
 
