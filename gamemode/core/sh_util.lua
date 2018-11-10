@@ -1419,6 +1419,10 @@ do
 		end
 
 		function playerMeta:SetRagdolled(state, time, getUpGrace)
+			if (!self:Alive()) then
+				return
+			end
+
 			getUpGrace = getUpGrace or time or 5
 
 			if (state) then
