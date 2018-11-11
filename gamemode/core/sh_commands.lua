@@ -560,7 +560,7 @@ ix.command.Add("CharFallOver", {
 	description = "@cmdCharFallOver",
 	arguments = bit.bor(ix.type.number, ix.type.optional),
 	OnRun = function(self, client, time)
-		if (client:GetMoveType() == MOVETYPE_NOCLIP) then
+		if (!client:Alive() or client:GetMoveType() == MOVETYPE_NOCLIP) then
 			return "@notNow"
 		end
 
