@@ -274,7 +274,7 @@ do
 		ix.chat.Register("me", {
 			format = "** %s %s",
 			GetColor = ix.chat.classes.ic.GetColor,
-			CanHear = ix.config.Get("chatRange", 280),
+			CanHear = ix.config.Get("chatRange", 280) * 2,
 			prefix = {"/Me", "/Action"},
 			description = "@cmdMe",
 			indicator = "chatPerforming",
@@ -286,7 +286,7 @@ do
 			OnChatAdd = function(self, speaker, text)
 				chat.AddText(ix.config.Get("chatColor"), "** "..text)
 			end,
-			CanHear = ix.config.Get("chatRange", 280),
+			CanHear = ix.config.Get("chatRange", 280) * 2,
 			prefix = {"/It"},
 			description = "@cmdIt",
 			indicator = "chatPerforming",
