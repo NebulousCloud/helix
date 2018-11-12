@@ -116,7 +116,7 @@ if (SERVER) then
 			net.Start("ixCharacterInfo")
 				net.WriteTable(data)
 				net.WriteUInt(self:GetID(), 32)
-				net.WriteEntity(self.player)
+				net.WriteUInt(self.player:EntIndex(), 8)
 			net.Send(self.player)
 		else
 			local data = {}
@@ -130,7 +130,7 @@ if (SERVER) then
 			net.Start("ixCharacterInfo")
 				net.WriteTable(data)
 				net.WriteUInt(self:GetID(), 32)
-				net.WriteEntity(self.player)
+				net.WriteUInt(self.player:EntIndex(), 8)
 			net.Send(receiver)
 		end
 	end
@@ -225,8 +225,17 @@ end
 
 -- Returns which player owns this character.
 function CHAR:GetPlayer()
+	-- Set the player from entity index.
+	if (isnumber(self.player)) then
+		local client = Entity(self.player)
+
+		if (IsValid(client)) then
+			self.player = client
+
+			return client
+		end
 	-- Return the player from cache.
-	if (IsValid(self.player)) then
+	elseif (IsValid(self.player)) then
 		return self.player
 	-- Search for which player owns this character.
 	elseif (self.steamID) then

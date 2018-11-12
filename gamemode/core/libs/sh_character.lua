@@ -234,7 +234,7 @@ function ix.char.New(data, id, client, steamID)
 		character.id = id or 0
 		character.player = client
 
-		if (IsValid(client) or steamID) then
+		if (SERVER and IsValid(client) or steamID) then
 			character.steamID = IsValid(client) and client:SteamID64() or steamID
 		end
 	return character
@@ -885,7 +885,7 @@ do
 		net.Receive("ixCharacterInfo", function()
 			local data = net.ReadTable()
 			local id = net.ReadUInt(32)
-			local client = net.ReadEntity()
+			local client = net.ReadUInt(8)
 
 			ix.char.loaded[id] = ix.char.New(data, id, client)
 		end)
