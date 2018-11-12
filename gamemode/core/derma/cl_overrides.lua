@@ -103,6 +103,16 @@ OverridePanel("DMenu", function()
 		return panel
 	end
 
+	Override("AddSubMenu")
+	function PANEL:AddSubMenu(...)
+		local menu, panel = self:ixAddSubMenu(...)
+
+		panel:SetTextColor(derma.GetColor("MenuLabel", self, color_black))
+		panel:SetTextInset(6, 0) -- there is no icon functionality in DComboBoxes
+
+		return menu, panel
+	end
+
 	Override("Open")
 	function PANEL:Open(x, y, bSkipAnimation, ownerPanel)
 		self.ixX, self.ixY, self.ixOwnerPanel = x, y, ownerPanel
