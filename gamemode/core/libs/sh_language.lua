@@ -15,10 +15,15 @@ function ix.lang.LoadFromDir(directory)
 				NAME = nil
 			end
 
-			ix.lang.stored[niceName] = table.Merge(ix.lang.stored[niceName] or {}, LANGUAGE)
+			ix.lang.AddTable(niceName, LANGUAGE)
 			LANGUAGE = nil
 		end
 	end
+end
+
+function ix.lang.AddTable(language, data)
+	language = tostring(language):lower()
+	ix.lang.stored[language] = table.Merge(ix.lang.stored[language] or {}, data)
 end
 
 local FormatString = string.format
