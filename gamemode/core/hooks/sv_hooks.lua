@@ -361,7 +361,9 @@ function GM:PlayerSpawn(client)
 end
 
 -- Shortcuts for (super)admin only things.
-local IsAdmin = function(_, client) return client:IsAdmin() end
+local function IsAdmin(_, client)
+	return client:IsAdmin()
+end
 
 -- Set the gamemode hooks to the appropriate shortcuts.
 GM.PlayerGiveSWEP = IsAdmin
@@ -402,6 +404,34 @@ function GM:PlayerSpawnVehicle(client, model, name, data)
 	end
 
 	return false
+end
+
+function GM:PlayerSpawnedEffect(client, model, entity)
+	entity:SetNetVar("owner", client:GetCharacter():GetID())
+end
+
+function GM:PlayerSpawnedNPC(client, entity)
+	entity:SetNetVar("owner", client:GetCharacter():GetID())
+end
+
+function GM:PlayerSpawnedProp(client, model, entity)
+	entity:SetNetVar("owner", client:GetCharacter():GetID())
+end
+
+function GM:PlayerSpawnedRagdoll(client, model, entity)
+	entity:SetNetVar("owner", client:GetCharacter():GetID())
+end
+
+function GM:PlayerSpawnedSENT(client, entity)
+	entity:SetNetVar("owner", client:GetCharacter():GetID())
+end
+
+function GM:PlayerSpawnedSWEP(client, entity)
+	entity:SetNetVar("owner", client:GetCharacter():GetID())
+end
+
+function GM:PlayerSpawnedVehicle(client, entity)
+	entity:SetNetVar("owner", client:GetCharacter():GetID())
 end
 
 -- Called when weapons should be given to a player.

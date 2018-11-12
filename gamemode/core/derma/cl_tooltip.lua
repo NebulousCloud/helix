@@ -85,7 +85,7 @@ function PANEL:SizeToContents()
 	contentHeight = contentHeight + 4
 
 	if (contentWidth > self.maxWidth) then
-		self:SetWide(self.maxWidth)
+		self:SetWide(self.maxWidth - 4) -- to account for text inset
 		self:SetTextInset(4, 0)
 		self:SetWrap(true)
 

@@ -91,13 +91,7 @@ if (SERVER) then
 		end
 	end
 
-	function PLUGIN:PlayerSpawnedEntity(client, entity)
-		entity:SetNetVar("owner", client:GetCharacter():GetID())
-	end
-
 	function PLUGIN:PlayerSpawnedProp(client, model, entity)
-		hook.Run("PlayerSpawnedEntity", client, entity)
-
 		ix.log.Add(client, "spawnProp", model)
 	end
 
@@ -105,8 +99,6 @@ if (SERVER) then
 	PLUGIN.PlayerSpawnedRagdoll = PLUGIN.PlayerSpawnedProp
 
 	function PLUGIN:PlayerSpawnedNPC(client, entity)
-		hook.Run("PlayerSpawnedEntity", client, entity)
-
 		ix.log.Add(client, "spawnEntity", entity)
 	end
 
