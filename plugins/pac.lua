@@ -139,6 +139,42 @@ if (SERVER) then
 		end
 	end
 else
+	local function AttachPart(client, uniqueID)
+		local itemTable = ix.item.list[uniqueID]
+		local pacData = ix.pac.list[uniqueID]
+
+		if (pacData) then
+			if (itemTable and itemTable.pacAdjust) then
+				pacData = table.Copy(pacData)
+				pacData = itemTable:pacAdjust(pacData, client)
+			end
+
+			if (isfunction(client.AttachPACPart)) then
+				client:AttachPACPart(pacData)
+			else
+				pac.SetupENT(client)
+
+				timer.Simple(0.1, function()
+					if (IsValid(client) and isfunction(client.AttachPACPart)) then
+						client:AttachPACPart(pacData)
+					end
+				end)
+			end
+		end
+	end
+
+	local function RemovePart(client, uniqueID)
+		local pacData = ix.pac.list[uniqueID]
+
+		if (pacData) then
+			if (isfunction(client.RemovePACPart)) then
+				client:RemovePACPart(pacData)
+			else
+				pac.SetupENT(client)
+			end
+		end
+	end
+
 	hook.Add("Think", "ix_pacupdate", function()
 		if (!pac) then
 			hook.Remove("Think", "ix_pacupdate")
@@ -146,16 +182,14 @@ else
 		end
 
 		if (IsValid(pac.LocalPlayer)) then
-			local parts = LocalPlayer():GetParts()
-
 			for _, v in ipairs(player.GetAll()) do
 				local character = v:GetCharacter()
 
 				if (character) then
-					for k, _ in pairs(parts) do
-						if (isfunction(v.AttachPACPart) and ix.pac.list[k]) then
-							v:AttachPACPart(ix.pac.list[k])
-						end
+					local parts = v:GetParts()
+
+					for k2, _ in pairs(parts) do
+						AttachPart(v, k2)
 					end
 				end
 			end
@@ -174,27 +208,7 @@ else
 			pac.SetupENT(wearer)
 		end
 
-		local itemTable = ix.item.list[uid]
-		local newPac = ix.pac.list[uid]
-
-		if (ix.pac.list[uid]) then
-			if (itemTable and itemTable.pacAdjust) then
-				newPac = table.Copy(ix.pac.list[uid])
-				newPac = itemTable:pacAdjust(newPac, wearer)
-			end
-
-			if (wearer.AttachPACPart) then
-				wearer:AttachPACPart(newPac)
-			else
-				pac.SetupENT(wearer)
-
-				timer.Simple(0.1, function()
-					if (IsValid(wearer) and wearer.AttachPACPart) then
-						wearer:AttachPACPart(newPac)
-					end
-				end)
-			end
-		end
+		AttachPart(wearer, uid)
 	end)
 
 	net.Receive("ixPartRemove", function(length)
@@ -207,13 +221,7 @@ else
 			pac.SetupENT(wearer)
 		end
 
-		if (ix.pac.list[uid]) then
-			if (wearer.RemovePACPart) then
-				wearer:RemovePACPart(ix.pac.list[uid])
-			else
-				pac.SetupENT(wearer)
-			end
-		end
+		RemovePart(wearer, uid)
 	end)
 
 	net.Receive("ixPartReset", function(length)
@@ -227,11 +235,7 @@ else
 		end
 
 		for k, _ in pairs(uidList) do
-			if (wearer.RemovePACPart) then
-				wearer:RemovePACPart(ix.pac.list[k])
-			else
-				pac.SetupENT(wearer)
-			end
+			RemovePart(wearer, k)
 		end
 	end)
 
