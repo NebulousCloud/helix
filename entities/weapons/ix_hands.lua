@@ -60,7 +60,6 @@ function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
 
 	self.lastHand = 0
-	self.physicsIndex = -1
 	self.maxHoldDistanceSquared = self.maxHoldDistance ^ 2
 	self.heldObjectAngle = angle_zero
 end
@@ -136,7 +135,13 @@ function SWEP:Think()
 	else
 		if (self:IsHoldingObject()) then
 			local physics = self:GetHeldPhysicsObject()
-			local targetLocation = (self.Owner:GetShootPos() + self.Owner:GetForward() * self.holdDistance) - self.heldEntity:OBBCenter()
+			local bIsRagdoll = self.heldEntity:IsRagdoll()
+			local holdDistance = bIsRagdoll and self.holdDistance * 0.5 or self.holdDistance
+			local targetLocation = (self.Owner:GetShootPos() + self.Owner:GetForward() * holdDistance) - self.heldEntity:OBBCenter()
+
+			if (bIsRagdoll) then
+				targetLocation.z = math.min(targetLocation.z, self.Owner:GetShootPos().z - 32)
+			end
 
 			if (!IsValid(physics)) then
 				self:DropObject()
@@ -146,8 +151,10 @@ function SWEP:Think()
 			if (physics:GetPos():DistToSqr(targetLocation) > self.maxHoldDistanceSquared) then
 				self:DropObject()
 			else
-				physics:Wake()
-				physics:ComputeShadowControl({
+				local physicsObject = self.holdEntity:GetPhysicsObject()
+
+				physicsObject:Wake()
+				physicsObject:ComputeShadowControl({
 					secondstoarrive = 0.01,
 					pos = targetLocation,
 					angle = self.heldObjectAngle,
@@ -169,25 +176,23 @@ function SWEP:Think()
 end
 
 function SWEP:GetHeldPhysicsObject()
-	return (IsValid(self.heldEntity) and (
-		self.physicsIndex > -1 and self.heldEntity:GetPhysicsObjectNum(self.physicsIndex) or self.heldEntity:GetPhysicsObject()
-	) or nil)
+	return IsValid(self.heldEntity) and self.heldEntity:GetPhysicsObject() or nil
 end
 
 function SWEP:CanHoldObject(entity)
 	local physics = entity:GetPhysicsObject()
 
-	return (IsValid(physics) and
+	return IsValid(physics) and
 		(physics:GetMass() <= ix.config.Get("maxHoldWeight", 100) and physics:IsMoveable()) and
 		!self:IsHoldingObject() and
 		!IsValid(entity.ixHeldOwner) and
-		(self.allowedHoldableClasses[entity:GetClass()] or hook.Run("CanPlayerHoldObject", self.Owner, entity)))
+		(self.allowedHoldableClasses[entity:GetClass()] or hook.Run("CanPlayerHoldObject", self.Owner, entity))
 end
 
 function SWEP:IsHoldingObject()
-	return (IsValid(self.heldEntity) and
+	return IsValid(self.heldEntity) and
 		IsValid(self.heldEntity.ixHeldOwner) and
-		self.heldEntity.ixHeldOwner == self.Owner)
+		self.heldEntity.ixHeldOwner == self.Owner
 end
 
 function SWEP:PickupObject(entity)
@@ -199,6 +204,7 @@ function SWEP:PickupObject(entity)
 
 	local physics = entity:GetPhysicsObject()
 	physics:EnableGravity(false)
+	physics:AddGameFlag(FVPHYSICS_PLAYER_HELD)
 
 	entity.ixHeldOwner = self.Owner
 	entity.ixCollisionGroup = entity:GetCollisionGroup()
@@ -208,14 +214,32 @@ function SWEP:PickupObject(entity)
 	self.heldObjectAngle = entity:GetAngles()
 	self.heldEntity = entity
 
-	local trace = self.Owner:GetEyeTrace()
+	self.holdEntity = ents.Create("prop_physics")
+	self.holdEntity:SetPos(self.heldEntity:GetPos())
+	self.holdEntity:SetAngles(self.heldEntity:GetAngles())
+	self.holdEntity:SetModel("models/weapons/w_bugbait.mdl")
+	self.holdEntity:SetOwner(self.Owner)
 
-	if (IsValid(trace.Entity) and trace.Entity:IsRagdoll()) then
-		if (isnumber(trace.PhysicsBone)) then
-			-- we're assuming that the physics bone corresponds to the correct physics object
-			self.physicsIndex = trace.PhysicsBone
-		end
+	self.holdEntity:SetNoDraw(true)
+	self.holdEntity:SetNotSolid(true)
+	self.holdEntity:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+	self.holdEntity:DrawShadow(false)
+
+	self.holdEntity:Spawn()
+
+	local trace = self.Owner:GetEyeTrace()
+	local physicsObject = self.holdEntity:GetPhysicsObject()
+
+	if (IsValid(physicsObject)) then
+		physicsObject:SetMass(2048)
+		physicsObject:SetDamping(0, 1000)
+		physicsObject:EnableGravity(false)
+		physicsObject:EnableCollisions(false)
+		physicsObject:EnableMotion(false)
 	end
+
+	self.constraint = constraint.Weld(self.holdEntity, self.heldEntity, 0,
+		trace.Entity:IsRagdoll() and trace.PhysicsBone or 0, 0, true, true)
 end
 
 function SWEP:DropObject(bThrow)
@@ -223,22 +247,29 @@ function SWEP:DropObject(bThrow)
 		return
 	end
 
+	self.constraint:Remove()
+	self.holdEntity:Remove()
+
 	self.heldEntity:StopMotionController()
 	self.heldEntity:SetCollisionGroup(self.heldEntity.ixCollisionGroup)
 
 	local physics = self:GetHeldPhysicsObject()
 	physics:EnableGravity(true)
 	physics:Wake()
-	physics:SetVelocityInstantaneous(vector_origin)
+	physics:ClearGameFlag(FVPHYSICS_PLAYER_HELD)
 
 	if (bThrow) then
-		physics:ApplyForceCenter(self.Owner:GetAimVector() * ix.config.Get("throwForce", 732))
+		timer.Simple(0, function()
+			if (IsValid(physics) and IsValid(self.Owner)) then
+				physics:AddGameFlag(FVPHYSICS_WAS_THROWN)
+				physics:ApplyForceCenter(self.Owner:GetAimVector() * ix.config.Get("throwForce", 732))
+			end
+		end)
 	end
 
 	self.heldEntity.ixHeldOwner = nil
 	self.heldEntity.ixCollisionGroup = nil
 	self.heldEntity = nil
-	self.physicsIndex = -1
 end
 
 function SWEP:PlayPickupSound(surfaceProperty)
@@ -375,7 +406,7 @@ function SWEP:SecondaryAttack()
 
 	local data = {}
 		data.start = self.Owner:GetShootPos()
-		data.endpos = data.start + self.Owner:GetAimVector()*84
+		data.endpos = data.start + self.Owner:GetAimVector() * 84
 		data.filter = {self, self.Owner}
 	local trace = util.TraceLine(data)
 	local entity = trace.Entity
