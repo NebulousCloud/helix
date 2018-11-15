@@ -443,6 +443,19 @@ function SKIN:DrawChatboxPreviewBox(x, y, text, color)
 	return width
 end
 
+function SKIN:DrawChatboxPrefixBox(panel, width, height)
+	local color = panel:GetBackgroundColor()
+
+	-- background
+	surface.SetDrawColor(color)
+	surface.DrawRect(0, 0, width, height)
+
+	-- outline
+	surface.SetDrawColor(Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, 255))
+	surface.DrawOutlinedRect(0, 0, width, height)
+end
+
+
 function SKIN:PaintChatboxAutocompleteEntry(panel, width, height)
 	-- selected background
 	if (panel.highlightAlpha > 0) then

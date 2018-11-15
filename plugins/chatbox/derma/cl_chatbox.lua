@@ -408,6 +408,85 @@ end
 
 vgui.Register("ixChatboxEntry", PANEL, "DTextEntry")
 
+-- chatbox additional command info panel
+PANEL = {}
+
+AccessorFunc(PANEL, "text", "Text", FORCE_STRING)
+AccessorFunc(PANEL, "padding", "Padding", FORCE_NUMBER)
+AccessorFunc(PANEL, "backgroundColor", "BackgroundColor")
+AccessorFunc(PANEL, "textColor", "TextColor")
+
+function PANEL:Init()
+	self.text = ""
+	self.padding = 4
+	self.currentWidth = 0
+	self.currentMargin = 0
+	self.backgroundColor = ix.config.Get("color")
+	self.textColor = color_white
+
+	self:SetWide(0)
+	self:DockMargin(0, 0, 0, 0)
+end
+
+function PANEL:SetText(text)
+	self:SetVisible(true)
+
+	if (!isstring(text) or text == "") then
+		self:CreateAnimation(animationTime, {
+			index = 9,
+			easing = "outQuint",
+			target = {
+				currentWidth = 0,
+				currentMargin = 0
+			},
+
+			Think = function(animation, panel)
+				panel:SetWide(panel.currentWidth)
+				panel:DockMargin(0, 0, panel.currentMargin, 0)
+			end,
+
+			OnComplete = function(animation, panel)
+				panel:SetVisible(false)
+				self.text = ""
+			end
+		})
+	else
+		text = tostring(text)
+
+		surface.SetFont("ixChatFont")
+		local textWidth = surface.GetTextSize(text)
+
+		self:CreateAnimation(animationTime, {
+			index = 9,
+			easing = "outQuint",
+			target = {
+				currentWidth = textWidth + self.padding * 2,
+				currentMargin = 4
+			},
+
+			Think = function(animation, panel)
+				panel:SetWide(panel.currentWidth)
+				panel:DockMargin(0, 0, panel.currentMargin, 0)
+			end,
+		})
+
+		self.text = text
+	end
+end
+
+function PANEL:Paint(width, height)
+	derma.SkinFunc("DrawChatboxPrefixBox", self, width, height)
+
+	surface.SetFont("ixChatFont")
+	local textWidth, textHeight = surface.GetTextSize(self.text)
+
+	surface.SetTextColor(self.textColor)
+	surface.SetTextPos(width * 0.5 - textWidth * 0.5, height * 0.5 - textHeight * 0.5)
+	surface.DrawText(self.text)
+end
+
+vgui.Register("ixChatboxPrefix", PANEL, "Panel")
+
 -- chatbox command preview panel
 PANEL = {}
 DEFINE_BASECLASS("Panel")
@@ -757,13 +836,19 @@ function PANEL:Init()
 	self:SetSize(self:GetDefaultSize())
 	self:SetPos(self:GetDefaultPosition())
 
-	self.entry = self:Add("ixChatboxEntry")
-	self.entry:SetZPos(1)
-	self.entry:Dock(BOTTOM)
-	self.entry:DockMargin(4, 0, 4, 4)
+	local entryPanel = self:Add("Panel")
+	entryPanel:SetZPos(1)
+	entryPanel:Dock(BOTTOM)
+	entryPanel:DockMargin(4, 0, 4, 4)
+
+	self.entry = entryPanel:Add("ixChatboxEntry")
+	self.entry:Dock(FILL)
 	self.entry.OnValueChange = ix.util.Bind(self, self.OnTextChanged)
 	self.entry.OnKeyCodeTyped = ix.util.Bind(self, self.OnKeyCodeTyped)
 	self.entry.OnEnter = ix.util.Bind(self, self.OnMessageSent)
+
+	self.prefix = entryPanel:Add("ixChatboxPrefix")
+	self.prefix:Dock(LEFT)
 
 	self.preview = self:Add("ixChatboxPreview")
 	self.preview:SetZPos(2) -- ensure the preview is docked above the text entry
@@ -834,7 +919,9 @@ function PANEL:SetActive(bActive)
 		self.entry:RequestFocus()
 
 		input.SetCursorPos(self:LocalToScreen(-1, -1))
+
 		hook.Run("StartChat")
+		self.prefix:SetText(hook.Run("GetChatPrefixInfo", ""))
 	else
 		self:SetAlpha(0)
 		self:SetMouseInputEnabled(false)
@@ -844,6 +931,7 @@ function PANEL:SetActive(bActive)
 		self.preview:SetVisible(false)
 		self.entry:SetText("")
 		self.preview:SetCommand("")
+		self.prefix:SetText(hook.Run("GetChatPrefixInfo", ""))
 
 		CloseDermaMenus()
 		gui.EnableScreenClicker(false)
@@ -1070,6 +1158,8 @@ function PANEL:OnTextChanged(text)
 	local autocomplete = self.autocomplete
 	local chatClassCommand = self:GetTextEntryChatClass(text)
 
+	self.prefix:SetText(hook.Run("GetChatPrefixInfo", text))
+
 	if (chatClassCommand) then
 		preview:SetCommand(chatClassCommand)
 		preview:SetVisible(true)
@@ -1235,3 +1325,7 @@ function PANEL:AddMessage(...)
 end
 
 vgui.Register("ixChatbox", PANEL, "EditablePanel")
+
+if (IsValid(ix.gui.chat)) then
+	PLUGIN:CreateChat()
+end
