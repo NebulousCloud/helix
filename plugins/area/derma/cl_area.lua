@@ -117,6 +117,7 @@ function PANEL:Remove()
 				end,
 
 				OnComplete = function(_, sizePanel)
+					sizePanel:OnRemove()
 					BaseClass.Remove(sizePanel)
 				end
 			})
@@ -124,6 +125,9 @@ function PANEL:Remove()
 	})
 
 	self.bRemoving = true
+end
+
+function PANEL:OnRemove()
 end
 
 vgui.Register("ixAreaEntry", PANEL, "Panel")
@@ -159,7 +163,12 @@ function PANEL:AddEntry(entry, color)
 	panel:Dock(BOTTOM)
 	panel:Show()
 	panel.OnRemove = function()
-		table.remove(self.entries, id)
+		for k, v in pairs(self.entries) do
+			if (v == panel) then
+				table.remove(self.entries, k)
+				break
+			end
+		end
 	end
 
 	self.entries[id] = panel
