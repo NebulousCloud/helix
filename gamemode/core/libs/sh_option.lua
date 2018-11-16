@@ -306,7 +306,7 @@ else
 			ix.option.clients[steamID][key] = value
 		else
 			ErrorNoHalt(string.format(
-				"'%s' attempted to set option with invalid key '%s'", tostring(client) .. client:SteamID(), key
+				"'%s' attempted to set option with invalid key '%s'\n", tostring(client) .. client:SteamID(), key
 			))
 		end
 	end)
@@ -330,7 +330,7 @@ else
 				ix.option.clients[steamID][k] = v
 			else
 				return ErrorNoHalt(string.format(
-					"'%s' attempted to sync option with invalid key '%s'", tostring(client) .. client:SteamID(), k
+					"'%s' attempted to sync option with invalid key '%s'\n", tostring(client) .. client:SteamID(), k
 				))
 			end
 		end
