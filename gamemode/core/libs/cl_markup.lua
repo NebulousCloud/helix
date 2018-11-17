@@ -478,12 +478,12 @@ function ix.markup.Parse(ml, maxwidth)
 				newBlock.thisY = block.h
 				newBlock.offset = {
 					x = xOffset,
-					y = lineHeight * 0.5 - block.h * 0.5
+					y = 0
 				}
 
 			table.insert(new_block_list, newBlock)
 			xOffset = xOffset + block.w + 1
-			texOffset = block.h/2
+			texOffset = block.h / 2
 		end
 	end
 
@@ -491,6 +491,10 @@ function ix.markup.Parse(ml, maxwidth)
 	for i = 1, #new_block_list do
 		local block = new_block_list[i]
 		block.height = ymaxes[block.offset.y]
+
+		if (block.texture) then
+			block.offset.y = ymaxes[0] * 0.5 - block.h * 0.5
+		end
 
 		if (block.height and block.offset.y + block.height > totalHeight) then
 			totalHeight = block.offset.y + block.height
