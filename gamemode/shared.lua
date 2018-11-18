@@ -153,22 +153,8 @@ ix.util.Include("core/sh_commands.lua")
 if (SERVER and game.IsDedicated()) then
 	concommand.Remove("gm_save")
 
-	concommand.Add("gm_save", function(client, command, arguments)
-		client:ChatPrint("You are not allowed to do that, administrators have been notified.")
-
-		if ((client.ixNextWarn or 0) < CurTime()) then
-			local message = client:Name().." ["..client:SteamID().."] has possibly attempted to crash the server with 'gm_save'"
-
-			for _, v in ipairs(player.GetAll()) do
-				if (v:IsAdmin()) then
-					v:ChatPrint(message)
-				end
-			end
-
-			MsgC(Color(255, 255, 0), message.."\n")
-			client.ixNextWarn = CurTime() + 60
-		end
-	end)
+	concommand.Add("gm_save", function(client, command, arguments) end)
+	concommand.Add("gmod_admin_cleanup", function(client, command, arguments) end)
 end
 
 -- add entries for c_viewmodels that aren't set by default
