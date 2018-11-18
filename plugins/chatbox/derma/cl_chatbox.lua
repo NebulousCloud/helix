@@ -343,6 +343,7 @@ function PANEL:AddLine(elements, bShouldScroll)
 
 	local panel = self:Add("ixChatMessage")
 	panel:Dock(TOP)
+	panel:InvalidateParent(true)
 	panel:SetMarkup(table.concat(buffer))
 
 	if (#self.entries >= maxChatEntries) then
