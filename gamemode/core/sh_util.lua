@@ -1185,6 +1185,11 @@ do
 		function playerMeta:ToggleWepRaised()
 			local weapon = self:GetActiveWeapon()
 
+			if (weapon.IsAlwaysRaised or ALWAYS_RAISED[weapon:GetClass()]
+			or weapon.IsAlwaysLowered or weapon.NeverRaised) then
+				return
+			end
+
 			self:SetWepRaised(!self:IsWepRaised(), weapon)
 
 			if (IsValid(weapon)) then
