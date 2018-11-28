@@ -194,7 +194,7 @@ if (SERVER) then
 			if (ix.config.Get("chatAutoFormat") and hook.Run("CanAutoFormatMessage", speaker, chatType, text)) then
 				local last = text:sub(-1)
 
-				if (last != "." and last != "?" and last != "!") then
+				if (last != "." and last != "?" and last != "!" and last != "-" and last != "\"") then
 					text = text .. "."
 				end
 
