@@ -497,6 +497,8 @@ do
 			totalBar:SetText(L("attribPointsLeft"))
 			totalBar:SetReadOnly(true)
 			totalBar:SetColor(Color(20, 120, 20, 255))
+				
+			y = totalBar:GetTall() + 4
 
 			for k, v in SortedPairsByMemberValue(ix.attributes.list, "name") do
 				payload.attributes[k] = 0
