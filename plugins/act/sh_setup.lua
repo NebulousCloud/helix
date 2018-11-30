@@ -21,7 +21,7 @@ local function facingWallBack(client)
 	end
 end
 
-PLUGIN.acts["Sit"] = {
+ix.act.stored["Sit"] = {
 	["citizen_male"] = {
 		sequence = {"Idle_to_Sit_Ground", "Idle_to_Sit_Chair"},
 		untimed = true
@@ -35,7 +35,8 @@ PLUGIN.acts["Sit"] = {
 		untimed = true
 	}
 }
-PLUGIN.acts["Lean"] = {
+
+ix.act.stored["Lean"] = {
 	["citizen_male"] = {
 		sequence = "idle_to_lean_back",
 		untimed = true
@@ -49,7 +50,8 @@ PLUGIN.acts["Lean"] = {
 		untimed = true
 	}
 }
-PLUGIN.acts["Injured"] = {
+
+ix.act.stored["Injured"] = {
 	["citizen_male"] = {
 		sequence = {"d1_town05_wounded_idle_1", "d1_town05_wounded_idle_2", "d1_town05_winston_down"},
 		untimed = true
@@ -59,7 +61,8 @@ PLUGIN.acts["Injured"] = {
 		untimed = true
 	}
 }
-PLUGIN.acts["ArrestWall"] = {
+
+ix.act.stored["ArrestWall"] = {
 	["citizen_male"] = {
 		sequence = "apcarrestidle",
 		untimed = true,
@@ -69,18 +72,21 @@ PLUGIN.acts["ArrestWall"] = {
 		end
 	}
 }
-PLUGIN.acts["Arrest"] = {
+
+ix.act.stored["Arrest"] = {
 	["citizen_male"] = {
 		sequence = "arrestidle",
 		untimed = true
 	}
 }
-PLUGIN.acts["Threat"] = {
+
+ix.act.stored["Threat"] = {
 	["metrocop"] = {
 		sequence = {"plazathreat1", "plazathreat2"}
 	}
 }
-PLUGIN.acts["Cheer"] = {
+
+ix.act.stored["Cheer"] = {
 	["citizen_male"] = {
 		sequence = {"cheer1", "cheer2", "wave_smg1"}
 	},
@@ -88,7 +94,8 @@ PLUGIN.acts["Cheer"] = {
 		sequence = {"cheer1", "wave_smg1"}
 	}
 }
-PLUGIN.acts["Here"] = {
+
+ix.act.stored["Here"] = {
 	["citizen_male"] = {
 		sequence = {"wave_close", "wave"}
 	},
@@ -96,7 +103,8 @@ PLUGIN.acts["Here"] = {
 		sequence = {"wave_close", "wave"}
 	}
 }
-PLUGIN.acts["SitWall"] = {
+
+ix.act.stored["SitWall"] = {
 	["citizen_male"] = {
 		sequence = {"plazaidle4", "injured1"},
 		untimed = true,
@@ -108,7 +116,8 @@ PLUGIN.acts["SitWall"] = {
 		onCheck = facingWallBack
 	}
 }
-PLUGIN.acts["Stand"] = {
+
+ix.act.stored["Stand"] = {
 	["citizen_male"] = {
 		sequence = {"lineidle01", "lineidle02", "lineidle03", "lineidle04"},
 		untimed = true

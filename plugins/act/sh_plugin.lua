@@ -2,30 +2,30 @@
 PLUGIN.name = "Acts"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds acts that can be performed."
-PLUGIN.acts = PLUGIN.acts or {}
+
+ix.act = ix.act or {}
+ix.act.stored = ix.act.stored or {}
 
 ix.util.Include("sh_setup.lua")
 
-for k, v in pairs(PLUGIN.acts) do
-	local COMMAND = {
-		description = "@cmdAct"
-	}
-	local multiple = false
+function ix.act.Register(act, data)
+	local COMMAND = {}
 
-	for _, v2 in pairs(v) do
-		if (type(v2.sequence) == "table" and #v2.sequence > 1) then
-			multiple = true
+	local bMultiple = false
+	for _, v in pairs(data) do
+		if (type(v.sequence) == "table" and #v.sequence > 1) then
+			bMultiple = true
 
 			break
 		end
 	end
 
-	if (multiple) then
+	if (bMultiple) then
 		COMMAND.arguments = bit.bor(ix.type.number, ix.type.optional)
 	end
 
 	function COMMAND:GetDescription()
-		return L("cmdAct", k)
+		return L("cmdAct", act)
 	end
 
 	function COMMAND:OnRun(client, index)
@@ -37,16 +37,14 @@ for k, v in pairs(PLUGIN.acts) do
 			return
 		end
 
-		if (!client:Alive() or
-			client:SetLocalVar("ragdoll") or
-			client:WaterLevel() > 0 or
-			!client:IsOnGround()) then
+		if (!client:Alive() or client:GetLocalVar("ragdoll")
+		or client:WaterLevel() > 0 or !client:IsOnGround()) then
 			return
 		end
 
 		if ((client.ixNextAct or 0) < CurTime()) then
 			local class = ix.anim.GetModelClass(client:GetModel())
-			local info = v[class]
+			local info = data[class]
 
 			if (info) then
 				if (info.onCheck) then
@@ -58,8 +56,7 @@ for k, v in pairs(PLUGIN.acts) do
 				end
 
 				local sequence
-
-				if (type(info.sequence) == "table") then
+				if (istable(info.sequence)) then
 					index = math.Clamp(math.floor(index or 1), 1, #info.sequence)
 					sequence = info.sequence[index]
 				else
@@ -82,7 +79,13 @@ for k, v in pairs(PLUGIN.acts) do
 		end
 	end
 
-	ix.command.Add("Act"..k, COMMAND)
+	ix.command.Add("Act" .. act, COMMAND)
+end
+
+function PLUGIN:InitializedPlugins()
+	for k, v in pairs(ix.act.stored) do
+		ix.act.Register(k, v)
+	end
 end
 
 function PLUGIN:UpdateAnimation(client, moveData)
