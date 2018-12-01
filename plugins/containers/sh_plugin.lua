@@ -4,18 +4,9 @@ local PLUGIN = PLUGIN
 PLUGIN.name = "Containers"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Provides the ability to store items."
-PLUGIN.definitions = PLUGIN.definitions or {}
 
-ix.util.Include("sh_definitions.lua")
-
-for k, v in pairs(PLUGIN.definitions) do
-	if (v.name and v.width and v.height) then
-		ix.item.RegisterInv("container:" .. k:lower(), v.width, v.height)
-	else
-		ErrorNoHalt("[Helix] Container for '"..k.."' is missing all inventory information!\n")
-		PLUGIN.definitions[k] = nil
-	end
-end
+ix.container = ix.container or {}
+ix.container.stored = ix.container.stored or {}
 
 ix.config.Add("containerSave", true, "Whether or not containers will save after a server restart.", nil, {
 	category = "Containers"
@@ -26,12 +17,18 @@ ix.config.Add("containerOpenTime", 0.7, "How long it takes to open a container."
 	category = "Containers"
 })
 
+function ix.container.Register(model, data)
+	ix.container.stored[model] = data
+end
+
+ix.util.Include("sh_definitions.lua")
+
 if (SERVER) then
 	util.AddNetworkString("ixContainerPassword")
 
 	function PLUGIN:PlayerSpawnedProp(client, model, entity)
 		model = tostring(model):lower()
-		local data = self.definitions[model:lower()]
+		local data = ix.container.stored[model:lower()]
 
 		if (data) then
 			if (hook.Run("CanPlayerSpawnContainer", client, model, entity) == false) then return end
@@ -108,7 +105,7 @@ if (SERVER) then
 
 		if (data) then
 			for _, v in ipairs(data) do
-				local data2 = self.definitions[v[4]:lower()]
+				local data2 = ix.container.stored[v[4]:lower()]
 
 				if (data2) then
 					local entity = ents.Create("ix_container")
@@ -209,6 +206,18 @@ else
 	end)
 end
 
+function PLUGIN:InitializedPlugins()
+	for k, v in pairs(ix.container.stored) do
+		if (v.name and v.width and v.height) then
+			ix.item.RegisterInv("container:" .. k:lower(), v.width, v.height)
+		else
+			ErrorNoHalt("[Helix] Container for '"..k.."' is missing all inventory information!\n")
+			ix.container.stored[k] = nil
+		end
+	end
+end
+
+-- properties
 properties.Add("container_setpassword", {
 	MenuLabel = "Set Password",
 	Order = 400,
@@ -252,7 +261,7 @@ properties.Add("container_setpassword", {
 			client:NotifyLocalized("containerPasswordRemove")
 		end
 
-		local definition = PLUGIN.definitions[entity:GetModel():lower()]
+		local definition = ix.container.stored[entity:GetModel():lower()]
 		local name = entity:GetNetVar("name", definition.name)
 		local inventory = entity:GetInventory()
 

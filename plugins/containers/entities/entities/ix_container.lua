@@ -1,6 +1,4 @@
 
-local PLUGIN = PLUGIN
-
 ENT.Type = "anim"
 ENT.PrintName = "Container"
 ENT.Category = "Helix"
@@ -91,7 +89,7 @@ if (SERVER) then
 			local character = activator:GetCharacter()
 
 			if (character) then
-				local def = PLUGIN.definitions[self:GetModel():lower()]
+				local def = ix.container.stored[self:GetModel():lower()]
 
 				if (self:GetNetVar("locked") and !self.Sessions[character:GetID()]) then
 					self:EmitSound(def.locksound or "doors/default_locked.wav")
@@ -116,7 +114,7 @@ else
 	local COLOR_UNLOCKED = Color(135, 211, 124, 255)
 
 	function ENT:OnPopulateEntityInfo(container)
-		local definition = PLUGIN.definitions[self:GetModel():lower()]
+		local definition = ix.container.stored[self:GetModel():lower()]
 		local bLocked = self:GetNetVar("locked", false)
 
 		surface.SetFont("ixIconsSmall")
@@ -147,7 +145,7 @@ else
 end
 
 function ENT:GetDisplayName()
-	local definition = PLUGIN.definitions[self:GetModel():lower()]
+	local definition = ix.container.stored[self:GetModel():lower()]
 	return self:GetNetVar("name", definition.name)
 end
 
