@@ -483,7 +483,7 @@ do
 			local attributes = container:Add("DPanel")
 			attributes:Dock(TOP)
 
-			local y = 0
+			local y
 			local total = 0
 
 			payload.attributes = {}
@@ -497,6 +497,8 @@ do
 			totalBar:SetText(L("attribPointsLeft"))
 			totalBar:SetReadOnly(true)
 			totalBar:SetColor(Color(20, 120, 20, 255))
+
+			y = totalBar:GetTall() + 4
 
 			for k, v in SortedPairsByMemberValue(ix.attributes.list, "name") do
 				payload.attributes[k] = 0
