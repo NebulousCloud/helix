@@ -483,7 +483,7 @@ do
 			local attributes = container:Add("DPanel")
 			attributes:Dock(TOP)
 
-			local y = 0
+			local y
 			local total = 0
 
 			payload.attributes = {}
