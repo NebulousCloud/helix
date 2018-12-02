@@ -138,6 +138,31 @@ OverridePanel("DMenu", function()
 		})
 	end
 
+	Override("Hide")
+	function PANEL:Hide()
+		if (ix.option.Get("disableAnimations")) then
+			self:ixHide()
+			return
+		end
+
+		self.ixAnimating = true
+		self:SetVisible(true)
+
+		self:CreateAnimation(animationTime * 0.5, {
+			index = 1,
+			target = {ixAnimation = 0},
+			easing = "outQuint",
+
+			Think = function(animation, panel)
+				panel:InvalidateLayout(true)
+			end,
+
+			OnComplete = function(animation, panel)
+				panel:ixHide()
+			end
+		})
+	end
+
 	Override("Remove")
 	function PANEL:Remove()
 		if (ix.option.Get("disableAnimations")) then
