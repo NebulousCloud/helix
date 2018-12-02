@@ -5,6 +5,7 @@ local gradientLeft = surface.GetTextureID("vgui/gradient-l")
 local defaultBackgroundColor = Color(30, 30, 30, 200)
 
 local SKIN = {}
+derma.DefineSkin("helix", "The base skin for the Helix framework.", SKIN)
 
 SKIN.fontCategory = "ixMediumLightFont"
 SKIN.fontCategoryBlur = "ixMediumLightBlurFont"
@@ -34,6 +35,17 @@ SKIN.Colours.Button.Down = Color(180, 180, 180)
 SKIN.Colours.Button.Disabled = Color(0, 0, 0, 100)
 
 SKIN.Colours.Label.Default = color_white
+
+function SKIN.tex.Menu_Strip(x, y, width, height, color)
+	surface.SetDrawColor(0, 0, 0, 200)
+	surface.DrawRect(x, y, width, height)
+
+	surface.SetDrawColor(ColorAlpha(color or ix.config.Get("color"), 175))
+	surface.SetTexture(gradient)
+	surface.DrawTexturedRect(x, y, width, height)
+
+	surface.SetTextColor(color_white)
+end
 
 hook.Add("ColorSchemeChanged", "ixSkin", function(color)
 	SKIN.Colours.Area.Background = color
@@ -524,5 +536,4 @@ do
 	})
 end
 
-derma.DefineSkin("helix", "The base skin for the Helix framework.", SKIN)
 derma.RefreshSkins()
