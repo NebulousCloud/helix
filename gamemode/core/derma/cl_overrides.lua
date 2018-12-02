@@ -122,6 +122,10 @@ OverridePanel("DMenu", function()
 			return
 		end
 
+		-- remove pac3 derma menu hooks since animations don't play nicely
+		hook.Remove("CloseDermaMenus", self)
+		hook.Remove("Think", self)
+
 		self.ixAnimating = true
 		self:CreateAnimation(animationTime, {
 			index = 1,
@@ -165,12 +169,17 @@ OverridePanel("DMenu", function()
 
 	Override("Remove")
 	function PANEL:Remove()
+		if (self.ixRemoving) then
+			return
+		end
+
 		if (ix.option.Get("disableAnimations")) then
 			self:ixRemove()
 			return
 		end
 
 		self.ixAnimating = true
+		self.ixRemoving = true
 		self:SetVisible(true)
 
 		self:CreateAnimation(animationTime * 0.5, {
