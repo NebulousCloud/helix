@@ -26,6 +26,31 @@ if (CLIENT) then
 	local colors = {color_black}
 	local filter = {}
 
+	function PLUGIN:DrawCrosshair(x, y, trace)
+		local entity = trace.Entity
+		distance = trace.StartPos:DistToSqr(trace.HitPos)
+		scaleFraction = 1 - math.Clamp(distance / maxDistance, 0, .5)
+		crossSize = 4
+		crossGap = 25 * (scaleFraction - (LocalPlayer():IsWepRaised() and 0 or .1))
+
+		if (IsValid(entity) and entity:GetClass() == "ix_item" and
+			entity:GetPos():DistToSqr(trace.StartPos) <= 16384) then
+			crossGap = 0
+			crossSize = 5
+		end
+
+		curGap = Lerp(ft * 2, curGap, crossGap)
+		curAlpha = Lerp(ft * 2, curAlpha, (!LocalPlayer():IsWepRaised() and 255 or 150))
+		curAlpha = hook.Run("GetCrosshairAlpha", curAlpha) or curAlpha
+		colors[2] = Color(255, curAlpha, curAlpha, curAlpha)
+
+		drawdot( {math_round(screen.x), math_round(screen.y)}, crossSize, colors)
+		drawdot( {math_round(screen.x + curGap), math_round(screen.y)}, crossSize, colors)
+		drawdot( {math_round(screen.x - curGap), math_round(screen.y)}, crossSize, colors)
+		drawdot( {math_round(screen.x), math_round(screen.y + curGap * .8)}, crossSize, colors)
+		drawdot( {math_round(screen.x), math_round(screen.y - curGap * .8)}, crossSize, colors)
+	end
+
 	-- luacheck: globals g_ContextMenu
 	function PLUGIN:PostDrawHUD()
 		local client = LocalPlayer()
@@ -42,8 +67,7 @@ if (CLIENT) then
 		local wep = client:GetActiveWeapon()
 		local bShouldDraw = hook.Run("ShouldDrawCrosshair", client, wep)
 
-		if (bShouldDraw != true and wep and wep:IsValid() and
-			(wep.HUDPaint or wep.DoDrawCrosshair or wep.DrawCrosshair == false)) then
+		if (bShouldDraw == false or !IsValid(wep)) then
 			return
 		end
 
@@ -65,32 +89,20 @@ if (CLIENT) then
 
 		local data = {}
 			data.start = client:GetShootPos()
-			data.endpos = data.start + (aimVector + punchAngle):Forward()*65535
+			data.endpos = data.start + (aimVector + punchAngle):Forward() * 65535
 			data.filter = filter
 		local trace = util.TraceLine(data)
 
-		entity = trace.Entity
-		distance = trace.StartPos:DistToSqr(trace.HitPos)
-		scaleFraction = 1 - math.Clamp(distance / maxDistance, 0, .5)
-		screen = trace.HitPos:ToScreen()
-		crossSize = 4
-		crossGap = 25 * (scaleFraction - (client:IsWepRaised() and 0 or .1))
+		local drawTarget = self
+		local drawFunction = self.DrawCrosshair
 
-		if (IsValid(entity) and entity:GetClass() == "ix_item" and
-			entity:GetPos():DistToSqr(data.start) <= 16384) then
-			crossGap = 0
-			crossSize = 5
+		-- we'll manually call this since CHudCrosshair is never drawn; checks are already performed
+		if (wep.DrawCrosshair and wep.DoDrawCrosshair) then
+			drawTarget = wep
+			drawFunction = wep.DoDrawCrosshair
 		end
 
-		curGap = Lerp(ft * 2, curGap, crossGap)
-		curAlpha = Lerp(ft * 2, curAlpha, (!client:IsWepRaised() and 255 or 150))
-		curAlpha = hook.Run("GetCrosshairAlpha", curAlpha) or curAlpha
-		colors[2] = Color(255, curAlpha, curAlpha, curAlpha)
-
-		drawdot( {math_round(screen.x), math_round(screen.y)}, crossSize, colors)
-		drawdot( {math_round(screen.x + curGap), math_round(screen.y)}, crossSize, colors)
-		drawdot( {math_round(screen.x - curGap), math_round(screen.y)}, crossSize, colors)
-		drawdot( {math_round(screen.x), math_round(screen.y + curGap * .8)}, crossSize, colors)
-		drawdot( {math_round(screen.x), math_round(screen.y - curGap * .8)}, crossSize, colors)
+		screen = trace.HitPos:ToScreen()
+		drawFunction(drawTarget, screen.x, screen.y, trace)
 	end
 end
