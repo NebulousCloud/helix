@@ -6,7 +6,7 @@ if (CLIENT) then
 	SWEP.Slot = 0
 	SWEP.SlotPos = 1
 	SWEP.DrawAmmo = false
-	SWEP.DrawCrosshair = false
+	SWEP.DrawCrosshair = true
 end
 
 SWEP.Author = "Chessnut"
@@ -64,13 +64,20 @@ function SWEP:Initialize()
 	self.heldObjectAngle = angle_zero
 end
 
-function SWEP:PreDrawViewModel(viewModel, weapon, client)
-	local hands = player_manager.TranslatePlayerHands(player_manager.TranslateToPlayerModelName(client:GetModel()))
+if (CLIENT) then
+	function SWEP:PreDrawViewModel(viewModel, weapon, client)
+		local hands = player_manager.TranslatePlayerHands(player_manager.TranslateToPlayerModelName(client:GetModel()))
 
-	if (hands and hands.model) then
-		viewModel:SetModel(hands.model)
-		viewModel:SetSkin(hands.skin)
-		viewModel:SetBodyGroups(hands.body)
+		if (hands and hands.model) then
+			viewModel:SetModel(hands.model)
+			viewModel:SetSkin(hands.skin)
+			viewModel:SetBodyGroups(hands.body)
+		end
+	end
+
+	function SWEP:DoDrawCrosshair(x, y)
+		surface.SetDrawColor(255, 255, 255, 66)
+		surface.DrawRect(x - 2, y - 2, 4, 4)
 	end
 end
 
