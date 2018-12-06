@@ -19,9 +19,11 @@ Commands can be ran through the chat with slash commands or they can be executed
 -- When the arguments field is NOT defined: `OnRun(self, client, arguments)`
 -- @field[type=string,opt="@noDesc"] description The help text that appears when the user types in the command. If the string is
 -- prefixed with `"@"`, it will use a language phrase.
--- @field[type=string,opt="none"] syntax The arguments that your command accepts. This field is automatically populated when
--- using the arguments field. Syntax strings generally take the form of `"<argumentName: type> [optionalName: type]"` - it is
--- recommended to stick to this format to keep consistent with other commands.
+-- @field[type=table,opt=nil] argumentNames An array of strings corresponding to each argument of the command. This ignores the
+-- name that's specified in the `OnRun` function arguments and allows you to use any string to change the text that displays
+-- in the command's syntax help. When using this field, make sure that the amount is equal to the amount of arguments, as such:
+-- 	COMMAND.arguments = {ix.type.character, ix.type.number}
+-- 	COMMAND.argumentNames = {"target char", "cash (1-1000)"}
 -- @field[type=table,opt] arguments If this field is defined, then additional checks will be performed to ensure that the
 -- arguments given to the command are valid. This removes extra boilerplate code since all the passed arguments are guaranteed
 -- to be valid. See `CommandArgumentsStructure` for more information.
@@ -29,6 +31,12 @@ Commands can be ran through the chat with slash commands or they can be executed
 -- @field[type=boolean,opt=false] superAdminOnly Provides an additional check to see if the user is a superadmin before running.
 -- @field[type=any,opt] group Provides an additional check to see if the user is part of the specified usergroup before running.
 -- This can be a string or table of strings for allowing multiple groups to use the command.
+-- @field[type=function,opt=nil] OnCheckAccess This callback checks whether or not the player is allowed to run the command.
+-- This callback should **NOT** be used in conjunction with `adminOnly`, `superAdminOnly`, or `group`, as populating those
+-- fields create a custom a `OnCheckAccess` callback for you internally. This is used in cases where you want more fine-grained
+-- access control for your command.
+--
+-- Keep in mind that this is a **SHARED** callback; the command will not show up the client if the callback returns `false`.
 
 --- Rather than checking the validity for arguments in your command's `OnRun` function, you can have Helix do it for you to
 -- reduce the amount of boilerplate code that needs to be written. This can be done by populating the `arguments` field.
@@ -209,13 +217,20 @@ function ix.command.Add(command, data)
 	if (data.arguments) then
 		local bFirst = true
 		local bLastOptional = false
+		local bHasArgumentNames = istable(data.argumentNames)
 
 		data.syntax = "" -- @todo deprecate this in favour of argumentNames
-		data.argumentNames = {} -- extra metadata for external use
+		data.argumentNames = bHasArgumentNames and data.argumentNames or {}
 
 		-- if one argument is supplied by itself, put it into a table
 		if (!istable(data.arguments)) then
 			data.arguments = {data.arguments}
+		end
+
+		if (bHasArgumentNames and #data.argumentNames != #data.arguments) then
+			return ErrorNoHalt(string.format(
+				"Command '%s' doesn't have argument names that correspond to each argument\n", command
+			))
 		end
 
 		-- check the arguments table to see if its entries are valid
@@ -264,7 +279,10 @@ function ix.command.Add(command, data)
 				bOptional = true
 			end
 
-			data.argumentNames[i] = argumentName
+			if (!bHasArgumentNames) then
+				data.argumentNames[i] = argumentName
+			end
+
 			data.syntax = data.syntax .. (bFirst and "" or " ") ..
 				string.format((bOptional and "[%s: %s]" or "<%s: %s>"), argumentName, ix.type[argument])
 
@@ -471,7 +489,8 @@ if (SERVER) then
 
 		-- check for group access
 		if (command.OnCheckAccess) then
-			feedback = !command:OnCheckAccess(client) and L("noPerm", client) or nil
+			local bSuccess, phrase = command:OnCheckAccess(client)
+			feedback = !bSuccess and L(phrase and phrase or "noPerm", client) or nil
 		end
 
 		-- check for strict arguments
