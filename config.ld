@@ -1,6 +1,7 @@
 
 file = {
 	"gamemode",
+	"plugins",
 	exclude = {"gamemode/core/libs/thirdparty"}
 }
 
