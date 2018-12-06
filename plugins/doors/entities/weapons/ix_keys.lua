@@ -102,14 +102,14 @@ function SWEP:PrimaryAttack()
 		)
 	) then
 		self.Owner:SetAction("@locking", time, function()
-			self:toggleLock(entity, true)
+			self:ToggleLock(entity, true)
 		end)
 
 		return
 	end
 end
 
-function SWEP:toggleLock(door, state)
+function SWEP:ToggleLock(door, state)
 	if (IsValid(self.Owner) and self.Owner:GetPos():Distance(door:GetPos()) > 96) then
 		return
 	end
@@ -124,6 +124,8 @@ function SWEP:toggleLock(door, state)
 
 			door:Fire("lock")
 			self.Owner:EmitSound("doors/door_latch3.wav")
+
+			hook.Run("PlayerLockedDoor", self.Owner, door, partner)
 		else
 			if (IsValid(partner)) then
 				partner:Fire("unlock")
@@ -131,20 +133,28 @@ function SWEP:toggleLock(door, state)
 
 			door:Fire("unlock")
 			self.Owner:EmitSound("doors/door_latch1.wav")
+
+			hook.Run("PlayerUnlockedDoor", self.Owner, door, partner)
 		end
 	elseif (door:IsVehicle()) then
 		if (state) then
 			door:Fire("lock")
+
 			if (door.IsSimfphyscar) then
 				door.IsLocked = true
 			end
+
 			self.Owner:EmitSound("doors/door_latch3.wav")
+			hook.Run("PlayerLockedVehicle", self.Owner, door)
 		else
 			door:Fire("unlock")
+
 			if (door.IsSimfphyscar) then
 				door.IsLocked = nil
 			end
+
 			self.Owner:EmitSound("doors/door_latch1.wav")
+			hook.Run("PlayerUnlockedVehicle", self.Owner, door)
 		end
 	end
 end
@@ -183,7 +193,7 @@ function SWEP:SecondaryAttack()
 		)
 	) then
 		self.Owner:SetAction("@unlocking", time, function()
-			self:toggleLock(entity, false)
+			self:ToggleLock(entity, false)
 		end)
 
 		return
