@@ -44,8 +44,8 @@
 		<!-- library functions -->
 		<article>
 				<header>
-					<h1>ix.item</h1>
-					<h2>Item/inventory manipulation and helper functions.</h2>
+					<h1>ix.act</h1>
+					<h2>Provides players the ability to perform animations.</h2>
 				</header>
 
 				<!-- summary -->
@@ -55,7 +55,8 @@
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
-									<li><span class="realm server"></span><a href="#ix.item.RestoreInv">ix.item.RestoreInv(invID, width, height, callback)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.act.Register">ix.act.Register(name, modelClass, data)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.act.Remove">ix.act.Remove(name)</a></li>
 							</ul>
 					</div>
 				</details>
@@ -69,22 +70,12 @@
 					<h1 class="title">Functions</h1>
 
 						<section class="method">
-								<aside>
-										<code>ix.item.RestoreInv({
-	[10] = {5, 5},
-	[11] = {7, 4}
-})
--- inventories 10 and 11 with sizes (5, 5) and (7, 4) will be loaded
-</code>
-								</aside>
-							<header><a name="ix.item.RestoreInv"></a>
-								<h1><span class="realm server"></span>ix.item.RestoreInv(invID, width, height, callback)</h1>
+							<header><a name="ix.act.Register"></a>
+								<h1><span class="realm shared"></span>ix.act.Register(name, modelClass, data)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_item.lua#L364">View source &raquo;</a>
-								<p>Loads an inventory and associated items from the database into memory.  If you are passing a table into <code>invID</code>, it
- requires a table where the key is the inventory ID, and the value is a table of the width and height values. See below
- for an example.</p>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/home/travis/build/NebulousCloud/helix/plugins/act/sh_plugin.lua#L22">View source &raquo;</a>
+								<p>Registers a sequence as a performable animation.</p>
 							</header>
 
 
@@ -94,47 +85,63 @@
 									<ul>
 
 											<li>
-												<span class="tag parameter">invID</span>
+												<span class="tag parameter">name</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-
-												<p> Inventory ID or table of inventory IDs</p>
+												<p> Name of the animation (in CamelCase)</p>
 											</li>
 									</ul>
 
 									<ul>
 
 											<li>
-												<span class="tag parameter">width</span>
+												<span class="tag parameter">modelClass</span>
 
-													<span class="tag"><span class="type">number</span></span>
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p> Width of inventory (this is not used when passing a table to <code>invID</code>)</p>
+												<p> Model class to add this animation to</p>
 											</li>
 									</ul>
 
 									<ul>
 
 											<li>
-												<span class="tag parameter">height</span>
+												<span class="tag parameter">data</span>
 
-													<span class="tag"><span class="type">number</span></span>
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
 
 
-												<p> Height of inventory (this is not used when passing a table to <code>invID</code>)</p>
+												<p> An <code>ActInfoStructure</code> table describing the animation</p>
 											</li>
 									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.act.Remove"></a>
+								<h1><span class="realm shared"></span>ix.act.Remove(name)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/home/travis/build/NebulousCloud/helix/plugins/act/sh_plugin.lua#L59">View source &raquo;</a>
+								<p>Removes a sequence from being performable if it has been previously registered.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
 
 									<ul>
 
 											<li>
-												<span class="tag parameter">callback</span>
+												<span class="tag parameter">name</span>
 
-													<span class="tag"><span class="type">function</span></span>
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p> Function to call when inventory is restored</p>
+												<p> Name of the animation</p>
 											</li>
 									</ul>
 
