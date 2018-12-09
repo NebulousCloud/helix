@@ -380,8 +380,8 @@ if (SERVER) then
 
 	local playerMeta = FindMetaTable("Player")
 
-	function playerMeta:ForceSequence(sequence, callback, time, noFreeze)
-		hook.Run("PlayerEnterSequence", self, sequence, callback, time, noFreeze)
+	function playerMeta:ForceSequence(sequence, callback, time, bNoFreeze)
+		hook.Run("PlayerEnterSequence", self, sequence, callback, time, bNoFreeze)
 
 		if (!sequence) then
 			net.Start("ixSequenceReset")
@@ -391,17 +391,19 @@ if (SERVER) then
 			return
 		end
 
-		sequence = self:LookupSequence(sequence)
+		sequence = self:LookupSequence(tostring(sequence))
 
 		if (sequence and sequence > 0) then
 			time = time or self:SequenceDuration(sequence)
 
 			self.ixCouldShoot = self:GetNetVar("canShoot", false)
+			self.ixSeqCallback = callback
+			self:SetCycle(0)
+			self:SetPlaybackRate(1)
 			self:SetNetVar("forcedSequence", sequence)
 			self:SetNetVar("canShoot", false)
-			self.ixSeqCallback = callback
 
-			if (!noFreeze) then
+			if (!bNoFreeze) then
 				self:SetMoveType(MOVETYPE_NONE)
 			end
 
@@ -418,6 +420,8 @@ if (SERVER) then
 			net.Broadcast()
 
 			return time
+		else
+			callback()
 		end
 
 		return false
@@ -444,9 +448,6 @@ else
 		local entity = net.ReadEntity()
 
 		if (IsValid(entity)) then
-			entity:SetCycle(0)
-			entity:SetPlaybackRate(1)
-
 			hook.Run("PlayerEnterSequence", entity)
 		end
 	end)
