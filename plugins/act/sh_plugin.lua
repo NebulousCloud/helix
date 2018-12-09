@@ -1,259 +1,243 @@
 
-PLUGIN.name = "Acts"
-PLUGIN.author = "Chessnut"
-PLUGIN.description = "Adds acts that can be performed."
+--[[--
+Provides players the ability to perform animations.
+
+]]
+-- @module ix.act
+
+local PLUGIN = PLUGIN
+
+PLUGIN.name = "Player Acts"
+PLUGIN.description = "Adds animations that can be performed by certain models."
+PLUGIN.author = "`impulse"
 
 ix.act = ix.act or {}
 ix.act.stored = ix.act.stored or {}
 
-ix.util.Include("sh_setup.lua")
+--- Registers a sequence as a performable animation.
+-- @realm shared
+-- @string name Name of the animation (in CamelCase)
+-- @string modelClass Model class to add this animation to
+-- @tab data An `ActInfoStructure` table describing the animation
+function ix.act.Register(name, modelClass, data)
+	ix.act.stored[name] = ix.act.stored[name] or {} -- might be adding onto an existing act
 
-function ix.act.Register(act, data)
-	local COMMAND = {}
-
-	local bMultiple = false
-	for _, v in pairs(data) do
-		if (type(v.sequence) == "table" and #v.sequence > 1) then
-			bMultiple = true
-
-			break
-		end
+	if (!data.sequence) then
+		return ErrorNoHalt(string.format(
+			"Act '%s' for '%s' tried to register without a provided sequence\n", name, modelClass
+		))
 	end
 
-	if (bMultiple) then
-		COMMAND.arguments = bit.bor(ix.type.number, ix.type.optional)
+	if (!istable(data.sequence)) then
+		data.sequence = {data.sequence}
 	end
 
-	function COMMAND:GetDescription()
-		return L("cmdAct", act)
+	if (data.start and istable(data.start) and #data.start != #data.sequence) then
+		return ErrorNoHalt(string.format(
+			"Act '%s' tried to register without matching number of enter sequences\n", name
+		))
 	end
 
-	function COMMAND:OnRun(client, index)
-		if (client.ixSeqUntimed) then
-			client:SetNetVar("actEnterAngle")
-			client:LeaveSequence()
-			client.ixSeqUntimed = nil
+	if (data.finish and istable(data.finish) and #data.finish != #data.sequence) then
+		return ErrorNoHalt(string.format(
+			"Act '%s' tried to register without matching number of exit sequences\n", name
+		))
+	end
 
-			return
+	if (istable(modelClass)) then
+		for _, v in ipairs(modelClass) do
+			ix.act.stored[name][v] = data
+		end
+	else
+		ix.act.stored[name][modelClass] = data
+	end
+end
+
+--- Removes a sequence from being performable if it has been previously registered.
+-- @realm shared
+-- @string name Name of the animation
+function ix.act.Remove(name)
+	ix.act.stored[name] = nil
+	ix.command.list["Act" .. name] = nil
+end
+
+ix.util.Include("sh_definitions.lua")
+ix.util.Include("sv_hooks.lua")
+ix.util.Include("cl_hooks.lua")
+
+function PLUGIN:InitializedPlugins()
+	hook.Run("SetupActs")
+	hook.Run("PostSetupActs")
+end
+
+function PLUGIN:ExitAct(client)
+	client.ixUntimedSequence = nil
+	client:SetNetVar("actEnterAngle")
+
+	net.Start("ixActLeave")
+	net.Send(client)
+end
+
+function PLUGIN:PostSetupActs()
+	-- create chat commands for all stored acts
+	for act, classes in pairs(ix.act.stored) do
+		local variants = 1
+		local COMMAND = {}
+
+		-- check if this act has any variants (i.e /ActSit 2)
+		for _, v in pairs(classes) do
+			if (#v.sequence > 1) then
+				variants = math.max(variants, #v.sequence)
+			end
 		end
 
-		if (!client:Alive() or client:GetLocalVar("ragdoll")
-		or client:WaterLevel() > 0 or !client:IsOnGround()) then
-			return
+		-- setup command arguments if there are variants for this act
+		if (variants > 1) then
+			COMMAND.arguments = bit.bor(ix.type.number, ix.type.optional)
+			COMMAND.argumentNames = {"variant (1-" .. variants .. ")"}
 		end
 
-		if ((client.ixNextAct or 0) < CurTime()) then
-			local class = ix.anim.GetModelClass(client:GetModel())
-			local info = data[class]
+		COMMAND.GetDescription = function(command)
+			return L("cmdAct", act)
+		end
 
-			if (info) then
-				if (info.onCheck) then
-					local result = info.onCheck(client)
+		-- we'll perform a model class check in OnCheckAccess to prevent the command from showing up on the client at all
+		COMMAND.OnCheckAccess = function(command, client)
+			local modelClass = ix.anim.GetModelClass(client:GetModel())
+
+			if (!classes[modelClass]) then
+				return false, "modelNoSeq"
+			end
+
+			return true
+		end
+
+		COMMAND.OnRun = function(command, client, variant)
+			variant = math.Clamp(tonumber(variant) or 1, 1, variants)
+
+			if (client:GetNetVar("actEnterAngle")) then
+				return "@notNow"
+			end
+
+			local modelClass = ix.anim.GetModelClass(client:GetModel())
+			local bCanEnter, error = PLUGIN:CanPlayerEnterAct(client, modelClass, variant, classes)
+
+			if (!bCanEnter) then
+				return error
+			end
+
+			local data = classes[modelClass]
+			local mainSequence = data.sequence[variant]
+			local mainDuration
+
+			-- check if the main sequence has any extra info
+			if (istable(mainSequence)) then
+				-- any validity checks to perform (i.e facing a wall)
+				if (mainSequence.check) then
+					local result = mainSequence.check(client)
 
 					if (result) then
 						return result
 					end
 				end
 
-				local sequence
-				if (istable(info.sequence)) then
-					index = math.Clamp(math.floor(index or 1), 1, #info.sequence)
-					sequence = info.sequence[index]
-				else
-					sequence = info.sequence
-				end
-
-				local duration = client:ForceSequence(sequence, nil, info.untimed and 0 or nil)
-
-				client.ixSeqUntimed = info.untimed
-				client.ixNextAct = CurTime() + (info.untimed and 4 or duration) + 1
-				client:SetNetVar("actEnterAngle", client:GetAngles())
-
-				if (info.offset) then
+				-- position offset
+				if (mainSequence.offset) then
 					client.ixOldPosition = client:GetPos()
-					client:SetPos(client:GetPos() + info.offset(client))
+					client:SetPos(client:GetPos() + mainSequence.offset(client))
 				end
-			else
-				return "@modelNoSeq"
+
+				mainDuration = mainSequence.duration
+				mainSequence = mainSequence[1]
 			end
+
+			local startSequence = data.start and data.start[variant] or ""
+			local startDuration
+
+			if (istable(startSequence)) then
+				startDuration = startSequence.duration
+				startSequence = startSequence[1]
+			end
+
+			client:SetNetVar("actEnterAngle", client:GetAngles())
+
+			client:ForceSequence(startSequence, function()
+				-- we've finished the start sequence
+				client.ixUntimedSequence = data.untimed -- client can exit after the start sequence finishes playing
+
+				local duration = client:ForceSequence(mainSequence, function()
+					-- we've stopped playing the main sequence (either duration expired or user cancelled the act)
+					if (data.finish) then
+						local finishSequence = data.finish[variant]
+						local finishDuration
+
+						if (istable(finishSequence)) then
+							finishDuration = finishSequence.duration
+							finishSequence = finishSequence[1]
+						end
+
+						client:ForceSequence(finishSequence, function()
+							-- client has finished the end sequence and is no longer playing any animations
+							self:ExitAct(client)
+						end, finishDuration)
+					else
+						-- there's no end sequence so we can exit right away
+						self:ExitAct(client)
+					end
+				end, data.untimed and 0 or (mainDuration or nil))
+
+				if (!duration) then
+					-- the model doesn't support this variant
+					self:ExitAct(client)
+					client:NotifyLocalized("modelNoSeq")
+
+					return
+				end
+			end, startDuration, nil)
+
+			net.Start("ixActEnter")
+				net.WriteBool(data.idle or false)
+			net.Send(client)
+
+			client.ixNextAct = CurTime() + 4
+		end
+
+		ix.command.Add("Act" .. act, COMMAND)
+	end
+
+	-- setup exit act command
+	local COMMAND = {
+		OnRun = function(command, client)
+			if (client.ixUntimedSequence) then
+				client:LeaveSequence()
+			end
+		end
+	}
+
+	if (CLIENT) then
+		-- hide this command from the command list
+		COMMAND.OnCheckAccess = function(client)
+			return false
 		end
 	end
 
-	ix.command.Add("Act" .. act, COMMAND)
-end
-
-function PLUGIN:InitializedPlugins()
-	for k, v in pairs(ix.act.stored) do
-		ix.act.Register(k, v)
-	end
+	ix.command.Add("ExitAct", COMMAND)
 end
 
 function PLUGIN:UpdateAnimation(client, moveData)
-	local angles = client:GetNetVar("actEnterAngle")
+	local angle = client:GetNetVar("actEnterAngle")
 
-	if (angles) then
-		client:SetRenderAngles(angles)
+	if (angle) then
+		client:SetRenderAngles(angle)
 	end
 end
 
-local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2
+do
+	local keyBlacklist = IN_ATTACK + IN_ATTACK2
 
-function PLUGIN:StartCommand(client, command)
-	if (client:GetNetVar("actEnterAngle")) then
-		command:RemoveKey(KEY_BLACKLIST)
-	end
-end
-
-if (SERVER) then
-	function PLUGIN:PlayerLeaveSequence(client)
-		client:SetNetVar("actEnterAngle")
-
-		if (client.ixOldPosition) then
-			client:SetPos(client.ixOldPosition)
-			client.ixOldPosition = nil
-		end
-	end
-
-	function PLUGIN:PlayerDeath(client)
-		if (client.ixSeqUntimed) then
-			client:SetNetVar("actEnterAngle")
-			client:LeaveSequence()
-			client.ixSeqUntimed = nil
-		end
-	end
-
-	function PLUGIN:PlayerSpawn(client)
-		if (client.ixSeqUntimed) then
-			client:SetNetVar("actEnterAngle")
-			client:LeaveSequence()
-			client.ixSeqUntimed = nil
-		end
-	end
-
-	function PLUGIN:OnCharacterFallover(client)
-		if (client.ixSeqUntimed) then
-			client:SetNetVar("actEnterAngle")
-			client:LeaveSequence()
-			client.ixSeqUntimed = nil
-		end
-	end
-else
-	local function GetHeadBone(client)
-		local head
-
-		for i = 1, client:GetBoneCount() do
-			local name = client:GetBoneName(i)
-
-			if (string.find(name:lower(), "head")) then
-				head = i
-				break
-			end
-		end
-
-		return head
-	end
-
-	function PLUGIN:PlayerEnterSequence(client)
-		if (client != LocalPlayer()) then
-			return
-		end
-
-		if (!ix.option.Get("thirdpersonEnabled", false)) then
-			local head = GetHeadBone(client)
-
-			if (head) then
-				client:ManipulateBoneScale(head, vector_origin)
-			end
-		end
-	end
-
-	function PLUGIN:PlayerLeaveSequence(client)
-		if (client != LocalPlayer()) then
-			return
-		end
-
-		local head = GetHeadBone(client)
-
-		if (head) then
-			client:ManipulateBoneScale(head, Vector(1, 1, 1))
-		end
-	end
-
-	function PLUGIN:ShouldDrawLocalPlayer(client)
+	function PLUGIN:StartCommand(client, command)
 		if (client:GetNetVar("actEnterAngle")) then
-			return true
-		end
-	end
-
-	function PLUGIN:ThirdPersonToggled(oldValue, value)
-		if (LocalPlayer():GetNetVar("actEnterAngle")) then
-			local head = GetHeadBone(LocalPlayer())
-
-			if (head) then
-				LocalPlayer():ManipulateBoneScale(head, value and Vector(1, 1, 1) or vector_origin)
-			end
-		end
-	end
-
-	local GROUND_PADDING = Vector(0, 0, 8)
-	local PLAYER_OFFSET = Vector(0, 0, 64)
-
-	function PLUGIN:CalcView(client, origin)
-		local enterAngle = client:GetNetVar("actEnterAngle")
-
-		if (!enterAngle) then
-			return
-		end
-
-		local view = {
-			angles = client:EyeAngles()
-		}
-
-		if (ix.option.Get("thirdpersonEnabled", false)) then
-			local data = {}
-				data.start = client:GetPos() + PLAYER_OFFSET
-				data.endpos = data.start - client:EyeAngles():Forward() * 48
-				data.mins = Vector(-10, -10, -10)
-				data.maxs = Vector(10, 10, 10)
-				data.filter = client
-			view.origin = util.TraceHull(data).HitPos + GROUND_PADDING
-		else
-			local head = GetHeadBone(client)
-
-			if (head) then
-				local forward = enterAngle:Forward()
-				local position = client:GetBonePosition(head) + forward * 2 + Vector(0, 0, 3.5)
-
-				local data = {
-					start = position,
-					endpos = position + forward * 5,
-					mins = Vector(-2, -2, -2),
-					maxs = Vector(2, 2, 2),
-					filter = client
-				}
-
-				if (util.TraceHull(data).Hit) then
-					view.origin = origin
-				else
-					view.origin = position
-				end
-			else
-				view.origin = origin
-			end
-		end
-
-		return view
-	end
-
-	function PLUGIN:PlayerBindPress(client, bind, pressed)
-		if (client:GetNetVar("actEnterAngle")) then
-			bind = bind:lower()
-
-			if (bind:find("+jump") and pressed) then
-				ix.command.Send("actsit")
-
-				return true
-			end
+			command:RemoveKey(keyBlacklist)
 		end
 	end
 end
