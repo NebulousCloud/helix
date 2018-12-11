@@ -63,13 +63,23 @@ function ITEM:RemoveOutfit(client)
 		if (index > -1) then
 			client:SetBodygroup(index, 0)
 
-			local groups = character:GetData("groups" .. self.outfitCategory, {})
+			local groups = character:GetData("groups", {})
 
 			if (groups[index]) then
 				groups[index] = nil
-				character:SetData("groups" .. self.outfitCategory, groups)
+				character:SetData("groups", groups)
 			end
 		end
+	end
+
+	-- restore the original bodygroups
+	if (character:GetData("oldGroups" .. self.outfitCategory)) then
+		for k, v in pairs(character:GetData("oldGroups" .. self.outfitCategory, {})) do
+			client:SetBodygroup(k, v)
+		end
+
+		character:SetData("groups", character:GetData("oldGroups" .. self.outfitCategory, {}))
+		character:GetData("oldGroups" .. self.outfitCategory, nil)
 	end
 
 	if (self.attribBoosts) then
@@ -174,8 +184,16 @@ ITEM.functions.Equip = {
 			item.player:SetSkin(item.newSkin)
 		end
 
+		local groups = char:GetData("groups", {})
+
+		if (table.Count(groups) > 0) then
+			char:SetData("oldGroups" .. item.outfitCategory, groups)
+
+			client:ResetBodygroups()
+		end
+
 		if (item.bodyGroups) then
-			local groups = {}
+			groups = {}
 
 			for k, value in pairs(item.bodyGroups) do
 				local index = item.player:FindBodygroupByName(k)

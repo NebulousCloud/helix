@@ -10,6 +10,9 @@ To start working on your gamemode, you'll need to set up a schema for Helix. Thi
 
 You can also use our HL2 RP schema at https://github.com/NebulousCloud/helix-hl2rp as a base to work off of if you need something more fleshed out.
 
+## Plugins
+If you'd like to enhance your gamemode, you can use any of the freely provided plugins available at https://github.com/NebulousCloud/helix-plugins. It is also encouraged to submit your own plugins for others to use.
+
 ## Documentation
 Up-to-date documentation can be found at https://nebulouscloud.github.io/helix/. This is automatically updated when commits are pushed to the master branch. As it currently stands, you might find it a bit lacking. However, this will definitely improve over time as we continue polishing off the framework.
 
