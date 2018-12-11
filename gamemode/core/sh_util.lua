@@ -1168,13 +1168,18 @@ do
 
 			if (IsValid(weapon)) then
 				local bCanShoot = !state and weapon.FireWhenLowered or state
-
 				self:SetNetVar("raised", state)
-				self:SetNetVar("canShoot", bCanShoot)
 
-				-- delay shooting while we're doing the raising animation, otherwise make sure we can't shoot
-				weapon:SetNextPrimaryFire(bCanShoot and (CurTime() + 1) or math.huge)
-				weapon:SetNextSecondaryFire(bCanShoot and (CurTime() + 1) or math.huge)
+				if (bCanShoot) then
+					-- delay shooting while the raise animation is playing
+					timer.Simple(1, function()
+						if (IsValid(self)) then
+							self:SetNetVar("canShoot", true)
+						end
+					end)
+				else
+					self:SetNetVar("canShoot", false)
+				end
 			else
 				self:SetNetVar("raised", false)
 				self:SetNetVar("canShoot", false)
