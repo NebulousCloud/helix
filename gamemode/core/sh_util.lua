@@ -1172,15 +1172,17 @@ do
 
 				if (bCanShoot) then
 					-- delay shooting while the raise animation is playing
-					timer.Simple(1, function()
+					timer.Create("ixWeaponRaise" .. self:SteamID64(), 1, 1, function()
 						if (IsValid(self)) then
 							self:SetNetVar("canShoot", true)
 						end
 					end)
 				else
+					timer.Remove("ixWeaponRaise" .. self:SteamID64())
 					self:SetNetVar("canShoot", false)
 				end
 			else
+				timer.Remove("ixWeaponRaise" .. self:SteamID64())
 				self:SetNetVar("raised", false)
 				self:SetNetVar("canShoot", false)
 			end
