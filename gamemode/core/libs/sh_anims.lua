@@ -420,7 +420,7 @@ if (SERVER) then
 			net.Broadcast()
 
 			return time
-		else
+		elseif (callback) then
 			callback()
 		end
 
