@@ -67,7 +67,7 @@ if (CLIENT) then
 		local wep = client:GetActiveWeapon()
 		local bShouldDraw = hook.Run("ShouldDrawCrosshair", client, wep)
 
-		if (bShouldDraw == false or !IsValid(wep)) then
+		if (bShouldDraw == false or !IsValid(wep) or wep.DrawCrosshair == false) then
 			return
 		end
 
@@ -97,7 +97,7 @@ if (CLIENT) then
 		local drawFunction = self.DrawCrosshair
 
 		-- we'll manually call this since CHudCrosshair is never drawn; checks are already performed
-		if (wep.DrawCrosshair and wep.DoDrawCrosshair) then
+		if (wep.DoDrawCrosshair) then
 			drawTarget = wep
 			drawFunction = wep.DoDrawCrosshair
 		end
