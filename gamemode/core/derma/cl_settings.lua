@@ -714,16 +714,14 @@ hook.Add("CreateMenuButtons", "ixSettings", function(tabs)
 				return
 			end
 
-			-- we'll manually reposition this button outside of the list to take up less space
-			menu:AddManuallyPaintedChild(button)
-			button:Dock(NODOCK)
-			button:SetFont("ixIconsMedium")
-			button:SetText("`")
-			button:SetTextInset(0, 0)
-			button:SetSize(32, 32)
-			button:SetPos(menu:GetWide() - 32, menu:GetTall() - 32)
-			button:SetTextColor(ColorAlpha(button:GetTextColor(), 80))
-			button.PaintBackground = function() end
+			DEFINE_BASECLASS("ixMenuButton")
+			button:SetZPos(9999)
+			button.Paint = function(panel, width, height)
+				BaseClass.Paint(panel, width, height)
+
+				surface.SetDrawColor(255, 255, 255, 33)
+				surface.DrawRect(0, 0, width, 1)
+			end
 		end,
 
 		Create = function(info, container)
