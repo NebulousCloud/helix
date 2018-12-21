@@ -47,8 +47,9 @@ if (SERVER) then
 				if (IsValid(container)) then
 					container:SetInventory(inventory)
 					self:SaveContainer()
-					entity:Remove()
 				end
+					
+				entity:Remove()
 			end)
 		end
 	end
