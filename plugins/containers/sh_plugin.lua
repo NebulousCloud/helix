@@ -46,11 +46,10 @@ if (SERVER) then
 
 				if (IsValid(container)) then
 					container:SetInventory(inventory)
+					self:SaveContainer()
+					entity:Remove()
 				end
 			end)
-
-			self:SaveContainer()
-			entity:Remove()
 		end
 	end
 
