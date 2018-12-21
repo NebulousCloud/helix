@@ -48,7 +48,7 @@ if (SERVER) then
 					container:SetInventory(inventory)
 					self:SaveContainer()
 				end
-					
+
 				entity:Remove()
 			end)
 		end
