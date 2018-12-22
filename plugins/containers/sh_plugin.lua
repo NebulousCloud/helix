@@ -45,7 +45,7 @@ if (SERVER) then
 				inventory.vars.isContainer = true
 
 				if (IsValid(container)) then
-					container:SetInventory(inventory
+					container:SetInventory(inventory)
 					self:SaveContainer()
 				end
 			end)
