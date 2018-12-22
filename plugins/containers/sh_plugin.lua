@@ -49,7 +49,7 @@ if (SERVER) then
 					self:SaveContainer()
 				end
 			end)
-			
+
 			entity:Remove()
 		end
 	end
