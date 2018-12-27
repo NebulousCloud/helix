@@ -250,6 +250,11 @@ function GM:PrePlayerLoadedCharacter(client, character, lastChar)
 end
 
 function GM:PlayerLoadedCharacter(client, character, lastChar)
+	local query = mysql:Update("ix_characters")
+		query:Where("id", character:GetID())
+		query:Update("last_join_time", math.floor(os.time()))
+	query:Execute()
+
 	if (lastChar) then
 		local charEnts = lastChar:GetVar("charEnts") or {}
 
