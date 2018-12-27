@@ -136,11 +136,6 @@ if (SERVER) then
 							[1] = -1,
 						}
 
-						local timeQuery = mysql:Update("ix_characters")
-							timeQuery:Where("id", charID)
-							timeQuery:Update("last_join_time", math.floor(os.time()))
-						timeQuery:Execute()
-
 						local invQuery = mysql:Select("ix_inventories")
 							invQuery:Select("inventory_id")
 							invQuery:Select("inventory_type")
