@@ -103,8 +103,6 @@ function GM:TranslateActivity(client, act)
 				return act
 			end
 		elseif (client:OnGround()) then
-			client:ManipulateBonePosition(0, vector_origin)
-
 			if (clientInfo.ixAnimTable[act]) then
 				local act2 = clientInfo.ixAnimTable[act][bRaised and 2 or 1]
 
