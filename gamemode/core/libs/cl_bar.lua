@@ -17,13 +17,17 @@ function ix.bar.Get(identifier)
 	end
 end
 
+function ix.bar.Remove(identifier)
+	local bar = ix.bar.Get(identifier)
+
+	if (bar) then
+		table.remove(ix.bar.list, bar.priority)
+	end
+end
+
 function ix.bar.Add(getValue, color, priority, identifier)
 	if (identifier) then
-		local oldBar = ix.bar.Get(identifier)
-
-		if (oldBar) then
-			table.remove(ix.bar.list, oldBar.priority)
-		end
+		ix.bar.Remove(identifier)
 	end
 
 	priority = priority or table.Count(ix.bar.list) + 1
