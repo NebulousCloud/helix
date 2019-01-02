@@ -84,7 +84,7 @@ function ix.db.LoadTables()
 	query = mysql:Create("ix_inventories")
 		query:Create("inventory_id", "INT(11) UNSIGNED NOT NULL AUTO_INCREMENT")
 		query:Create("character_id", "INT(11) UNSIGNED NOT NULL")
-		query:Create("inventory_type", "VARCHAR(24) DEFAULT NULL")
+		query:Create("inventory_type", "VARCHAR(150) DEFAULT NULL")
 		query:PrimaryKey("inventory_id")
 	query:Execute()
 
