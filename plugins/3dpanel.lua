@@ -213,6 +213,7 @@ end
 
 ix.command.Add("PanelAdd", {
 	description = "@cmdPanelAdd",
+	privilege = "Manage Panels",
 	adminOnly = true,
 	arguments = {
 		ix.type.string,
@@ -236,6 +237,7 @@ ix.command.Add("PanelAdd", {
 
 ix.command.Add("PanelRemove", {
 	description = "@cmdPanelRemove",
+	privilege = "Manage Panels",
 	adminOnly = true,
 	arguments = bit.bor(ix.type.number, ix.type.optional),
 	OnRun = function(self, client, radius)

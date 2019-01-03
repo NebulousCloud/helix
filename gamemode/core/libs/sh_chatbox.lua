@@ -6,6 +6,11 @@ if (!ix.command) then
 	include("sh_command.lua")
 end
 
+CAMI.RegisterPrivilege({
+	Name = "Helix - Bypass OOC Timer",
+	MinAccess = "admin"
+})
+
 -- Registers a new chat type with the information provided.
 function ix.chat.Register(chatType, data)
 	chatType = string.lower(chatType)
@@ -72,6 +77,7 @@ function ix.chat.Register(chatType, data)
 						indicator = data.indicator,
 						bNoIndicator = data.bNoIndicator,
 						chatClass = data,
+						OnCheckAccess = function() return true end,
 						OnRun = function(self, client, message) end
 					})
 				end
@@ -83,6 +89,7 @@ function ix.chat.Register(chatType, data)
 				indicator = data.indicator,
 				bNoIndicator = data.bNoIndicator,
 				chatClass = data,
+				OnCheckAccess = function() return true end,
 				OnRun = function(self, client, message) end
 			})
 		end
@@ -337,7 +344,7 @@ do
 						local lastOOC = CurTime() - speaker.ixLastOOC
 
 						-- Use this method of checking time in case the oocDelay config changes.
-						if (lastOOC <= delay and !speaker:IsAdmin()) then
+						if (lastOOC <= delay and !CAMI.PlayerHasAccess(speaker, "Helix - Bypass OOC Timer", nil)) then
 							speaker:NotifyLocalized("oocDelay", delay - math.ceil(lastOOC))
 
 							return false
@@ -385,7 +392,7 @@ do
 					local lastLOOC = CurTime() - speaker.ixLastLOOC
 
 					-- Use this method of checking time in case the oocDelay config changes.
-					if (lastLOOC <= delay and !speaker:IsAdmin()) then
+					if (lastLOOC <= delay and !CAMI.PlayerHasAccess(speaker, "Helix - Bypass OOC Timer", nil)) then
 						speaker:NotifyLocalized("loocDelay", delay - math.ceil(lastLOOC))
 
 						return false
@@ -439,15 +446,10 @@ ix.chat.Register("pm", {
 
 -- Global events.
 ix.chat.Register("event", {
-	CanSay = function(self, speaker, text)
-		return speaker:IsAdmin()
-	end,
 	CanHear = 1000000,
 	OnChatAdd = function(self, speaker, text)
 		chat.AddText(Color(255, 150, 0), text)
 	end,
-	prefix = {"/Event"},
-	description = "@cmdEvent",
 	indicator = "chatPerforming"
 })
 

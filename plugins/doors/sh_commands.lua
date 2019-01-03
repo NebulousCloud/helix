@@ -114,6 +114,7 @@ ix.command.Add("DoorBuy", {
 
 ix.command.Add("DoorSetUnownable", {
 	description = "@cmdDoorSetUnownable",
+	privilege = "Manage Doors",
 	adminOnly = true,
 	arguments = ix.type.text,
 	OnRun = function(self, client, name)
@@ -150,6 +151,7 @@ ix.command.Add("DoorSetUnownable", {
 
 ix.command.Add("DoorSetOwnable", {
 	description = "@cmdDoorSetOwnable",
+	privilege = "Manage Doors",
 	adminOnly = true,
 	arguments = ix.type.text,
 	OnRun = function(self, client, name)
@@ -188,6 +190,7 @@ ix.command.Add("DoorSetOwnable", {
 
 ix.command.Add("DoorSetFaction", {
 	description = "@cmdDoorSetFaction",
+	privilege = "Manage Doors",
 	adminOnly = true,
 	arguments = ix.type.text,
 	OnRun = function(self, client, name)
@@ -243,6 +246,7 @@ ix.command.Add("DoorSetFaction", {
 
 ix.command.Add("DoorSetDisabled", {
 	description = "@cmdDoorSetDisabled",
+	privilege = "Manage Doors",
 	adminOnly = true,
 	arguments = ix.type.bool,
 	OnRun = function(self, client, bDisabled)
@@ -301,7 +305,7 @@ ix.command.Add("DoorSetTitle", {
 			-- Check if they are allowed to change the door's name.
 			if (entity:CheckDoorAccess(client, DOOR_TENANT)) then
 				entity:SetNetVar("title", name)
-			elseif (client:IsAdmin()) then
+			elseif (CAMI.PlayerHasAccess(client, "Helix - Manage Doors", nil)) then
 				entity:SetNetVar("name", name)
 
 				PLUGIN:CallOnDoorChildren(entity, function(child)
@@ -320,6 +324,7 @@ ix.command.Add("DoorSetTitle", {
 
 ix.command.Add("DoorSetParent", {
 	description = "@cmdDoorSetParent",
+	privilege = "Manage Doors",
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
@@ -338,6 +343,7 @@ ix.command.Add("DoorSetParent", {
 
 ix.command.Add("DoorSetChild", {
 	description = "@cmdDoorSetChild",
+	privilege = "Manage Doors",
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
@@ -376,6 +382,7 @@ ix.command.Add("DoorSetChild", {
 
 ix.command.Add("DoorRemoveChild", {
 	description = "@cmdDoorRemoveChild",
+	privilege = "Manage Doors",
 	adminOnly = true,
 	OnRun = function(self, client, arguments)
 		-- Get the door the player is looking at.
@@ -411,6 +418,7 @@ ix.command.Add("DoorRemoveChild", {
 
 ix.command.Add("DoorSetHidden", {
 	description = "@cmdDoorSetHidden",
+	privilege = "Manage Doors",
 	adminOnly = true,
 	arguments = ix.type.bool,
 	OnRun = function(self, client, bHidden)
@@ -438,6 +446,7 @@ ix.command.Add("DoorSetHidden", {
 
 ix.command.Add("DoorSetClass", {
 	description = "@cmdDoorSetClass",
+	privilege = "Manage Doors",
 	adminOnly = true,
 	arguments = ix.type.text,
 	OnRun = function(self, client, name)

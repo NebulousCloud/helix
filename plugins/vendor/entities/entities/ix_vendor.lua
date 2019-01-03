@@ -183,7 +183,7 @@ if (SERVER) then
 
 		-- Only send what is needed.
 		for k, v in pairs(self.items) do
-			if (table.Count(v) > 0 and (activator:IsAdmin() or v[VENDOR_MODE])) then
+			if (table.Count(v) > 0 and (CAMI.PlayerHasAccess(activator, "Helix - Manage Vendors", nil) or v[VENDOR_MODE])) then
 				items[k] = v
 			end
 		end

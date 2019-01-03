@@ -349,10 +349,6 @@ function GM:CanAutoFormatMessage(client, chatType, message)
 	return chatType == "ic" or chatType == "w" or chatType == "y"
 end
 
-function GM:CanPlayerModifyConfig(client, key)
-	return client:IsSuperAdmin()
-end
-
 function GM:PlayerSpawn(client)
 	client:SetNoDraw(false)
 	client:UnLock()

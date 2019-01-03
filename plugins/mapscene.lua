@@ -205,6 +205,7 @@ end
 
 ix.command.Add("MapSceneAdd", {
 	description = "@cmdMapSceneAdd",
+	privilege = "Manage Map Scenes",
 	adminOnly = true,
 	arguments = bit.bor(ix.type.bool, ix.type.optional),
 	OnRun = function(self, client, bIsPair)
@@ -230,6 +231,7 @@ ix.command.Add("MapSceneAdd", {
 
 ix.command.Add("MapSceneRemove", {
 	description = "@cmdMapSceneRemove",
+	privilege = "Manage Map Scenes",
 	adminOnly = true,
 	arguments = bit.bor(ix.type.number, ix.type.optional),
 	OnRun = function(self, client, radius)
