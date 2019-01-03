@@ -16,6 +16,12 @@ ix.log.color = {
 	[FLAG_SERVER] = Color(200, 200, 220),
 	[FLAG_DEV] = Color(200, 200, 220),
 }
+
+CAMI.RegisterPrivilege({
+	Name = "Helix - Logs",
+	MinAccess = "admin"
+})
+
 local consoleColor = Color(50, 200, 50)
 
 if (SERVER) then
@@ -56,7 +62,9 @@ if (SERVER) then
 	end
 
 	function ix.log.AddRaw(logString, bNoSave)
-		ix.log.Send(ix.util.GetAdmins(), logString)
+		CAMI.GetPlayersWithAccess("Helix - Logs", function(receivers)
+			ix.log.Send(receivers, logString)
+		end)
 
 		Msg("[LOG] ", logString .. "\n")
 
@@ -69,7 +77,9 @@ if (SERVER) then
 		local logString, logFlag = ix.log.Parse(client, logType, ...)
 		if (logString == -1) then return end
 
-		ix.log.Send(ix.util.GetAdmins(), logString, logFlag)
+		CAMI.GetPlayersWithAccess("Helix - Logs", function(receivers)
+			ix.log.Send(receivers, logString, logFlag)
+		end)
 
 		Msg("[LOG] ", logString .. "\n")
 

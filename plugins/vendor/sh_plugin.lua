@@ -11,6 +11,11 @@ PLUGIN.name = "Vendors"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds NPC vendors that can sell things."
 
+CAMI.RegisterPrivilege({
+	Name = "Helix - Manage Vendors",
+	MinAccess = "admin"
+})
+
 VENDOR_BUY = 1
 VENDOR_SELL = 2
 VENDOR_BOTH = 3
@@ -143,7 +148,7 @@ if (SERVER) then
 	end
 
 	net.Receive("ixVendorEdit", function(length, client)
-		if (!client:IsAdmin()) then
+		if (!CAMI.PlayerHasAccess(client, "Helix - Manage Vendors", nil)) then
 			return
 		end
 
@@ -282,7 +287,7 @@ if (SERVER) then
 			local receivers = {}
 
 			for _, v in ipairs(entity.receivers) do
-				if (v:IsAdmin()) then
+				if (CAMI.PlayerHasAccess(v, "Helix - Manage Vendors", nil)) then
 					receivers[#receivers + 1] = v
 				end
 			end

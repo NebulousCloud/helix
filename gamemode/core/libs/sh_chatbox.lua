@@ -6,6 +6,11 @@ if (!ix.command) then
 	include("sh_command.lua")
 end
 
+CAMI.RegisterPrivilege({
+	Name = "Helix - Bypass OOC Timer",
+	MinAccess = "admin"
+})
+
 -- Registers a new chat type with the information provided.
 function ix.chat.Register(chatType, data)
 	chatType = string.lower(chatType)
@@ -339,7 +344,7 @@ do
 						local lastOOC = CurTime() - speaker.ixLastOOC
 
 						-- Use this method of checking time in case the oocDelay config changes.
-						if (lastOOC <= delay and !speaker:IsAdmin()) then
+						if (lastOOC <= delay and !CAMI.PlayerHasAccess(speaker, "Helix - Bypass OOC Timer", nil)) then
 							speaker:NotifyLocalized("oocDelay", delay - math.ceil(lastOOC))
 
 							return false
@@ -387,7 +392,7 @@ do
 					local lastLOOC = CurTime() - speaker.ixLastLOOC
 
 					-- Use this method of checking time in case the oocDelay config changes.
-					if (lastLOOC <= delay and !speaker:IsAdmin()) then
+					if (lastLOOC <= delay and !CAMI.PlayerHasAccess(speaker, "Helix - Bypass OOC Timer", nil)) then
 						speaker:NotifyLocalized("loocDelay", delay - math.ceil(lastLOOC))
 
 						return false
