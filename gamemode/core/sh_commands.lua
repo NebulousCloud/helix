@@ -11,6 +11,15 @@ ix.command.Add("Roll", {
 	end
 })
 
+ix.command.Add("Event", {
+	description = "@cmdEvent",
+	arguments = ix.type.text,
+	superAdminOnly = true,
+	OnRun = function(self, client, text)
+		ix.chat.Send(client, "event", text)
+	end
+})
+
 ix.command.Add("PM", {
 	description = "@cmdPM",
 	arguments = {

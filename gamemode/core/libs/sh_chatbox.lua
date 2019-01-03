@@ -446,15 +446,10 @@ ix.chat.Register("pm", {
 
 -- Global events.
 ix.chat.Register("event", {
-	CanSay = function(self, speaker, text)
-		return speaker:IsAdmin()
-	end,
 	CanHear = 1000000,
 	OnChatAdd = function(self, speaker, text)
 		chat.AddText(Color(255, 150, 0), text)
 	end,
-	prefix = {"/Event"},
-	description = "@cmdEvent",
 	indicator = "chatPerforming"
 })
 
