@@ -177,39 +177,24 @@ function ix.command.Add(command, data)
 		end
 	end
 
-	-- if no access checking is specified, we'll generate one based on the
-	-- populated fields for admin/superadmin/group
+	-- OnCheckAccess by default will rely on CAMI for access information with adminOnly/superAdminOnly being fallbacks
 	if (!data.OnCheckAccess) then
-		-- Check if the command is for basic admins only.
-		if (data.adminOnly) then
-			function data:OnCheckAccess(client)
-				return client:IsAdmin()
-			end
-		-- Or if it is only for super administrators.
-		elseif (data.superAdminOnly) then
-			function data:OnCheckAccess(client)
-				return client:IsSuperAdmin()
-			end
-		-- Or if we specify a usergroup allowed to use this.
-		elseif (data.group) then
-			-- The group property can be a table of usergroups.
-			if (type(data.group) == "table") then
-				function data:OnCheckAccess(client)
-					-- Check if the client's group is allowed.
-					for _, v in ipairs(self.group) do
-						if (client:IsUserGroup(v)) then
-							return true
-						end
-					end
+		if (data.group) then
+			ErrorNoHalt("Command '" .. data.name .. "' tried to use the deprecated field 'group'!\n")
+			return
+		end
 
-					return false
-				end
-			-- Otherwise it is most likely a string.
-			else
-				function data:OnCheckAccess(client)
-					return client:IsUserGroup(self.group)
-				end
-			end
+		local privilege = "Helix - " .. data.name
+
+		CAMI.RegisterPrivilege({
+			Name = privilege,
+			MinAccess = data.superAdminOnly and "superadmin" or (data.adminOnly and "admin" or "user"),
+			Description = data.description
+		})
+
+		function data:OnCheckAccess(client)
+			local bHasAccess, _ = CAMI.PlayerHasAccess(client, privilege, nil)
+			return bHasAccess
 		end
 	end
 

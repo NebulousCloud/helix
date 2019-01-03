@@ -72,6 +72,7 @@ function ix.chat.Register(chatType, data)
 						indicator = data.indicator,
 						bNoIndicator = data.bNoIndicator,
 						chatClass = data,
+						OnCheckAccess = function() return true end,
 						OnRun = function(self, client, message) end
 					})
 				end
@@ -83,6 +84,7 @@ function ix.chat.Register(chatType, data)
 				indicator = data.indicator,
 				bNoIndicator = data.bNoIndicator,
 				chatClass = data,
+				OnCheckAccess = function() return true end,
 				OnRun = function(self, client, message) end
 			})
 		end
