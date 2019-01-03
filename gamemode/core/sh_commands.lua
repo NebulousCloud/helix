@@ -62,6 +62,7 @@ ix.command.Add("SetVoicemail", {
 
 ix.command.Add("CharGiveFlag", {
 	description = "@cmdCharGiveFlag",
+	privilege = "Manage Character Flags",
 	superAdminOnly = true,
 	arguments = {
 		ix.type.character,
@@ -91,6 +92,7 @@ ix.command.Add("CharGiveFlag", {
 
 ix.command.Add("CharTakeFlag", {
 	description = "@cmdCharTakeFlag",
+	privilege = "Manage Character Flags",
 	superAdminOnly = true,
 	arguments = {
 		ix.type.character,
@@ -179,6 +181,7 @@ ix.command.Add("CharSetBodygroup", {
 
 ix.command.Add("CharSetAttribute", {
 	description = "@cmdCharSetAttribute",
+	privilege = "Manage Character Attributes",
 	adminOnly = true,
 	arguments = {
 		ix.type.character,
@@ -199,6 +202,7 @@ ix.command.Add("CharSetAttribute", {
 
 ix.command.Add("CharAddAttribute", {
 	description = "@cmdCharAddAttribute",
+	privilege = "Manage Character Attributes",
 	adminOnly = true,
 	arguments = {
 		ix.type.character,
@@ -288,6 +292,7 @@ ix.command.Add("CharKick", {
 
 ix.command.Add("CharBan", {
 	description = "@cmdCharBan",
+	privilege = "Ban Character",
 	arguments = ix.type.character,
 	adminOnly = true,
 	OnRun = function(self, client, target)
@@ -302,6 +307,7 @@ ix.command.Add("CharBan", {
 
 ix.command.Add("CharUnban", {
 	description = "@cmdCharUnban",
+	privilege = "Ban Character",
 	arguments = ix.type.text,
 	adminOnly = true,
 	OnRun = function(self, client, name)
@@ -437,6 +443,7 @@ end
 
 ix.command.Add("PlyWhitelist", {
 	description = "@cmdPlyWhitelist",
+	privilege = "Manage Character Whitelist",
 	superAdminOnly = true,
 	arguments = {
 		ix.type.player,
@@ -496,6 +503,7 @@ ix.command.Add("CharGetUp", {
 
 ix.command.Add("PlyUnwhitelist", {
 	description = "@cmdPlyUnwhitelist",
+	privilege = "Manage Character Whitelist",
 	superAdminOnly = true,
 	arguments = {
 		ix.type.string,

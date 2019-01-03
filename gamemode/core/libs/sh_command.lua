@@ -184,13 +184,16 @@ function ix.command.Add(command, data)
 			return
 		end
 
-		local privilege = "Helix - " .. data.name
+		local privilege = "Helix - " .. (isstring(data.privilege) and data.privilege or data.name)
 
-		CAMI.RegisterPrivilege({
-			Name = privilege,
-			MinAccess = data.superAdminOnly and "superadmin" or (data.adminOnly and "admin" or "user"),
-			Description = data.description
-		})
+		-- we could be using a previously-defined privilege
+		if (!CAMI.GetPrivilege(privilege)) then
+			CAMI.RegisterPrivilege({
+				Name = privilege,
+				MinAccess = data.superAdminOnly and "superadmin" or (data.adminOnly and "admin" or "user"),
+				Description = data.description
+			})
+		end
 
 		function data:OnCheckAccess(client)
 			local bHasAccess, _ = CAMI.PlayerHasAccess(client, privilege, nil)
