@@ -93,7 +93,7 @@ if (CLIENT) then
 
 	function PLUGIN:ShouldPopulateEntityInfo(entity)
 		if (IsValid(entity)) then
-			if (entity:IsPlayer() or IsValid(entity:GetNetVar("player")) and entity:GetMoveType() == MOVETYPE_NOCLIP) then
+			if ((entity:IsPlayer() or IsValid(entity:GetNetVar("player"))) and entity:GetMoveType() == MOVETYPE_NOCLIP) then
 				return false
 			end
 		end
