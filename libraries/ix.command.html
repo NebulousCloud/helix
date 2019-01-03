@@ -83,7 +83,7 @@
 								<h1><span class="realm shared"></span>ix.command.Add(command, data)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L153">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L154">View source &raquo;</a>
 								<p>Creates a new command.</p>
 							</header>
 
@@ -122,7 +122,7 @@
 								<h1><span class="realm shared"></span>ix.command.HasAccess(client, command)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L321">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L310">View source &raquo;</a>
 								<p>Returns true if a player is allowed to run a certain command.</p>
 							</header>
 
@@ -179,7 +179,7 @@
 								<h1><span class="realm shared"></span>ix.command.ExtractArgs(text)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L345">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L334">View source &raquo;</a>
 								<p>Returns a table of arguments from a given string.
  Words separated by spaces will be considered one argument. To have an argument containing multiple words, they must be
  contained within quotation marks.</p>
@@ -219,7 +219,7 @@
 								<h1><span class="realm shared"></span>ix.command.FindAll(identifier[, bSorted=false[, bReorganize=false[, bRemoveDupes=false]]])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L393">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L382">View source &raquo;</a>
 								<p>Returns an array of potential commands by unique id.
  When bSorted is true, the commands will be sorted by name. When bReorganize is true, it will move any exact match to the top
  of the array. When bRemoveDupes is true, it will remove any commands that have the same NAME.</p>
@@ -298,7 +298,7 @@
 								<h1><span class="realm server"></span>ix.command.FindPlayer(client, name)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L453">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L442">View source &raquo;</a>
 								<p>Attempts to find a player by an identifier.  If unsuccessful, a notice will be displayed to the specified player. The
  search criteria is derived from <a href="../libraries/ix.util.html#ix.util.FindPlayer">ix.util.FindPlayer</a>.</p>
 							</header>
@@ -365,7 +365,7 @@
 								<h1><span class="realm server"></span>ix.command.Run(client, command, arguments)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L470">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L459">View source &raquo;</a>
 								<p>Forces a player to execute a command by name.</p>
 							</header>
 
@@ -421,7 +421,7 @@
 								<h1><span class="realm server"></span>ix.command.Parse(client, text[, realCommand[, arguments]])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L545">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L534">View source &raquo;</a>
 								<p>Parses a chat string and runs the command if one is found.  Specifically, it checks for commands in a string with the
  format <code>/CommandName some arguments</code></p>
 							</header>
@@ -504,7 +504,7 @@
 								<h1><span class="realm client"></span>ix.command.Send(command, ...)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L616">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L605">View source &raquo;</a>
 								<p>Request the server to run a command.  This mimics similar functionality to the client typing <code>/CommandName</code> in the chatbox.</p>
 							</header>
 
@@ -544,7 +544,7 @@
 								<h1><span class="realm shared"></span>CommandStructure</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L41">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L42">View source &raquo;</a>
 								<p>When registering commands with <a href="../libraries/ix.command.html#ix.command.Add">ix.command.Add</a>, you'll need to pass in a valid command structure.  This is simply a table
  with various fields defined to describe the functionality of the command.</p>
 							</header>
@@ -649,14 +649,15 @@ COMMAND.argumentNames = {"target char", "cash (1-1000)"}
 									<ul>
 
 											<li>
-												<span class="tag parameter">group</span>
+												<span class="tag parameter">privilege</span>
 
-													<span class="tag"><span class="type">any</span></span>
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
-													<span class="tag default">optional</span>
+													<span class="tag default">default: nil</span>
 
-												<p> Provides an additional check to see if the user is part of the specified usergroup before running.
- This can be a string or table of strings for allowing multiple groups to use the command.</p>
+												<p> Manually specify a privilege name for this command. It will always be prefixed with
+ <code>&quot;Helix - &quot;</code>. This is used in the case that you want to group commands under the same privilege, or use a privilege that
+ you've already defined (i.e grouping <code>/CharBan</code> and <code>/CharUnban</code> into the <code>Helix - Ban Character</code> privilege).</p>
 											</li>
 									</ul>
 
@@ -670,7 +671,7 @@ COMMAND.argumentNames = {"target char", "cash (1-1000)"}
 													<span class="tag default">default: nil</span>
 
 												<p> This callback checks whether or not the player is allowed to run the command.
- This callback should <strong>NOT</strong> be used in conjunction with <code>adminOnly</code>, <code>superAdminOnly</code>, or <code>group</code>, as populating those
+ This callback should <strong>NOT</strong> be used in conjunction with <code>adminOnly</code> or <code>superAdminOnly</code>, as populating those
  fields create a custom a <code>OnCheckAccess</code> callback for you internally. This is used in cases where you want more fine-grained
  access control for your command.</p>
 
@@ -685,7 +686,7 @@ COMMAND.argumentNames = {"target char", "cash (1-1000)"}
 								<h1><span class="realm shared"></span>CommandArgumentsStructure</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L73">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L74">View source &raquo;</a>
 								<p>Rather than checking the validity for arguments in your command's <code>OnRun</code> function, you can have Helix do it for you to
  reduce the amount of boilerplate code that needs to be written.  This can be done by populating the <code>arguments</code> field.</p>
 
