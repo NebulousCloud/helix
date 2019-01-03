@@ -13,6 +13,11 @@ if (!pace) then return end
 ix.pac = ix.pac or {}
 ix.pac.list = ix.pac.list or {}
 
+CAMI.RegisterPrivilege({
+	Name = "Helix - Manage PAC",
+	MinAccess = "superadmin"
+})
+
 -- this stores pac3 part information to plugin's table'
 function ix.pac.RegisterPart(id, outfit)
 	ix.pac.list[id] = outfit
@@ -33,18 +38,16 @@ if (CLIENT) then
 		RunConsoleCommand("pac_restart")
 	end)
 
-	-- You should be admin to access PAC3 editor.
+	-- you need the proper permission to open the editor
 	function PLUGIN:PrePACEditorOpen()
-		local client = LocalPlayer()
-
-		if (!client:IsSuperAdmin()) then
+		if (!CAMI.PlayerHasAccess(LocalPlayer(), "Helix - Manage PAC", nil)) then
 			return false
 		end
 	end
 end
 
 function PLUGIN:pac_CanWearParts(client)
-	if (!client:IsSuperAdmin()) then
+	if (!CAMI.PlayerHasAccess(client, "Helix - Manage PAC", nil)) then
 		return false
 	end
 end

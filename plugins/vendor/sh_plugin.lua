@@ -415,7 +415,7 @@ else
 	net.Receive("ixVendorEditor", function()
 		local entity = net.ReadEntity()
 
-		if (!IsValid(entity) or !LocalPlayer():IsSuperAdmin()) then
+		if (!IsValid(entity) or !CAMI.PlayerHasAccess(LocalPlayer(), "Helix - Manage Vendors", nil)) then
 			return
 		end
 
@@ -637,7 +637,7 @@ properties.Add("vendor_edit", {
 		if (entity:GetClass() != "ix_vendor") then return false end
 		if (!gamemode.Call( "CanProperty", client, "vendor_edit", entity)) then return false end
 
-		return client:IsSuperAdmin()
+		return CAMI.PlayerHasAccess(client, "Helix - Manage Vendors", nil)
 	end,
 
 	Action = function(self, entity)
