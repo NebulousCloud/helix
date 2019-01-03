@@ -29,10 +29,11 @@ Commands can be ran through the chat with slash commands or they can be executed
 -- to be valid. See `CommandArgumentsStructure` for more information.
 -- @field[type=boolean,opt=false] adminOnly Provides an additional check to see if the user is an admin before running.
 -- @field[type=boolean,opt=false] superAdminOnly Provides an additional check to see if the user is a superadmin before running.
--- @field[type=any,opt] group Provides an additional check to see if the user is part of the specified usergroup before running.
--- This can be a string or table of strings for allowing multiple groups to use the command.
+-- @field[type=string,opt=nil] privilege Manually specify a privilege name for this command. It will always be prefixed with
+-- `"Helix - "`. This is used in the case that you want to group commands under the same privilege, or use a privilege that
+-- you've already defined (i.e grouping `/CharBan` and `/CharUnban` into the `Helix - Ban Character` privilege).
 -- @field[type=function,opt=nil] OnCheckAccess This callback checks whether or not the player is allowed to run the command.
--- This callback should **NOT** be used in conjunction with `adminOnly`, `superAdminOnly`, or `group`, as populating those
+-- This callback should **NOT** be used in conjunction with `adminOnly` or `superAdminOnly`, as populating those
 -- fields create a custom a `OnCheckAccess` callback for you internally. This is used in cases where you want more fine-grained
 -- access control for your command.
 --
