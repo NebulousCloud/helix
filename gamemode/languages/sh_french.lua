@@ -1,5 +1,8 @@
 
--- FRENCH TRANSLATION - http://steamcommunity.com/id/sadness81
+-- FRENCH TRANSLATION
+-- http://steamcommunity.com/id/sadness81
+-- https://steamcommunity.com/id/Azphal
+
 NAME = "Français"
 
 LANGUAGE = {
