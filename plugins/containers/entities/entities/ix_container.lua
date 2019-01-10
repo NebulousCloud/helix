@@ -6,8 +6,6 @@ ENT.Spawnable = false
 ENT.bNoPersist = true
 
 if (SERVER) then
-	ENT.money = 0
-
 	function ENT:Initialize()
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -20,6 +18,8 @@ if (SERVER) then
 			physObj:EnableMotion(true)
 			physObj:Wake()
 		end
+		
+		self.money = self.money or 0
 	end
 
 	function ENT:SetInventory(inventory)
