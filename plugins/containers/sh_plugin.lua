@@ -108,6 +108,16 @@ if (SERVER) then
 				local data2 = ix.container.stored[v[4]:lower()]
 
 				if (data2) then
+					local inventoryID = tonumber(v[3])
+
+					if (!inventoryID or inventoryID < 1) then
+						ErrorNoHalt(string.format(
+							"[Helix] Attempted to restore container inventory with invalid inventory ID '%s' (%s, %s)\n",
+							tostring(inventoryID), v[6] or "no name", v[4] or "no model"))
+
+						continue
+					end
+
 					local entity = ents.Create("ix_container")
 					entity:SetPos(v[1])
 					entity:SetAngles(v[2])
@@ -131,7 +141,7 @@ if (SERVER) then
 						entity:SetMoney(v[7])
 					end
 
-					ix.item.RestoreInv(v[3], data2.width, data2.height, function(inventory)
+					ix.item.RestoreInv(inventoryID, data2.width, data2.height, function(inventory)
 						inventory.vars.isBag = true
 						inventory.vars.isContainer = true
 
