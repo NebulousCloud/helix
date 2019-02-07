@@ -1522,9 +1522,9 @@ do
 				self:SetNoDraw(true)
 				self:SetNotSolid(true)
 
-				if (time) then
-					local uniqueID = "ixUnRagdoll"..self:SteamID()
+				local uniqueID = "ixUnRagdoll" .. self:SteamID()
 
+				if (time) then
 					timer.Create(uniqueID, 0.33, 0, function()
 						if (IsValid(entity) and IsValid(self) and self.ixRagdoll == entity) then
 							local velocity = entity:GetVelocity()
@@ -1549,6 +1549,14 @@ do
 							if (time <= 0) then
 								entity:Remove()
 							end
+						else
+							timer.Remove(uniqueID)
+						end
+					end)
+				else
+					timer.Create(uniqueID, 0.33, 0, function()
+						if (IsValid(entity) and IsValid(self) and self.ixRagdoll == entity) then
+							self:SetPos(entity:GetPos())
 						else
 							timer.Remove(uniqueID)
 						end
