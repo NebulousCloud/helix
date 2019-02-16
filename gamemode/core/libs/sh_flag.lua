@@ -6,24 +6,20 @@ function ix.flag.Add(flag, description, callback)
 	-- Add the flag to a list, storing the description and callback (if there is one).
 	ix.flag.list[flag] = {description = description, callback = callback}
 end
-
 if (SERVER) then
 	-- Called to apply flags when a player has spawned.
 	function ix.flag.OnSpawn(client)
+		-- Get the player's character.
+		local character = client:GetCharacter()
+
 		-- Check if they have a valid character.
-		if (client:GetCharacter()) then
-			-- Get all of the character's flags.
-			local flags = client:GetCharacter():GetFlags()
-
-			for i = 1, #flags do
-				-- Get each individual flag.
-				local flag = flags[i]
-				local info = ix.flag.list[flag]
-
-				-- Check if the flag has a callback.
-				if (info and info.callback) then
-					-- Run the callback, passing the player and true so they get whatever benefits.
-					info.callback(client, true)
+		if (character) then
+			-- Iterate over all registered flags.
+			for k, v in pairs(ix.flag.list) do
+				-- Check if the character has the flags and the callback is valid.
+				if (character:HasFlags(k) and (type(v.callback) == "function")) then
+					-- Call the flag's callback.
+					v.callback(client, true)
 				end
 			end
 		end
