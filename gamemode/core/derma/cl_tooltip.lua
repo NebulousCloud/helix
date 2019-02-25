@@ -74,7 +74,7 @@ end
 
 function PANEL:SetBackgroundColor(color)
 	color = table.Copy(color)
-	color.a = math.min(color.a, 100)
+	color.a = math.min(color.a or 255, 100)
 
 	self.backgroundColor = color
 end
