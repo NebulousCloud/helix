@@ -22,11 +22,11 @@ function PLUGIN:LoadData()
 
 	if (items) then
 		local idRange = {}
-		local positions = {}
+		local info = {}
 
 		for _, v in ipairs(items) do
 			idRange[#idRange + 1] = v[1]
-			positions[v[1]] = v[2]
+			info[v[1]] = {v[2], v[3], v[4]}
 		end
 
 		if (#idRange > 0) then
@@ -55,10 +55,24 @@ function PLUGIN:LoadData()
 								local itemTable = ix.item.list[uniqueID]
 
 								if (itemTable and itemID) then
-									local position = positions[itemID]
 									local item = ix.item.New(uniqueID, itemID)
 									item.data = data or {}
-									item:Spawn(position).ixItemID = itemID
+
+									local itemInfo = info[itemID]
+									local position, angles, bMovable = itemInfo[1], itemInfo[2], true
+
+									if (isbool(itemInfo[3])) then
+										bMovable = itemInfo[3]
+									end
+
+									local itemEntity = item:Spawn(position, angles)
+									itemEntity.ixItemID = itemID
+
+									local physicsObject = itemEntity:GetPhysicsObject()
+
+									if (IsValid(physicsObject)) then
+										physicsObject:EnableMotion(bMovable)
+									end
 
 									item.invID = 0
 									loadedItems[#loadedItems + 1] = item
@@ -89,8 +103,17 @@ function PLUGIN:SaveData()
 	local items = {}
 
 	for _, v in ipairs(ents.FindByClass("ix_item")) do
-		if (v.ixItemID and !v.temp) then
-			items[#items + 1] = {v.ixItemID, v:GetPos()}
+		if (v.ixItemID and !v.bTemporary) then
+			local physicsObject = v:GetPhysicsObject()
+			local bMovable = nil
+
+			if (IsValid(physicsObject)) then
+				bMovable = physicsObject:IsMoveable()
+			end
+
+			items[#items + 1] = {
+				v.ixItemID, v:GetPos(), v:GetAngles(), bMovable
+			}
 		end
 	end
 
