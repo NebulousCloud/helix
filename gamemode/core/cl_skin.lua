@@ -2,6 +2,7 @@
 local gradient = surface.GetTextureID("vgui/gradient-d")
 local gradientUp = surface.GetTextureID("vgui/gradient-u")
 local gradientLeft = surface.GetTextureID("vgui/gradient-l")
+local gradientRadial = Material("helix/gui/radial-gradient.png")
 local defaultBackgroundColor = Color(30, 30, 30, 200)
 
 local SKIN = {}
@@ -245,6 +246,12 @@ function SKIN:PaintTooltipBackground(panel, width, height)
 
 	surface.SetDrawColor(self.Colours.DarkerBackground)
 	surface.DrawRect(0, 0, width, height)
+end
+
+function SKIN:PaintTooltipMinimalBackground(panel, width, height)
+	surface.SetDrawColor(0, 0, 0, 150 * panel.fraction)
+	surface.SetMaterial(gradientRadial)
+	surface.DrawTexturedRect(0, 0, width, height)
 end
 
 function SKIN:PaintSegmentedProgressBackground(panel, width, height)

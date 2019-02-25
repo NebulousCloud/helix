@@ -53,6 +53,7 @@ local PANEL = {}
 
 AccessorFunc(PANEL, "backgroundColor", "BackgroundColor")
 AccessorFunc(PANEL, "maxWidth", "MaxWidth", FORCE_NUMBER)
+AccessorFunc(PANEL, "bNoMinimal", "MinimalHidden", FORCE_BOOL)
 
 function PANEL:Init()
 	self:SetFont("ixSmallFont")
@@ -63,6 +64,12 @@ function PANEL:Init()
 	self:Dock(TOP)
 
 	self.maxWidth = ScrW() * 0.2
+	self.bNoMinimal = false
+	self.bMinimal = false
+end
+
+function PANEL:IsMinimal()
+	return self.bMinimal
 end
 
 -- changes font and background color to reduce repetition for titles
@@ -131,6 +138,7 @@ function PANEL:Init()
 	self.arrowColor = ix.config.Get("color")
 	self.bHideArrowWhenRaised = true
 	self.bArrowFollowEntity = true
+	self.bMinimal = false
 
 	self.lastX, self.lastY = self:GetCursorPosition()
 	self.arrowX, self.arrowY = ScrW() * 0.5, ScrH() * 0.5
@@ -140,6 +148,7 @@ function PANEL:Init()
 	self:SetDrawOnTop(true)
 
 	self:CreateAnimation(animationTime, {
+		index = 1,
 		target = {fraction = 1},
 		easing = "outQuint",
 
@@ -147,6 +156,10 @@ function PANEL:Init()
 			panel:SetAlpha(panel.fraction * 255)
 		end
 	})
+end
+
+function PANEL:IsMinimal()
+	return self.bMinimal
 end
 
 -- ensure all children are painted manually
@@ -346,3 +359,157 @@ function PANEL:Remove()
 end
 
 vgui.Register("ixTooltip", PANEL, "Panel")
+
+-- legacy tooltip row
+
+PANEL = {}
+
+function PANEL:Init()
+	self.bMinimal = true
+	self.ixAlpha = 0 -- to avoid conflicts if we're animating a non-tooltip panel
+
+	self:SetExpensiveShadow(1, color_black)
+	self:SetContentAlignment(5)
+end
+
+function PANEL:SetImportant()
+	self:SetFont("ixMinimalTitleFont")
+	self:SetBackgroundColor(ix.config.Get("color"))
+end
+
+-- background color will affect text instead in minimal tooltips
+function PANEL:SetBackgroundColor(color)
+	color = table.Copy(color)
+	color.a = math.min(color.a or 255, 100)
+
+	self:SetTextColor(color)
+	self.backgroundColor = color
+end
+
+function PANEL:PaintBackground()
+end
+
+vgui.Register("ixTooltipMinimalRow", PANEL, "ixTooltipRow")
+
+-- legacy tooltip
+DEFINE_BASECLASS("ixTooltip")
+PANEL = {}
+
+function PANEL:Init()
+	self.bMinimal = true
+
+	-- we don't want to animate the alpha since children will handle their own animation, but we want to keep the fraction
+	-- for the background to animate
+	self:CreateAnimation(animationTime, {
+		index = 1,
+		target = {fraction = 1},
+		easing = "outQuint",
+	})
+
+	self:SetAlpha(255)
+end
+
+-- we don't need the children to be painted manually
+function PANEL:Add(...)
+	local panel = BaseClass.Add(self, ...)
+	panel:SetPaintedManually(false)
+
+	return panel
+end
+
+function PANEL:AddRow(id)
+	local panel = self:Add("ixTooltipMinimalRow")
+	panel.id = id
+	panel:SetZPos(#self:GetChildren() * 10)
+
+	return panel
+end
+
+function PANEL:Paint(width, height)
+	self:PaintUnder()
+
+	derma.SkinFunc("PaintTooltipMinimalBackground", self, width, height)
+end
+
+function PANEL:Think()
+end
+
+function PANEL:SizeToContents()
+	-- remove any panels that shouldn't be shown in a minimal tooltip
+	for _, v in ipairs(self:GetChildren()) do
+		if (v.bNoMinimal) then
+			v:Remove()
+		end
+	end
+
+	BaseClass.SizeToContents(self)
+	self:SetPos(ScrW() * 0.5 - self:GetWide() * 0.5, ScrH() * 0.5 + self.mousePadding)
+
+	-- we create animation here since this is the only function that usually gets called after all the rows are populated
+	local children = self:GetChildren()
+
+	-- sort by z index so we can animate them in order
+	table.sort(children, function(a, b)
+		return a:GetZPos() < b:GetZPos()
+	end)
+
+	local i = 1
+	local count = table.Count(children)
+
+	for _, v in ipairs(children) do
+		v.ixAlpha = v.ixAlpha or 0
+
+		v:CreateAnimation((animationTime / count) * i, {
+			easing = "inSine",
+			target = {ixAlpha = 255},
+			Think = function(animation, panel)
+				panel:SetAlpha(panel.ixAlpha)
+			end
+		})
+
+		i = i + 1
+	end
+end
+
+DEFINE_BASECLASS("Panel")
+function PANEL:Remove()
+	if (self.bClosing) then
+		return
+	end
+
+	self.bClosing = true
+
+	-- we create animation here since this is the only function that usually gets called after all the rows are populated
+	local children = self:GetChildren()
+
+	-- sort by z index so we can animate them in order
+	table.sort(children, function(a, b)
+		return a:GetZPos() > b:GetZPos()
+	end)
+
+	local duration = animationTime * 0.5
+	local i = 1
+	local count = table.Count(children)
+
+	for _, v in ipairs(children) do
+		v.ixAlpha = v.ixAlpha or 255
+
+		v:CreateAnimation(duration / count * i, {
+			target = {ixAlpha = 0},
+			Think = function(animation, panel)
+				panel:SetAlpha(panel.ixAlpha)
+			end
+		})
+
+		i = i + 1
+	end
+
+	self:CreateAnimation(duration, {
+		target = {fraction = 0},
+		OnComplete = function(animation, panel)
+			BaseClass.Remove(panel)
+		end
+	})
+end
+
+vgui.Register("ixTooltipMinimal", PANEL, "ixTooltip")

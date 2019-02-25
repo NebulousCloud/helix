@@ -174,6 +174,13 @@ function GM:LoadFonts(font, genericFont)
 		weight = 100
 	})
 
+	surface.CreateFont("ixMinimalTitleFont", {
+		font = "Roboto",
+		size = math.max(ScreenScale(8), 22),
+		extended = true,
+		weight = 800
+	})
+
 	surface.CreateFont("ixSmallFont", {
 		font = font,
 		size = math.max(ScreenScale(6), 17),
@@ -517,7 +524,7 @@ do
 					ix.gui.entityInfo:Remove()
 				end
 
-				local infoPanel = vgui.Create("ixTooltip")
+				local infoPanel = vgui.Create(ix.option.Get("minimalTooltips", false) and "ixTooltipMinimal" or "ixTooltip")
 				infoPanel:SetEntity(lastEntity)
 				infoPanel:SetDrawArrow(true)
 				ix.gui.entityInfo = infoPanel
