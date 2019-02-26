@@ -48,6 +48,7 @@ function ix.plugin.Load(uniqueID, path, isSingleFile, variable)
 		ix.plugin.LoadFromDir(path.."/plugins")
 		ix.util.IncludeDir(path.."/derma", true)
 		ix.plugin.LoadEntities(path.."/entities")
+		ix.util.IncludeDir(path.."/commands", true)
 
 		hook.Run("DoPluginIncludes", path, PLUGIN)
 	end
