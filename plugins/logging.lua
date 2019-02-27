@@ -59,6 +59,11 @@ if (SERVER) then
 		return L("%s ran '%s' on item '%s' (#%s)", client:Name(), arg[1], item:GetName(), item:GetID())
 	end, FLAG_NORMAL)
 
+	ix.log.AddType("itemDestroy", function(client, itemName, itemID)
+		local name = client:GetName() ~= "" and client:GetName() or client:GetClass()
+		return L("%s destroyed a '%s' #%d.", name, itemName, itemID)
+	end, FLAG_WARNING)
+
 	ix.log.AddType("shipmentTake", function(client, ...)
 		local arg = {...}
 		return L("%s took '%s' from the shipment", client:Name(), arg[1])

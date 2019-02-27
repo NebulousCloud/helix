@@ -50,12 +50,13 @@ if (SERVER) then
 		end
 	end
 
-	function ENT:OnTakeDamage(dmginfo)
-		local damage = dmginfo:GetDamage()
+	function ENT:OnTakeDamage(damageInfo)
+		local damage = damageInfo:GetDamage()
 		self:SetHealth(self:Health() - damage)
 
 		if (self:Health() <= 0 and !self.ixIsDestroying) then
 			self.ixIsDestroying = true
+			self.ixDamageInfo = {damageInfo:GetAttacker(), damage, damageInfo:GetInflictor()}
 			self:Remove()
 		end
 	end
@@ -129,6 +130,8 @@ if (SERVER) then
 					if (itemTable.OnDestroyed) then
 						itemTable:OnDestroyed(self)
 					end
+
+					ix.log.Add(self.ixDamageInfo[1], "itemDestroy", itemTable:GetName(), itemTable:GetID())
 				end
 
 				if (itemTable.OnRemoved) then
