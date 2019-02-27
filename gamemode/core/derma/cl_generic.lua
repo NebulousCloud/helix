@@ -630,3 +630,43 @@ function PANEL:SizeToContents()
 end
 
 vgui.Register("ixKLabel", PANEL, "Panel")
+
+-- text entry with icon
+DEFINE_BASECLASS("ixTextEntry")
+PANEL = {}
+
+AccessorFunc(PANEL, "icon", "Icon", FORCE_STRING)
+AccessorFunc(PANEL, "iconColor", "IconColor")
+
+function PANEL:Init()
+	self:SetIcon("V")
+	self:SetFont("ixSmallTitleFont")
+
+	self.iconColor = Color(200, 200, 200, 160)
+end
+
+function PANEL:SetIcon(newIcon)
+	surface.SetFont("ixSmallTitleIcons")
+
+	self.iconWidth, self.iconHeight = surface.GetTextSize(newIcon)
+	self.icon = newIcon
+
+	self:DockMargin(self.iconWidth + 2, 0, 0, 8)
+end
+
+function PANEL:Paint(width, height)
+	BaseClass.Paint(self, width, height)
+
+	-- there's no inset for text entries so we'll have to get creative
+	DisableClipping(true)
+		surface.SetDrawColor(self:GetBackgroundColor())
+		surface.DrawRect(-self.iconWidth - 2, 0, self.iconWidth + 2, height)
+
+		surface.SetFont("ixSmallTitleIcons")
+		surface.SetTextColor(self.iconColor)
+		surface.SetTextPos(-self.iconWidth, 0)
+		surface.DrawText("V")
+	DisableClipping(false)
+end
+
+vgui.Register("ixIconTextEntry", PANEL, "ixTextEntry")
