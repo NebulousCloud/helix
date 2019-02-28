@@ -105,9 +105,17 @@ function PANEL:AddCategory(name)
 	panel:Dock(FILL)
 	panel:DockMargin(8, 0, 0, 0)
 	panel:GetCanvas():DockPadding(8, 8, 8, 8)
+
 	panel.Paint = function(_, width, height)
 		surface.SetDrawColor(backgroundColor)
 		surface.DrawRect(0, 0, width, height)
+	end
+
+	-- reverts functionality back to a standard panel in the case that a category will manage its own scrolling
+	panel.DisableScrolling = function()
+		panel:GetCanvas():SetVisible(false)
+		panel:GetVBar():SetVisible(false)
+		panel.OnChildAdded = function() end
 	end
 
 	self.categorySubpanels[name] = panel
