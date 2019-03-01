@@ -59,6 +59,23 @@ if (SERVER) then
 		return false
 	end
 
+	--- Returns whether or not an inventory is in use by a specific player.
+	-- @realm server
+	-- @inventory inventory Inventory to check
+	-- @player client Player to check
+	-- @treturn bool Whether or not the player is using the given `inventory`
+	function ix.storage.InUseBy(inventory, client)
+		if (inventory.storageInfo) then
+			for _, v in pairs(inventory:GetReceivers()) do
+				if (IsValid(v) and v:IsPlayer() and v == client) then
+					return true
+				end
+			end
+		end
+
+		return false
+	end
+
 	--- Creates a storage context on the given inventory.
 	-- @realm server
 	-- @internal
