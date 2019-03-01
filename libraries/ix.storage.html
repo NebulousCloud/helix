@@ -56,6 +56,7 @@
 							<h2>Functions</h2>
 							<ul>
 									<li><span class="realm server"></span><a href="#ix.storage.InUse">ix.storage.InUse(inventory)</a></li>
+									<li><span class="realm server"></span><a href="#ix.storage.InUseBy">ix.storage.InUseBy(inventory, client)</a></li>
 									<li><span class="realm server"></span><a href="#ix.storage.CreateContext">ix.storage.CreateContext(inventory, info)</a></li>
 									<li><span class="realm server"></span><a href="#ix.storage.RemoveContext">ix.storage.RemoveContext(inventory)</a></li>
 									<li><span class="realm server"></span><a href="#ix.storage.Sync">ix.storage.Sync(client, inventory)</a></li>
@@ -132,12 +133,62 @@ and the player's inventory in the player's UI, which allows them to drag items t
 
 						</section>
 						<section class="method">
+							<header><a name="ix.storage.InUseBy"></a>
+								<h1><span class="realm server"></span>ix.storage.InUseBy(inventory, client)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L67">View source &raquo;</a>
+								<p>Returns whether or not an inventory is in use by a specific player.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">inventory</span>
+
+													<span class="tag"><span class="type">inventory</span></span>
+
+
+												<p> Inventory to check</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><span class="type">player</span></span>
+
+
+												<p> Player to check</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not the player is using the given <code>inventory</code></p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
 							<header><a name="ix.storage.CreateContext"></a>
 								<h1><span class="realm server"></span>ix.storage.CreateContext(inventory, info)</h1>
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L67">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L84">View source &raquo;</a>
 								<p>Creates a storage context on the given inventory.</p>
 							</header>
 
@@ -177,7 +228,7 @@ and the player's inventory in the player's UI, which allows them to drag items t
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L92">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L109">View source &raquo;</a>
 								<p>Removes a storage context from an inventory if it exists.</p>
 							</header>
 
@@ -205,7 +256,7 @@ and the player's inventory in the player's UI, which allows them to drag items t
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L108">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L125">View source &raquo;</a>
 								<p>Synchronizes an inventory with a storage context to the given client.</p>
 							</header>
 
@@ -245,7 +296,7 @@ and the player's inventory in the player's UI, which allows them to drag items t
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L137">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L154">View source &raquo;</a>
 								<p>Adds a receiver to a given inventory with a storage context.</p>
 							</header>
 
@@ -298,7 +349,7 @@ and the player's inventory in the player's UI, which allows them to drag items t
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L167">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L184">View source &raquo;</a>
 								<p>Removes a storage receiver and removes the context if there are no more receivers.</p>
 							</header>
 
@@ -349,7 +400,7 @@ and the player's inventory in the player's UI, which allows them to drag items t
 								<h1><span class="realm server"></span>ix.storage.Open(client, inventory, info)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L199">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L216">View source &raquo;</a>
 								<p>Makes a player open an inventory that they can interact with.  This can be called multiple times on the same inventory,
  if the info passed allows for multiple users.</p>
 							</header>
@@ -401,7 +452,7 @@ and the player's inventory in the player's UI, which allows them to drag items t
 								<h1><span class="realm server"></span>ix.storage.Close(inventory)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L240">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L257">View source &raquo;</a>
 								<p>Forcefully makes clients close this inventory if they have it open.</p>
 							</header>
 
