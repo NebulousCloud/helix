@@ -29,7 +29,7 @@ function ix.config.Add(key, value, description, callback, data, bNoNetworking, s
 		type = type,
 		data = data,
 		value = oldConfig and oldConfig.value or value,
-		default = value,
+		default = oldConfig and oldConfig.default or value,
 		description = description,
 		bNoNetworking = bNoNetworking,
 		global = !schemaOnly,
@@ -43,6 +43,12 @@ function ix.config.SetDefault(key, value)
 
 	if (config) then
 		config.default = value
+	else
+		-- set up dummy config if we're setting default of config that doesn't exist yet (i.e schema setting framework default)
+		ix.config.stored[key] = {
+			value = value,
+			default = value
+		}
 	end
 end
 
@@ -85,7 +91,8 @@ end
 function ix.config.Get(key, default)
 	local config = ix.config.stored[key]
 
-	if (config) then
+	-- ensure we aren't accessing a dummy value
+	if (config and config.type) then
 		if (config.value != nil) then
 			return config.value
 		elseif (config.default != nil) then
