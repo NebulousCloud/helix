@@ -88,6 +88,9 @@ if (SERVER) then
 			entity:Spawn()
 			entity:SetModel(v.model)
 			entity:SetSkin(v.skin or 0)
+			entity:SetSolid(SOLID_BBOX)
+			entity:PhysicsInit(SOLID_BBOX)
+
 			entity:SetNetVar("noBubble", v.bubble)
 			entity:SetNetVar("name", v.name)
 			entity:SetNetVar("description", v.description)
@@ -261,6 +264,8 @@ if (SERVER) then
 			data = {uniqueID, entity.classes[uniqueID]}
 		elseif (key == "model") then
 			entity:SetModel(data)
+			entity:SetSolid(SOLID_BBOX)
+			entity:PhysicsInit(SOLID_BBOX)
 			entity:SetAnim()
 		elseif (key == "useMoney") then
 			if (entity.money) then
