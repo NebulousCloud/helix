@@ -86,10 +86,18 @@ if (SERVER) then
 			entity:SetPos(v.pos)
 			entity:SetAngles(v.angles)
 			entity:Spawn()
+
 			entity:SetModel(v.model)
 			entity:SetSkin(v.skin or 0)
 			entity:SetSolid(SOLID_BBOX)
 			entity:PhysicsInit(SOLID_BBOX)
+
+			local physObj = entity:GetPhysicsObject()
+
+			if (IsValid(physObj)) then
+				physObj:EnableMotion(false)
+				physObj:Sleep()
+			end
 
 			entity:SetNetVar("noBubble", v.bubble)
 			entity:SetNetVar("name", v.name)
