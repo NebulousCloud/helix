@@ -52,6 +52,7 @@ end
 
 ix.command.Add("SpawnAdd", {
 	description = "@cmdSpawnAdd",
+	privilege = "Manage Spawn Points",
 	adminOnly = true,
 	arguments = {
 		ix.type.string,
@@ -117,6 +118,7 @@ ix.command.Add("SpawnAdd", {
 
 ix.command.Add("SpawnRemove", {
 	description = "@cmdSpawnRemove",
+	privilege = "Manage Spawn Points",
 	adminOnly = true,
 	arguments = bit.bor(ix.type.number, ix.type.optional),
 	OnRun = function(self, client, radius)

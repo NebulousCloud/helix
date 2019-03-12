@@ -29,10 +29,11 @@ Commands can be ran through the chat with slash commands or they can be executed
 -- to be valid. See `CommandArgumentsStructure` for more information.
 -- @field[type=boolean,opt=false] adminOnly Provides an additional check to see if the user is an admin before running.
 -- @field[type=boolean,opt=false] superAdminOnly Provides an additional check to see if the user is a superadmin before running.
--- @field[type=any,opt] group Provides an additional check to see if the user is part of the specified usergroup before running.
--- This can be a string or table of strings for allowing multiple groups to use the command.
+-- @field[type=string,opt=nil] privilege Manually specify a privilege name for this command. It will always be prefixed with
+-- `"Helix - "`. This is used in the case that you want to group commands under the same privilege, or use a privilege that
+-- you've already defined (i.e grouping `/CharBan` and `/CharUnban` into the `Helix - Ban Character` privilege).
 -- @field[type=function,opt=nil] OnCheckAccess This callback checks whether or not the player is allowed to run the command.
--- This callback should **NOT** be used in conjunction with `adminOnly`, `superAdminOnly`, or `group`, as populating those
+-- This callback should **NOT** be used in conjunction with `adminOnly` or `superAdminOnly`, as populating those
 -- fields create a custom a `OnCheckAccess` callback for you internally. This is used in cases where you want more fine-grained
 -- access control for your command.
 --
@@ -177,39 +178,27 @@ function ix.command.Add(command, data)
 		end
 	end
 
-	-- if no access checking is specified, we'll generate one based on the
-	-- populated fields for admin/superadmin/group
+	-- OnCheckAccess by default will rely on CAMI for access information with adminOnly/superAdminOnly being fallbacks
 	if (!data.OnCheckAccess) then
-		-- Check if the command is for basic admins only.
-		if (data.adminOnly) then
-			function data:OnCheckAccess(client)
-				return client:IsAdmin()
-			end
-		-- Or if it is only for super administrators.
-		elseif (data.superAdminOnly) then
-			function data:OnCheckAccess(client)
-				return client:IsSuperAdmin()
-			end
-		-- Or if we specify a usergroup allowed to use this.
-		elseif (data.group) then
-			-- The group property can be a table of usergroups.
-			if (type(data.group) == "table") then
-				function data:OnCheckAccess(client)
-					-- Check if the client's group is allowed.
-					for _, v in ipairs(self.group) do
-						if (client:IsUserGroup(v)) then
-							return true
-						end
-					end
+		if (data.group) then
+			ErrorNoHalt("Command '" .. data.name .. "' tried to use the deprecated field 'group'!\n")
+			return
+		end
 
-					return false
-				end
-			-- Otherwise it is most likely a string.
-			else
-				function data:OnCheckAccess(client)
-					return client:IsUserGroup(self.group)
-				end
-			end
+		local privilege = "Helix - " .. (isstring(data.privilege) and data.privilege or data.name)
+
+		-- we could be using a previously-defined privilege
+		if (!CAMI.GetPrivilege(privilege)) then
+			CAMI.RegisterPrivilege({
+				Name = privilege,
+				MinAccess = data.superAdminOnly and "superadmin" or (data.adminOnly and "admin" or "user"),
+				Description = data.description
+			})
+		end
+
+		function data:OnCheckAccess(client)
+			local bHasAccess, _ = CAMI.PlayerHasAccess(client, privilege, nil)
+			return bHasAccess
 		end
 	end
 

@@ -651,7 +651,8 @@ do
 		fieldType = ix.type.number,
 		bNoDisplay = true,
 		bNoNetworking = true,
-		bNotModifiable = true -- this is updated manually through sql for now
+		bNotModifiable = true,
+		bSaveLoadInitialOnly = true
 	})
 
 	ix.char.RegisterVar("schema", {

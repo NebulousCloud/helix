@@ -42,18 +42,13 @@ function ix.util.InstallAnimationMethods(meta)
 	end
 
 	function meta:IsPlayingTweenAnimation(index)
-		local bResult = false
-
-		for i = 1, #self.tweenAnimations do
-			local animation = self.tweenAnimations[i]
-
-			if (animation.bShouldPlay and (index == nil or index == i)) then
-				bResult = true
-				break
+		for k, v in pairs(self.tweenAnimations or {}) do
+			if (v.bShouldPlay and index == k) then
+				return true
 			end
 		end
 
-		return bResult
+		return false
 	end
 
 	function meta:StopAnimations(bRemove)

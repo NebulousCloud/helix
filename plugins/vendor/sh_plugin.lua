@@ -11,6 +11,11 @@ PLUGIN.name = "Vendors"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds NPC vendors that can sell things."
 
+CAMI.RegisterPrivilege({
+	Name = "Helix - Manage Vendors",
+	MinAccess = "admin"
+})
+
 VENDOR_BUY = 1
 VENDOR_SELL = 2
 VENDOR_BOTH = 3
@@ -81,8 +86,19 @@ if (SERVER) then
 			entity:SetPos(v.pos)
 			entity:SetAngles(v.angles)
 			entity:Spawn()
+
 			entity:SetModel(v.model)
 			entity:SetSkin(v.skin or 0)
+			entity:SetSolid(SOLID_BBOX)
+			entity:PhysicsInit(SOLID_BBOX)
+
+			local physObj = entity:GetPhysicsObject()
+
+			if (IsValid(physObj)) then
+				physObj:EnableMotion(false)
+				physObj:Sleep()
+			end
+
 			entity:SetNetVar("noBubble", v.bubble)
 			entity:SetNetVar("name", v.name)
 			entity:SetNetVar("description", v.description)
@@ -143,7 +159,7 @@ if (SERVER) then
 	end
 
 	net.Receive("ixVendorEdit", function(length, client)
-		if (!client:IsAdmin()) then
+		if (!CAMI.PlayerHasAccess(client, "Helix - Manage Vendors", nil)) then
 			return
 		end
 
@@ -256,6 +272,8 @@ if (SERVER) then
 			data = {uniqueID, entity.classes[uniqueID]}
 		elseif (key == "model") then
 			entity:SetModel(data)
+			entity:SetSolid(SOLID_BBOX)
+			entity:PhysicsInit(SOLID_BBOX)
 			entity:SetAnim()
 		elseif (key == "useMoney") then
 			if (entity.money) then
@@ -282,7 +300,7 @@ if (SERVER) then
 			local receivers = {}
 
 			for _, v in ipairs(entity.receivers) do
-				if (v:IsAdmin()) then
+				if (CAMI.PlayerHasAccess(v, "Helix - Manage Vendors", nil)) then
 					receivers[#receivers + 1] = v
 				end
 			end
@@ -410,7 +428,7 @@ else
 	net.Receive("ixVendorEditor", function()
 		local entity = net.ReadEntity()
 
-		if (!IsValid(entity) or !LocalPlayer():IsSuperAdmin()) then
+		if (!IsValid(entity) or !CAMI.PlayerHasAccess(LocalPlayer(), "Helix - Manage Vendors", nil)) then
 			return
 		end
 
@@ -632,7 +650,7 @@ properties.Add("vendor_edit", {
 		if (entity:GetClass() != "ix_vendor") then return false end
 		if (!gamemode.Call( "CanProperty", client, "vendor_edit", entity)) then return false end
 
-		return client:IsSuperAdmin()
+		return CAMI.PlayerHasAccess(client, "Helix - Manage Vendors", nil)
 	end,
 
 	Action = function(self, entity)

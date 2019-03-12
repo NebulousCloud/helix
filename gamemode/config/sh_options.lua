@@ -16,6 +16,10 @@ if (CLIENT) then
 		category = "appearance"
 	})
 
+	ix.option.Add("minimalTooltips", ix.type.bool, false, {
+		category = "appearance"
+	})
+
 	ix.option.Add("noticeDuration", ix.type.number, 8, {
 		category = "appearance", min = 0.1, max = 20, decimals = 1
 	})

@@ -35,11 +35,11 @@ function ix.bar.Add(getValue, color, priority, identifier)
 	local info = ix.bar.list[priority]
 
 	ix.bar.list[priority] = {
-		getValue = getValue,
+		GetValue = getValue,
 		color = color or info.color or Color(math.random(150, 255), math.random(150, 255), math.random(150, 255)),
 		priority = priority,
 		lifeTime = 0,
-		identifier = identifier
+		identifier = identifier,
 	}
 
 	return priority
@@ -149,7 +149,7 @@ function ix.bar.DrawAll()
 		local bar = ix.bar.list[i]
 
 		if (bar) then
-			local realValue, barText = bar.getValue()
+			local realValue, barText = bar.GetValue()
 
 			if (realValue == false) then
 				continue

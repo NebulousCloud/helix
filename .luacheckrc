@@ -31,6 +31,7 @@ stds.helix.read_globals = {
 	"HOOKS_CACHE",
 	"BAR_HEIGHT",
 	"ACCESS_LABELS",
+	"CAMI",
 
 	"netstream",
 	"mysql",

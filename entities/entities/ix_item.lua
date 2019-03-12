@@ -50,12 +50,13 @@ if (SERVER) then
 		end
 	end
 
-	function ENT:OnTakeDamage(dmginfo)
-		local damage = dmginfo:GetDamage()
+	function ENT:OnTakeDamage(damageInfo)
+		local damage = damageInfo:GetDamage()
 		self:SetHealth(self:Health() - damage)
 
 		if (self:Health() <= 0 and !self.ixIsDestroying) then
 			self.ixIsDestroying = true
+			self.ixDamageInfo = {damageInfo:GetAttacker(), damage, damageInfo:GetInflictor()}
 			self:Remove()
 		end
 	end
@@ -129,6 +130,8 @@ if (SERVER) then
 					if (itemTable.OnDestroyed) then
 						itemTable:OnDestroyed(self)
 					end
+
+					ix.log.Add(self.ixDamageInfo[1], "itemDestroy", itemTable:GetName(), itemTable:GetID())
 				end
 
 				if (itemTable.OnRemoved) then
@@ -166,7 +169,7 @@ else
 	local blockSize = 4
 	local blockSpacing = 2
 
-	function ENT:OnPopulateEntityInfo(container)
+	function ENT:OnPopulateEntityInfo(tooltip)
 		local item = self:GetItemTable()
 
 		if (!item) then
@@ -178,23 +181,35 @@ else
 		item.data = self:GetNetVar("data", {})
 		item.entity = self
 
-		ix.hud.PopulateItemTooltip(container, item)
+		ix.hud.PopulateItemTooltip(tooltip, item)
 
-		local name = container:GetRow("name")
+		local name = tooltip:GetRow("name")
 		local color = name and name:GetBackgroundColor() or ix.config.Get("color")
 
 		-- set the arrow to be the same colour as the title/name row
-		container:SetArrowColor(color)
+		tooltip:SetArrowColor(color)
 
 		if ((item.width > 1 or item.height > 1) and
 			hook.Run("ShouldDrawItemSize", item) != false) then
 
-			local size = container:Add("Panel")
-			size:Dock(BOTTOM)
+			local sizeHeight = item.height * blockSize + item.height * blockSpacing
+			local size = tooltip:Add("Panel")
+			size:SetWide(tooltip:GetWide())
+
+			if (tooltip:IsMinimal()) then
+				size:SetTall(sizeHeight)
+				size:Dock(TOP)
+				size:SetZPos(-999)
+			else
+				size:SetTall(sizeHeight + 8)
+				size:Dock(BOTTOM)
+			end
 
 			size.Paint = function(sizePanel, width, height)
-				surface.SetDrawColor(ColorAlpha(shadeColor, 60))
-				surface.DrawRect(0, 0, width, height)
+				if (!tooltip:IsMinimal()) then
+					surface.SetDrawColor(ColorAlpha(shadeColor, 60))
+					surface.DrawRect(0, 0, width, height)
+				end
 
 				local x, y = width * 0.5 - 1, height * 0.5 - 1
 				local itemWidth = item.width - 1
@@ -217,9 +232,7 @@ else
 				end
 			end
 
-			container:SizeToContents()
-			size:SetWide(container:GetWide())
-			size:SetTall(item.height * blockSize + item.height * blockSpacing + 8)
+			tooltip:SizeToContents()
 		end
 
 		item.entity = nil

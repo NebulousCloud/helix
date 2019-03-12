@@ -619,34 +619,12 @@ function PANEL:SetSearchEnabled(bValue)
 	end
 
 	-- search entry
-	DEFINE_BASECLASS("ixTextEntry")
-
-	surface.SetFont("ixSmallTitleIcons")
-	local iconWidth, _ = surface.GetTextSize("V")
-
-	self.searchEntry = self:Add("ixTextEntry")
+	self.searchEntry = self:Add("ixIconTextEntry")
 	self.searchEntry:Dock(TOP)
-	self.searchEntry:SetFont("ixSmallTitleFont")
 	self.searchEntry:SetEnterAllowed(false)
-	self.searchEntry:DockMargin(iconWidth + 2, 0, 0, 8)
 
 	self.searchEntry.OnChange = function(entry)
 		self:FilterRows(entry:GetValue())
-	end
-
-	self.searchEntry.Paint = function(panel, width, height)
-		BaseClass.Paint(panel, width, height)
-
-		-- there's no inset for text entries so we'll have to get creative
-		DisableClipping(true)
-			surface.SetDrawColor(self.searchEntry:GetBackgroundColor())
-			surface.DrawRect(-iconWidth - 2, 0, iconWidth + 2, height)
-
-			surface.SetFont("ixSmallTitleIcons")
-			surface.SetTextColor(Color(200, 200, 200, 160))
-			surface.SetTextPos(-iconWidth, 0)
-			surface.DrawText("V")
-		DisableClipping(false)
 	end
 end
 

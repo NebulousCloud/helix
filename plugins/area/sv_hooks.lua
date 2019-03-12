@@ -79,7 +79,7 @@ function PLUGIN:OnPlayerAreaChanged(client, oldID, newID)
 end
 
 net.Receive("ixAreaAdd", function(length, client)
-	if (!client:Alive() or !client:IsAdmin()) then
+	if (!client:Alive() or !CAMI.PlayerHasAccess(client, "Helix - AreaEdit", nil)) then
 		return
 	end
 
@@ -111,7 +111,7 @@ net.Receive("ixAreaAdd", function(length, client)
 end)
 
 net.Receive("ixAreaRemove", function(length, client)
-	if (!client:Alive() or !client:IsAdmin()) then
+	if (!client:Alive() or !CAMI.PlayerHasAccess(client, "Helix - AreaEdit", nil)) then
 		return
 	end
 

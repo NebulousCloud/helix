@@ -110,10 +110,10 @@ if (SERVER) then
 else
 	ENT.PopulateEntityInfo = true
 
-	local COLOR_LOCKED = Color(242, 38, 19, 255)
-	local COLOR_UNLOCKED = Color(135, 211, 124, 255)
+	local COLOR_LOCKED = Color(200, 38, 19, 200)
+	local COLOR_UNLOCKED = Color(135, 211, 124, 200)
 
-	function ENT:OnPopulateEntityInfo(container)
+	function ENT:OnPopulateEntityInfo(tooltip)
 		local definition = ix.container.stored[self:GetModel():lower()]
 		local bLocked = self:GetNetVar("locked", false)
 
@@ -122,23 +122,34 @@ else
 		local iconText = bLocked and "P" or "Q"
 		local iconWidth, iconHeight = surface.GetTextSize(iconText)
 
-		local title = container:AddRow("name")
-		title:SetFont("ixSmallTitleFont")
+		-- minimal tooltips have centered text so we'll draw the icon above the name instead
+		if (tooltip:IsMinimal()) then
+			local icon = tooltip:AddRow("icon")
+			icon:SetFont("ixIconsSmall")
+			icon:SetTextColor(bLocked and COLOR_LOCKED or COLOR_UNLOCKED)
+			icon:SetText(iconText)
+			icon:SizeToContents()
+		end
+
+		local title = tooltip:AddRow("name")
+		title:SetImportant()
 		title:SetText(self:GetDisplayName())
 		title:SetBackgroundColor(ix.config.Get("color"))
 		title:SetTextInset(iconWidth + 8, 0)
 		title:SizeToContents()
 
-		title.Paint = function(panel, width, height)
-			panel:PaintBackground(width, height)
+		if (!tooltip:IsMinimal()) then
+			title.Paint = function(panel, width, height)
+				panel:PaintBackground(width, height)
 
-			surface.SetFont("ixIconsSmall")
-			surface.SetTextColor(bLocked and COLOR_LOCKED or COLOR_UNLOCKED)
-			surface.SetTextPos(4, height * 0.5 - iconHeight * 0.5)
-			surface.DrawText(iconText)
+				surface.SetFont("ixIconsSmall")
+				surface.SetTextColor(bLocked and COLOR_LOCKED or COLOR_UNLOCKED)
+				surface.SetTextPos(4, height * 0.5 - iconHeight * 0.5)
+				surface.DrawText(iconText)
+			end
 		end
 
-		local description = container:AddRow("description")
+		local description = tooltip:AddRow("description")
 		description:SetText(definition.description)
 		description:SizeToContents()
 	end

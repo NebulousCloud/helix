@@ -212,25 +212,6 @@ function ix.util.GetAddress()
 	return table.concat(ip, ".")..":"..GetConVarString("hostport")
 end
 
--- Returns a table of admin players
-function ix.util.GetAdmins(isSuper)
-	local admins = {}
-
-	for _, v in ipairs(player.GetAll()) do
-		if (isSuper) then
-			if (v:IsSuperAdmin()) then
-				table.insert(admins, v)
-			end
-		else
-			if (v:IsAdmin()) then
-				table.insert(admins, v)
-			end
-		end
-	end
-
-	return admins
-end
-
 -- Returns a single cached copy of a material or creates it if it doesn't exist.
 function ix.util.GetMaterial(materialPath)
 	-- Cache the material.
@@ -1541,9 +1522,9 @@ do
 				self:SetNoDraw(true)
 				self:SetNotSolid(true)
 
-				if (time) then
-					local uniqueID = "ixUnRagdoll"..self:SteamID()
+				local uniqueID = "ixUnRagdoll" .. self:SteamID()
 
+				if (time) then
 					timer.Create(uniqueID, 0.33, 0, function()
 						if (IsValid(entity) and IsValid(self) and self.ixRagdoll == entity) then
 							local velocity = entity:GetVelocity()
@@ -1568,6 +1549,14 @@ do
 							if (time <= 0) then
 								entity:Remove()
 							end
+						else
+							timer.Remove(uniqueID)
+						end
+					end)
+				else
+					timer.Create(uniqueID, 0.33, 0, function()
+						if (IsValid(entity) and IsValid(self) and self.ixRagdoll == entity) then
+							self:SetPos(entity:GetPos())
 						else
 							timer.Remove(uniqueID)
 						end

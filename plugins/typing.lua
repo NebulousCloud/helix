@@ -24,6 +24,10 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:ChatTextChanged(text)
+		if (!IsValid(LocalPlayer())) then
+			return
+		end
+
 		local character = LocalPlayer():GetCharacter()
 
 		if (!character) then

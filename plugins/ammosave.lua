@@ -1,4 +1,6 @@
 
+local PLUGIN = PLUGIN
+
 PLUGIN.name = "Ammo Saver"
 PLUGIN.author = "Black Tea"
 PLUGIN.description = "Saves the ammo of a character."
@@ -6,35 +8,35 @@ PLUGIN.ammoList = {}
 
 ix.ammo = ix.ammo or {}
 
-function ix.ammo.register(name)
+function ix.ammo.Register(name)
 	table.insert(PLUGIN.ammoList, name)
 end
 
 -- Register Default HL2 Ammunition.
-ix.ammo.register("ar2")
-ix.ammo.register("pistol")
-ix.ammo.register("357")
-ix.ammo.register("smg1")
-ix.ammo.register("xbowbolt")
-ix.ammo.register("buckshot")
-ix.ammo.register("rpg_round")
-ix.ammo.register("smg1_grenade")
-ix.ammo.register("grenade")
-ix.ammo.register("ar2altfire")
-ix.ammo.register("slam")
+ix.ammo.Register("ar2")
+ix.ammo.Register("pistol")
+ix.ammo.Register("357")
+ix.ammo.Register("smg1")
+ix.ammo.Register("xbowbolt")
+ix.ammo.Register("buckshot")
+ix.ammo.Register("rpg_round")
+ix.ammo.Register("smg1_grenade")
+ix.ammo.Register("grenade")
+ix.ammo.Register("ar2altfire")
+ix.ammo.Register("slam")
 
 -- Register Cut HL2 Ammunition.
-ix.ammo.register("alyxgun")
-ix.ammo.register("sniperround")
-ix.ammo.register("sniperpenetratedround")
-ix.ammo.register("thumper")
-ix.ammo.register("gravity")
-ix.ammo.register("battery")
-ix.ammo.register("gaussenergy")
-ix.ammo.register("combinecannon")
-ix.ammo.register("airboatgun")
-ix.ammo.register("striderminigun")
-ix.ammo.register("helicoptergun")
+ix.ammo.Register("alyxgun")
+ix.ammo.Register("sniperround")
+ix.ammo.Register("sniperpenetratedround")
+ix.ammo.Register("thumper")
+ix.ammo.Register("gravity")
+ix.ammo.Register("battery")
+ix.ammo.Register("gaussenergy")
+ix.ammo.Register("combinecannon")
+ix.ammo.Register("airboatgun")
+ix.ammo.Register("striderminigun")
+ix.ammo.Register("helicoptergun")
 
 -- Called right before the character has its information save.
 function PLUGIN:CharacterPreSave(character)

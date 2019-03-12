@@ -3,11 +3,16 @@ PLUGIN.name = "Observer"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds on to the no-clip mode to prevent instrusion."
 
+CAMI.RegisterPrivilege({
+	Name = "Helix - Observer",
+	MinAccess = "admin"
+})
+
 ix.option.Add("observerTeleportBack", ix.type.bool, true, {
 	bNetworked = true,
 	category = "observer",
 	hidden = function()
-		return !LocalPlayer():IsAdmin() and !LocalPlayer():IsUserGroup("operator")
+		return !CAMI.PlayerHasAccess(LocalPlayer(), "Helix - Observer", nil)
 	end
 })
 
@@ -15,7 +20,7 @@ if (CLIENT) then
 	ix.option.Add("observerESP", ix.type.bool, true, {
 		category = "observer",
 		hidden = function()
-			return !LocalPlayer():IsAdmin() and !LocalPlayer():IsUserGroup("operator")
+			return !CAMI.PlayerHasAccess(LocalPlayer(), "Helix - Observer", nil)
 		end
 	})
 
@@ -27,7 +32,7 @@ if (CLIENT) then
 		local client = LocalPlayer()
 
 		if (ix.option.Get("observerESP", true) and client:GetMoveType() == MOVETYPE_NOCLIP and
-			!client:InVehicle() and (client:IsAdmin() or client:IsUserGroup("operator"))) then
+			!client:InVehicle() and CAMI.PlayerHasAccess(client, "Helix - Observer", nil)) then
 			local scrW, scrH = ScrW(), ScrH()
 
 			for _, v in ipairs(player.GetAll()) do
@@ -88,10 +93,8 @@ if (CLIENT) then
 
 	function PLUGIN:ShouldPopulateEntityInfo(entity)
 		if (IsValid(entity)) then
-			if (entity:IsPlayer() or IsValid(entity:GetNetVar("player"))) then
-				if (entity.IsAdmin and entity:IsAdmin() and entity:GetMoveType() == MOVETYPE_NOCLIP) then
-					return false
-				end
+			if ((entity:IsPlayer() or IsValid(entity:GetNetVar("player"))) and entity:GetMoveType() == MOVETYPE_NOCLIP) then
+				return false
 			end
 		end
 	end
@@ -121,7 +124,7 @@ else
 	end)
 
 	function PLUGIN:CanPlayerEnterObserver(client)
-		if (client:IsAdmin()) then
+		if (CAMI.PlayerHasAccess(client, "Helix - Observer", nil)) then
 			return true
 		end
 	end

@@ -9,6 +9,11 @@ if (SERVER) then
 	ix.config.server = ix.yaml.Read("gamemodes/helix/helix.yml") or {}
 end
 
+CAMI.RegisterPrivilege({
+	Name = "Helix - Manage Config",
+	MinAccess = "superadmin"
+})
+
 function ix.config.Add(key, value, description, callback, data, bNoNetworking, schemaOnly)
 	local oldConfig = ix.config.stored[key]
 	local type = data.type or ix.util.GetTypeFromValue(value)
@@ -24,7 +29,7 @@ function ix.config.Add(key, value, description, callback, data, bNoNetworking, s
 		type = type,
 		data = data,
 		value = oldConfig and oldConfig.value or value,
-		default = value,
+		default = oldConfig and oldConfig.default or value,
 		description = description,
 		bNoNetworking = bNoNetworking,
 		global = !schemaOnly,
@@ -38,6 +43,12 @@ function ix.config.SetDefault(key, value)
 
 	if (config) then
 		config.default = value
+	else
+		-- set up dummy config if we're setting default of config that doesn't exist yet (i.e schema setting framework default)
+		ix.config.stored[key] = {
+			value = value,
+			default = value
+		}
 	end
 end
 
@@ -80,7 +91,8 @@ end
 function ix.config.Get(key, default)
 	local config = ix.config.stored[key]
 
-	if (config) then
+	-- ensure we aren't accessing a dummy value
+	if (config and config.type) then
 		if (config.value != nil) then
 			return config.value
 		elseif (config.default != nil) then
@@ -158,8 +170,8 @@ if (SERVER) then
 		local key = net.ReadString()
 		local value = net.ReadType()
 
-		if (hook.Run("CanPlayerModifyConfig", client, key) != false
-		and type(ix.config.stored[key].default) == type(value)) then
+		if (CAMI.PlayerHasAccess(client, "Helix - Manage Config", nil) and
+			type(ix.config.stored[key].default) == type(value)) then
 			ix.config.Set(key, value)
 
 			if (ix.util.IsColor(value)) then
@@ -229,7 +241,7 @@ end
 
 if (CLIENT) then
 	hook.Add("CreateMenuButtons", "ixConfig", function(tabs)
-		if (!LocalPlayer():IsSuperAdmin() or hook.Run("CanPlayerUseConfig", LocalPlayer()) == false) then
+		if (!CAMI.PlayerHasAccess(LocalPlayer(), "Helix - Manage Config", nil)) then
 			return
 		end
 

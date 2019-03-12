@@ -37,7 +37,7 @@ function GM:PlayerInitialSpawn(client)
 		if (!IsValid(client)) then return end
 
 		-- Don't use the character cache if they've connected to another server using the same database
-		local address = ix.util.GetAddress()
+		local address = client:IPAddress():match("%d+%.%d+%.%d+%.%d+")
 		local bNoCache = client:GetData("lastIP", address) != address
 		client:SetData("lastIP", address)
 
@@ -347,10 +347,6 @@ end
 
 function GM:CanAutoFormatMessage(client, chatType, message)
 	return chatType == "ic" or chatType == "w" or chatType == "y"
-end
-
-function GM:CanPlayerModifyConfig(client, key)
-	return client:IsSuperAdmin()
 end
 
 function GM:PlayerSpawn(client)

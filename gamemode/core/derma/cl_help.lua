@@ -105,9 +105,17 @@ function PANEL:AddCategory(name)
 	panel:Dock(FILL)
 	panel:DockMargin(8, 0, 0, 0)
 	panel:GetCanvas():DockPadding(8, 8, 8, 8)
+
 	panel.Paint = function(_, width, height)
 		surface.SetDrawColor(backgroundColor)
 		surface.DrawRect(0, 0, width, height)
+	end
+
+	-- reverts functionality back to a standard panel in the case that a category will manage its own scrolling
+	panel.DisableScrolling = function()
+		panel:GetCanvas():SetVisible(false)
+		panel:GetVBar():SetVisible(false)
+		panel.OnChildAdded = function() end
 	end
 
 	self.categorySubpanels[name] = panel
@@ -169,8 +177,6 @@ end)
 
 hook.Add("PopulateHelpMenu", "ixHelpMenu", function(tabs)
 	tabs["commands"] = function(container)
-		local client = LocalPlayer()
-
 		-- info text
 		local info = container:Add("DLabel")
 		info:SetFont("ixSmallFont")
@@ -190,93 +196,74 @@ hook.Add("PopulateHelpMenu", "ixHelpMenu", function(tabs)
 
 		-- commands
 		for uniqueID, command in SortedPairs(ix.command.list) do
-			if (command.adminOnly and !client:IsAdmin() or command.superAdminOnly and !client:IsSuperAdmin()) then
+			if (command.OnCheckAccess and !command:OnCheckAccess(LocalPlayer())) then
 				continue
 			end
 
-			local bAllowed = false
+			local bIsAlias = false
+			local aliasText = ""
 
-			if (command.group) then
-				if (istable(command.group)) then
-					for _, group in pairs(command.group) do
-						if (client:IsUserGroup(group)) then
-							bAllowed = true
-							break
-						end
+			-- we want to show aliases in the same entry for better readability
+			if (command.alias) then
+				local alias = istable(command.alias) and command.alias or {command.alias}
+
+				for _, v in ipairs(alias) do
+					if (v:lower() == uniqueID) then
+						bIsAlias = true
+						break
 					end
-				elseif (client:IsUserGroup(command.group)) then
-					bAllowed = true
+
+					aliasText = aliasText .. ", /" .. v
 				end
-			else
-				bAllowed = true
+
+				if (bIsAlias) then
+					continue
+				end
 			end
 
-			if (bAllowed) then
-				local bIsAlias = false
-				local aliasText = ""
+			-- command name
+			local title = container:Add("DLabel")
+			title:SetFont("ixMediumLightFont")
+			title:SetText("/" .. command.name .. aliasText)
+			title:Dock(TOP)
+			title:SetTextColor(ix.config.Get("color"))
+			title:SetExpensiveShadow(1, color_black)
+			title:SizeToContents()
 
-				-- we want to show aliases in the same entry for better readability
-				if (command.alias) then
-					local alias = istable(command.alias) and command.alias or {command.alias}
+			-- syntax
+			local syntaxText = command.syntax
+			local syntax
 
-					for _, v in ipairs(alias) do
-						if (v:lower() == uniqueID) then
-							bIsAlias = true
-							break
-						end
+			if (syntaxText != "" and syntaxText != "[none]") then
+				syntax = container:Add("DLabel")
+				syntax:SetFont("ixMediumLightFont")
+				syntax:SetText(syntaxText)
+				syntax:Dock(TOP)
+				syntax:SetTextColor(color_white)
+				syntax:SetExpensiveShadow(1, color_black)
+				syntax:SetWrap(true)
+				syntax:SetAutoStretchVertical(true)
+				syntax:SizeToContents()
+			end
 
-						aliasText = aliasText .. ", /" .. v
-					end
+			-- description
+			local descriptionText = command:GetDescription()
 
-					if (bIsAlias) then
-						continue
-					end
-				end
-
-				-- command name
-				local title = container:Add("DLabel")
-				title:SetFont("ixMediumLightFont")
-				title:SetText("/" .. command.name .. aliasText)
-				title:Dock(TOP)
-				title:SetTextColor(ix.config.Get("color"))
-				title:SetExpensiveShadow(1, color_black)
-				title:SizeToContents()
-
-				-- syntax
-				local syntaxText = command.syntax
-				local syntax
-
-				if (syntaxText != "" and syntaxText != "[none]") then
-					syntax = container:Add("DLabel")
-					syntax:SetFont("ixMediumLightFont")
-					syntax:SetText(syntaxText)
-					syntax:Dock(TOP)
-					syntax:SetTextColor(color_white)
-					syntax:SetExpensiveShadow(1, color_black)
-					syntax:SetWrap(true)
-					syntax:SetAutoStretchVertical(true)
-					syntax:SizeToContents()
-				end
-
-				-- description
-				local descriptionText = command:GetDescription()
-
-				if (descriptionText != "") then
-					local description = container:Add("DLabel")
-					description:SetFont("ixSmallFont")
-					description:SetText(descriptionText)
-					description:Dock(TOP)
-					description:SetTextColor(color_white)
-					description:SetExpensiveShadow(1, color_black)
-					description:SetWrap(true)
-					description:SetAutoStretchVertical(true)
-					description:SizeToContents()
-					description:DockMargin(0, 0, 0, 8)
-				elseif (syntax) then
-					syntax:DockMargin(0, 0, 0, 8)
-				else
-					title:DockMargin(0, 0, 0, 8)
-				end
+			if (descriptionText != "") then
+				local description = container:Add("DLabel")
+				description:SetFont("ixSmallFont")
+				description:SetText(descriptionText)
+				description:Dock(TOP)
+				description:SetTextColor(color_white)
+				description:SetExpensiveShadow(1, color_black)
+				description:SetWrap(true)
+				description:SetAutoStretchVertical(true)
+				description:SizeToContents()
+				description:DockMargin(0, 0, 0, 8)
+			elseif (syntax) then
+				syntax:DockMargin(0, 0, 0, 8)
+			else
+				title:DockMargin(0, 0, 0, 8)
 			end
 		end
 	end
