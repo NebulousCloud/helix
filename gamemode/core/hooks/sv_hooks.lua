@@ -445,6 +445,7 @@ function GM:PlayerLoadout(client)
 
 	client:SetWeaponColor(Vector(client:GetInfo("cl_weaponcolor")))
 	client:StripWeapons()
+	client:StripAmmo()
 	client:SetLocalVar("blur", nil)
 
 	local character = client:GetCharacter()
