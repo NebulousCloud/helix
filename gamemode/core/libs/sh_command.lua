@@ -290,11 +290,11 @@ function ix.command.Add(command, data)
 	local alias = data.alias
 
 	if (alias) then
-		if (type(alias) == "table") then
+		if (istable(alias)) then
 			for _, v in ipairs(alias) do
 				ix.command.list[v:lower()] = data
 			end
-		elseif (type(alias) == "string") then
+		elseif (isstring(alias)) then
 			ix.command.list[alias:lower()] = data
 		end
 	end
@@ -440,7 +440,7 @@ if (SERVER) then
 	-- @treturn[2] nil If a player could not be found
 	-- @see ix.util.FindPlayer
 	function ix.command.FindPlayer(client, name)
-		local target = type(name) == "string" and ix.util.FindPlayer(name) or NULL
+		local target = isstring(name) and ix.util.FindPlayer(name) or NULL
 
 		if (IsValid(target)) then
 			return target

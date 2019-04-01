@@ -76,7 +76,7 @@ function ix.plugin.Load(uniqueID, path, isSingleFile, variable)
 		PLUGIN.description = PLUGIN.description or "No description available."
 
 		for k, v in pairs(PLUGIN) do
-			if (type(v) == "function") then
+			if (isfunction(v)) then
 				HOOKS_CACHE[k] = HOOKS_CACHE[k] or {}
 				HOOKS_CACHE[k][PLUGIN] = v
 			end

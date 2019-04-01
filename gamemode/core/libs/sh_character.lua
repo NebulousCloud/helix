@@ -67,13 +67,13 @@ if (SERVER) then
 				if (v.field and characterInfo[v.field] and !v.bSaveLoadInitialOnly) then
 					local value = characterInfo[v.field]
 
-					if (type(v.default) == "number") then
+					if (isnumber(v.default)) then
 						value = tonumber(value) or v.default
-					elseif (type(v.default) == "string") then
+					elseif (isstring(v.default)) then
 						value = tostring(value) == "NULL" and v.default or tostring(value or v.default)
-					elseif (type(v.default) == "boolean") then
+					elseif (isbool(v.default)) then
 						value = tobool(value)
-					elseif (type(v.default) == "table") then
+					elseif (istable(v.default)) then
 						value = istable(value) and value or util.JSONToTable(value)
 					end
 
@@ -366,7 +366,7 @@ do
 						end
 					end
 
-					if (type(v) == "string") then
+					if (isstring(v)) then
 						icon:SetModel(v)
 					else
 						icon:SetModel(v[1], v[2] or 0, v[3])
@@ -395,9 +395,9 @@ do
 			if (faction) then
 				local model = faction:GetModels(client)[value]
 
-				if (type(model) == "string") then
+				if (isstring(model)) then
 					newData.model = model
-				elseif (type(model) == "table") then
+				elseif (istable(model)) then
 					newData.model = model[1]
 
 					-- save skin/bodygroups to character data
@@ -526,7 +526,7 @@ do
 		end,
 		OnValidate = function(self, value, data, client)
 			if (value != nil) then
-				if (type(value) == "table") then
+				if (istable(value)) then
 					local count = 0
 
 					for _, v in pairs(value) do
@@ -722,7 +722,7 @@ do
 					currentChar:Save()
 
 					for _, v in ipairs(currentChar:GetInventory(true)) do
-						if (type(v) == "table") then
+						if (istable(v)) then
 							v:RemoveReceiver(client)
 						end
 					end

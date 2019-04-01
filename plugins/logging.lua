@@ -158,14 +158,14 @@ if (SERVER) then
 	end
 
 	function PLUGIN:PlayerInteractItem(client, action, item)
-		if (type(item) == "Entity") then
+		if (isentity(item)) then
 			if (IsValid(item)) then
 				local itemID = item.ixItemID
 				item = ix.item.instances[itemID]
 			else
 				return
 			end
-		elseif (type(item) == "number") then
+		elseif (isnumber(item)) then
 			item = ix.item.instances[item]
 		end
 

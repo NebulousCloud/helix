@@ -63,7 +63,7 @@ end
 function PANEL:SetClass(data)
 	if (data.model) then
 		local model = data.model
-		if (type(model):lower() == "table") then
+		if (istable(model)) then
 			model = table.Random(model)
 		end
 

@@ -59,9 +59,9 @@ function ix.faction.LoadFromDir(directory)
 			FACTION.uniqueID = FACTION.uniqueID or niceName
 
 			for _, v2 in pairs(FACTION.models) do
-				if (type(v2) == "string") then
+				if (isstring(v2)) then
 					util.PrecacheModel(v2)
-				elseif (type(v2) == "table") then
+				elseif (istable(v2)) then
 					util.PrecacheModel(v2[1])
 				end
 			end

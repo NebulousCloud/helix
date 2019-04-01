@@ -136,7 +136,7 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 	if (itemTable.factions) then
 		local allowed = false
 
-		if (type(itemTable.factions) == "table") then
+		if (istable(itemTable.factions)) then
 			for _, v in pairs(itemTable.factions) do
 				if (client:Team() == v) then
 					allowed = true
@@ -156,7 +156,7 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 	if (itemTable.classes) then
 		local allowed = false
 
-		if (type(itemTable.classes) == "table") then
+		if (istable(itemTable.classes)) then
 			for _, v in pairs(itemTable.classes) do
 				if (client:GetCharacter():GetClass() == v) then
 					allowed = true
@@ -418,7 +418,7 @@ function GM:CanPlayerUseCharacter(client, character)
 	local banned = character:GetData("banned")
 
 	if (banned) then
-		if (type(banned) == "number" and banned < os.time()) then
+		if (isnumber(banned) and banned < os.time()) then
 			return
 		end
 

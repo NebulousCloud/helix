@@ -736,7 +736,7 @@ do
 				return
 			end
 
-			if (type(item) == "Entity") then
+			if (isentity(item)) then
 				if (IsValid(item)) then
 					local entity = item
 					local itemID = item.ixItemID
@@ -751,7 +751,7 @@ do
 				else
 					return
 				end
-			elseif (type(item) == "number") then
+			elseif (isnumber(item)) then
 				item = ix.item.instances[item]
 
 				if (!item) then
@@ -960,7 +960,7 @@ ix.char.RegisterVar("Inventory", {
 	bNoNetworking = true,
 	bNoDisplay = true,
 	OnGet = function(character, index)
-		if (index and type(index) != "number") then
+		if (index and !isnumber(index)) then
 			return character.vars.inv or {}
 		end
 

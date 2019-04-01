@@ -228,7 +228,7 @@ else
 				local row = properties:GetCategory(L(config.data and config.data.category or "misc")):GetRow(key)
 
 				if (IsValid(row)) then
-					if (type(value) == "table" and value.r and value.g and value.b) then
+					if (istable(value) and value.r and value.g and value.b) then
 						value = Vector(value.r / 255, value.g / 255, value.b / 255)
 					end
 

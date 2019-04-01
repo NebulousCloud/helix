@@ -21,7 +21,7 @@ function ix.chat.Register(chatType, data)
 			-- The speaker will be heard by everyone.
 			return true
 		end
-	elseif (type(data.CanHear) == "number") then
+	elseif (isnumber(data.CanHear)) then
 		-- Use the value as a range and create a function to compare distances.
 		local range = data.CanHear * data.CanHear
 		data.range = range
@@ -68,7 +68,7 @@ function ix.chat.Register(chatType, data)
 	end
 
 	if (CLIENT and data.prefix) then
-		if (type(data.prefix) == "table") then
+		if (istable(data.prefix)) then
 			for _, v in ipairs(data.prefix) do
 				if (v:sub(1, 1) == "/") then
 					ix.command.Add(v:sub(2), {
@@ -114,7 +114,7 @@ function ix.chat.Parse(client, message, noSend)
 		local noSpaceAfter = v.noSpaceAfter
 
 		-- Check through all prefixes if the chat type has more than one.
-		if (type(v.prefix) == "table") then
+		if (istable(v.prefix)) then
 			for _, prefix in ipairs(v.prefix) do
 				prefix = prefix:lower()
 
@@ -127,7 +127,7 @@ function ix.chat.Parse(client, message, noSend)
 				end
 			end
 		-- Otherwise the prefix itself is checked.
-		elseif (type(v.prefix) == "string") then
+		elseif (isstring(v.prefix)) then
 			local prefix = v.prefix:lower()
 
 			isChosen = message:sub(1, #prefix + (noSpaceAfter and 0 or 1)):lower() == prefix..(noSpaceAfter and "" or " "):lower()

@@ -8,7 +8,7 @@ do
 
 	if (SERVER) then
 		function character:Recognize(id)
-			if (type(id) != "number" and id.GetID) then
+			if (!isnumber(id) and id.GetID) then
 				id = id:GetID()
 			end
 
@@ -25,7 +25,7 @@ do
 	end
 
 	function character:DoesRecognize(id)
-		if (type(id) != "number" and id.GetID) then
+		if (!isnumber(id) and id.GetID) then
 			id = id:GetID()
 		end
 

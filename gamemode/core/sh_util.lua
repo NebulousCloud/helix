@@ -269,7 +269,7 @@ function ix.util.FormatStringNamed(format, ...)
 
 	-- If the first argument is a table, we can assumed it's going to specify which
 	-- keys to fill out. Otherwise we'll fill in specified arguments in order.
-	if (type(arguments[1]) == "table") then
+	if (istable(arguments[1])) then
 		input = arguments[1]
 	else
 		input = arguments
@@ -1724,7 +1724,7 @@ function ix.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
 		local postSet, preSet = 0, 0
 
 		-- Determine if this sound has special time offsets.
-		if (type(v) == "table") then
+		if (istable(v)) then
 			postSet, preSet = v[2] or 0, v[3] or 0
 			v = v[1]
 		end

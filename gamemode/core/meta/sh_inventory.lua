@@ -123,7 +123,7 @@ end
 function META:SetOwner(owner, fullUpdate)
 	if (type(owner) == "Player" and owner:GetNetVar("char")) then
 		owner = owner:GetNetVar("char")
-	elseif (type(owner) != "number") then
+	elseif (!isnumber(owner)) then
 		return
 	end
 

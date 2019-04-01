@@ -166,7 +166,7 @@ if (SERVER) then
 				end
 
 				for _, v in ipairs(self:GetInventory(true)) do
-					if (type(v) == "table") then
+					if (istable(v)) then
 						v:AddReceiver(client)
 						v:Sync(client)
 					end

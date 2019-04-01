@@ -393,7 +393,7 @@ function PANEL:Populate()
 			-- if the var has a custom way of displaying, we'll use that instead
 			if (v.OnDisplay) then
 				panel = v:OnDisplay(container, self.payload)
-			elseif (type(v.default) == "string") then
+			elseif (isstring(v.default)) then
 				panel = container:Add("ixTextEntry")
 				panel:Dock(TOP)
 				panel:SetFont("ixMenuButtonHugeFont")
