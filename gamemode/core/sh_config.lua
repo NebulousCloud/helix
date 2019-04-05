@@ -1,4 +1,5 @@
 
+--- Helper library for creating/setting config options.
 -- @module ix.config
 
 ix.config = ix.config or {}
