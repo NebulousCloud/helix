@@ -23,6 +23,7 @@ CAMI.RegisterPrivilege({
 -- @param value Default value that this config will have
 -- @string description Description of the config
 -- @func[opt=nil] callback Function to call when config is changed
+-- @tab data Additional settings for this config option
 -- @bool[opt=false] bNoNetworking Whether or not to prevent networking the config
 -- @bool[opt=false] bSchemaOnly Whether or not the config is for the schema only
 function ix.config.Add(key, value, description, callback, data, bNoNetworking, bSchemaOnly)
