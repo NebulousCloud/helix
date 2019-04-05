@@ -1,0 +1,248 @@
+
+
+
+
+<html>
+	<head>
+		<title>Helix Documentation</title>
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
+		<link rel="stylesheet" href="../ldoc.css" />
+		<link rel="stylesheet" href="../highlight.css" />
+	</head>
+
+	<body>
+		<aside>
+			<h1>Helix</h1>
+
+			<!-- project contents -->
+			<section>
+						<h2>Libraries</h2>
+
+						<ul>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/core.sh_config.html">core.sh_config</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
+								<li><a href="../libraries/ix.html">ix</a></li>
+								<li><a href="../libraries/ix.act.html">ix.act</a></li>
+						</ul>
+						<h2>Classes</h2>
+
+						<ul>
+								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Inventory.html">Inventory</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
+						</ul>
+			</section>
+		</aside>
+
+		<!-- library functions -->
+		<article>
+				<header>
+					<h1>core.sh_config</h1>
+					<h2>Creates a config option with the given information.</h2>
+				</header>
+
+				<!-- summary -->
+				<details>
+					<summary>Reference</summary>
+
+					<div class="contents">
+							<h2>Functions</h2>
+							<ul>
+									<li><span class="realm shared"></span><a href="#ix.config.SetDefault">ix.config.SetDefault(key, value)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.config.Set">ix.config.Set(key, value)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.config.Get">ix.config.Get(key, default)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.config.Load">ix.config.Load()</a></li>
+									<li><span class="realm server"></span><a href="#ix.config.Save">ix.config.Save()</a></li>
+							</ul>
+					</div>
+				</details>
+
+				<!-- description -->
+				<p>
+
+</p>
+
+				<!-- methods -->
+					<h1 class="title">Functions</h1>
+
+						<section class="method">
+							<header><a name="ix.config.SetDefault"></a>
+								<h1><span class="realm shared"></span>ix.config.SetDefault(key, value)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L55">View source &raquo;</a>
+								<p>Sets the default value for a config option.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Unique ID of the config</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+
+
+												<p> Default value for the config option</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.config.Set"></a>
+								<h1><span class="realm shared"></span>ix.config.Set(key, value)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L85">View source &raquo;</a>
+								<p>Sets the value of a config option.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Unique ID of the config</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+
+
+												<p> New value to assign to the config</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.config.Get"></a>
+								<h1><span class="realm shared"></span>ix.config.Get(key, default)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L114">View source &raquo;</a>
+								<p>Retrieves a value of a config option.  If it is not set, it'll return the default that you've specified.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Unique ID of the config</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">default</span>
+
+
+
+												<p> Default value to return if the config is not set</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="tag type">any</span>
+
+												<p>Value associated with the key, or the default that was given if it doesn't exist</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ix.config.Load"></a>
+								<h1><span class="realm shared"></span>ix.config.Load()</h1>
+
+									<div class="internal"></div>
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L132">View source &raquo;</a>
+								<p>Loads all saved config options from disk.</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.config.Save"></a>
+								<h1><span class="realm server"></span>ix.config.Save()</h1>
+
+									<div class="internal"></div>
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L181">View source &raquo;</a>
+								<p>Saves all config options to disk.</p>
+							</header>
+
+
+
+						</section>
+		</article>
+
+		<footer>
+			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
+			<p>Last updated: <span class="timestamp">2018-10-18 04:36:26</span></p>
+		</footer>
+
+		<script type="text/javascript" src="../highlight.min.js"></script>
+		<script type="text/javascript">
+		var elements = document.querySelectorAll("aside code, pre code")
+
+		hljs.configure({
+			languages: ["lua"]
+		});
+
+		for (var i = 0; i < elements.length; i++)
+		{
+			hljs.highlightBlock(elements[i]);
+		}
+		</script>
+	</body>
+</html>
