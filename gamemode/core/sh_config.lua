@@ -1,4 +1,6 @@
 
+-- @module ix.config
+
 ix.config = ix.config or {}
 ix.config.stored = ix.config.stored or {}
 
@@ -14,7 +16,15 @@ CAMI.RegisterPrivilege({
 	MinAccess = "superadmin"
 })
 
-function ix.config.Add(key, value, description, callback, data, bNoNetworking, schemaOnly)
+--- Creates a config option with the given information.
+-- @realm shared
+-- @string key Unique ID of the config
+-- @param value Default value that this config will have
+-- @string description Description of the config
+-- @func[opt=nil] callback Function to call when config is changed
+-- @bool[opt=false] bNoNetworking Whether or not to prevent networking the config
+-- @bool[opt=false] bSchemaOnly Whether or not the config is for the schema only
+function ix.config.Add(key, value, description, callback, data, bNoNetworking, bSchemaOnly)
 	local oldConfig = ix.config.stored[key]
 	local type = data.type or ix.util.GetTypeFromValue(value)
 
@@ -32,12 +42,16 @@ function ix.config.Add(key, value, description, callback, data, bNoNetworking, s
 		default = oldConfig and oldConfig.default or value,
 		description = description,
 		bNoNetworking = bNoNetworking,
-		global = !schemaOnly,
+		global = !bSchemaOnly,
 		callback = callback,
 		hidden = data.hidden or nil
 	}
 end
 
+--- Sets the default value for a config option.
+-- @realm shared
+-- @string key Unique ID of the config
+-- @param value Default value for the config option
 function ix.config.SetDefault(key, value)
 	local config = ix.config.stored[key]
 
@@ -64,6 +78,10 @@ function ix.config.ForceSet(key, value, noSave)
 	end
 end
 
+--- Sets the value of a config option.
+-- @realm shared
+-- @string key Unique ID of the config
+-- @param value New value to assign to the config
 function ix.config.Set(key, value)
 	local config = ix.config.stored[key]
 
@@ -88,6 +106,11 @@ function ix.config.Set(key, value)
 	end
 end
 
+--- Retrieves a value of a config option. If it is not set, it'll return the default that you've specified.
+-- @realm shared
+-- @string key Unique ID of the config
+-- @param default Default value to return if the config is not set
+-- @return Value associated with the key, or the default that was given if it doesn't exist
 function ix.config.Get(key, default)
 	local config = ix.config.stored[key]
 
@@ -103,6 +126,9 @@ function ix.config.Get(key, default)
 	return default
 end
 
+--- Loads all saved config options from disk.
+-- @realm shared
+-- @internal
 function ix.config.Load()
 	if (SERVER) then
 		local globals = ix.data.Get("config", nil, true, true)
@@ -149,6 +175,9 @@ if (SERVER) then
 		net.Send(client)
 	end
 
+	--- Saves all config options to disk.
+	-- @realm server
+	-- @internal
 	function ix.config.Save()
 		local globals = {}
 		local data = {}
