@@ -26,7 +26,7 @@
 								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
 								<li><a href="../libraries/ix.option.html">ix.option</a></li>
 								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-								<li><a href="../libraries/core.sh_config.html">core.sh_config</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
 								<li><a href="../libraries/ix.data.html">ix.data</a></li>
 								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 								<li><a href="../libraries/ix.html">ix</a></li>
@@ -45,8 +45,8 @@
 		<!-- library functions -->
 		<article>
 				<header>
-					<h1>core.sh_config</h1>
-					<h2>Creates a config option with the given information.</h2>
+					<h1>ix.config</h1>
+					<h2>Helper library for creating/setting config options.</h2>
 				</header>
 
 				<!-- summary -->
@@ -56,6 +56,7 @@
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
+									<li><span class="realm shared"></span><a href="#ix.config.Add">ix.config.Add(key, value, description[, callback=nil], data[, bNoNetworking=false[, bSchemaOnly=false]])</a></li>
 									<li><span class="realm shared"></span><a href="#ix.config.SetDefault">ix.config.SetDefault(key, value)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.config.Set">ix.config.Set(key, value)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.config.Get">ix.config.Get(key, default)</a></li>
@@ -74,11 +75,112 @@
 					<h1 class="title">Functions</h1>
 
 						<section class="method">
+							<header><a name="ix.config.Add"></a>
+								<h1><span class="realm shared"></span>ix.config.Add(key, value, description[, callback=nil], data[, bNoNetworking=false[, bSchemaOnly=false]])</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L29">View source &raquo;</a>
+								<p>Creates a config option with the given information.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Unique ID of the config</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+
+
+												<p> Default value that this config will have</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">description</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Description of the config</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">callback</span>
+
+													<span class="tag"><span class="type">function</span></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> Function to call when config is changed</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">data</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+
+												<p> Additional settings for this config option</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bNoNetworking</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether or not to prevent networking the config</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bSchemaOnly</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether or not the config is for the schema only</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
 							<header><a name="ix.config.SetDefault"></a>
 								<h1><span class="realm shared"></span>ix.config.SetDefault(key, value)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L55">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L57">View source &raquo;</a>
 								<p>Sets the default value for a config option.</p>
 							</header>
 
@@ -116,7 +218,7 @@
 								<h1><span class="realm shared"></span>ix.config.Set(key, value)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L85">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L87">View source &raquo;</a>
 								<p>Sets the value of a config option.</p>
 							</header>
 
@@ -154,7 +256,7 @@
 								<h1><span class="realm shared"></span>ix.config.Get(key, default)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L114">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L116">View source &raquo;</a>
 								<p>Retrieves a value of a config option.  If it is not set, it'll return the default that you've specified.</p>
 							</header>
 
@@ -204,7 +306,7 @@
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L132">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L134">View source &raquo;</a>
 								<p>Loads all saved config options from disk.</p>
 							</header>
 
@@ -217,7 +319,7 @@
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L181">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L183">View source &raquo;</a>
 								<p>Saves all config options to disk.</p>
 							</header>
 
