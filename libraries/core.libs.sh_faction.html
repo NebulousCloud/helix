@@ -46,8 +46,8 @@
 		<!-- library functions -->
 		<article>
 				<header>
-					<h1>ix.act</h1>
-					<h2>Provides players the ability to perform animations.</h2>
+					<h1>core.libs.sh_faction</h1>
+					<h2>Loads factions from a directory.</h2>
 				</header>
 
 				<!-- summary -->
@@ -57,8 +57,9 @@
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
-									<li><span class="realm shared"></span><a href="#ix.act.Register">ix.act.Register(name, modelClass, data)</a></li>
-									<li><span class="realm shared"></span><a href="#ix.act.Remove">ix.act.Remove(name)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.faction.Get">ix.faction.Get(identifier)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.faction.GetIndex">ix.faction.GetIndex(uniqueID)</a></li>
+									<li><span class="realm client"></span><a href="#ix.faction.HasWhitelist">ix.faction.HasWhitelist(faction)</a></li>
 							</ul>
 					</div>
 				</details>
@@ -72,12 +73,12 @@
 					<h1 class="title">Functions</h1>
 
 						<section class="method">
-							<header><a name="ix.act.Register"></a>
-								<h1><span class="realm shared"></span>ix.act.Register(name, modelClass, data)</h1>
+							<header><a name="ix.faction.Get"></a>
+								<h1><span class="realm shared"></span>ix.faction.Get(identifier)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/home/travis/build/NebulousCloud/helix/plugins/act/sh_plugin.lua#L22">View source &raquo;</a>
-								<p>Registers a sequence as a performable animation.</p>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_faction.lua#L90">View source &raquo;</a>
+								<p>Retrieves a faction table.</p>
 							</header>
 
 
@@ -87,48 +88,34 @@
 									<ul>
 
 											<li>
-												<span class="tag parameter">name</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+												<span class="tag parameter">identifier</span>
 
 
-												<p> Name of the animation (in CamelCase)</p>
+
+												<p> Index or name of the faction</p>
 											</li>
 									</ul>
 
-									<ul>
+
+								<h3>Returns</h3>
+								<ul>
 
 											<li>
-												<span class="tag parameter">modelClass</span>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>
 
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
-
-												<p> Model class to add this animation to</p>
+												<p>Faction table</p>
 											</li>
-									</ul>
 
-									<ul>
-
-											<li>
-												<span class="tag parameter">data</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
-
-
-												<p> An <code>ActInfoStructure</code> table describing the animation</p>
-											</li>
-									</ul>
-
+								</ul>
 
 						</section>
 						<section class="method">
-							<header><a name="ix.act.Remove"></a>
-								<h1><span class="realm shared"></span>ix.act.Remove(name)</h1>
+							<header><a name="ix.faction.GetIndex"></a>
+								<h1><span class="realm shared"></span>ix.faction.GetIndex(uniqueID)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/home/travis/build/NebulousCloud/helix/plugins/act/sh_plugin.lua#L59">View source &raquo;</a>
-								<p>Removes a sequence from being performable if it has been previously registered.</p>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_faction.lua#L98">View source &raquo;</a>
+								<p>Retrieves a faction index.</p>
 							</header>
 
 
@@ -138,15 +125,64 @@
 									<ul>
 
 											<li>
-												<span class="tag parameter">name</span>
+												<span class="tag parameter">uniqueID</span>
 
 													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p> Name of the animation</p>
+												<p> Unique ID of the faction</p>
 											</li>
 									</ul>
 
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>Faction index</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ix.faction.HasWhitelist"></a>
+								<h1><span class="realm client"></span>ix.faction.HasWhitelist(faction)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_faction.lua#L111">View source &raquo;</a>
+								<p>Returns true if a faction requires a whitelist.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">faction</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Index of the faction</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not the faction requires a whitelist</p>
+											</li>
+
+								</ul>
 
 						</section>
 		</article>
