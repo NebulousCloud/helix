@@ -147,6 +147,11 @@ function META:SetOwner(owner, fullUpdate)
 	self.owner = owner
 end
 
+--- Checks whether a player has access to an inventory
+-- @realm shared
+-- @internal
+-- @player client Player to check access for
+-- @treturn bool Whether or not the player has access to the inventory
 function META:OnCheckAccess(client)
 	local bAccess = false
 

@@ -1,4 +1,7 @@
 
+--- Helper library for loading/getting class information.
+-- @module ix.class
+
 if (SERVER) then
 	util.AddNetworkString("ixClassUpdate")
 end
@@ -8,7 +11,9 @@ ix.class.list = {}
 
 local charMeta = ix.meta.character
 
--- Register classes from a directory.
+--- Loads classes from a directory.
+-- @realm shared
+-- @string directory The path to the class files.
 function ix.class.LoadFromDir(directory)
 	-- Search the directory for .lua files.
 	for _, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
@@ -65,7 +70,11 @@ function ix.class.LoadFromDir(directory)
 	end
 end
 
--- Determines if a player is allowed to join a specific class.
+--- Determines if a player is allowed to join a specific class.
+-- @realm shared
+-- @player client Player to check
+-- @number class Index of the class
+-- @treturn bool Whether or not the player can switch to the class
 function ix.class.CanSwitchTo(client, class)
 	-- Get the class table by its numeric identifier.
 	local info = ix.class.list[class]
@@ -98,10 +107,18 @@ function ix.class.CanSwitchTo(client, class)
 	return info:CanSwitchTo(client)
 end
 
+--- Retrieves a class table.
+-- @realm shared
+-- @number identifier Index of the class
+-- @treturn table Class table
 function ix.class.Get(identifier)
 	return ix.class.list[identifier]
 end
 
+--- Retrieves the players in a class
+-- @realm shared
+-- @number class Index of the class
+-- @treturn table Table of players in the class
 function ix.class.GetPlayers(class)
 	local players = {}
 

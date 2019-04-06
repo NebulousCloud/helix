@@ -32,6 +32,7 @@ local CITIZEN_MODELS = {
 }
 
 --- Loads factions from a directory.
+-- @realm shared
 -- @string directory The path to the factions files.
 function ix.faction.LoadFromDir(directory)
 	for _, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
