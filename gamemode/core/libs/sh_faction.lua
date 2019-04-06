@@ -1,4 +1,5 @@
 
+--- Helper library for loading/getting faction information.
 -- @module ix.faction
 
 ix.faction = ix.faction or {}
