@@ -1,0 +1,251 @@
+
+
+
+
+<html>
+	<head>
+		<title>Helix Documentation</title>
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
+		<link rel="stylesheet" href="../ldoc.css" />
+		<link rel="stylesheet" href="../highlight.css" />
+	</head>
+
+	<body>
+		<aside>
+			<h1>Helix</h1>
+
+			<!-- project contents -->
+			<section>
+						<h2>Libraries</h2>
+
+						<ul>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
+								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
+								<li><a href="../libraries/ix.html">ix</a></li>
+								<li><a href="../libraries/ix.act.html">ix.act</a></li>
+						</ul>
+						<h2>Classes</h2>
+
+						<ul>
+								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Inventory.html">Inventory</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
+						</ul>
+			</section>
+		</aside>
+
+		<!-- library functions -->
+		<article>
+				<header>
+					<h1>ix.class</h1>
+					<h2>Helper library for loading/getting class information.</h2>
+				</header>
+
+				<!-- summary -->
+				<details>
+					<summary>Reference</summary>
+
+					<div class="contents">
+							<h2>Functions</h2>
+							<ul>
+									<li><span class="realm shared"></span><a href="#ix.class.LoadFromDir">ix.class.LoadFromDir(directory)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.class.CanSwitchTo">ix.class.CanSwitchTo(client, class)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.class.Get">ix.class.Get(identifier)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.class.GetPlayers">ix.class.GetPlayers(class)</a></li>
+							</ul>
+					</div>
+				</details>
+
+				<!-- description -->
+				<p>
+
+</p>
+
+				<!-- methods -->
+					<h1 class="title">Functions</h1>
+
+						<section class="method">
+							<header><a name="ix.class.LoadFromDir"></a>
+								<h1><span class="realm shared"></span>ix.class.LoadFromDir(directory)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L17">View source &raquo;</a>
+								<p>Loads classes from a directory.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">directory</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> The path to the class files.</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.class.CanSwitchTo"></a>
+								<h1><span class="realm shared"></span>ix.class.CanSwitchTo(client, class)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L78">View source &raquo;</a>
+								<p>Determines if a player is allowed to join a specific class.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><span class="type">player</span></span>
+
+
+												<p> Player to check</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">class</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Index of the class</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not the player can switch to the class</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ix.class.Get"></a>
+								<h1><span class="realm shared"></span>ix.class.Get(identifier)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L114">View source &raquo;</a>
+								<p>Retrieves a class table.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">identifier</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Index of the class</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>
+
+												<p>Class table</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ix.class.GetPlayers"></a>
+								<h1><span class="realm shared"></span>ix.class.GetPlayers(class)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L122">View source &raquo;</a>
+								<p>Retrieves the players in a class</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">class</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Index of the class</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>
+
+												<p>Table of players in the class</p>
+											</li>
+
+								</ul>
+
+						</section>
+		</article>
+
+		<footer>
+			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
+			<p>Last updated: <span class="timestamp">2018-10-18 04:36:26</span></p>
+		</footer>
+
+		<script type="text/javascript" src="../highlight.min.js"></script>
+		<script type="text/javascript">
+		var elements = document.querySelectorAll("aside code, pre code")
+
+		hljs.configure({
+			languages: ["lua"]
+		});
+
+		for (var i = 0; i < elements.length; i++)
+		{
+			hljs.highlightBlock(elements[i]);
+		}
+		</script>
+	</body>
+</html>

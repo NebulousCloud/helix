@@ -20,9 +20,10 @@
 						<h2>Libraries</h2>
 
 						<ul>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
 								<li><a href="../libraries/ix.command.html">ix.command</a></li>
 								<li><a href="../libraries/ix.date.html">ix.date</a></li>
-								<li><a href="../libraries/core.libs.sh_faction.html">core.libs.sh_faction</a></li>
+								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
 								<li><a href="../libraries/ix.item.html">ix.item</a></li>
 								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
 								<li><a href="../libraries/ix.option.html">ix.option</a></li>
@@ -46,8 +47,8 @@
 		<!-- library functions -->
 		<article>
 				<header>
-					<h1>core.libs.sh_faction</h1>
-					<h2>Loads factions from a directory.</h2>
+					<h1>ix.faction</h1>
+					<h2>Helper library for loading/getting faction information.</h2>
 				</header>
 
 				<!-- summary -->
@@ -57,6 +58,7 @@
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
+									<li><span class="realm shared"></span><a href="#ix.faction.LoadFromDir">ix.faction.LoadFromDir(directory)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.faction.Get">ix.faction.Get(identifier)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.faction.GetIndex">ix.faction.GetIndex(uniqueID)</a></li>
 									<li><span class="realm client"></span><a href="#ix.faction.HasWhitelist">ix.faction.HasWhitelist(faction)</a></li>
@@ -73,11 +75,38 @@
 					<h1 class="title">Functions</h1>
 
 						<section class="method">
+							<header><a name="ix.faction.LoadFromDir"></a>
+								<h1><span class="realm shared"></span>ix.faction.LoadFromDir(directory)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_faction.lua#L37">View source &raquo;</a>
+								<p>Loads factions from a directory.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">directory</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> The path to the factions files.</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
 							<header><a name="ix.faction.Get"></a>
 								<h1><span class="realm shared"></span>ix.faction.Get(identifier)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_faction.lua#L90">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_faction.lua#L92">View source &raquo;</a>
 								<p>Retrieves a faction table.</p>
 							</header>
 
@@ -114,7 +143,7 @@
 								<h1><span class="realm shared"></span>ix.faction.GetIndex(uniqueID)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_faction.lua#L98">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_faction.lua#L100">View source &raquo;</a>
 								<p>Retrieves a faction index.</p>
 							</header>
 
@@ -152,7 +181,7 @@
 								<h1><span class="realm client"></span>ix.faction.HasWhitelist(faction)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_faction.lua#L111">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_faction.lua#L113">View source &raquo;</a>
 								<p>Returns true if a faction requires a whitelist.</p>
 							</header>
 
