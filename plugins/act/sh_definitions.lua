@@ -1,22 +1,22 @@
 
 local function FacingWall(client)
 	local data = {}
-	data.start = client:GetPos()
+	data.start = client:EyePos()
 	data.endpos = data.start + client:GetForward() * 20
 	data.filter = client
 
-	if (!util.TraceLine(data).HitWorld) then
+	if (!util.TraceLine(data).Hit) then
 		return "@faceWall"
 	end
 end
 
 local function FacingWallBack(client)
 	local data = {}
-	data.start = client:GetPos()
+	data.start = client:LocalToWorld(client:OBBCenter())
 	data.endpos = data.start - client:GetForward() * 20
 	data.filter = client
 
-	if (!util.TraceLine(data).HitWorld) then
+	if (!util.TraceLine(data).Hit) then
 		return "@faceWallBack"
 	end
 end
