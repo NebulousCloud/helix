@@ -242,29 +242,34 @@ function PANEL:Setup(uniqueID)
 		self.icon:SetModel(item:GetModel(), item:GetSkin())
 		self.name:SetText(item:GetName())
 		self.itemName = item:GetName()
+
+		self.click:SetHelixTooltip(function(tooltip)
+			ix.hud.PopulateItemTooltip(tooltip, item)
+
+			local entity = ix.gui.vendor.entity
+			if (entity and entity.items[self.item] and entity.items[self.item][VENDOR_MAXSTOCK]) then
+				local info = entity.items[self.item]
+				local stock = tooltip:AddRowAfter("name", "stock")
+				stock:SetText(string.format("Stock: %d/%d", info[VENDOR_STOCK], info[VENDOR_MAXSTOCK]))
+				stock:SetBackgroundColor(derma.GetColor("Info", self))
+				stock:SizeToContents()
+			end
+		end)
 	end
 end
 
 function PANEL:Think()
 	if ((self.nextUpdate or 0) < CurTime()) then
-		local name = self.itemName
 		local entity = ix.gui.vendor.entity
 
-		if (entity) then
-			if (self.isLocal) then
-				local count = LocalPlayer():GetCharacter():GetInventory():GetItemCount(self.item)
+		if (entity and self.isLocal) then
+			local count = LocalPlayer():GetCharacter():GetInventory():GetItemCount(self.item)
 
-				if (count == 0) then
-					self:Remove()
-				end
-
-				name = name.." ("..count..")"
-			elseif (entity.items[self.item] and entity.items[self.item][VENDOR_MAXSTOCK]) then
-				name = name.." ("..entity.items[self.item][VENDOR_STOCK].."/"..entity.items[self.item][VENDOR_MAXSTOCK]..")"
+			if (count == 0) then
+				self:Remove()
 			end
 		end
 
-		self.name:SetText(name)
 		self.nextUpdate = CurTime() + 0.1
 	end
 end
