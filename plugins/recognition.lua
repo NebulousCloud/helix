@@ -63,7 +63,9 @@ if (CLIENT) then
 	CHAT_RECOGNIZED["me"] = true
 
 	function PLUGIN:IsRecognizedChatType(chatType)
-		return CHAT_RECOGNIZED[chatType]
+		if (CHAT_RECOGNIZED[chatType]) then
+			return true
+		end
 	end
 
 	function PLUGIN:GetCharacterDescription(client)
