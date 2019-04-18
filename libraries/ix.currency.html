@@ -48,8 +48,8 @@
 		<!-- library functions -->
 		<article>
 				<header>
-					<h1>ix.class</h1>
-					<h2>Helper library for loading/getting class information.</h2>
+					<h1>ix.currency</h1>
+					<h2>A library representing the server's currency system.</h2>
 				</header>
 
 				<!-- summary -->
@@ -59,10 +59,9 @@
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
-									<li><span class="realm shared"></span><a href="#ix.class.LoadFromDir">ix.class.LoadFromDir(directory)</a></li>
-									<li><span class="realm shared"></span><a href="#ix.class.CanSwitchTo">ix.class.CanSwitchTo(client, class)</a></li>
-									<li><span class="realm shared"></span><a href="#ix.class.Get">ix.class.Get(identifier)</a></li>
-									<li><span class="realm shared"></span><a href="#ix.class.GetPlayers">ix.class.GetPlayers(class)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.currency.Set">ix.currency.Set(symbol, singular, plural)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.currency.Get">ix.currency.Get(amount)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.currency.Spawn">ix.currency.Spawn(pos, amount[, angle=Angle(0])</a></li>
 							</ul>
 					</div>
 				</details>
@@ -76,12 +75,12 @@
 					<h1 class="title">Functions</h1>
 
 						<section class="method">
-							<header><a name="ix.class.LoadFromDir"></a>
-								<h1><span class="realm shared"></span>ix.class.LoadFromDir(directory)</h1>
+							<header><a name="ix.currency.Set"></a>
+								<h1><span class="realm shared"></span>ix.currency.Set(symbol, singular, plural)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L17">View source &raquo;</a>
-								<p>Loads classes from a directory.</p>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_currency.lua#L15">View source &raquo;</a>
+								<p>Sets the currency type.</p>
 							</header>
 
 
@@ -91,24 +90,48 @@
 									<ul>
 
 											<li>
-												<span class="tag parameter">directory</span>
+												<span class="tag parameter">symbol</span>
 
 													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p> The path to the class files.</p>
+												<p> The symbol of the currency.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">singular</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> The name of the currency in it's singular form.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">plural</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> The name of the currency in it's plural form.</p>
 											</li>
 									</ul>
 
 
 						</section>
 						<section class="method">
-							<header><a name="ix.class.CanSwitchTo"></a>
-								<h1><span class="realm shared"></span>ix.class.CanSwitchTo(client, class)</h1>
+							<header><a name="ix.currency.Get"></a>
+								<h1><span class="realm shared"></span>ix.currency.Get(amount)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L78">View source &raquo;</a>
-								<p>Determines if a player is allowed to join a specific class.</p>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_currency.lua#L25">View source &raquo;</a>
+								<p>Returns a formatted string according to the current currency.</p>
 							</header>
 
 
@@ -118,24 +141,12 @@
 									<ul>
 
 											<li>
-												<span class="tag parameter">client</span>
-
-													<span class="tag"><span class="type">player</span></span>
-
-
-												<p> Player to check</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">class</span>
+												<span class="tag parameter">amount</span>
 
 													<span class="tag"><span class="type">number</span></span>
 
 
-												<p> Index of the class</p>
+												<p> The amount of cash being formatted.</p>
 											</li>
 									</ul>
 
@@ -144,21 +155,21 @@
 								<ul>
 
 											<li>
-													<span class="type">bool</span>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
 
-												<p>Whether or not the player can switch to the class</p>
+												<p>The formatted string.</p>
 											</li>
 
 								</ul>
 
 						</section>
 						<section class="method">
-							<header><a name="ix.class.Get"></a>
-								<h1><span class="realm shared"></span>ix.class.Get(identifier)</h1>
+							<header><a name="ix.currency.Spawn"></a>
+								<h1><span class="realm shared"></span>ix.currency.Spawn(pos, amount[, angle=Angle(0])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L114">View source &raquo;</a>
-								<p>Retrieves a class table.</p>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_currency.lua#L39">View source &raquo;</a>
+								<p>Spawns an amount of cash at a specific location on the map.</p>
 							</header>
 
 
@@ -168,50 +179,37 @@
 									<ul>
 
 											<li>
-												<span class="tag parameter">identifier</span>
+												<span class="tag parameter">pos</span>
 
-													<span class="tag"><span class="type">number</span></span>
+													<span class="tag"><span class="type">vector</span></span>
 
 
-												<p> Index of the class</p>
+												<p> The position of the money to be spawned.</p>
 											</li>
 									</ul>
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>
-
-												<p>Class table</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="ix.class.GetPlayers"></a>
-								<h1><span class="realm shared"></span>ix.class.GetPlayers(class)</h1>
-
-
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L122">View source &raquo;</a>
-								<p>Retrieves the players in a class</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
 
 									<ul>
 
 											<li>
-												<span class="tag parameter">class</span>
+												<span class="tag parameter">amount</span>
 
 													<span class="tag"><span class="type">number</span></span>
 
 
-												<p> Index of the class</p>
+												<p> The amount of cash being spawned.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">angle</span>
+
+													<span class="tag"><span class="type">angle</span></span>
+
+													<span class="tag default">default: Angle(0</span>
+
+												<p> The angle of the entity being spawned.</p>
 											</li>
 									</ul>
 
@@ -220,9 +218,9 @@
 								<ul>
 
 											<li>
-													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>
+													<span class="type">entity</span>
 
-												<p>Table of players in the class</p>
+												<p>The spawned money entity.</p>
 											</li>
 
 								</ul>
