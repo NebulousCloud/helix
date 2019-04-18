@@ -32,9 +32,9 @@ end
 
 --- Spawns an amount of cash at a specific location on the map.
 -- @realm shared
--- @field[type=vector] pos The position of the money to be spawned.
+-- @param[type=vector] pos The position of the money to be spawned.
 -- @number amount The amount of cash being spawned.
--- @field[type=angle,opt=Angle(0,0,0)] angle The angle of the entity being spawned.
+-- @param[type=angle,opt=Angle(0,0,0)] angle The angle of the entity being spawned.
 -- @treturn entity The spawned money entity.
 function ix.currency.Spawn(pos, amount, angle)
 	if (!amount or amount < 0) then
