@@ -758,6 +758,16 @@ do
 				return
 			end
 
+			local bCanCreate, strErr = hook.Run("CanPlayerCreateCharacter", client, payload)
+
+			if (bCanCreate == false) then
+				net.Start("ixCharacterAuthFailed")
+					net.WriteString(strErr or "unknownError")
+					net.WriteTable({})
+				net.Send(client)
+				return
+			end
+
 			for k, _ in pairs(payload) do
 				local info = ix.char.vars[k]
 
