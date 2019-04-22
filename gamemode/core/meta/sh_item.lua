@@ -167,7 +167,7 @@ end
 --- Sets a key within the item's data.
 -- @realm shared
 -- @string key The key to store the value within
--- @param[opt=nil] The value to store within the key
+-- @param[opt=nil] value The value to store within the key
 -- @table[opt=nil] receivers The players to replicate the data on
 -- @bool[opt=false] noSave Whether to disable saving the data on the database or not
 -- @bool[opt=false] noCheckEntity Whether to disable setting the data on the entity, if applicable
