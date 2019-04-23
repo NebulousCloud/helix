@@ -75,9 +75,6 @@ function ITEM:GetSkin()
 	return self.skin or 0
 end
 
---- Deprecated function which currently returns nothing.
--- @realm shared
--- @treturn nil Nothing
 function ITEM:GetMaterial()
 	return nil
 end
@@ -107,7 +104,7 @@ function ITEM:Print(detail)
 	end
 end
 
---- A utility function printing all information about the item.
+--- A utility function printing the item's stored data.
 -- @realm shared
 function ITEM:PrintData()
 	self:Print(true)
@@ -168,7 +165,7 @@ end
 -- @realm shared
 -- @string key The key to store the value within
 -- @param[opt=nil] value The value to store within the key
--- @table[opt=nil] receivers The players to replicate the data on
+-- @tab[opt=nil] receivers The players to replicate the data on
 -- @bool[opt=false] noSave Whether to disable saving the data on the database or not
 -- @bool[opt=false] noCheckEntity Whether to disable setting the data on the entity, if applicable
 function ITEM:SetData(key, value, receivers, noSave, noCheckEntity)
