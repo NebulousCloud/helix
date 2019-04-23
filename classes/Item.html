@@ -62,6 +62,24 @@
 									<li><span class="realm shared"></span><a href="#ITEM:__tostring">Item:__tostring()</a></li>
 									<li><span class="realm shared"></span><a href="#ITEM:__eq">Item:__eq(other)</a></li>
 									<li><span class="realm shared"></span><a href="#ITEM:GetID">Item:GetID()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetName">Item:GetName()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetDescription">Item:GetDescription()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetModel">Item:GetModel()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetSkin">Item:GetSkin()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetCharacterID">Item:GetCharacterID()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetPlayerID">Item:GetPlayerID()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:Print">Item:Print([detail=false])</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:PrintData">Item:PrintData()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:Call">Item:Call(method, client, entity, ...)</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetOwner">Item:GetOwner()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:SetData">Item:SetData(key[, value=nil[, receivers=nil[, noSave=false[, noCheckEntity=false]]]])</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetData">Item:GetData(key[, default=nil])</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:Hook">Item:Hook(name, func)</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:PostHook">Item:PostHook(name, func)</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:Remove">Item:Remove(bNoReplication, bNoDelete)</a></li>
+									<li><span class="realm server"></span><a href="#ITEM:GetEntity">Item:GetEntity()</a></li>
+									<li><span class="realm server"></span><a href="#ITEM:Spawn">Item:Spawn(position, angles)</a></li>
+									<li><span class="realm server"></span><a href="#ITEM:Transfer">Item:Transfer(invID, x, y, client, noReplication, isLogical)</a></li>
 							</ul>
 					</div>
 				</details>
@@ -167,6 +185,715 @@ same name but different numerical IDs). You can think of items as the class, whi
 													<span class="type">number</span>
 
 												<p>Unique ID of item</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetName"></a>
+								<h1><span class="realm shared"></span>Item:GetName()</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L51">View source &raquo;</a>
+								<p>Returns the name of the item.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>The name of the item</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetDescription"></a>
+								<h1><span class="realm shared"></span>Item:GetDescription()</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L58">View source &raquo;</a>
+								<p>Returns the description of the item.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>The description of the item</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetModel"></a>
+								<h1><span class="realm shared"></span>Item:GetModel()</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L67">View source &raquo;</a>
+								<p>Returns the model of the item.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>The model of the item</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetSkin"></a>
+								<h1><span class="realm shared"></span>Item:GetSkin()</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L74">View source &raquo;</a>
+								<p>Returns the skin of the item.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>The skin of the item</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetCharacterID"></a>
+								<h1><span class="realm shared"></span>Item:GetCharacterID()</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L85">View source &raquo;</a>
+								<p>Returns the ID of the owning character, if one exists.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>The owning character's ID</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetPlayerID"></a>
+								<h1><span class="realm shared"></span>Item:GetPlayerID()</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L92">View source &raquo;</a>
+								<p>Returns the SteamID64 of the owning player, if one exists.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>The owning player's SteamID64</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:Print"></a>
+								<h1><span class="realm shared"></span>Item:Print([detail=false])</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L99">View source &raquo;</a>
+								<p>A utility function which prints the item's details.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">detail</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether additional detail should be printed or not(Owner, X position, Y position)</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:PrintData"></a>
+								<h1><span class="realm shared"></span>Item:PrintData()</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L109">View source &raquo;</a>
+								<p>A utility function printing the item's stored data.</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:Call"></a>
+								<h1><span class="realm shared"></span>Item:Call(method, client, entity, ...)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L124">View source &raquo;</a>
+								<p>Calls one of the item's methods.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">method</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> The method to be called</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><span class="type">player</span></span>
+
+
+												<p> The client to pass when calling the method, if applicable</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+													<span class="tag"><span class="type">entity</span></span>
+
+
+												<p> The eneity to pass when calling the method, if applicable</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">...</span>
+
+
+
+												<p> Arguments to pass to the method</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="tag type">any</span>
+
+												<p>The values returned by the method</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetOwner"></a>
+								<h1><span class="realm shared"></span>Item:GetOwner()</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L146">View source &raquo;</a>
+								<p>Returns the owner of the item.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="../classes/Character.html#">Character</a>
+
+												<p>The character owning the item</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:SetData"></a>
+								<h1><span class="realm shared"></span>Item:SetData(key[, value=nil[, receivers=nil[, noSave=false[, noCheckEntity=false]]]])</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L171">View source &raquo;</a>
+								<p>Sets a key within the item's data.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> The key to store the value within</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+
+													<span class="tag default">default: nil</span>
+
+												<p> The value to store within the key</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">receivers</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> The players to replicate the data on</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">noSave</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether to disable saving the data on the database or not</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">noCheckEntity</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether to disable setting the data on the entity, if applicable</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetData"></a>
+								<h1><span class="realm shared"></span>Item:GetData(key[, default=nil])</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L209">View source &raquo;</a>
+								<p>Returns the value stored on a key within the item's data.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> The key in which the value is stored</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">default</span>
+
+
+													<span class="tag default">default: nil</span>
+
+												<p> The value to return in case there is no value stored in the key</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="tag type">any</span>
+
+												<p>The value stored within the key</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:Hook"></a>
+								<h1><span class="realm shared"></span>Item:Hook(name, func)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L244">View source &raquo;</a>
+								<p>Changes the function called on specific events for the item.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">name</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> The name of the hook</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">func</span>
+
+													<span class="tag"><span class="type">function</span></span>
+
+
+												<p> The function to call once the event occurs</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:PostHook"></a>
+								<h1><span class="realm shared"></span>Item:PostHook(name, func)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L254">View source &raquo;</a>
+								<p>Changes the function called after hooks for specific events for the item.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">name</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> The name of the hook</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">func</span>
+
+													<span class="tag"><span class="type">function</span></span>
+
+
+												<p> The function to call after the original hook was called</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:Remove"></a>
+								<h1><span class="realm shared"></span>Item:Remove(bNoReplication, bNoDelete)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L265">View source &raquo;</a>
+								<p>Removes the item.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bNoReplication</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+
+												<p> Whether or not the item's removal should not be replicated.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bNoDelete</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+
+												<p> Whether or not the item should not be fully deleted</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether the item was successfully deleted or not</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetEntity"></a>
+								<h1><span class="realm server"></span>Item:GetEntity()</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L352">View source &raquo;</a>
+								<p>Returns the item's entity.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">entity</span>
+
+												<p>The entity of the item</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:Spawn"></a>
+								<h1><span class="realm server"></span>Item:Spawn(position, angles)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L367">View source &raquo;</a>
+								<p>Spawn an item entity based off the item table.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">position</span>
+
+													<span class="tag"><span class="type">vector</span></span>
+
+
+												<p> The position in which the item's entity will be spawned</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">angles</span>
+
+													<span class="tag"><span class="type">angle</span></span>
+
+
+												<p> The angles at which the item's entity will spawn</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">entity</span>
+
+												<p>The spawned entity</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:Transfer"></a>
+								<h1><span class="realm server"></span>Item:Transfer(invID, x, y, client, noReplication, isLogical)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L408">View source &raquo;</a>
+								<p>Transfers an item to a specific inventory.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">invID</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> The inventory to transfer the item to</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">x</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> The X position to which the item should be transferred on the new inventory</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">y</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> The Y position to which the item should be transferred on the new inventory</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><span class="type">player</span></span>
+
+
+												<p> The player to which the item is being transferred</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">noReplication</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+
+												<p> Whether there should be no replication of the transferral</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">isLogical</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+
+												<p> Whether or not an entity should spawn if the item is transferred to the world</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether the transfer was successful or not</p>
+											</li>
+
+											<div class="or"><span>OR</span></div>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>The error, if applicable</p>
 											</li>
 
 								</ul>
