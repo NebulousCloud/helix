@@ -42,18 +42,18 @@ function ENT:Initialize()
 end
 
 function ENT:CanAccess(client)
-	local allowed = false
+	local bAccess = false
 	local uniqueID = ix.faction.indices[client:Team()].uniqueID
 
-	if (self.factions and table.Count(self.factions) > 0) then
+	if (self.factions and !table.IsEmpty(self.factions)) then
 		if (self.factions[uniqueID]) then
-			allowed = true
+			bAccess = true
 		else
 			return false
 		end
 	end
 
-	if (allowed and self.classes and table.Count(self.classes) > 0) then
+	if (bAccess and self.classes and !table.IsEmpty(self.classes)) then
 		local class = ix.class.list[client:GetCharacter():GetClass()]
 		local classID = class and class.uniqueID
 
@@ -183,7 +183,7 @@ if (SERVER) then
 
 		-- Only send what is needed.
 		for k, v in pairs(self.items) do
-			if (table.Count(v) > 0 and (CAMI.PlayerHasAccess(activator, "Helix - Manage Vendors", nil) or v[VENDOR_MODE])) then
+			if (!table.IsEmpty(v) and (CAMI.PlayerHasAccess(activator, "Helix - Manage Vendors", nil) or v[VENDOR_MODE])) then
 				items[k] = v
 			end
 		end

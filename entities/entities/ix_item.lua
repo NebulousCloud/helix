@@ -79,7 +79,7 @@ if (SERVER) then
 			self:SetNetVar("id", itemTable.uniqueID)
 			self.ixItemID = itemID
 
-			if (table.Count(itemTable.data) > 0) then
+			if (!table.IsEmpty(itemTable.data)) then
 				self:SetNetVar("data", itemTable.data)
 			end
 

@@ -186,7 +186,7 @@ ITEM.functions.Equip = {
 
 		local groups = char:GetData("groups", {})
 
-		if (table.Count(groups) > 0) then
+		if (!table.IsEmpty(groups)) then
 			char:SetData("oldGroups" .. item.outfitCategory, groups)
 
 			client:ResetBodygroups()
@@ -210,7 +210,7 @@ ITEM.functions.Equip = {
 				item.player:SetBodygroup(index, value)
 			end
 
-			if (table.Count(newGroups) > 0) then
+			if (!table.IsEmpty(newGroups)) then
 				char:SetData("groups", newGroups)
 			end
 		end

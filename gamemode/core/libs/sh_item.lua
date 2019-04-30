@@ -457,7 +457,7 @@ do
 						ix.item.inventories[k].slots = v
 					end
 
-					if (table.Count(badItems) > 0) then
+					if (!table.IsEmpty(badItems)) then
 						local deleteQuery = mysql:Delete("ix_items")
 							deleteQuery:WhereIn("item_id", badItems)
 						deleteQuery:Execute()

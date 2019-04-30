@@ -19,7 +19,7 @@ if (SERVER) then
 			return
 		end
 
-		if (table.Count(items) < 1) then
+		if (table.IsEmpty(items)) then
 			return
 		end
 
@@ -41,7 +41,7 @@ if (SERVER) then
 			end
 		end
 
-		if (table.Count(items) < 1) then
+		if (table.IsEmpty(items)) then
 			return
 		end
 

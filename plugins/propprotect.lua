@@ -54,7 +54,7 @@ if (SERVER) then
 		return string.format("%s has spawned a '%s'.", client:Name(), arg[1])
 	end)
 
-	function PLUGIN:PlayerSpawnObject(client, model, skin)
+	function PLUGIN:PlayerSpawnObject(client, model, entity)
 		if ((client.ixNextSpawn or 0) < CurTime()) then
 			client.ixNextSpawn = CurTime() + 0.75
 		else

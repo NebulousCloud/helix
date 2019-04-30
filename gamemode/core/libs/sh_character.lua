@@ -542,7 +542,7 @@ do
 			end
 		end,
 		ShouldDisplay = function(self, container, payload)
-			return table.Count(ix.attributes.list) > 0
+			return !table.IsEmpty(ix.attributes.list)
 		end
 	})
 

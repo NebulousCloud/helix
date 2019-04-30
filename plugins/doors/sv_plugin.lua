@@ -142,7 +142,7 @@ function PLUGIN:SaveDoorData()
 			end
 
 			-- Add the door to the door information.
-			if (table.Count(doorData) > 0) then
+			if (!table.IsEmpty(doorData)) then
 				data[k] = doorData
 			end
 		end

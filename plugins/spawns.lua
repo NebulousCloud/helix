@@ -9,7 +9,7 @@ PLUGIN.spawns = PLUGIN.spawns or {}
 function PLUGIN:PlayerLoadout(client)
 	local character = client:GetCharacter()
 
-	if (self.spawns and table.Count(self.spawns) > 0 and character) then
+	if (self.spawns and !table.IsEmpty(self.spawns) and character) then
 		local class = character:GetClass()
 		local points
 		local className = ""
@@ -33,7 +33,7 @@ function PLUGIN:PlayerLoadout(client)
 
 			points = points[className] or points[""]
 
-			if (points and table.Count(points) > 0) then
+			if (points and !table.IsEmpty(points)) then
 				local position = table.Random(points)
 
 				client:SetPos(position)

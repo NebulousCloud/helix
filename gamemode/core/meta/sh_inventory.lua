@@ -501,7 +501,7 @@ end
 if (SERVER) then
 	function META:SendSlot(x, y, item)
 		local receivers = self:GetReceivers()
-		local sendData = item and item.data and table.Count(item.data) > 0 and item.data or {}
+		local sendData = item and item.data and !table.IsEmpty(item.data) and item.data or {}
 
 		net.Start("ixInventorySet")
 			net.WriteUInt(self:GetID(), 32)

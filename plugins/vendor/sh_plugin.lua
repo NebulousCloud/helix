@@ -670,7 +670,7 @@ properties.Add("vendor_edit", {
 		local itemsTable = {}
 
 		for k, v in pairs(entity.items) do
-			if (table.Count(v) > 0) then
+			if (!table.IsEmpty(v)) then
 				itemsTable[k] = v
 			end
 		end

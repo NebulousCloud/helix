@@ -18,7 +18,7 @@ if (CLIENT) then
 		local scenes = self.scenes
 
 		if (IsValid(ix.gui.characterMenu) and !IsValid(ix.gui.menu) and !ix.gui.characterMenu:IsClosing() and
-			table.Count(scenes) > 0) then
+			!table.IsEmpty(scenes)) then
 			local key = self.index
 			local value = scenes[self.index]
 

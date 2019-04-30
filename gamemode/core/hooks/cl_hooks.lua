@@ -785,7 +785,7 @@ end
 function GM:ShowEntityMenu(entity)
 	local options = entity:GetEntityMenu(LocalPlayer())
 
-	if (istable(options) and table.Count(options) > 0) then
+	if (istable(options) and !table.IsEmpty(options)) then
 		ix.menu.Open(options, entity)
 	end
 end

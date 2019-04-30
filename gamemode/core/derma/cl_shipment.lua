@@ -73,7 +73,7 @@ function PANEL:SetItems(entity, items)
 					items[k] = nil
 				end
 
-				if (table.Count(items) == 0) then
+				if (table.IsEmpty(items)) then
 					self:Remove()
 				end
 			end
