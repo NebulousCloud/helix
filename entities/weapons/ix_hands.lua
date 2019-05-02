@@ -49,6 +49,8 @@ SWEP.maxHoldStress = 4000 -- how much stress the held object can undergo before 
 SWEP.allowedHoldableClasses = {
 	["ix_item"] = true,
 	["prop_physics"] = true,
+	["prop_physics_override"] = true,
+	["prop_physics_multiplayer"] = true,
 	["prop_ragdoll"] = true
 }
 
