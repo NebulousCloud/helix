@@ -388,6 +388,7 @@ if (SERVER) then
 			if (IsValid(client)) then
 				entity.ixSteamID = client:SteamID()
 				entity.ixCharID = client:GetCharacter():GetID()
+				entity:SetNetVar("owner", entity.ixCharID)
 			end
 
 			-- Return the newly created entity.
