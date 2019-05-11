@@ -34,7 +34,7 @@ end
 -- @realm shared
 -- @param[type=vector] pos The position of the money to be spawned.
 -- @number amount The amount of cash being spawned.
--- @param[type=angle,opt=Angle(0,0,0)] angle The angle of the entity being spawned.
+-- @param[type=angle,opt=angle_zero] angle The angle of the entity being spawned.
 -- @treturn entity The spawned money entity.
 function ix.currency.Spawn(pos, amount, angle)
 	if (!amount or amount < 0) then
@@ -57,7 +57,7 @@ function ix.currency.Spawn(pos, amount, angle)
 	money:SetPos(pos)
 	-- double check for negative.
 	money:SetNetVar("amount", math.Round(math.abs(amount)))
-	money:SetAngles(angle or Angle(0, 0, 0))
+	money:SetAngles(angle or angle_zero)
 	money:Activate()
 
 	return money
