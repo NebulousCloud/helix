@@ -10,7 +10,7 @@ function PANEL:Init()
 
 	self.moneyLabel = self:Add("DLabel")
 	self.moneyLabel:Dock(TOP)
-	self.moneyLabel:SetFont("ixMediumLightFont")
+	self.moneyLabel:SetFont("ixGenericFont")
 	self.moneyLabel:SetText("")
 	self.moneyLabel:SetTextInset(2, 0)
 	self.moneyLabel:SizeToContents()
