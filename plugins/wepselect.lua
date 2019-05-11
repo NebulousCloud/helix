@@ -73,17 +73,17 @@ if (CLIENT) then
 
 				surface.SetFont("ixWeaponSelectFont")
 				local _, ty = surface.GetTextSize(v:GetPrintName():upper())
-				local scale = (1 - math.abs(theta*2))
+				local scale = (1 - math.abs(theta * 2))
 
 				local matrix = Matrix()
 				matrix:Translate(Vector(
 					shiftX + x + math.cos(theta * spacing + math.pi) * radius + radius,
-					y + lastY + math.sin(theta * spacing + math.pi) * radius - ty/2 ,
+					y + lastY + math.sin(theta * spacing + math.pi) * radius - ty / 2 ,
 					1))
 				matrix:Scale(Vector(1, 1, 0) * scale)
 
 				cam.PushModelMatrix(matrix)
-					ix.util.DrawText(v:GetPrintName():upper(), 2, ty/2, color, 0, 1, "ixWeaponSelectFont")
+					ix.util.DrawText(v:GetPrintName():upper(), 2, ty / 2, color, 0, 1, "ixWeaponSelectFont")
 				cam.PopModelMatrix()
 
 				i = i + 1
@@ -126,6 +126,13 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:PlayerBindPress(client, bind, pressed)
+		bind = bind:lower()
+
+		if (!pressed or !bind:find("invprev") and !bind:find("invnext")
+		and !bind:find("slot") and !bind:find("attack")) then
+			return
+		end
+
 		local currentWeapon = client:GetActiveWeapon()
 		local bValid = IsValid(currentWeapon)
 		local bTool
@@ -139,18 +146,22 @@ if (CLIENT) then
 			bTool = tool and (tool.Scroll != nil)
 		end
 
-		bind = bind:lower()
+		local weapons = {}
 
-		if (bind:find("invprev") and pressed and !bTool) then
+		for _, v in pairs(client:GetWeapons()) do
+			weapons[#weapons + 1] = v
+		end
+
+		if (bind:find("invprev") and !bTool) then
 			local oldIndex = self.index
-			self.index = math.min(self.index + 1, table.Count(client:GetWeapons()))
+			self.index = math.min(self.index + 1, #weapons)
 
 			if (self.alpha == 0 or oldIndex != self.index) then
 				self:OnIndexChanged()
 			end
 
 			return true
-		elseif (bind:find("invnext") and pressed and !bTool) then
+		elseif (bind:find("invnext") and !bTool) then
 			local oldIndex = self.index
 			self.index = math.max(self.index - 1, 1)
 
@@ -159,13 +170,13 @@ if (CLIENT) then
 			end
 
 			return true
-		elseif (bind:find("slot") and pressed) then
-			self.index = math.Clamp(tonumber(bind:match("slot(%d)")) or 1, 1, table.Count(LocalPlayer():GetWeapons()))
+		elseif (bind:find("slot")) then
+			self.index = math.Clamp(tonumber(bind:match("slot(%d)")) or 1, 1, #weapons)
 			self:OnIndexChanged()
 
 			return true
-		elseif (bind:find("attack") and pressed and self.alpha > 0) then
-			local weapon = LocalPlayer():GetWeapons()[self.index]
+		elseif (bind:find("attack") and self.alpha > 0) then
+			local weapon = weapons[self.index]
 
 			if (IsValid(weapon)) then
 				LocalPlayer():EmitSound(hook.Run("WeaponSelectSound", weapon) or "HL2Player.Use")
