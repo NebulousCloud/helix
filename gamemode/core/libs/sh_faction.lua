@@ -89,6 +89,8 @@ end
 -- @realm shared
 -- @param identifier Index or name of the faction
 -- @treturn table Faction table
+-- @usage print(ix.faction.Get(Entity(1):Team()).name)
+-- > "Citizen"
 function ix.faction.Get(identifier)
 	return ix.faction.indices[identifier] or ix.faction.teams[identifier]
 end
