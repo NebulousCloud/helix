@@ -167,7 +167,10 @@ function GM:OnEntityCreated(entity)
 	if (entity:GetClass() == "npc_grenade_frag") then
 		-- OnEntityCreated is called before the owner is set on the grenade entity, so we have to wait until next frame
 		timer.Simple(0, function()
-			RemoveGrenade(entity:GetOwner(), entity)
+			-- Needed because engine entities are created on map load for some reason??
+			if (IsValid(entity)) then
+				RemoveGrenade(entity:GetOwner(), entity)
+			end
 		end)
 	end
 end
