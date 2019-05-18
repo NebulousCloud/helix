@@ -148,6 +148,10 @@ if (SERVER) then
 	function ENT:Think()
 		local itemTable = self:GetItemTable()
 
+		if (!itemTable) then
+			self:Remove()
+		end
+
 		if (itemTable.Think) then
 			itemTable:Think(self)
 		end
