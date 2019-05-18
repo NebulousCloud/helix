@@ -708,7 +708,7 @@ ix.command.Add("CharSetClass", {
 
 			if (targetPlayer:Team() == classTable.faction) then
 				target:SetClass(classTable.index)
-				hook.Run("PlayerJoinedClass", client, classTable.index, oldClass)
+				hook.Run("PlayerJoinedClass", targetPlayer, classTable.index, oldClass)
 
 				targetPlayer:NotifyLocalized("becomeClass", L(classTable.name, targetPlayer))
 
