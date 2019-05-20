@@ -61,14 +61,14 @@ if (SERVER) then
 			end
 
 			data[#data + 1] = {
-				name = entity:GetNetVar("name"),
-				description = entity:GetNetVar("description"),
+				name = entity:GetDisplayName(),
+				description = entity:GetDescription(),
 				pos = entity:GetPos(),
 				angles = entity:GetAngles(),
 				model = entity:GetModel(),
 				skin = entity:GetSkin(),
 				bodygroups = bodygroups,
-				bubble = entity:GetNetVar("noBubble"),
+				bubble = entity:GetNoBubble(),
 				items = entity.items,
 				factions = entity.factions,
 				classes = entity.classes,
@@ -99,9 +99,9 @@ if (SERVER) then
 				physObj:Sleep()
 			end
 
-			entity:SetNetVar("noBubble", v.bubble)
-			entity:SetNetVar("name", v.name)
-			entity:SetNetVar("description", v.description)
+			entity:SetNoBubble(v.bubble)
+			entity:SetDisplayName(v.name)
+			entity:SetDescription(v.description)
 
 			for id, bodygroup in pairs(v.bodygroups or {}) do
 				entity:SetBodygroup(id, bodygroup)
@@ -174,11 +174,11 @@ if (SERVER) then
 		local feedback = true
 
 		if (key == "name") then
-			entity:SetNetVar("name", data)
+			entity:SetDisplayName(data)
 		elseif (key == "description") then
-			entity:SetNetVar("description", data)
+			entity:SetDescription(data)
 		elseif (key == "bubble") then
-			entity:SetNetVar("noBubble", data)
+			entity:SetNoBubble(data)
 		elseif (key == "mode") then
 			local uniqueID = data[1]
 
@@ -524,9 +524,9 @@ else
 		local data = net.ReadType()
 
 		if (key == "name") then
-			editor.name:SetText(entity:GetNetVar("name"))
+			editor.name:SetText(entity:GetDisplayName())
 		elseif (key == "description") then
-			editor.description:SetText(entity:GetNetVar("description"))
+			editor.description:SetText(entity:GetDescription())
 		elseif (key == "bubble") then
 			editor.bubble.noSend = true
 			editor.bubble:SetValue(data and 1 or 0)

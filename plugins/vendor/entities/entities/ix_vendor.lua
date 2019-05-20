@@ -7,6 +7,12 @@ ENT.AdminOnly = true
 ENT.isVendor = true
 ENT.bNoPersist = true
 
+function ENT:SetupDataTables()
+	self:NetworkVar("Bool", 0, "NoBubble")
+	self:NetworkVar("String", 0, "DisplayName")
+	self:NetworkVar("String", 1, "Description")
+end
+
 function ENT:Initialize()
 	if (SERVER) then
 		self:SetModel("models/mossman.mdl")
@@ -21,8 +27,8 @@ function ENT:Initialize()
 		self.factions = {}
 		self.classes = {}
 
-		self:SetNetVar("name", "John Doe")
-		self:SetNetVar("description", "")
+		self:SetDisplayName("John Doe")
+		self:SetDescription("")
 
 		self.receivers = {}
 
@@ -57,7 +63,7 @@ function ENT:CanAccess(client)
 		local class = ix.class.list[client:GetCharacter():GetClass()]
 		local classID = class and class.uniqueID
 
-		if (!self.classes[classID]) then
+		if (classID and !self.classes[classID]) then
 			return false
 		end
 	end
@@ -138,7 +144,9 @@ function ENT:SetAnim()
 		end
 	end
 
-	self:ResetSequence(4)
+	if (self:GetSequenceCount() > 1) then
+		self:ResetSequence(4)
+	end
 end
 
 if (SERVER) then
@@ -165,7 +173,7 @@ if (SERVER) then
 
 		if (!self:CanAccess(activator) or hook.Run("CanPlayerUseVendor", activator) == false) then
 			if (self.messages[VENDOR_NOTRADE]) then
-				activator:ChatPrint(self:GetNetVar("name")..": "..self.messages[VENDOR_NOTRADE])
+				activator:ChatPrint(self:GetDisplayName()..": "..self.messages[VENDOR_NOTRADE])
 			else
 				activator:NotifyLocalized("vendorNoTrade")
 			end
@@ -176,7 +184,7 @@ if (SERVER) then
 		self.receivers[#self.receivers + 1] = activator
 
 		if (self.messages[VENDOR_WELCOME]) then
-			activator:ChatPrint(self:GetNetVar("name")..": "..self.messages[VENDOR_WELCOME])
+			activator:ChatPrint(self:GetDisplayName()..": "..self.messages[VENDOR_WELCOME])
 		end
 
 		local items = {}
@@ -204,7 +212,7 @@ if (SERVER) then
 			net.WriteFloat(self.scale or 0.5)
 		net.Send(activator)
 
-		ix.log.Add(activator, "vendorUse", self:GetNetVar("name"))
+		ix.log.Add(activator, "vendorUse", self:GetDisplayName())
 	end
 
 	function ENT:SetMoney(value)
@@ -277,7 +285,7 @@ else
 	end
 
 	function ENT:Think()
-		local noBubble = self:GetNetVar("noBubble")
+		local noBubble = self:GetNoBubble()
 
 		if (IsValid(self.bubble) and noBubble) then
 			self.bubble:Remove()
@@ -306,14 +314,14 @@ else
 	function ENT:OnPopulateEntityInfo(container)
 		local name = container:AddRow("name")
 		name:SetImportant()
-		name:SetText(self:GetNetVar("name", "John Doe"))
+		name:SetText(self:GetDisplayName())
 		name:SizeToContents()
 
-		local descriptionText = self:GetNetVar("description", "")
+		local descriptionText = self:GetDescription()
 
 		if (descriptionText != "") then
 			local description = container:AddRow("description")
-			description:SetText(self:GetNetVar("description"))
+			description:SetText(self:GetDescription())
 			description:SizeToContents()
 		end
 	end

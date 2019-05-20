@@ -56,7 +56,7 @@ function ix.currency.Spawn(pos, amount, angle)
 
 	money:SetPos(pos)
 	-- double check for negative.
-	money:SetNetVar("amount", math.Round(math.abs(amount)))
+	money:SetAmount(math.Round(math.abs(amount)))
 	money:SetAngles(angle or angle_zero)
 	money:Activate()
 

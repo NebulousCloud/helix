@@ -7,6 +7,10 @@ ENT.Spawnable = false
 ENT.ShowPlayerInteraction = true
 ENT.bNoPersist = true
 
+function ENT:SetupDataTables()
+	self:NetworkVar("Int", 0, "Amount")
+end
+
 if (SERVER) then
 	function ENT:Initialize()
 		self:SetModel("models/props_lab/box01a.mdl")
@@ -56,12 +60,4 @@ else
 		text:SetText(ix.currency.Get(self:GetAmount()))
 		text:SizeToContents()
 	end
-end
-
-function ENT:SetAmount(amount)
-	self:SetNetVar("amount", amount)
-end
-
-function ENT:GetAmount()
-	return self:GetNetVar("amount", 0)
 end

@@ -5,6 +5,12 @@ ENT.Category = "Helix"
 ENT.Spawnable = false
 ENT.bNoPersist = true
 
+function ENT:SetupDataTables()
+	self:NetworkVar("Int", 0, "ID")
+	self:NetworkVar("Bool", 0, "Locked")
+	self:NetworkVar("String", 0, "DisplayName")
+end
+
 if (SERVER) then
 	ENT.money = 0
 
@@ -13,6 +19,12 @@ if (SERVER) then
 		self:SetSolid(SOLID_VPHYSICS)
 		self:SetUseType(SIMPLE_USE)
 		self.receivers = {}
+
+		local definition = ix.container.stored[self:GetModel():lower()]
+
+		if (definition) then
+			self:SetDisplayName(definition.name)
+		end
 
 		local physObj = self:GetPhysicsObject()
 
@@ -24,7 +36,7 @@ if (SERVER) then
 
 	function ENT:SetInventory(inventory)
 		if (inventory) then
-			self:SetNetVar("id", inventory:GetID())
+			self:SetID(inventory:GetID())
 		end
 	end
 
@@ -37,7 +49,7 @@ if (SERVER) then
 	end
 
 	function ENT:OnRemove()
-		local index = self:GetNetVar("id")
+		local index = self:GetID()
 
 		if (!ix.shuttingDown and !self.ixIsSafe and ix.entityDataLoaded and index) then
 			local inventory = ix.item.inventories[index]
@@ -74,7 +86,7 @@ if (SERVER) then
 				end
 			})
 
-			if (self:GetNetVar("locked")) then
+			if (self:GetLocked()) then
 				self.Sessions[activator:GetCharacter():GetID()] = true
 			end
 
@@ -91,7 +103,7 @@ if (SERVER) then
 			if (character) then
 				local def = ix.container.stored[self:GetModel():lower()]
 
-				if (self:GetNetVar("locked") and !self.Sessions[character:GetID()]) then
+				if (self:GetLocked() and !self.Sessions[character:GetID()]) then
 					self:EmitSound(def.locksound or "doors/default_locked.wav")
 
 					if (!self.keypad) then
@@ -115,7 +127,7 @@ else
 
 	function ENT:OnPopulateEntityInfo(tooltip)
 		local definition = ix.container.stored[self:GetModel():lower()]
-		local bLocked = self:GetNetVar("locked", false)
+		local bLocked = self:GetLocked()
 
 		surface.SetFont("ixIconsSmall")
 
@@ -155,11 +167,6 @@ else
 	end
 end
 
-function ENT:GetDisplayName()
-	local definition = ix.container.stored[self:GetModel():lower()]
-	return self:GetNetVar("name", definition.name)
-end
-
 function ENT:GetInventory()
-	return ix.item.inventories[self:GetNetVar("id", 0)]
+	return ix.item.inventories[self:GetID()]
 end

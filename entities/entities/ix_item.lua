@@ -10,6 +10,10 @@ ENT.ShowPlayerInteraction = true
 ENT.RenderGroup = RENDERGROUP_BOTH
 ENT.bNoPersist = true
 
+function ENT:SetupDataTables()
+	self:NetworkVar("String", 0, "ItemID")
+end
+
 if (SERVER) then
 	util.AddNetworkString("ixItemEntityAction")
 
@@ -76,7 +80,7 @@ if (SERVER) then
 
 			self:PhysicsInit(SOLID_VPHYSICS)
 			self:SetSolid(SOLID_VPHYSICS)
-			self:SetNetVar("id", itemTable.uniqueID)
+			self:SetItemID(itemTable.uniqueID)
 			self.ixItemID = itemID
 
 			if (!table.IsEmpty(itemTable.data)) then
@@ -304,10 +308,6 @@ function ENT:GetEntityMenu(client)
 	itemTable.entity = nil
 
 	return options
-end
-
-function ENT:GetItemID()
-	return self:GetNetVar("id", "")
 end
 
 function ENT:GetItemTable()

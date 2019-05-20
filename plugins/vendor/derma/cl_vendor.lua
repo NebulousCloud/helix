@@ -140,8 +140,8 @@ end
 
 function PANEL:Setup(entity)
 	self.entity = entity
-	self:SetTitle(entity:GetNetVar("name", ""))
-	self.vendorName:SetText(entity:GetNetVar("name", "")..(entity.money and " ("..entity.money..")" or ""))
+	self:SetTitle(entity:GetDisplayName())
+	self.vendorName:SetText(entity:GetDisplayName()..(entity.money and " ("..entity.money..")" or ""))
 
 	self.vendorBuy:SetEnabled(!self:GetReadOnly())
 	self.vendorSell:SetEnabled(!self:GetReadOnly())
@@ -174,8 +174,8 @@ function PANEL:Think()
 	end
 
 	if ((self.nextUpdate or 0) < CurTime()) then
-		self:SetTitle(self.entity:GetNetVar("name"))
-		self.vendorName:SetText(entity:GetNetVar("name", "")..(entity.money and " ("..ix.currency.Get(entity.money)..")" or ""))
+		self:SetTitle(self.entity:GetDisplayName())
+		self.vendorName:SetText(entity:GetDisplayName()..(entity.money and " ("..ix.currency.Get(entity.money)..")" or ""))
 		self.ourName:SetText(L"you".." ("..ix.currency.Get(LocalPlayer():GetCharacter():GetMoney())..")")
 
 		self.nextUpdate = CurTime() + 0.25
