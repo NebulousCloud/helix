@@ -3,7 +3,7 @@ function GM:PlayerInitialSpawn(client)
 	client.ixJoinTime = RealTime()
 
 	if (client:IsBot()) then
-		local botID = os.time()
+		local botID = os.time() + client:EntIndex()
 		local index = math.random(1, table.Count(ix.faction.indices))
 		local faction = ix.faction.indices[index]
 
@@ -20,7 +20,7 @@ function GM:PlayerInitialSpawn(client)
 
 		character.vars.inv = {inventory}
 
-		ix.char.loaded[os.time()] = character
+		ix.char.loaded[botID] = character
 
 		character:Setup()
 		client:Spawn()
