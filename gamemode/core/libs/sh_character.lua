@@ -928,7 +928,7 @@ do
 				ix.characters = charList
 			end
 
-			vgui.Create("ixCharMenu")
+			ix.charmenu.Create()
 		end)
 
 		net.Receive("ixCharacterLoadFailure", function()
@@ -976,8 +976,8 @@ do
 				end
 			end
 
-			if (isCurrentChar and !IsValid(ix.gui.characterMenu)) then
-				vgui.Create("ixCharMenu")
+			if (isCurrentChar and !ix.charmenu.IsOpen()) then
+				ix.charmenu.Create()
 			end
 		end)
 
@@ -988,11 +988,8 @@ do
 				ix.gui.menu:Remove()
 			end
 
-			if (!IsValid(ix.gui.characterMenu)) then
-				vgui.Create("ixCharMenu")
-			elseif (ix.gui.characterMenu:IsClosing()) then
-				ix.gui.characterMenu:Remove()
-				vgui.Create("ixCharMenu")
+			if (!ix.charmenu.IsOpen()) then
+				ix.charmenu.Create()
 			end
 
 			if (isCurrentChar) then

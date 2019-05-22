@@ -462,4 +462,4 @@ function PANEL:Paint(width, height)
 	derma.SkinFunc("PaintCharacterLoadBackground", self, width, height)
 end
 
-vgui.Register("ixCharMenuLoad", PANEL, "ixCharMenuPanel")
+vgui.Register("ixCharacterMenuLoad", PANEL, "ixCharMenuPanel")

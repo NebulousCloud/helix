@@ -479,4 +479,4 @@ function PANEL:Paint(width, height)
 	BaseClass.Paint(self, width, height)
 end
 
-vgui.Register("ixCharMenuNew", PANEL, "ixCharMenuPanel")
+vgui.Register("ixCharacterMenuCreate", PANEL, "ixCharMenuPanel")
