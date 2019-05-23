@@ -40,6 +40,7 @@ tparam_alias("player", "player")
 tparam_alias("entity", "entity")
 tparam_alias("color", "color")
 tparam_alias("tab", "table")
+tparam_alias("panel", "panel")
 
 tparam_alias("ixtype", "ix.type")
 tparam_alias("inventory", "inventory")
