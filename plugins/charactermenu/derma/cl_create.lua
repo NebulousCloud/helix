@@ -2,7 +2,7 @@
 local padding = ScreenScale(32)
 
 -- create character panel
-DEFINE_BASECLASS("ixCharMenuPanel")
+DEFINE_BASECLASS("ixCharacterMenuPanel")
 local PANEL = {}
 
 function PANEL:Init()
@@ -46,7 +46,7 @@ function PANEL:Init()
 	self.factionModel:SetFOV(78)
 	self.factionModel.PaintModel = self.factionModel.Paint
 
-	self.factionButtonsPanel = self.factionPanel:Add("ixCharMenuButtonList")
+	self.factionButtonsPanel = self.factionPanel:Add("ixCharacterMenuButtonList")
 	self.factionButtonsPanel:SetWide(halfWidth)
 	self.factionButtonsPanel:Dock(LEFT)
 
@@ -479,4 +479,4 @@ function PANEL:Paint(width, height)
 	BaseClass.Paint(self, width, height)
 end
 
-vgui.Register("ixCharacterMenuCreate", PANEL, "ixCharMenuPanel")
+vgui.Register("ixCharacterMenuCreate", PANEL, "ixCharacterMenuPanel")

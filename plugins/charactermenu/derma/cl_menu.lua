@@ -95,7 +95,7 @@ function PANEL:Paint(width, height)
 	end
 end
 
-vgui.Register("ixCharMenuPanel", PANEL, "ixSubpanelParent")
+vgui.Register("ixCharacterMenuPanel", PANEL, "ixSubpanelParent")
 
 -- character menu main button list
 PANEL = {}
@@ -112,7 +112,7 @@ function PANEL:Add(name)
 	return panel
 end
 
-vgui.Register("ixCharMenuButtonList", PANEL, "EditablePanel")
+vgui.Register("ixCharacterMenuButtonList", PANEL, "EditablePanel")
 
 -- main character menu panel
 PANEL = {}
@@ -215,7 +215,7 @@ function PANEL:Init()
 	end
 
 	-- button list
-	local mainButtonList = self:Add("ixCharMenuButtonList")
+	local mainButtonList = self:Add("ixCharacterMenuButtonList")
 	mainButtonList:Dock(LEFT)
 
 	-- leave/return button
@@ -306,7 +306,7 @@ function PANEL:OnClose()
 	end
 end
 
-vgui.Register("ixCharMenuMain", PANEL, "ixCharMenuPanel")
+vgui.Register("ixCharacterMenuMain", PANEL, "ixCharacterMenuPanel")
 
 -- container panel
 PANEL = {}
@@ -328,7 +328,7 @@ function PANEL:Init()
 	self:SetPos(0, 0)
 
 	-- main menu panel
-	self.mainPanel = self:Add("ixCharMenuMain")
+	self.mainPanel = self:Add("ixCharacterMenuMain")
 
 	-- new character panel
 	self.newCharacterPanel = self:Add("ixCharacterMenuCreate")
