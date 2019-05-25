@@ -184,7 +184,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L110">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L115">View source &raquo;</a>
 								<p>Loads all saved options from disk.</p>
 							</header>
 
@@ -205,7 +205,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 								<h1><span class="realm shared"></span>ix.option.GetAll()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L135">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L140">View source &raquo;</a>
 								<p>Returns all of the available options.  Note that this does contain the actual values of the options, just their properties.</p>
 							</header>
 
@@ -239,7 +239,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 								<h1><span class="realm shared"></span>ix.option.GetAllByCategories([bRemoveHidden=false])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L153">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L158">View source &raquo;</a>
 								<p>Returns all of the available options grouped by their categories.  The returned table contains category tables, that contain
  all the options in that category as an array (this is so you can sort them if you'd like).</p>
 							</header>
@@ -279,7 +279,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 								<h1><span class="realm client"></span>ix.option.Set(key, value[, bNoSave=false])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L182">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L187">View source &raquo;</a>
 								<p>Sets an option value for the local player.
  This function will error when an invalid key is passed.</p>
 							</header>
@@ -331,7 +331,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 								<h1><span class="realm client"></span>ix.option.Get(key, default)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L214">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L219">View source &raquo;</a>
 								<p>Retrieves an option value for the local player.  If it is not set, it'll return the default that you've specified.</p>
 							</header>
 
@@ -389,7 +389,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L233">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L238">View source &raquo;</a>
 								<p>Saves all options to disk.</p>
 							</header>
 
@@ -401,7 +401,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 								<h1><span class="realm client"></span>ix.option.Sync()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L239">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L244">View source &raquo;</a>
 								<p>Syncs all networked options to the server.</p>
 							</header>
 
@@ -413,7 +413,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 								<h1><span class="realm server"></span>ix.option.Get(client, key, default)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L274">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L279">View source &raquo;</a>
 								<p>Retrieves an option value from the specified player.  If it is not set, it'll return the default that you've specified.
  This function will error when an invalid player is passed.</p>
 							</header>
@@ -485,7 +485,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 								<h1><span class="realm shared"></span>OptionStructure</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L90">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L95">View source &raquo;</a>
 								<p>You can specify additional optional arguments for <a href="../libraries/ix.option.html#ix.option.Add">ix.option.Add</a> by passing in a table of specific fields as the fourth
  argument.</p>
 							</header>
@@ -592,6 +592,26 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 													<span class="tag default">default: false</span>
 
 												<p> Whether or not the server should be aware of this option for each client.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">OnChanged</span>
+
+													<span class="tag"><span class="type">function</span></span>
+
+													<span class="tag default">optional</span>
+
+												<p>
+<p> The function to run when this option is changed - this includes whether it was set
+ by the player, or through code using <a href="../libraries/ix.option.html#ix.option.Set">ix.option.Set</a>.</p>
+<pre><code>OnChanged = function(oldValue, value)
+    print("new value is", value)
+end
+</code></pre>
+</p>
 											</li>
 									</ul>
 
