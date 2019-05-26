@@ -50,8 +50,8 @@
 		<!-- library functions -->
 		<article>
 				<header>
-					<h1>ix.faction</h1>
-					<h2>Helper library for loading/getting faction information.</h2>
+					<h1>ix.lang</h1>
+					<h2>Multi-language phrase support.</h2>
 				</header>
 
 				<!-- summary -->
@@ -61,10 +61,8 @@
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
-									<li><span class="realm shared"></span><a href="#ix.faction.LoadFromDir">ix.faction.LoadFromDir(directory)</a></li>
-									<li><span class="realm shared"></span><a href="#ix.faction.Get">ix.faction.Get(identifier)</a></li>
-									<li><span class="realm shared"></span><a href="#ix.faction.GetIndex">ix.faction.GetIndex(uniqueID)</a></li>
-									<li><span class="realm client"></span><a href="#ix.faction.HasWhitelist">ix.faction.HasWhitelist(faction)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.lang.LoadFromDir">ix.lang.LoadFromDir(directory)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.lang.AddTable">ix.lang.AddTable(language, data)</a></li>
 							</ul>
 					</div>
 				</details>
@@ -72,18 +70,48 @@
 				<!-- description -->
 				<p>
 
+
+<p>Helix has support for multiple languages, and you can easily leverage this system for use in your own schema, plugins, etc.
+Languages will be loaded from the schema and any plugins in <code>languages/sh_languagename.lua</code>, where <code>languagename</code> is the id of a
+language (<code>english</code> for English, <code>french</code> for French, etc). The structure of a language file is a table of phrases with the key
+as its phrase ID and the value as its translation for that language. For example, in <code>plugins/area/sh_english.lua</code>:</p>
+<pre><code>LANGUAGE = {
+    area = "Area",
+    areas = "Areas",
+    areaEditMode = "Area Edit Mode",
+    -- etc.
+}
+</code></pre>
+
+<p>The phrases defined in these language files can be used with the <code>L</code> global function:</p>
+<pre><code>print(L("areaEditMode"))
+&gt; Area Edit Mode
+</code></pre>
+
+<p>All phrases are formatted with <a href="https://www.lua.org/manual/5.1/manual.html#pdf-string.format">string.format</a>, so if you wish to add some info in a phrase you can use standard Lua string
+formatting arguments:</p>
+<pre><code>print(L("areaDeleteConfirm", "Test"))
+&gt; Are you sure you want to delete the area "Test"?
+</code></pre>
+
+<p>Phrases are also usable on the server, but only when trying to localize a phrase based on a client's preferences. The server
+does not have a set language. An example:</p>
+<pre><code>Entity(1):ChatPrint(L("areaEditMode"))
+&gt; -- "Area Edit Mode" will print in the player's chatbox
+</code></pre>
 </p>
 
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
 						<section class="method">
-							<header><a name="ix.faction.LoadFromDir"></a>
-								<h1><span class="realm shared"></span>ix.faction.LoadFromDir(directory)</h1>
+							<header><a name="ix.lang.LoadFromDir"></a>
+								<h1><span class="realm shared"></span>ix.lang.LoadFromDir(directory)</h1>
 
+									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_faction.lua#L37">View source &raquo;</a>
-								<p>Loads factions from a directory.</p>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_language.lua#L40">View source &raquo;</a>
+								<p>Loads language files from a directory.</p>
 							</header>
 
 
@@ -98,7 +126,7 @@
 													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p> The path to the factions files.</p>
+												<p> Directory to load language files from</p>
 											</li>
 									</ul>
 
@@ -106,16 +134,18 @@
 						</section>
 						<section class="method">
 								<aside>
-										<code>print(ix.faction.Get(Entity(1):Team()).name)
- > "Citizen"
+										<code>ix.lang.AddTable("english", {
+	myPhrase = "My Phrase"
+})
 </code>
 								</aside>
-							<header><a name="ix.faction.Get"></a>
-								<h1><span class="realm shared"></span>ix.faction.Get(identifier)</h1>
+							<header><a name="ix.lang.AddTable"></a>
+								<h1><span class="realm shared"></span>ix.lang.AddTable(language, data)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_faction.lua#L94">View source &raquo;</a>
-								<p>Retrieves a faction table.</p>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_language.lua#L66">View source &raquo;</a>
+								<p>Adds phrases to a language.  This is used when you aren't adding entries through the files in the <code>languages/</code> folder. A
+ common use case is adding language phrases in a single-file plugin.</p>
 							</header>
 
 
@@ -125,101 +155,27 @@
 									<ul>
 
 											<li>
-												<span class="tag parameter">identifier</span>
-
-
-
-												<p> Index or name of the faction</p>
-											</li>
-									</ul>
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>
-
-												<p>Faction table</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="ix.faction.GetIndex"></a>
-								<h1><span class="realm shared"></span>ix.faction.GetIndex(uniqueID)</h1>
-
-
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_faction.lua#L102">View source &raquo;</a>
-								<p>Retrieves a faction index.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">uniqueID</span>
+												<span class="tag parameter">language</span>
 
 													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p> Unique ID of the faction</p>
+												<p> The ID of the language</p>
 											</li>
 									</ul>
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="type">number</span>
-
-												<p>Faction index</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="ix.faction.HasWhitelist"></a>
-								<h1><span class="realm client"></span>ix.faction.HasWhitelist(faction)</h1>
-
-
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_faction.lua#L115">View source &raquo;</a>
-								<p>Returns true if a faction requires a whitelist.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
 
 									<ul>
 
 											<li>
-												<span class="tag parameter">faction</span>
+												<span class="tag parameter">data</span>
 
-													<span class="tag"><span class="type">number</span></span>
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
 
 
-												<p> Index of the faction</p>
+												<p> Language data to add to the given language</p>
 											</li>
 									</ul>
 
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="type">bool</span>
-
-												<p>Whether or not the faction requires a whitelist</p>
-											</li>
-
-								</ul>
 
 						</section>
 		</article>
