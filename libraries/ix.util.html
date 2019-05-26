@@ -20,6 +20,7 @@
 						<h2>Libraries</h2>
 
 						<ul>
+								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
 								<li><a href="../libraries/ix.class.html">ix.class</a></li>
 								<li><a href="../libraries/ix.command.html">ix.command</a></li>
 								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
@@ -61,15 +62,28 @@
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
+									<li><span class="realm shared"></span><a href="#ix.util.Include">ix.util.Include(fileName[, realm])</a></li>
+									<li><span class="realm shared"></span><a href="#ix.util.IncludeDir">ix.util.IncludeDir(directory[, bFromLua])</a></li>
 									<li><span class="realm shared"></span><a href="#ix.util.StripRealmPrefix">ix.util.StripRealmPrefix(name)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.util.IsColor">ix.util.IsColor(input)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.util.DimColor">ix.util.DimColor(color, multiplier[, alpha=255])</a></li>
 									<li><span class="realm shared"></span><a href="#ix.util.SanitizeType">ix.util.SanitizeType(type, input)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.util.GetTypeFromValue">ix.util.GetTypeFromValue(value)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.util.GetMaterial">ix.util.GetMaterial(materialPath)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.util.FindPlayer">ix.util.FindPlayer(identifier[, bAllowPatterns=false])</a></li>
+									<li><span class="realm shared"></span><a href="#ix.util.StringMatches">ix.util.StringMatches(a, b)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.util.FormatStringNamed">ix.util.FormatStringNamed(format, Arguments)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.util.ExpandCamelCase">ix.util.ExpandCamelCase(input[, bNoUpperFirst=false])</a></li>
 									<li><span class="realm shared"></span><a href="#ix.util.GetCharacters">ix.util.GetCharacters()</a></li>
+									<li><span class="realm client"></span><a href="#ix.util.DrawBlur">ix.util.DrawBlur(panel[, amount=5[, passes=0.2[, alpha=255]]])</a></li>
+									<li><span class="realm client"></span><a href="#ix.util.DrawBlurAt">ix.util.DrawBlurAt(x, y, width, height[, amount=5[, passes=0.2[, alpha=255]]])</a></li>
+									<li><span class="realm client"></span><a href="#ix.util.PushBlur">ix.util.PushBlur(drawFunc)</a></li>
+									<li><span class="realm client"></span><a href="#ix.util.DrawText">ix.util.DrawText(text, x, y, color[, alignX=TEXT_ALIGN_LEFT[, alignY=TEXT_ALIGN_LEFT[, font="ixGenericFont"[, alpha=color.a * 0.575]]]])</a></li>
+									<li><span class="realm client"></span><a href="#ix.util.WrapText">ix.util.WrapText(text, maxWidth[, font="ixChatFont"])</a></li>
 									<li><span class="realm client"></span><a href="#ix.util.ResetStencilValues">ix.util.ResetStencilValues()</a></li>
+									<li><span class="realm shared"></span><a href="#ix.util.GetUTCTime">ix.util.GetUTCTime()</a></li>
+									<li><span class="realm shared"></span><a href="#ix.util.GetStringTime">ix.util.GetStringTime(text)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.util.EmitQueuedSounds">ix.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)</a></li>
 							</ul>
 					</div>
 				</details>
@@ -83,6 +97,94 @@
 					<h1 class="title">Functions</h1>
 
 						<section class="method">
+							<header><a name="ix.util.Include"></a>
+								<h1><span class="realm shared"></span>ix.util.Include(fileName[, realm])</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L39">View source &raquo;</a>
+								<p>Includes a lua file based on the prefix of the file.  This will automatically call <code>include</code> and <code>AddCSLuaFile</code> based on the
+ current realm. This function should always be called shared to ensure that the client will receive the file from the server.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">fileName</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Path of the Lua file to include. The path is relative to the file that is currently running this function</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">realm</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+													<span class="tag default">optional</span>
+
+												<p> Realm that this file should be included in. You should usually ignore this since it
+ will be automatically be chosen based on the <code>SERVER</code> and <code>CLIENT</code> globals. This value should either be <code>&quot;server&quot;</code> or
+ <code>&quot;client&quot;</code> if it is filled in manually</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.util.IncludeDir"></a>
+								<h1><span class="realm shared"></span>ix.util.IncludeDir(directory[, bFromLua])</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L71">View source &raquo;</a>
+								<p>Includes multiple files in a directory.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">directory</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Directory to include files from</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bFromLua</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">optional</span>
+
+												<p> Whether or not to search from the base <code>lua/</code> folder, instead of contextually basing from <code>schema/</code>
+ or <code>gamemode/</code></p>
+											</li>
+									</ul>
+
+
+								<h3>See Also</h3>
+								<ul>
+										<li><a href="../libraries/ix.util.html#ix.util.Include">ix.util.Include</a></li>
+								</ul>
+						</section>
+						<section class="method">
 								<aside>
 										<code>print(ix.util.StripRealmPrefix("sv_init.lua"))
  > init.lua
@@ -92,7 +194,7 @@
 								<h1><span class="realm shared"></span>ix.util.StripRealmPrefix(name)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L84">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L95">View source &raquo;</a>
 								<p>Removes the realm prefix from a file name.  The returned string will be unchanged if there is no prefix found.</p>
 							</header>
 
@@ -130,7 +232,7 @@
 								<h1><span class="realm shared"></span>ix.util.IsColor(input)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L95">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L106">View source &raquo;</a>
 								<p>Returns <code>true</code> if the given input is a color table.  This is necessary since the engine <a href="../libraries/ix.util.html#ix.util.IsColor">IsColor</a> function only checks for
  color metatables - which are not used for regular Lua color types.</p>
 							</header>
@@ -173,7 +275,7 @@
 								<h1><span class="realm shared"></span>ix.util.DimColor(color, multiplier[, alpha=255])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L108">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L119">View source &raquo;</a>
 								<p>Returns a dimmed version of the given color by the given scale.</p>
 							</header>
 
@@ -243,7 +345,7 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 								<h1><span class="realm shared"></span>ix.util.SanitizeType(type, input)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L124">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L135">View source &raquo;</a>
 								<p>Sanitizes an input value with the given type.  This function ensures that a valid type is always returned. If a valid value
  could not be found, it will return the default value for the type. This only works for simple types - e.g it does not work
  for player, character, or Steam ID types.</p>
@@ -303,7 +405,7 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 								<h1><span class="realm shared"></span>ix.util.GetTypeFromValue(value)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L176">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L187">View source &raquo;</a>
 								<p>Returns the <a href="../libraries/ix.html#type">ix.type</a> of the given value.</p>
 							</header>
 
@@ -340,11 +442,58 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 								</ul>
 						</section>
 						<section class="method">
+							<header><a name="ix.util.GetMaterial"></a>
+								<h1><span class="realm shared"></span>ix.util.GetMaterial(materialPath)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L232">View source &raquo;</a>
+								<p>Returns a cached copy of the given material, or creates and caches one if it doesn't exist.  This is a quick helper function
+ if you aren't locally storing a <code>Material()</code> call.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">materialPath</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Path to the material</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">material</span>
+
+												<p>The cached material</p>
+											</li>
+
+											<div class="or"><span>OR</span></div>
+
+											<li>
+													<span class="type">nil</span>
+
+												<p>If the material doesn't exist in the filesystem</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
 							<header><a name="ix.util.FindPlayer"></a>
 								<h1><span class="realm shared"></span>ix.util.FindPlayer(identifier[, bAllowPatterns=false])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L229">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L245">View source &raquo;</a>
 								<p>Attempts to find a player by matching their name or Steam ID.</p>
 							</header>
 
@@ -391,6 +540,105 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 
 						</section>
 						<section class="method">
+							<header><a name="ix.util.StringMatches"></a>
+								<h1><span class="realm shared"></span>ix.util.StringMatches(a, b)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L267">View source &raquo;</a>
+								<p>Checks to see if two strings are equivalent using a fuzzy manner.  Both strings will be lowered, and will return <code>true</code> if
+ the strings are identical, or if <code>a</code> is a substring of <code>b</code>.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">a</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> First string to check</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">b</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Second string to check</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not the strings are equivalent</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+								<aside>
+										<code>print(ix.util.FormatStringNamed("Hi, my name is {name}.", {name = "Bobby"}))
+ > Hi, my name is Bobby.
+</code>
+										<code>print(ix.util.FormatStringNamed("Hi, my name is {name}.", "Bobby"))
+ > Hi, my name is Bobby.
+</code>
+								</aside>
+							<header><a name="ix.util.FormatStringNamed"></a>
+								<h1><span class="realm shared"></span>ix.util.FormatStringNamed(format, Arguments)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L292">View source &raquo;</a>
+								<p>Returns a string that has the named arguments in the format string replaced with the given arguments.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">format</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Format string</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">Arguments</span>
+
+													<span class="tag"><span class="type">tab</span> or <span class="type">...</span></span>
+
+
+												<p> to pass to the formatted string. If passed a table, it will use that table as the lookup table for
+ the named arguments. If passed multiple arguments, it will replace the arguments in the string in order.</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
 								<aside>
 										<code>print(ix.util.ExpandCamelCase("HelloWorld"))
  > Hello World
@@ -400,7 +648,7 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 								<h1><span class="realm shared"></span>ix.util.ExpandCamelCase(input[, bNoUpperFirst=false])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L304">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L331">View source &raquo;</a>
 								<p>Returns a string that is the given input with spaces in between each CamelCase word.  This function will ignore any words
  that do not begin with a capital letter. The words <code>ooc</code>, <code>looc</code>, <code>afk</code>, and <code>url</code> will be automatically transformed
  into uppercase text.</p>
@@ -462,7 +710,7 @@ end
 								<h1><span class="realm shared"></span>ix.util.GetCharacters()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L357">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L384">View source &raquo;</a>
 								<p>Returns an iterator for characters.  The resulting key/values will be a player and their corresponding characters. This
  iterator skips over any players that do not have a valid character loaded.</p>
 							</header>
@@ -484,22 +732,583 @@ end
 
 						</section>
 						<section class="method">
+								<aside>
+										<code>function PANEL:Paint(width, height)
+	ix.util.DrawBlur(self)
+end
+</code>
+								</aside>
+							<header><a name="ix.util.DrawBlur"></a>
+								<h1><span class="realm client"></span>ix.util.DrawBlur(panel[, amount=5[, passes=0.2[, alpha=255]]])</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L404">View source &raquo;</a>
+								<p>Blurs the content underneath the given panel.  This will fall back to a simple darkened rectangle if the player has
+ blurring disabled.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">panel</span>
+
+													<span class="tag"><span class="type">panel</span></span>
+
+
+												<p> Panel to draw the blur for</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">amount</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: 5</span>
+
+												<p> Intensity of the blur. This should be kept between 0 and 10 for performance reasons</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">passes</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: 0.2</span>
+
+												<p> Quality of the blur. This should be kept as default</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">alpha</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: 255</span>
+
+												<p> Opacity of the blur</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+								<aside>
+										<code>hook.Add("HUDPaint", "MyHUDPaint", function()
+	ix.util.DrawBlurAt(0, 0, ScrW(), ScrH())
+end)
+</code>
+								</aside>
+							<header><a name="ix.util.DrawBlurAt"></a>
+								<h1><span class="realm client"></span>ix.util.DrawBlurAt(x, y, width, height[, amount=5[, passes=0.2[, alpha=255]]])</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L441">View source &raquo;</a>
+								<p>Draws a blurred rectangle with the given position and bounds.  This shouldn't be used for panels, see <a href="../libraries/ix.util.html#ix.util.DrawBlur">ix.util.DrawBlur</a>
+ instead.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">x</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> X-position of the rectangle</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">y</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Y-position of the rectangle</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">width</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Width of the rectangle</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">height</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Height of the rectangle</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">amount</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: 5</span>
+
+												<p> Intensity of the blur. This should be kept between 0 and 10 for performance reasons</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">passes</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: 0.2</span>
+
+												<p> Quality of the blur. This should be kept as default</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">alpha</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: 255</span>
+
+												<p> Opacity of the blur</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.util.PushBlur"></a>
+								<h1><span class="realm client"></span>ix.util.PushBlur(drawFunc)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L469">View source &raquo;</a>
+								<p>Pushes a 3D2D blur to be rendered in the world.  The draw function will be called next frame in the
+ <code>PostDrawOpaqueRenderables</code> hook.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">drawFunc</span>
+
+													<span class="tag"><span class="type">function</span></span>
+
+
+												<p> Function to call when it needs to be drawn</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.util.DrawText"></a>
+								<h1><span class="realm client"></span>ix.util.DrawText(text, x, y, color[, alignX=TEXT_ALIGN_LEFT[, alignY=TEXT_ALIGN_LEFT[, font="ixGenericFont"[, alpha=color.a * 0.575]]]])</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L483">View source &raquo;</a>
+								<p>Draws some text with a shadow.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">text</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Text to draw</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">x</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> X-position of the text</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">y</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Y-position of the text</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">color</span>
+
+													<span class="tag"><span class="type">color</span></span>
+
+
+												<p> Color of the text to draw</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">alignX</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: TEXT_ALIGN_LEFT</span>
+
+												<p> Horizontal alignment of the text, using one of the <code>TEXT_ALIGN_*</code> constants</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">alignY</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: TEXT_ALIGN_LEFT</span>
+
+												<p> Vertical alignment of the text, using one of the <code>TEXT_ALIGN_*</code> constants</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">font</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+													<span class="tag default">default: "ixGenericFont"</span>
+
+												<p> Font to use for the text</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">alpha</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: color.a * 0.575</span>
+
+												<p> Alpha of the shadow</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.util.WrapText"></a>
+								<h1><span class="realm client"></span>ix.util.WrapText(text, maxWidth[, font="ixChatFont"])</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L502">View source &raquo;</a>
+								<p>Wraps text so it does not pass a certain width.  This function will try and break lines between words if it can,
+ otherwise it will break a word if it's too long.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">text</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Text to wrap</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">maxWidth</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Maximum allowed width in pixels</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">font</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+													<span class="tag default">default: "ixChatFont"</span>
+
+												<p> Font to use for the text</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
 							<header><a name="ix.util.ResetStencilValues"></a>
 								<h1><span class="realm client"></span>ix.util.ResetStencilValues()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L579">View source &raquo;</a>
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L644">View source &raquo;</a>
 								<p>Resets all stencil values to known good (i.e defaults)</p>
 							</header>
 
 
 
 						</section>
+						<section class="method">
+							<header><a name="ix.util.GetUTCTime"></a>
+								<h1><span class="realm shared"></span>ix.util.GetUTCTime()</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L1647">View source &raquo;</a>
+								<p>Gets the current time in the UTC time-zone.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>Current time in UTC</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+								<aside>
+										<code>print(ix.util.GetStringTime("5y2d7w"))
+ > 162086400 -- 5 years, 2 days, 7 weeks
+</code>
+								</aside>
+							<header><a name="ix.util.GetStringTime"></a>
+								<h1><span class="realm shared"></span>ix.util.GetStringTime(text)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L1680">View source &raquo;</a>
+								<p>
+<p>Gets the amount of seconds from a given formatted string.  If no time units are specified, it is assumed minutes.
+ The valid values are as follows:</p>
+<pre><code>s - Seconds
+m - Minutes
+h - Hours
+d - Days
+w - Weeks
+mo - Months
+y - Years
+</code></pre>
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">text</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Text to interpret a length of time from</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>Amount of seconds from the length interpreted from the given string</p>
+											</li>
+
+											<div class="or"><span>OR</span></div>
+
+											<li>
+													<span class="type">0</span>
+
+												<p>If the given string does not have a valid time</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ix.util.EmitQueuedSounds"></a>
+								<h1><span class="realm shared"></span>ix.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L1804">View source &raquo;</a>
+								<p>Emits sounds one after the other from an entity.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+													<span class="tag"><span class="type">entity</span></span>
+
+
+												<p> Entity to play sounds from</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">sounds</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+
+												<p> Sound paths to play</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">delay</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p>[opt=0] How long to wait before starting to play the sounds</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">spacing</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p>[opt=0.1] How long to wait between playing each sound</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">volume</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p>[opt=75] The sound level of each sound</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">pitch</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p>[opt=100] Pitch percentage of each sound</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>How long the entire sequence of sounds will take to play</p>
+											</li>
+
+								</ul>
+
+						</section>
 		</article>
 
 		<footer>
 			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
-			<p>Last updated: <span class="timestamp">2019-05-26 02:18:54</span></p>
+			<p>Last updated: <span class="timestamp">2019-05-26 09:37:04</span></p>
 		</footer>
 
 		<script type="text/javascript" src="../highlight.min.js"></script>
