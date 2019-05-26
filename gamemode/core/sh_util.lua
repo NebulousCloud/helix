@@ -29,17 +29,23 @@ ix.type = ix.type or {
 
 ix.blurRenderQueue = {}
 
--- Includes a file from the prefix.
-function ix.util.Include(fileName, state)
+--- Includes a lua file based on the prefix of the file. This will automatically call `include` and `AddCSLuaFile` based on the
+-- current realm. This function should always be called shared to ensure that the client will receive the file from the server.
+-- @realm shared
+-- @string fileName Path of the Lua file to include. The path is relative to the file that is currently running this function
+-- @string[opt] realm Realm that this file should be included in. You should usually ignore this since it
+-- will be automatically be chosen based on the `SERVER` and `CLIENT` globals. This value should either be `"server"` or
+-- `"client"` if it is filled in manually
+function ix.util.Include(fileName, realm)
 	if (!fileName) then
 		error("[Helix] No file name specified for including.")
 	end
 
 	-- Only include server-side if we're on the server.
-	if ((state == "server" or fileName:find("sv_")) and SERVER) then
+	if ((realm == "server" or fileName:find("sv_")) and SERVER) then
 		include(fileName)
 	-- Shared is included by both server and client.
-	elseif (state == "shared" or fileName:find("shared.lua") or fileName:find("sh_")) then
+	elseif (realm == "shared" or fileName:find("shared.lua") or fileName:find("sh_")) then
 		if (SERVER) then
 			-- Send the file to the client if shared so they can run it.
 			AddCSLuaFile(fileName)
@@ -47,7 +53,7 @@ function ix.util.Include(fileName, state)
 
 		include(fileName)
 	-- File is sent to client, included on client.
-	elseif (state == "client" or fileName:find("cl_")) then
+	elseif (realm == "client" or fileName:find("cl_")) then
 		if (SERVER) then
 			AddCSLuaFile(fileName)
 		else
@@ -56,8 +62,13 @@ function ix.util.Include(fileName, state)
 	end
 end
 
--- Include files based off the prefix within a directory.
-function ix.util.IncludeDir(directory, fromLua)
+--- Includes multiple files in a directory.
+-- @realm shared
+-- @string directory Directory to include files from
+-- @bool[opt] bFromLua Whether or not to search from the base `lua/` folder, instead of contextually basing from `schema/`
+-- or `gamemode/`
+-- @see ix.util.Include
+function ix.util.IncludeDir(directory, bFromLua)
 	-- By default, we include relatively to Helix.
 	local baseDir = "helix"
 
@@ -69,7 +80,7 @@ function ix.util.IncludeDir(directory, fromLua)
 	end
 
 	-- Find all of the files within the directory.
-	for _, v in ipairs(file.Find((fromLua and "" or baseDir)..directory.."/*.lua", "LUA")) do
+	for _, v in ipairs(file.Find((bFromLua and "" or baseDir)..directory.."/*.lua", "LUA")) do
 		-- Include the file from the prefix.
 		ix.util.Include(directory.."/"..v)
 	end
@@ -212,7 +223,12 @@ function ix.util.GetAddress()
 	return table.concat(ip, ".")..":"..GetConVarString("hostport")
 end
 
--- Returns a single cached copy of a material or creates it if it doesn't exist.
+--- Returns a cached copy of the given material, or creates and caches one if it doesn't exist. This is a quick helper function
+-- if you aren't locally storing a `Material()` call.
+-- @realm shared
+-- @string materialPath Path to the material
+-- @treturn[1] material The cached material
+-- @treturn[2] nil If the material doesn't exist in the filesystem
 function ix.util.GetMaterial(materialPath)
 	-- Cache the material.
 	ix.util.cachedMaterials = ix.util.cachedMaterials or {}
@@ -242,7 +258,12 @@ function ix.util.FindPlayer(identifier, bAllowPatterns)
 	end
 end
 
--- Returns whether or a not a string matches.
+--- Checks to see if two strings are equivalent using a fuzzy manner. Both strings will be lowered, and will return `true` if
+-- the strings are identical, or if `a` is a substring of `b`.
+-- @realm shared
+-- @string a First string to check
+-- @string b Second string to check
+-- @treturn bool Whether or not the strings are equivalent
 function ix.util.StringMatches(a, b)
 	if (a and b) then
 		local a2, b2 = a:lower(), b:lower()
@@ -259,9 +280,15 @@ function ix.util.StringMatches(a, b)
 	return false
 end
 
--- Returns a string that has the items in the format string replaced with the input.
--- You can also pass in a table with regular indices to replace them in order
--- Example: ix.util.FormatStringNamed("Hello, my name is {name}.", {name = "Bobby"})
+--- Returns a string that has the named arguments in the format string replaced with the given arguments.
+-- @realm shared
+-- @string format Format string
+-- @tparam tab|... Arguments to pass to the formatted string. If passed a table, it will use that table as the lookup table for
+-- the named arguments. If passed multiple arguments, it will replace the arguments in the string in order.
+-- @usage print(ix.util.FormatStringNamed("Hi, my name is {name}.", {name = "Bobby"}))
+-- > Hi, my name is Bobby.
+-- @usage print(ix.util.FormatStringNamed("Hi, my name is {name}.", "Bobby"))
+-- > Hi, my name is Bobby.
 function ix.util.FormatStringNamed(format, ...)
 	local arguments = {...}
 	local bArray = false -- Whether or not the input has numerical indices or named ones
@@ -364,9 +391,17 @@ if (CLIENT) then
 	local blur = ix.util.GetMaterial("pp/blurscreen")
 	local surface = surface
 
-	-- Draws a blurred material over the screen, to blur things.
+	--- Blurs the content underneath the given panel. This will fall back to a simple darkened rectangle if the player has
+	-- blurring disabled.
+	-- @realm client
+	-- @panel panel Panel to draw the blur for
+	-- @number[opt=5] amount Intensity of the blur. This should be kept between 0 and 10 for performance reasons
+	-- @number[opt=0.2] passes Quality of the blur. This should be kept as default
+	-- @number[opt=255] alpha Opacity of the blur
+	-- @usage function PANEL:Paint(width, height)
+	-- 	ix.util.DrawBlur(self)
+	-- end
 	function ix.util.DrawBlur(panel, amount, passes, alpha)
-		-- Intensity of the blur.
 		amount = amount or 5
 
 		if (ix.option.Get("cheapBlur", false)) then
@@ -390,36 +425,61 @@ if (CLIENT) then
 		end
 	end
 
-	function ix.util.DrawBlurAt(x, y, w, h, amount, passes, maxAlpha, alpha)
-		-- Intensity of the blur.
+	--- Draws a blurred rectangle with the given position and bounds. This shouldn't be used for panels, see `ix.util.DrawBlur`
+	-- instead.
+	-- @realm client
+	-- @number x X-position of the rectangle
+	-- @number y Y-position of the rectangle
+	-- @number width Width of the rectangle
+	-- @number height Height of the rectangle
+	-- @number[opt=5] amount Intensity of the blur. This should be kept between 0 and 10 for performance reasons
+	-- @number[opt=0.2] passes Quality of the blur. This should be kept as default
+	-- @number[opt=255] alpha Opacity of the blur
+	-- @usage hook.Add("HUDPaint", "MyHUDPaint", function()
+	-- 	ix.util.DrawBlurAt(0, 0, ScrW(), ScrH())
+	-- end)
+	function ix.util.DrawBlurAt(x, y, width, height, amount, passes, alpha)
 		amount = amount or 5
 
 		if (ix.option.Get("cheapBlur", false)) then
 			surface.SetDrawColor(30, 30, 30, amount * 20)
-			surface.DrawRect(x, y, w, h)
+			surface.DrawRect(x, y, width, height)
 		else
 			surface.SetMaterial(blur)
 			surface.SetDrawColor(255, 255, 255, alpha or 255)
 
 			local scrW, scrH = ScrW(), ScrH()
 			local x2, y2 = x / scrW, y / scrH
-			local w2, h2 = (x + w) / scrW, (y + h) / scrH
+			local w2, h2 = (x + width) / scrW, (y + height) / scrH
 
 			for i = -(passes or 0.2), 1, 0.2 do
 				blur:SetFloat("$blur", i * amount)
 				blur:Recompute()
 
 				render.UpdateScreenEffectTexture()
-				surface.DrawTexturedRectUV(x, y, w, h, x2, y2, w2, h2)
+				surface.DrawTexturedRectUV(x, y, width, height, x2, y2, w2, h2)
 			end
 		end
 	end
 
+	--- Pushes a 3D2D blur to be rendered in the world. The draw function will be called next frame in the
+	-- `PostDrawOpaqueRenderables` hook.
+	-- @realm client
+	-- @func drawFunc Function to call when it needs to be drawn
 	function ix.util.PushBlur(drawFunc)
 		ix.blurRenderQueue[#ix.blurRenderQueue + 1] = drawFunc
 	end
 
-	-- Draw a text with a shadow.
+	--- Draws some text with a shadow.
+	-- @realm client
+	-- @string text Text to draw
+	-- @number x X-position of the text
+	-- @number y Y-position of the text
+	-- @color color Color of the text to draw
+	-- @number[opt=TEXT_ALIGN_LEFT] alignX Horizontal alignment of the text, using one of the `TEXT_ALIGN_*` constants
+	-- @number[opt=TEXT_ALIGN_LEFT] alignY Vertical alignment of the text, using one of the `TEXT_ALIGN_*` constants
+	-- @string[opt="ixGenericFont"] font Font to use for the text
+	-- @number[opt=color.a * 0.575] alpha Alpha of the shadow
 	function ix.util.DrawText(text, x, y, color, alignX, alignY, font, alpha)
 		color = color or color_white
 
@@ -428,12 +488,17 @@ if (CLIENT) then
 			font = font or "ixGenericFont",
 			pos = {x, y},
 			color = color,
-			xalign = alignX or 0,
-			yalign = alignY or 0
+			xalign = alignX or TEXT_ALIGN_LEFT,
+			yalign = alignY or TEXT_ALIGN_LEFT
 		}, 1, alpha or (color.a * 0.575))
 	end
 
-	-- Wraps text so it does not pass a certain width.
+	--- Wraps text so it does not pass a certain width. This function will try and break lines between words if it can,
+	-- otherwise it will break a word if it's too long.
+	-- @realm client
+	-- @string text Text to wrap
+	-- @number maxWidth Maximum allowed width in pixels
+	-- @string[opt="ixChatFont"] font Font to use for the text
 	function ix.util.WrapText(text, maxWidth, font)
 		font = font or "ixChatFont"
 		surface.SetFont(font)
@@ -869,9 +934,9 @@ do
 	FCAP_USE_ONGROUND = 0x00000100
 	FCAP_USE_IN_RADIUS = 0x00000200
 
-	function ix.util.IsUseableEntity(pEntity, requiredCaps)
-		if (IsValid(pEntity)) then
-			local caps = pEntity:ObjectCaps()
+	function ix.util.IsUseableEntity(entity, requiredCaps)
+		if (IsValid(entity)) then
+			local caps = entity:ObjectCaps()
 
 			if (bit.band(caps, bit.bor(FCAP_IMPULSE_USE, FCAP_CONTINUOUS_USE, FCAP_ONOFF_USE, FCAP_DIRECTIONAL_USE))) then
 				if (bit.band(caps, requiredCaps) == requiredCaps) then
@@ -1576,7 +1641,9 @@ end
 
 -- Time related stuff.
 do
-	-- Gets the current time in the UTC time-zone.
+	--- Gets the current time in the UTC time-zone.
+	-- @realm shared
+	-- @treturn number Current time in UTC
 	function ix.util.GetUTCTime()
 		local date = os.date("!*t")
 		local localDate = os.date("*t")
@@ -1595,9 +1662,21 @@ do
 	TIME_UNITS["mo"] = TIME_UNITS["d"] * 30	-- Months
 	TIME_UNITS["y"] = TIME_UNITS["d"] * 365	-- Years
 
-	-- Gets the amount of seconds from a given formatted string.
-	-- Example: 5y2d7w = 5 years, 2 days, and 7 weeks.
-	-- If just given a minute, it is assumed minutes.
+	--- Gets the amount of seconds from a given formatted string. If no time units are specified, it is assumed minutes.
+	-- The valid values are as follows:
+	-- 	s - Seconds
+	-- 	m - Minutes
+	-- 	h - Hours
+	-- 	d - Days
+	-- 	w - Weeks
+	-- 	mo - Months
+	-- 	y - Years
+	-- @realm shared
+	-- @string text Text to interpret a length of time from
+	-- @treturn[1] number Amount of seconds from the length interpreted from the given string
+	-- @treturn[2] 0 If the given string does not have a valid time
+	-- @usage print(ix.util.GetStringTime("5y2d7w"))
+	-- > 162086400 -- 5 years, 2 days, 7 weeks
 	function ix.util.GetStringTime(text)
 		local minutes = tonumber(text)
 
@@ -1713,7 +1792,15 @@ end
 
 local ADJUST_SOUND = SoundDuration("npc/metropolice/pain1.wav") > 0 and "" or "../../hl2/sound/"
 
--- Emits sounds one after the other from an entity.
+--- Emits sounds one after the other from an entity.
+-- @realm shared
+-- @entity entity Entity to play sounds from
+-- @tab sounds Sound paths to play
+-- @number delay[opt=0] How long to wait before starting to play the sounds
+-- @number spacing[opt=0.1] How long to wait between playing each sound
+-- @number volume[opt=75] The sound level of each sound
+-- @number pitch[opt=100] Pitch percentage of each sound
+-- @treturn number How long the entire sequence of sounds will take to play
 function ix.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
 	-- Let there be a delay before any sound is played.
 	delay = delay or 0
