@@ -151,7 +151,7 @@ end
 --- Creates a new command.
 -- @realm shared
 -- @string command Name of the command (recommended in UpperCamelCase)
--- @tab data A `CommandStructure` describing the command
+-- @tparam CommandStructure data Data describing the command
 function ix.command.Add(command, data)
 	data.name = string.gsub(command, "%s", "")
 	data.description = data.description or ""

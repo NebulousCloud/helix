@@ -28,7 +28,7 @@ ix.menu = ix.menu or {}
 if (CLIENT) then
 	--- Opens up a context menu for the given entity.
 	-- @realm client
-	-- @tab options A `MenuOptionsStructure` to describe what options to display
+	-- @tparam MenuOptionsStructure options Data describing what options to display
 	-- @entity[opt] entity Entity to send commands to
 	-- @treturn boolean Whether or not the menu opened successfully. It will fail when there is already a menu open.
 	function ix.menu.Open(options, entity)

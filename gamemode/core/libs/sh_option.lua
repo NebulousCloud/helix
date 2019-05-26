@@ -34,8 +34,7 @@ ix.option.categories = ix.option.categories or {}
 -- @string key Unique ID for this option
 -- @ixtype optionType Type of this option
 -- @param default Default value that this option will have - this can be nil if needed
--- @tab data Additional settings for this option
--- @see OptionStructure
+-- @tparam OptionStructure data Additional settings for this option
 -- @usage ix.option.Add("animationScale", ix.type.number, 1, {
 -- 	category = "appearance",
 -- 	min = 0.3,

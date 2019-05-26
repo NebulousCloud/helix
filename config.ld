@@ -29,10 +29,14 @@ custom_display_name_handler = function(item, default_handler)
 	return default_handler(item)
 end
 
+-- helix types
 tparam_alias("char", "Character")
-tparam_alias("inv", "Inventory")
+tparam_alias("inventory", "Inventory")
 tparam_alias("item", "Item")
+tparam_alias("ixtype", "ix.type")
+tparam_alias("date", "date")
 
+-- standard types
 tparam_alias("string", "string")
 tparam_alias("bool", "boolean")
 tparam_alias("func", "function")
@@ -41,7 +45,3 @@ tparam_alias("entity", "entity")
 tparam_alias("color", "color")
 tparam_alias("tab", "table")
 tparam_alias("panel", "panel")
-
-tparam_alias("ixtype", "ix.type")
-tparam_alias("inventory", "inventory")
-tparam_alias("date", "date")
