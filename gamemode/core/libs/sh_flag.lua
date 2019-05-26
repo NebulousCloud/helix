@@ -1,14 +1,50 @@
+
+--[[--
+Grants abilities to characters.
+
+Flags are a simple way of adding/removing certain abilities to players on a per-character basis. Helix comes with a few flags
+by default, for example to restrict spawning of props, usage of the physgun, etc. All flags will be listed in the
+`Flags` section of the `Help` menu. Flags are usually used when server validation is required to allow a player to do something
+on their character. However, it's usually preferable to use in-character methods over flags when possible (i.e restricting
+the business menu to characters that have a permit item, rather than using flags to determine availability).
+
+Flags are a single alphanumeric character that can be checked on the server. Serverside callbacks can be used to provide
+functionality whenever the flag is added or removed. For example:
+	ix.flag.Add("z", "Access to some cool stuff.", function(client, bGiven)
+		print("z flag given:", bGiven)
+	end)
+
+	Entity(1):GetCharacter():GiveFlags("z")
+	> z flag given: true
+
+	Entity(1):GetCharacter():TakeFlags("z")
+	> z flag given: false
+
+	print(Entity(1):GetCharacter():HasFlag("z"))
+	> false
+]]
+-- @module ix.flag
+
 ix.flag = ix.flag or {}
 ix.flag.list = ix.flag.list or {}
 
--- Adds a flag that does something when set.
+--- Creates a flag. This should be called shared in order for the client to be aware of the flag's existence.
+-- @realm shared
+-- @string flag Alphanumeric character to use for the flag
+-- @string description Description of the flag
+-- @func callback Function to call when the flag is given or taken from a player
 function ix.flag.Add(flag, description, callback)
-	-- Add the flag to a list, storing the description and callback (if there is one).
-	ix.flag.list[flag] = {description = description, callback = callback}
+	ix.flag.list[flag] = {
+		description = description,
+		callback = callback
+	}
 end
 
 if (SERVER) then
 	-- Called to apply flags when a player has spawned.
+	-- @realm server
+	-- @internal
+	-- @player client Player to setup flags for
 	function ix.flag.OnSpawn(client)
 		-- Check if they have a valid character.
 		if (client:GetCharacter()) then
