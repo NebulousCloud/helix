@@ -2,7 +2,8 @@
 --[[--
 Registration, parsing, and handling of commands.
 
-Commands can be ran through the chat with slash commands or they can be executed through the console.
+Commands can be ran through the chat with slash commands or they can be executed through the console. Commands can be manually
+restricted to certain usergroups using a [CAMI](https://github.com/glua/CAMI)-compliant admin mod.
 ]]
 -- @module ix.command
 
