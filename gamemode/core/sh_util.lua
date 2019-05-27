@@ -1120,6 +1120,10 @@ do
 		return self:GetNetVar("raised", false)
 	end
 
+	function playerMeta:IsRestricted()
+		return self:GetNetVar("restricted", false)
+	end
+
 	function playerMeta:CanShootWeapon()
 		return self:GetNetVar("canShoot", true)
 	end

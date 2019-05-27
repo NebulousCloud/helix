@@ -96,7 +96,7 @@ function GM:PlayerInitialSpawn(client)
 end
 
 function GM:PlayerUse(client, entity)
-	if (client:GetNetVar("restricted") or (isfunction(entity.GetEntityMenu) and entity:GetClass() != "ix_item")) then
+	if (client:IsRestricted() or (isfunction(entity.GetEntityMenu) and entity:GetClass() != "ix_item")) then
 		return false
 	end
 
@@ -176,7 +176,7 @@ function GM:OnEntityCreated(entity)
 end
 
 function GM:CanPlayerInteractItem(client, action, item)
-	if (client:GetNetVar("restricted")) then
+	if (client:IsRestricted()) then
 		return false
 	end
 
