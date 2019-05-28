@@ -1,7 +1,7 @@
 
 PLUGIN.name = "Observer"
 PLUGIN.author = "Chessnut"
-PLUGIN.description = "Adds on to the no-clip mode to prevent instrusion."
+PLUGIN.description = "Adds on to the no-clip mode to prevent intrusion."
 
 CAMI.RegisterPrivilege({
 	Name = "Helix - Observer",
@@ -170,6 +170,8 @@ else
 
 				hook.Run("OnPlayerObserve", client, state)
 			end
+
+			return true
 		end
 	end
 
