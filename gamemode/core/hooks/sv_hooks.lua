@@ -55,12 +55,6 @@ function GM:PlayerInitialSpawn(client)
 				ix.char.loaded[v]:Sync(client)
 			end
 
-			for _, v in ipairs(player.GetAll()) do
-				if (v:GetCharacter()) then
-					v:GetCharacter():Sync(client)
-				end
-			end
-
 			client.ixCharList = charList
 
 			net.Start("ixCharacterMenu")
@@ -73,8 +67,13 @@ function GM:PlayerInitialSpawn(client)
 			net.Send(client)
 
 			client.ixLoaded = true
-
 			client:SetData("intro", true)
+
+			for _, v in ipairs(player.GetAll()) do
+				if (v:GetCharacter()) then
+					v:GetCharacter():Sync(client)
+				end
+			end
 		end, bNoCache)
 
 		ix.chat.Send(nil, "connect", client:SteamName())
@@ -646,6 +645,7 @@ function GM:PlayerDeathThink(client)
 end
 
 function GM:PlayerDisconnected(client)
+	client:ClearNetVars()
 	client:SaveData()
 
 	local character = client:GetCharacter()
