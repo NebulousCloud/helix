@@ -2,7 +2,8 @@
 --[[--
 Registration, parsing, and handling of commands.
 
-Commands can be ran through the chat with slash commands or they can be executed through the console.
+Commands can be ran through the chat with slash commands or they can be executed through the console. Commands can be manually
+restricted to certain usergroups using a [CAMI](https://github.com/glua/CAMI)-compliant admin mod.
 ]]
 -- @module ix.command
 
@@ -150,7 +151,7 @@ end
 --- Creates a new command.
 -- @realm shared
 -- @string command Name of the command (recommended in UpperCamelCase)
--- @tab data A `CommandStructure` describing the command
+-- @tparam CommandStructure data Data describing the command
 function ix.command.Add(command, data)
 	data.name = string.gsub(command, "%s", "")
 	data.description = data.description or ""

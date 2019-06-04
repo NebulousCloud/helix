@@ -288,7 +288,7 @@ function GM:PlayerWeaponChanged(client, weapon)
 	end
 
 	-- If the player has been forced to have their weapon lowered.
-	if (client:GetNetVar("restricted")) then
+	if (client:IsRestricted()) then
 		client:SetWepRaised(false, weapon)
 		return
 	end

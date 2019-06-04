@@ -143,7 +143,7 @@ end
 function SKIN:DrawCharacterStatusBackground(panel, fraction)
 	surface.SetDrawColor(0, 0, 0, fraction * 100)
 	surface.DrawRect(0, 0, ScrW(), ScrH())
-	ix.util.DrawBlurAt(0, 0, ScrW(), ScrH(), 5, nil, nil, fraction * 255)
+	ix.util.DrawBlurAt(0, 0, ScrW(), ScrH(), 5, nil, fraction * 255)
 end
 
 function SKIN:PaintPanel(panel)

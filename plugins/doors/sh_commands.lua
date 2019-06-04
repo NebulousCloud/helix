@@ -192,13 +192,26 @@ ix.command.Add("DoorSetFaction", {
 	description = "@cmdDoorSetFaction",
 	privilege = "Manage Doors",
 	adminOnly = true,
-	arguments = ix.type.text,
+	arguments = bit.bor(ix.type.text, ix.type.optional),
 	OnRun = function(self, client, name)
 		-- Get the door the player is looking at.
 		local entity = client:GetEyeTrace().Entity
 
 		-- Validate it is a door.
 		if (IsValid(entity) and entity:IsDoor() and !entity:GetNetVar("disabled")) then
+			if (!name or name == "") then
+				entity.ixFactionID = nil
+				entity:SetNetVar("faction", nil)
+
+				PLUGIN:CallOnDoorChildren(entity, function()
+					entity.ixFactionID = nil
+					entity:SetNetVar("faction", nil)
+				end)
+
+				PLUGIN:SaveDoorData()
+				return "@dRemoveFaction"
+			end
+
 			local faction
 
 			-- Loop through each faction, checking the uniqueID and name.
@@ -225,20 +238,8 @@ ix.command.Add("DoorSetFaction", {
 				PLUGIN:SaveDoorData()
 				return "@dSetFaction", L(faction.name, client)
 			-- The faction was not found.
-			elseif (name:len() != 0) then
-				return "@invalidFaction"
-			-- The player didn't provide a faction.
 			else
-				entity.ixFactionID = nil
-				entity:SetNetVar("faction", nil)
-
-				PLUGIN:CallOnDoorChildren(entity, function()
-					entity.ixFactionID = nil
-					entity:SetNetVar("faction", nil)
-				end)
-
-				PLUGIN:SaveDoorData()
-				return "@dRemoveFaction"
+				return "@invalidFaction"
 			end
 		end
 	end

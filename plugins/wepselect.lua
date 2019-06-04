@@ -185,6 +185,10 @@ if (CLIENT) then
 		end
 	end
 
+	function PLUGIN:ScoreboardShow()
+		self.alpha = 0
+	end
+
 	function PLUGIN:ShouldPopulateEntityInfo(entity)
 		if (self.alpha > 0) then
 			return false

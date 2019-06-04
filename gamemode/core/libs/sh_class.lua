@@ -1,5 +1,11 @@
 
---- Helper library for loading/getting class information.
+--[[--
+Helper library for loading/getting class information.
+
+Classes are temporary assignments for characters - analogous to a "job" in a faction. For example, you may have a police faction
+in your schema, and have "police recruit" and "police chief" as different classes in your faction. Anyone can join a class in
+their faction by default, but you can restrict this as you need with `CLASS.CanSwitchTo`.
+]]
 -- @module ix.class
 
 if (SERVER) then
@@ -13,9 +19,9 @@ local charMeta = ix.meta.character
 
 --- Loads classes from a directory.
 -- @realm shared
+-- @internal
 -- @string directory The path to the class files.
 function ix.class.LoadFromDir(directory)
-	-- Search the directory for .lua files.
 	for _, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
 		-- Get the name without the "sh_" prefix and ".lua" suffix.
 		local niceName = v:sub(4, -5)
@@ -35,7 +41,6 @@ function ix.class.LoadFromDir(directory)
 
 		-- Set up a global table so the file has access to the class table.
 		CLASS = {index = index, uniqueID = niceName}
-			-- Define some default variables.
 			CLASS.name = "Unknown"
 			CLASS.description = "No description available."
 			CLASS.limit = 0
@@ -45,7 +50,6 @@ function ix.class.LoadFromDir(directory)
 				CLASS.plugin = PLUGIN.uniqueID
 			end
 
-			-- Include the file so data can be modified.
 			ix.util.Include(directory.."/"..v, "shared")
 
 			-- Why have a class without a faction?
@@ -63,9 +67,7 @@ function ix.class.LoadFromDir(directory)
 				end
 			end
 
-			-- Add the class to the list of classes.
 			ix.class.list[index] = CLASS
-		-- Remove the global variable to prevent conflict.
 		CLASS = nil
 	end
 end

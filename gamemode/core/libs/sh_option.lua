@@ -34,8 +34,7 @@ ix.option.categories = ix.option.categories or {}
 -- @string key Unique ID for this option
 -- @ixtype optionType Type of this option
 -- @param default Default value that this option will have - this can be nil if needed
--- @tab data Additional settings for this option
--- @see OptionStructure
+-- @tparam OptionStructure data Additional settings for this option
 -- @usage ix.option.Add("animationScale", ix.type.number, 1, {
 -- 	category = "appearance",
 -- 	min = 0.3,
@@ -75,6 +74,11 @@ function ix.option.Add(key, optionType, default, data)
 	-- @field[type=number,opt=0] decimals How many decimals to constrain to when using a number type. This field is not
 	-- applicable to any type other than `ix.type.number`.
 	-- @field[type=boolean,opt=false] bNetworked Whether or not the server should be aware of this option for each client.
+	-- @field[type=function,opt] OnChanged The function to run when this option is changed - this includes whether it was set
+	-- by the player, or through code using `ix.option.Set`.
+	-- 	OnChanged = function(oldValue, value)
+	-- 		print("new value is", value)
+	-- 	end
 	-- @field[type=function,opt] hidden The function to check whether the option should be hidden from the options menu.
 	-- @field[type=function,opt] populate The function to run when the option needs to be added to the menu. This is a required
 	-- field for any array options. It should return a table of entries where the key is the value to set in `ix.option.Set`,

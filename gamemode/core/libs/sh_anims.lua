@@ -1,4 +1,24 @@
 
+--[[--
+Player model animation.
+
+Helix comes with support for using NPC animations/models as regular player models by manually translating animations. There are
+a few standard animation sets that are built-in that should cover most non-player models:
+	citizen_male
+	citizen_female
+	metrocop
+	overwatch
+	vortigaunt
+	player
+	zombie
+	fastZombie
+
+If you find that your models are T-posing when they work elsewhere, you'll probably need to set the model class for your
+model with `ix.anim.SetModelClass` in order for the correct animations to be used. If you'd like to add your own animation
+class, simply add to the `ix.anim` table with a model class name and the required animation translation table.
+]]
+-- @module ix.anim
+
 ix.anim = ix.anim or {}
 ix.anim.citizen_male = {
 	normal = {
@@ -333,6 +353,11 @@ ix.anim.fastZombie = {
 
 local translations = {}
 
+--- Sets a model's animation class.
+-- @realm shared
+-- @string model Model name to set the animation class for
+-- @string class Animation class to assign to the model
+-- @usage ix.anim.SetModelClass("models/police.mdl", "metrocop")
 function ix.anim.SetModelClass(model, class)
 	if (!ix.anim[class]) then
 		error("'" .. tostring(class) .. "' is not a valid animation class!")
@@ -341,24 +366,27 @@ function ix.anim.SetModelClass(model, class)
 	translations[model:lower()] = class
 end
 
--- Micro-optimization since the get class function gets called a lot.
-local stringLower = string.lower
-local stringFind = string.find
-
+--- Gets a model's animation class.
+-- @realm shared
+-- @string model Model to get the animation class for
+-- @treturn[1] string Animation class of the model
+-- @treturn[2] nil If there was no animation associated with the given model
+-- @usage ix.anim.GetModelClass("models/police.mdl")
+-- > metrocop
 function ix.anim.GetModelClass(model)
-	model = stringLower(model)
+	model = string.lower(model)
 	local class = translations[model]
 
-	if (!class and stringFind(model, "/player")) then
+	if (!class and string.find(model, "/player")) then
 		return "player"
 	end
 
 	class = class or "citizen_male"
 
 	if (class == "citizen_male" and (
-		stringFind(model, "female") or
-		stringFind(model, "alyx") or
-		stringFind(model, "mossman"))) then
+		string.find(model, "female") or
+		string.find(model, "alyx") or
+		string.find(model, "mossman"))) then
 		class = "citizen_female"
 	end
 
