@@ -23,6 +23,8 @@ menu in a plugin:
 
 ix.charmenu = ix.charmenu or {}
 
+ix.util.Include("helix/gamemode/core/meta/sh_payload.lua")
+
 --- Creates a character menu and sets it as active.
 -- @realm client
 -- @internal
@@ -67,4 +69,37 @@ end
 -- @treturn bool Whether or not the character menu is closing
 function ix.charmenu.IsClosing()
 	return IsValid(ix.gui.characterMenu) and ix.gui.characterMenu.bClosing
+end
+
+if (CLIENT) then
+	--- Creates a new character creation payload.
+	-- @realm client
+	-- @treturn Payload payload
+	-- @see Payload
+	function ix.charmenu.CreatePayload()
+		local payload = setmetatable({}, ix.meta.payload)
+		payload.vars = {}
+
+		-- sorted pairs since we need errors to output in the order that the fields are displayed to the user
+		for k, v in SortedPairsByMemberValue(ix.char.vars, "index") do
+			-- if we can't display the var then the user can't edit them, so there's no point in sending the info over
+			if (v.bNoDisplay or k == "__SortedIndex") then
+				continue
+			end
+
+			payload.vars[#payload.vars + 1] = k
+		end
+
+		return payload
+	end
+else
+	--- Deserializes a payload from the incoming net message.
+	-- @realm server
+	-- @internal
+	function ix.charmenu.DeserializePayload()
+		local payload = ix.charmenu.CreatePayload()
+		payload:Deserialize()
+
+		return payload
+	end
 end

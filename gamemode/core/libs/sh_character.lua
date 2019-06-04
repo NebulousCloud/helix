@@ -427,7 +427,7 @@ do
 		field = "faction",
 		fieldType = ix.type.string,
 		default = "Citizen",
-		bNoDisplay = true,
+		index = 0,
 		OnSet = function(self, value)
 			local client = self:GetPlayer()
 

@@ -381,50 +381,51 @@ function PANEL:Populate()
 
 	-- set up character vars
 	for k, v in SortedPairsByMemberValue(ix.char.vars, "index") do
-		if (!v.bNoDisplay and k != "__SortedIndex") then
-			local container = self:GetContainerPanel(v.category or "description")
+		if (v.bNoDisplay or k == "__SortedIndex" or k == "faction") then
+			continue
+		end
+		local container = self:GetContainerPanel(v.category or "description")
 
-			if (v.ShouldDisplay and v:ShouldDisplay(container, self.payload) == false) then
-				continue
+		if (v.ShouldDisplay and v:ShouldDisplay(container, self.payload) == false) then
+			continue
+		end
+
+		local panel
+
+		-- if the var has a custom way of displaying, we'll use that instead
+		if (v.OnDisplay) then
+			panel = v:OnDisplay(container, self.payload)
+		elseif (isstring(v.default)) then
+			panel = container:Add("ixTextEntry")
+			panel:Dock(TOP)
+			panel:SetFont("ixMenuButtonHugeFont")
+			panel:SetUpdateOnType(true)
+			panel.OnValueChange = function(this, text)
+				self.payload:Set(k, text)
+			end
+		end
+
+		if (IsValid(panel)) then
+			-- add label for entry
+			local label = container:Add("DLabel")
+			label:SetFont("ixMenuButtonLabelFont")
+			label:SetText(L(k):upper())
+			label:SizeToContents()
+			label:DockMargin(0, 16, 0, 2)
+			label:Dock(TOP)
+
+			-- we need to set the docking order so the label is above the panel
+			label:SetZPos(zPos - 1)
+			panel:SetZPos(zPos)
+
+			self:AttachCleanup(label)
+			self:AttachCleanup(panel)
+
+			if (v.OnPostSetup) then
+				v:OnPostSetup(panel, self.payload)
 			end
 
-			local panel
-
-			-- if the var has a custom way of displaying, we'll use that instead
-			if (v.OnDisplay) then
-				panel = v:OnDisplay(container, self.payload)
-			elseif (isstring(v.default)) then
-				panel = container:Add("ixTextEntry")
-				panel:Dock(TOP)
-				panel:SetFont("ixMenuButtonHugeFont")
-				panel:SetUpdateOnType(true)
-				panel.OnValueChange = function(this, text)
-					self.payload:Set(k, text)
-				end
-			end
-
-			if (IsValid(panel)) then
-				-- add label for entry
-				local label = container:Add("DLabel")
-				label:SetFont("ixMenuButtonLabelFont")
-				label:SetText(L(k):upper())
-				label:SizeToContents()
-				label:DockMargin(0, 16, 0, 2)
-				label:Dock(TOP)
-
-				-- we need to set the docking order so the label is above the panel
-				label:SetZPos(zPos - 1)
-				panel:SetZPos(zPos)
-
-				self:AttachCleanup(label)
-				self:AttachCleanup(panel)
-
-				if (v.OnPostSetup) then
-					v:OnPostSetup(panel, self.payload)
-				end
-
-				zPos = zPos + 2
-			end
+			zPos = zPos + 2
 		end
 	end
 
