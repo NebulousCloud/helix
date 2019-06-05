@@ -1,0 +1,376 @@
+
+
+
+
+<html>
+	<head>
+		<title>Helix Documentation</title>
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
+		<link rel="stylesheet" href="../ldoc.css" />
+		<link rel="stylesheet" href="../highlight.css" />
+	</head>
+
+	<body>
+		<aside>
+			<h1>Helix</h1>
+
+			<!-- project contents -->
+			<section>
+						<h2>Libraries</h2>
+
+						<ul>
+								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
+								<li><a href="../libraries/ix.char.html">ix.char</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
+								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
+								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
+								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
+								<li><a href="../libraries/ix.html">ix</a></li>
+								<li><a href="../libraries/ix.act.html">ix.act</a></li>
+						</ul>
+						<h2>Classes</h2>
+
+						<ul>
+								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Inventory.html">Inventory</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
+						</ul>
+			</section>
+		</aside>
+
+		<!-- library functions -->
+		<article>
+				<header>
+					<h1>ix.char</h1>
+					<h2>Character creation and management.</h2>
+				</header>
+
+				<!-- summary -->
+				<details open>
+					<summary>Reference</summary>
+
+					<div class="contents">
+							<h2>Functions</h2>
+							<ul>
+									<li><span class="realm server"></span><a href="#ix.char.Create">ix.char.Create(data, callback)</a></li>
+									<li><span class="realm server"></span><a href="#ix.char.Restore">ix.char.Restore(client[, callback=nil[, bNoCache=false[, id=nil]]])</a></li>
+									<li><span class="realm server"></span><a href="#ix.char.RestoreVars">ix.char.RestoreVars(data, characterInfo)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.char.New">ix.char.New(data, id, client[, steamID=client:SteamID64()])</a></li>
+							</ul>
+							<h2>Tables</h2>
+							<ul>
+									<li><span class="realm shared"></span><a href="#ix.char.loaded">ix.char.loaded</a></li>
+									<li><span class="realm shared"></span><a href="#ix.char.vars">ix.char.vars</a></li>
+									<li><span class="realm server"></span><a href="#ix.char.cache">ix.char.cache</a></li>
+							</ul>
+					</div>
+				</details>
+
+				<!-- description -->
+				<p><strong>NOTE:</strong> For the most part you shouldn't use this library unless you know what you're doing. You can very easily corrupt
+character data using these functions!</p>
+
+				<!-- methods -->
+					<h1 class="title">Functions</h1>
+
+						<section class="method">
+							<header><a name="ix.char.Create"></a>
+								<h1><span class="realm server"></span>ix.char.Create(data, callback)</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L45">View source &raquo;</a>
+								<p>Creates a character object with its assigned properties and saves it to the database.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">data</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+
+												<p> Properties to assign to this character. If fields are missing from the table, then it will use the default
+ value for that property</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">callback</span>
+
+													<span class="tag"><span class="type">function</span></span>
+
+
+												<p> Function to call after the character saves</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.char.Restore"></a>
+								<h1><span class="realm server"></span>ix.char.Restore(client[, callback=nil[, bNoCache=false[, id=nil]]])</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L98">View source &raquo;</a>
+								<p>Loads all of a player's characters into memory.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><span class="type">player</span></span>
+
+
+												<p> Player to load the characters for</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">callback</span>
+
+													<span class="tag"><span class="type">function</span></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> Function to call when the characters have been loaded</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bNoCache</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether or not to skip the cache; players that leave and join again later will already have
+ their characters loaded which will skip the database query and load quicker</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">id</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> The ID of a specific character to load instead of all of the player's characters</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.char.RestoreVars"></a>
+								<h1><span class="realm server"></span>ix.char.RestoreVars(data, characterInfo)</h1>
+
+									<div class="internal"></div>
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L231">View source &raquo;</a>
+								<p>Adds character properties to a table.  This is done automatically by <a href="../libraries/ix.char.html#ix.char.Restore">ix.char.Restore</a>, so that should be used instead if
+ you are loading characters.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">data</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+
+												<p> Table of fields to apply to the table. If this is an SQL query object, it will instead populate the query with
+ <code>SELECT</code> statements for each applicable character var in <a href="../libraries/ix.char.html#ix.char.vars">ix.char.vars</a>.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">characterInfo</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+
+												<p> Table to apply the properties to. This can be left as <code>nil</code> if an SQL query object is passed in <a href="../libraries/ix.data.html">data</a></p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.char.New"></a>
+								<h1><span class="realm shared"></span>ix.char.New(data, id, client[, steamID=client:SteamID64()])</h1>
+
+									<div class="internal"></div>
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L269">View source &raquo;</a>
+								<p>Creates a new empty <a href="../classes/Character.html#">Character</a> object.  If you are looking to create a usable character, see <a href="../libraries/ix.char.html#ix.char.Create">ix.char.Create</a>.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">data</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+
+												<p> Character vars to assign</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">id</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Unique ID of the character</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><span class="type">player</span></span>
+
+
+												<p> Player that will own the character</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">steamID</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+													<span class="tag default">default: client:SteamID64()</span>
+
+												<p> SteamID64 of the player that will own the character</p>
+											</li>
+									</ul>
+
+
+						</section>
+					<h1 class="title">Tables</h1>
+
+						<section class="method">
+								<aside>
+										<code>print(ix.char.loaded[1])
+ > character[1]
+</code>
+								</aside>
+							<header><a name="ix.char.loaded"></a>
+								<h1><span class="realm shared"></span>ix.char.loaded</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L22">View source &raquo;</a>
+								<p>Characters that are currently loaded into memory.  This is <strong>not</strong> a table of characters that players are currently using.
+ Characters are automatically loaded when a player joins the server. Entries are not cleared once the player disconnects, as
+ some data is needed after the player has disconnected. Clients will also keep their own version of this table, so don't
+ expect it to be the same as the server's.</p>
+
+<p> The keys in this table are the IDs of characters, and the values are the <a href="../classes/Character.html#">Character</a> objects that the ID corresponds to.</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+								<aside>
+										<code>print(ix.char.vars["name"])
+ > table: 0xdeadbeef
+</code>
+								</aside>
+							<header><a name="ix.char.vars"></a>
+								<h1><span class="realm shared"></span>ix.char.vars</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L29">View source &raquo;</a>
+								<p>Variables that are stored on characters.  This table is populated automatically by <code>ix.char.RegisterVar</code>.</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.char.cache"></a>
+								<h1><span class="realm server"></span>ix.char.cache</h1>
+
+
+								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L35">View source &raquo;</a>
+								<p>Functions similar to <a href="../libraries/ix.char.html#ix.char.loaded">ix.char.loaded</a>, but is serverside only.  This contains a table of all loaded characters grouped by
+ the SteamID64 of the player that owns them.</p>
+							</header>
+
+
+
+						</section>
+		</article>
+
+		<footer>
+			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
+			<p>Last updated: <span class="timestamp">2019-06-05 00:36:51</span></p>
+		</footer>
+
+		<script type="text/javascript" src="../highlight.min.js"></script>
+		<script type="text/javascript">
+		var elements = document.querySelectorAll("aside code, pre code")
+
+		hljs.configure({
+			languages: ["lua"]
+		});
+
+		for (var i = 0; i < elements.length; i++)
+		{
+			hljs.highlightBlock(elements[i]);
+		}
+		</script>
+	</body>
+</html>
