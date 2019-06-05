@@ -1,12 +1,47 @@
 
+--[[--
+Character creation and management.
+
+**NOTE:** For the most part you shouldn't use this library unless you know what you're doing. You can very easily corrupt
+character data using these functions!
+]]
+-- @module ix.char
+
 ix.char = ix.char or {}
+
+--- Characters that are currently loaded into memory. This is **not** a table of characters that players are currently using.
+-- Characters are automatically loaded when a player joins the server. Entries are not cleared once the player disconnects, as
+-- some data is needed after the player has disconnected. Clients will also keep their own version of this table, so don't
+-- expect it to be the same as the server's.
+--
+-- The keys in this table are the IDs of characters, and the values are the `Character` objects that the ID corresponds to.
+-- @realm shared
+-- @table ix.char.loaded
+-- @usage print(ix.char.loaded[1])
+-- > character[1]
 ix.char.loaded = ix.char.loaded or {}
+
+--- Variables that are stored on characters. This table is populated automatically by `ix.char.RegisterVar`.
+-- @realm shared
+-- @table ix.char.vars
+-- @usage print(ix.char.vars["name"])
+-- > table: 0xdeadbeef
 ix.char.vars = ix.char.vars or {}
+
+--- Functions similar to `ix.char.loaded`, but is serverside only. This contains a table of all loaded characters grouped by
+-- the SteamID64 of the player that owns them.
+-- @realm server
+-- @table ix.char.cache
 ix.char.cache = ix.char.cache or {}
 
 ix.util.Include("helix/gamemode/core/meta/sh_character.lua")
 
 if (SERVER) then
+	--- Creates a character object with its assigned properties and saves it to the database.
+	-- @realm server
+	-- @tab data Properties to assign to this character. If fields are missing from the table, then it will use the default
+	-- value for that property
+	-- @func callback Function to call after the character saves
 	function ix.char.Create(data, callback)
 		local timeStamp = math.floor(os.time())
 
@@ -53,36 +88,13 @@ if (SERVER) then
 		query:Execute()
 	end
 
-	function ix.char.RestoreVars(data, characterInfo)
-		if (data.queryType) then
-			-- populate query
-			for _, v in pairs(ix.char.vars) do
-				if (v.field and v.fieldType and !v.bSaveLoadInitialOnly) then
-					data:Select(v.field)
-				end
-			end
-		else
-			-- populate character data
-			for k, v in pairs(ix.char.vars) do
-				if (v.field and characterInfo[v.field] and !v.bSaveLoadInitialOnly) then
-					local value = characterInfo[v.field]
-
-					if (isnumber(v.default)) then
-						value = tonumber(value) or v.default
-					elseif (isstring(v.default)) then
-						value = tostring(value) == "NULL" and v.default or tostring(value or v.default)
-					elseif (isbool(v.default)) then
-						value = tobool(value)
-					elseif (istable(v.default)) then
-						value = istable(value) and value or util.JSONToTable(value)
-					end
-
-					data[k] = value
-				end
-			end
-		end
-	end
-
+	--- Loads all of a player's characters into memory.
+	-- @realm server
+	-- @player client Player to load the characters for
+	-- @func[opt=nil] callback Function to call when the characters have been loaded
+	-- @bool[opt=false] bNoCache Whether or not to skip the cache; players that leave and join again later will already have
+	-- their characters loaded which will skip the database query and load quicker
+	-- @number[opt=nil] id The ID of a specific character to load instead of all of the player's characters
 	function ix.char.Restore(client, callback, bNoCache, id)
 		local steamID64 = client:SteamID64()
 		local cache = ix.char.cache[steamID64]
@@ -208,8 +220,52 @@ if (SERVER) then
 			end)
 		query:Execute()
 	end
+
+	--- Adds character properties to a table. This is done automatically by `ix.char.Restore`, so that should be used instead if
+	-- you are loading characters.
+	-- @realm server
+	-- @internal
+	-- @tab data Table of fields to apply to the table. If this is an SQL query object, it will instead populate the query with
+	-- `SELECT` statements for each applicable character var in `ix.char.vars`.
+	-- @tab characterInfo Table to apply the properties to. This can be left as `nil` if an SQL query object is passed in `data`
+	function ix.char.RestoreVars(data, characterInfo)
+		if (data.queryType) then
+			-- populate query
+			for _, v in pairs(ix.char.vars) do
+				if (v.field and v.fieldType and !v.bSaveLoadInitialOnly) then
+					data:Select(v.field)
+				end
+			end
+		else
+			-- populate character data
+			for k, v in pairs(ix.char.vars) do
+				if (v.field and characterInfo[v.field] and !v.bSaveLoadInitialOnly) then
+					local value = characterInfo[v.field]
+
+					if (isnumber(v.default)) then
+						value = tonumber(value) or v.default
+					elseif (isstring(v.default)) then
+						value = tostring(value) == "NULL" and v.default or tostring(value or v.default)
+					elseif (isbool(v.default)) then
+						value = tobool(value)
+					elseif (istable(v.default)) then
+						value = istable(value) and value or util.JSONToTable(value)
+					end
+
+					data[k] = value
+				end
+			end
+		end
+	end
 end
 
+--- Creates a new empty `Character` object. If you are looking to create a usable character, see `ix.char.Create`.
+-- @realm shared
+-- @internal
+-- @tab data Character vars to assign
+-- @number id Unique ID of the character
+-- @player client Player that will own the character
+-- @string[opt=client:SteamID64()] steamID SteamID64 of the player that will own the character
 function ix.char.New(data, id, client, steamID)
 	if (data.name) then
 		data.name = data.name:gsub("#", "#​")
