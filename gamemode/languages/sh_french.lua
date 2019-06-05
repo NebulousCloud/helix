@@ -403,7 +403,6 @@ LANGUAGE = {
 	cmdTextRemove = "Supprime les blocs de texte que vous regardez.",
 	cmdMapSceneAdd = "Ajoute un point de vue de caméra cinématique affiché dans le menu du personnage..",
 	cmdMapSceneRemove = "Supprime un point de vue de la caméra qui est affiché dans le menu du personnage.",
-	cmdFixPAC = "Tentatives de corriger les erreurs PAC3.",
 	cmdSpawnAdd = "Ajoute un point d'apparition pour la faction spécifiée.",
 	cmdSpawnRemove = "Supprime les points d'apparition que vous regardez.",
 	cmdAct = "Effectuer l'animation %s.",
