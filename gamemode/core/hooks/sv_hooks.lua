@@ -645,7 +645,6 @@ function GM:PlayerDeathThink(client)
 end
 
 function GM:PlayerDisconnected(client)
-	client:ClearNetVars()
 	client:SaveData()
 
 	local character = client:GetCharacter()
@@ -667,6 +666,8 @@ function GM:PlayerDisconnected(client)
 	if (IsValid(client.ixRagdoll)) then
 		client.ixRagdoll:Remove()
 	end
+
+	client:ClearNetVars()
 end
 
 function GM:InitPostEntity()
