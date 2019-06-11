@@ -77,8 +77,8 @@ if (SERVER) then
 	function PLUGIN:CanProperty(client, property, entity)
 		local characterID = client:GetCharacter():GetID()
 
-		if (entity:GetNetVar("owner", 0) == characterID and (property == "remover" or property == "collision")) then
-			return true
+		if (entity:GetNetVar("owner", 0) != characterID or (property != "remover" and property != "collision")) then
+			return false
 		end
 	end
 
@@ -86,8 +86,8 @@ if (SERVER) then
 		local entity = trace.Entity
 		local characterID = client:GetCharacter():GetID()
 
-		if (IsValid(entity) and entity:GetNetVar("owner", 0) == characterID) then
-			return true
+		if (IsValid(entity) and entity:GetNetVar("owner", 0) != characterID) then
+			return false
 		end
 	end
 
@@ -115,8 +115,8 @@ else
 	function PLUGIN:CanProperty(client, property, entity)
 		local characterID = client:GetCharacter():GetID()
 
-		if (entity:GetNetVar("owner", 0) == characterID and (property == "remover" or property == "collision")) then
-			return true
+		if (entity:GetNetVar("owner", 0) != characterID or (property != "remover" and property != "collision")) then
+			return false
 		end
 	end
 
@@ -124,8 +124,8 @@ else
 		local entity = trace.Entity
 		local characterID = client:GetCharacter():GetID()
 
-		if (IsValid(entity) and entity:GetNetVar("owner", 0) == characterID) then
-			return true
+		if (IsValid(entity) and entity:GetNetVar("owner", 0) != characterID) then
+			return false
 		end
 	end
 end
