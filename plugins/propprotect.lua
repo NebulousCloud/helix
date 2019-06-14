@@ -81,6 +81,16 @@ if (SERVER) then
 		end
 	end
 
+	function PLUGIN:OnPhysgunReload(weapon, client)
+		local characterID = client:GetCharacter():GetID()
+		local trace = client:GetEyeTrace()
+
+		if (IsValid(trace.Entity) and trace.Entity:GetNetVar("owner", 0) != characterID
+		and !CAMI.PlayerHasAccess(client, "Helix - Bypass Prop Protection", nil)) then
+			return false
+		end
+	end
+
 	function PLUGIN:CanProperty(client, property, entity)
 		local characterID = client:GetCharacter():GetID()
 
