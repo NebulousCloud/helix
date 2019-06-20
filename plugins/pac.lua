@@ -2,7 +2,7 @@
 -- luacheck: globals pac pace
 
 -- This Library is just for PAC3 Integration.
--- You must install PAC3 to make this library works.
+-- You must install PAC3 to make this library work.
 
 PLUGIN.name = "PAC3 Integration"
 PLUGIN.author = "Black Tea"
