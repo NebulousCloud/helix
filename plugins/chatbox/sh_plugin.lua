@@ -55,7 +55,7 @@ if (CLIENT) then
 		self.panel:SetupTabs(util.JSONToTable(ix.option.Get("chatTabs", "")))
 		self.panel:SetupPosition(util.JSONToTable(ix.option.Get("chatPosition", "")))
 
-		hook.Run("ChatboxCreated")
+		hook.Run("ChatboxCreated", self.panel)
 	end
 
 	function PLUGIN:TabExists(id)
