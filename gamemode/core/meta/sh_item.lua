@@ -140,9 +140,9 @@ function ITEM:Call(method, client, entity, ...)
 	self.entity = oldEntity
 end
 
---- Returns the owner of the item.
+--- Returns the player that owns this item.
 -- @realm shared
--- @treturn Character The character owning the item
+-- @treturn player Player owning this item
 function ITEM:GetOwner()
 	local inventory = ix.item.inventories[self.invID]
 
