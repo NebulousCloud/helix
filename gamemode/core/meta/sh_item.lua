@@ -156,7 +156,7 @@ function ITEM:GetOwner()
 		local character = v:GetCharacter()
 
 		if (character and character:GetInventory():GetItemByID(id)) then
-			return v
+			return character
 		end
 	end
 end
