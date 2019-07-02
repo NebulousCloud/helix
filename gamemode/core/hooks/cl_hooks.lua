@@ -15,7 +15,7 @@ end
 function GM:LoadFonts(font, genericFont)
 	surface.CreateFont("ix3D2DFont", {
 		font = font,
-		size = 2048,
+		size = 128,
 		extended = true,
 		weight = 100
 	})
