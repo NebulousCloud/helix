@@ -736,9 +736,7 @@ function GM:PlayerCanHearPlayersVoice(listener, speaker)
 	local bAllowVoice = ix.config.Get("allowVoice")
 
 	if (bAllowVoice) then
-		local listenerPosition = listener:GetPos()
-		local speakerPosition = speaker:GetPos()
-		local distance = math.Distance(speakerPosition.x, speakerPosition.y, listenerPosition.x, listenerPosition.y)
+		local distance = speaker:GetPos():Distance( listener:GetPos() )
 
 		if (distance > ix.config.Get("voiceDistance")) then
 			bAllowVoice = false
