@@ -473,12 +473,9 @@ function GM:PhysgunDrop(client, entity)
 end
 
 do
-	local TOOL_SAFE = {}
-	TOOL_SAFE["lamp"] = true
-	TOOL_SAFE["camera"] = true
-
 	local TOOL_DANGEROUS = {}
 	TOOL_DANGEROUS["dynamite"] = true
+	TOOL_DANGEROUS["duplicator"] = true
 
 	function GM:CanTool(client, trace, tool)
 		if (client:IsAdmin()) then
@@ -489,17 +486,7 @@ do
 			return false
 		end
 
-		local entity = trace.Entity
-
-		if (IsValid(entity)) then
-			if (TOOL_SAFE[tool]) then
-				return true
-			end
-		else
-			return true
-		end
-
-		return false
+		return self.BaseClass:CanTool(client, trace, tool)
 	end
 end
 

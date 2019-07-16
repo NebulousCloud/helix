@@ -17,7 +17,7 @@ if (CLIENT) then
 	function PLUGIN:LoadFonts(font, genericFont)
 		surface.CreateFont("ixTypingIndicator", {
 			font = genericFont,
-			size = 2048,
+			size = 128,
 			extended = true,
 			weight = 1000
 		})

@@ -152,7 +152,7 @@ if (SERVER) then
 
 					local physObject = entity:GetPhysicsObject()
 
-					if (physObject) then
+					if (IsValid(physObject)) then
 						physObject:EnableMotion()
 					end
 				end

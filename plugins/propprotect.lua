@@ -1,6 +1,12 @@
+
 PLUGIN.name = "Basic Prop Protection"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds a simple prop protection system."
+
+CAMI.RegisterPrivilege({
+	Name = "Helix - Bypass Prop Protection",
+	MinAccess = "admin"
+})
 
 local PROP_BLACKLIST = {
 	["models/props_combine/combinetrain02b.mdl"] = true,
@@ -69,7 +75,18 @@ if (SERVER) then
 	function PLUGIN:PhysgunPickup(client, entity)
 		local characterID = client:GetCharacter():GetID()
 
-		if (!client:IsAdmin() and entity:GetNetVar("owner", 0) != characterID) then
+		if (entity:GetNetVar("owner", 0) != characterID
+		and !CAMI.PlayerHasAccess(client, "Helix - Bypass Prop Protection", nil)) then
+			return false
+		end
+	end
+
+	function PLUGIN:OnPhysgunReload(weapon, client)
+		local characterID = client:GetCharacter():GetID()
+		local trace = client:GetEyeTrace()
+
+		if (IsValid(trace.Entity) and trace.Entity:GetNetVar("owner", 0) != characterID
+		and !CAMI.PlayerHasAccess(client, "Helix - Bypass Prop Protection", nil)) then
 			return false
 		end
 	end
@@ -77,8 +94,9 @@ if (SERVER) then
 	function PLUGIN:CanProperty(client, property, entity)
 		local characterID = client:GetCharacter():GetID()
 
-		if (entity:GetNetVar("owner", 0) == characterID and (property == "remover" or property == "collision")) then
-			return true
+		if (entity:GetNetVar("owner", 0) != characterID
+		and !CAMI.PlayerHasAccess(client, "Helix - Bypass Prop Protection", nil)) then
+			return false
 		end
 	end
 
@@ -86,8 +104,9 @@ if (SERVER) then
 		local entity = trace.Entity
 		local characterID = client:GetCharacter():GetID()
 
-		if (IsValid(entity) and entity:GetNetVar("owner", 0) == characterID) then
-			return true
+		if (IsValid(entity) and entity:GetNetVar("owner", 0) != characterID
+		and !CAMI.PlayerHasAccess(client, "Helix - Bypass Prop Protection", nil)) then
+			return false
 		end
 	end
 
@@ -107,7 +126,8 @@ if (SERVER) then
 	PLUGIN.PlayerSpawnedVehicle = PLUGIN.PlayerSpawnedNPC
 else
 	function PLUGIN:PhysgunPickup(client, entity)
-		if (!client:IsAdmin() and entity:GetNetVar("owner", 0) != client:GetCharacter():GetID()) then
+		if (entity:GetNetVar("owner", 0) != client:GetCharacter():GetID()
+		and !CAMI.PlayerHasAccess(client, "Helix - Bypass Prop Protection", nil)) then
 			return false
 		end
 	end
@@ -115,8 +135,9 @@ else
 	function PLUGIN:CanProperty(client, property, entity)
 		local characterID = client:GetCharacter():GetID()
 
-		if (entity:GetNetVar("owner", 0) == characterID and (property == "remover" or property == "collision")) then
-			return true
+		if (entity:GetNetVar("owner", 0) != characterID
+		and !CAMI.PlayerHasAccess(client, "Helix - Bypass Prop Protection", nil)) then
+			return false
 		end
 	end
 
@@ -124,8 +145,9 @@ else
 		local entity = trace.Entity
 		local characterID = client:GetCharacter():GetID()
 
-		if (IsValid(entity) and entity:GetNetVar("owner", 0) == characterID) then
-			return true
+		if (IsValid(entity) and entity:GetNetVar("owner", 0) != characterID
+		and !CAMI.PlayerHasAccess(client, "Helix - Bypass Prop Protection", nil)) then
+			return false
 		end
 	end
 end

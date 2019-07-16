@@ -55,12 +55,6 @@ function GM:PlayerInitialSpawn(client)
 				ix.char.loaded[v]:Sync(client)
 			end
 
-			for _, v in ipairs(player.GetAll()) do
-				if (v:GetCharacter()) then
-					v:GetCharacter():Sync(client)
-				end
-			end
-
 			client.ixCharList = charList
 
 			net.Start("ixCharacterMenu")
@@ -73,8 +67,13 @@ function GM:PlayerInitialSpawn(client)
 			net.Send(client)
 
 			client.ixLoaded = true
-
 			client:SetData("intro", true)
+
+			for _, v in ipairs(player.GetAll()) do
+				if (v:GetCharacter()) then
+					v:GetCharacter():Sync(client)
+				end
+			end
 		end, bNoCache)
 
 		ix.chat.Send(nil, "connect", client:SteamName())
@@ -443,6 +442,30 @@ function GM:PlayerSpawnedVehicle(client, entity)
 	entity:SetNetVar("owner", client:GetCharacter():GetID())
 end
 
+local voiceDistance = 360000
+local function CalcPlayerCanHearPlayersVoice(listener)
+	if (!IsValid(listener)) then
+		return
+	end
+
+	listener.ixVoiceHear = listener.ixVoiceHear or {}
+
+	local eyePos = listener:EyePos()
+	for _, speaker in ipairs(player.GetAll()) do
+		local speakerEyePos = speaker:EyePos()
+		listener.ixVoiceHear[speaker] = eyePos:DistToSqr(speakerEyePos) < voiceDistance
+	end
+end
+
+function GM:InitializedConfig()
+	voiceDistance = ix.config.Get("voiceDistance")
+	voiceDistance = voiceDistance * voiceDistance
+end
+
+function GM:VoiceDistanceChanged(distance)
+	voiceDistance = distance * distance
+end
+
 -- Called when weapons should be given to a player.
 function GM:PlayerLoadout(client)
 	if (client.ixSkipLoadout) then
@@ -532,6 +555,12 @@ function GM:PostPlayerLoadout(client)
 				end
 			end
 		end
+	end
+
+	if (ix.config.Get("allowVoice")) then
+		timer.Create(client:SteamID64() .. "ixCanHearPlayersVoice", 0.5, 0, function()
+			CalcPlayerCanHearPlayersVoice(client)
+		end)
 	end
 end
 
@@ -667,6 +696,22 @@ function GM:PlayerDisconnected(client)
 	if (IsValid(client.ixRagdoll)) then
 		client.ixRagdoll:Remove()
 	end
+
+	client:ClearNetVars()
+
+	if (!client.ixVoiceHear) then
+		return
+	end
+
+	for _, v in ipairs(player.GetAll()) do
+		if (!v.ixVoiceHear) then
+			continue
+		end
+
+		v.ixVoiceHear[client] = nil
+	end
+
+	timer.Remove(client:SteamID64() .. "ixCanHearPlayersVoice")
 end
 
 function GM:InitPostEntity()
@@ -732,19 +777,12 @@ function GM:InitializedSchema()
 end
 
 function GM:PlayerCanHearPlayersVoice(listener, speaker)
-	local bAllowVoice = ix.config.Get("allowVoice")
-
-	if (bAllowVoice) then
-		local listenerPosition = listener:GetPos()
-		local speakerPosition = speaker:GetPos()
-		local distance = math.Distance(speakerPosition.x, speakerPosition.y, listenerPosition.x, listenerPosition.y)
-
-		if (distance > ix.config.Get("voiceDistance")) then
-			bAllowVoice = false
-		end
+	if (!speaker:Alive()) then
+		return false
 	end
 
-	return bAllowVoice
+	local bCanHear = listener.ixVoiceHear and listener.ixVoiceHear[speaker]
+	return bCanHear, true
 end
 
 function GM:PlayerCanPickupWeapon(client, weapon)

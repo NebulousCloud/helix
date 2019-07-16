@@ -145,7 +145,11 @@ ix.config.Add("defaultMoney", 0, "The amount of money that players start with.",
 ix.config.Add("allowVoice", false, "Whether or not voice chat is allowed.", nil, {
 	category = "server"
 })
-ix.config.Add("voiceDistance", 600.0, "How far can the voice be heard.", nil, {
+ix.config.Add("voiceDistance", 600.0, "How far can the voice be heard.", function(oldValue, newValue)
+	if (SERVER) then
+		hook.Run("VoiceDistanceChanged", newValue)
+	end
+end, {
 	category = "server",
 	data = {min = 0, max = 5000, decimals = 1}
 })
