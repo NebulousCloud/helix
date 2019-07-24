@@ -238,7 +238,7 @@ function ITEM:OnLoadout()
 		local client = self.player
 		client.carryWeapons = client.carryWeapons or {}
 
-		local weapon = client:Give(self.class)
+		local weapon = client:Give(self.class, true)
 
 		if (IsValid(weapon)) then
 			client:RemoveAmmo(weapon:Clip1(), weapon:GetPrimaryAmmoType())
