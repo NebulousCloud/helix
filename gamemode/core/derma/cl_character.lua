@@ -156,7 +156,7 @@ function PANEL:Init()
 		ix.util.DrawBlur(panel, 15, nil, 200)
 
 		-- background dim
-		surface.SetDrawColor(Color(0, 0, 0, 100))
+		surface.SetDrawColor(0, 0, 0, 100)
 		surface.DrawRect(0, y, width, newHeight)
 
 		-- border lines
@@ -487,11 +487,11 @@ end
 
 function PANEL:Paint(width, height)
 	surface.SetTexture(gradient)
-	surface.SetDrawColor(Color(0, 0, 0, 255))
+	surface.SetDrawColor(0, 0, 0, 255)
 	surface.DrawTexturedRect(0, 0, width, height)
 
 	if (!ix.option.Get("cheapBlur", false)) then
-		surface.SetDrawColor(Color(0, 0, 0, 150))
+		surface.SetDrawColor(0, 0, 0, 150)
 		surface.DrawTexturedRect(0, 0, width, height)
 		ix.util.DrawBlur(self, Lerp((self.currentAlpha - 200) / 255, 0, 10))
 	end

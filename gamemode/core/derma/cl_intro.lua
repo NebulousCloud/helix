@@ -180,7 +180,7 @@ function PANEL:Paint(width, height)
 
 	-- background
 	if (self.bBackground) then
-		surface.SetDrawColor(Color(0, 0, 0, 255))
+		surface.SetDrawColor(0, 0, 0, 255)
 		surface.DrawRect(0, 0, width, height)
 	end
 
@@ -201,7 +201,7 @@ function PANEL:Paint(width, height)
 		local ratio = i / #self.waves
 		local color = ratio * 33
 
-		surface.SetDrawColor(Color(color, color, color, self.bBackground and 255 or ratio * 320))
+		surface.SetDrawColor(color, color, color, self.bBackground and 255 or ratio * 320)
 		self:PaintCurve(height * wave[1], width, wave[2])
 	end
 

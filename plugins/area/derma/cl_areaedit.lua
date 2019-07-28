@@ -84,7 +84,7 @@ function PANEL:Init()
 			end
 
 			panel.Paint = function(_, width, height)
-				surface.SetDrawColor(Color(0, 0, 0, 255))
+				surface.SetDrawColor(0, 0, 0, 255)
 				surface.DrawOutlinedRect(0, 0, width, height)
 
 				surface.SetDrawColor(panel.value)
