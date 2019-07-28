@@ -172,6 +172,8 @@ if (SERVER) then
 	-- Send a chat message using the specified chat type.
 	function ix.chat.Send(speaker, chatType, text, anonymous, receivers, data)
 		data = data or {}
+		print(speaker, chatType, text, anonymous, receivers, data )
+		if chatType == nil then return end -- fixes : "/ooc" command, probably worth printing a howto-use example in the chatbox
 		chatType = string.lower(chatType)
 
 		local class = ix.chat.classes[chatType]
