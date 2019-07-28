@@ -326,7 +326,7 @@ function PANEL:Paint(width, height)
 	local textWidth, textHeight = surface.GetTextSize(text)
 	local y = offset * -textHeight
 
-	surface.SetTextColor(Color(250, 60, 60, 255))
+	surface.SetTextColor(250, 60, 60, 255)
 	surface.SetTextPos(width * 0.5 - textWidth * 0.5, y + height * 0.5 - textHeight * 0.5)
 	surface.DrawText(text)
 
@@ -334,7 +334,7 @@ function PANEL:Paint(width, height)
 	y = y + textHeight
 	textWidth, textHeight = surface.GetTextSize(text)
 
-	surface.SetTextColor(Color(30, 250, 30, 255))
+	surface.SetTextColor(30, 250, 30, 255)
 	surface.SetTextPos(width * 0.5 - textWidth * 0.5, y + height * 0.5 - textHeight * 0.5)
 	surface.DrawText(text)
 end

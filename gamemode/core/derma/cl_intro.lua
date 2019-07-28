@@ -216,9 +216,9 @@ function PANEL:Paint(width, height)
 	end
 
 	-- title text glow
-	surface.SetTextColor(Color(255, 255, 255,
+	surface.SetTextColor(255, 255, 255,
 		self.sunbeamOffset == 1 and self.kickTarget or math.sin(math.pi * self.sunbeamOffset) * 255
-	))
+	)
 	surface.SetFont("ixIntroTitleBlurFont")
 
 	local logoTextWidth, logoTextHeight = surface.GetTextSize(text)
@@ -226,7 +226,7 @@ function PANEL:Paint(width, height)
 	surface.DrawText(text)
 
 	-- title text
-	surface.SetTextColor(Color(255, 255, 255, self.sunbeamOffset * 255))
+	surface.SetTextColor(255, 255, 255, self.sunbeamOffset * 255)
 	surface.SetFont("ixIntroTitleFont")
 
 	logoTextWidth, logoTextHeight = surface.GetTextSize(text)
@@ -238,7 +238,7 @@ function PANEL:Paint(width, height)
 	text = L("introTextOne"):lower()
 	textWidth = surface.GetTextSize(text)
 
-	surface.SetTextColor(Color(255, 255, 255, self.textOne * 255))
+	surface.SetTextColor(255, 255, 255, self.textOne * 255)
 	surface.SetTextPos(width * 0.5 - textWidth * 0.5, height * 0.66)
 	surface.DrawText(text)
 
@@ -246,7 +246,7 @@ function PANEL:Paint(width, height)
 	text = L("introTextTwo", Schema.author or "nebulous"):lower()
 	textWidth = surface.GetTextSize(text)
 
-	surface.SetTextColor(Color(255, 255, 255, self.textTwo * 255))
+	surface.SetTextColor(255, 255, 255, self.textTwo * 255)
 	surface.SetTextPos(width * 0.5 - textWidth * 0.5, height * 0.66)
 	surface.DrawText(text)
 
@@ -263,7 +263,7 @@ function PANEL:Paint(width, height)
 		end
 	end
 
-	surface.SetTextColor(Color(255, 255, 255, self.continueText * 255 - (math.sin(self.pulse) * 100), 0))
+	surface.SetTextColor(255, 255, 255, self.continueText * 255 - (math.sin(self.pulse) * 100), 0)
 	surface.SetTextPos(width * 0.5 - textWidth * 0.5, centerY * 2 - textHeight * 2)
 	surface.DrawText(text)
 
