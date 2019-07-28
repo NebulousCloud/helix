@@ -11,7 +11,7 @@ AccessorFunc(PANEL, "backgroundAlpha", "BackgroundAlpha")
 function PANEL:Init()
 	self:SetFont("ixMenuButtonFont")
 	self:SetTextColor(color_white)
-	self:SetDrawBackground(false)
+	self:SetPaintBackground(false)
 	self:SetContentAlignment(4)
 	self:SetTextInset(buttonPadding, 0)
 

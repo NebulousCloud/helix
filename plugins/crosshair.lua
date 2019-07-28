@@ -77,7 +77,7 @@ if (CLIENT) then
 		end
 
 		aimVector = client:EyeAngles()
-		punchAngle = client:GetPunchAngle()
+		punchAngle = client:GetViewPunchAngles()
 		ft = FrameTime()
 		filter = {client}
 
