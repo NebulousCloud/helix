@@ -149,8 +149,9 @@ end
 function SKIN:PaintPanel(panel)
 	if (panel.m_bBackground) then
 		local width, height = panel:GetSize()
-
-		surface.SetDrawColor(30, 30, 30, 100)
+		local backgroundColor = panel:GetBackgroundColor() or Color(30, 30, 30, 100);
+		
+		surface.SetDrawColor(backgroundColor);
 		surface.DrawRect(0, 0, width, height)
 
 		surface.SetDrawColor(0, 0, 0, 150)
