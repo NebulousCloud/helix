@@ -174,8 +174,8 @@ if (SERVER) then
 		if (!chatType) then
 			return
 		end
-		
-		data = data or {}		
+
+		data = data or {}
 		chatType = string.lower(chatType)
 
 		local class = ix.chat.classes[chatType]
