@@ -70,7 +70,7 @@ function SKIN:DrawHelixCurved(x, y, radius, segments, barHeight, fraction, color
 		if (barOffset > 0) then
 			surface.SetDrawColor(color)
 		else
-			surface.SetDrawColor(Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, color.a))
+			surface.SetDrawColor(color.r * 0.5, color.g * 0.5, color.b * 0.5, color.a)
 		end
 
 		surface.DrawTexturedRectRotated(barX, barY, 4, barOffset * (barHeight * fraction), math.deg(angle))
@@ -92,7 +92,7 @@ function SKIN:DrawHelix(x, y, width, height, segments, color, fraction, speed)
 		if (offset > 0) then
 			surface.SetDrawColor(color)
 		else
-			surface.SetDrawColor(Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, color.a))
+			surface.SetDrawColor(color.r * 0.5, color.g * 0.5, color.b * 0.5, color.a)
 		end
 
 		surface.DrawTexturedRectRotated(x + (i / segments) * width, y + height * 0.5, 4, barHeight, 0)
@@ -176,7 +176,7 @@ function SKIN:PaintPlaceholderPanel(panel, width, height, barWidth, padding)
 
 	for i = 1, segments do
 		surface.SetTexture(-1)
-		surface.SetDrawColor(Color(0, 0, 0, 88))
+		surface.SetDrawColor(0, 0, 0, 88)
 		surface.DrawTexturedRectRotated(i * barWidth, i * barWidth, barWidth, size * 2, -45)
 	end
 end
@@ -190,7 +190,7 @@ function SKIN:PaintCategoryPanel(panel, text, color)
 	local textHeight = select(2, surface.GetTextSize(text)) + 6
 	local width, height = panel:GetSize()
 
-	surface.SetDrawColor(Color(0, 0, 0, 100))
+	surface.SetDrawColor(0, 0, 0, 100)
 	surface.DrawRect(0, textHeight, width, height - textHeight)
 
 	self:DrawImportantBackground(0, 0, width, textHeight, color)
@@ -277,13 +277,13 @@ function SKIN:PaintSegmentedProgress(panel, width, height)
 end
 
 function SKIN:PaintCharacterCreateBackground(panel, width, height)
-	surface.SetDrawColor(Color(40, 40, 40, 255))
+	surface.SetDrawColor(40, 40, 40, 255)
 	surface.SetTexture(gradient)
 	surface.DrawTexturedRect(0, 0, width, height)
 end
 
 function SKIN:PaintCharacterLoadBackground(panel, width, height)
-	surface.SetDrawColor(Color(40, 40, 40, panel:GetBackgroundFraction() * 255))
+	surface.SetDrawColor(40, 40, 40, panel:GetBackgroundFraction() * 255)
 	surface.SetTexture(gradient)
 	surface.DrawTexturedRect(0, 0, width, height)
 end
@@ -311,7 +311,7 @@ function SKIN:PaintSettingsRowBackground(panel, width, height)
 	local bReset = panel:GetShowReset()
 
 	if (index == 0) then
-		surface.SetDrawColor(Color(30, 30, 30, 45))
+		surface.SetDrawColor(30, 30, 30, 45)
 		surface.DrawRect(0, 0, width, height)
 	end
 
@@ -330,7 +330,7 @@ function SKIN:PaintScrollBarGrip(panel, width, height)
 	local downButtonHeight = parent.btnDown:GetTall()
 
 	DisableClipping(true)
-		surface.SetDrawColor(Color(30, 30, 30, 200))
+		surface.SetDrawColor(30, 30, 30, 200)
 		surface.DrawRect(4, -upButtonHeight, width - 8, height + upButtonHeight + downButtonHeight)
 	DisableClipping(false)
 end
@@ -358,7 +358,7 @@ end
 function SKIN:PaintMenu(panel, width, height)
 	ix.util.DrawBlur(panel)
 
-	surface.SetDrawColor(Color(30, 30, 30, 150))
+	surface.SetDrawColor(30, 30, 30, 150)
 	surface.DrawRect(0, 0, width, height)
 end
 
@@ -381,7 +381,7 @@ function SKIN:PaintChatboxTabButton(panel, width, height)
 		surface.SetDrawColor(ix.config.Get("color"))
 		surface.DrawRect(0, 0, width, height)
 	else
-		surface.SetDrawColor(Color(0, 0, 0, 100))
+		surface.SetDrawColor(0, 0, 0, 100)
 		surface.DrawRect(0, 0, width, height)
 
 		if (panel:GetUnread()) then
@@ -456,7 +456,7 @@ function SKIN:DrawChatboxPreviewBox(x, y, text, color)
 	surface.DrawText(text)
 
 	-- outline
-	surface.SetDrawColor(Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, 255))
+	surface.SetDrawColor(color.r * 0.5, color.g * 0.5, color.b * 0.5, 255)
 	surface.DrawOutlinedRect(x, y, width, height)
 
 	return width
@@ -470,7 +470,7 @@ function SKIN:DrawChatboxPrefixBox(panel, width, height)
 	surface.DrawRect(0, 0, width, height)
 
 	-- outline
-	surface.SetDrawColor(Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, 255))
+	surface.SetDrawColor(color.r * 0.5, color.g * 0.5, color.b * 0.5, 255)
 	surface.DrawOutlinedRect(0, 0, width, height)
 end
 

@@ -171,6 +171,10 @@ if (SERVER) then
 
 	-- Send a chat message using the specified chat type.
 	function ix.chat.Send(speaker, chatType, text, anonymous, receivers, data)
+		if (!chatType) then
+			return
+		end
+
 		data = data or {}
 		chatType = string.lower(chatType)
 

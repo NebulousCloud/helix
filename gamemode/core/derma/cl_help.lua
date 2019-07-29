@@ -162,7 +162,7 @@ local function DrawHelix(width, height, color) -- luacheck: ignore 211
 		if (barOffset > 0) then
 			surface.SetDrawColor(color)
 		else
-			surface.SetDrawColor(Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, color.a))
+			surface.SetDrawColor(color.r * 0.5, color.g * 0.5, color.b * 0.5, color.a)
 		end
 
 		surface.DrawTexturedRectRotated(x, y, 4, barHeight, math.deg(angle))
