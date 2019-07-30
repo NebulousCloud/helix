@@ -150,19 +150,21 @@ function ix.bar.DrawAll()
 
 		if (bar) then
 			local realValue, barText = bar.GetValue()
-
 			if (realValue == false) then
 				continue
 			end
-
-			local value = Approach(deltas[i] or 0, realValue, updateValue)
+			deltas[i] = deltas[i] or 0
+			local value = Approach(deltas[i], realValue, updateValue)
+			-- fix for smooth bar changes (increase of 0.01 every 0.1sec for example)
+			if (value == realValue and deltas[i] != realValue and realValue != 0 and realValue != 1) then
+				value = deltas[i]
+			end
 
 			deltas[i] = value
 
 			if (deltas[i] != realValue) then
 				bar.lifeTime = curTime + 5
 			end
-
 			if (bar.lifeTime >= curTime or bar.visible or ix.option.Get("alwaysShowBars", false) or hook.Run("ShouldBarDraw", bar)) then
 				ix.bar.Draw(x, ix.bar.totalHeight, w, h, value, bar.color, barText)
 				ix.bar.totalHeight = ix.bar.totalHeight + h + 2
