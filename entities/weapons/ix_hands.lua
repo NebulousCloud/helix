@@ -19,7 +19,9 @@ SWEP.ViewModelFlip = false
 SWEP.AnimPrefix	 = "rpg"
 
 SWEP.ViewTranslation = 4
-SWEP.NextAllowedPlayRateChange = 0
+if CLIENT then
+	SWEP.NextAllowedPlayRateChange = 0
+end
 
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = -1
@@ -94,7 +96,9 @@ function SWEP:Deploy()
 	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(1)
 		viewModel:ResetSequence(ACT_VM_FISTS_DRAW)
-		self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration()
+		if CLIENT then
+			self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration()
+		end
 	end
 
 	self:DropObject()
@@ -127,7 +131,9 @@ function SWEP:Holster()
 	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(1)
 		viewModel:ResetSequence(ACT_VM_FISTS_HOLSTER)
-		self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration()
+		if CLIENT then
+			self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration()
+		end
 	end
 
 	return true
@@ -329,7 +335,9 @@ function SWEP:DoPunchAnimation()
 	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(0.5)
 		viewModel:SetSequence(sequence)
-		self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration() * 2
+		if CLIENT then
+			self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration() * 2
+		end
 	end
 end
 
@@ -431,7 +439,9 @@ function SWEP:SecondaryAttack()
 
 		if (IsValid(viewModel)) then
 			viewModel:SetPlaybackRate(0.5)
-			self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration() * 2
+			if CLIENT then
+				self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration() * 2
+			end
 		end
 	end
 
