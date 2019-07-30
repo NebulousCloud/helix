@@ -23,23 +23,26 @@ ix.config.Add("punchStamina", 10, "How much stamina punches use up.", nil, {
 	category = "characters"
 })
 -- luacheck: pop
-local function calcStaminaChange(client)
+local function CalcStaminaChange(client)
 	local character = client:GetCharacter()
-	if (not character or client:GetMoveType() == MOVETYPE_NOCLIP) then return 0 end
-	local runSpeed
 
-	if SERVER then
-		runSpeed = ix.config.Get("runSpeed") + character:GetAttribute("stm", 0)
+	if (!character or client:GetMoveType() == MOVETYPE_NOCLIP) then
+		return 0
 	end
 
-	local offset = 0 -- luacheck: ignore 211
+	local runSpeed
 
-	if (SERVER and client:WaterLevel() > 1) then
-		runSpeed = runSpeed * 0.775
+	if (SERVER) then
+		runSpeed = ix.config.Get("runSpeed") + character:GetAttribute("stm", 0)
+
+		if (client:WaterLevel() > 1) then
+			runSpeed = runSpeed * 0.775
+		end
 	end
 
 	local walkSpeed = ix.config.Get("walkSpeed")
 	local maxAttributes = ix.config.Get("maxAttributes", 30)
+	local offset
 
 	if (client:KeyDown(IN_SPEED) and client:GetVelocity():LengthSqr() >= (walkSpeed * walkSpeed)) then
 		-- characters could have attribute values greater than max if the config was changed
@@ -50,24 +53,27 @@ local function calcStaminaChange(client)
 
 	offset = hook.Run("AdjustStaminaOffset", client, offset) or offset
 
-	if CLIENT then
+	if (CLIENT) then
 		return offset -- for the client we need to return the estimated stamina change
 	else
 		local current = client:GetLocalVar("stm", 0)
 		local value = math.Clamp(current + offset, 0, 100)
 
-		if (current ~= value) then
+		if (current != value) then
 			client:SetLocalVar("stm", value)
 
-			if (value == 0 and not client:GetNetVar("brth", false)) then
+			if (value == 0 and !client:GetNetVar("brth", false)) then
 				client:SetRunSpeed(walkSpeed)
 				client:SetNetVar("brth", true)
+
 				character:UpdateAttrib("end", 0.1)
 				character:UpdateAttrib("stm", 0.01)
+
 				hook.Run("PlayerStaminaLost", client)
 			elseif (value >= 50 and client:GetNetVar("brth", false)) then
 				client:SetRunSpeed(runSpeed)
 				client:SetNetVar("brth", nil)
+
 				hook.Run("PlayerStaminaGained", client)
 			end
 		end
@@ -77,14 +83,15 @@ end
 
 if (SERVER) then
 	function PLUGIN:PostPlayerLoadout(client)
-		local uniqueID = "ixStam"..client:SteamID()
+		local uniqueID = "ixStam" .. client:SteamID()
 
 		timer.Create(uniqueID, 0.25, 0, function()
 			if (!IsValid(client)) then
 				timer.Remove(uniqueID)
 				return
 			end
-			calcStaminaChange(client)
+
+			CalcStaminaChange(client)
 		end)
 	end
 
@@ -114,31 +121,30 @@ if (SERVER) then
 	function playerMeta:ConsumeStamina(amount)
 		local current = self:GetLocalVar("stm", 0)
 		local value = math.Clamp(current - amount, 0, 100)
+
 		self:SetLocalVar("stm", value)
 	end
-
 
 else
 
 	local predictedStamina = 100
 
-	hook.Add("Think", "helixStaminaPluginPredictStamina", function()
-		local offset = calcStaminaChange(LocalPlayer())
+	function PLUGIN:Think()
+		local offset = CalcStaminaChange(LocalPlayer())
 		-- the server check it every 0.25 sec, here we check it every [FrameTime()] seconds
 		offset = math.Remap(FrameTime(), 0, 0.25, 0, offset)
 
-		if offset ~= 0 then
+		if (offset != 0) then
 			predictedStamina = math.Clamp(predictedStamina + offset, 0, 100)
 		end
-	end)
+	end
 
-	hook.Add("ixLocalVarSet", "helixStaminaPluginPredictStamina", function(key, var)
-		if key ~= "stm" then return end
-		if math.abs(predictedStamina-var) > 5 then
+	function PLUGIN:OnLocalVarSet(key, var)
+		if (key != "stm") then return end
+		if (math.abs(predictedStamina - var) > 5) then
 			predictedStamina = var
 		end
-
-	end)
+	end
 
 	ix.bar.Add(function()
 		return predictedStamina / 100

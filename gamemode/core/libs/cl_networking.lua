@@ -21,11 +21,13 @@ net.Receive("ixNetVarDelete", function()
 end)
 
 net.Receive("ixLocalVarSet", function()
-	ix.net[LocalPlayer():EntIndex()] = ix.net[LocalPlayer():EntIndex()] or {}
 	local key = net.ReadString()
-	local var =  net.ReadType()
+	local var = net.ReadType()
+
+	ix.net[LocalPlayer():EntIndex()] = ix.net[LocalPlayer():EntIndex()] or {}
 	ix.net[LocalPlayer():EntIndex()][key] = var
-	hook.Run("ixLocalVarSet", key, var)
+
+	hook.Run("OnLocalVarSet", key, var)
 end)
 
 function GetNetVar(key, default) -- luacheck: globals GetNetVar
