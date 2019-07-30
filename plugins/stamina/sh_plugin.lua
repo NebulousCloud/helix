@@ -141,5 +141,5 @@ else
 
 	ix.bar.Add(function()
 		return predictedStamina / 100
-	end, Color(200, 200, 40), nil, "stm", true)
+	end, Color(200, 200, 40), nil, "stm")
 end
