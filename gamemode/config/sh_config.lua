@@ -115,10 +115,6 @@ ix.config.Add("walkRatio", 0.5, "How fast one goes when holding ALT.", nil, {
 	data = {min = 0, max = 1, decimals = 1},
 	category = "characters"
 })
-ix.config.Add("punchStamina", 10, "How much stamina punches use up.", nil, {
-	data = {min = 0, max = 100},
-	category = "characters"
-})
 ix.config.Add("intro", true, "Whether or not the Helix intro is enabled for new players.", nil, {
 	category = "appearance"
 })

@@ -18,6 +18,11 @@ ix.config.Add("staminaCrouchRegeneration", 2, "How much stamina to regain per ti
 	data = {min = 0, max = 10, decimals = 2},
 	category = "characters"
 })
+
+ix.config.Add("punchStamina", 10, "How much stamina punches use up.", nil, {
+	data = {min = 0, max = 100},
+	category = "characters"
+})
 -- luacheck: pop
 
 if (SERVER) then

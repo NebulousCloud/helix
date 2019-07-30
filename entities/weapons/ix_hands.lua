@@ -19,6 +19,9 @@ SWEP.ViewModelFlip = false
 SWEP.AnimPrefix	 = "rpg"
 
 SWEP.ViewTranslation = 4
+if CLIENT then
+	SWEP.NextAllowedPlayRateChange = 0
+end
 
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = -1
@@ -93,6 +96,9 @@ function SWEP:Deploy()
 	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(1)
 		viewModel:ResetSequence(ACT_VM_FISTS_DRAW)
+		if CLIENT then
+			self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration()
+		end
 	end
 
 	self:DropObject()
@@ -125,6 +131,9 @@ function SWEP:Holster()
 	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(1)
 		viewModel:ResetSequence(ACT_VM_FISTS_HOLSTER)
+		if CLIENT then
+			self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration()
+		end
 	end
 
 	return true
@@ -138,7 +147,7 @@ function SWEP:Think()
 	if (CLIENT) then
 		local viewModel = self.Owner:GetViewModel()
 
-		if (IsValid(viewModel)) then
+		if (IsValid(viewModel) and self.NextAllowedPlayRateChange < CurTime()) then
 			viewModel:SetPlaybackRate(1)
 		end
 	else
@@ -326,6 +335,9 @@ function SWEP:DoPunchAnimation()
 	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(0.5)
 		viewModel:SetSequence(sequence)
+		if CLIENT then
+			self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration() * 2
+		end
 	end
 end
 
@@ -345,15 +357,17 @@ function SWEP:PrimaryAttack()
 		return
 	end
 
-	local staminaUse = ix.config.Get("punchStamina")
+	if (ix.plugin.Get("stamina")) then
+		local staminaUse = ix.config.Get("punchStamina")
 
-	if (staminaUse > 0) then
-		local value = self.Owner:GetLocalVar("stm", 0) - staminaUse
+		if (staminaUse > 0) then
+			local value = self.Owner:GetLocalVar("stm", 0) - staminaUse
 
-		if (value < 0) then
-			return
-		elseif (SERVER) then
-			self.Owner:SetLocalVar("stm", value)
+			if (value < 0) then
+				return
+			elseif (SERVER) then
+				self.Owner:SetLocalVar("stm", value)
+			end
 		end
 	end
 
@@ -381,7 +395,7 @@ function SWEP:PrimaryAttack()
 			self.Owner:LagCompensation(true)
 				local data = {}
 					data.start = self.Owner:GetShootPos()
-					data.endpos = data.start + self.Owner:GetAimVector()*96
+					data.endpos = data.start + self.Owner:GetAimVector() * 96
 					data.filter = self.Owner
 				local trace = util.TraceLine(data)
 
@@ -419,6 +433,17 @@ function SWEP:SecondaryAttack()
 		data.filter = {self, self.Owner}
 	local trace = util.TraceLine(data)
 	local entity = trace.Entity
+
+	if CLIENT then
+		local viewModel = self.Owner:GetViewModel()
+
+		if (IsValid(viewModel)) then
+			viewModel:SetPlaybackRate(0.5)
+			if CLIENT then
+				self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration() * 2
+			end
+		end
+	end
 
 	if (SERVER and IsValid(entity)) then
 		if (entity:IsDoor()) then
