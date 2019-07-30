@@ -349,15 +349,17 @@ function SWEP:PrimaryAttack()
 		return
 	end
 
-	local staminaUse = ix.config.Get("punchStamina")
+	if (ix.plugin.Get("stamina")) then
+		local staminaUse = ix.config.Get("punchStamina")
 
-	if (staminaUse > 0) then
-		local value = self.Owner:GetLocalVar("stm", 0) - staminaUse
+		if (staminaUse > 0) then
+			local value = self.Owner:GetLocalVar("stm", 0) - staminaUse
 
-		if (value < 0) then
-			return
-		elseif (SERVER) then
-			self.Owner:SetLocalVar("stm", value)
+			if (value < 0) then
+				return
+			elseif (SERVER) then
+				self.Owner:SetLocalVar("stm", value)
+			end
 		end
 	end
 
@@ -385,7 +387,7 @@ function SWEP:PrimaryAttack()
 			self.Owner:LagCompensation(true)
 				local data = {}
 					data.start = self.Owner:GetShootPos()
-					data.endpos = data.start + self.Owner:GetAimVector()*96
+					data.endpos = data.start + self.Owner:GetAimVector() * 96
 					data.filter = self.Owner
 				local trace = util.TraceLine(data)
 
