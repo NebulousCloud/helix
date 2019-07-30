@@ -22,7 +22,10 @@ end)
 
 net.Receive("ixLocalVarSet", function()
 	ix.net[LocalPlayer():EntIndex()] = ix.net[LocalPlayer():EntIndex()] or {}
-	ix.net[LocalPlayer():EntIndex()][net.ReadString()] = net.ReadType()
+	local key = net.ReadString()
+	local var =  net.ReadType()
+	ix.net[LocalPlayer():EntIndex()][key] = var
+	hook.Run("ixLocalVarSet", key, var)
 end)
 
 function GetNetVar(key, default) -- luacheck: globals GetNetVar

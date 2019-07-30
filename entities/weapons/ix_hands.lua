@@ -366,7 +366,7 @@ function SWEP:PrimaryAttack()
 			if (value < 0) then
 				return
 			elseif (SERVER) then
-				self.Owner:SetLocalVar("stm", value)
+				self.Owner:ConsumeStamina(staminaUse)
 			end
 		end
 	end
