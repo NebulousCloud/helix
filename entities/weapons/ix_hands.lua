@@ -19,6 +19,7 @@ SWEP.ViewModelFlip = false
 SWEP.AnimPrefix	 = "rpg"
 
 SWEP.ViewTranslation = 4
+SWEP.NextAllowedPlayRateChange = 0
 
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = -1
@@ -93,6 +94,7 @@ function SWEP:Deploy()
 	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(1)
 		viewModel:ResetSequence(ACT_VM_FISTS_DRAW)
+		self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration()
 	end
 
 	self:DropObject()
@@ -125,6 +127,7 @@ function SWEP:Holster()
 	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(1)
 		viewModel:ResetSequence(ACT_VM_FISTS_HOLSTER)
+		self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration()
 	end
 
 	return true
@@ -138,7 +141,7 @@ function SWEP:Think()
 	if (CLIENT) then
 		local viewModel = self.Owner:GetViewModel()
 
-		if (IsValid(viewModel)) then
+		if (IsValid(viewModel) and self.NextAllowedPlayRateChange < CurTime()) then
 			viewModel:SetPlaybackRate(1)
 		end
 	else
@@ -326,6 +329,7 @@ function SWEP:DoPunchAnimation()
 	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(0.5)
 		viewModel:SetSequence(sequence)
+		self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration() * 2
 	end
 end
 
@@ -419,6 +423,15 @@ function SWEP:SecondaryAttack()
 		data.filter = {self, self.Owner}
 	local trace = util.TraceLine(data)
 	local entity = trace.Entity
+
+	if CLIENT then
+		local viewModel = self.Owner:GetViewModel()
+
+		if (IsValid(viewModel)) then
+			viewModel:SetPlaybackRate(0.5)
+			self.NextAllowedPlayRateChange = CurTime() + viewModel:SequenceDuration() * 2
+		end
+	end
 
 	if (SERVER and IsValid(entity)) then
 		if (entity:IsDoor()) then
