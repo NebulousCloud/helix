@@ -32,7 +32,7 @@ local function calcStaminaChange(client)
 		runSpeed = ix.config.Get("runSpeed") + character:GetAttribute("stm", 0)
 	end
 
-	local offset = 0 --luacheck: ignore 211
+	local offset = 0 -- luacheck: ignore 211
 
 	if (SERVER and client:WaterLevel() > 1) then
 		runSpeed = runSpeed * 0.775
