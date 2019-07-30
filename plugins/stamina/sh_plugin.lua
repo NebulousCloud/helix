@@ -31,7 +31,7 @@ local function calcStaminaChange(client)
 	if SERVER then
 		runSpeed = ix.config.Get("runSpeed") + character:GetAttribute("stm", 0)
 	end
-
+	--luacheck: ignore 211
 	local offset = 0
 
 	if (SERVER and client:WaterLevel() > 1) then
@@ -124,7 +124,8 @@ else
 
 	hook.Add("Think", "helixStaminaPluginPredictStamina", function()
 		local offset = calcStaminaChange(LocalPlayer())
-		offset = math.Remap(FrameTime(), 0, 0.25, 0, offset) -- the server check it every 0.25 sec, here we check it every [FrameTime()] seconds
+		-- the server check it every 0.25 sec, here we check it every [FrameTime()] seconds
+		offset = math.Remap(FrameTime(), 0, 0.25, 0, offset)
 
 		if offset ~= 0 then
 			predictedStamina = math.Clamp(predictedStamina + offset, 0, 100)
