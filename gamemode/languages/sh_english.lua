@@ -270,6 +270,8 @@ LANGUAGE = {
 	disable = "Disable",
 	vendorPriceReq = "Enter the new price for this item.",
 	vendorEditCurStock = "Edit Current Stock",
+	vendorStockReq = "Enter the Maximum amount of Stock the item should have.",
+	vendorStockCurReq = "Enter how many items are available for purchase from the maximum stock.",
 	you = "You",
 	vendorSellScale = "Sell price scale",
 	vendorNoTrade = "You are not able to trade with this vendor!",
@@ -293,6 +295,7 @@ LANGUAGE = {
 	containerInvalid = "You need to be looking at a container to do this!",
 	wrongPassword = "You have entered an incorrect password!",
 	respawning = "Respawning...",
+	tellAdmin = "Inform a staff member of this error: %s",
 
 	scoreboard = "Scoreboard",
 	ping = "Ping: %d",
