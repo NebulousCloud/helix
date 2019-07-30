@@ -149,15 +149,12 @@ end
 function SKIN:PaintPanel(panel)
 	if (panel.m_bBackground) then
 		local width, height = panel:GetSize()
-		
 		if (panel.m_bgColor) then
 			surface.SetDrawColor(panel.m_bgColor)
 		else
 			surface.SetDrawColor(30, 30, 30, 100)
 		end
-		
 		surface.DrawRect(0, 0, width, height)
-
 		surface.SetDrawColor(0, 0, 0, 150)
 		surface.DrawOutlinedRect(0, 0, width, height)
 	end
