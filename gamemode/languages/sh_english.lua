@@ -293,6 +293,7 @@ LANGUAGE = {
 	containerInvalid = "You need to be looking at a container to do this!",
 	wrongPassword = "You have entered an incorrect password!",
 	respawning = "Respawning...",
+	tellAdmin = "Inform a staff member of this error: %s",
 
 	scoreboard = "Scoreboard",
 	ping = "Ping: %d",
