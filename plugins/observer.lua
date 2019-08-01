@@ -129,6 +129,12 @@ else
 		end
 	end
 
+	function PLUGIN:CanPlayerEnterVehicle(client, vehicle, role)
+		if (client:GetMoveType() == MOVETYPE_NOCLIP) then
+			return false
+		end
+	end
+
 	function PLUGIN:PlayerNoClip(client, state)
 		if (hook.Run("CanPlayerEnterObserver", client)) then
 			if (state) then
