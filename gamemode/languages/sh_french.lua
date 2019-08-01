@@ -365,6 +365,8 @@ LANGUAGE = {
 	optdChatFontScale = "A quelle taille doit être la police de discussion.",
 	optChatOutline = "Décrire le texte du chat",
 	optdChatOutline = "Affiche un contour autour du texte de la discussion plutôt qu’une ombre. Activez cette option si vous rencontrez des difficultés pour lire du texte.",
+	optCorrectAngleTypingText = "Affiche le texte d'écriture avec un angle ajusté.",
+	optdCorrectAngleTypingText = "Calcul le vrai angle du texte affiché au dessus de la tête des joueurs.",
 
 	cmdRoll = "Rolls un nombre entre 0 et le nombre spécifié",
 	cmdPM = "Envoie un message privé à quelqu'un.",

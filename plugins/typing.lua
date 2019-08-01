@@ -150,24 +150,37 @@ if (CLIENT) then
 			fraction = 1
 		end
 
-		local angle = EyeAngles()
-		angle:RotateAroundAxis(angle:Forward(), 90)
-		angle:RotateAroundAxis(angle:Right(), 90)
+		if ix.option.Get("correctAngleTypingText", true) then
+			local pos = LocalPlayer():GetPos()
+			local target = self:GetTypingIndicatorPosition(client)
+			local targetX = target.x
+			local targetY = target.y
+			local Y = math.fmod(math.atan2(pos.y - targetY, pos.x - targetX), math.pi * 2)
+			local angle_2 = Angle(0, math.deg(Y), 0)
+			angle_2:RotateAroundAxis(angle_2:Forward(), 90)
+			angle_2:RotateAroundAxis(angle_2:Right(), -90)
 
-		cam.Start3D2D(self:GetTypingIndicatorPosition(client), Angle(0, angle.y, 90), 0.05)
-			surface.SetFont("ixTypingIndicator")
+			cam.Start3D2D(target, angle_2, 0.05)
+		else
+			local angle = EyeAngles()
+			angle:RotateAroundAxis(angle:Forward(), 90)
+			angle:RotateAroundAxis(angle:Right(), 90)
 
-			local _, textHeight = surface.GetTextSize(text)
-			local alpha = bAnimation and ((1 - math.min(distance, range) / range) * 255 * fraction) or 255
+			cam.Start3D2D(self:GetTypingIndicatorPosition(client), Angle(0, angle.y, 90), 0.05)
+		end
+				surface.SetFont("ixTypingIndicator")
 
-			draw.SimpleTextOutlined(text, "ixTypingIndicator", 0,
-				-textHeight * 0.5 * fraction,
-				ColorAlpha(textColor, alpha),
-				TEXT_ALIGN_CENTER,
-				TEXT_ALIGN_CENTER, 4,
-				ColorAlpha(shadowColor, alpha)
-			)
-		cam.End3D2D()
+				local _, textHeight = surface.GetTextSize(text)
+				local alpha = bAnimation and ((1 - math.min(distance, range) / range) * 255 * fraction) or 255
+
+				draw.SimpleTextOutlined(text, "ixTypingIndicator", 0,
+					-textHeight * 0.5 * fraction,
+					ColorAlpha(textColor, alpha),
+					TEXT_ALIGN_CENTER,
+					TEXT_ALIGN_CENTER, 4,
+					ColorAlpha(shadowColor, alpha)
+				)
+			cam.End3D2D()
 	end
 
 	net.Receive("ixTypeClass", function()
@@ -208,6 +221,9 @@ if (CLIENT) then
 			end
 		end
 	end)
+	ix.option.Add("correctAngleTypingText", ix.type.bool, false, {
+		category = "performance"
+	})
 else
 	util.AddNetworkString("ixTypeClass")
 
