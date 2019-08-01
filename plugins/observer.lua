@@ -182,4 +182,8 @@ else
 			ix.log.Add(client, "observerExit")
 		end
 	end
+
+	function PLUGIN:PlayerLeaveVehicle(client)
+		client:GodDisable()
+	end
 end
