@@ -183,7 +183,16 @@ else
 		end
 	end
 
-	function PLUGIN:PlayerLeaveVehicle(client)
-		client:GodDisable()
+	function PLUGIN:PlayerEnteredVehicle(client)
+		if client.ixObsData then
+			client.ixObsData = nil
+			client:SetNoDraw(false)
+			client:SetNotSolid(false)
+			client:DrawWorldModel(true)
+			client:DrawShadow(true)
+			client:GodDisable()
+			client:SetNoTarget(false)
+			hook.Run("OnPlayerObserve", client, false)
+		end
 	end
 end
