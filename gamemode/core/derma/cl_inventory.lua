@@ -206,6 +206,7 @@ function PANEL:Move(newX, newY, givenInventory, bNoSend)
 	local iconSize = givenInventory.iconSize
 	local oldX, oldY = self.gridX, self.gridY
 	local oldParent = self:GetParent()
+	local item = self.itemTable;
 
 	if (givenInventory:OnTransfer(oldX, oldY, newX, newY, oldParent, bNoSend) == false) then
 		return
@@ -219,6 +220,8 @@ function PANEL:Move(newX, newY, givenInventory, bNoSend)
 
 	self:SetParent(givenInventory)
 	self:SetPos(x, y)
+	self:SetSize(iconSize * item.width, iconSize * item.height);
+	self:PerformLayout();
 
 	if (self.slots) then
 		for _, v in ipairs(self.slots) do
@@ -312,20 +315,7 @@ function PANEL:FitParent(invWidth, invHeight)
 	end
 
 	local width, height = parent:GetSize()
-	local padding = 4
-	local iconSize
-
-	if (invWidth > invHeight) then
-		iconSize = (width - padding * 2) / invWidth
-	elseif (invHeight > invWidth) then
-		iconSize = (height - padding * 2) / invHeight
-	else
-		-- we use height because the titlebar will make it more tall than it is wide
-		iconSize = (height - padding * 2) / invHeight - 4
-	end
-
-	self:SetSize(iconSize * invWidth + padding * 2, iconSize * invHeight + padding * 2)
-	self:SetIconSize(iconSize)
+	self:SetIconSize(math.min(width / invWidth, height / invHeight) - 4)
 end
 
 function PANEL:OnRemove()
