@@ -524,9 +524,9 @@ else
 		local data = net.ReadType()
 
 		if (key == "name") then
-			editor.name:SetText(entity:GetDisplayName())
+			editor.name:SetText(data)
 		elseif (key == "description") then
-			editor.description:SetText(entity:GetDescription())
+			editor.description:SetText(data)
 		elseif (key == "bubble") then
 			editor.bubble.noSend = true
 			editor.bubble:SetValue(data and 1 or 0)
