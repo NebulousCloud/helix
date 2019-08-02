@@ -185,6 +185,13 @@ if (CLIENT) then
 		end
 	end
 
+	function PLUGIN:Think()
+		local client = LocalPlayer()
+		if (!IsValid(client) or !client:Alive()) then
+			self.alpha = 0
+		end
+	end
+
 	function PLUGIN:ScoreboardShow()
 		self.alpha = 0
 	end
