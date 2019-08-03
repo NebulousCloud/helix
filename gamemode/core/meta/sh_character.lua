@@ -330,7 +330,7 @@ function ix.char.RegisterVar(key, data)
 
 			if (default == nil) then
 				return ix.char.vars[key] and (istable(ix.char.vars[key].default) and table.Copy(ix.char.vars[key].default)
-					or ix.char.vars[key].default) or nil
+					or ix.char.vars[key].default)
 			end
 
 			return default
