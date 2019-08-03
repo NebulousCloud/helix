@@ -244,6 +244,8 @@ function GM:EntityTakeDamage(entity, dmgInfo)
 			end
 		end
 
+		local fallDamage = hook.Run("GetFallDamage", entity.ixPlayer, entity:GetVelocity():Length())
+		dmgInfo:SetDamage(fallDamage)
 		entity.ixPlayer:TakeDamageInfo(dmgInfo)
 	end
 end
