@@ -270,6 +270,8 @@ LANGUAGE = {
 	disable = "Отключить",
 	vendorPriceReq = "Введите новую цену для этого предмета.",
 	vendorEditCurStock = "Изменить настоящее кол-во",
+	vendorStockReq = "Введите максимальное количество предметов.",
+	vendorStockCurReq = "Введите доступное количество предметов для покупки.",
 	you = "Персонаж",
 	vendorSellScale = "Множитель продажи",
 	vendorNoTrade = "Вы не можете торговать с этим торговцем!",
@@ -293,6 +295,7 @@ LANGUAGE = {
 	containerInvalid = "Вы должны смотреть на контейнер, чтобы это выполнить это!",
 	wrongPassword = "Неверный пароль!",
 	respawning = "Респавнимся...",
+	tellAdmin = "Сообщите администрации эту ошибку: %s",
 
 	scoreboard = "Игроки",
 	ping = "Ping: %d",
