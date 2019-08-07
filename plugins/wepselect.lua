@@ -49,6 +49,10 @@ if (CLIENT) then
 			end
 
 			for i = 1, #self.weapons do
+				if not IsValid(self.weapons[i]) then
+					break
+				end
+
 				local theta = (i - index) * 0.1
 				local color = ColorAlpha(
 					i == self.index and ix.config.Get("color") or color_white,
