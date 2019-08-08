@@ -155,8 +155,6 @@ ix.command.Add("CharSetSkin", {
 	OnRun = function(self, client, target, skin)
 		target:SetData("skin", skin)
 		target:GetPlayer():SetSkin(skin or 0)
-
-		ix.util.NotifyLocalized("cChangeSkin", nil, client:GetName(), target:GetName(), skin or 0)
 	end
 })
 
@@ -180,8 +178,6 @@ ix.command.Add("CharSetBodygroup", {
 				groups[index] = value
 			target:SetData("groups", groups)
 			target:GetPlayer():SetBodygroup(index, value or 0)
-
-			ix.util.NotifyLocalized("cChangeGroups", nil, client:GetName(), target:GetName(), bodygroup, value or 0)
 		else
 			return "@invalidArg", 2
 		end
