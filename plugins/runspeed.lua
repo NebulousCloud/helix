@@ -102,9 +102,7 @@ function playerMeta:RemoveWalkSpeedModifier(identifier, do_not_recalc)
 	end
 end
 
-
-local sortFunc = function( a, b ) return a.mod_type > b.mod_type end -- handle add or 
-
+local sortFunc = function( a, b ) return a.mod_type > b.mod_type end
 
 --- Update the speed/walk speed using the existing modifiers
 -- @realm server
@@ -123,7 +121,7 @@ function PLUGIN:RecalcSpeed(client, walk)
 	end
 	table.sort( targetTable, sortFunc)
 	local baseValue = targetTable.base
-	for uniqueIdentifier, tableData in pairs(targetTable) do
+	for _, tableData in pairs(targetTable) do
 		if tableData == targetTable.base then continue end -- faster to compare table pointer than key (string)
 		if (tableData.mod_type == PLUGIN.ModifierTypes.MULT) then
 			baseValue = baseValue * tableData.value
