@@ -65,7 +65,8 @@ local function CalcStaminaChange(client)
 
 			if (value == 0 and !client:GetNetVar("brth", false)) then
 				if not client:RunSpeedModifierExists("noStamina") then
-					client:UpdateRunSpeedModifier("noStamina", ix.plugin.list.runspeed.ModifierTypes.ADD, -(client:GetRunSpeed() - client:GetWalkSpeed()), true)
+					client:UpdateRunSpeedModifier("noStamina", ix.plugin.list.runspeed.ModifierTypes.ADD,
+						-(client:GetRunSpeed() - walkSpeed), true)
 				end
 				client:SetNetVar("brth", true)
 				character:UpdateAttrib("end", 0.1)

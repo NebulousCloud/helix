@@ -2,7 +2,8 @@ local PLUGIN = PLUGIN
 local playerMeta = FindMetaTable("Player")
 PLUGIN.name = "Walk/RunSpeed manager"
 PLUGIN.author = "Lapin"
-PLUGIN.description = "Allows the gamemode and plugins to apply runspeed/walkspeed modifiers without overwriting existing speed, which allow multiple plugins/addon to coexist"
+PLUGIN.description = [[Allows the gamemode and plugins to apply runspeed/walkspeed modifiers without
+overwriting existing speed, which allow multiple plugins/addon to coexist"]]
 
 if not SERVER then return end
 
@@ -29,26 +30,26 @@ function playerMeta:WalkSpeedModifierExists(identifier)
 end
 
 
---- Manually recalculate the RunSpeed, can be used if you had multiple modifier changed calls before with do_not_recalc to true in the call
+--- Manually recalculate the RunSpeed, used if you had multiple modifier changes in the frame
 -- @realm server
 -- @usage ply:UpdateAdvancedRunSpeed()
 function playerMeta:UpdateAdvancedRunSpeed()
 	PLUGIN:RecalcSpeed(self, false)
 end
 
---- Manually recalculate the WalkSpeed, can be used if you had multiple modifier changed calls before with do_not_recalc to true in the call
+--- Manually recalculate the WalkSpeed, used if you had multiple modifier changes in the frame
 -- @realm server
 -- @usage ply:UpdateAdvancedWalkSpeed()
 function playerMeta:UpdateAdvancedWalkSpeed()
 	PLUGIN:RecalcSpeed(self, true)
 end
 
---- Applies a run speed modifier to the player (gets removed when he dies) added to the top of the existing modifiers and base runspeed
+--- Applies a run speed modifier to the player added to the top of the existing modifiers and base runspeed
 -- @realm server
 -- @any_var identifier Identifier of the modifier to be able to edit or remove it later
 -- @integer Modifier type, can be accessed using ix.plugin.list.runspeed.ModifierTypes
 -- @integer Value of the modifier, 0.90 with mult to remove 10% of the current speed for example
--- @bool true if you don't want to recalk the speed right after this call, need to be used when multiple modifiers are applied in one frame to prevent useless calcs
+-- @bool true if you don't want to recalk the speed right after this call
 -- @usage client:UpdateRunSpeedModifier("waterSlowDown", ix.plugin.list.runspeed.ModifierTypes.MULT, 0.775, true)
 function playerMeta:UpdateRunSpeedModifier(identifier, mod_type, value, do_not_recalc)
 	self.SpeedModifiers.run[identifier] = self.SpeedModifiers.run[identifier] or {}
@@ -59,12 +60,12 @@ function playerMeta:UpdateRunSpeedModifier(identifier, mod_type, value, do_not_r
 	end
 end
 
---- Applies a walk speed modifier to the player (gets removed when he dies) added to the top of the existing modifiers and base runspeed
+--- Applies a walk speed modifier to the player added to the top of the existing modifiers and base runspeed
 -- @realm server
 -- @any_var identifier Identifier of the modifier to be able to edit or remove it later
 -- @integer Modifier type, can be accessed using ix.plugin.list.runspeed.ModifierTypes
 -- @integer Value of the modifier, 0.90 with mult to remove 10% of the current speed for example
--- @bool true if you don't want to recalk the speed right after this call, need to be used when multiple modifiers are applied in one frame to prevent useless calcs
+-- @bool true if you don't want to recalk the speed right after this call
 -- @usage client:UpdateWalkSpeedModifier("waterSlowDown", ix.plugin.list.walkspeed.ModifierTypes.MULT, 0.775, true)
 function playerMeta:UpdateWalkSpeedModifier(identifier, mod_type, value, do_not_recalc)
 	self.SpeedModifiers.walk[identifier] = self.SpeedModifiers.walk[identifier] or {}
@@ -78,7 +79,7 @@ end
 --- Remove a run speed modifier from the player
 -- @realm server
 -- @any_var identifier Identifier of the modifier to be able to edit or remove it later
--- @bool true if you don't want to recalk the speed right after this call, need to be used when multiple modifiers are applied in one frame to prevent useless calcs
+-- @bool true if you don't want to recalk the speed right after this call
 -- @usage client:RemoveRunSpeedModifier("waterSlowDown", true)
 function playerMeta:RemoveRunSpeedModifier(identifier, do_not_recalc)
 	if identifier == "base" then Error("You can't remove the base modifier") end
@@ -91,7 +92,7 @@ end
 --- Remove a walk speed modifier from the player
 -- @realm server
 -- @any_var identifier Identifier of the modifier to be able to edit or remove it later
--- @bool true if you don't want to recalk the speed right after this call, need to be used when multiple modifiers are applied in one frame to prevent useless calcs
+-- @bool true if you don't want to recalk the speed right after this call
 -- @usage client:RemoveWalkSpeedModifier("waterSlowDown", true)
 function playerMeta:RemoveWalkSpeedModifier(identifier, do_not_recalc)
 	if identifier == "base" then Error("You can't remove the base modifier") end
