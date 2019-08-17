@@ -22,6 +22,7 @@ ix.config.Add("punchStamina", 10, "How much stamina punches use up.", nil, {
 	data = {min = 0, max = 100},
 	category = "characters"
 })
+
 -- luacheck: pop
 local function CalcStaminaChange(client)
 	local character = client:GetCharacter()
@@ -30,17 +31,17 @@ local function CalcStaminaChange(client)
 		return 0
 	end
 
-	local runSpeed
-
 	if (SERVER) then
-		runSpeed = ix.config.Get("runSpeed") + character:GetAttribute("stm", 0)
+		client:UpdateRunSpeedModifier("stmBoost", ix.plugin.list.runspeed.ModifierTypes.ADD, character:GetAttribute("stm", 0), true)
 
 		if (client:WaterLevel() > 1) then
-			runSpeed = runSpeed * 0.775
+			client:UpdateRunSpeedModifier("waterSlowDown", ix.plugin.list.runspeed.ModifierTypes.MULT, 0.775, true)
+		else
+			client:RemoveRunSpeedModifier("waterSlowDown", true)
 		end
 	end
 
-	local walkSpeed = ix.config.Get("walkSpeed")
+	local walkSpeed = client:GetWalkSpeed()
 	local maxAttributes = ix.config.Get("maxAttributes", 30)
 	local offset
 
@@ -63,19 +64,23 @@ local function CalcStaminaChange(client)
 			client:SetLocalVar("stm", value)
 
 			if (value == 0 and !client:GetNetVar("brth", false)) then
-				client:SetRunSpeed(walkSpeed)
+				if not client:RunSpeedModifierExists("noStamina") then
+					client:UpdateRunSpeedModifier("noStamina", ix.plugin.list.runspeed.ModifierTypes.ADD, -(client:GetRunSpeed() - client:GetWalkSpeed()), true)
+				end
 				client:SetNetVar("brth", true)
-
 				character:UpdateAttrib("end", 0.1)
 				character:UpdateAttrib("stm", 0.01)
 
 				hook.Run("PlayerStaminaLost", client)
 			elseif (value >= 50 and client:GetNetVar("brth", false)) then
-				client:SetRunSpeed(runSpeed)
+				if client:RunSpeedModifierExists("noStamina") then
+					client:RemoveRunSpeedModifier("noStamina", true)
+				end
 				client:SetNetVar("brth", nil)
 
 				hook.Run("PlayerStaminaGained", client)
 			end
+			client:UpdateAdvancedRunSpeed()
 		end
 	end
 end
