@@ -106,5 +106,3 @@ function PLUGIN:PostPlayerLoadout(client)
 	self:RecalcSpeed(client, true)
 	self:RecalcSpeed(client, false)
 end
-
-
