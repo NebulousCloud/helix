@@ -379,7 +379,7 @@ do
 				end);
 			query:Execute();
 		else
-			for k, v in pairs(invID) do
+			for _, v in pairs(invID) do
 				inventories[k] = {v[1], v[2]}
 				ix.item.CreateInv(v[1], v[2], k)
 			end
