@@ -101,7 +101,7 @@ function ix.item.RegisterInv(invType, w, h, isBag)
 	ix.item.inventoryTypes[invType] = {w = w, h = h}
 
 	if (isBag) then
-		ix.item.inventoryTypes[invType].isBag = invType
+		ix.item.inventoryTypes[invType].type = invType
 	end
 
 	return ix.item.inventoryTypes[invType]
@@ -117,7 +117,7 @@ function ix.item.NewInv(owner, invType, callback)
 			local inventory = ix.item.CreateInv(invData.w, invData.h, lastID)
 
 			if (invType) then
-				inventory.vars.isBag = invType
+				inventory.type = invType
 			end
 
 			if (isnumber(owner) and owner > 0) then
@@ -371,11 +371,33 @@ do
 
 			inventories[invID] = {width, height}
 			ix.item.CreateInv(width, height, invID)
+			local query = mysql:Select("ix_inventories");
+				query:Select("inventory_type");
+				query:WhereIn("inventory_id", invID);
+				query:Callback(function(result)
+					if (istable(result) and #result > 0) then
+						ix.item.GetInv(invID).type = result[1].inventory_type;
+					end
+				end);
+			query:Execute();
 		else
 			for k, v in pairs(invID) do
 				inventories[k] = {v[1], v[2]}
 				ix.item.CreateInv(v[1], v[2], k)
 			end
+			local query = mysql:Select("ix_inventories");
+				query:Select("inventory_type");
+				query:Select("inventory_id");
+				query:WhereIn("inventory_id", table.GetKeys(inventories));
+				query:Callback(function(result)
+					if (istable(result) and #result > 0) then
+						for k, v in pairs(result) do
+							local inventory = ix.item.GetInv(tonumber(v.inventory_id));
+							inventory.type = v.inventory_type;
+						end
+					end
+				end);
+			query:Execute();
 		end
 
 		local query = mysql:Select("ix_items")
