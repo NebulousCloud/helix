@@ -379,7 +379,7 @@ do
 				end);
 			query:Execute();
 		else
-			for _, v in pairs(invID) do
+			for k, v in pairs(invID) do
 				inventories[k] = {v[1], v[2]}
 				ix.item.CreateInv(v[1], v[2], k)
 			end
@@ -389,7 +389,7 @@ do
 				query:WhereIn("inventory_id", table.GetKeys(inventories))
 				query:Callback(function(result)
 					if (istable(result) and #result > 0) then
-						for k, v in pairs(result) do
+						for _, v in pairs(result) do
 							local inventory = ix.item.GetInv(tonumber(v.inventory_id))
 							inventory.type = v.inventory_type
 						end
