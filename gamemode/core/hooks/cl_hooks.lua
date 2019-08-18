@@ -525,7 +525,15 @@ do
 				end
 
 				local infoPanel = vgui.Create(ix.option.Get("minimalTooltips", false) and "ixTooltipMinimal" or "ixTooltip")
-				infoPanel:SetEntity(lastEntity)
+				local entityPlayer = lastEntity:GetNetVar("player")
+
+				if (entityPlayer) then
+					infoPanel:SetEntity(entityPlayer)
+					infoPanel.entity = lastEntity
+				else
+					infoPanel:SetEntity(lastEntity)
+				end
+
 				infoPanel:SetDrawArrow(true)
 				ix.gui.entityInfo = infoPanel
 			end
