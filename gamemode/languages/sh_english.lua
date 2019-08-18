@@ -297,6 +297,10 @@ LANGUAGE = {
 	respawning = "Respawning...",
 	tellAdmin = "Inform a staff member of this error: %s",
 
+	mapAdd = "You have added a map scene.",
+	mapDel = "You have removed %d map scene(s).",
+	mapRepeat = "Now add the secondary point.",
+
 	scoreboard = "Scoreboard",
 	ping = "Ping: %d",
 	viewProfile = "View Steam Profile",
