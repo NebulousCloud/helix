@@ -263,33 +263,33 @@ end
 
 local function checkSubjectAndTargetRecursively(subject, target, path)
   path = path or {}
-  local targetType, newPath
+  local newPath
   for k,targetValue in pairs(target) do
-    targetType, newPath = type(targetValue), copyTables({}, path)
+    newPath = type(targetValue), copyTables({}, path)
     table.insert(newPath, tostring(k))
-    if targetType == 'number' then
-      assert(type(subject[k]) == 'number', "Parameter '" .. table.concat(newPath,'/') .. "' is missing from subject or isn't a number")
-    elseif targetType == 'table' then
+    if isnumber(targetValue) then
+      assert(isnumber(subject[k]), "Parameter '" .. table.concat(newPath,'/') .. "' is missing from subject or isn't a number")
+    elseif istable(targetValue) then
       checkSubjectAndTargetRecursively(subject[k], targetValue, newPath)
     else
-      assert(targetType == 'number', "Parameter '" .. table.concat(newPath,'/') .. "' must be a number or table of numbers")
+      assert(isnumber(targetValue), "Parameter '" .. table.concat(newPath,'/') .. "' must be a number or table of numbers")
     end
   end
 end
 
 local function checkNewParams(duration, subject, target, easing)
-  assert(type(duration) == 'number' and duration > 0, "duration must be a positive number. Was " .. tostring(duration))
-  assert(type(target)== 'table', "target must be a table. Was " .. tostring(target))
-  assert(type(easing)=='function', "easing must be a function. Was " .. tostring(easing))
+  assert(isnumber(duration) and duration > 0, "duration must be a positive number. Was " .. tostring(duration))
+  assert(istable(target), "target must be a table. Was " .. tostring(target))
+  assert(isfunction(easing), "easing must be a function. Was " .. tostring(easing))
   checkSubjectAndTargetRecursively(subject, target)
 end
 
 local function getEasingFunction(easing)
   easing = easing or "linear"
-  if type(easing) == 'string' then
+  if isstring(easing) then
     local name = easing
     easing = tween.easing[name]
-    if type(easing) ~= 'function' then
+    if not isfunction(easing) then
       error("The easing function name '" .. name .. "' is invalid")
     end
   end
@@ -299,7 +299,7 @@ end
 local function performEasingOnSubject(subject, target, initial, clock, duration, easing)
   local t,b,c,d
   for k,v in pairs(target) do
-    if type(v) == 'table' then
+    if istable(v) then
       performEasingOnSubject(subject[k], v, initial[k], clock, duration, easing)
     else
       t,b,c,d = clock, initial[k], v - initial[k], duration
@@ -324,7 +324,7 @@ local Tween = {}
 local Tween_mt = {__index = Tween}
 
 function Tween:set(clock)
-  assert(type(clock) == 'number', "clock must be a positive number or 0")
+  assert(isnumber(clock), "clock must be a positive number or 0")
 
   self.initial = self.initial or copyTables({}, self.target, self.subject)
   self.clock = clock
@@ -353,7 +353,7 @@ function Tween:reset()
 end
 
 function Tween:update(dt)
-  assert(type(dt) == 'number', "dt must be a number")
+  assert(isnumber(dt), "dt must be a number")
   return self:set(self.clock + dt)
 end
 
