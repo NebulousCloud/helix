@@ -14,11 +14,13 @@ util.AddNetworkString("ixNetVarDelete")
 
 -- Check if there is an attempt to send a function. Can't send those.
 local function CheckBadType(name, object)
-	if (isfunction(object)) then
+	local objectType = type(object)
+
+	if (objectType == "function") then
 		ErrorNoHalt("Net var '" .. name .. "' contains a bad object type!")
 
 		return true
-	elseif (istable(object)) then
+	elseif (objectType == "table") then
 		for k, v in pairs(object) do
 			-- Check both the key and the value for tables, and has recursion.
 			if (CheckBadType(name, k) or CheckBadType(name, v)) then

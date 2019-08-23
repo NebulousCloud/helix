@@ -242,7 +242,7 @@ THE SOFTWARE.
   end
   -- is `v` a date object?
   local function date_isdobj(v)
-    return (istable(v) and getmetatable(v) == dobj) and v
+    return (type(v) == 'table' and getmetatable(v) == dobj) and v
   end
 
 --#if not NO_LOCAL_TIME_SUPPORT then

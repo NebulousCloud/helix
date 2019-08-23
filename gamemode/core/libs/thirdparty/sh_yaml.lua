@@ -14,7 +14,7 @@ local table_print_value
 table_print_value = function(value, indent, done)
   indent = indent or 0
   done = done or {}
-  if istable(value) and not done [value] then
+  if type(value) == "table" and not done [value] then
     done [value] = true
 
     local list = {}
@@ -33,7 +33,7 @@ table_print_value = function(value, indent, done)
         comma = ','
       end
       local keyRep
-      if isnumber(key) then
+      if type(key) == "number" then
         keyRep = key
       else
         keyRep = string.format("%q", tostring(key))
@@ -52,7 +52,7 @@ table_print_value = function(value, indent, done)
 
     done[value] = false
     return rep
-  elseif isstring(value) then
+  elseif type(value) == "string" then
     return string.format("%q", value)
   else
     return tostring(value)
@@ -87,7 +87,7 @@ local pop = function(stack)
 end
 
 local context = function (str)
-  if not isstring(str) then
+  if type(str) ~= "string" then
     return ""
   end
 
