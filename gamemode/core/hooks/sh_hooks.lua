@@ -490,8 +490,6 @@ do
 	end
 end
 
-local vectorNul = Vector(0, 0, 0)
-
 function GM:Move(client, moveData)
 	local char = client:GetCharacter()
 
@@ -499,7 +497,7 @@ function GM:Move(client, moveData)
 		if (client:GetNetVar("actEnterAngle")) then
 			moveData:SetForwardSpeed(0)
 			moveData:SetSideSpeed(0)
-			moveData:SetVelocity(vectorNul)
+			moveData:SetVelocity(vector_origin)
 		end
 
 		if (client:GetMoveType() == MOVETYPE_WALK and moveData:KeyDown(IN_WALK)) then
