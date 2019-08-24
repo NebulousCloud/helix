@@ -443,7 +443,7 @@ function PANEL:FullFrontalLayout()
 	local p = self.prev
 	local ent = p.model:GetEntity()
 	local pos = ent:GetPos()
-	pos:Sub(vectorMinusX200)
+	pos:Sub(vectorX200)
 
 	ICON_INFO.camPos = pos
 	ICON_INFO.FOV = 45
