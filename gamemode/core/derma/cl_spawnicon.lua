@@ -15,6 +15,8 @@ function PANEL:Init()
 	end
 end
 
+local vectorZ64 = Vector(0, 0, 64)
+
 function PANEL:SetModel(model, skin, hidden)
 	BaseClass.SetModel(self, model)
 
@@ -58,7 +60,7 @@ function PANEL:SetModel(model, skin, hidden)
 	end
 
 	entity:SetIK(false)
-	entity:SetEyeTarget(Vector(0, 0, 64))
+	entity:SetEyeTarget(vectorZ64)
 end
 
 function PANEL:SetHidden(hidden)

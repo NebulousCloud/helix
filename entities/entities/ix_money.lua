@@ -11,6 +11,8 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "Amount")
 end
 
+	local min, max = Vector(-8, -8, -8), Vector(8, 8, 8)
+
 if (SERVER) then
 	function ENT:Initialize()
 		self:SetModel("models/props_lab/box01a.mdl")
@@ -24,8 +26,6 @@ if (SERVER) then
 			physObj:EnableMotion(true)
 			physObj:Wake()
 		else
-			local min, max = Vector(-8, -8, -8), Vector(8, 8, 8)
-
 			self:PhysicsInitBox(min, max)
 			self:SetCollisionBounds(min, max)
 		end

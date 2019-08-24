@@ -8,7 +8,7 @@ PLUGIN.scenes = PLUGIN.scenes or {}
 
 local x3, y3 = 0, 0
 local realOrigin = Vector(0, 0, 0)
-local realAngles = Angle(0, 0, 0)
+local realAngles = angle_zero
 local view = {}
 
 if (CLIENT) then

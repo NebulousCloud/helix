@@ -42,6 +42,9 @@ local forwardOffset = 16
 local backwardOffset = -32
 local heightOffset = Vector(0, 0, 20)
 local idleHeightOffset = Vector(0, 0, 6)
+local vector0064 = Vector(0, 0, 64)
+local mVector444 = Vector(-4, -4, -4)
+local vector444 = Vector(4, 4, 4)
 
 function PLUGIN:CalcView(client, origin)
 	local enterAngle = client:GetNetVar("actEnterAngle")
@@ -72,10 +75,10 @@ function PLUGIN:CalcView(client, origin)
 	if (head) then
 		local position = client:GetBonePosition(head) + forward * offset + height
 		local data = {
-			start = (client:GetBonePosition(head) or Vector(0, 0, 64)) + forward * 8,
+			start = (client:GetBonePosition(head) or vector0064) + forward * 8,
 			endpos = position + forward * offset,
-			mins = Vector(-4, -4, -4),
-			maxs = Vector(4, 4, 4),
+			mins = mVector444,
+			maxs = vector444,
 			filter = client
 		}
 

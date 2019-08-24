@@ -265,9 +265,10 @@ if (SERVER) then
 		self:AddStock(uniqueID, -(value or 1))
 	end
 else
+	local vectorZ84 = Vector(0, 0, 84)
 	function ENT:CreateBubble()
 		self.bubble = ClientsideModel("models/extras/info_speech.mdl", RENDERGROUP_OPAQUE)
-		self.bubble:SetPos(self:GetPos() + Vector(0, 0, 84))
+		self.bubble:SetPos(self:GetPos() + vectorZ84)
 		self.bubble:SetModelScale(0.6, 0)
 	end
 

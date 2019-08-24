@@ -67,6 +67,8 @@ if (SERVER) then
 		end
 	end)
 
+	local vectorZ16 = Vector(0, 0, 16)
+	local vectorZ05 = Vector(0, 0, 0.5)
 	net.Receive("ixShipmentUse", function(length, client)
 		local uniqueID = net.ReadString()
 		local drop = net.ReadBool()
@@ -89,7 +91,7 @@ if (SERVER) then
 				end
 
 				if (drop) then
-					ix.item.Spawn(uniqueID, entity:GetPos() + Vector(0, 0, 16), function(item, itemEntity)
+					ix.item.Spawn(uniqueID, entity:GetPos() + vectorZ16, function(item, itemEntity)
 						if (IsValid(client)) then
 							itemEntity.ixSteamID = client:SteamID()
 							itemEntity.ixCharID = client:GetCharacter():GetID()
@@ -108,7 +110,7 @@ if (SERVER) then
 				entity.items[uniqueID] = entity.items[uniqueID] - 1
 
 				if (entity:GetItemCount() < 1) then
-					entity:GibBreakServer(Vector(0, 0, 0.5))
+					entity:GibBreakServer(vectorZ05)
 					entity:Remove()
 				end
 			end

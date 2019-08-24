@@ -37,7 +37,7 @@ PLAYER_HOLDTYPE_TRANSLATOR["bugbait"] = "normal"
 
 local PLAYER_HOLDTYPE_TRANSLATOR = PLAYER_HOLDTYPE_TRANSLATOR
 local HOLDTYPE_TRANSLATOR = HOLDTYPE_TRANSLATOR
-
+local magicVector = Vector(16.5438, -0.1642, -20.5493)
 function GM:TranslateActivity(client, act)
 	local clientInfo = client:GetTable()
 	local modelClass = clientInfo.ixAnimModelClass or "player"
@@ -94,7 +94,7 @@ function GM:TranslateActivity(client, act)
 			local fixVector = clientInfo.ixAnimTable[2]
 
 			if (isvector(fixVector)) then
-				client:SetLocalPos(Vector(16.5438, -0.1642, -20.5493))
+				client:SetLocalPos(magicVector)
 			end
 
 			if (isstring(act)) then
@@ -490,6 +490,8 @@ do
 	end
 end
 
+local vectorNul = Vector(0, 0, 0)
+
 function GM:Move(client, moveData)
 	local char = client:GetCharacter()
 
@@ -497,7 +499,7 @@ function GM:Move(client, moveData)
 		if (client:GetNetVar("actEnterAngle")) then
 			moveData:SetForwardSpeed(0)
 			moveData:SetSideSpeed(0)
-			moveData:SetVelocity(Vector(0, 0, 0))
+			moveData:SetVelocity(vectorNul)
 		end
 
 		if (client:GetMoveType() == MOVETYPE_WALK and moveData:KeyDown(IN_WALK)) then

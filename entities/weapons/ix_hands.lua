@@ -422,6 +422,8 @@ function SWEP:PrimaryAttack()
 	end)
 end
 
+local viewPunchAngle = Angle(-1.3, 1.8, 0)
+
 function SWEP:SecondaryAttack()
 	if (!IsFirstTimePredicted()) then
 		return
@@ -451,7 +453,7 @@ function SWEP:SecondaryAttack()
 				return
 			end
 
-			self.Owner:ViewPunch(Angle(-1.3, 1.8, 0))
+			self.Owner:ViewPunch(viewPunchAngle)
 			self.Owner:EmitSound("physics/wood/wood_crate_impact_hard"..math.random(2, 3)..".wav")
 			self.Owner:SetAnimation(PLAYER_ATTACK1)
 

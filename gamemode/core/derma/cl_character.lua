@@ -61,6 +61,8 @@ end
 function PANEL:OnUndim()
 end
 
+local vectorScale = Vector(1, 1, 0.0001)
+
 function PANEL:Paint(width, height)
 	local amount = self.currentDimAmount
 	local bShouldScale = self.currentScale != 1
@@ -69,7 +71,7 @@ function PANEL:Paint(width, height)
 	-- draw child panels with scaling if needed
 	if (bShouldScale) then
 		matrix = Matrix()
-		matrix:Scale(Vector(1, 1, 0.0001) * self.currentScale)
+		matrix:Scale(vectorScale * self.currentScale)
 		matrix:Translate(Vector(
 			ScrW() * 0.5 - (ScrW() * self.currentScale * 0.5),
 			ScrH() * 0.5 - (ScrH() * self.currentScale * 0.5),

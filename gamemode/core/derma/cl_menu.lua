@@ -188,6 +188,8 @@ function PANEL:SetCharacterOverview(bValue, length)
 	end
 end
 
+local angleYaw180 = Angle(0, 180, 0)
+
 function PANEL:GetOverviewInfo(origin, angles, fov)
 	local originAngles = Angle(0, angles.yaw, angles.roll)
 	local target = LocalPlayer():GetObserverTarget()
@@ -204,7 +206,7 @@ function PANEL:GetOverviewInfo(origin, angles, fov)
 		newOrigin = origin - LocalPlayer():OBBCenter() * 0.6 + forward
 	end
 
-	local newAngles = originAngles + Angle(0, 180, 0)
+	local newAngles = originAngles + angleYaw180
 	newAngles.pitch = 5
 	newAngles.roll = 0
 
@@ -309,6 +311,9 @@ function PANEL:OnKeyCodePressed(key)
 	end
 end
 
+local vectorZ6 = Vector(0, 0, 6)
+local angleM456000 = Angle(-45, 60, 0)
+
 function PANEL:Think()
 	if (IsValid(self.projectedTexture)) then
 		local forward = LocalPlayer():GetForward()
@@ -318,8 +323,8 @@ function PANEL:Think()
 		right.z = 0
 
 		self.projectedTexture:SetBrightness(self.overviewFraction * 4)
-		self.projectedTexture:SetPos(LocalPlayer():GetPos() + right * 16 - forward * 8 + Vector(0, 0, 6))
-		self.projectedTexture:SetAngles(forward:Angle() + Angle(-45, 60, 0))
+		self.projectedTexture:SetPos(LocalPlayer():GetPos() + right * 16 - forward * 8 + vectorZ6)
+		self.projectedTexture:SetAngles(forward:Angle() + angleM456000)
 		self.projectedTexture:Update()
 	end
 
@@ -339,6 +344,8 @@ function PANEL:Think()
 	end
 end
 
+local vectorZDiv1000 = Vector(1, 1, 0.0001)
+
 function PANEL:Paint(width, height)
 	derma.SkinFunc("PaintMenuBackground", self, width, height, self.currentBlur)
 
@@ -348,7 +355,7 @@ function PANEL:Paint(width, height)
 		local currentScale = Lerp(self.currentAlpha / 255, 0.9, 1)
 		local matrix = Matrix()
 
-		matrix:Scale(Vector(1, 1, 0.0001) * currentScale)
+		matrix:Scale(vectorZDiv1000 * currentScale)
 		matrix:Translate(Vector(
 			ScrW() * 0.5 - (ScrW() * currentScale * 0.5),
 			ScrH() * 0.5 - (ScrH() * currentScale * 0.5),

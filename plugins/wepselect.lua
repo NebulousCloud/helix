@@ -27,6 +27,8 @@ if (CLIENT) then
 		end
 	end
 
+	local vector110 = Vector(1, 1, 0)
+
 	function PLUGIN:HUDPaint()
 		local frameTime = FrameTime()
 
@@ -79,7 +81,7 @@ if (CLIENT) then
 					shiftX + x + math.cos(theta * spacing + math.pi) * radius + radius,
 					y + lastY + math.sin(theta * spacing + math.pi) * radius - ty / 2 ,
 					1))
-				matrix:Scale(Vector(1, 1, 0) * scale)
+				matrix:Scale(vector110 * scale)
 
 				cam.PushModelMatrix(matrix)
 					ix.util.DrawText(weaponName, 2, ty / 2, color, 0, 1, "ixWeaponSelectFont")

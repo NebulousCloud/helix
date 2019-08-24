@@ -418,6 +418,7 @@ local vignetteAlphaDelta = 0
 local blurGoal = 0
 local blurDelta = 0
 local hasVignetteMaterial = vignette != "___error"
+local vectorZ768 = Vector(0, 0, 768)
 
 timer.Create("ixVignetteChecker", 1, 0, function()
 	local client = LocalPlayer()
@@ -425,7 +426,7 @@ timer.Create("ixVignetteChecker", 1, 0, function()
 	if (IsValid(client)) then
 		local data = {}
 			data.start = client:GetPos()
-			data.endpos = data.start + Vector(0, 0, 768)
+			data.endpos = data.start + vectorZ768
 			data.filter = client
 		local trace = util.TraceLine(data)
 

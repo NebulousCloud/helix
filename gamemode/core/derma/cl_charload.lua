@@ -29,6 +29,9 @@ local function GetCharacter(self)
 	return self.character
 end
 
+local camPos = Vector(80, 0, 35)
+local camAngle = Angle(0, 180, 0)
+
 function PANEL:Init()
 	self.activeCharacter = ClientsideModel(errorModel)
 	self.activeCharacter:SetNoDraw(true)
@@ -45,8 +48,8 @@ function PANEL:Init()
 	self.shadeY = 0
 	self.shadeHeight = 0
 
-	self.cameraPosition = Vector(80, 0, 35)
-	self.cameraAngle = Angle(0, 180, 0)
+	self.cameraPosition = camPos
+	self.cameraAngle = camAngle
 	self.lastPaint = 0
 end
 

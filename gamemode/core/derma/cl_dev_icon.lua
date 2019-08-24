@@ -437,48 +437,53 @@ function PANEL:BestGuessLayout()
 	end
 end
 
+local vectorX200 = Vector( 200, 0, 0 )
+
 function PANEL:FullFrontalLayout()
 	local p = self.prev
 	local ent = p.model:GetEntity()
 	local pos = ent:GetPos()
-	local campos = pos + Vector( -200, 0, 0 )
+	pos:Sub(vectorMinusX200)
 
-	ICON_INFO.camPos = campos
+	ICON_INFO.camPos = pos
 	ICON_INFO.FOV = 45
-	ICON_INFO.camAng = (campos * -1):Angle()
+	ICON_INFO.camAng = (pos * -1):Angle()
 end
 
 function PANEL:AboveLayout()
 	local p = self.prev
 	local ent = p.model:GetEntity()
 	local pos = ent:GetPos()
-	local campos = pos + Vector( 0, 0, 200 )
+	pos:Add(vectorX200)
 
-	ICON_INFO.camPos = campos
+	ICON_INFO.camPos = pos
 	ICON_INFO.FOV = 45
-	ICON_INFO.camAng = (campos * -1):Angle()
+	ICON_INFO.camAng = (pos * -1):Angle()
 end
+
+local vectorY200 = Vector( 0, 200, 0 )
 
 function PANEL:RightLayout()
 	local p = self.prev
 	local ent = p.model:GetEntity()
 	local pos = ent:GetPos()
-	local campos = pos + Vector( 0, 200, 0 )
+	pos:Add(vectorY200)
 
-	ICON_INFO.camPos = campos
+	ICON_INFO.camPos = pos
 	ICON_INFO.FOV = 45
-	ICON_INFO.camAng = (campos * -1):Angle()
+	ICON_INFO.camAng = (pos * -1):Angle()
 end
+
+local angleYawMinus180 = Angle( 0, -180, 0 )
 
 function PANEL:OriginLayout()
 	local p = self.prev
 	local ent = p.model:GetEntity()
 	local pos = ent:GetPos()
-	local campos = pos + Vector( 0, 0, 0 )
 
-	ICON_INFO.camPos = campos
+	ICON_INFO.camPos = pos
 	ICON_INFO.FOV = 45
-	ICON_INFO.camAng = Angle( 0, -180, 0 )
+	ICON_INFO.camAng = angleYawMinus180
 end
 
 

@@ -65,6 +65,8 @@ if (SERVER) then
 		end
 	end
 
+	local min, max = Vector(-8, -8, -8), Vector(8, 8, 8)
+
 	function ENT:SetItem(itemID)
 		local itemTable = ix.item.instances[itemID]
 
@@ -90,8 +92,6 @@ if (SERVER) then
 			local physObj = self:GetPhysicsObject()
 
 			if (!IsValid(physObj)) then
-				local min, max = Vector(-8, -8, -8), Vector(8, 8, 8)
-
 				self:PhysicsInitBox(min, max)
 				self:SetCollisionBounds(min, max)
 			end
