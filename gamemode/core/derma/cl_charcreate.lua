@@ -48,10 +48,11 @@ function PANEL:Init()
 
 	self.factionButtonsPanel = self.factionPanel:Add("ixCharMenuButtonList")
 	self.factionButtonsPanel:SetWide(halfWidth)
-	self.factionButtonsPanel:Dock(LEFT)
+	self.factionButtonsPanel:Dock(FILL)
 
-	local factionBack = self.factionButtonsPanel:Add("ixMenuButton")
+	local factionBack = self.factionPanel:Add("ixMenuButton")
 	factionBack:SetText("return")
+	factionBack:Dock(BOTTOM)
 	factionBack.DoClick = function()
 		self.progress:DecrementProgress()
 
@@ -342,7 +343,6 @@ function PANEL:Populate()
 				local button = self.factionButtonsPanel:Add("ixMenuSelectionButton")
 				button:SetBackgroundColor(v.color or color_white)
 				button:SetText(L(v.name):upper())
-				button:Dock(BOTTOM)
 				button:SetButtonList(self.factionButtons)
 				button.faction = v.index
 				button.OnSelected = function(panel)
@@ -376,6 +376,8 @@ function PANEL:Populate()
 			end
 		end
 	end
+
+	self.factionButtonsPanel:SizeToContents()
 
 	local zPos = 1
 

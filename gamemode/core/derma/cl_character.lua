@@ -103,16 +103,30 @@ PANEL = {}
 function PANEL:Init()
 	local parent = self:GetParent()
 	self:SetSize(parent:GetWide() * 0.25, parent:GetTall())
+
+	self:GetVBar():SetWide(0)
+	self:GetVBar():SetVisible(false)
 end
 
 function PANEL:Add(name)
 	local panel = vgui.Create(name, self)
-	panel:Dock(BOTTOM)
+	panel:Dock(TOP)
 
 	return panel
 end
 
-vgui.Register("ixCharMenuButtonList", PANEL, "EditablePanel")
+function PANEL:SizeToContents()
+	self:GetCanvas():InvalidateLayout(true)
+
+	-- if the canvas has extra space, forcefully dock to the bottom so it doesn't anchor to the top
+	if (self:GetTall() > self:GetCanvas():GetTall()) then
+		self:GetCanvas():Dock(BOTTOM)
+	else
+		self:GetCanvas():Dock(NODOCK)
+	end
+end
+
+vgui.Register("ixCharMenuButtonList", PANEL, "DScrollPanel")
 
 -- main character menu panel
 PANEL = {}
@@ -215,50 +229,11 @@ function PANEL:Init()
 	end
 
 	-- button list
-	local mainButtonList = self:Add("ixCharMenuButtonList")
-	mainButtonList:Dock(LEFT)
-
-	-- leave/return button
-	self.returnButton = mainButtonList:Add("ixMenuButton")
-	self:UpdateReturnButton()
-	self.returnButton.DoClick = function()
-		if (self.bUsingCharacter) then
-			parent:Close()
-		else
-			RunConsoleCommand("disconnect")
-		end
-	end
-
-	-- community button
-	local extraURL = ix.config.Get("communityURL", "")
-	local extraText = ix.config.Get("communityText", "@community")
-
-	if (extraURL != "" and extraText != "") then
-		if (extraText:sub(1, 1) == "@") then
-			extraText = L(extraText:sub(2))
-		end
-
-		local extraButton = mainButtonList:Add("ixMenuButton")
-		extraButton:SetText(extraText, true)
-		extraButton.DoClick = function()
-			gui.OpenURL(extraURL)
-		end
-	end
-
-	-- load character button
-	self.loadButton = mainButtonList:Add("ixMenuButton")
-	self.loadButton:SetText("load")
-	self.loadButton.DoClick = function()
-		self:Dim()
-		parent.loadCharacterPanel:SlideUp()
-	end
-
-	if (!bHasCharacter) then
-		self.loadButton:SetDisabled(true)
-	end
+	self.mainButtonList = self:Add("ixCharMenuButtonList")
+	self.mainButtonList:Dock(LEFT)
 
 	-- create character button
-	local createButton = mainButtonList:Add("ixMenuButton")
+	local createButton = self.mainButtonList:Add("ixMenuButton")
 	createButton:SetText("create")
 	createButton.DoClick = function()
 		local maximum = hook.Run("GetMaxPlayerCharacter", LocalPlayer()) or ix.config.Get("maxCharacters", 5)
@@ -272,6 +247,47 @@ function PANEL:Init()
 		parent.newCharacterPanel:SetActiveSubpanel("faction", 0)
 		parent.newCharacterPanel:SlideUp()
 	end
+
+	-- load character button
+	self.loadButton = self.mainButtonList:Add("ixMenuButton")
+	self.loadButton:SetText("load")
+	self.loadButton.DoClick = function()
+		self:Dim()
+		parent.loadCharacterPanel:SlideUp()
+	end
+
+	if (!bHasCharacter) then
+		self.loadButton:SetDisabled(true)
+	end
+
+	-- community button
+	local extraURL = ix.config.Get("communityURL", "")
+	local extraText = ix.config.Get("communityText", "@community")
+
+	if (extraURL != "" and extraText != "") then
+		if (extraText:sub(1, 1) == "@") then
+			extraText = L(extraText:sub(2))
+		end
+
+		local extraButton = self.mainButtonList:Add("ixMenuButton")
+		extraButton:SetText(extraText, true)
+		extraButton.DoClick = function()
+			gui.OpenURL(extraURL)
+		end
+	end
+
+	-- leave/return button
+	self.returnButton = self.mainButtonList:Add("ixMenuButton")
+	self:UpdateReturnButton()
+	self.returnButton.DoClick = function()
+		if (self.bUsingCharacter) then
+			parent:Close()
+		else
+			RunConsoleCommand("disconnect")
+		end
+	end
+
+	self.mainButtonList:SizeToContents()
 end
 
 function PANEL:UpdateReturnButton(bValue)
@@ -304,6 +320,12 @@ function PANEL:OnClose()
 			v:SetVisible(false)
 		end
 	end
+end
+
+function PANEL:PerformLayout(width, height)
+	local padding = self:GetPadding()
+
+	self.mainButtonList:SetPos(padding, height - self.mainButtonList:GetTall() - padding)
 end
 
 vgui.Register("ixCharMenuMain", PANEL, "ixCharMenuPanel")

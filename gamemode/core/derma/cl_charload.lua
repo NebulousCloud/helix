@@ -278,16 +278,9 @@ function PANEL:Init()
 		parent.mainPanel:Undim()
 	end
 
-	self.characterList = controlList:Add("Panel")
+	self.characterList = controlList:Add("ixCharMenuButtonList")
 	self.characterList.buttons = {}
 	self.characterList:Dock(FILL)
-	self.characterList.Clear = function(panel)
-		for _, v in pairs(panel:GetChildren()) do
-			if (IsValid(v)) then
-				v:Remove()
-			end
-		end
-	end
 
 	-- right-hand side with carousel and buttons
 	local infoPanel = self.panel:Add("Panel")
@@ -404,7 +397,7 @@ function PANEL:Populate(ignoreID)
 	local bSelected
 
 	-- loop backwards to preserve order since we're docking to the bottom
-	for i = #ix.characters, 1, -1 do
+	for i = 1, #ix.characters do
 		local id = ix.characters[i]
 		local character = ix.char.loaded[id]
 
@@ -419,7 +412,6 @@ function PANEL:Populate(ignoreID)
 		local button = self.characterList:Add("ixMenuSelectionButton")
 		button:SetBackgroundColor(color)
 		button:SetText(character:GetName())
-		button:Dock(BOTTOM)
 		button:SetButtonList(self.characterList.buttons)
 		button.character = character
 		button.OnSelected = function(panel)
@@ -431,17 +423,26 @@ function PANEL:Populate(ignoreID)
 
 		if (localCharacter and character:GetID() == localCharacter:GetID()) then
 			button:SetSelected(true)
+			self.characterList:ScrollToChild(button)
+
 			bSelected = true
 		end
 	end
 
 	if (!bSelected) then
-		if (#self.characterList.buttons > 0) then
-			self.characterList.buttons[1]:SetSelected(true)
+		local buttons = self.characterList.buttons
+
+		if (#buttons > 0) then
+			local button = buttons[#buttons]
+
+			button:SetSelected(true)
+			self.characterList:ScrollToChild(button)
 		else
 			self.character = nil
 		end
 	end
+
+	self.characterList:SizeToContents()
 end
 
 function PANEL:OnSlideUp()
