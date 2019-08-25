@@ -61,10 +61,10 @@ local function utf8charbytes (s, i)
         i = i or 1
 
         -- argument checking
-        if type(s) ~= "string" then
+        if not isstring(s) then
                 error("bad argument #1 to 'utf8charbytes' (string expected, got ".. type(s).. ")")
         end
-        if type(i) ~= "number" then
+        if not isnumber(i) then
                 error("bad argument #2 to 'utf8charbytes' (number expected, got ".. type(i).. ")")
         end
 
@@ -156,7 +156,7 @@ end
 -- returns the number of characters in a UTF-8 string
 local function utf8len (s)
         -- argument checking
-        if type(s) ~= "string" then
+        if not isstring(s) then
                 error("bad argument #1 to 'utf8len' (string expected, got ".. type(s).. ")")
         end
 
@@ -190,13 +190,13 @@ local function utf8sub (s, i, j)
         j = j or -1
 
         -- argument checking
-        if type(s) ~= "string" then
+        if not isstring(s) then
                 error("bad argument #1 to 'utf8sub' (string expected, got ".. type(s).. ")")
         end
-        if type(i) ~= "number" then
+        if not isnumber(i) then
                 error("bad argument #2 to 'utf8sub' (number expected, got ".. type(i).. ")")
         end
-        if type(j) ~= "number" then
+        if not isnumber(j) then
                 error("bad argument #3 to 'utf8sub' (number expected, got ".. type(j).. ")")
         end
 
@@ -244,10 +244,10 @@ end
 -- replace UTF-8 characters based on a mapping table
 local function utf8replace (s, mapping)
         -- argument checking
-        if type(s) ~= "string" then
+        if not isstring(s) then
                 error("bad argument #1 to 'utf8replace' (string expected, got ".. type(s).. ")")
         end
-        if type(mapping) ~= "table" then
+        if not istable(mapping) then
                 error("bad argument #2 to 'utf8replace' (table expected, got ".. type(mapping).. ")")
         end
 
@@ -294,7 +294,7 @@ end
 -- identical to string.reverse except that it supports UTF-8
 local function utf8reverse (s)
         -- argument checking
-        if type(s) ~= "string" then
+        if not isstring(s) then
                 error("bad argument #1 to 'utf8reverse' (string expected, got ".. type(s).. ")")
         end
 
