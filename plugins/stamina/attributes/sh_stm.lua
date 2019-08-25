@@ -2,5 +2,5 @@ ATTRIBUTE.name = "Stamina"
 ATTRIBUTE.description = "Affects how fast you can run."
 
 function ATTRIBUTE:OnSetup(client, value)
-	client:SetRunSpeed(ix.config.Get("runSpeed") + value)
+	client:UpdateRunSpeedModifier("stmBoost", ix.plugin.list.runspeed.ModifierTypes.ADD, value, true)
 end
