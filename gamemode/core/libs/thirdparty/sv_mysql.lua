@@ -583,6 +583,17 @@ function mysql:Queue(queryString, callback)
 	end;
 end;
 
+local function sqlSQLStr(str_in)
+	local str = tostring(str_in)
+	local null_chr = string.find(str, "\0")
+
+	if null_chr then
+		str = string.sub(str, 1, null_chr - 1)
+	end
+
+	return str
+end
+
 -- A function to escape a string for MySQL.
 function mysql:Escape(text)
 	if (self.connection) then
@@ -590,7 +601,7 @@ function mysql:Escape(text)
 			return self.connection:escape(text);
 		end;
 	else
-		return sql.SQLStr(string.gsub(text, "\"", "\"\""), true);
+		return sqlSQLStr(string.gsub(text, "\"", "\"\""), true);
 	end;
 end;
 
