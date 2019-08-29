@@ -807,6 +807,7 @@ hidden["CHudCrosshair"] = true
 hidden["CHudHistoryResource"] = true
 hidden["CHudPoisonDamageIndicator"] = true
 hidden["CHudSquadStatus"] = true
+hidden["CHUDQuickInfo"] = true
 
 function GM:HUDShouldDraw(element)
 	if (hidden[element]) then
