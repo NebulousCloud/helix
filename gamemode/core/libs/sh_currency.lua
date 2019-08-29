@@ -6,6 +6,7 @@ ix.currency = ix.currency or {}
 ix.currency.symbol = ix.currency.symbol or "$"
 ix.currency.singular = ix.currency.singular or "dollar"
 ix.currency.plural = ix.currency.plural or "dollars"
+ix.currency.model = ix.currency.model or "models/props_lab/box01a.mdl"
 
 --- Sets the currency type.
 -- @realm shared

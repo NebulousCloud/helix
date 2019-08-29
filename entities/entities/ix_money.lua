@@ -13,7 +13,7 @@ end
 
 if (SERVER) then
 	function ENT:Initialize()
-		self:SetModel("models/props_lab/box01a.mdl")
+		self:SetModel(ix.currency.model)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetUseType(SIMPLE_USE)
