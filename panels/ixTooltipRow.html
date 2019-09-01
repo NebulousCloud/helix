@@ -1,0 +1,300 @@
+
+
+
+
+<html>
+	<head>
+		<title>Helix Documentation</title>
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
+		<link rel="stylesheet" href="../ldoc.css" />
+		<link rel="stylesheet" href="../highlight.css" />
+	</head>
+
+	<body>
+		<aside>
+			<h1>Helix</h1>
+
+			<!-- project contents -->
+			<section>
+						<h2>Panels</h2>
+
+						<ul>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
+								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+						</ul>
+						<h2>Hooks</h2>
+
+						<ul>
+								<li><a href="../hooks/Class.html">Class</a></li>
+								<li><a href="../hooks/Faction.html">Faction</a></li>
+								<li><a href="../hooks/Plugin.html">Plugin</a></li>
+						</ul>
+						<h2>Libraries</h2>
+
+						<ul>
+								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
+								<li><a href="../libraries/ix.char.html">ix.char</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
+								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
+								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
+								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
+								<li><a href="../libraries/ix.html">ix</a></li>
+								<li><a href="../libraries/ix.act.html">ix.act</a></li>
+						</ul>
+						<h2>Classes</h2>
+
+						<ul>
+								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Inventory.html">Inventory</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
+						</ul>
+			</section>
+		</aside>
+
+		<!-- library functions -->
+		<article>
+				<header>
+					<h1>ixTooltipRow</h1>
+					<h2>Text container for <a href="../panels/ixTooltip.html#">ixTooltip</a>.</h2>
+				</header>
+
+				<!-- description -->
+				<p> Rows are the main way of interacting with <a href="../panels/ixTooltip.html#">ixTooltip</a>s. These derive from
+ <a href="https://wiki.garrysmod.com/page/Category:DLabel">DLabel</a> panels, which means that making use of this panel
+ will be largely the same as any DLabel panel.</p>
+
+				<!-- summary -->
+				<details open>
+					<summary>Reference</summary>
+
+					<div class="contents">
+							<h2>Functions</h2>
+							<ul>
+									<li><span class="realm client"></span><a href="#PANEL:IsMinimal">ixTooltipRow:IsMinimal()</a></li>
+									<li><span class="realm client"></span><a href="#PANEL:SetImportant">ixTooltipRow:SetImportant()</a></li>
+									<li><span class="realm client"></span><a href="#PANEL:SetBackgroundColor">ixTooltipRow:SetBackgroundColor(color)</a></li>
+									<li><span class="realm client"></span><a href="#PANEL:SizeToContents">ixTooltipRow:SizeToContents()</a></li>
+									<li><span class="realm client"></span><a href="#PANEL:SizeToContentsY">ixTooltipRow:SizeToContentsY()</a></li>
+									<li><span class="realm client"></span><a href="#PANEL:PaintBackground">ixTooltipRow:PaintBackground(width, height)</a></li>
+									<li><span class="realm client"></span><a href="#PANEL:Paint">ixTooltipRow:Paint(width, height)</a></li>
+							</ul>
+					</div>
+				</details>
+
+				<!-- methods -->
+					<h1 class="title">Functions</h1>
+
+						<section class="method">
+							<header><a name="PANEL:IsMinimal"></a>
+								<h1><span class="realm client"></span>ixTooltipRow:IsMinimal()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_tooltip.lua#L81">View source &raquo;</a>
+
+								<p>Whether or not this tooltip row should be displayed in a minimal format.  This usually means no background and/or
+ smaller font. You probably won't need this if you're using regular <a href="../panels/ixTooltipRow.html#">ixTooltipRow</a> panels, but you should take into
+ account if you're creating your own panels that derive from <a href="../panels/ixTooltipRow.html#">ixTooltipRow</a>.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>True if this tooltip row should be displayed in a minimal format</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="PANEL:SetImportant"></a>
+								<h1><span class="realm client"></span>ixTooltipRow:SetImportant()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_tooltip.lua#L90">View source &raquo;</a>
+
+								<p>Sets this row to be more prominent with a larger font and more noticable background color.  This should usually
+ be used once per tooltip as a title row. For example, item tooltips have one "important" row consisting of the
+ item's name. Note that this function is a fire-and-forget function; you cannot revert a row back to it's regular state
+ unless you set the font/colors manually.</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="PANEL:SetBackgroundColor"></a>
+								<h1><span class="realm client"></span>ixTooltipRow:SetBackgroundColor(color)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_tooltip.lua#L100">View source &raquo;</a>
+
+								<p>Sets the background color of this row.  This should be used sparingly to avoid overwhelming players with a
+ bunch of different colors that could convey different meanings.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">color</span>
+
+													<span class="tag"><span class="type">color</span></span>
+
+
+												<p> New color of the background. The alpha is clamped to 100-255 to ensure visibility</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PANEL:SizeToContents"></a>
+								<h1><span class="realm client"></span>ixTooltipRow:SizeToContents()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_tooltip.lua#L109">View source &raquo;</a>
+
+								<p>Resizes this panel to fit its contents.  This should be called after setting the text.</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="PANEL:SizeToContentsY"></a>
+								<h1><span class="realm client"></span>ixTooltipRow:SizeToContentsY()</h1>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_tooltip.lua#L129">View source &raquo;</a>
+
+								<p>Resizes the height of this panel to fit its contents.</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="PANEL:PaintBackground"></a>
+								<h1><span class="realm client"></span>ixTooltipRow:PaintBackground(width, height)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_tooltip.lua#L139">View source &raquo;</a>
+
+								<p>Called when the background of this row should be painted.  This will paint the background with the
+ <code>DrawImportantBackground</code> function set in the skin by default.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">width</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Width of the panel</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">height</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Height of the panel</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PANEL:Paint"></a>
+								<h1><span class="realm client"></span>ixTooltipRow:Paint(width, height)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_tooltip.lua#L151">View source &raquo;</a>
+
+								<p>Called when the foreground of this row should be painted.  If you are overriding this in a subclassed panel,
+ make sure you call <a href="../panels/ixTooltipRow.html#PANEL:PaintBackground">ixTooltipRow:PaintBackground</a> at the <em>beginning</em> of your function to make its style
+ consistent with the rest of the framework.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">width</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Width of the panel</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">height</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Height of the panel</p>
+											</li>
+									</ul>
+
+
+						</section>
+		</article>
+
+		<footer>
+			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
+			<p>Last updated: <span class="timestamp">2019-09-01 08:40:04</span></p>
+		</footer>
+
+		<script type="text/javascript" src="../highlight.min.js"></script>
+		<script type="text/javascript">
+		var elements = document.querySelectorAll("aside code, pre code")
+
+		hljs.configure({
+			languages: ["lua"]
+		});
+
+		for (var i = 0; i < elements.length; i++)
+		{
+			hljs.highlightBlock(elements[i]);
+		}
+		</script>
+	</body>
+</html>

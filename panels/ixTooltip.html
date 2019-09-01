@@ -1,0 +1,374 @@
+
+
+
+
+<html>
+	<head>
+		<title>Helix Documentation</title>
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
+		<link rel="stylesheet" href="../ldoc.css" />
+		<link rel="stylesheet" href="../highlight.css" />
+	</head>
+
+	<body>
+		<aside>
+			<h1>Helix</h1>
+
+			<!-- project contents -->
+			<section>
+						<h2>Panels</h2>
+
+						<ul>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
+								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+						</ul>
+						<h2>Hooks</h2>
+
+						<ul>
+								<li><a href="../hooks/Class.html">Class</a></li>
+								<li><a href="../hooks/Faction.html">Faction</a></li>
+								<li><a href="../hooks/Plugin.html">Plugin</a></li>
+						</ul>
+						<h2>Libraries</h2>
+
+						<ul>
+								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
+								<li><a href="../libraries/ix.char.html">ix.char</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
+								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
+								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
+								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
+								<li><a href="../libraries/ix.html">ix</a></li>
+								<li><a href="../libraries/ix.act.html">ix.act</a></li>
+						</ul>
+						<h2>Classes</h2>
+
+						<ul>
+								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Inventory.html">Inventory</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
+						</ul>
+			</section>
+		</aside>
+
+		<!-- library functions -->
+		<article>
+				<header>
+					<h1>ixTooltip</h1>
+					<h2>Generic information panel.</h2>
+				</header>
+
+				<!-- description -->
+				<p>
+
+<p> Tooltips are used extensively throughout Helix: for item information, character displays, entity status, etc.
+ The tooltip system can be used on any panel or entity you would like to show standardized information for. Tooltips
+ consist of the parent container panel (<a href="../panels/ixTooltip.html#">ixTooltip</a>), which is filled with rows of information (usually
+ <a href="../panels/ixTooltipRow.html#">ixTooltipRow</a>, but can be any docked panel if non-text information needs to be shown, like an item's size).</p>
+
+<p> Tooltips can be added to panel with <code>panel:SetHelixTooltip()</code>. An example taken from the scoreboard:</p>
+<pre><code>panel:SetHelixTooltip(function(tooltip)
+    local name = tooltip:AddRow("name")
+    name:SetImportant()
+    name:SetText(client:SteamName())
+    name:SetBackgroundColor(team.GetColor(client:Team()))
+    name:SizeToContents()
+
+    tooltip:SizeToContents()
+end)
+</code></pre>
+</p>
+
+				<!-- summary -->
+				<details open>
+					<summary>Reference</summary>
+
+					<div class="contents">
+							<h2>Functions</h2>
+							<ul>
+									<li><span class="realm client"></span><a href="#PANEL:IsMinimal">ixTooltip:IsMinimal()</a></li>
+									<li><span class="realm client"></span><a href="#PANEL:AddRow">ixTooltip:AddRow(id)</a></li>
+									<li><span class="realm client"></span><a href="#PANEL:AddRowAfter">ixTooltip:AddRowAfter(after, id)</a></li>
+									<li><span class="realm client"></span><a href="#PANEL:SetEntity">ixTooltip:SetEntity(entity)</a></li>
+									<li><span class="realm client"></span><a href="#PANEL:GetCursorPosition">ixTooltip:GetCursorPosition()</a></li>
+									<li><span class="realm client"></span><a href="#PANEL:GetRow">ixTooltip:GetRow(id)</a></li>
+									<li><span class="realm client"></span><a href="#PANEL:SizeToContents">ixTooltip:SizeToContents()</a></li>
+							</ul>
+					</div>
+				</details>
+
+				<!-- methods -->
+					<h1 class="title">Functions</h1>
+
+						<section class="method">
+							<header><a name="PANEL:IsMinimal"></a>
+								<h1><span class="realm client"></span>ixTooltip:IsMinimal()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_tooltip.lua#L214">View source &raquo;</a>
+
+								<p>Whether or not this tooltip should be displayed in a minimal format.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>True if this tooltip should be displayed in a minimal format</p>
+											</li>
+
+								</ul>
+
+								<h3>See Also</h3>
+								<ul>
+										<li><a href="../panels/ixTooltipRow.html#PANEL:IsMinimal">ixTooltipRow:IsMinimal</a></li>
+								</ul>
+						</section>
+						<section class="method">
+							<header><a name="PANEL:AddRow"></a>
+								<h1><span class="realm client"></span>ixTooltip:AddRow(id)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_tooltip.lua#L230">View source &raquo;</a>
+
+								<p>Creates a new <a href="../panels/ixTooltipRow.html#">ixTooltipRow</a> panel and adds it to the bottom of this tooltip.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">id</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Name of the new row. This is used to reorder rows if needed</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">panel</span>
+
+												<p>Created row</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="PANEL:AddRowAfter"></a>
+								<h1><span class="realm client"></span>ixTooltip:AddRowAfter(after, id)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_tooltip.lua#L244">View source &raquo;</a>
+
+								<p>Creates a new <a href="../panels/ixTooltipRow.html#">ixTooltipRow</a> and adds it after the row with the given <code>id</code>.  The order of the rows is set via
+ setting the Z position of the panels, as this is how VGUI handles ordering with docked panels.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">after</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Name of the row to insert after</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">id</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Name of the newly created row</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">panel</span>
+
+												<p>Created row</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="PANEL:SetEntity"></a>
+								<h1><span class="realm client"></span>ixTooltip:SetEntity(entity)</h1>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_tooltip.lua#L261">View source &raquo;</a>
+
+								<p>Sets the entity associated with this tooltip.  Note that this function is not how you get entities to show tooltips.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+													<span class="tag"><span class="type">entity</span></span>
+
+
+												<p> Entity to associate with this tooltip</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PANEL:GetCursorPosition"></a>
+								<h1><span class="realm client"></span>ixTooltip:GetCursorPosition()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_tooltip.lua#L345">View source &raquo;</a>
+
+								<p>Returns the current position of the mouse cursor on the screen.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>X position of cursor</p>
+											</li>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>Y position of cursor</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="PANEL:GetRow"></a>
+								<h1><span class="realm client"></span>ixTooltip:GetRow(id)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_tooltip.lua#L394">View source &raquo;</a>
+
+								<p>Returns an <a href="../panels/ixTooltipRow.html#">ixTooltipRow</a> corresponding to the given name.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">id</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Name of the row</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">panel</span>
+
+												<p>Corresponding row</p>
+											</li>
+
+											<div class="or"><span>OR</span></div>
+
+											<li>
+													<span class="type">nil</span>
+
+												<p>If the row doesn't exist</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="PANEL:SizeToContents"></a>
+								<h1><span class="realm client"></span>ixTooltip:SizeToContents()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_tooltip.lua#L405">View source &raquo;</a>
+
+								<p>Resizes the tooltip to fit all of the child panels.  You should always call this after you are done
+ adding all of your rows.</p>
+							</header>
+
+
+
+						</section>
+		</article>
+
+		<footer>
+			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
+			<p>Last updated: <span class="timestamp">2019-09-01 08:40:04</span></p>
+		</footer>
+
+		<script type="text/javascript" src="../highlight.min.js"></script>
+		<script type="text/javascript">
+		var elements = document.querySelectorAll("aside code, pre code")
+
+		hljs.configure({
+			languages: ["lua"]
+		});
+
+		for (var i = 0; i < elements.length; i++)
+		{
+			hljs.highlightBlock(elements[i]);
+		}
+		</script>
+	</body>
+</html>
