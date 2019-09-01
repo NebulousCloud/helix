@@ -39,6 +39,11 @@
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
 						</ul>
+						<h2>Hooks</h2>
+
+						<ul>
+								<li><a href="../hooks/Plugin.html">Plugin</a></li>
+						</ul>
 						<h2>Classes</h2>
 
 						<ul>
@@ -55,6 +60,10 @@
 					<h1>ix.char</h1>
 					<h2>Character creation and management.</h2>
 				</header>
+
+				<!-- description -->
+				<p><strong>NOTE:</strong> For the most part you shouldn't use this library unless you know what you're doing. You can very easily corrupt
+character data using these functions!</p>
 
 				<!-- summary -->
 				<details open>
@@ -77,10 +86,6 @@
 					</div>
 				</details>
 
-				<!-- description -->
-				<p><strong>NOTE:</strong> For the most part you shouldn't use this library unless you know what you're doing. You can very easily corrupt
-character data using these functions!</p>
-
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
@@ -89,7 +94,8 @@ character data using these functions!</p>
 								<h1><span class="realm server"></span>ix.char.Create(data, callback)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L45">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L45">View source &raquo;</a>
+
 								<p>Creates a character object with its assigned properties and saves it to the database.</p>
 							</header>
 
@@ -129,7 +135,8 @@ character data using these functions!</p>
 								<h1><span class="realm server"></span>ix.char.Restore(client[, callback=nil[, bNoCache=false[, id=nil]]])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L98">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L98">View source &raquo;</a>
+
 								<p>Loads all of a player's characters into memory.</p>
 							</header>
 
@@ -197,7 +204,8 @@ character data using these functions!</p>
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L231">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L231">View source &raquo;</a>
+
 								<p>Adds character properties to a table.  This is done automatically by <a href="../libraries/ix.char.html#ix.char.Restore">ix.char.Restore</a>, so that should be used instead if
  you are loading characters.</p>
 							</header>
@@ -239,7 +247,8 @@ character data using these functions!</p>
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L269">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L269">View source &raquo;</a>
+
 								<p>Creates a new empty <a href="../classes/Character.html#">Character</a> object.  If you are looking to create a usable character, see <a href="../libraries/ix.char.html#ix.char.Create">ix.char.Create</a>.</p>
 							</header>
 
@@ -310,7 +319,8 @@ character data using these functions!</p>
 								<h1><span class="realm shared"></span>ix.char.loaded</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L22">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L22">View source &raquo;</a>
+
 								<p>Characters that are currently loaded into memory.  This is <strong>not</strong> a table of characters that players are currently using.
  Characters are automatically loaded when a player joins the server. Entries are not cleared once the player disconnects, as
  some data is needed after the player has disconnected. Clients will also keep their own version of this table, so don't
@@ -332,7 +342,8 @@ character data using these functions!</p>
 								<h1><span class="realm shared"></span>ix.char.vars</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L29">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L29">View source &raquo;</a>
+
 								<p>Variables that are stored on characters.  This table is populated automatically by <code>ix.char.RegisterVar</code>.</p>
 							</header>
 
@@ -344,7 +355,8 @@ character data using these functions!</p>
 								<h1><span class="realm server"></span>ix.char.cache</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L35">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L35">View source &raquo;</a>
+
 								<p>Functions similar to <a href="../libraries/ix.char.html#ix.char.loaded">ix.char.loaded</a>, but is serverside only.  This contains a table of all loaded characters grouped by
  the SteamID64 of the player that owns them.</p>
 							</header>
@@ -356,7 +368,7 @@ character data using these functions!</p>
 
 		<footer>
 			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
-			<p>Last updated: <span class="timestamp">2019-08-29 20:05:06</span></p>
+			<p>Last updated: <span class="timestamp">2019-09-01 01:35:30</span></p>
 		</footer>
 
 		<script type="text/javascript" src="../highlight.min.js"></script>

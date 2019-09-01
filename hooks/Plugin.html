@@ -1,0 +1,6685 @@
+
+
+
+
+<html>
+	<head>
+		<title>Helix Documentation</title>
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
+		<link rel="stylesheet" href="../ldoc.css" />
+		<link rel="stylesheet" href="../highlight.css" />
+	</head>
+
+	<body>
+		<aside>
+			<h1>Helix</h1>
+
+			<!-- project contents -->
+			<section>
+						<h2>Hooks</h2>
+
+						<ul>
+								<li><a href="../hooks/Plugin.html">Plugin</a></li>
+						</ul>
+						<h2>Libraries</h2>
+
+						<ul>
+								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
+								<li><a href="../libraries/ix.char.html">ix.char</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
+								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
+								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
+								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
+								<li><a href="../libraries/ix.html">ix</a></li>
+								<li><a href="../libraries/ix.act.html">ix.act</a></li>
+						</ul>
+						<h2>Classes</h2>
+
+						<ul>
+								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Inventory.html">Inventory</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
+						</ul>
+			</section>
+		</aside>
+
+		<!-- library functions -->
+		<article>
+				<header>
+					<h1>Plugin</h1>
+					<h2>Global hooks for general use.</h2>
+				</header>
+
+				<!-- description -->
+				<p>Plugin hooks are regular hooks that can be used in your schema with <code>Schema:HookName(args)</code>, in your plugin with
+<code>PLUGIN:HookName(args)</code>, or in your addon with <code>hook.Add(&quot;HookName&quot;, function(args) end)</code>.</p>
+
+				<!-- summary -->
+				<details open>
+					<summary>Reference</summary>
+
+					<div class="contents">
+							<h2>Functions</h2>
+							<ul>
+									<li><span class="realm server"></span><a href="#AdjustCreationPayload">PLUGIN:AdjustCreationPayload(client, payload, newPayload)</a></li>
+									<li><span class="realm shared"></span><a href="#AdjustStaminaOffset">PLUGIN:AdjustStaminaOffset(client, baseOffset)</a></li>
+									<li><span class="realm client"></span><a href="#BuildBusinessMenu">PLUGIN:BuildBusinessMenu(tabs)</a></li>
+									<li><span class="realm server"></span><a href="#CanAutoFormatMessage">PLUGIN:CanAutoFormatMessage(speaker, chatType, text)</a></li>
+									<li><span class="realm client"></span><a href="#CanCreateCharacterInfo">PLUGIN:CanCreateCharacterInfo(suppress)</a></li>
+									<li><span class="realm client"></span><a href="#CanDrawAmmoHUD">PLUGIN:CanDrawAmmoHUD(weapon)</a></li>
+									<li><span class="realm shared"></span><a href="#CanPlayerAccessDoor">PLUGIN:CanPlayerAccessDoor(client, self, access)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerDropItem">PLUGIN:CanPlayerDropItem(client, item)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerEarnSalary">PLUGIN:CanPlayerEarnSalary(client, faction)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerEnterObserver">PLUGIN:CanPlayerEnterObserver(client)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerEquipItem">PLUGIN:CanPlayerEquipItem(client, item)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerHoldObject">PLUGIN:CanPlayerHoldObject(client, entity)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerInteractEntity">PLUGIN:CanPlayerInteractEntity(client, entity, option, data)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerInteractItem">PLUGIN:CanPlayerInteractItem(client, action, item, data)</a></li>
+									<li><span class="realm shared"></span><a href="#CanPlayerJoinClass">PLUGIN:CanPlayerJoinClass(client, class, info)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerKnock">PLUGIN:CanPlayerKnock(client, entity)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerOpenShipment">PLUGIN:CanPlayerOpenShipment(client, self)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerSpawnContainer">PLUGIN:CanPlayerSpawnContainer(client, model, entity)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerTakeItem">PLUGIN:CanPlayerTakeItem(client, item)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerThrowPunch">PLUGIN:CanPlayerThrowPunch(client)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerTradeWithVendor">PLUGIN:CanPlayerTradeWithVendor(client, entity, uniqueID, isSellingToVendor)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerUnequipItem">PLUGIN:CanPlayerUnequipItem(client, item)</a></li>
+									<li><span class="realm shared"></span><a href="#CanPlayerUseBusiness">PLUGIN:CanPlayerUseBusiness(client, uniqueID)</a></li>
+									<li><span class="realm shared"></span><a href="#CanPlayerUseCharacter">PLUGIN:CanPlayerUseCharacter(client, character)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerUseDoor">PLUGIN:CanPlayerUseDoor(client, entity)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerUseVendor">PLUGIN:CanPlayerUseVendor(activator)</a></li>
+									<li><span class="realm client"></span><a href="#CanPlayerViewInventory">PLUGIN:CanPlayerViewInventory()</a></li>
+									<li><span class="realm server"></span><a href="#CanSaveContainer">PLUGIN:CanSaveContainer(entity, inventory)</a></li>
+									<li><span class="realm shared"></span><a href="#CanTransferItem">PLUGIN:CanTransferItem(item, currentInv, oldInv)</a></li>
+									<li><span class="realm shared"></span><a href="#CharacterAttributeBoosted">PLUGIN:CharacterAttributeBoosted(client, character, attribID, boostID, boostAmount)</a></li>
+									<li><span class="realm shared"></span><a href="#CharacterAttributeUpdated">PLUGIN:CharacterAttributeUpdated(client, self, key, value)</a></li>
+									<li><span class="realm shared"></span><a href="#CharacterDeleted">PLUGIN:CharacterDeleted(client, id, isCurrentChar)</a></li>
+									<li><span class="realm shared"></span><a href="#CharacterHasFlags">PLUGIN:CharacterHasFlags(self, flags)</a></li>
+									<li><span class="realm server"></span><a href="#CharacterLoaded">PLUGIN:CharacterLoaded(character)</a></li>
+									<li><span class="realm server"></span><a href="#CharacterPostSave">PLUGIN:CharacterPostSave(character)</a></li>
+									<li><span class="realm shared"></span><a href="#CharacterPreSave">PLUGIN:CharacterPreSave(character)</a></li>
+									<li><span class="realm shared"></span><a href="#CharacterRecognized">PLUGIN:CharacterRecognized()</a></li>
+									<li><span class="realm server"></span><a href="#CharacterRestored">PLUGIN:CharacterRestored(character)</a></li>
+									<li><span class="realm shared"></span><a href="#CharacterVarChanged">PLUGIN:CharacterVarChanged(character, key, oldVar, value)</a></li>
+									<li><span class="realm shared"></span><a href="#CharacterVendorTraded">PLUGIN:CharacterVendorTraded(client, entity, uniqueID, isSellingToVendor)</a></li>
+									<li><span class="realm client"></span><a href="#ChatboxCreated">PLUGIN:ChatboxCreated()</a></li>
+									<li><span class="realm client"></span><a href="#ChatboxPositionChanged">PLUGIN:ChatboxPositionChanged(x, y, width, height)</a></li>
+									<li><span class="realm client"></span><a href="#ColorSchemeChanged">PLUGIN:ColorSchemeChanged(color)</a></li>
+									<li><span class="realm server"></span><a href="#ContainerRemoved">PLUGIN:ContainerRemoved(container, inventory)</a></li>
+									<li><span class="realm client"></span><a href="#CreateCharacterInfo">PLUGIN:CreateCharacterInfo(panel)</a></li>
+									<li><span class="realm client"></span><a href="#CreateCharacterInfoCategory">PLUGIN:CreateCharacterInfoCategory(panel)</a></li>
+									<li><span class="realm client"></span><a href="#CreateItemInteractionMenu">PLUGIN:CreateItemInteractionMenu(icon, menu, itemTable)</a></li>
+									<li><span class="realm client"></span><a href="#CreateMenuButtons">PLUGIN:CreateMenuButtons(tabs)</a></li>
+									<li><span class="realm server"></span><a href="#CreateShipment">PLUGIN:CreateShipment(client, entity)</a></li>
+									<li><span class="realm server"></span><a href="#DatabaseConnected">PLUGIN:DatabaseConnected()</a></li>
+									<li><span class="realm server"></span><a href="#DatabaseConnectionFailed">PLUGIN:DatabaseConnectionFailed(error)</a></li>
+									<li><span class="realm shared"></span><a href="#DoPluginIncludes">PLUGIN:DoPluginIncludes(path, pluginTable)</a></li>
+									<li><span class="realm client"></span><a href="#DrawCharacterOverview">PLUGIN:DrawCharacterOverview()</a></li>
+									<li><span class="realm client"></span><a href="#DrawHelixModelView">PLUGIN:DrawHelixModelView(panel, entity)</a></li>
+									<li><span class="realm client"></span><a href="#DrawPlayerRagdoll">PLUGIN:DrawPlayerRagdoll(entity)</a></li>
+									<li><span class="realm client"></span><a href="#GetCharacterDescription">PLUGIN:GetCharacterDescription(client)</a></li>
+									<li><span class="realm shared"></span><a href="#GetCharacterName">PLUGIN:GetCharacterName(speaker, chatType)</a></li>
+									<li><span class="realm shared"></span><a href="#GetChatPrefixInfo">PLUGIN:GetChatPrefixInfo(text)</a></li>
+									<li><span class="realm client"></span><a href="#GetCrosshairAlpha">PLUGIN:GetCrosshairAlpha(curAlpha)</a></li>
+									<li><span class="realm shared"></span><a href="#GetDefaultAttributePoints">PLUGIN:GetDefaultAttributePoints(client, count)</a></li>
+									<li><span class="realm shared"></span><a href="#GetDefaultCharacterName">PLUGIN:GetDefaultCharacterName(client, faction)</a></li>
+									<li><span class="realm shared"></span><a href="#GetMaxPlayerCharacter">PLUGIN:GetMaxPlayerCharacter(client)</a></li>
+									<li><span class="realm server"></span><a href="#GetPlayerDeathSound">PLUGIN:GetPlayerDeathSound(client)</a></li>
+									<li><span class="realm client"></span><a href="#GetPlayerEntityMenu">PLUGIN:GetPlayerEntityMenu(client, options)</a></li>
+									<li><span class="realm client"></span><a href="#GetPlayerIcon">PLUGIN:GetPlayerIcon(speaker)</a></li>
+									<li><span class="realm server"></span><a href="#GetPlayerPainSound">PLUGIN:GetPlayerPainSound(client)</a></li>
+									<li><span class="realm shared"></span><a href="#GetPlayerPunchDamage">PLUGIN:GetPlayerPunchDamage(client, damage, context)</a></li>
+									<li><span class="realm server"></span><a href="#GetSalaryAmount">PLUGIN:GetSalaryAmount(client, faction)</a></li>
+									<li><span class="realm client"></span><a href="#GetTypingIndicator">PLUGIN:GetTypingIndicator(character, text)</a></li>
+									<li><span class="realm shared"></span><a href="#InitializedChatClasses">PLUGIN:InitializedChatClasses()</a></li>
+									<li><span class="realm shared"></span><a href="#InitializedConfig">PLUGIN:InitializedConfig()</a></li>
+									<li><span class="realm shared"></span><a href="#InitializedPlugins">PLUGIN:InitializedPlugins()</a></li>
+									<li><span class="realm shared"></span><a href="#InitializedSchema">PLUGIN:InitializedSchema()</a></li>
+									<li><span class="realm server"></span><a href="#InventoryItemAdded">PLUGIN:InventoryItemAdded(oldInv, inventory, item)</a></li>
+									<li><span class="realm server"></span><a href="#InventoryItemRemoved">PLUGIN:InventoryItemRemoved(inventory, item)</a></li>
+									<li><span class="realm shared"></span><a href="#IsCharacterRecognized">PLUGIN:IsCharacterRecognized(character, id)</a></li>
+									<li><span class="realm client"></span><a href="#IsPlayerRecognized">PLUGIN:IsPlayerRecognized(client)</a></li>
+									<li><span class="realm client"></span><a href="#IsRecognizedChatType">PLUGIN:IsRecognizedChatType(chatType)</a></li>
+									<li><span class="realm server"></span><a href="#LoadData">PLUGIN:LoadData()</a></li>
+									<li><span class="realm client"></span><a href="#LoadFonts">PLUGIN:LoadFonts(font, genericFont)</a></li>
+									<li><span class="realm client"></span><a href="#LoadIntro">PLUGIN:LoadIntro()</a></li>
+									<li><span class="realm client"></span><a href="#MenuSubpanelCreated">PLUGIN:MenuSubpanelCreated(subpanelName, panel)</a></li>
+									<li><span class="realm client"></span><a href="#MessageReceived">PLUGIN:MessageReceived(client, info)</a></li>
+									<li><span class="realm client"></span><a href="#OnAreaChanged">PLUGIN:OnAreaChanged(oldID, newID)</a></li>
+									<li><span class="realm shared"></span><a href="#OnCharacterCreated">PLUGIN:OnCharacterCreated(client, character)</a></li>
+									<li><span class="realm shared"></span><a href="#OnCharacterDisconnect">PLUGIN:OnCharacterDisconnect(client, character)</a></li>
+									<li><span class="realm shared"></span><a href="#OnCharacterFallover">PLUGIN:OnCharacterFallover(client, entity, bFallenOver)</a></li>
+									<li><span class="realm client"></span><a href="#OnCharacterMenuCreated">PLUGIN:OnCharacterMenuCreated(panel)</a></li>
+									<li><span class="realm shared"></span><a href="#OnItemSpawned">PLUGIN:OnItemSpawned(entity)</a></li>
+									<li><span class="realm shared"></span><a href="#OnItemTransferred">PLUGIN:OnItemTransferred(self, curInv, inventory)</a></li>
+									<li><span class="realm client"></span><a href="#OnLocalVarSet">PLUGIN:OnLocalVarSet(key, var)</a></li>
+									<li><span class="realm client"></span><a href="#OnPAC3PartTransferred">PLUGIN:OnPAC3PartTransferred(part)</a></li>
+									<li><span class="realm server"></span><a href="#OnPickupMoney">PLUGIN:OnPickupMoney(client, self)</a></li>
+									<li><span class="realm shared"></span><a href="#OnPlayerAreaChanged">PLUGIN:OnPlayerAreaChanged(client, oldID, newID)</a></li>
+									<li><span class="realm server"></span><a href="#OnPlayerObserve">PLUGIN:OnPlayerObserve(client, state)</a></li>
+									<li><span class="realm server"></span><a href="#OnPlayerOptionSelected">PLUGIN:OnPlayerOptionSelected(client, callingClient, option)</a></li>
+									<li><span class="realm server"></span><a href="#OnPlayerPurchaseDoor">PLUGIN:OnPlayerPurchaseDoor(client, entity, bBuying, bCallOnDoorChild)</a></li>
+									<li><span class="realm server"></span><a href="#OnPlayerRestricted">PLUGIN:OnPlayerRestricted(client)</a></li>
+									<li><span class="realm server"></span><a href="#OnPlayerUnRestricted">PLUGIN:OnPlayerUnRestricted(client)</a></li>
+									<li><span class="realm server"></span><a href="#OnSavedItemLoaded">PLUGIN:OnSavedItemLoaded(loadedItems)</a></li>
+									<li><span class="realm server"></span><a href="#OnWipeTables">PLUGIN:OnWipeTables()</a></li>
+									<li><span class="realm shared"></span><a href="#PlayerEnterSequence">PLUGIN:PlayerEnterSequence(client, sequence, callback, time, bNoFreeze)</a></li>
+									<li><span class="realm server"></span><a href="#PlayerInteractEntity">PLUGIN:PlayerInteractEntity(client, entity, option, data)</a></li>
+									<li><span class="realm server"></span><a href="#PlayerInteractItem">PLUGIN:PlayerInteractItem(client, action, item)</a></li>
+									<li><span class="realm server"></span><a href="#PlayerJoinedClass">PLUGIN:PlayerJoinedClass(client, class, oldClass)</a></li>
+									<li><span class="realm shared"></span><a href="#PlayerLeaveSequence">PLUGIN:PlayerLeaveSequence(entity)</a></li>
+									<li><span class="realm server"></span><a href="#PlayerLoadedCharacter">PLUGIN:PlayerLoadedCharacter(client, character, currentChar)</a></li>
+									<li><span class="realm server"></span><a href="#PlayerLockedDoor">PLUGIN:PlayerLockedDoor(client, door, partner)</a></li>
+									<li><span class="realm server"></span><a href="#PlayerLockedVehicle">PLUGIN:PlayerLockedVehicle(client, vehicle)</a></li>
+									<li><span class="realm shared"></span><a href="#PlayerMessageSend">PLUGIN:PlayerMessageSend(client, chatType, message, anonymous)</a></li>
+									<li><span class="realm shared"></span><a href="#PlayerModelChanged">PLUGIN:PlayerModelChanged(client, model)</a></li>
+									<li><span class="realm server"></span><a href="#PlayerStaminaGained">PLUGIN:PlayerStaminaGained(client)</a></li>
+									<li><span class="realm server"></span><a href="#PlayerStaminaLost">PLUGIN:PlayerStaminaLost(client)</a></li>
+									<li><span class="realm shared"></span><a href="#PlayerThrowPunch">PLUGIN:PlayerThrowPunch(client, trace)</a></li>
+									<li><span class="realm server"></span><a href="#PlayerUnlockedDoor">PLUGIN:PlayerUnlockedDoor(client, door, partner)</a></li>
+									<li><span class="realm server"></span><a href="#PlayerUnlockedVehicle">PLUGIN:PlayerUnlockedVehicle(client, door)</a></li>
+									<li><span class="realm server"></span><a href="#PlayerUse">PLUGIN:PlayerUse(client, entity)</a></li>
+									<li><span class="realm server"></span><a href="#PlayerUseDoor">PLUGIN:PlayerUseDoor(client, entity)</a></li>
+									<li><span class="realm shared"></span><a href="#PlayerWeaponChanged">PLUGIN:PlayerWeaponChanged(client, weapon)</a></li>
+									<li><span class="realm shared"></span><a href="#PluginLoaded">PLUGIN:PluginLoaded(uniqueID, pluginTable)</a></li>
+									<li><span class="realm shared"></span><a href="#PluginShouldLoad">PLUGIN:PluginShouldLoad(uniqueID)</a></li>
+									<li><span class="realm shared"></span><a href="#PluginUnloaded">PLUGIN:PluginUnloaded(uniqueID)</a></li>
+									<li><span class="realm client"></span><a href="#PopulateCharacterInfo">PLUGIN:PopulateCharacterInfo(client, character, tooltip)</a></li>
+									<li><span class="realm client"></span><a href="#PopulateEntityInfo">PLUGIN:PopulateEntityInfo(entity, tooltip)</a></li>
+									<li><span class="realm client"></span><a href="#PopulateHelpMenu">PLUGIN:PopulateHelpMenu(categories)</a></li>
+									<li><span class="realm client"></span><a href="#PopulateImportantCharacterInfo">PLUGIN:PopulateImportantCharacterInfo(entity, character, tooltip)</a></li>
+									<li><span class="realm client"></span><a href="#PopulateItemTooltip">PLUGIN:PopulateItemTooltip(tooltip, item)</a></li>
+									<li><span class="realm client"></span><a href="#PopulatePlayerTooltip">PLUGIN:PopulatePlayerTooltip(client, tooltip)</a></li>
+									<li><span class="realm client"></span><a href="#PopulateScoreboardPlayerMenu">PLUGIN:PopulateScoreboardPlayerMenu(client, menu)</a></li>
+									<li><span class="realm client"></span><a href="#PostChatboxDraw">PLUGIN:PostChatboxDraw(width, height, alpha)</a></li>
+									<li><span class="realm client"></span><a href="#PostDrawInventory">PLUGIN:PostDrawInventory(panel)</a></li>
+									<li><span class="realm server"></span><a href="#PostLoadData">PLUGIN:PostLoadData()</a></li>
+									<li><span class="realm server"></span><a href="#PostPlayerLoadout">PLUGIN:PostPlayerLoadout(client)</a></li>
+									<li><span class="realm server"></span><a href="#PostPlayerSay">PLUGIN:PostPlayerSay(client, chatType, message, anonymous)</a></li>
+									<li><span class="realm shared"></span><a href="#PostSetupActs">PLUGIN:PostSetupActs()</a></li>
+									<li><span class="realm server"></span><a href="#PreCharacterDeleted">PLUGIN:PreCharacterDeleted(client, character)</a></li>
+									<li><span class="realm server"></span><a href="#PrePlayerLoadedCharacter">PLUGIN:PrePlayerLoadedCharacter(client, character, currentChar)</a></li>
+									<li><span class="realm server"></span><a href="#PrePlayerMessageSend">PLUGIN:PrePlayerMessageSend(client, chatType, message, anonymous)</a></li>
+									<li><span class="realm server"></span><a href="#SaveData">PLUGIN:SaveData()</a></li>
+									<li><span class="realm clikent"></span><a href="#ScreenResolutionChanged">PLUGIN:ScreenResolutionChanged(width, height)</a></li>
+									<li><span class="realm shared"></span><a href="#SetupActs">PLUGIN:SetupActs()</a></li>
+									<li><span class="realm shared"></span><a href="#SetupAreaProperties">PLUGIN:SetupAreaProperties()</a></li>
+									<li><span class="realm server"></span><a href="#ShipmentItemTaken">PLUGIN:ShipmentItemTaken(client, uniqueID, amount)</a></li>
+									<li><span class="realm client"></span><a href="#ShouldBarDraw">PLUGIN:ShouldBarDraw(bar)</a></li>
+									<li><span class="realm server"></span><a href="#ShouldDeleteSavedItems">PLUGIN:ShouldDeleteSavedItems()</a></li>
+									<li><span class="realm client"></span><a href="#ShouldDisplayArea">PLUGIN:ShouldDisplayArea(newID)</a></li>
+									<li><span class="realm client"></span><a href="#ShouldDrawCrosshair">PLUGIN:ShouldDrawCrosshair(client, weapon)</a></li>
+									<li><span class="realm client"></span><a href="#ShouldDrawItemSize">PLUGIN:ShouldDrawItemSize(item)</a></li>
+									<li><span class="realm client"></span><a href="#ShouldHideBars">PLUGIN:ShouldHideBars()</a></li>
+									<li><span class="realm server"></span><a href="#ShouldPlayerDrowned">PLUGIN:ShouldPlayerDrowned(v)</a></li>
+									<li><span class="realm server"></span><a href="#ShouldRemoveRagdollOnDeath">PLUGIN:ShouldRemoveRagdollOnDeath(client)</a></li>
+									<li><span class="realm server"></span><a href="#ShouldRestoreInventory">PLUGIN:ShouldRestoreInventory(characterID, inventoryID, inventoryType)</a></li>
+									<li><span class="realm client"></span><a href="#ShouldShowPlayerOnScoreboard">PLUGIN:ShouldShowPlayerOnScoreboard(client)</a></li>
+									<li><span class="realm server"></span><a href="#ShouldSpawnClientRagdoll">PLUGIN:ShouldSpawnClientRagdoll(client)</a></li>
+									<li><span class="realm client"></span><a href="#ShowEntityMenu">PLUGIN:ShowEntityMenu(entity)</a></li>
+									<li><span class="realm client"></span><a href="#ThirdPersonToggled">PLUGIN:ThirdPersonToggled(oldValue, value)</a></li>
+									<li><span class="realm client"></span><a href="#UpdateCharacterInfo">PLUGIN:UpdateCharacterInfo(panel, character)</a></li>
+									<li><span class="realm client"></span><a href="#UpdateCharacterInfoCategory">PLUGIN:UpdateCharacterInfoCategory(panel, character)</a></li>
+									<li><span class="realm server"></span><a href="#VoiceDistanceChanged">PLUGIN:VoiceDistanceChanged(newValue)</a></li>
+									<li><span class="realm client"></span><a href="#WeaponCycleSound">PLUGIN:WeaponCycleSound()</a></li>
+									<li><span class="realm client"></span><a href="#WeaponSelectSound">PLUGIN:WeaponSelectSound(weapon)</a></li>
+							</ul>
+					</div>
+				</details>
+
+				<!-- methods -->
+					<h1 class="title">Functions</h1>
+
+						<section class="method">
+							<header><a name="AdjustCreationPayload"></a>
+								<h1><span class="realm server"></span>PLUGIN:AdjustCreationPayload(client, payload, newPayload)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">payload</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">newPayload</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="AdjustStaminaOffset"></a>
+								<h1><span class="realm shared"></span>PLUGIN:AdjustStaminaOffset(client, baseOffset)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">baseOffset</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="BuildBusinessMenu"></a>
+								<h1><span class="realm client"></span>PLUGIN:BuildBusinessMenu(tabs)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">tabs</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanAutoFormatMessage"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanAutoFormatMessage(speaker, chatType, text)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">speaker</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">chatType</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">text</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanCreateCharacterInfo"></a>
+								<h1><span class="realm client"></span>PLUGIN:CanCreateCharacterInfo(suppress)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">suppress</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanDrawAmmoHUD"></a>
+								<h1><span class="realm client"></span>PLUGIN:CanDrawAmmoHUD(weapon)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">weapon</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerAccessDoor"></a>
+								<h1><span class="realm shared"></span>PLUGIN:CanPlayerAccessDoor(client, self, access)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">self</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">access</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerDropItem"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerDropItem(client, item)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">item</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerEarnSalary"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerEarnSalary(client, faction)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">faction</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerEnterObserver"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerEnterObserver(client)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerEquipItem"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerEquipItem(client, item)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">item</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerHoldObject"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerHoldObject(client, entity)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerInteractEntity"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerInteractEntity(client, entity, option, data)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">option</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">data</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerInteractItem"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerInteractItem(client, action, item, data)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">action</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">item</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">data</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerJoinClass"></a>
+								<h1><span class="realm shared"></span>PLUGIN:CanPlayerJoinClass(client, class, info)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">class</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">info</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerKnock"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerKnock(client, entity)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerOpenShipment"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerOpenShipment(client, self)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">self</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerSpawnContainer"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerSpawnContainer(client, model, entity)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">model</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerTakeItem"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerTakeItem(client, item)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">item</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerThrowPunch"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerThrowPunch(client)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerTradeWithVendor"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerTradeWithVendor(client, entity, uniqueID, isSellingToVendor)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">uniqueID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">isSellingToVendor</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerUnequipItem"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerUnequipItem(client, item)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">item</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerUseBusiness"></a>
+								<h1><span class="realm shared"></span>PLUGIN:CanPlayerUseBusiness(client, uniqueID)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">uniqueID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerUseCharacter"></a>
+								<h1><span class="realm shared"></span>PLUGIN:CanPlayerUseCharacter(client, character)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerUseDoor"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerUseDoor(client, entity)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerUseVendor"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerUseVendor(activator)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">activator</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanPlayerViewInventory"></a>
+								<h1><span class="realm client"></span>PLUGIN:CanPlayerViewInventory()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanSaveContainer"></a>
+								<h1><span class="realm server"></span>PLUGIN:CanSaveContainer(entity, inventory)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">inventory</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CanTransferItem"></a>
+								<h1><span class="realm shared"></span>PLUGIN:CanTransferItem(item, currentInv, oldInv)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">item</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">currentInv</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">oldInv</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CharacterAttributeBoosted"></a>
+								<h1><span class="realm shared"></span>PLUGIN:CharacterAttributeBoosted(client, character, attribID, boostID, boostAmount)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">attribID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">boostID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">boostAmount</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CharacterAttributeUpdated"></a>
+								<h1><span class="realm shared"></span>PLUGIN:CharacterAttributeUpdated(client, self, key, value)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">self</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CharacterDeleted"></a>
+								<h1><span class="realm shared"></span>PLUGIN:CharacterDeleted(client, id, isCurrentChar)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">id</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">isCurrentChar</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CharacterHasFlags"></a>
+								<h1><span class="realm shared"></span>PLUGIN:CharacterHasFlags(self, flags)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">self</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">flags</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CharacterLoaded"></a>
+								<h1><span class="realm server"></span>PLUGIN:CharacterLoaded(character)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CharacterPostSave"></a>
+								<h1><span class="realm server"></span>PLUGIN:CharacterPostSave(character)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CharacterPreSave"></a>
+								<h1><span class="realm shared"></span>PLUGIN:CharacterPreSave(character)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CharacterRecognized"></a>
+								<h1><span class="realm shared"></span>PLUGIN:CharacterRecognized()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="CharacterRestored"></a>
+								<h1><span class="realm server"></span>PLUGIN:CharacterRestored(character)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CharacterVarChanged"></a>
+								<h1><span class="realm shared"></span>PLUGIN:CharacterVarChanged(character, key, oldVar, value)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">oldVar</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CharacterVendorTraded"></a>
+								<h1><span class="realm shared"></span>PLUGIN:CharacterVendorTraded(client, entity, uniqueID, isSellingToVendor)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">uniqueID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">isSellingToVendor</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ChatboxCreated"></a>
+								<h1><span class="realm client"></span>PLUGIN:ChatboxCreated()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="ChatboxPositionChanged"></a>
+								<h1><span class="realm client"></span>PLUGIN:ChatboxPositionChanged(x, y, width, height)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">x</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">y</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">width</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">height</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ColorSchemeChanged"></a>
+								<h1><span class="realm client"></span>PLUGIN:ColorSchemeChanged(color)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">color</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ContainerRemoved"></a>
+								<h1><span class="realm server"></span>PLUGIN:ContainerRemoved(container, inventory)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">container</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">inventory</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CreateCharacterInfo"></a>
+								<h1><span class="realm client"></span>PLUGIN:CreateCharacterInfo(panel)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">panel</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CreateCharacterInfoCategory"></a>
+								<h1><span class="realm client"></span>PLUGIN:CreateCharacterInfoCategory(panel)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">panel</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CreateItemInteractionMenu"></a>
+								<h1><span class="realm client"></span>PLUGIN:CreateItemInteractionMenu(icon, menu, itemTable)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">icon</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">menu</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">itemTable</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CreateMenuButtons"></a>
+								<h1><span class="realm client"></span>PLUGIN:CreateMenuButtons(tabs)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">tabs</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="CreateShipment"></a>
+								<h1><span class="realm server"></span>PLUGIN:CreateShipment(client, entity)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="DatabaseConnected"></a>
+								<h1><span class="realm server"></span>PLUGIN:DatabaseConnected()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="DatabaseConnectionFailed"></a>
+								<h1><span class="realm server"></span>PLUGIN:DatabaseConnectionFailed(error)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">error</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="DoPluginIncludes"></a>
+								<h1><span class="realm shared"></span>PLUGIN:DoPluginIncludes(path, pluginTable)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">path</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">pluginTable</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="DrawCharacterOverview"></a>
+								<h1><span class="realm client"></span>PLUGIN:DrawCharacterOverview()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="DrawHelixModelView"></a>
+								<h1><span class="realm client"></span>PLUGIN:DrawHelixModelView(panel, entity)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">panel</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="DrawPlayerRagdoll"></a>
+								<h1><span class="realm client"></span>PLUGIN:DrawPlayerRagdoll(entity)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="GetCharacterDescription"></a>
+								<h1><span class="realm client"></span>PLUGIN:GetCharacterDescription(client)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="GetCharacterName"></a>
+								<h1><span class="realm shared"></span>PLUGIN:GetCharacterName(speaker, chatType)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">speaker</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">chatType</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="GetChatPrefixInfo"></a>
+								<h1><span class="realm shared"></span>PLUGIN:GetChatPrefixInfo(text)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">text</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="GetCrosshairAlpha"></a>
+								<h1><span class="realm client"></span>PLUGIN:GetCrosshairAlpha(curAlpha)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">curAlpha</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="GetDefaultAttributePoints"></a>
+								<h1><span class="realm shared"></span>PLUGIN:GetDefaultAttributePoints(client, count)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">count</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="GetDefaultCharacterName"></a>
+								<h1><span class="realm shared"></span>PLUGIN:GetDefaultCharacterName(client, faction)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">faction</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="GetMaxPlayerCharacter"></a>
+								<h1><span class="realm shared"></span>PLUGIN:GetMaxPlayerCharacter(client)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="GetPlayerDeathSound"></a>
+								<h1><span class="realm server"></span>PLUGIN:GetPlayerDeathSound(client)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="GetPlayerEntityMenu"></a>
+								<h1><span class="realm client"></span>PLUGIN:GetPlayerEntityMenu(client, options)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">options</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="GetPlayerIcon"></a>
+								<h1><span class="realm client"></span>PLUGIN:GetPlayerIcon(speaker)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">speaker</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="GetPlayerPainSound"></a>
+								<h1><span class="realm server"></span>PLUGIN:GetPlayerPainSound(client)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="GetPlayerPunchDamage"></a>
+								<h1><span class="realm shared"></span>PLUGIN:GetPlayerPunchDamage(client, damage, context)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">damage</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">context</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="GetSalaryAmount"></a>
+								<h1><span class="realm server"></span>PLUGIN:GetSalaryAmount(client, faction)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">faction</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="GetTypingIndicator"></a>
+								<h1><span class="realm client"></span>PLUGIN:GetTypingIndicator(character, text)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">text</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="InitializedChatClasses"></a>
+								<h1><span class="realm shared"></span>PLUGIN:InitializedChatClasses()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="InitializedConfig"></a>
+								<h1><span class="realm shared"></span>PLUGIN:InitializedConfig()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="InitializedPlugins"></a>
+								<h1><span class="realm shared"></span>PLUGIN:InitializedPlugins()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="InitializedSchema"></a>
+								<h1><span class="realm shared"></span>PLUGIN:InitializedSchema()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="InventoryItemAdded"></a>
+								<h1><span class="realm server"></span>PLUGIN:InventoryItemAdded(oldInv, inventory, item)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">oldInv</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">inventory</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">item</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="InventoryItemRemoved"></a>
+								<h1><span class="realm server"></span>PLUGIN:InventoryItemRemoved(inventory, item)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">inventory</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">item</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="IsCharacterRecognized"></a>
+								<h1><span class="realm shared"></span>PLUGIN:IsCharacterRecognized(character, id)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">id</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="IsPlayerRecognized"></a>
+								<h1><span class="realm client"></span>PLUGIN:IsPlayerRecognized(client)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="IsRecognizedChatType"></a>
+								<h1><span class="realm client"></span>PLUGIN:IsRecognizedChatType(chatType)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">chatType</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="LoadData"></a>
+								<h1><span class="realm server"></span>PLUGIN:LoadData()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="LoadFonts"></a>
+								<h1><span class="realm client"></span>PLUGIN:LoadFonts(font, genericFont)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">font</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">genericFont</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="LoadIntro"></a>
+								<h1><span class="realm client"></span>PLUGIN:LoadIntro()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="MenuSubpanelCreated"></a>
+								<h1><span class="realm client"></span>PLUGIN:MenuSubpanelCreated(subpanelName, panel)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">subpanelName</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">panel</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="MessageReceived"></a>
+								<h1><span class="realm client"></span>PLUGIN:MessageReceived(client, info)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">info</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnAreaChanged"></a>
+								<h1><span class="realm client"></span>PLUGIN:OnAreaChanged(oldID, newID)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">oldID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">newID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnCharacterCreated"></a>
+								<h1><span class="realm shared"></span>PLUGIN:OnCharacterCreated(client, character)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnCharacterDisconnect"></a>
+								<h1><span class="realm shared"></span>PLUGIN:OnCharacterDisconnect(client, character)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnCharacterFallover"></a>
+								<h1><span class="realm shared"></span>PLUGIN:OnCharacterFallover(client, entity, bFallenOver)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bFallenOver</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnCharacterMenuCreated"></a>
+								<h1><span class="realm client"></span>PLUGIN:OnCharacterMenuCreated(panel)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">panel</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnItemSpawned"></a>
+								<h1><span class="realm shared"></span>PLUGIN:OnItemSpawned(entity)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnItemTransferred"></a>
+								<h1><span class="realm shared"></span>PLUGIN:OnItemTransferred(self, curInv, inventory)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">self</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">curInv</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">inventory</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnLocalVarSet"></a>
+								<h1><span class="realm client"></span>PLUGIN:OnLocalVarSet(key, var)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">var</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnPAC3PartTransferred"></a>
+								<h1><span class="realm client"></span>PLUGIN:OnPAC3PartTransferred(part)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">part</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnPickupMoney"></a>
+								<h1><span class="realm server"></span>PLUGIN:OnPickupMoney(client, self)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">self</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnPlayerAreaChanged"></a>
+								<h1><span class="realm shared"></span>PLUGIN:OnPlayerAreaChanged(client, oldID, newID)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">oldID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">newID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnPlayerObserve"></a>
+								<h1><span class="realm server"></span>PLUGIN:OnPlayerObserve(client, state)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">state</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnPlayerOptionSelected"></a>
+								<h1><span class="realm server"></span>PLUGIN:OnPlayerOptionSelected(client, callingClient, option)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">callingClient</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">option</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnPlayerPurchaseDoor"></a>
+								<h1><span class="realm server"></span>PLUGIN:OnPlayerPurchaseDoor(client, entity, bBuying, bCallOnDoorChild)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bBuying</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bCallOnDoorChild</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnPlayerRestricted"></a>
+								<h1><span class="realm server"></span>PLUGIN:OnPlayerRestricted(client)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnPlayerUnRestricted"></a>
+								<h1><span class="realm server"></span>PLUGIN:OnPlayerUnRestricted(client)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnSavedItemLoaded"></a>
+								<h1><span class="realm server"></span>PLUGIN:OnSavedItemLoaded(loadedItems)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">loadedItems</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="OnWipeTables"></a>
+								<h1><span class="realm server"></span>PLUGIN:OnWipeTables()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerEnterSequence"></a>
+								<h1><span class="realm shared"></span>PLUGIN:PlayerEnterSequence(client, sequence, callback, time, bNoFreeze)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">sequence</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">callback</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">time</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bNoFreeze</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerInteractEntity"></a>
+								<h1><span class="realm server"></span>PLUGIN:PlayerInteractEntity(client, entity, option, data)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">option</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">data</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerInteractItem"></a>
+								<h1><span class="realm server"></span>PLUGIN:PlayerInteractItem(client, action, item)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">action</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">item</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerJoinedClass"></a>
+								<h1><span class="realm server"></span>PLUGIN:PlayerJoinedClass(client, class, oldClass)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">class</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">oldClass</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerLeaveSequence"></a>
+								<h1><span class="realm shared"></span>PLUGIN:PlayerLeaveSequence(entity)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerLoadedCharacter"></a>
+								<h1><span class="realm server"></span>PLUGIN:PlayerLoadedCharacter(client, character, currentChar)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">currentChar</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerLockedDoor"></a>
+								<h1><span class="realm server"></span>PLUGIN:PlayerLockedDoor(client, door, partner)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">door</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">partner</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerLockedVehicle"></a>
+								<h1><span class="realm server"></span>PLUGIN:PlayerLockedVehicle(client, vehicle)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">vehicle</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerMessageSend"></a>
+								<h1><span class="realm shared"></span>PLUGIN:PlayerMessageSend(client, chatType, message, anonymous)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">chatType</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">message</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">anonymous</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerModelChanged"></a>
+								<h1><span class="realm shared"></span>PLUGIN:PlayerModelChanged(client, model)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">model</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerStaminaGained"></a>
+								<h1><span class="realm server"></span>PLUGIN:PlayerStaminaGained(client)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerStaminaLost"></a>
+								<h1><span class="realm server"></span>PLUGIN:PlayerStaminaLost(client)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerThrowPunch"></a>
+								<h1><span class="realm shared"></span>PLUGIN:PlayerThrowPunch(client, trace)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">trace</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerUnlockedDoor"></a>
+								<h1><span class="realm server"></span>PLUGIN:PlayerUnlockedDoor(client, door, partner)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">door</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">partner</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerUnlockedVehicle"></a>
+								<h1><span class="realm server"></span>PLUGIN:PlayerUnlockedVehicle(client, door)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">door</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerUse"></a>
+								<h1><span class="realm server"></span>PLUGIN:PlayerUse(client, entity)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerUseDoor"></a>
+								<h1><span class="realm server"></span>PLUGIN:PlayerUseDoor(client, entity)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PlayerWeaponChanged"></a>
+								<h1><span class="realm shared"></span>PLUGIN:PlayerWeaponChanged(client, weapon)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">weapon</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PluginLoaded"></a>
+								<h1><span class="realm shared"></span>PLUGIN:PluginLoaded(uniqueID, pluginTable)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">uniqueID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">pluginTable</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PluginShouldLoad"></a>
+								<h1><span class="realm shared"></span>PLUGIN:PluginShouldLoad(uniqueID)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">uniqueID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PluginUnloaded"></a>
+								<h1><span class="realm shared"></span>PLUGIN:PluginUnloaded(uniqueID)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">uniqueID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PopulateCharacterInfo"></a>
+								<h1><span class="realm client"></span>PLUGIN:PopulateCharacterInfo(client, character, tooltip)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">tooltip</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PopulateEntityInfo"></a>
+								<h1><span class="realm client"></span>PLUGIN:PopulateEntityInfo(entity, tooltip)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">tooltip</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PopulateHelpMenu"></a>
+								<h1><span class="realm client"></span>PLUGIN:PopulateHelpMenu(categories)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">categories</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PopulateImportantCharacterInfo"></a>
+								<h1><span class="realm client"></span>PLUGIN:PopulateImportantCharacterInfo(entity, character, tooltip)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">tooltip</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PopulateItemTooltip"></a>
+								<h1><span class="realm client"></span>PLUGIN:PopulateItemTooltip(tooltip, item)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">tooltip</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">item</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PopulatePlayerTooltip"></a>
+								<h1><span class="realm client"></span>PLUGIN:PopulatePlayerTooltip(client, tooltip)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">tooltip</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PopulateScoreboardPlayerMenu"></a>
+								<h1><span class="realm client"></span>PLUGIN:PopulateScoreboardPlayerMenu(client, menu)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">menu</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PostChatboxDraw"></a>
+								<h1><span class="realm client"></span>PLUGIN:PostChatboxDraw(width, height, alpha)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">width</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">height</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">alpha</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PostDrawInventory"></a>
+								<h1><span class="realm client"></span>PLUGIN:PostDrawInventory(panel)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">panel</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PostLoadData"></a>
+								<h1><span class="realm server"></span>PLUGIN:PostLoadData()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="PostPlayerLoadout"></a>
+								<h1><span class="realm server"></span>PLUGIN:PostPlayerLoadout(client)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PostPlayerSay"></a>
+								<h1><span class="realm server"></span>PLUGIN:PostPlayerSay(client, chatType, message, anonymous)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">chatType</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">message</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">anonymous</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PostSetupActs"></a>
+								<h1><span class="realm shared"></span>PLUGIN:PostSetupActs()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="PreCharacterDeleted"></a>
+								<h1><span class="realm server"></span>PLUGIN:PreCharacterDeleted(client, character)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PrePlayerLoadedCharacter"></a>
+								<h1><span class="realm server"></span>PLUGIN:PrePlayerLoadedCharacter(client, character, currentChar)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">currentChar</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="PrePlayerMessageSend"></a>
+								<h1><span class="realm server"></span>PLUGIN:PrePlayerMessageSend(client, chatType, message, anonymous)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">chatType</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">message</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">anonymous</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="SaveData"></a>
+								<h1><span class="realm server"></span>PLUGIN:SaveData()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="ScreenResolutionChanged"></a>
+								<h1><span class="realm clikent"></span>PLUGIN:ScreenResolutionChanged(width, height)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">width</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">height</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="SetupActs"></a>
+								<h1><span class="realm shared"></span>PLUGIN:SetupActs()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="SetupAreaProperties"></a>
+								<h1><span class="realm shared"></span>PLUGIN:SetupAreaProperties()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="ShipmentItemTaken"></a>
+								<h1><span class="realm server"></span>PLUGIN:ShipmentItemTaken(client, uniqueID, amount)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">uniqueID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">amount</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ShouldBarDraw"></a>
+								<h1><span class="realm client"></span>PLUGIN:ShouldBarDraw(bar)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bar</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ShouldDeleteSavedItems"></a>
+								<h1><span class="realm server"></span>PLUGIN:ShouldDeleteSavedItems()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="ShouldDisplayArea"></a>
+								<h1><span class="realm client"></span>PLUGIN:ShouldDisplayArea(newID)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">newID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ShouldDrawCrosshair"></a>
+								<h1><span class="realm client"></span>PLUGIN:ShouldDrawCrosshair(client, weapon)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">weapon</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ShouldDrawItemSize"></a>
+								<h1><span class="realm client"></span>PLUGIN:ShouldDrawItemSize(item)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">item</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ShouldHideBars"></a>
+								<h1><span class="realm client"></span>PLUGIN:ShouldHideBars()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="ShouldPlayerDrowned"></a>
+								<h1><span class="realm server"></span>PLUGIN:ShouldPlayerDrowned(v)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">v</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ShouldRemoveRagdollOnDeath"></a>
+								<h1><span class="realm server"></span>PLUGIN:ShouldRemoveRagdollOnDeath(client)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ShouldRestoreInventory"></a>
+								<h1><span class="realm server"></span>PLUGIN:ShouldRestoreInventory(characterID, inventoryID, inventoryType)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">characterID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">inventoryID</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">inventoryType</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ShouldShowPlayerOnScoreboard"></a>
+								<h1><span class="realm client"></span>PLUGIN:ShouldShowPlayerOnScoreboard(client)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ShouldSpawnClientRagdoll"></a>
+								<h1><span class="realm server"></span>PLUGIN:ShouldSpawnClientRagdoll(client)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ShowEntityMenu"></a>
+								<h1><span class="realm client"></span>PLUGIN:ShowEntityMenu(entity)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ThirdPersonToggled"></a>
+								<h1><span class="realm client"></span>PLUGIN:ThirdPersonToggled(oldValue, value)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">oldValue</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="UpdateCharacterInfo"></a>
+								<h1><span class="realm client"></span>PLUGIN:UpdateCharacterInfo(panel, character)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">panel</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="UpdateCharacterInfoCategory"></a>
+								<h1><span class="realm client"></span>PLUGIN:UpdateCharacterInfoCategory(panel, character)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">panel</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="VoiceDistanceChanged"></a>
+								<h1><span class="realm server"></span>PLUGIN:VoiceDistanceChanged(newValue)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">newValue</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="WeaponCycleSound"></a>
+								<h1><span class="realm client"></span>PLUGIN:WeaponCycleSound()</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="WeaponSelectSound"></a>
+								<h1><span class="realm client"></span>PLUGIN:WeaponSelectSound(weapon)</h1>
+
+
+
+								<p>
+
+</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">weapon</span>
+
+
+
+												<p>
+
+</p>
+											</li>
+									</ul>
+
+
+						</section>
+		</article>
+
+		<footer>
+			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
+			<p>Last updated: <span class="timestamp">2019-09-01 01:35:30</span></p>
+		</footer>
+
+		<script type="text/javascript" src="../highlight.min.js"></script>
+		<script type="text/javascript">
+		var elements = document.querySelectorAll("aside code, pre code")
+
+		hljs.configure({
+			languages: ["lua"]
+		});
+
+		for (var i = 0; i < elements.length; i++)
+		{
+			hljs.highlightBlock(elements[i]);
+		}
+		</script>
+	</body>
+</html>

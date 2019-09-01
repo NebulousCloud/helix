@@ -24,6 +24,11 @@
 								<li><a href="../classes/Inventory.html">Inventory</a></li>
 								<li><a href="../classes/Item.html">Item</a></li>
 						</ul>
+						<h2>Hooks</h2>
+
+						<ul>
+								<li><a href="../hooks/Plugin.html">Plugin</a></li>
+						</ul>
 						<h2>Libraries</h2>
 
 						<ul>
@@ -56,6 +61,17 @@
 					<h2>Contains information about a player's current game state.</h2>
 				</header>
 
+				<!-- description -->
+				<p>Characters are a fundamental object type in Helix. They are distinct from players, where players are the representation of a
+person's existence in the server that owns a character, and their character is their currently selected persona. All the
+characters that a player owns will be loaded into memory once they connect to the server. Characters are saved during a regular
+interval, and during specific events (e.g when the owning player switches away from one character to another).</p>
+
+<p>They contain all information that is not persistent with the player; names, descriptions, model, currency, etc. For the most
+part, you'll want to keep all information stored on the character since it will probably be different or change if the
+player switches to another character. An easy way to do this is to use <code>ix.char.RegisterVar</code> to easily create accessor functions
+for variables that automatically save to the character object.</p>
+
 				<!-- summary -->
 				<details open>
 					<summary>Reference</summary>
@@ -75,17 +91,6 @@
 					</div>
 				</details>
 
-				<!-- description -->
-				<p>Characters are a fundamental object type in Helix. They are distinct from players, where players are the representation of a
-person's existence in the server that owns a character, and their character is their currently selected persona. All the
-characters that a player owns will be loaded into memory once they connect to the server. Characters are saved during a regular
-interval, and during specific events (e.g when the owning player switches away from one character to another).</p>
-
-<p>They contain all information that is not persistent with the player; names, descriptions, model, currency, etc. For the most
-part, you'll want to keep all information stored on the character since it will probably be different or change if the
-player switches to another character. An easy way to do this is to use <code>ix.char.RegisterVar</code> to easily create accessor functions
-for variables that automatically save to the character object.</p>
-
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
@@ -99,7 +104,8 @@ for variables that automatically save to the character object.</p>
 								<h1><span class="realm shared"></span>Character:__tostring()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L32">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L32">View source &raquo;</a>
+
 								<p>Returns a string representation of this character</p>
 							</header>
 
@@ -127,7 +133,8 @@ for variables that automatically save to the character object.</p>
 								<h1><span class="realm shared"></span>Character:__eq(other)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L42">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L42">View source &raquo;</a>
+
 								<p>Returns true if this character is equal to another character.  Internally, this checks character IDs.</p>
 							</header>
 
@@ -165,7 +172,8 @@ for variables that automatically save to the character object.</p>
 								<h1><span class="realm shared"></span>Character:GetID()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L49">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L49">View source &raquo;</a>
+
 								<p>Returns this character's database ID.  This is guaranteed to be unique.</p>
 							</header>
 
@@ -195,7 +203,8 @@ end)
 								<h1><span class="realm server"></span>Character:Save([callback=nil])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L61">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L61">View source &raquo;</a>
+
 								<p>Saves this character's info to the database.</p>
 							</header>
 
@@ -224,7 +233,8 @@ end)
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L100">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L100">View source &raquo;</a>
+
 								<p>Networks this character's information to make the given player aware of this character's existence.  If the receiver is
  not the owner of this character, it will only be sent a limited amount of data (as it does not need anything else).
  This is done automatically by the framework.</p>
@@ -254,7 +264,8 @@ end)
 								<h1><span class="realm server"></span>Character:Kick()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L194">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L194">View source &raquo;</a>
+
 								<p>Forces a player off their current character, and sends them to the character menu to select a character.</p>
 							</header>
 
@@ -266,7 +277,8 @@ end)
 								<h1><span class="realm server"></span>Character:Ban([time])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L219">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L219">View source &raquo;</a>
+
 								<p>Forces a player off their current character, and prevents them from using the character for the specified amount of time.</p>
 							</header>
 
@@ -294,7 +306,8 @@ end)
 								<h1><span class="realm shared"></span>Character:GetPlayer()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L236">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L236">View source &raquo;</a>
+
 								<p>Returns the player that owns this character.</p>
 							</header>
 
@@ -316,7 +329,7 @@ end)
 
 		<footer>
 			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
-			<p>Last updated: <span class="timestamp">2019-08-29 20:05:06</span></p>
+			<p>Last updated: <span class="timestamp">2019-09-01 01:35:30</span></p>
 		</footer>
 
 		<script type="text/javascript" src="../highlight.min.js"></script>

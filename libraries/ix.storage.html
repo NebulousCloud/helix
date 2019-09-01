@@ -39,6 +39,11 @@
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
 						</ul>
+						<h2>Hooks</h2>
+
+						<ul>
+								<li><a href="../hooks/Plugin.html">Plugin</a></li>
+						</ul>
 						<h2>Classes</h2>
 
 						<ul>
@@ -55,6 +60,25 @@
 					<h1>ix.storage</h1>
 					<h2>Player manipulation of inventories.</h2>
 				</header>
+
+				<!-- description -->
+				<p>
+
+
+<p>This library provides an easy way for players to manipulate other inventories. The only functions that you should need are
+<a href="../libraries/ix.storage.html#ix.storage.Open">ix.storage.Open</a> and <a href="../libraries/ix.storage.html#ix.storage.Close">ix.storage.Close</a>. When opening an inventory as a storage item, it will display both the given inventory
+and the player's inventory in the player's UI, which allows them to drag items to and from the given inventory.</p>
+
+<p>Example usage:</p>
+<pre><code>ix.storage.Open(client, inventory, {
+    name = "Filing Cabinet",
+    entity = ents.GetByIndex(3),
+    bMultipleUsers = true,
+    searchText = "Rummaging...",
+    searchTime = 4
+})
+</code></pre>
+</p>
 
 				<!-- summary -->
 				<details open>
@@ -80,25 +104,6 @@
 					</div>
 				</details>
 
-				<!-- description -->
-				<p>
-
-
-<p>This library provides an easy way for players to manipulate other inventories. The only functions that you should need are
-<a href="../libraries/ix.storage.html#ix.storage.Open">ix.storage.Open</a> and <a href="../libraries/ix.storage.html#ix.storage.Close">ix.storage.Close</a>. When opening an inventory as a storage item, it will display both the given inventory
-and the player's inventory in the player's UI, which allows them to drag items to and from the given inventory.</p>
-
-<p>Example usage:</p>
-<pre><code>ix.storage.Open(client, inventory, {
-    name = "Filing Cabinet",
-    entity = ents.GetByIndex(3),
-    bMultipleUsers = true,
-    searchText = "Rummaging...",
-    searchTime = 4
-})
-</code></pre>
-</p>
-
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
@@ -107,7 +112,8 @@ and the player's inventory in the player's UI, which allows them to drag items t
 								<h1><span class="realm server"></span>ix.storage.InUse(inventory)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L50">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L50">View source &raquo;</a>
+
 								<p>Returns whether or not the given inventory has a storage context and is being looked at by other players.</p>
 							</header>
 
@@ -145,7 +151,8 @@ and the player's inventory in the player's UI, which allows them to drag items t
 								<h1><span class="realm server"></span>ix.storage.InUseBy(inventory, client)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L67">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L67">View source &raquo;</a>
+
 								<p>Returns whether or not an inventory is in use by a specific player.</p>
 							</header>
 
@@ -196,7 +203,8 @@ and the player's inventory in the player's UI, which allows them to drag items t
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L84">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L84">View source &raquo;</a>
+
 								<p>Creates a storage context on the given inventory.</p>
 							</header>
 
@@ -236,7 +244,8 @@ and the player's inventory in the player's UI, which allows them to drag items t
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L109">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L109">View source &raquo;</a>
+
 								<p>Removes a storage context from an inventory if it exists.</p>
 							</header>
 
@@ -264,7 +273,8 @@ and the player's inventory in the player's UI, which allows them to drag items t
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L125">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L125">View source &raquo;</a>
+
 								<p>Synchronizes an inventory with a storage context to the given client.</p>
 							</header>
 
@@ -304,7 +314,8 @@ and the player's inventory in the player's UI, which allows them to drag items t
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L154">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L154">View source &raquo;</a>
+
 								<p>Adds a receiver to a given inventory with a storage context.</p>
 							</header>
 
@@ -357,7 +368,8 @@ and the player's inventory in the player's UI, which allows them to drag items t
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L184">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L184">View source &raquo;</a>
+
 								<p>Removes a storage receiver and removes the context if there are no more receivers.</p>
 							</header>
 
@@ -408,7 +420,8 @@ and the player's inventory in the player's UI, which allows them to drag items t
 								<h1><span class="realm server"></span>ix.storage.Open(client, inventory, info)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L216">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L216">View source &raquo;</a>
+
 								<p>Makes a player open an inventory that they can interact with.  This can be called multiple times on the same inventory,
  if the info passed allows for multiple users.</p>
 							</header>
@@ -460,7 +473,8 @@ and the player's inventory in the player's UI, which allows them to drag items t
 								<h1><span class="realm server"></span>ix.storage.Close(inventory)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L257">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L257">View source &raquo;</a>
+
 								<p>Forcefully makes clients close this inventory if they have it open.</p>
 							</header>
 
@@ -489,7 +503,8 @@ and the player's inventory in the player's UI, which allows them to drag items t
 								<h1><span class="realm server"></span>StorageInfoStructure</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L36">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L36">View source &raquo;</a>
+
 								<p>There are some parameters you can customize when opening an inventory as a storage object with <a href="../libraries/ix.storage.html#ix.storage.Open">ix.storage.Open</a>.</p>
 							</header>
 
@@ -610,7 +625,7 @@ and the player's inventory in the player's UI, which allows them to drag items t
 
 		<footer>
 			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
-			<p>Last updated: <span class="timestamp">2019-08-29 20:05:06</span></p>
+			<p>Last updated: <span class="timestamp">2019-09-01 01:35:30</span></p>
 		</footer>
 
 		<script type="text/javascript" src="../highlight.min.js"></script>

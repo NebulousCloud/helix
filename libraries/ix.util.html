@@ -39,6 +39,11 @@
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
 						</ul>
+						<h2>Hooks</h2>
+
+						<ul>
+								<li><a href="../hooks/Plugin.html">Plugin</a></li>
+						</ul>
 						<h2>Classes</h2>
 
 						<ul>
@@ -55,6 +60,11 @@
 					<h1>ix.util</h1>
 					<h2>Various useful helper functions.</h2>
 				</header>
+
+				<!-- description -->
+				<p>
+
+</p>
 
 				<!-- summary -->
 				<details open>
@@ -89,11 +99,6 @@
 					</div>
 				</details>
 
-				<!-- description -->
-				<p>
-
-</p>
-
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
@@ -102,7 +107,8 @@
 								<h1><span class="realm shared"></span>ix.util.Include(fileName[, realm])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L39">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L39">View source &raquo;</a>
+
 								<p>Includes a lua file based on the prefix of the file.  This will automatically call <code>include</code> and <code>AddCSLuaFile</code> based on the
  current realm. This function should always be called shared to ensure that the client will receive the file from the server.</p>
 							</header>
@@ -145,7 +151,8 @@
 								<h1><span class="realm shared"></span>ix.util.IncludeDir(directory[, bFromLua])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L71">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L71">View source &raquo;</a>
+
 								<p>Includes multiple files in a directory.</p>
 							</header>
 
@@ -195,7 +202,8 @@
 								<h1><span class="realm shared"></span>ix.util.StripRealmPrefix(name)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L95">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L95">View source &raquo;</a>
+
 								<p>Removes the realm prefix from a file name.  The returned string will be unchanged if there is no prefix found.</p>
 							</header>
 
@@ -233,7 +241,8 @@
 								<h1><span class="realm shared"></span>ix.util.IsColor(input)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L106">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L106">View source &raquo;</a>
+
 								<p>Returns <code>true</code> if the given input is a color table.  This is necessary since the engine <a href="../libraries/ix.util.html#ix.util.IsColor">IsColor</a> function only checks for
  color metatables - which are not used for regular Lua color types.</p>
 							</header>
@@ -276,7 +285,8 @@
 								<h1><span class="realm shared"></span>ix.util.DimColor(color, multiplier[, alpha=255])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L119">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L119">View source &raquo;</a>
+
 								<p>Returns a dimmed version of the given color by the given scale.</p>
 							</header>
 
@@ -346,7 +356,8 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 								<h1><span class="realm shared"></span>ix.util.SanitizeType(type, input)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L135">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L135">View source &raquo;</a>
+
 								<p>Sanitizes an input value with the given type.  This function ensures that a valid type is always returned. If a valid value
  could not be found, it will return the default value for the type. This only works for simple types - e.g it does not work
  for player, character, or Steam ID types.</p>
@@ -406,7 +417,8 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 								<h1><span class="realm shared"></span>ix.util.GetTypeFromValue(value)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L187">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L187">View source &raquo;</a>
+
 								<p>Returns the <a href="../libraries/ix.html#type">ix.type</a> of the given value.</p>
 							</header>
 
@@ -447,7 +459,8 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 								<h1><span class="realm shared"></span>ix.util.GetMaterial(materialPath)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L232">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L232">View source &raquo;</a>
+
 								<p>Returns a cached copy of the given material, or creates and caches one if it doesn't exist.  This is a quick helper function
  if you aren't locally storing a <code>Material()</code> call.</p>
 							</header>
@@ -494,7 +507,8 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 								<h1><span class="realm shared"></span>ix.util.FindPlayer(identifier[, bAllowPatterns=false])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L245">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L245">View source &raquo;</a>
+
 								<p>Attempts to find a player by matching their name or Steam ID.</p>
 							</header>
 
@@ -545,7 +559,8 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 								<h1><span class="realm shared"></span>ix.util.StringMatches(a, b)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L267">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L267">View source &raquo;</a>
+
 								<p>Checks to see if two strings are equivalent using a fuzzy manner.  Both strings will be lowered, and will return <code>true</code> if
  the strings are identical, or if <code>a</code> is a substring of <code>b</code>.</p>
 							</header>
@@ -604,7 +619,8 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 								<h1><span class="realm shared"></span>ix.util.FormatStringNamed(format, Arguments)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L292">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L292">View source &raquo;</a>
+
 								<p>Returns a string that has the named arguments in the format string replaced with the given arguments.</p>
 							</header>
 
@@ -649,7 +665,8 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 								<h1><span class="realm shared"></span>ix.util.ExpandCamelCase(input[, bNoUpperFirst=false])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L331">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L331">View source &raquo;</a>
+
 								<p>Returns a string that is the given input with spaces in between each CamelCase word.  This function will ignore any words
  that do not begin with a capital letter. The words <code>ooc</code>, <code>looc</code>, <code>afk</code>, and <code>url</code> will be automatically transformed
  into uppercase text.</p>
@@ -711,7 +728,8 @@ end
 								<h1><span class="realm shared"></span>ix.util.GetCharacters()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L384">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L384">View source &raquo;</a>
+
 								<p>Returns an iterator for characters.  The resulting key/values will be a player and their corresponding characters. This
  iterator skips over any players that do not have a valid character loaded.</p>
 							</header>
@@ -743,7 +761,8 @@ end
 								<h1><span class="realm client"></span>ix.util.DrawBlur(panel[, amount=5[, passes=0.2[, alpha=255]]])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L404">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L404">View source &raquo;</a>
+
 								<p>Blurs the content underneath the given panel.  This will fall back to a simple darkened rectangle if the player has
  blurring disabled.</p>
 							</header>
@@ -816,7 +835,8 @@ end)
 								<h1><span class="realm client"></span>ix.util.DrawBlurAt(x, y, width, height[, amount=5[, passes=0.2[, alpha=255]]])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L441">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L441">View source &raquo;</a>
+
 								<p>Draws a blurred rectangle with the given position and bounds.  This shouldn't be used for panels, see <a href="../libraries/ix.util.html#ix.util.DrawBlur">ix.util.DrawBlur</a>
  instead.</p>
 							</header>
@@ -919,7 +939,8 @@ end)
 								<h1><span class="realm client"></span>ix.util.PushBlur(drawFunc)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L469">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L469">View source &raquo;</a>
+
 								<p>Pushes a 3D2D blur to be rendered in the world.  The draw function will be called next frame in the
  <code>PostDrawOpaqueRenderables</code> hook.</p>
 							</header>
@@ -947,7 +968,8 @@ end)
 								<h1><span class="realm client"></span>ix.util.DrawText(text, x, y, color[, alignX=TEXT_ALIGN_LEFT[, alignY=TEXT_ALIGN_LEFT[, font="ixGenericFont"[, alpha=color.a * 0.575]]]])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L483">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L483">View source &raquo;</a>
+
 								<p>Draws some text with a shadow.</p>
 							</header>
 
@@ -1062,7 +1084,8 @@ end)
 								<h1><span class="realm client"></span>ix.util.WrapText(text, maxWidth[, font="ixChatFont"])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L502">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L502">View source &raquo;</a>
+
 								<p>Wraps text so it does not pass a certain width.  This function will try and break lines between words if it can,
  otherwise it will break a word if it's too long.</p>
 							</header>
@@ -1115,7 +1138,8 @@ end)
 								<h1><span class="realm client"></span>ix.util.ResetStencilValues()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L644">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L644">View source &raquo;</a>
+
 								<p>Resets all stencil values to known good (i.e defaults)</p>
 							</header>
 
@@ -1127,7 +1151,8 @@ end)
 								<h1><span class="realm shared"></span>ix.util.GetUTCTime()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L1651">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L1651">View source &raquo;</a>
+
 								<p>Gets the current time in the UTC time-zone.</p>
 							</header>
 
@@ -1155,7 +1180,8 @@ end)
 								<h1><span class="realm shared"></span>ix.util.GetStringTime(text)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L1684">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L1684">View source &raquo;</a>
+
 								<p>
 <p>Gets the amount of seconds from a given formatted string.  If no time units are specified, it is assumed minutes.
  The valid values are as follows:</p>
@@ -1212,7 +1238,8 @@ y - Years
 								<h1><span class="realm shared"></span>ix.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L1808">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L1808">View source &raquo;</a>
+
 								<p>Emits sounds one after the other from an entity.</p>
 							</header>
 
@@ -1309,7 +1336,7 @@ y - Years
 
 		<footer>
 			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
-			<p>Last updated: <span class="timestamp">2019-08-29 20:05:06</span></p>
+			<p>Last updated: <span class="timestamp">2019-09-01 01:35:30</span></p>
 		</footer>
 
 		<script type="text/javascript" src="../highlight.min.js"></script>

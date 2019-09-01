@@ -39,6 +39,11 @@
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
 						</ul>
+						<h2>Hooks</h2>
+
+						<ul>
+								<li><a href="../hooks/Plugin.html">Plugin</a></li>
+						</ul>
 						<h2>Classes</h2>
 
 						<ul>
@@ -55,30 +60,6 @@
 					<h1>ix.option</h1>
 					<h2>Client-side configuration management.</h2>
 				</header>
-
-				<!-- summary -->
-				<details open>
-					<summary>Reference</summary>
-
-					<div class="contents">
-							<h2>Functions</h2>
-							<ul>
-									<li><span class="realm shared"></span><a href="#ix.option.Add">ix.option.Add(key, optionType, default, data)</a></li>
-									<li><span class="realm shared"></span><a href="#ix.option.Load">ix.option.Load()</a></li>
-									<li><span class="realm shared"></span><a href="#ix.option.GetAll">ix.option.GetAll()</a></li>
-									<li><span class="realm shared"></span><a href="#ix.option.GetAllByCategories">ix.option.GetAllByCategories([bRemoveHidden=false])</a></li>
-									<li><span class="realm client"></span><a href="#ix.option.Set">ix.option.Set(key, value[, bNoSave=false])</a></li>
-									<li><span class="realm client"></span><a href="#ix.option.Get">ix.option.Get(key, default)</a></li>
-									<li><span class="realm client"></span><a href="#ix.option.Save">ix.option.Save()</a></li>
-									<li><span class="realm client"></span><a href="#ix.option.Sync">ix.option.Sync()</a></li>
-									<li><span class="realm server"></span><a href="#ix.option.Get">ix.option.Get(client, key, default)</a></li>
-							</ul>
-							<h2>Tables</h2>
-							<ul>
-									<li><span class="realm shared"></span><a href="#OptionStructure">OptionStructure</a></li>
-							</ul>
-					</div>
-				</details>
 
 				<!-- description -->
 				<p>The <a href="../libraries/ix.option.html">option</a> library provides a cleaner way to manage any arbitrary data on the client without the hassle of managing CVars. It
@@ -104,6 +85,30 @@ client, unless <code>hidden</code> returns <code>true</code> when using <a href=
 <p>Note that the labels for each option in the menu will use a language phrase to show the name. For example, if your option is
 named <code>headbob</code>, then you'll need to define a language phrase called <code>optHeadbob</code> that will be used as the option title.</p>
 
+				<!-- summary -->
+				<details open>
+					<summary>Reference</summary>
+
+					<div class="contents">
+							<h2>Functions</h2>
+							<ul>
+									<li><span class="realm shared"></span><a href="#ix.option.Add">ix.option.Add(key, optionType, default, data)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.option.Load">ix.option.Load()</a></li>
+									<li><span class="realm shared"></span><a href="#ix.option.GetAll">ix.option.GetAll()</a></li>
+									<li><span class="realm shared"></span><a href="#ix.option.GetAllByCategories">ix.option.GetAllByCategories([bRemoveHidden=false])</a></li>
+									<li><span class="realm client"></span><a href="#ix.option.Set">ix.option.Set(key, value[, bNoSave=false])</a></li>
+									<li><span class="realm client"></span><a href="#ix.option.Get">ix.option.Get(key, default)</a></li>
+									<li><span class="realm client"></span><a href="#ix.option.Save">ix.option.Save()</a></li>
+									<li><span class="realm client"></span><a href="#ix.option.Sync">ix.option.Sync()</a></li>
+									<li><span class="realm server"></span><a href="#ix.option.Get">ix.option.Get(client, key, default)</a></li>
+							</ul>
+							<h2>Tables</h2>
+							<ul>
+									<li><span class="realm shared"></span><a href="#OptionStructure">OptionStructure</a></li>
+							</ul>
+					</div>
+				</details>
+
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
@@ -121,7 +126,8 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 								<h1><span class="realm shared"></span>ix.option.Add(key, optionType, default, data)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L44">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L44">View source &raquo;</a>
+
 								<p>Creates a client-side configuration option with the given information.</p>
 							</header>
 
@@ -184,7 +190,8 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L114">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L114">View source &raquo;</a>
+
 								<p>Loads all saved options from disk.</p>
 							</header>
 
@@ -205,7 +212,8 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 								<h1><span class="realm shared"></span>ix.option.GetAll()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L139">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L139">View source &raquo;</a>
+
 								<p>Returns all of the available options.  Note that this does contain the actual values of the options, just their properties.</p>
 							</header>
 
@@ -239,7 +247,8 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 								<h1><span class="realm shared"></span>ix.option.GetAllByCategories([bRemoveHidden=false])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L157">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L157">View source &raquo;</a>
+
 								<p>Returns all of the available options grouped by their categories.  The returned table contains category tables, that contain
  all the options in that category as an array (this is so you can sort them if you'd like).</p>
 							</header>
@@ -279,7 +288,8 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 								<h1><span class="realm client"></span>ix.option.Set(key, value[, bNoSave=false])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L186">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L186">View source &raquo;</a>
+
 								<p>Sets an option value for the local player.
  This function will error when an invalid key is passed.</p>
 							</header>
@@ -331,7 +341,8 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 								<h1><span class="realm client"></span>ix.option.Get(key, default)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L218">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L218">View source &raquo;</a>
+
 								<p>Retrieves an option value for the local player.  If it is not set, it'll return the default that you've specified.</p>
 							</header>
 
@@ -389,7 +400,8 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 
 									<div class="internal"></div>
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L237">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L237">View source &raquo;</a>
+
 								<p>Saves all options to disk.</p>
 							</header>
 
@@ -401,7 +413,8 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 								<h1><span class="realm client"></span>ix.option.Sync()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L243">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L243">View source &raquo;</a>
+
 								<p>Syncs all networked options to the server.</p>
 							</header>
 
@@ -413,7 +426,8 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 								<h1><span class="realm server"></span>ix.option.Get(client, key, default)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L278">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L278">View source &raquo;</a>
+
 								<p>Retrieves an option value from the specified player.  If it is not set, it'll return the default that you've specified.
  This function will error when an invalid player is passed.</p>
 							</header>
@@ -485,7 +499,8 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 								<h1><span class="realm shared"></span>OptionStructure</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L94">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L94">View source &raquo;</a>
+
 								<p>You can specify additional optional arguments for <a href="../libraries/ix.option.html#ix.option.Add">ix.option.Add</a> by passing in a table of specific fields as the fourth
  argument.</p>
 							</header>
@@ -660,7 +675,7 @@ end
 
 		<footer>
 			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
-			<p>Last updated: <span class="timestamp">2019-08-29 20:05:06</span></p>
+			<p>Last updated: <span class="timestamp">2019-09-01 01:35:30</span></p>
 		</footer>
 
 		<script type="text/javascript" src="../highlight.min.js"></script>

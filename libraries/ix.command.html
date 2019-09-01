@@ -39,6 +39,11 @@
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
 						</ul>
+						<h2>Hooks</h2>
+
+						<ul>
+								<li><a href="../hooks/Plugin.html">Plugin</a></li>
+						</ul>
 						<h2>Classes</h2>
 
 						<ul>
@@ -55,6 +60,10 @@
 					<h1>ix.command</h1>
 					<h2>Registration, parsing, and handling of commands.</h2>
 				</header>
+
+				<!-- description -->
+				<p>Commands can be ran through the chat with slash commands or they can be executed through the console. Commands can be manually
+restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">CAMI</a>-compliant admin mod.</p>
 
 				<!-- summary -->
 				<details open>
@@ -80,10 +89,6 @@
 					</div>
 				</details>
 
-				<!-- description -->
-				<p>Commands can be ran through the chat with slash commands or they can be executed through the console. Commands can be manually
-restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">CAMI</a>-compliant admin mod.</p>
-
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
@@ -92,7 +97,8 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 								<h1><span class="realm shared"></span>ix.command.Add(command, data)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L155">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L155">View source &raquo;</a>
+
 								<p>Creates a new command.</p>
 							</header>
 
@@ -131,7 +137,8 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 								<h1><span class="realm shared"></span>ix.command.HasAccess(client, command)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L311">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L311">View source &raquo;</a>
+
 								<p>Returns true if a player is allowed to run a certain command.</p>
 							</header>
 
@@ -188,7 +195,8 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 								<h1><span class="realm shared"></span>ix.command.ExtractArgs(text)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L335">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L335">View source &raquo;</a>
+
 								<p>Returns a table of arguments from a given string.
  Words separated by spaces will be considered one argument. To have an argument containing multiple words, they must be
  contained within quotation marks.</p>
@@ -228,7 +236,8 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 								<h1><span class="realm shared"></span>ix.command.FindAll(identifier[, bSorted=false[, bReorganize=false[, bRemoveDupes=false]]])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L383">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L383">View source &raquo;</a>
+
 								<p>Returns an array of potential commands by unique id.
  When bSorted is true, the commands will be sorted by name. When bReorganize is true, it will move any exact match to the top
  of the array. When bRemoveDupes is true, it will remove any commands that have the same NAME.</p>
@@ -307,7 +316,8 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 								<h1><span class="realm server"></span>ix.command.FindPlayer(client, name)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L443">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L443">View source &raquo;</a>
+
 								<p>Attempts to find a player by an identifier.  If unsuccessful, a notice will be displayed to the specified player. The
  search criteria is derived from <a href="../libraries/ix.util.html#ix.util.FindPlayer">ix.util.FindPlayer</a>.</p>
 							</header>
@@ -374,7 +384,8 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 								<h1><span class="realm server"></span>ix.command.Run(client, command, arguments)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L460">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L460">View source &raquo;</a>
+
 								<p>Forces a player to execute a command by name.</p>
 							</header>
 
@@ -430,7 +441,8 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 								<h1><span class="realm server"></span>ix.command.Parse(client, text[, realCommand[, arguments]])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L535">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L535">View source &raquo;</a>
+
 								<p>Parses a chat string and runs the command if one is found.  Specifically, it checks for commands in a string with the
  format <code>/CommandName some arguments</code></p>
 							</header>
@@ -513,7 +525,8 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 								<h1><span class="realm client"></span>ix.command.Send(command, ...)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L606">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L606">View source &raquo;</a>
+
 								<p>Request the server to run a command.  This mimics similar functionality to the client typing <code>/CommandName</code> in the chatbox.</p>
 							</header>
 
@@ -553,7 +566,8 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 								<h1><span class="realm shared"></span>CommandStructure</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L43">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L43">View source &raquo;</a>
+
 								<p>When registering commands with <a href="../libraries/ix.command.html#ix.command.Add">ix.command.Add</a>, you'll need to pass in a valid command structure.  This is simply a table
  with various fields defined to describe the functionality of the command.</p>
 							</header>
@@ -695,7 +709,8 @@ COMMAND.argumentNames = {"target char", "cash (1-1000)"}
 								<h1><span class="realm shared"></span>CommandArgumentsStructure</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L75">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L75">View source &raquo;</a>
+
 								<p>Rather than checking the validity for arguments in your command's <code>OnRun</code> function, you can have Helix do it for you to
  reduce the amount of boilerplate code that needs to be written.  This can be done by populating the <code>arguments</code> field.</p>
 
@@ -735,7 +750,7 @@ COMMAND.argumentNames = {"target char", "cash (1-1000)"}
 
 		<footer>
 			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
-			<p>Last updated: <span class="timestamp">2019-08-29 20:05:06</span></p>
+			<p>Last updated: <span class="timestamp">2019-09-01 01:35:30</span></p>
 		</footer>
 
 		<script type="text/javascript" src="../highlight.min.js"></script>

@@ -24,6 +24,11 @@
 								<li><a href="../classes/Inventory.html">Inventory</a></li>
 								<li><a href="../classes/Item.html">Item</a></li>
 						</ul>
+						<h2>Hooks</h2>
+
+						<ul>
+								<li><a href="../hooks/Plugin.html">Plugin</a></li>
+						</ul>
 						<h2>Libraries</h2>
 
 						<ul>
@@ -55,6 +60,15 @@
 					<h1>Item</h1>
 					<h2>Interactable entities that can be held in inventories.</h2>
 				</header>
+
+				<!-- description -->
+				<p>Items are objects that are contained inside of an <a href="../classes/Inventory.html#">Inventory</a>, or as standalone entities if they are dropped in the world. They
+usually have functionality that provides more gameplay aspects to the schema. For example, the zipties in the HL2 RP schema
+allow a player to tie up and search a player.</p>
+
+<p>For an item to have an actual presence, they need to be instanced (usually with <code>ix.item.Instance</code>). Items describe the
+properties, while instances are a clone of these properties that can have their own unique data (e.g an ID card will have the
+same name but different numerical IDs). You can think of items as the class, while instances are objects of the <a href="../classes/Item.html#">Item</a> class.</p>
 
 				<!-- summary -->
 				<details open>
@@ -88,15 +102,6 @@
 					</div>
 				</details>
 
-				<!-- description -->
-				<p>Items are objects that are contained inside of an <a href="../classes/Inventory.html#">Inventory</a>, or as standalone entities if they are dropped in the world. They
-usually have functionality that provides more gameplay aspects to the schema. For example, the zipties in the HL2 RP schema
-allow a player to tie up and search a player.</p>
-
-<p>For an item to have an actual presence, they need to be instanced (usually with <code>ix.item.Instance</code>). Items describe the
-properties, while instances are a clone of these properties that can have their own unique data (e.g an ID card will have the
-same name but different numerical IDs). You can think of items as the class, while instances are objects of the <a href="../classes/Item.html#">Item</a> class.</p>
-
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
@@ -110,7 +115,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:__tostring()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L27">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L27">View source &raquo;</a>
+
 								<p>Returns a string representation of this item.</p>
 							</header>
 
@@ -138,7 +144,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:__eq(other)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L37">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L37">View source &raquo;</a>
+
 								<p>Returns true if this item is equal to another item.  Internally, this checks item IDs.</p>
 							</header>
 
@@ -176,7 +183,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:GetID()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L44">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L44">View source &raquo;</a>
+
 								<p>Returns this item's database ID.  This is guaranteed to be unique.</p>
 							</header>
 
@@ -199,7 +207,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:GetName()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L51">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L51">View source &raquo;</a>
+
 								<p>Returns the name of the item.</p>
 							</header>
 
@@ -222,7 +231,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:GetDescription()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L58">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L58">View source &raquo;</a>
+
 								<p>Returns the description of the item.</p>
 							</header>
 
@@ -245,7 +255,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:GetModel()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L67">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L67">View source &raquo;</a>
+
 								<p>Returns the model of the item.</p>
 							</header>
 
@@ -268,7 +279,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:GetSkin()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L74">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L74">View source &raquo;</a>
+
 								<p>Returns the skin of the item.</p>
 							</header>
 
@@ -291,7 +303,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:GetCharacterID()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L85">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L85">View source &raquo;</a>
+
 								<p>Returns the ID of the owning character, if one exists.</p>
 							</header>
 
@@ -314,7 +327,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:GetPlayerID()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L92">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L92">View source &raquo;</a>
+
 								<p>Returns the SteamID64 of the owning player, if one exists.</p>
 							</header>
 
@@ -337,7 +351,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:Print([detail=false])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L99">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L99">View source &raquo;</a>
+
 								<p>A utility function which prints the item's details.</p>
 							</header>
 
@@ -365,7 +380,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:PrintData()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L109">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L109">View source &raquo;</a>
+
 								<p>A utility function printing the item's stored data.</p>
 							</header>
 
@@ -377,7 +393,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:Call(method, client, entity, ...)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L124">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L124">View source &raquo;</a>
+
 								<p>Calls one of the item's methods.</p>
 							</header>
 
@@ -450,7 +467,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:GetOwner()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L146">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L146">View source &raquo;</a>
+
 								<p>Returns the player that owns this item.</p>
 							</header>
 
@@ -473,7 +491,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:SetData(key[, value=nil[, receivers=nil[, noSave=false[, noCheckEntity=false]]]])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L171">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L171">View source &raquo;</a>
+
 								<p>Sets a key within the item's data.</p>
 							</header>
 
@@ -551,7 +570,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:GetData(key[, default=nil])</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L209">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L209">View source &raquo;</a>
+
 								<p>Returns the value stored on a key within the item's data.</p>
 							</header>
 
@@ -601,7 +621,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:Hook(name, func)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L244">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L244">View source &raquo;</a>
+
 								<p>Changes the function called on specific events for the item.</p>
 							</header>
 
@@ -640,7 +661,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:PostHook(name, func)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L254">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L254">View source &raquo;</a>
+
 								<p>Changes the function called after hooks for specific events for the item.</p>
 							</header>
 
@@ -679,7 +701,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm shared"></span>Item:Remove(bNoReplication, bNoDelete)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L265">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L265">View source &raquo;</a>
+
 								<p>Removes the item.</p>
 							</header>
 
@@ -729,7 +752,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm server"></span>Item:GetEntity()</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L352">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L352">View source &raquo;</a>
+
 								<p>Returns the item's entity.</p>
 							</header>
 
@@ -752,7 +776,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm server"></span>Item:Spawn(position, angles)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L367">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L367">View source &raquo;</a>
+
 								<p>Spawn an item entity based off the item table.</p>
 							</header>
 
@@ -802,7 +827,8 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<h1><span class="realm server"></span>Item:Transfer(invID, x, y, client, noReplication, isLogical)</h1>
 
 
-								<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L409">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L409">View source &raquo;</a>
+
 								<p>Transfers an item to a specific inventory.</p>
 							</header>
 
@@ -907,7 +933,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 
 		<footer>
 			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
-			<p>Last updated: <span class="timestamp">2019-08-29 20:05:06</span></p>
+			<p>Last updated: <span class="timestamp">2019-09-01 01:35:30</span></p>
 		</footer>
 
 		<script type="text/javascript" src="../highlight.min.js"></script>
