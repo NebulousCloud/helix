@@ -1,3 +1,4 @@
+
 -- luacheck: ignore 111
 
 --[[--
@@ -11,7 +12,7 @@ regular gamemode hooks.
 -- @hooks Faction
 
 --- Called when the default name for a character needs to be retrieved (i.e upon initial creation).
--- @realm server
+-- @realm shared
 -- @player client Client to get the default name for
 -- @treturn string Default name for the newly created character
 -- @usage function FACTION:GetDefaultName(client)
@@ -44,6 +45,12 @@ end
 -- 	end
 -- end
 function OnNameChanged(client, oldValue, value)
+end
+
+--- Called when a character in this faction has spawned in the world.
+-- @realm server
+-- @player client Player that has just spawned
+function OnSpawn(client)
 end
 
 --- Called when a player's character has been transferred to this faction.
