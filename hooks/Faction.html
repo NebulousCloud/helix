@@ -1,0 +1,295 @@
+
+
+
+
+<html>
+	<head>
+		<title>Helix Documentation</title>
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
+		<link rel="stylesheet" href="../ldoc.css" />
+		<link rel="stylesheet" href="../highlight.css" />
+	</head>
+
+	<body>
+		<aside>
+			<h1>Helix</h1>
+
+			<!-- project contents -->
+			<section>
+						<h2>Hooks</h2>
+
+						<ul>
+								<li><a href="../hooks/Faction.html">Faction</a></li>
+								<li><a href="../hooks/Plugin.html">Plugin</a></li>
+						</ul>
+						<h2>Libraries</h2>
+
+						<ul>
+								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
+								<li><a href="../libraries/ix.char.html">ix.char</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
+								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
+								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
+								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
+								<li><a href="../libraries/ix.html">ix</a></li>
+								<li><a href="../libraries/ix.act.html">ix.act</a></li>
+						</ul>
+						<h2>Classes</h2>
+
+						<ul>
+								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Inventory.html">Inventory</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
+						</ul>
+			</section>
+		</aside>
+
+		<!-- library functions -->
+		<article>
+				<header>
+					<h1>Faction</h1>
+					<h2>Faction setup hooks.</h2>
+				</header>
+
+				<!-- description -->
+				<p>Factions get their own hooks that are called for various reasons, but the most common one is to set up a character
+once it's created and assigned to a certain faction. For example, giving a police faction character a weapon on creation.
+These hooks are used in faction tables that are created in <code>schema/factions/sh_factionname.lua</code> and cannot be used like
+regular gamemode hooks.</p>
+
+				<!-- summary -->
+				<details open>
+					<summary>Reference</summary>
+
+					<div class="contents">
+							<h2>Functions</h2>
+							<ul>
+									<li><span class="realm server"></span><a href="#GetDefaultName">FACTION:GetDefaultName(client)</a></li>
+									<li><span class="realm server"></span><a href="#OnCharacterCreated">FACTION:OnCharacterCreated(client, character)</a></li>
+									<li><span class="realm server"></span><a href="#OnNameChanged">FACTION:OnNameChanged(client, oldValue, value)</a></li>
+									<li><span class="realm server"></span><a href="#OnTransferred">FACTION:OnTransferred(client)</a></li>
+							</ul>
+					</div>
+				</details>
+
+				<!-- methods -->
+					<h1 class="title">Functions</h1>
+
+						<section class="method">
+								<aside>
+										<code>function FACTION:GetDefaultName(client)
+	return "MPF-RCT." .. tostring(math.random(1, 99999))
+end
+</code>
+								</aside>
+							<header><a name="GetDefaultName"></a>
+								<h1><span class="realm server"></span>FACTION:GetDefaultName(client)</h1>
+
+
+
+								<p>Called when the default name for a character needs to be retrieved (i.e upon initial creation).</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><span class="type">player</span></span>
+
+
+												<p> Client to get the default name for</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>Default name for the newly created character</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+								<aside>
+										<code>function FACTION:OnCharacterCreated(client, character)
+	local inventory = character:GetInventory()
+	inventory:Add("pistol")
+end
+</code>
+								</aside>
+							<header><a name="OnCharacterCreated"></a>
+								<h1><span class="realm server"></span>FACTION:OnCharacterCreated(client, character)</h1>
+
+
+
+								<p>Called when a character has been initally created and assigned to this faction.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><span class="type">player</span></span>
+
+
+												<p> Client that owns the character</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">character</span>
+
+													<span class="tag"><a class="type" href="../classes/Character.html#">Character</a></span>
+
+
+												<p> Character that has been created</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+								<aside>
+										<code>function FACTION:OnNameChanged(client, oldValue, value)
+	local character = client:GetCharacter()
+
+	if (string.StartWith(value, "MPF-OfC")) then
+		character:SetModel("models/policetrench.mdl")
+	end
+end
+</code>
+								</aside>
+							<header><a name="OnNameChanged"></a>
+								<h1><span class="realm server"></span>FACTION:OnNameChanged(client, oldValue, value)</h1>
+
+
+
+								<p>Called when a character's name has changed.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><span class="type">player</span></span>
+
+
+												<p> Player whose character has had their name changed</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">oldValue</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Old name of the character</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> New name of the character</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+								<aside>
+										<code>function FACTION:OnTransferred(client)
+	local character = client:GetCharacter()
+	character:SetModel(self.models[1])
+end
+</code>
+								</aside>
+							<header><a name="OnTransferred"></a>
+								<h1><span class="realm server"></span>FACTION:OnTransferred(client)</h1>
+
+
+
+								<p>Called when a player's character has been transferred to this faction.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><span class="type">player</span></span>
+
+
+												<p> Player whose character has been transferred</p>
+											</li>
+									</ul>
+
+
+						</section>
+		</article>
+
+		<footer>
+			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
+			<p>Last updated: <span class="timestamp">2019-09-01 04:21:54</span></p>
+		</footer>
+
+		<script type="text/javascript" src="../highlight.min.js"></script>
+		<script type="text/javascript">
+		var elements = document.querySelectorAll("aside code, pre code")
+
+		hljs.configure({
+			languages: ["lua"]
+		});
+
+		for (var i = 0; i < elements.length; i++)
+		{
+			hljs.highlightBlock(elements[i]);
+		}
+		</script>
+	</body>
+</html>
