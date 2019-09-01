@@ -565,7 +565,7 @@ end
 function SaveData()
 end
 
---- @realm clikent
+--- @realm client
 function ScreenResolutionChanged(width, height)
 end
 
