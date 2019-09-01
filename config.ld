@@ -2,6 +2,7 @@
 file = {
 	"gamemode",
 	"plugins",
+	"docs/hooks",
 	exclude = {"gamemode/core/libs/thirdparty"}
 }
 
@@ -22,12 +23,18 @@ custom_tags = {
 }
 
 custom_display_name_handler = function(item, default_handler)
-	if (item.type == "function" and item.module and item.module.type == "classmod") then
-		return item.module.mod_name .. default_handler(item):gsub(".+:", ":")
+	if (item.type == "function" and item.module) then
+		if (item.module.type == "classmod") then
+			return item.module.mod_name .. default_handler(item):gsub(".+:", ":")
+		elseif (item.module.type == "hooks") then
+			return item.module.mod_name:upper() .. ":" .. default_handler(item)
+		end
 	end
 
 	return default_handler(item)
 end
+
+new_type("hooks", "Hooks", true)
 
 -- helix types
 tparam_alias("char", "Character")
