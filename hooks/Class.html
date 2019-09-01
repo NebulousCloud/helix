@@ -59,15 +59,13 @@
 		<!-- library functions -->
 		<article>
 				<header>
-					<h1>Faction</h1>
-					<h2>Faction setup hooks.</h2>
+					<h1>Class</h1>
+					<h2>Class setup hooks.</h2>
 				</header>
 
 				<!-- description -->
-				<p>Factions get their own hooks that are called for various reasons, but the most common one is to set up a character
-once it's created and assigned to a certain faction. For example, giving a police faction character a weapon on creation.
-These hooks are used in faction tables that are created in <code>schema/factions/sh_factionname.lua</code> and cannot be used like
-regular gamemode hooks.</p>
+				<p>As with <a href="../hooks/Faction.html#">Faction</a>s, <a href="../hooks/Class.html#">Class</a>es get their own hooks for when players leave/join a class, etc. These hooks are only
+valid in class tables that are created in <code>schema/classes/sh_classname.lua</code>, and cannot be used like regular gamemode hooks.</p>
 
 				<!-- summary -->
 				<details open>
@@ -76,11 +74,10 @@ regular gamemode hooks.</p>
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
-									<li><span class="realm shared"></span><a href="#GetDefaultName">FACTION:GetDefaultName(client)</a></li>
-									<li><span class="realm server"></span><a href="#OnCharacterCreated">FACTION:OnCharacterCreated(client, character)</a></li>
-									<li><span class="realm server"></span><a href="#OnNameChanged">FACTION:OnNameChanged(client, oldValue, value)</a></li>
-									<li><span class="realm server"></span><a href="#OnSpawn">FACTION:OnSpawn(client)</a></li>
-									<li><span class="realm server"></span><a href="#OnTransferred">FACTION:OnTransferred(client)</a></li>
+									<li><span class="realm shared"></span><a href="#CanSwitchTo">CLASS:CanSwitchTo(client)</a></li>
+									<li><span class="realm server"></span><a href="#OnLeave">CLASS:OnLeave(client)</a></li>
+									<li><span class="realm server"></span><a href="#OnSet">CLASS:OnSet(client)</a></li>
+									<li><span class="realm server"></span><a href="#OnSpawn">CLASS:OnSpawn(client)</a></li>
 							</ul>
 					</div>
 				</details>
@@ -90,17 +87,17 @@ regular gamemode hooks.</p>
 
 						<section class="method">
 								<aside>
-										<code>function FACTION:GetDefaultName(client)
-	return "MPF-RCT." .. tostring(math.random(1, 99999))
+										<code>function CLASS:CanSwitchTo(client)
+	return client:IsAdmin() -- only admins allowed in this class!
 end
 </code>
 								</aside>
-							<header><a name="GetDefaultName"></a>
-								<h1><span class="realm shared"></span>FACTION:GetDefaultName(client)</h1>
+							<header><a name="CanSwitchTo"></a>
+								<h1><span class="realm shared"></span>CLASS:CanSwitchTo(client)</h1>
 
 
 
-								<p>Called when the default name for a character needs to be retrieved (i.e upon initial creation).</p>
+								<p>Whether or not a player can switch to this class.</p>
 							</header>
 
 
@@ -115,7 +112,7 @@ end
 													<span class="tag"><span class="type">player</span></span>
 
 
-												<p> Client to get the default name for</p>
+												<p> Client that wants to switch to this class</p>
 											</li>
 									</ul>
 
@@ -124,28 +121,22 @@ end
 								<ul>
 
 											<li>
-													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+													<span class="type">bool</span>
 
-												<p>Default name for the newly created character</p>
+												<p>True if the player is allowed to switch to this class</p>
 											</li>
 
 								</ul>
 
 						</section>
 						<section class="method">
-								<aside>
-										<code>function FACTION:OnCharacterCreated(client, character)
-	local inventory = character:GetInventory()
-	inventory:Add("pistol")
-end
-</code>
-								</aside>
-							<header><a name="OnCharacterCreated"></a>
-								<h1><span class="realm server"></span>FACTION:OnCharacterCreated(client, character)</h1>
+							<header><a name="OnLeave"></a>
+								<h1><span class="realm server"></span>CLASS:OnLeave(client)</h1>
 
 
 
-								<p>Called when a character has been initally created and assigned to this faction.</p>
+								<p>Called when a character has left this class and has joined a different one.  You can get the class the character has
+ has joined by calling <code>character:GetClass()</code>.</p>
 							</header>
 
 
@@ -160,19 +151,7 @@ end
 													<span class="tag"><span class="type">player</span></span>
 
 
-												<p> Client that owns the character</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">character</span>
-
-													<span class="tag"><a class="type" href="../classes/Character.html#">Character</a></span>
-
-
-												<p> Character that has been created</p>
+												<p> Player who left this class</p>
 											</li>
 									</ul>
 
@@ -180,21 +159,17 @@ end
 						</section>
 						<section class="method">
 								<aside>
-										<code>function FACTION:OnNameChanged(client, oldValue, value)
-	local character = client:GetCharacter()
-
-	if (string.StartWith(value, "MPF-OfC")) then
-		character:SetModel("models/policetrench.mdl")
-	end
+										<code>function CLASS:OnSet(client)
+	client:SetModel("models/police.mdl")
 end
 </code>
 								</aside>
-							<header><a name="OnNameChanged"></a>
-								<h1><span class="realm server"></span>FACTION:OnNameChanged(client, oldValue, value)</h1>
+							<header><a name="OnSet"></a>
+								<h1><span class="realm server"></span>CLASS:OnSet(client)</h1>
 
 
 
-								<p>Called when a character's name has changed.</p>
+								<p>Called when a character has joined this class.</p>
 							</header>
 
 
@@ -209,31 +184,7 @@ end
 													<span class="tag"><span class="type">player</span></span>
 
 
-												<p> Player whose character has had their name changed</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">oldValue</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
-
-												<p> Old name of the character</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">value</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
-
-												<p> New name of the character</p>
+												<p> Player who has joined this class</p>
 											</li>
 									</ul>
 
@@ -241,11 +192,11 @@ end
 						</section>
 						<section class="method">
 							<header><a name="OnSpawn"></a>
-								<h1><span class="realm server"></span>FACTION:OnSpawn(client)</h1>
+								<h1><span class="realm server"></span>CLASS:OnSpawn(client)</h1>
 
 
 
-								<p>Called when a character in this faction has spawned in the world.</p>
+								<p>Called when a character in this class has spawned in the world.</p>
 							</header>
 
 
@@ -261,40 +212,6 @@ end
 
 
 												<p> Player that has just spawned</p>
-											</li>
-									</ul>
-
-
-						</section>
-						<section class="method">
-								<aside>
-										<code>function FACTION:OnTransferred(client)
-	local character = client:GetCharacter()
-	character:SetModel(self.models[1])
-end
-</code>
-								</aside>
-							<header><a name="OnTransferred"></a>
-								<h1><span class="realm server"></span>FACTION:OnTransferred(client)</h1>
-
-
-
-								<p>Called when a player's character has been transferred to this faction.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">client</span>
-
-													<span class="tag"><span class="type">player</span></span>
-
-
-												<p> Player whose character has been transferred</p>
 											</li>
 									</ul>
 
