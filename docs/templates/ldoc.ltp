@@ -51,6 +51,9 @@
 					<h2>$(markup(module.summary))</h2>
 				</header>
 
+				<!-- description -->
+				<p>$(markup(module.description))</p>
+
 				<!-- summary -->
 				<details open>
 					<summary>Reference</summary>
@@ -66,9 +69,6 @@
 #						end
 					</div>
 				</details>
-
-				<!-- description -->
-				<p>$(markup(module.description))</p>
 
 				<!-- methods -->
 #				for kind, items in module.kinds() do
@@ -90,7 +90,10 @@
 									<div class="internal"></div>
 #								end
 
-								<a class="reference" href="$(repoReference(item))">View source &raquo;</a>
+#								if (item.module and item.module.type ~= "hooks") then
+									<a class="reference" href="$(repoReference(item))">View source &raquo;</a>
+#								end
+
 								<p>$(markup(ldoc.descript(item)))</p>
 							</header>
 

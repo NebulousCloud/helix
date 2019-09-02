@@ -394,7 +394,7 @@ if (CLIENT) then
 	--- Blurs the content underneath the given panel. This will fall back to a simple darkened rectangle if the player has
 	-- blurring disabled.
 	-- @realm client
-	-- @panel panel Panel to draw the blur for
+	-- @tparam panel panel Panel to draw the blur for
 	-- @number[opt=5] amount Intensity of the blur. This should be kept between 0 and 10 for performance reasons
 	-- @number[opt=0.2] passes Quality of the blur. This should be kept as default
 	-- @number[opt=255] alpha Opacity of the blur

@@ -2,6 +2,7 @@
 file = {
 	"gamemode",
 	"plugins",
+	"docs/hooks",
 	exclude = {"gamemode/core/libs/thirdparty"}
 }
 
@@ -22,12 +23,19 @@ custom_tags = {
 }
 
 custom_display_name_handler = function(item, default_handler)
-	if (item.type == "function" and item.module and item.module.type == "classmod") then
-		return item.module.mod_name .. default_handler(item):gsub(".+:", ":")
+	if (item.type == "function" and item.module) then
+		if (item.module.type == "classmod" or item.module.type == "panel") then
+			return item.module.mod_name .. default_handler(item):gsub(".+:", ":")
+		elseif (item.module.type == "hooks") then
+			return item.module.mod_name:upper() .. ":" .. default_handler(item)
+		end
 	end
 
 	return default_handler(item)
 end
+
+new_type("hooks", "Hooks", true)
+new_type("panel", "Panels", true)
 
 -- helix types
 tparam_alias("char", "Character")
@@ -44,7 +52,6 @@ tparam_alias("player", "player")
 tparam_alias("entity", "entity")
 tparam_alias("color", "color")
 tparam_alias("tab", "table")
-tparam_alias("panel", "panel")
 tparam_alias("material", "material")
 tparam_alias("vector", "vector")
 tparam_alias("angle", "angle")
