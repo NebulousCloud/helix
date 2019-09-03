@@ -95,7 +95,12 @@ ix.command.Add("CharGiveFlag", {
 		end
 
 		target:GiveFlags(flags)
-		ix.util.NotifyLocalized("flagGive", nil, client:GetName(), target:GetName(), flags)
+
+		for _, v in ipairs(player.GetAll()) do
+			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
+				v:NotifyLocalized("flagGive", client:GetName(), target:GetName(), flags)
+			end
+		end
 	end
 })
 
@@ -115,7 +120,12 @@ ix.command.Add("CharTakeFlag", {
 		end
 
 		target:TakeFlags(flags)
-		ix.util.NotifyLocalized("flagTake", nil, client:GetName(), flags, target:GetName())
+
+		for _, v in ipairs(player.GetAll()) do
+			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
+				v:NotifyLocalized("flagTake", client:GetName(), flags, target:GetName())
+			end
+		end
 	end
 })
 
@@ -141,7 +151,11 @@ ix.command.Add("CharSetModel", {
 		target:SetModel(model)
 		target:GetPlayer():SetupHands()
 
-		ix.util.NotifyLocalized("cChangeModel", nil, client:GetName(), target:GetName(), model)
+		for _, v in ipairs(player.GetAll()) do
+			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
+				v:NotifyLocalized("cChangeModel", client:GetName(), target:GetName(), model)
+			end
+		end
 	end
 })
 
@@ -156,7 +170,11 @@ ix.command.Add("CharSetSkin", {
 		target:SetData("skin", skin)
 		target:GetPlayer():SetSkin(skin or 0)
 
-		ix.util.NotifyLocalized("cChangeSkin", nil, client:GetName(), target:GetName(), skin or 0)
+		for _, v in ipairs(player.GetAll()) do
+			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
+				v:NotifyLocalized("cChangeSkin", client:GetName(), target:GetName(), skin or 0)
+			end
+		end
 	end
 })
 
@@ -245,8 +263,13 @@ ix.command.Add("CharSetName", {
 			end, target:GetName())
 		end
 
-		ix.util.NotifyLocalized("cChangeName", nil, client:GetName(), target:GetName(), newName)
 		target:SetName(newName:gsub("#", "#​"))
+
+		for _, v in ipairs(player.GetAll()) do
+			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
+				v:NotifyLocalized("cChangeName", client:GetName(), target:GetName(), newName)
+			end
+		end
 	end
 })
 
@@ -291,11 +314,15 @@ ix.command.Add("CharKick", {
 	adminOnly = true,
 	arguments = ix.type.character,
 	OnRun = function(self, client, target)
-		ix.util.NotifyLocalized("charKick", nil, client:GetName(), target:GetName())
-
 		target:Save(function()
 			target:Kick()
 		end)
+
+		for _, v in ipairs(player.GetAll()) do
+			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
+				v:NotifyLocalized("charKick", client:GetName(), target:GetName())
+			end
+		end
 	end
 })
 
@@ -305,12 +332,16 @@ ix.command.Add("CharBan", {
 	arguments = ix.type.character,
 	adminOnly = true,
 	OnRun = function(self, client, target)
-		ix.util.NotifyLocalized("charBan", nil, client:GetName(), target:GetName())
-
 		target:SetData("banned", true)
 		target:Save(function()
 			target:Kick()
 		end)
+
+		for _, v in ipairs(player.GetAll()) do
+			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
+				v:NotifyLocalized("charBan", client:GetName(), target:GetName())
+			end
+		end
 	end
 })
 
@@ -478,7 +509,9 @@ ix.command.Add("PlyWhitelist", {
 		if (faction) then
 			if (target:SetWhitelisted(faction.index, true)) then
 				for _, v in ipairs(player.GetAll()) do
-					v:NotifyLocalized("whitelist", client:GetName(), target:GetName(), L(faction.name, v))
+					if (self:OnCheckAccess(v) or v == target) then
+						v:NotifyLocalized("whitelist", client:GetName(), target:GetName(), L(faction.name, v))
+					end
 				end
 			end
 		else
@@ -536,7 +569,9 @@ ix.command.Add("PlyUnwhitelist", {
 
 			if (IsValid(targetPlayer) and targetPlayer:SetWhitelisted(faction.index, false)) then
 				for _, v in ipairs(player.GetAll()) do
-					v:NotifyLocalized("unwhitelist", client:GetName(), targetPlayer:GetName(), L(faction.name, v))
+					if (self:OnCheckAccess(v) or v == targetPlayer) then
+						v:NotifyLocalized("unwhitelist", client:GetName(), targetPlayer:GetName(), L(faction.name, v))
+					end
 				end
 			else
 				local steamID64 = util.SteamIDTo64(target)
@@ -561,7 +596,9 @@ ix.command.Add("PlyUnwhitelist", {
 							updateQuery:Execute()
 
 							for _, v in ipairs(player.GetAll()) do
-								v:NotifyLocalized("unwhitelist", client:GetName(), target, L(faction.name, v))
+								if (self:OnCheckAccess(v)) then
+									v:NotifyLocalized("unwhitelist", client:GetName(), target, L(faction.name, v))
+								end
 							end
 						end
 					end)
