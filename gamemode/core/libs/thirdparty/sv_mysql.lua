@@ -531,7 +531,9 @@ function mysql:Connect(host, username, password, database, port, socket, flags)
 			ErrorNoHalt(string.format(MODULE_NOT_EXIST, self.module))
 		end
 	elseif (self.module == "sqlite") then
-		mysql:OnConnected()
+		timer.Simple(0, function()
+			mysql:OnConnected()
+		end)
 	end
 end
 
