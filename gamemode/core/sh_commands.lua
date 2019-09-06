@@ -256,7 +256,6 @@ ix.command.Add("CharSetName", {
 		bit.bor(ix.type.text, ix.type.optional)
 	},
 	OnRun = function(self, client, target, newName)
-
 		for _, v in ipairs(player.GetAll()) do
 			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
 				v:NotifyLocalized("cChangeName", client:GetName(), target:GetName(), newName)
@@ -271,7 +270,6 @@ ix.command.Add("CharSetName", {
 		end
 
 		target:SetName(newName:gsub("#", "#​"))
-
 	end
 })
 
