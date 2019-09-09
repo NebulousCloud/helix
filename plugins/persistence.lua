@@ -89,24 +89,27 @@ if (SERVER) then
 
 		for _, v in ipairs(entities) do
 			local entity = ents.Create(v.Class)
+
+			if entity then
 				entity:SetPos(v.Pos)
 				entity:SetAngles(v.Angle)
 				entity:SetModel(v.Model)
 				entity:SetSkin(v.Skin)
 				entity:SetColor(v.Color)
 				entity:SetMaterial(v.Material)
-			entity:Spawn()
-			entity:Activate()
+				entity:Spawn()
+				entity:Activate()
 
-			local physicsObject = entity:GetPhysicsObject()
+				local physicsObject = entity:GetPhysicsObject()
 
-			if (IsValid(physicsObject)) then
-				physicsObject:EnableMotion(v.Movable)
+				if (IsValid(physicsObject)) then
+					physicsObject:EnableMotion(v.Movable)
+				end
+
+				self.stored[#self.stored + 1] = entity
+
+				entity:SetNetVar("Persistent", true)
 			end
-
-			self.stored[#self.stored + 1] = entity
-
-			entity:SetNetVar("Persistent", true)
 		end
 	end
 
