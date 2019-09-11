@@ -68,14 +68,23 @@
 		<!-- library functions -->
 		<article>
 				<header>
-					<h1>ix.class</h1>
-					<h2>Helper library for loading/getting class information.</h2>
+					<h1>ix.log</h1>
+					<h2>Logging helper functions.</h2>
 				</header>
 
 				<!-- description -->
-				<p>Classes are temporary assignments for characters - analogous to a "job" in a faction. For example, you may have a police faction
-in your schema, and have "police recruit" and "police chief" as different classes in your faction. Anyone can join a class in
-their faction by default, but you can restrict this as you need with <code>CLASS.CanSwitchTo</code>.</p>
+				<p>
+
+
+<p>Predefined flags:</p>
+<pre><code>FLAG_NORMAL
+FLAG_SUCCESS
+FLAG_WARNING
+FLAG_DANGER
+FLAG_SERVER
+FLAG_DEV
+</code></pre>
+</p>
 
 				<!-- summary -->
 				<details open>
@@ -84,10 +93,8 @@ their faction by default, but you can restrict this as you need with <code>CLASS
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
-									<li><span class="realm shared"></span><a href="#ix.class.LoadFromDir">ix.class.LoadFromDir(directory)</a></li>
-									<li><span class="realm shared"></span><a href="#ix.class.CanSwitchTo">ix.class.CanSwitchTo(client, class)</a></li>
-									<li><span class="realm shared"></span><a href="#ix.class.Get">ix.class.Get(identifier)</a></li>
-									<li><span class="realm shared"></span><a href="#ix.class.GetPlayers">ix.class.GetPlayers(class)</a></li>
+									<li><span class="realm server"></span><a href="#ix.log.AddType">ix.log.AddType(logType, format, flag)</a></li>
+									<li><span class="realm server"></span><a href="#ix.log.Add">ix.log.Add(client, logType, ...)</a></li>
 							</ul>
 					</div>
 				</details>
@@ -96,14 +103,13 @@ their faction by default, but you can restrict this as you need with <code>CLASS
 					<h1 class="title">Functions</h1>
 
 						<section class="method">
-							<header><a name="ix.class.LoadFromDir"></a>
-								<h1><span class="realm shared"></span>ix.class.LoadFromDir(directory)</h1>
+							<header><a name="ix.log.AddType"></a>
+								<h1><span class="realm server"></span>ix.log.AddType(logType, format, flag)</h1>
 
-									<div class="internal"></div>
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L24">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_log.lua#L58">View source &raquo;</a>
 
-								<p>Loads classes from a directory.</p>
+								<p>Adds a log type</p>
 							</header>
 
 
@@ -113,25 +119,49 @@ their faction by default, but you can restrict this as you need with <code>CLASS
 									<ul>
 
 											<li>
-												<span class="tag parameter">directory</span>
+												<span class="tag parameter">logType</span>
 
 													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p> The path to the class files.</p>
+												<p> Log category</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">format</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> The string format that log messages should use</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">flag</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Log level</p>
 											</li>
 									</ul>
 
 
 						</section>
 						<section class="method">
-							<header><a name="ix.class.CanSwitchTo"></a>
-								<h1><span class="realm shared"></span>ix.class.CanSwitchTo(client, class)</h1>
+							<header><a name="ix.log.Add"></a>
+								<h1><span class="realm server"></span>ix.log.Add(client, logType, ...)</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L80">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_log.lua#L100">View source &raquo;</a>
 
-								<p>Determines if a player is allowed to join a specific class.</p>
+								<p>Add a log message</p>
 							</header>
 
 
@@ -146,111 +176,33 @@ their faction by default, but you can restrict this as you need with <code>CLASS
 													<span class="tag"><span class="type">player</span></span>
 
 
-												<p> Player to check</p>
+												<p> Player who instigated the log</p>
 											</li>
 									</ul>
 
 									<ul>
 
 											<li>
-												<span class="tag parameter">class</span>
+												<span class="tag parameter">logType</span>
 
-													<span class="tag"><span class="type">number</span></span>
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p> Index of the class</p>
+												<p> Log category</p>
 											</li>
 									</ul>
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="type">bool</span>
-
-												<p>Whether or not the player can switch to the class</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="ix.class.Get"></a>
-								<h1><span class="realm shared"></span>ix.class.Get(identifier)</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L116">View source &raquo;</a>
-
-								<p>Retrieves a class table.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
 
 									<ul>
 
 											<li>
-												<span class="tag parameter">identifier</span>
-
-													<span class="tag"><span class="type">number</span></span>
+												<span class="tag parameter">...</span>
 
 
-												<p> Index of the class</p>
+
+												<p> Arguments to pass to the log</p>
 											</li>
 									</ul>
 
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>
-
-												<p>Class table</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="ix.class.GetPlayers"></a>
-								<h1><span class="realm shared"></span>ix.class.GetPlayers(class)</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L124">View source &raquo;</a>
-
-								<p>Retrieves the players in a class</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">class</span>
-
-													<span class="tag"><span class="type">number</span></span>
-
-
-												<p> Index of the class</p>
-											</li>
-									</ul>
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>
-
-												<p>Table of players in the class</p>
-											</li>
-
-								</ul>
 
 						</section>
 		</article>
