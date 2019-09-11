@@ -125,9 +125,9 @@ end
 -- @player client Player who is speaking
 -- @string message Message to parse
 -- @bool[opt=false] bNoSend Whether or not to send the chat message after parsing
--- @treturn[1] string Name of the chat type
--- @treturn[2] string Message that was parsed
--- @treturn[3] bool Whether or not the speaker should be anonymous
+-- @treturn string Name of the chat type
+-- @treturn string Message that was parsed
+-- @treturn bool Whether or not the speaker should be anonymous
 function ix.chat.Parse(client, message, bNoSend)
 	local anonymous = false
 	local chatType = "ic"

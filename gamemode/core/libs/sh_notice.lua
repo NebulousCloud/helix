@@ -1,6 +1,6 @@
 
 --- Notification helper functions
--- @module ix.util
+-- @module ix.notice
 
 if (SERVER) then
 	util.AddNetworkString("ixNotify")
