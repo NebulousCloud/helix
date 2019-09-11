@@ -19,7 +19,8 @@ CAMI.RegisterPrivilege({
 --- Registers a new chat type with the information provided.
 -- @realm shared
 -- @string chatType Name of the chat type
--- @tab data Table Properties and functions to assign to this chat class. If fields are missing from the table, then it will use a default value
+-- @tab data Table Properties and functions to assign to this chat class. If fields are missing from the table, then it
+-- will use a default value
 -- @usage ix.chat.Register("me", {
 -- 	format = "** %s %s",
 -- 	GetColor = Color(255, 50, 50),
