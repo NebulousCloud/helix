@@ -90,7 +90,7 @@ if (SERVER) then
 		for _, v in ipairs(entities) do
 			local entity = ents.Create(v.Class)
 
-			if IsValid(entity) then
+			if (IsValid(entity)) then
 				entity:SetPos(v.Pos)
 				entity:SetAngles(v.Angle)
 				entity:SetModel(v.Model)
