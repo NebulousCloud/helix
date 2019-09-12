@@ -20,7 +20,7 @@ functionality whenever the flag is added or removed. For example:
 	Entity(1):GetCharacter():TakeFlags("z")
 	> z flag given: false
 
-	print(Entity(1):GetCharacter():HasFlag("z"))
+	print(Entity(1):GetCharacter():HasFlags("z"))
 	> false
 ]]
 -- @module ix.flag

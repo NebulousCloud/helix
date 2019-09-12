@@ -1,9 +1,15 @@
 
+--- Notification helper functions
+-- @module ix.notice
+
 if (SERVER) then
 	util.AddNetworkString("ixNotify")
 	util.AddNetworkString("ixNotifyLocalized")
 
-	-- Sends a notification to a specified recipient.
+	--- Sends a notification to a specified recipient.
+	-- @realm server
+	-- @string message Message to notify
+	-- @player[opt=nil] recipient Player to be notified
 	function ix.util.Notify(message, recipient)
 		net.Start("ixNotify")
 		net.WriteString(message)
@@ -15,7 +21,11 @@ if (SERVER) then
 		end
 	end
 
-	-- Sends a translated notification.
+	--- Sends a translated notification to a specified recipient.
+	-- @realm server
+	-- @string message Message to notify
+	-- @player[opt=nil] recipient Player to be notified
+	-- @param ... Arguments to pass to the translated message
 	function ix.util.NotifyLocalized(message, recipient, ...)
 		net.Start("ixNotifyLocalized")
 		net.WriteString(message)
