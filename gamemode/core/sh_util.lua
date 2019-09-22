@@ -43,7 +43,7 @@ function ix.util.Include(fileName, realm)
 
 	-- Only include server-side if we're on the server.
 	if ((realm == "server" or fileName:find("sv_")) and SERVER) then
-		include(fileName)
+		return include(fileName)
 	-- Shared is included by both server and client.
 	elseif (realm == "shared" or fileName:find("shared.lua") or fileName:find("sh_")) then
 		if (SERVER) then
@@ -51,13 +51,13 @@ function ix.util.Include(fileName, realm)
 			AddCSLuaFile(fileName)
 		end
 
-		include(fileName)
+		return include(fileName)
 	-- File is sent to client, included on client.
 	elseif (realm == "client" or fileName:find("cl_")) then
 		if (SERVER) then
 			AddCSLuaFile(fileName)
 		else
-			include(fileName)
+			return include(fileName)
 		end
 	end
 end
