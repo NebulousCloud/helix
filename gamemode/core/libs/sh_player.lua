@@ -132,7 +132,7 @@ do
 				return
 			end
 
-			for _, v in pairs(client:GetWeapons()) do
+			for _, v in ipairs(client:GetWeapons()) do
 				if (v:GetClass() == className) then
 					hook.Run("PlayerWeaponChanged", client, v)
 					break

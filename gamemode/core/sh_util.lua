@@ -1366,7 +1366,7 @@ do
 
 				self.ixRestrictWeps = self.ixRestrictWeps or {}
 
-				for _, v in pairs(self:GetWeapons()) do
+				for _, v in ipairs(self:GetWeapons()) do
 					self.ixRestrictWeps[#self.ixRestrictWeps + 1] = v:GetClass()
 					v:Remove()
 				end
@@ -1527,7 +1527,7 @@ do
 								end
 							end
 
-							for _, v in pairs(self:GetWeapons()) do
+							for _, v in ipairs(self:GetWeapons()) do
 								v:SetClip1(0)
 							end
 						end
@@ -1571,7 +1571,7 @@ do
 					self:SetAction("@wakingUp", nil, nil, entity.ixStart, entity.ixFinish)
 				end
 
-				for _, v in pairs(self:GetWeapons()) do
+				for _, v in ipairs(self:GetWeapons()) do
 					entity.ixWeapons[#entity.ixWeapons + 1] = {class = v:GetClass(), item = v.ixItem}
 
 					local clip = v:Clip1()
