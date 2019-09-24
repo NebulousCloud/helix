@@ -110,64 +110,69 @@ if (CLIENT) then
 		return position + boneOffset
 	end
 
-	function PLUGIN:PostPlayerDraw(client)
-		if (client == LocalPlayer()) then
-			return
-		end
+	function PLUGIN:PostDrawTranslucentRenderables()
+		local client = LocalPlayer()
+		local position = client:GetPos()
 
-		local distance = client:GetPos():DistToSqr(LocalPlayer():GetPos())
-		local moveType = client:GetMoveType()
-
-		if (!IsValid(client) or !client:Alive() or
-			(moveType != MOVETYPE_WALK and moveType != MOVETYPE_NONE) or
-			!client.ixChatClassText or
-			distance >= client.ixChatClassRange) then
-			return
-		end
-
-		local text = client.ixChatClassText
-		local range = client.ixChatClassRange
-
-		if (!text) then
-			return
-		end
-
-		local bAnimation = !ix.option.Get("disableAnimations", false)
-		local fraction
-
-		if (bAnimation) then
-			local bComplete = client.ixChatClassTween:update(FrameTime())
-
-			if (bComplete and !client.ixChatStarted) then
-				client.ixChatClassText = nil
-				client.ixChatClassRange = nil
-
-				return
+		for _, v in ipairs(player.GetAll()) do
+			if (v == client) then
+				continue
 			end
 
-			fraction = client.ixChatClassAnimation
-		else
-			fraction = 1
+			local distance = v:GetPos():DistToSqr(position)
+			local moveType = v:GetMoveType()
+
+			if (!IsValid(v) or !v:Alive() or
+				(moveType != MOVETYPE_WALK and moveType != MOVETYPE_NONE) or
+				!v.ixChatClassText or
+				distance >= v.ixChatClassRange) then
+				continue
+			end
+
+			local text = v.ixChatClassText
+			local range = v.ixChatClassRange
+
+			if (!text) then
+				continue
+			end
+
+			local bAnimation = !ix.option.Get("disableAnimations", false)
+			local fraction
+
+			if (bAnimation) then
+				local bComplete = v.ixChatClassTween:update(FrameTime())
+
+				if (bComplete and !v.ixChatStarted) then
+					v.ixChatClassText = nil
+					v.ixChatClassRange = nil
+
+					continue
+				end
+
+				fraction = v.ixChatClassAnimation
+			else
+				fraction = 1
+			end
+
+			local angle = EyeAngles()
+			angle:RotateAroundAxis(angle:Forward(), 90)
+			angle:RotateAroundAxis(angle:Right(), 90)
+
+			cam.Start3D2D(self:GetTypingIndicatorPosition(v), Angle(0, angle.y, 90), 0.05)
+				surface.SetFont("ixTypingIndicator")
+
+				local _, textHeight = surface.GetTextSize(text)
+				local alpha = bAnimation and ((1 - math.min(distance, range) / range) * 255 * fraction) or 255
+
+				draw.SimpleTextOutlined(text, "ixTypingIndicator", 0,
+					-textHeight * 0.5 * fraction,
+					ColorAlpha(textColor, alpha),
+					TEXT_ALIGN_CENTER,
+					TEXT_ALIGN_CENTER, 4,
+					ColorAlpha(shadowColor, alpha)
+				)
+			cam.End3D2D()
 		end
-
-		local angle = EyeAngles()
-		angle:RotateAroundAxis(angle:Forward(), 90)
-		angle:RotateAroundAxis(angle:Right(), 90)
-
-		cam.Start3D2D(self:GetTypingIndicatorPosition(client), Angle(0, angle.y, 90), 0.05)
-			surface.SetFont("ixTypingIndicator")
-
-			local _, textHeight = surface.GetTextSize(text)
-			local alpha = bAnimation and ((1 - math.min(distance, range) / range) * 255 * fraction) or 255
-
-			draw.SimpleTextOutlined(text, "ixTypingIndicator", 0,
-				-textHeight * 0.5 * fraction,
-				ColorAlpha(textColor, alpha),
-				TEXT_ALIGN_CENTER,
-				TEXT_ALIGN_CENTER, 4,
-				ColorAlpha(shadowColor, alpha)
-			)
-		cam.End3D2D()
 	end
 
 	net.Receive("ixTypeClass", function()
