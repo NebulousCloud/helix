@@ -256,17 +256,17 @@ ix.command.Add("CharSetName", {
 		bit.bor(ix.type.text, ix.type.optional)
 	},
 	OnRun = function(self, client, target, newName)
-		for _, v in ipairs(player.GetAll()) do
-			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
-				v:NotifyLocalized("cChangeName", client:GetName(), target:GetName(), newName)
-			end
-		end
-
-		-- display string request if no name was specified
+		-- display string request panel if no name was specified
 		if (newName:len() == 0) then
 			return client:RequestString("@chgName", "@chgNameDesc", function(text)
 				ix.command.Run(client, "CharSetName", {target:GetName(), text})
 			end, target:GetName())
+		end
+
+		for _, v in ipairs(player.GetAll()) do
+			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
+				v:NotifyLocalized("cChangeName", client:GetName(), target:GetName(), newName)
+			end
 		end
 
 		target:SetName(newName:gsub("#", "#​"))
