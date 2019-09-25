@@ -256,7 +256,6 @@ ix.command.Add("CharSetName", {
 		bit.bor(ix.type.text, ix.type.optional)
 	},
 	OnRun = function(self, client, target, newName)
-		
 		-- display string request panel if no name was specified
 		if (newName:len() == 0) then
 			return client:RequestString("@chgName", "@chgNameDesc", function(text)
