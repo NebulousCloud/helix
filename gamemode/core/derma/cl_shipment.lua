@@ -104,6 +104,13 @@ function PANEL:SetItems(entity, items)
 	end
 end
 
+function PANEL:Close()
+	net.Start("ixShipmentClose")
+	net.SendToServer()
+
+	self:Remove()
+end
+
 function PANEL:Think()
 	if (self.items and !IsValid(self.entity)) then
 		self:Remove()
