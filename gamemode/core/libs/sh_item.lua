@@ -138,10 +138,22 @@ function ix.item.NewInv(owner, invType, callback)
 	query:Execute()
 end
 
+--- Retrieves an item table.
+-- @realm shared
+-- @param identifier Unique ID of the item
+-- @treturn item Item table
+-- @usage print(ix.item.Get("example"))
+-- > "item[example][0]"
 function ix.item.Get(identifier)
 	return ix.item.base[identifier] or ix.item.list[identifier]
 end
 
+--- Retrieves an inventory table.
+-- @realm shared
+-- @param invID Index of the inventory
+-- @treturn inventory Inventory table
+-- @usage print(ix.item.GetInv(123))
+-- > "inventory[123]"
 function ix.item.GetInv(invID)
 	return ix.item.inventories[invID]
 end
