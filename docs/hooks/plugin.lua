@@ -366,7 +366,7 @@ function OnItemSpawned(entity)
 end
 
 --- @realm shared
-function OnItemTransferred(self, curInv, inventory)
+function OnItemTransferred(item, curInv, inventory)
 end
 
 --- @realm client
