@@ -2,9 +2,17 @@
 # local root = ldoc.css:gsub("ldoc.css", "")
 # local iter = ldoc.modules.iter
 # local repo = "https://github.com/nebulouscloud/helix/"
+# local pageTitle = module and (ldoc.display_name(module) .. " - " .. ldoc.title) or ldoc.title
 
 # local function markup(text, item)
 #	return ldoc.markup(text, item, ldoc.plain)
+# end
+
+# local function moduleDescription(mod)
+#	if (mod.type == "topic") then
+#		return mod.body:gsub(mod.display_name, ""):gsub("#", ""):sub(1, 256) .. "..."
+#	end
+#	return mod.summary
 # end
 
 # local function repoReference(item)
@@ -13,7 +21,15 @@
 
 <html>
 	<head>
-		<title>$(ldoc.title)</title>
+		<title>$(pageTitle)</title>
+
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content="$(pageTitle)" />
+		<meta property="og:site_name" content="Helix Documentation" />
+
+#		if (module) then
+			<meta property="og:description" content="$(moduleDescription(module))" />
+#		end
 
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
 		<link rel="stylesheet" href="$(ldoc.css)" />
