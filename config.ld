@@ -15,7 +15,8 @@ style = "docs/css"
 template = "docs/templates"
 format = "markdown"
 ignore = true
-kind_names = {module = "Libraries"}
+topics = "docs/manual"
+kind_names = {module = "Libraries", topic = "Manual"}
 
 custom_tags = {
 	{"realm", hidden = true},
