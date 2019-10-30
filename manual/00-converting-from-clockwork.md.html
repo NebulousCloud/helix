@@ -1,0 +1,467 @@
+
+
+
+
+<html>
+	<head>
+		<title>Helix Documentation</title>
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
+		<link rel="stylesheet" href="../ldoc.css" />
+		<link rel="stylesheet" href="../highlight.css" />
+	</head>
+
+	<body>
+		<aside>
+			<h1>Helix</h1>
+
+			<!-- project contents -->
+			<section>
+						<h2>Manual</h2>
+
+						<ul>
+								<li><a href="../manual/00-converting-from-clockwork.md.html">Clockwork to Helix Migration</a></li>
+						</ul>
+						<h2>Hooks</h2>
+
+						<ul>
+								<li><a href="../hooks/Class.html">Class</a></li>
+								<li><a href="../hooks/Faction.html">Faction</a></li>
+								<li><a href="../hooks/Plugin.html">Plugin</a></li>
+						</ul>
+						<h2>Panels</h2>
+
+						<ul>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
+								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+						</ul>
+						<h2>Libraries</h2>
+
+						<ul>
+								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
+								<li><a href="../libraries/ix.char.html">ix.char</a></li>
+								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
+								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
+								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
+								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
+								<li><a href="../libraries/ix.log.html">ix.log</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
+								<li><a href="../libraries/ix.html">ix</a></li>
+								<li><a href="../libraries/ix.act.html">ix.act</a></li>
+						</ul>
+						<h2>Classes</h2>
+
+						<ul>
+								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Inventory.html">Inventory</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
+						</ul>
+			</section>
+		</aside>
+
+		<!-- library functions -->
+		<article>
+
+<h1>Clockwork to Helix Migration</h1>
+
+<p>If you are here, you probably want to be converting your code from another framework to Helix. Doing so should not be a difficult task. Most of the previous functions are probably within Helix in one form or another! This means all you need to do is match <em>x</em> function found in the old framework to <em>y</em> function in Helix. Some headings will contain a link - this will bring you to the documentation for Helix's equivalent library or class.</p>
+
+<p>This tutorial assumes basic to intermediate knowledge and experience with Garry's Mod Lua.</p>
+
+<p><strong>Before you start!</strong> You will notice that Helix uses client for the variable that represents a player. Clockwork uses player for the variable instead, but this will conflict with the player library. So if you see <code>_player</code> being used in Clockwork, it means the Garry's Mod player library. This is just a preference and does not affect anything besides appear. So keep in mind throughout the tutorial, you may see player being used for Clockwork code and client being used for Helix code. They represent the same thing, just with a different name.</p>
+
+<p>If you are converting Clockwork code to Helix, keep in mind that <code>_player</code> is not defined so you will need to either define <code>_player</code> yourself or switch it to player instead and change the variable name to client for player objects.</p>
+
+<h1>Basics of Conversion</h1>
+
+<p><a name="Folders"></a></p>
+<h2>Folders</h2>
+<p>Clockwork code and file structure is not too different from Helix. In the schema, the plugins folder and schema folder stay in the same place. There are some minor differences in naming however:</p>
+
+<ul>
+    <li>The <code>schema/entities</code> folder should be moved outside out of the schema folder.</li>
+    <li>The <code>libraries</code> folder needs to be renamed to <code>libs</code> to load.</li>
+    <li>The <code>commands</code> tab will not load as each command is now defined in a single shared file, does not matter which one.</li>
+</ul>
+
+<p><a name="Deriving_from_Helix"></a></p>
+<h2>Deriving from Helix</h2>
+<p>This is pretty important. If you want to use Helix as the base, you need to set it as the base. So, go to your Clockwork schema's <code>gamemode</code> folder. Inside should be two files: <code>init.lua </code>and <code>cl_init.lua</code>. Open both, and you should see something along the lines of <code>DeriveGamemode(&quot;Clockwork&quot;)</code>. Change this to <code>DeriveGamemode(&quot;helix&quot;)</code>.</p>
+
+<h1>The Schema</h1>
+
+<p><a name="Introduction"></a></p>
+<h2>Introduction</h2>
+<p>Inside of the <code>schema</code> folder of the actual schema, you should see a file named <code>sh_schema.lua</code>. This is the main schema file in both Clockwork and Helix. Most of your changes may actually be within this file.</p>
+
+<p><a name="Including_Files"></a></p>
+<h2>Including Files</h2>
+<p>Both frameworks come with a utility function to include a file without worrying about sending them to the client and stuff. In Clockwork, this function is <code>Clockwork.kernel:IncludePrefixed(&quot;sh_myfile.lua&quot;)</code>. Change this to <code>ix.util.Include(&quot;sh_myfile.lua&quot;) </code>and save.</p>
+
+<h1>The Plugin</h1>
+
+<p><a name="Introduction"></a></p>
+<h2>Introduction</h2>
+<p>Plugins serve as a means to add on to a schema or framework without directly modifying either. This allows for easier modifications that can be added/removed with ease. It is recommended that you keep all custom modifications left to plugins rather than editing the framework or the schema if possible.</p>
+
+<p><a name="Structure"></a></p>
+<h2>Structure</h2>
+<p>All plugins in Clockwork and Helix go into the <code>plugins</code> folder. However, there are many differences with the CW plugin structure. First of all, there are two things you see when you open a plugin folder: <code>plugin</code> again and <code>plugin.ini</code>.</p>
+
+<p>Helix only has one file needed: <code>sh_plugin.lua</code> which acts like <code>sh_schema.lua</code> but for plugins.</p>
+
+<p><a name="Conversion"></a></p>
+<h2>Conversion</h2>
+<p>The first step is to move all of the contents from the <code>plugin</code> folder to the main folder of the plugin folder. The <code>sh_plugin.lua</code> file needs to be changed to provide basic information about the plugin.You need to define three things in <code>sh_plugin.lua</code> which can be found within the <code>plugin.ini</code> file:</p>
+
+<ul>
+    <li><code>PLUGIN.name = &quot;Plugin Name&quot;</code></li>
+    <li><code>PLUGIN.author = &quot;Plugin Author&quot;</code></li>
+    <li><code>PLUGIN.description = &quot;Plugin Description&quot;</code></li>
+</ul>
+
+<p>If the plugin uses a special variable (e.g. <code>cwPluginName</code>) for the plugin, change it to <code>PLUGIN</code>.</p>
+
+<ul>
+    <li>Note that the <code>PLUGIN</code> table is removed after the plugin is loaded. So if you want to use <code>PLUGIN</code> after the plugin has loaded (such as in console commands, in entities, etc.), add <code>local PLUGIN = PLUGIN</code> at the top.</li>
+    <li>You can see if a global variable is defined for it by looking for <code>PLUGIN:SetGlobalAlias(&quot;cwMyPlugin&quot;)</code>. So, one would change <code>cwMyPlugin</code> to <code>PLUGIN</code>.</li>
+</ul>
+
+<h1>The <a href="../classes/Character.html#">Character</a> Object</h1>
+<p>One main thing that is very notable is how the character is referenced using <code>client:GetCharacter()</code> which returns a character object. The way the object works is just like an entity you spawn. It has its own properties like the model, color, etc. that makes it unique. You can access all the characters in a table which stores loaded characters with <a href="../libraries/ix.char.html#ix.char.loaded">ix.char.loaded</a>.</p>
+
+<p>The character object comes with many predefined methods. You can look at how they are defined <a href="https://github.com/NebulousCloud/helix/blob/master/gamemode/core/meta/sh_character.lua">by clicking here</a>. The character object makes it very simple to manager character information.</p>
+
+<p>You will notice throughout the framework, the character object is used a lot. The use of the character object makes a large barrier between what belongs to the character and what belongs to the player. For example: flags, models, factions, data, and other things are stored on the character and can be accessed by the character object.</p>
+
+<p>In Clockwork, there is no use of an object. Instead, the character information is intertwined with the player object. For example:</p>
+
+<pre><code> -- in Clockwork
+ player:SetCharacterData("foo", "bar")
+
+ -- in Helix
+ client:GetCharacter():SetData("foo", "bar")
+</code></pre>
+
+
+<p>The use of the character object allows you to access other characters a player might own without needing to have them be the active character, or even access them when the player is not on the server. Overall, the use of the character object may seem like a complex concept, but will simplify a lot of things once you get the hang of the idea.</p>
+
+<p>You can see the documented methods for the character object here: <a href="https://nebulouscloud.github.io/helix/classes/Character.html">https://nebulouscloud.github.io/helix/classes/Character.html</a></p>
+
+<h1>The Libraries</h1>
+
+<p><a name="Animations___ix_anim__"></a></p>
+<h2>Animations (<a href="../libraries/ix.anim.html#">ix.anim</a>)</h2>
+<p>Clockwork features many functions to set up animations for a specific model. Helix too has this functionality. Helix has one function instead that pairs a model to a specific "animation class" (grouping of animation types). So, all one needs to do is find the appropriate animation class to match the model with. Looking at the Clockwork function name should tell you.</p>
+
+<p>You can view the Helix version here which contains information about the function to use and what animation classes you can use at <a href="https://nebulouscloud.github.io/helix/libraries/ix.anim.html">https://nebulouscloud.github.io/helix/libraries/ix.anim.html</a>. An example:</p>
+
+<pre><code> -- before
+ Clockwork.animation:AddCivilProtectionModel("models/mymodel.mdl")
+
+ -- after
+ ix.anim.SetModelClass("models/mymodel.mdl", "metrocop")
+</code></pre>
+
+
+<p><a name="Attributes___ix_attributes__"></a></p>
+<h2>Attributes (<code>ix.attributes</code>)</h2>
+<p>Attributes allow the player to boost certain abilities over time. Both frameworks require one to register attributes, but they are done differently. In Clockwork, the <code>ATTRIBUTE</code> table needs to be defined and registered manually. In Helix, the <code>ATTRIBUTE</code> table is automatically defined and registered for you. All you need to do is have <code>ATTRIBUTE.value = &quot;value&quot;</code>. The basic parts of the attribute needed is <code>ATTRIBUTE.name</code> and <code>ATTRIBUTE.description</code>.</p>
+
+<p>One extra feature for attributes in Helix is <code>ATTRIBUTE:OnSetup(client, value)</code> which is a function that gets called on spawn to apply any effects. For example, the stamina attribute changes the player's run speed by adding the amount of stamina points the player has.</p>
+
+<p>You can find an example at <a href="https://github.com/NebulousCloud/helix/blob/master/plugins/stamina/attributes/sh_stm.lua">https://github.com/NebulousCloud/helix/blob/master/plugins/stamina/attributes/sh_stm.lua</a></p>
+
+<p><a name="Classes___ix_class__"></a></p>
+<h2>Classes (<a href="../libraries/ix.class.html#">ix.class</a>)</h2>
+<p>Classes are a part of the factions. They basically are a more specific form of a faction. Factions in Helix and Clockwork work similarly. For instance, all classes are placed in the <code>classes</code> folder under the schema folder and use <code>CLASS</code> as the main variable inside the file.</p>
+
+<p>However:</p>
+
+<ul>
+    <li>You do not need to use <code>local CLASS = Clockwork.class:New(&quot;My Class&quot;)</code>. Instead, <code>CLASS</code> is already defined for you and you set the name using <code>CLASS.name = &quot;My Class&quot;</code></li>
+    <li><code>CLASS.factions</code> is <em>not</em> a table, so <code>CLASS.factions = {FACTION_MYFACTION}</code> becomes <code>CLASS.faction = FACTION_MYFACTION</code></li>
+    <li>You do not need to use <code>CLASS:Register()</code> as classes are registered for you after the file is done processing.</li>
+    <li>Classes are <em>optional</em> for factions rather than being required.</li>
+</ul>
+
+<p><a name="Commands___ix_command__"></a></p>
+<h2>Commands (<a href="../libraries/ix.command.html#">ix.command</a>)</h2>
+<p>Commands no longer need to be in separate files. Instead, they are just placed into one large file. However, if you really wanted you can register multiple commands across multiple files or however you want. One thing you may notice is Clockwork uses a <em>COMMAND</em> table while Helix does not always. It is simply a design preference. You can find examples at <a href="https://github.com/NebulousCloud/helix/blob/master/gamemode/core/sh_commands.lua">https://github.com/NebulousCloud/helix/blob/master/gamemode/core/sh_commands.lua</a></p>
+
+<p>It should be noted that:</p>
+
+<ul>
+    <li><code>COMMAND.tip</code> is not used.</li>
+    <li><code>COMMAND.text</code> is not used.</li>
+    <li><code>COMMAND.flags</code> is not used.</li>
+    <li><code>COMMAND.arguments</code> does not need to be defined if no arguments are needed but is defined as a table of argument types when needed <code>arguments = {ix.type.character, ix.type.number}</code>. See <a href="../libraries/ix.command.html#CommandArgumentsStructure">ix.command.CommandArgumentsStructure</a> for details.</li>
+    <li><code>COMMAND.access</code> for checking whether or not a person is a (super)admin can be replaced with <code>adminOnly = true</code> or <code>superAdminOnly = true</code> in the command table.</li>
+</ul>
+
+<p><a name="Configurations___ix_config__"></a></p>
+<h2>Configurations (<a href="../libraries/ix.config.html#">ix.config</a>)</h2>
+<p>In Helix, the method of adding configurations that can be changed by server owners is heavily simplified. <a href="https://github.com/NebulousCloud/helix/blob/master/gamemode/config/sh_config.lua">See an example here</a>.</p>
+
+<p>Adding a configuration is as follows:</p>
+
+<pre><code> -- before
+ Clockwork.config:Add("run_speed", 225)
+
+ -- after
+ ix.config.Add("runSpeed", 235, ...)
+</code></pre>
+
+<p>You'll notice that ellipses (...) were added at the end. This is because there are more arguments since adding configuration information has been placed into one function. Additionally:</p>
+
+<ul>
+    <li><code>Clockwork.config:ShareKey()</code> is not needed.</li>
+    <li>The 3rd argument for <code>Clockwork.config:AddToSystem(name, key, description, min, max)</code> is also the 3rd argument for <a href="../libraries/ix.config.html#ix.config.Add">ix.config.Add</a></li>
+    <li>The 4th argument for <a href="../libraries/ix.config.html#ix.config.Add">ix.config.Add</a> is an optional function that is called when the configuration is changed.</li>
+    <li>The 5th argument for <a href="../libraries/ix.config.html#ix.config.Add">ix.config.Add</a> is a table. You can specify the category for the configuration to group it with other configurations. There is also a data table inside which can be used to determine the minimum value and maximum value for numbers. Check out <a href="https://github.com/NebulousCloud/helix/blob/master/gamemode/config/sh_config.lua">an example here</a>. See also <a href="../libraries/ix.config.html#">ix.config</a>.</li>
+</ul>
+
+<p><a name="Currency___ix_currency__"></a></p>
+<h2>Currency (<a href="../libraries/ix.currency.html#">ix.currency</a>)</h2>
+<p>Updating your currency code is simple:</p>
+
+<pre><code> -- before
+ Clockwork.config:SetKey("name_cash", "Tokens")
+ Clockwork.config:SetKey("name_cash", "Dollars") -- another example
+
+ -- after
+ ix.currency.Set("", "token", "tokens")
+ ix.currency.Set("$", "dollar", "dollars")
+</code></pre>
+
+
+<p>Note that you need to provide a symbol for that currency (€ for Euro, £ for Pound, ¥ for Yen, etc.) or just leave it as an empty string (<code>&quot;&quot;</code>) and then provide the singular form of the name for the currency, then the plural form.</p>
+
+<p><a name="Datastream"></a></p>
+<h2>Datastream</h2>
+<p>Helix uses the <a href="http://wiki.garrysmod.com/page/Net_Library_Usage">net library</a> whereas Clockwork uses datastream (<a href="https://github.com/alexgrist/NetStream/blob/master/netstream2.lua">netstream</a>).</p>
+
+<p>If you're unfamiliar with the net library, you can include the netstream library to your schema by downloading <a href="https://github.com/alexgrist/NetStream/blob/master/netstream2.lua">netstream</a> to <code>schema/libs/thirdparty/sh_netstream2.lua</code> and adding <code>ix.util.Include(&quot;libs/thirdparty/sh_netstream2.lua&quot;)</code> to your <code>sh_schema.lua</code> file.</p>
+
+<p>Starting a datastream:</p>
+
+<pre><code> -- before
+ Clockwork.datastream:Start(receiver, "MessageName", {1, 2, 3});
+
+ -- after
+ netstream.Start(receiver, "MessageName", 1, 2, 3)
+</code></pre>
+
+
+<p>Receiving a datastream:</p>
+
+<pre><code> -- before
+ Clockwork.datastream:Hook("MessageName", function(player, data)
+    local a = data[1];
+    local b = data[2];
+    local c = data[3];
+
+    print(a, b, c);
+ end);
+
+ -- after
+ netstream.Hook("MessageName", function(client, a, b, c)
+    print(a, b, c)
+ end)
+</code></pre>
+
+
+<p><a name="Factions___ix_faction__"></a></p>
+<h2>Factions (<a href="../libraries/ix.faction.html#">ix.faction</a>)</h2>
+<p>Factions, like classes, are pretty similar too. They share pretty much the same differences as classes in Clockwork and Helix do.</p>
+
+<p>For instance:</p>
+
+<ul>
+    <li>You do not need to use <code>local FACTION = Clockwork.faction:New(&quot;Name Here&quot;)</code>, instead <code>FACTION</code> is already defined for you and you set the name using <code>FACTION.name = &quot;Name Here&quot;</code></li>
+    <li><code>FACTION.whitelist = true</code> is changed to <code>FACTION.isDefault = false</code></li>
+    <li><code>FACTION.models</code> does not need a male and female part. Instead, all the models are combined into one big list.</li>
+    <li><code>function FACTION:GetName(name)</code> becomes <code>function FACTION:GetDefaultName(name)</code></li>
+    <li><code>FACTION.description = &quot;Describe me&quot;</code> is added to the faction.</li>
+    <li><code>FACTION_MYFACTION = FACTION:Register()</code> becomes <code>FACTION_MYFACTION = FACTION.index</code></li>
+</ul>
+
+<p><a name="Flags___ix_flag__"></a></p>
+<h2>Flags (<a href="../libraries/ix.flag.html#">ix.flag</a>)</h2>
+<p>Flags are functionally equivalent in Helix. To add a new flag:</p>
+
+<pre><code> -- before
+ Clockwork.flag:Add("x", "Name", "Description")
+
+ -- after
+ ix.flag.Add("x", "Description")
+</code></pre>
+
+
+<p>To check or manipulate a character's flag(s):</p>
+
+<pre><code> -- before
+ Clockwork.player:GiveFlags(player, flags)
+ Clockwork.player:TakeFlags(player, flags)
+ Clockwork.player:HasFlags(player, flags)
+
+ -- after
+ client:GetCharacter():GiveFlags(flags)
+ client:GetCharacter():TakeFlags(flags)
+ client:GetCharacter():HasFlags(flags)
+</code></pre>
+
+
+<p><a name="Inventories___Inventory__"></a></p>
+<h2>Inventories (<a href="../classes/Inventory.html#">Inventory</a>)</h2>
+<p>Inventories have also had a change in the way they work that may seem very different than Clockwork. Similar to how characters are their own objects, inventories become their own objects as well. These inventory objects belong to character objects, which belongs to players. So, this creates a chain of objects which is neat. The use of inventories as objects makes it very simple to attach inventories to anything.</p>
+
+<p>To access a player's inventory, you need to use <code>client:GetCharacter():GetInventory()</code> which returns the main inventory object for the player's character. You can also access all loaded inventories with <code>ix.item.inventories</code> but that is not important right now.</p>
+
+<p><a name="Items___Item__"></a></p>
+<h2>Items (<a href="../classes/Item.html#">Item</a>)</h2>
+<p>As discussed above, inventories contain items. Items are still used in inventories and world entities, use default class data, have callback functions, and can contain unique item data per instance.</p>
+
+<h3>Setting up items</h3>
+<p>Every time needs to be registered, or have information about it (such as the name, model, what it does, etc.) defined. In Clockwork, you have your items defined in schemas/plugins under the items folder.</p>
+
+<p>So let's start with the differences in structure in the item file.</p>
+
+<ul>
+    <li><code>local ITEM = Clockwork.item:New();</code> is removed</li>
+    <li><code>ITEM.uniqueID</code> is <em>completely</em> optional</li>
+    <li>Replace <code>ITEM.cost</code> with <code>ITEM.price</code></li>
+    <li><code>ITEM:Register()</code> is removed</li>
+</ul>
+
+<h3>Item Sizes</h3>
+<p>Helix's inventory uses a grid and utilizes width and height instead of weight as a means of inventory capacity. This means you will have to change your item's weight (<code>ITEM.weight</code>) to something that might be analagous to the item's size using <code>ITEM.width</code> and <code>ITEM.height</code>. The item's size must be at least one by one grid cell. It's up to you to balance the sizes of items in your use case - taking into account how many items a character might have at once, the default inventory size set in the config, etc.</p>
+
+<h3>Item Functions</h3>
+<p>Item functions are defined very differently than they are in Clockwork. For example:</p>
+
+<pre><code> -- before
+ function ITEM:OnUse(player, entity)
+    print("My name is: " .. player:Name(), entity)
+ end
+
+ -- after
+ ITEM.functions.Use = {
+    OnRun = function(item)
+        print("My name is: " .. item.player, item.entity)
+    end
+ }
+</code></pre>
+
+
+<p>All item functions are defined in the <code>ITEM.functions</code> table. This allows the drop-down menus when using the item a lot easier and cleaner to generate dynamically. There is also more control of the icons used for the options, whether or not the function should be displayed, etc.</p>
+
+<p>You can see an example of a water item here: <a href="https://github.com/NebulousCloud/helix-hl2rp/blob/master/schema/items/sh_water.lua">https://github.com/NebulousCloud/helix-hl2rp/blob/master/schema/items/sh_water.lua</a></p>
+
+<p>Here, we can define what happens when the function is run, what the icon is, and what sound it plays when used. It is basically put into one area rather than being scattered among hooks and stuff.</p>
+
+<h3>Giving/Taking Items</h3>
+<p>So before we can give/take items, we need to understand what the <em>item instance</em> is. Using the analogy earlier about how the inventory system is like a forum, and inside the forum are posts (the items in this case), we can think of instancing an item as making a new post on a forum. So when we talk about an <em>item instance</em>, it is an item that has been created in the past. The reason we use an item instance (which is its own object too, neat!) is to make each item ever created unique. Each item instance can have its own data unique to itself.</p>
+
+<p>Clockwork also uses an item instance system where you have to instance an item. So, to instance an item in Clockwork you would use:</p>
+
+<pre><code> item = Clockwork.item:CreateInstance("item")
+</code></pre>
+
+
+<p>And this would create a new instance of an item. Helix's instancing system is slightly different. Instead of having the function return the instance like it does in Clockwork, Helix relies on a callback to pass the instance. The reason for this is the item must be inserted into the database to get a unique number to represent that item. This is not done instantly, otherwise servers would freeze when new items are made. Clockwork uses the time and adds a number to get the numeric ID for an item, which allows the item to be returned which "solves" the issue, but I digress.</p>
+
+<p>The Helix equivalent would be:</p>
+
+<pre><code> ix.item.Instance(0, "item", data, x, y, function(item) end)
+</code></pre>
+
+
+<p>Let's break down the differences:</p>
+
+<ul>
+    <li>For Helix's item instance, the 1st argument (<code>0</code>) is the inventory that the item belongs to. You can specify 0 so it does not belong to any inventory.</li>
+    <li>The data argument is <em>optional</em> and is just a table for the item data.</li>
+    <li><em>x</em> and <em>y</em> are the position of the items in inventory. You can find an available <em>x</em> and <em>y</em> with <code>inventory:FindEmptySlot()</code>.</li>
+    <li>The function is an <em>optional</em> argument that passes the item instance. This is where you can directly access the new item.</li>
+</ul>
+
+<p>Keep in mind that Helix will simplify the item system for you when it can. Normally, you would not need to instance an item yourself unless you were doing something advanced.</p>
+
+<p>So you might be wondering, how do I spawn an item in the map, and how do I give a player an item? In Clockwork, you would do the following:</p>
+
+<pre><code> -- spawning an item in the map
+ Clockwork.entity:CreateItem(player, Clockwork.item:CreateInstance("item"), Vector(1, 2, 3));
+
+ -- giving a player an item
+ player:GiveItem(Clockwork.item:CreateInstance("item"));
+</code></pre>
+
+
+<p>The equivalent in Helix would be:</p>
+
+<pre><code> -- spawning an item in the map
+ ix.item.Spawn("item", Vector(1, 2, 3))
+
+ -- giving a player an item
+ client:GetCharacter():GetInventory():Add("test")
+</code></pre>
+
+
+<p>So in these two examples, the whole deal of instancing items is done for you in Helix!</p>
+
+<h1>Hooks</h1>
+<p>You will need to modify the function name and arguments for your schema or plugin hooks.</p>
+
+<pre><code> -- before
+ function Schema:PlayerPlayPainSound(player, gender, damageInfo, hitGroup)
+    -- ...
+ end
+
+ -- after
+ function Schema:GetPlayerPainSound(client)
+    -- ...
+ end
+</code></pre>
+
+
+<p>You can see the documented hooks for the schema and plugins in the <a href="../hooks/Plugin.html#">Plugin</a> section.</p>
+
+<h1>Conclusion</h1>
+<p>Overall, most of the conversion from Clockwork to Helix is simply renaming a certain function and/or switching the order of arguments around. Both are frameworks so they function similarly.</p>
+
+<p>You may want to use our HL2 RP schema example for reference which can be found at <a href="https://github.com/NebulousCloud/helix-hl2rp">https://github.com/NebulousCloud/helix-hl2rp</a></p>
+
+		</article>
+
+		<footer>
+			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
+			<p>Last updated: <span class="timestamp">2019-10-30 02:13:31</span></p>
+		</footer>
+
+		<script type="text/javascript" src="../highlight.min.js"></script>
+		<script type="text/javascript">
+		var elements = document.querySelectorAll("aside code, pre code")
+
+		hljs.configure({
+			languages: ["lua"]
+		});
+
+		for (var i = 0; i < elements.length; i++)
+		{
+			hljs.highlightBlock(elements[i]);
+		}
+		</script>
+	</body>
+</html>
