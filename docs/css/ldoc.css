@@ -182,6 +182,11 @@ article header h2 {
 	font-size: 16px;
 }
 
+article header a {
+	color: white !important;
+	text-decoration: underline;
+}
+
 /* function summary */
 article details {
 	background-color: rgb(230, 230, 230);
