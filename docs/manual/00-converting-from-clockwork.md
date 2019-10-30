@@ -69,14 +69,10 @@ client:GetCharacter():SetData("foo", "bar")
 
 The use of the character object allows you to access other characters a player might own without needing to have them be the active character, or even access them when the player is not on the server. Overall, the use of the character object may seem like a complex concept, but will simplify a lot of things once you get the hang of the idea.
 
-You can see the documented methods for the character object here: [https://nebulouscloud.github.io/helix/classes/Character.html](https://nebulouscloud.github.io/helix/classes/Character.html)
-
 # The Libraries
 
 ## Animations (`ix.anim`)
 Clockwork features many functions to set up animations for a specific model. Helix too has this functionality. Helix has one function instead that pairs a model to a specific "animation class" (grouping of animation types). So, all one needs to do is find the appropriate animation class to match the model with. Looking at the Clockwork function name should tell you.
-
-You can view the Helix version here which contains information about the function to use and what animation classes you can use at [https://nebulouscloud.github.io/helix/libraries/ix.anim.html](https://nebulouscloud.github.io/helix/libraries/ix.anim.html). An example:
 
 ```
 -- before
