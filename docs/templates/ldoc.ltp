@@ -29,6 +29,8 @@
 
 #		if (module) then
 			<meta property="og:description" content="$(moduleDescription(module))" />
+#		else
+			<meta property="og:description" content="Documentation and function reference for the Helix framework." />
 #		end
 
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
