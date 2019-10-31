@@ -182,7 +182,7 @@ article header h2 {
 	font-size: 16px;
 }
 
-article header a {
+article header.module a {
 	color: white !important;
 	text-decoration: underline;
 }
