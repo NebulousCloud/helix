@@ -1,0 +1,182 @@
+
+
+
+
+
+<html>
+	<head>
+		<title>Getting Started - Helix Documentation</title>
+
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content="Getting Started - Helix Documentation" />
+		<meta property="og:site_name" content="Helix Documentation" />
+
+			<meta property="og:description" content="
+It's pretty easy to get started with creating your own schema with Helix. It requires a bit of bootstrapping if you're starting from scratch, but you should quickly be on your way to developing your schema after following one of the below sections in thi..." />
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
+		<link rel="stylesheet" href="../ldoc.css" />
+		<link rel="stylesheet" href="../highlight.css" />
+	</head>
+
+	<body>
+		<aside>
+			<h1>Helix</h1>
+
+			<!-- project contents -->
+			<section>
+						<h2>Manual</h2>
+
+						<ul>
+								<li><a href="../manual/00-getting-started.md.html">Getting Started</a></li>
+								<li><a href="../manual/10-converting-from-clockwork.md.html">Clockwork to Helix Migration</a></li>
+						</ul>
+						<h2>Hooks</h2>
+
+						<ul>
+								<li><a href="../hooks/Class.html">Class</a></li>
+								<li><a href="../hooks/Faction.html">Faction</a></li>
+								<li><a href="../hooks/Plugin.html">Plugin</a></li>
+						</ul>
+						<h2>Panels</h2>
+
+						<ul>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
+								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+						</ul>
+						<h2>Libraries</h2>
+
+						<ul>
+								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
+								<li><a href="../libraries/ix.char.html">ix.char</a></li>
+								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
+								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
+								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
+								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
+								<li><a href="../libraries/ix.log.html">ix.log</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
+								<li><a href="../libraries/ix.html">ix</a></li>
+								<li><a href="../libraries/ix.act.html">ix.act</a></li>
+						</ul>
+						<h2>Classes</h2>
+
+						<ul>
+								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Inventory.html">Inventory</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
+						</ul>
+			</section>
+		</aside>
+
+		<!-- library functions -->
+		<article>
+
+<h1>Getting Started</h1>
+<p>It's pretty easy to get started with creating your own schema with Helix. It requires a bit of bootstrapping if you're starting from scratch, but you should quickly be on your way to developing your schema after following one of the below sections in this guide.</p>
+
+<h1>Installing the framework</h1>
+<p>Before you start working on your schema, you'll need to install Helix onto your server. The exact instructions will vary based on your server provider, or if you're hosting the server yourself.</p>
+
+<p>You'll need to download the framework from <a href="https://github.com/NebulousCloud/helix">GitHub</a> into a folder called <code>helix</code>. This folder goes into your server's <code>gamemodes</code> folder at <code>garrysmod/gamemodes/helix</code>. That's it! The framework is now installed onto your server. Of course, you'll need to restart your server after installing the framework and a schema.</p>
+
+<h1>MySQL usage</h1>
+<p>By default, Helix will use SQLite (which is built into Garry's Mod) to store player/character data. This requires no configuration and will work "out of the box" after installing and will be fine for most server owners. However, you might want to connect your database to your website or use multiple servers with one database - this will require the usage of an external database accessible elsewhere. This will require the use of a MySQL server. Some server providers will provide you with a MySQL database for free to use with your server.</p>
+
+<p><a name="Installing"></a></p>
+<h2>Installing</h2>
+<p>Helix uses the <a href="https://github.com/FredyH/MySQLOO">MySQLOO</a> library to connect to MySQL databases. You'll need to follow the instructions for installing that library onto your server before continuing. In a nutshell, you need to make sure <code>gmsv_mysqloo_win32.dll</code> or <code>gmsv_mysqloo_linux.dll</code> (depending on your server's operating system) is in the <code>garrysmod/lua/bin</code> folder. Additionally, you need <code>libmysql.dll</code> placed in the root <code>garrysmod</code> folder so it sits next to <code>srcds.exe</code> or <code>srcds_run</code> depending on your OS.</p>
+
+<p><a name="Configuring"></a></p>
+<h2>Configuring</h2>
+<p>Now that you've installed MySQLOO, you need to tell Helix that you want to connect to an external MySQL database instead of using SQLite. This requires creating a <code>helix.yml</code> configuration file in the <code>garrysmod/gamemodes/helix</code> folder. There is an example one already made for you called <code>helix.example.yml</code> that you can copy and rename to <code>helix.yml</code>.</p>
+
+<p>The first thing you'll need to change is the <code>adapter</code> entry so that it says <code>mysqloo</code>. Next is to change the other entries to match your database's connection information. Here is an example of what your <code>helix.yml</code> should look like:</p>
+
+<pre><code> database:
+   adapter: "mysqloo"
+   hostname: "myexampledatabase.com"
+   username: "myusername"
+   password: "mypassword"
+   database: "helix"
+   port: 3306
+</code></pre>
+
+
+<p>The <code>hostname</code> field can either be a domain name (like <code>myexampledatabase.com</code>) or an IP address (<code>123.123.123.123</code>). If you don't know what the <code>port</code> field should be, simply leave it as the default <code>3306</code>; this is the default port for MySQL database connections. The <code>database</code> field is the name of the database that you've created for Helix. Note that it does not need to be <code>helix</code>, it can be whatever you'd like.</p>
+
+<p>Another important thing to note about this configuration file is that you <strong>must</strong> indent with <strong>two spaces only</strong>. <code>database</code> should not have any spacing before it, and all other entries must have two spaces before them. Failing to ensure this will make the configuration file fail to load.</p>
+
+<h1>Starting with the HL2 RP schema (Basic)</h1>
+<p>This section is for using the existing HL2 RP schema as a base for your own schema. It contains a good amount of example code if you need a stronger foundation than just a skeleton.</p>
+
+<p>First, you'll need to download the schema from <a href="https://github.com/NebulousCloud/helix-hl2rp">GitHub</a>. Make sure that you download the contents of the repository into a folder called <code>ixhl2rp</code> and place it into your <code>garrysmod/gamemodes</code> folder. That's all you'll need to do to get the schema installed, other than setting your gamemode to <code>ixhl2rp</code> in the server's command line.</p>
+
+<h1>Starting with the skeleton (Basic)</h1>
+<p>If you don't want excess code you might not use, or prefer to build from an almost-empty foundation that covers the basic bootstrapping, then the skeleton schema is for you. The skeleton schema contains a lot of comments explaining why code is laid out in a certain way, and some other helpful tips/explanations. Make sure you give it a read!</p>
+
+<p>You'll need to download the schema from <a href="https://github.com/NebulousCloud/helix-skeleton">GitHub</a> into the folder name of your choice - just make sure it's all lowercase with no spaces. Our example for the sake of brevity will be <code>myschema</code>. Place the folder into <code>garrysmod/gamemodes</code>.</p>
+
+<p>Next up is to modify the gamemode info so that Garry's Mod will properly recognize it. Rename <code>skeleton.txt</code> in your schema folder to your folder's name. In our example we would rename <code>skeleton.txt</code> to <code>myschema.txt</code>. Next, you'll need to modify the contents of <code>myschema.txt</code> and replace the existing information with your own - making sure to replace the <code>&quot;skeleton&quot;</code> at the top of the file to your folder's name. In our case we would replace it with <code>&quot;myschema&quot;</code>. Once you've renamed the file, you're all good to go!</p>
+
+<h1>Converting from Clockwork (Intermediate)</h1>
+<p>If you are looking to switch to Helix from Clockwork, you can follow the <a href="../manual/10-converting-from-clockwork.md.html#">conversion guide</a>.</p>
+
+<h1>Starting from scratch (Intermediate)</h1>
+<p>You can always create the gamemode files yourself if you'd like (although we suggest the skeleton schema in general). In general, a schema is a gamemode that is derived from <code>helix</code> and automatically loads <code>schema/sh_schema.lua</code>. You shouldn't have your schema files outside of the <code>schema</code> folder. The files you'll need are as follows:</p>
+
+<p><code>gamemode/init.lua</code></p>
+<pre><code> AddCSLuaFile("cl_init.lua")
+ DeriveGamemode("helix")
+</code></pre>
+
+
+<p><code>gamemode/cl_init.lua</code></p>
+<pre><code> DeriveGamemode("helix")
+</code></pre>
+
+
+<p><code>schema/sh_schema.lua</code></p>
+<pre><code> Schema.name = "My Schema"
+ Schema.author = "me!"
+ Schema.description = "My awesome schema."
+
+ -- include your other schema files
+ ix.util.Include("cl_schema.lua")
+ ix.util.Include("sv_schema.lua")
+ -- etc.
+</code></pre>
+
+
+		</article>
+
+		<footer>
+			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
+			<p>Last updated: <span class="timestamp">2019-10-31 06:05:26</span></p>
+		</footer>
+
+		<script type="text/javascript" src="../highlight.min.js"></script>
+		<script type="text/javascript">
+		var elements = document.querySelectorAll("aside code, pre code")
+
+		hljs.configure({
+			languages: ["lua"]
+		});
+
+		for (var i = 0; i < elements.length; i++)
+		{
+			hljs.highlightBlock(elements[i]);
+		}
+		</script>
+	</body>
+</html>
