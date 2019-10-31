@@ -64,7 +64,7 @@
 #			if (ldoc.body) then -- we're rendering non-code elements
 				$(ldoc.body)
 #			elseif (module) then -- we're rendering libary contents
-				<header>
+				<header class="module">
 					<h1>$(module.name)</h1>
 					<h2>$(markup(module.summary))</h2>
 				</header>
