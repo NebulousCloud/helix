@@ -217,6 +217,7 @@ LANGUAGE = {
 	charKick = "%s kicked char %s.",
 	charBan = "%s banned the character %s.",
 	charBanned = "This character is banned.",
+	charBannedTemp = "This character is temporarily banned.",
 	playerConnected = "%s has connected to the server.",
 	playerDisconnected = "%s has disconnected from the server.",
 	setMoney = "You have set %s's money to %s.",

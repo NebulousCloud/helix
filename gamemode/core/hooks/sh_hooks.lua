@@ -418,8 +418,12 @@ function GM:CanPlayerUseCharacter(client, character)
 	local banned = character:GetData("banned")
 
 	if (banned) then
-		if (isnumber(banned) and banned < os.time()) then
-			return
+		if (isnumber(banned)) then
+			if (banned < os.time()) then
+				return
+			end
+
+			return false, "@charBannedTemp"
 		end
 
 		return false, "@charBanned"

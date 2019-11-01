@@ -329,12 +329,18 @@ ix.command.Add("CharKick", {
 ix.command.Add("CharBan", {
 	description = "@cmdCharBan",
 	privilege = "Ban Character",
-	arguments = ix.type.character,
+	arguments = {
+		ix.type.character,
+		bit.bor(ix.type.number, ix.type.optional)
+	},
 	adminOnly = true,
-	OnRun = function(self, client, target)
-		target:SetData("banned", true)
+	OnRun = function(self, client, target, minutes)
+		if (minutes) then
+			minutes = minutes * 60
+		end
+
 		target:Save(function()
-			target:Kick()
+			target:Ban(minutes)
 		end)
 
 		for _, v in ipairs(player.GetAll()) do
