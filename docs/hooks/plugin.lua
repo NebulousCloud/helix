@@ -445,8 +445,8 @@ end
 function PlayerLockedVehicle(client, vehicle)
 end
 
---- @realm shared
-function PlayerMessageSend(client, chatType, message, anonymous)
+--- @realm server
+function PlayerMessageSend(speaker, chatType, text, anonymous, receivers, rawText)
 end
 
 --- @realm shared
