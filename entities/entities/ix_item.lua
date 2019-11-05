@@ -54,17 +54,6 @@ if (SERVER) then
 		end
 	end
 
-	function ENT:OnTakeDamage(damageInfo)
-		local damage = damageInfo:GetDamage()
-		self:SetHealth(self:Health() - damage)
-
-		if (self:Health() <= 0 and !self.ixIsDestroying) then
-			self.ixIsDestroying = true
-			self.ixDamageInfo = {damageInfo:GetAttacker(), damage, damageInfo:GetInflictor()}
-			self:Remove()
-		end
-	end
-
 	function ENT:SetItem(itemID)
 		local itemTable = ix.item.instances[itemID]
 
@@ -114,6 +103,24 @@ if (SERVER) then
 		ix.item.Instance(0, itemTable.uniqueID, itemTable.data, 1, 1, function(item)
 			self:SetItem(item:GetID())
 		end)
+	end
+
+	function ENT:OnTakeDamage(damageInfo)
+		local itemTable = ix.item.instances[self.ixItemID]
+
+		if (itemTable.OnEntityTakeDamage
+		and itemTable:OnEntityTakeDamage(self, damageInfo) == false) then
+			return
+		end
+
+		local damage = damageInfo:GetDamage()
+		self:SetHealth(self:Health() - damage)
+
+		if (self:Health() <= 0 and !self.ixIsDestroying) then
+			self.ixIsDestroying = true
+			self.ixDamageInfo = {damageInfo:GetAttacker(), damage, damageInfo:GetInflictor()}
+			self:Remove()
+		end
 	end
 
 	function ENT:OnRemove()
