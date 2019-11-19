@@ -51,8 +51,15 @@ function GM:PlayerInitialSpawn(client)
 
 			MsgN("Loaded (" .. table.concat(charList, ", ") .. ") for " .. client:Name())
 
-			for _, v in ipairs(charList) do
-				ix.char.loaded[v]:Sync(client)
+			for k, v in ipairs(charList) do
+				local character = ix.char.loaded[v]
+
+				if (ix.faction.indices[character:GetFaction()]) then
+					character:Sync(client)
+				else
+					-- remove characters with an invalid faction
+					table.remove(charList, k)
+				end
 			end
 
 			client.ixCharList = charList
