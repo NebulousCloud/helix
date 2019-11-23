@@ -713,6 +713,7 @@ function GM:PopulateCharacterInfo(client, character, container)
 	if (descriptionText != "") then
 		local description = container:AddRow("description")
 		description:SetText(descriptionText)
+		description:SetTextColor(hook.Run("GetDescriptionColor",self.player) or color_white)
 		description:SizeToContents()
 	end
 end
