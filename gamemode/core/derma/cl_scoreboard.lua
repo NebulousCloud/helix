@@ -201,6 +201,7 @@ function PANEL:Update()
 
 	if (self.description:GetText() != description) then
 		self.description:SetText(description)
+		self.description:SetTextColor(hook.Run("GetScoreboardDescriptionColor",self.player) or color_white)
 		self.description:SizeToContents()
 	end
 end
