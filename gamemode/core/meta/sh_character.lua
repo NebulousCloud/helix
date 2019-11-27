@@ -159,7 +159,7 @@ if (SERVER) then
 			-- Apply a saved skin.
 			client:SetSkin(self:GetData("skin", 0))
 
-			-- Synchronize the character if we should.`
+			-- Synchronize the character if we should.
 			if (!bNoNetworking) then
 				if (client:IsBot()) then
 					timer.Simple(0.33, function()
