@@ -7,7 +7,7 @@ local CREDITS = {
 
 local SPECIALS = {
 	{
-		{"Mr. Meow", "76561197988658543"},
+		{"Luna", "76561197988658543"},
 		{"Rain GBizzle", "76561198036111376"}
 	},
 	{
