@@ -338,9 +338,11 @@ function ix.item.New(uniqueID, id)
 	local stockItem = ix.item.list[uniqueID]
 
 	if (stockItem) then
-		local item = setmetatable({}, {__index = stockItem})
-		item.id = id
-		item.data = {}
+		local item = setmetatable({id = id, data = {}}, {
+			__index = stockItem,
+			__eq = stockItem.__eq,
+			__tostring = stockItem.__tostring
+		})
 
 		ix.item.instances[id] = item
 
