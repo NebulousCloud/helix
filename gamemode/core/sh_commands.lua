@@ -341,8 +341,6 @@ ix.command.Add("CharBan", {
 
 		target:Ban(minutes)
 
-		target:Save()
-
 		for _, v in ipairs(player.GetAll()) do
 			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
 				v:NotifyLocalized("charBan", client:GetName(), target:GetName())

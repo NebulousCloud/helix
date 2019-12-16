@@ -227,6 +227,8 @@ if (SERVER) then
 		-- Mark the character as banned and kick the character back to menu.
 		self:SetData("banned", time or true)
 		self:Kick()
+
+		self:Save()
 	end
 end
 
