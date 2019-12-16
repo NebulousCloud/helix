@@ -339,9 +339,8 @@ ix.command.Add("CharBan", {
 			minutes = minutes * 60
 		end
 
-		target:Save(function()
-			target:Ban(minutes)
-		end)
+		target:Ban(minutes)
+		target:Save()
 
 		for _, v in ipairs(player.GetAll()) do
 			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
