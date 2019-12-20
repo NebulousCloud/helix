@@ -124,6 +124,10 @@ if (SERVER) then
 			entity:GetInventory():GetID(), total, ix.currency.plural)
 	end)
 
+	ix.log.AddType("roll", function(client, value, max)
+		return string.format("%s rolled %d out of %d.", client:Name(), value, max)
+	end)
+
 	function PLUGIN:PlayerInitialSpawn(client)
 		ix.log.Add(client, "connect")
 	end

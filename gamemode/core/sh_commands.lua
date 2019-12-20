@@ -5,9 +5,13 @@ ix.command.Add("Roll", {
 	OnRun = function(self, client, maximum)
 		maximum = math.Clamp(maximum or 100, 0, 1000000)
 
-		ix.chat.Send(client, "roll", tostring(math.random(0, maximum)), nil, nil, {
+		local value = math.random(0, maximum)
+
+		ix.chat.Send(client, "roll", tostring(value), nil, nil, {
 			max = maximum
 		})
+
+		ix.log.Add(client, "roll", value, maximum)
 	end
 })
 
