@@ -380,6 +380,7 @@ LANGUAGE = {
 	cmdSetVoicemail = "Sets or removes the auto-reply message when someone sends you a private message.",
 	cmdCharGiveFlag = "Gives the specified flag(s) to someone.",
 	cmdCharTakeFlag = "Removes the specified flag(s) from someone if they have it.",
+	cmdCharGetFlags = "Displays the flag(s) available to someone.",
 	cmdToggleRaise = "Raises or lowers the weapon you're holding.",
 	cmdCharSetModel = "Sets a person's character model.",
 	cmdCharSetSkin = "Sets the skin for a person's character model.",
