@@ -133,6 +133,24 @@ ix.command.Add("CharTakeFlag", {
 	end
 })
 
+ix.command.Add("CharGetFlags", {
+	description = "@cmdCharGetFlags",
+	privilege = "View Character Flags",
+	superAdminOnly = true,
+	arguments = {
+		ix.type.character
+	},
+	OnRun = function(self, client, target)
+		local format = "%s has flags: %s"
+
+		if (#target:GetData("f") != 0) then
+			return string.format(format, target.player:GetName(), target:GetData("f"))
+		else
+			return string.format(format, target.player:GetName(), "none")
+		end
+	end
+})
+
 ix.command.Add("ToggleRaise", {
 	description = "@cmdToggleRaise",
 	OnRun = function(self, client, arguments)
