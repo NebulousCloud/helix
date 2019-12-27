@@ -109,7 +109,7 @@ local function ArgumentCheckStub(command, client, given)
 			result[#result + 1] = value
 		elseif (argType == ix.type.player or argType == ix.type.character) then
 			local bPlayer = argType == ix.type.player
-			local value = ix.util.FindPlayer(argument)
+			local value = ix.util.FindPlayer(argument or "") -- argument could be nil due to optional type
 
 			-- FindPlayer emits feedback for us
 			if (!value and !bOptional) then
