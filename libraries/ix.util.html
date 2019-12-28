@@ -218,9 +218,9 @@
 						</section>
 						<section class="method">
 								<aside>
-										<code>print(ix.util.StripRealmPrefix("sv_init.lua"))
+										<pre><code>print(ix.util.StripRealmPrefix("sv_init.lua"))
  > init.lua
-</code>
+</code></pre>
 								</aside>
 							<header><a name="ix.util.StripRealmPrefix"></a>
 								<h1><span class="realm shared"></span>ix.util.StripRealmPrefix(name)</h1>
@@ -301,9 +301,9 @@
 						</section>
 						<section class="method">
 								<aside>
-										<code>print(ix.util.DimColor(Color(100, 100, 100, 255), 0.5))
+										<pre><code>print(ix.util.DimColor(Color(100, 100, 100, 255), 0.5))
  > 50 50 50 255
-</code>
+</code></pre>
 								</aside>
 							<header><a name="ix.util.DimColor"></a>
 								<h1><span class="realm shared"></span>ix.util.DimColor(color, multiplier[, alpha=255])</h1>
@@ -370,11 +370,11 @@
 						</section>
 						<section class="method">
 								<aside>
-										<code>print(ix.util.SanitizeType(ix.type.number, "123"))
+										<pre><code>print(ix.util.SanitizeType(ix.type.number, "123"))
 > 123
 print(ix.util.SanitizeType(ix.type.bool, 1))
 > true
-</code>
+</code></pre>
 								</aside>
 							<header><a name="ix.util.SanitizeType"></a>
 								<h1><span class="realm shared"></span>ix.util.SanitizeType(type, input)</h1>
@@ -433,9 +433,9 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 						</section>
 						<section class="method">
 								<aside>
-										<code>print(ix.util.GetTypeFromValue("hello"))
+										<pre><code>print(ix.util.GetTypeFromValue("hello"))
  > 2 -- i.e the value of ix.type.string
-</code>
+</code></pre>
 								</aside>
 							<header><a name="ix.util.GetTypeFromValue"></a>
 								<h1><span class="realm shared"></span>ix.util.GetTypeFromValue(value)</h1>
@@ -632,12 +632,12 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 						</section>
 						<section class="method">
 								<aside>
-										<code>print(ix.util.FormatStringNamed("Hi, my name is {name}.", {name = "Bobby"}))
+										<pre><code>print(ix.util.FormatStringNamed("Hi, my name is {name}.", {name = "Bobby"}))
  > Hi, my name is Bobby.
-</code>
-										<code>print(ix.util.FormatStringNamed("Hi, my name is {name}.", "Bobby"))
+</code></pre>
+										<pre><code>print(ix.util.FormatStringNamed("Hi, my name is {name}.", "Bobby"))
  > Hi, my name is Bobby.
-</code>
+</code></pre>
 								</aside>
 							<header><a name="ix.util.FormatStringNamed"></a>
 								<h1><span class="realm shared"></span>ix.util.FormatStringNamed(format, Arguments)</h1>
@@ -681,9 +681,9 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 						</section>
 						<section class="method">
 								<aside>
-										<code>print(ix.util.ExpandCamelCase("HelloWorld"))
+										<pre><code>print(ix.util.ExpandCamelCase("HelloWorld"))
  > Hello World
-</code>
+</code></pre>
 								</aside>
 							<header><a name="ix.util.ExpandCamelCase"></a>
 								<h1><span class="realm shared"></span>ix.util.ExpandCamelCase(input[, bNoUpperFirst=false])</h1>
@@ -740,13 +740,13 @@ print(ix.util.SanitizeType(ix.type.bool, 1))
 						</section>
 						<section class="method">
 								<aside>
-										<code>for client, character in ix.util.GetCharacters() do
+										<pre><code>for client, character in ix.util.GetCharacters() do
 	print(client, character)
 end
 > Player [1][Bot01]    character[1]
 > Player [2][Bot02]    character[2]
 -- etc.
-</code>
+</code></pre>
 								</aside>
 							<header><a name="ix.util.GetCharacters"></a>
 								<h1><span class="realm shared"></span>ix.util.GetCharacters()</h1>
@@ -776,10 +776,10 @@ end
 						</section>
 						<section class="method">
 								<aside>
-										<code>function PANEL:Paint(width, height)
+										<pre><code>function PANEL:Paint(width, height)
 	ix.util.DrawBlur(self)
 end
-</code>
+</code></pre>
 								</aside>
 							<header><a name="ix.util.DrawBlur"></a>
 								<h1><span class="realm client"></span>ix.util.DrawBlur(panel[, amount=5[, passes=0.2[, alpha=255]]])</h1>
@@ -850,10 +850,10 @@ end
 						</section>
 						<section class="method">
 								<aside>
-										<code>hook.Add("HUDPaint", "MyHUDPaint", function()
+										<pre><code>hook.Add("HUDPaint", "MyHUDPaint", function()
 	ix.util.DrawBlurAt(0, 0, ScrW(), ScrH())
 end)
-</code>
+</code></pre>
 								</aside>
 							<header><a name="ix.util.DrawBlurAt"></a>
 								<h1><span class="realm client"></span>ix.util.DrawBlurAt(x, y, width, height[, amount=5[, passes=0.2[, alpha=255]]])</h1>
@@ -1196,9 +1196,9 @@ end)
 						</section>
 						<section class="method">
 								<aside>
-										<code>print(ix.util.GetStringTime("5y2d7w"))
+										<pre><code>print(ix.util.GetStringTime("5y2d7w"))
  > 162086400 -- 5 years, 2 days, 7 weeks
-</code>
+</code></pre>
 								</aside>
 							<header><a name="ix.util.GetStringTime"></a>
 								<h1><span class="realm shared"></span>ix.util.GetStringTime(text)</h1>
@@ -1360,7 +1360,6 @@ y - Years
 
 		<footer>
 			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
-			<p>Last updated: <span class="timestamp">2019-12-28 00:22:34</span></p>
 		</footer>
 
 		<script type="text/javascript" src="../highlight.min.js"></script>
