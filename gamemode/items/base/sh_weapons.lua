@@ -255,7 +255,7 @@ end
 function ITEM:OnSave()
 	local weapon = self.player:GetWeapon(self.class)
 
-	if (IsValid(weapon)) then
+	if (IsValid(weapon) and weapon.ixItem == self and self:GetData("equip")) then
 		self:SetData("ammo", weapon:Clip1())
 	end
 end
