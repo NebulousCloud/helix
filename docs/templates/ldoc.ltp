@@ -97,7 +97,7 @@
 #							if (item.usage) then -- function usage
 								<aside>
 #									for usage in iter(item.usage) do
-										<code>$(usage)</code>
+										<pre><code>$(usage)</code></pre>
 #									end
 								</aside>
 #							end

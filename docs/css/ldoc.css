@@ -313,10 +313,14 @@ article pre code {
 	padding: 16px;
 }
 
-.method aside code {
+.method aside pre {
 	color: rgb(255, 255, 255);
 	background-color: rgb(33, 33, 33);
 	padding: 0;
+	margin: 0;
+}
+
+.method aside pre code {
 	font-size: 16px;
 	font-weight: 300;
 }
