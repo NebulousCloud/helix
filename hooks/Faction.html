@@ -100,7 +100,6 @@ regular gamemode hooks.</p>
 							<ul>
 									<li><span class="realm shared"></span><a href="#GetDefaultName">FACTION:GetDefaultName(client)</a></li>
 									<li><span class="realm server"></span><a href="#OnCharacterCreated">FACTION:OnCharacterCreated(client, character)</a></li>
-									<li><span class="realm server"></span><a href="#OnNameChanged">FACTION:OnNameChanged(client, oldValue, value)</a></li>
 									<li><span class="realm server"></span><a href="#OnSpawn">FACTION:OnSpawn(client)</a></li>
 									<li><span class="realm server"></span><a href="#OnTransferred">FACTION:OnTransferred(client)</a></li>
 							</ul>
@@ -195,67 +194,6 @@ end
 
 
 												<p> Character that has been created</p>
-											</li>
-									</ul>
-
-
-						</section>
-						<section class="method">
-								<aside>
-										<pre><code>function FACTION:OnNameChanged(client, oldValue, value)
-	local character = client:GetCharacter()
-
-	if (string.StartWith(value, "MPF-OfC")) then
-		character:SetModel("models/policetrench.mdl")
-	end
-end
-</code></pre>
-								</aside>
-							<header><a name="OnNameChanged"></a>
-								<h1><span class="realm server"></span>FACTION:OnNameChanged(client, oldValue, value)</h1>
-
-
-
-								<p>Called when a character's name has changed.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">client</span>
-
-													<span class="tag"><span class="type">player</span></span>
-
-
-												<p> Player whose character has had their name changed</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">oldValue</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
-
-												<p> Old name of the character</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">value</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
-
-												<p> New name of the character</p>
 											</li>
 									</ul>
 
