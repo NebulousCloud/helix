@@ -32,21 +32,6 @@ end
 function OnCharacterCreated(client, character)
 end
 
---- Called when a character's name has changed.
--- @realm server
--- @player client Player whose character has had their name changed
--- @string oldValue Old name of the character
--- @string value New name of the character
--- @usage function FACTION:OnNameChanged(client, oldValue, value)
--- 	local character = client:GetCharacter()
---
--- 	if (string.StartWith(value, "MPF-OfC")) then
--- 		character:SetModel("models/policetrench.mdl")
--- 	end
--- end
-function OnNameChanged(client, oldValue, value)
-end
-
 --- Called when a character in this faction has spawned in the world.
 -- @realm server
 -- @player client Player that has just spawned
