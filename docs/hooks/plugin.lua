@@ -9,55 +9,147 @@ Plugin hooks are regular hooks that can be used in your schema with `Schema:Hook
 ]]
 -- @hooks Plugin
 
---- @realm server
+--- Called as the last step before character creation to adjust the creation data payload.
+-- @realm server
+-- @player client Client that is creating the character.
+-- @payload table The current payload data to be sent to character creation.
+-- @newPayload table A table to be merged with the current payload table.
+-- @usage function PLUGIN:AdjustCreationPayload(client, payload, newPayload)
+-- 	newPayload.money = payload.attributes["stm"] -- Sets the characters initial money to the stamina attribute value.
+-- end
 function AdjustCreationPayload(client, payload, newPayload)
 end
 
---- @realm shared
+--- Called when stamina is being changed.
+-- @realm shared
+-- @player client Client that is draining/gaining stamina.
+-- @baseOffset number The current stamina change offset.
+-- @treturn number The new stamina change offset.
+-- @usage function PLUGIN:AdjustStaminaOffset(client, baseOffset)
+-- 	return baseOffset * 2 -- Drain/Regain stamina twice as fast.
+-- end
 function AdjustStaminaOffset(client, baseOffset)
 end
 
---- @realm client
+--- Called before the business menu is added to the tab menu.
+-- @realm client
+-- @tabs table Empty table from the tab menu gui, allows adding more tabs from inside this function.
+-- @treturn bool Whether or not to build the business menu for the client.
+-- @usage function PLUGIN:BuildBusinessMenu(tabs)
+-- 	return LocalPlayer():IsAdmin() -- Only builds the business menu for admins.
+-- end
 function BuildBusinessMenu(tabs)
 end
 
---- @realm server
+--- Called before a message is auto formatted.
+-- @realm server
+-- @speaker player The speaker of the message.
+-- @chatType string The chatType of the message.
+-- @text string The unformatted text of the message.
+-- @treturn bool Whether or not to allow auto formatting on the message.
+-- @usage function PLUGIN:CanAutoFormatMessage(speaker, chatType, text)
+-- 	return false -- Disable auto formatting outright.
+-- end
 function CanAutoFormatMessage(speaker, chatType, text)
 end
 
---- @realm client
+--- Called before creating character info.
+-- @realm client
+-- @suppress table Table refrenced before creating parts of the character info.
+-- @usage function PLUGIN:CanCreateCharacterInfo(suppress)
+-- 	suppress.attributes = true -- Hides attributes from the 'you' tab.
+-- end
 function CanCreateCharacterInfo(suppress)
 end
 
---- @realm client
+--- Called before drawing the ammo hud.
+-- @realm client
+-- @weapon entity The weapon the player currently is holding.
+-- @treturn bool Whether or not to draw the ammo hud.
+-- @usage function PLUGIN:CanDrawAmmoHUD(weapon)
+-- 	if (weapon:GetClass() == "weapon_frag") then -- Hides the ammo hud when holding grenades.
+--  	return false
+-- 	end
+-- end
 function CanDrawAmmoHUD(weapon)
 end
 
---- @realm shared
-function CanPlayerAccessDoor(client, self, access)
+--- Called when the player tries to use abilities on the door, such as locking.
+-- @realm shared
+-- @client player The client trying something on the door.
+-- @door entity The door entity itself.
+-- @access number The access level used when called.
+-- @treturn bool Whether or not to allow the client access.
+-- @usage function PLUGIN:CanPlayerAccessDoor(client, door, access)
+-- 	return true -- Always allow access.
+-- end
+function CanPlayerAccessDoor(client, door, access)
 end
 
---- @realm server
+--- Called when the player attempts to drop an item.
+-- @realm server
+-- @client player The client trying to drop the item.
+-- @item number The id of the item trying to be dropped.
+-- @treturn bool Whether or not to allow the client to drop the item.
+-- @usage function PLUGIN:CanPlayerDropItem(client, item)
+-- 	return false -- Never allow dropping items.
+-- end
 function CanPlayerDropItem(client, item)
 end
 
---- @realm server
+--- Called before salary is given to a player.
+-- @realm server
+-- @client player The client getting the salary.
+-- @faction table The factionTable of the clients faction.
+-- @treturn bool Whether or not to allow the client to earn salary.
+-- @usage function PLUGIN:CanPlayerEarnSalary(client, faction)
+-- 	return client:IsAdmin() -- Restricts earning salary to admins only.
+-- end
 function CanPlayerEarnSalary(client, faction)
 end
 
---- @realm server
+--- Called when a player attempts to enter observer.
+-- @realm server
+-- @client player The client trying to enter observer.
+-- @treturn bool Whether or not to allow the client to enter observer.
+-- @usage function PLUGIN:CanPlayerEarnSalary(client)
+-- 	return true -- Always allow observer.
+-- end
 function CanPlayerEnterObserver(client)
 end
 
---- @realm server
+--- Called when the player attempts to equip an item.
+-- @realm server
+-- @client player The client trying to equip the item.
+-- @item number The id of the item trying to be equipped.
+-- @treturn bool Whether or not to allow the client to equip the item.
+-- @usage function PLUGIN:CanPlayerEquipItem(client, item)
+-- 	return client:IsAdmin() -- Restrict equipping items to admins only.
+-- end
 function CanPlayerEquipItem(client, item)
 end
 
---- @realm server
+--- Called when the player attempts to hold an entity.
+-- @realm server
+-- @client player The client trying to hold the entity.
+-- @entity entity The entity attempted to be held.
+-- @treturn bool Whether or not to allow the client to hold the entity.
+-- @usage function PLUGIN:CanPlayerHoldObject(client, entity)
+-- 	return (client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle()) -- Disallow players in observer holding objects.
+-- end
 function CanPlayerHoldObject(client, entity)
 end
 
---- @realm server
+--- Called when the player attempts to interact with an entity.
+-- @realm server
+-- @client player The client trying to interact.
+-- @entity entity The entity being interacted.
+-- @option string The interaction option.
+-- @data any Any data from passed along.
+-- @treturn bool Whether or not to allow the client to interact with the entity.
+-- @usage function PLUGIN:CanPlayerInteractEntity(client, entity, option, data)
+-- 	return false -- Disallow interacting with any entity.
+-- end
 function CanPlayerInteractEntity(client, entity, option, data)
 end
 
