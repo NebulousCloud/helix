@@ -9,91 +9,271 @@ Plugin hooks are regular hooks that can be used in your schema with `Schema:Hook
 ]]
 -- @hooks Plugin
 
---- @realm server
+--- Adjusts the data used just before creating a new character.
+-- @realm server
+-- @player client Player that is creating the character
+-- @tab payload Table of data to be used for character creation
+-- @tab newPayload Table of data be merged with the current payload
+-- @usage function PLUGIN:AdjustCreationPayload(client, payload, newPayload)
+-- 	newPayload.money = payload.attributes["stm"] -- Sets the characters initial money to the stamina attribute value.
+-- end
 function AdjustCreationPayload(client, payload, newPayload)
 end
 
---- @realm shared
+--- Adjusts a player's current stamina offset amount. This is called when the player's stamina is about to be changed; every
+-- `0.25` seconds on the server, and every frame on the client.
+-- @realm shared
+-- @player client Player whose stamina is changing
+-- @number baseOffset Amount the stamina is changing by. This can be a positive or negative number depending if they are
+-- exhausting or regaining stamina
+-- @treturn number New offset to use
+-- @usage function PLUGIN:AdjustStaminaOffset(client, baseOffset)
+-- 	return baseOffset * 2 -- Drain/Regain stamina twice as fast.
+-- end
 function AdjustStaminaOffset(client, baseOffset)
 end
 
---- @realm client
-function BuildBusinessMenu(tabs)
+--- Creates the business panel in the tab menu.
+-- @realm client
+-- @treturn bool Whether or not to create the business menu
+-- @usage function PLUGIN:BuildBusinessMenu(tabs)
+-- 	return LocalPlayer():IsAdmin() -- Only builds the business menu for admins.
+-- end
+function BuildBusinessMenu()
 end
 
---- @realm server
+--- Whether or not a message can be auto formatted with punctuation and capitalization.
+-- @realm server
+-- @player speaker Player that sent the message
+-- @string chatType Chat type of the message. This will be something registered with `ix.chat.Register` - like `ic`, `ooc`, etc.
+-- @string text Unformatted text of the message
+-- @treturn bool Whether or not to allow auto formatting on the message
+-- @usage function PLUGIN:CanAutoFormatMessage(speaker, chatType, text)
+-- 	return false -- Disable auto formatting outright.
+-- end
 function CanAutoFormatMessage(speaker, chatType, text)
 end
 
---- @realm client
+--- Whether or not certain information can be displayed in the character info panel in the tab menu.
+-- @realm client
+-- @tab suppress Information to **NOT** display in the UI - modify this to change the behaviour. This is a table of the names of
+-- some panels to avoid displaying. Valid names include:
+--
+-- - `time` - current in-game time
+-- - `name` - name of the character
+-- - `description` - description of the character
+-- - `characterInfo` - entire panel showing a list of additional character info
+-- - `faction` - faction name of the character
+-- - `class` - name of the character's class if they're in one
+-- - `money` - current money the character has
+-- - `attributes` - attributes list for the character
+--
+-- Note that schemas/plugins can add additional character info panels.
+-- @usage function PLUGIN:CanCreateCharacterInfo(suppress)
+-- 	suppress.attributes = true -- Hides the attributes panel from the character info tab
+-- end
 function CanCreateCharacterInfo(suppress)
 end
 
---- @realm client
+--- Whether or not the ammo HUD should be drawn.
+-- @realm client
+-- @entity weapon Weapon the player currently is holding
+-- @treturn bool Whether or not to draw the ammo hud
+-- @usage function PLUGIN:CanDrawAmmoHUD(weapon)
+-- 	if (weapon:GetClass() == "weapon_frag") then -- Hides the ammo hud when holding grenades.
+-- 		return false
+-- 	end
+-- end
 function CanDrawAmmoHUD(weapon)
 end
 
---- @realm shared
-function CanPlayerAccessDoor(client, self, access)
+--- Called when a player tries to use abilities on the door, such as locking.
+-- @realm shared
+-- @player client The client trying something on the door.
+-- @entity door The door entity itself.
+-- @number access The access level used when called.
+-- @treturn bool Whether or not to allow the client access.
+-- @usage function PLUGIN:CanPlayerAccessDoor(client, door, access)
+-- 	return true -- Always allow access.
+-- end
+function CanPlayerAccessDoor(client, door, access)
 end
 
---- @realm server
+--- Whether or not a player is allowed to drop the given `item`.
+-- @realm server
+-- @player client Player attempting to drop an item
+-- @number item instance ID of the item being dropped
+-- @treturn bool Whether or not to allow the player to drop the item
+-- @usage function PLUGIN:CanPlayerDropItem(client, item)
+-- 	return false -- Never allow dropping items.
+-- end
 function CanPlayerDropItem(client, item)
 end
 
---- @realm server
+--- Whether or not a player can earn money at regular intervals. This hook runs only if the player's character faction has
+-- a salary set - i.e `FACTION.pay` is set to something other than `0` for their faction.
+-- @realm server
+-- @player client Player to give money to
+-- @tab faction Faction of the player's character
+-- @treturn bool Whether or not to allow the player to earn salary
+-- @usage function PLUGIN:CanPlayerEarnSalary(client, faction)
+-- 	return client:IsAdmin() -- Restricts earning salary to admins only.
+-- end
 function CanPlayerEarnSalary(client, faction)
 end
 
---- @realm server
+--- Whether or not the player is allowed to enter observer mode. This is allowed only for admins by default and can be
+-- customized by server owners if the server is using a CAMI-compliant admin mod.
+-- @realm server
+-- @player client Player attempting to enter observer
+-- @treturn bool Whether or not to allow the player to enter observer
+-- @usage function PLUGIN:CanPlayerEnterObserver(client)
+-- 	return true -- Always allow observer.
+-- end
 function CanPlayerEnterObserver(client)
 end
 
---- @realm server
+--- Whether or not a player can equip the given `item`. This is called for items with `outfit`, `pacoutfit`, or `weapons` as
+-- their base. Schemas/plugins can utilize this hook for their items.
+-- @realm server
+-- @player client Player attempting to equip the item
+-- @tab item Item being equipped
+-- @treturn bool Whether or not to allow the player to equip the item
+-- @see CanPlayerUnequipItem
+-- @usage function PLUGIN:CanPlayerEquipItem(client, item)
+-- 	return client:IsAdmin() -- Restrict equipping items to admins only.
+-- end
 function CanPlayerEquipItem(client, item)
 end
 
---- @realm server
+--- Whether or not a player is allowed to hold an entity with the hands SWEP.
+-- @realm server
+-- @player client Player attempting to hold an entity
+-- @entity entity Entity being held
+-- @treturn bool Whether or not to allow the player to hold the entity
+-- @usage function PLUGIN:CanPlayerHoldObject(client, entity)
+-- 	return !(client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle()) -- Disallow players in observer holding objects.
+-- end
 function CanPlayerHoldObject(client, entity)
 end
 
---- @realm server
+--- Whether or not a player is allowed to interact with an entity's interaction menu if it has one.
+-- @realm server
+-- @player client Player attempting interaction
+-- @entity entity Entity being interacted with
+-- @string option Option selected by the player
+-- @param data Any data passed with the interaction option
+-- @treturn bool Whether or not to allow the player to interact with the entity
+-- @usage function PLUGIN:CanPlayerInteractEntity(client, entity, option, data)
+-- 	return false -- Disallow interacting with any entity.
+-- end
 function CanPlayerInteractEntity(client, entity, option, data)
 end
 
---- @realm server
+--- Whether or not a player is allowed to interact with an item via an inventory action (e.g picking up, dropping, transferring
+-- inventories, etc). Note that this is for an item *table*, not an item *entity*. This is called after `CanPlayerDropItem`
+-- and `CanPlayerTakeItem`.
+-- @realm server
+-- @player client Player attempting interaction
+-- @string action The action being performed
+-- @param item Item's instance ID or item table
+-- @param data Any data passed with the action
+-- @treturn bool Whether or not to allow the player to interact with the item
+-- @usage function PLUGIN:CanPlayerInteractItem(client, action, item, data)
+-- 	return false -- Disallow interacting with any item.
+-- end
 function CanPlayerInteractItem(client, action, item, data)
 end
 
---- @realm shared
+--- Whether or not a plyer is allowed to join a class.
+-- @realm shared
+-- @player client Player attempting to join
+-- @number class ID of the class
+-- @tab info The class table
+-- @treturn bool Whether or not to allow the player to join the class
+-- @usage function PLUGIN:CanPlayerJoinClass(client, class, info)
+-- 	return client:IsAdmin() -- Restrict joining classes to admins only.
+-- end
 function CanPlayerJoinClass(client, class, info)
 end
 
---- @realm server
+--- Whether or not a player can knock on the door with the hands SWEP.
+-- @realm server
+-- @player client Player attempting to knock
+-- @entity entity Door being knocked on
+-- @treturn bool Whether or not to allow the player to knock on the door
+-- @usage function PLUGIN:CanPlayerKnock(client, entity)
+-- 	return false -- Disable knocking on doors outright.
+-- end
 function CanPlayerKnock(client, entity)
 end
 
---- @realm server
-function CanPlayerOpenShipment(client, self)
+--- Whether or not a player can open a shipment spawned from the business menu.
+-- @realm server
+-- @player client Player attempting to open the shipment
+-- @entity entity Shipment entity
+-- @treturn bool Whether or not to allow the player to open the shipment
+-- @usage function PLUGIN:CanPlayerOpenShipment(client, entity)
+-- 	return client:Team() == FACTION_BMD -- Restricts opening shipments to FACTION_BMD.
+-- end
+function CanPlayerOpenShipment(client, entity)
 end
 
---- @realm server
+--- Whether or not a player is allowed to spawn a container entity.
+-- @realm server
+-- @player client Player attempting to spawn a container
+-- @string model Model of the container being spawned
+-- @entity entity Container entity
+-- @treturn bool Whether or not to allow the player to spawn the container
+-- @usage function PLUGIN:CanPlayerSpawnContainer(client, model, entity)
+-- 	return client:IsAdmin() -- Restrict spawning containers to admins.
+-- end
 function CanPlayerSpawnContainer(client, model, entity)
 end
 
---- @realm server
+--- Whether or not a player is allowed to take an item and put it in their inventory.
+-- @realm server
+-- @player client Player attempting to take the item
+-- @entity item Entity corresponding to the item
+-- @treturn bool Whether or not to allow the player to take the item
+-- @usage function PLUGIN:CanPlayerTakeItem(client, item)
+-- 	return !(client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle()) -- Disallow players in observer taking items.
+-- end
 function CanPlayerTakeItem(client, item)
 end
 
---- @realm server
+--- Whether or not the player is allowed to punch with the hands SWEP.
+-- @realm server
+-- @player client Player attempting throw a punch
+-- @treturn bool Whether or not to allow the player to punch
+-- @usage function PLUGIN:CanPlayerThrowPunch(client)
+-- 	return client:GetCharacter():GetAttribute("str", 0) > 0 -- Only allow players with strength to punch.
+-- end
 function CanPlayerThrowPunch(client)
 end
 
---- @realm server
+--- Whether or not a player can trade with a vendor.
+-- @realm server
+-- @player client Player attempting to trade
+-- @entity entity Vendor entity
+-- @string uniqueID The uniqueID of the item being traded.
+-- @bool isSellingToVendor If the client is selling to the vendor
+-- @treturn bool Whether or not to allow the client to trade with the vendor
+-- @usage function PLUGIN:CanPlayerTradeWithVendor(client, entity, uniqueID, isSellingToVendor)
+-- 	return false -- Disallow trading with vendors outright.
+-- end
 function CanPlayerTradeWithVendor(client, entity, uniqueID, isSellingToVendor)
 end
 
---- @realm server
+--- Whether or not a player can unequip an item.
+-- @realm server
+-- @player client Player attempting to unequip an item
+-- @tab item Item being unequipped
+-- @treturn bool Whether or not to allow the player to unequip the item
+-- @see CanPlayerEquipItem
+-- @usage function PLUGIN:CanPlayerUnequipItem(client, item)
+-- 	return false -- Disallow unequipping items.
+-- end
 function CanPlayerUnequipItem(client, item)
 end
 
