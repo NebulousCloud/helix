@@ -33,12 +33,11 @@ end
 
 --- Called before the business menu is added to the tab menu.
 -- @realm client
--- @tab tabs Empty table from the tab menu gui, allows adding more tabs from inside this function.
 -- @treturn bool Whether or not to build the business menu for the client.
--- @usage function PLUGIN:BuildBusinessMenu(tabs)
+-- @usage function PLUGIN:BuildBusinessMenu()
 -- 	return LocalPlayer():IsAdmin() -- Only builds the business menu for admins.
 -- end
-function BuildBusinessMenu(tabs)
+function BuildBusinessMenu()
 end
 
 --- Called before a message is auto formatted.
