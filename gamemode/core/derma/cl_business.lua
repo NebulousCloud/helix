@@ -461,7 +461,7 @@ end
 vgui.Register("ixBusinessCheckout", PANEL, "DFrame")
 
 hook.Add("CreateMenuButtons", "ixBusiness", function(tabs)
-	if (hook.Run("BuildBusinessMenu", tabs) != false) then
+	if (hook.Run("BuildBusinessMenu") != false) then
 		tabs["business"] = function(container)
 			container:Add("ixBusiness")
 		end
