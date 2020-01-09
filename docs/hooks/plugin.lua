@@ -145,7 +145,7 @@ end
 -- @player client The client trying to interact.
 -- @entity entity The entity being interacted.
 -- @string option The interaction option.
--- @field data Any data passed along.
+-- @param data Any data passed along.
 -- @treturn bool Whether or not to allow the client to interact with the entity.
 -- @usage function PLUGIN:CanPlayerInteractEntity(client, entity, option, data)
 -- 	return false -- Disallow interacting with any entity.
@@ -158,7 +158,7 @@ end
 -- @player client The client trying to interact.
 -- @string action The action being performed.
 -- @param item The item id or the item entity.
--- @field data Any data passed along.
+-- @param data Any data passed along.
 -- @treturn bool Whether or not to allow the client to interact with the item.
 -- @usage function PLUGIN:CanPlayerInteractItem(client, action, item, data)
 -- 	return false -- Disallow interacting with any item.
