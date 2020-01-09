@@ -12,8 +12,8 @@ Plugin hooks are regular hooks that can be used in your schema with `Schema:Hook
 --- Called as the last step before character creation to adjust the creation data payload.
 -- @realm server
 -- @player client Client that is creating the character.
--- @payload table The current payload data to be sent to character creation.
--- @newPayload table A table to be merged with the current payload table.
+-- @table payload The current payload data to be sent to character creation.
+-- @tab newPayload A table to be merged with the current payload table.
 -- @usage function PLUGIN:AdjustCreationPayload(client, payload, newPayload)
 -- 	newPayload.money = payload.attributes["stm"] -- Sets the characters initial money to the stamina attribute value.
 -- end
@@ -23,7 +23,7 @@ end
 --- Called when stamina is being changed.
 -- @realm shared
 -- @player client Client that is draining/gaining stamina.
--- @baseOffset number The current stamina change offset.
+-- @type=number baseOffset The current stamina change offset.
 -- @treturn number The new stamina change offset.
 -- @usage function PLUGIN:AdjustStaminaOffset(client, baseOffset)
 -- 	return baseOffset * 2 -- Drain/Regain stamina twice as fast.
@@ -33,7 +33,7 @@ end
 
 --- Called before the business menu is added to the tab menu.
 -- @realm client
--- @tabs table Empty table from the tab menu gui, allows adding more tabs from inside this function.
+-- @tab tabs Empty table from the tab menu gui, allows adding more tabs from inside this function.
 -- @treturn bool Whether or not to build the business menu for the client.
 -- @usage function PLUGIN:BuildBusinessMenu(tabs)
 -- 	return LocalPlayer():IsAdmin() -- Only builds the business menu for admins.
@@ -43,9 +43,9 @@ end
 
 --- Called before a message is auto formatted.
 -- @realm server
--- @speaker player The speaker of the message.
--- @chatType string The chatType of the message.
--- @text string The unformatted text of the message.
+-- @player speaker The speaker of the message.
+-- @string chatType The chatType of the message.
+-- @string text The unformatted text of the message.
 -- @treturn bool Whether or not to allow auto formatting on the message.
 -- @usage function PLUGIN:CanAutoFormatMessage(speaker, chatType, text)
 -- 	return false -- Disable auto formatting outright.
@@ -55,7 +55,7 @@ end
 
 --- Called before creating character info.
 -- @realm client
--- @suppress table Table refrenced before creating parts of the character info.
+-- @tab suppress Table refrenced before creating parts of the character info.
 -- @usage function PLUGIN:CanCreateCharacterInfo(suppress)
 -- 	suppress.attributes = true -- Hides attributes from the 'you' tab.
 -- end
@@ -64,7 +64,7 @@ end
 
 --- Called before drawing the ammo hud.
 -- @realm client
--- @weapon entity The weapon the player currently is holding.
+-- @entity weapon The weapon the player currently is holding.
 -- @treturn bool Whether or not to draw the ammo hud.
 -- @usage function PLUGIN:CanDrawAmmoHUD(weapon)
 -- 	if (weapon:GetClass() == "weapon_frag") then -- Hides the ammo hud when holding grenades.
@@ -76,9 +76,9 @@ end
 
 --- Called when a player tries to use abilities on the door, such as locking.
 -- @realm shared
--- @client player The client trying something on the door.
--- @door entity The door entity itself.
--- @access number The access level used when called.
+-- @player client The client trying something on the door.
+-- @entity door The door entity itself.
+-- @number access The access level used when called.
 -- @treturn bool Whether or not to allow the client access.
 -- @usage function PLUGIN:CanPlayerAccessDoor(client, door, access)
 -- 	return true -- Always allow access.
@@ -88,8 +88,8 @@ end
 
 --- Called when a player attempts to drop an item.
 -- @realm server
--- @client player The client trying to drop the item.
--- @item number The id of the item trying to be dropped.
+-- @player client The client trying to drop the item.
+-- @number item The id of the item trying to be dropped.
 -- @treturn bool Whether or not to allow the client to drop the item.
 -- @usage function PLUGIN:CanPlayerDropItem(client, item)
 -- 	return false -- Never allow dropping items.
@@ -99,8 +99,8 @@ end
 
 --- Called before salary is given to a player.
 -- @realm server
--- @client player The client getting the salary.
--- @faction table The factionTable of the clients faction.
+-- @player client The client getting the salary.
+-- @tab faction The factionTable of the clients faction.
 -- @treturn bool Whether or not to allow the client to earn salary.
 -- @usage function PLUGIN:CanPlayerEarnSalary(client, faction)
 -- 	return client:IsAdmin() -- Restricts earning salary to admins only.
@@ -110,7 +110,7 @@ end
 
 --- Called when a player attempts to enter observer.
 -- @realm server
--- @client player The client trying to enter observer.
+-- @player client The client trying to enter observer.
 -- @treturn bool Whether or not to allow the client to enter observer.
 -- @usage function PLUGIN:CanPlayerEnterObserver(client)
 -- 	return true -- Always allow observer.
@@ -120,8 +120,8 @@ end
 
 --- Called when a player attempts to equip an item.
 -- @realm server
--- @client player The client trying to equip the item.
--- @item table The item table of the item being equipped.
+-- @player client The client trying to equip the item.
+-- @tab item The item table of the item being equipped.
 -- @treturn bool Whether or not to allow the client to equip the item.
 -- @usage function PLUGIN:CanPlayerEquipItem(client, item)
 -- 	return client:IsAdmin() -- Restrict equipping items to admins only.
@@ -131,7 +131,7 @@ end
 
 --- Called when a player attempts to hold an entity.
 -- @realm server
--- @client player The client trying to hold the entity.
+-- @player client The client trying to hold the entity.
 -- @entity entity The entity attempted to be held.
 -- @treturn bool Whether or not to allow the client to hold the entity.
 -- @usage function PLUGIN:CanPlayerHoldObject(client, entity)
@@ -142,10 +142,10 @@ end
 
 --- Called when a player attempts to interact with an entity.
 -- @realm server
--- @client player The client trying to interact.
+-- @player client The client trying to interact.
 -- @entity entity The entity being interacted.
--- @option string The interaction option.
--- @data any Any data passed along.
+-- @string opetion The interaction option.
+-- @any data Any data passed along.
 -- @treturn bool Whether or not to allow the client to interact with the entity.
 -- @usage function PLUGIN:CanPlayerInteractEntity(client, entity, option, data)
 -- 	return false -- Disallow interacting with any entity.
@@ -155,10 +155,10 @@ end
 
 --- Called when a player attempts to interact with an item.
 -- @realm server
--- @client player The client trying to interact.
--- @action string The action being performed.
+-- @player client The client trying to interact.
+-- @string action The action being performed.
 -- @param item The item id or the item entity.
--- @data any Any data passed along.
+-- @any data Any data passed along.
 -- @treturn bool Whether or not to allow the client to interact with the item.
 -- @usage function PLUGIN:CanPlayerInteractItem(client, action, item, data)
 -- 	return false -- Disallow interacting with any item.
@@ -168,9 +168,9 @@ end
 
 --- Called when a player attempts to join a class.
 -- @realm shared
--- @client player The client trying to join the class.
--- @class number The class id.
--- @info table The class table.
+-- @player client The client trying to join the class.
+-- @number class The class id.
+-- @tab info The class table.
 -- @treturn bool Whether or not to allow the client to join the class.
 -- @usage function PLUGIN:CanPlayerJoinClass(client, class, info)
 -- 	return client:IsAdmin() -- Restrict joining classes to admins only.
@@ -180,7 +180,7 @@ end
 
 --- Called when a player attempts to knock on a door.
 -- @realm server
--- @client player The client trying to knock on the door.
+-- @player client The client trying to knock on the door.
 -- @entity entity The door entity itself.
 -- @treturn bool Whether or not to allow the client to knock on the door.
 -- @usage function PLUGIN:CanPlayerKnock(client, entity)
@@ -191,7 +191,7 @@ end
 
 --- Called when a player attempts to open a shipment
 -- @realm server
--- @client player The client trying to open the shipment.
+-- @player client The client trying to open the shipment.
 -- @entity entity The shipment entity iteself.
 -- @treturn bool Whether or not to allow the client to open the shipment.
 -- @usage function PLUGIN:CanPlayerOpenShipment(client, entity)
@@ -202,8 +202,8 @@ end
 
 --- Called when a player attempts to spawn a container.
 -- @realm server
--- @client player The client trying to spawn the container.
--- @model string The model of the container entity being spawned.
+-- @player client The client trying to spawn the container.
+-- @string model The model of the container entity being spawned.
 -- @entity entity The container entity iteself.
 -- @treturn bool Whether or not to allow the client to spawn the container.
 -- @usage function PLUGIN:CanPlayerSpawnContainer(client, model, entity)
@@ -214,8 +214,8 @@ end
 
 --- Called when a player attempts to take an item.
 -- @realm server
--- @client player The client trying to take the item.
--- @item entity The item entity.
+-- @player client The client trying to take the item.
+-- @entity item The item entity.
 -- @treturn bool Whether or not to allow the client to take the item.
 -- @usage function PLUGIN:CanPlayerTakeItem(client, item)
 -- 	return !(client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle()) -- Disallow players in observer taking items.
@@ -225,7 +225,7 @@ end
 
 --- Called when a player attempts to punch.
 -- @realm server
--- @client player The client trying to punch.
+-- @player client The client trying to punch.
 -- @treturn bool Whether or not to allow the client to punch.
 -- @usage function PLUGIN:CanPlayerThrowPunch(client)
 -- 	return client:GetCharacter():GetAttribute("str", 0) > 0 -- Only allow players with strength to punch.
@@ -235,10 +235,10 @@ end
 
 --- Called when a player attempts to trade with a vendor.
 -- @realm server
--- @client player The client trying to trade.
+-- @player client The client trying to trade.
 -- @entity entity The vendor entity.
--- @uniqueID string The uniqueID of the item being traded.
--- @isSellingToVendor bool If the client is selling to the vendor.
+-- @string uniqueID The uniqueID of the item being traded.
+-- @bool isSellingToVendor If the client is selling to the vendor.
 -- @treturn bool Whether or not to allow the client to trade with the vendor.
 -- @usage function PLUGIN:CanPlayerTradeWithVendor(client, entity, uniqueID, isSellingToVendor)
 -- 	return false -- Disallow trading with vendors outright.
@@ -248,8 +248,8 @@ end
 
 --- Called when a player attempts to unequip an item.
 -- @realm server
--- @client player The client trying to unequip an item.
--- @item table The item table of the item being unequipped.
+-- @player client The client trying to unequip an item.
+-- @tab item The item table of the item being unequipped.
 -- @treturn bool Whether or not to allow the client to unequip the item.
 -- @usage function PLUGIN:CanPlayerUnequipItem(client, item)
 -- 	return false -- Disallow unequipping items.
