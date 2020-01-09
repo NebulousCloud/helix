@@ -36,7 +36,7 @@ end
 --- Creates the business panel in the tab menu.
 -- @realm client
 -- @treturn bool Whether or not to create the business menu
--- @usage function PLUGIN:BuildBusinessMenu(tabs)
+-- @usage function PLUGIN:BuildBusinessMenu()
 -- 	return LocalPlayer():IsAdmin() -- Only builds the business menu for admins.
 -- end
 function BuildBusinessMenu()
