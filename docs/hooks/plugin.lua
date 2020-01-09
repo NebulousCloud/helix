@@ -112,7 +112,7 @@ end
 -- @realm server
 -- @client player The client trying to enter observer.
 -- @treturn bool Whether or not to allow the client to enter observer.
--- @usage function PLUGIN:CanPlayerEarnSalary(client)
+-- @usage function PLUGIN:CanPlayerEnterObserver(client)
 -- 	return true -- Always allow observer.
 -- end
 function CanPlayerEnterObserver(client)
