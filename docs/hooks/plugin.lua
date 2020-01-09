@@ -12,7 +12,7 @@ Plugin hooks are regular hooks that can be used in your schema with `Schema:Hook
 --- Called as the last step before character creation to adjust the creation data payload.
 -- @realm server
 -- @player client Client that is creating the character.
--- @table payload The current payload data to be sent to character creation.
+-- @tab payload The current payload data to be sent to character creation.
 -- @tab newPayload A table to be merged with the current payload table.
 -- @usage function PLUGIN:AdjustCreationPayload(client, payload, newPayload)
 -- 	newPayload.money = payload.attributes["stm"] -- Sets the characters initial money to the stamina attribute value.
@@ -23,7 +23,7 @@ end
 --- Called when stamina is being changed.
 -- @realm shared
 -- @player client Client that is draining/gaining stamina.
--- @type=number baseOffset The current stamina change offset.
+-- @number baseOffset The current stamina change offset.
 -- @treturn number The new stamina change offset.
 -- @usage function PLUGIN:AdjustStaminaOffset(client, baseOffset)
 -- 	return baseOffset * 2 -- Drain/Regain stamina twice as fast.
