@@ -98,11 +98,11 @@
 							<ul>
 									<li><span class="realm server"></span><a href="#AdjustCreationPayload">PLUGIN:AdjustCreationPayload(client, payload, newPayload)</a></li>
 									<li><span class="realm shared"></span><a href="#AdjustStaminaOffset">PLUGIN:AdjustStaminaOffset(client, baseOffset)</a></li>
-									<li><span class="realm client"></span><a href="#BuildBusinessMenu">PLUGIN:BuildBusinessMenu(tabs)</a></li>
+									<li><span class="realm client"></span><a href="#BuildBusinessMenu">PLUGIN:BuildBusinessMenu()</a></li>
 									<li><span class="realm server"></span><a href="#CanAutoFormatMessage">PLUGIN:CanAutoFormatMessage(speaker, chatType, text)</a></li>
 									<li><span class="realm client"></span><a href="#CanCreateCharacterInfo">PLUGIN:CanCreateCharacterInfo(suppress)</a></li>
 									<li><span class="realm client"></span><a href="#CanDrawAmmoHUD">PLUGIN:CanDrawAmmoHUD(weapon)</a></li>
-									<li><span class="realm shared"></span><a href="#CanPlayerAccessDoor">PLUGIN:CanPlayerAccessDoor(client, self, access)</a></li>
+									<li><span class="realm shared"></span><a href="#CanPlayerAccessDoor">PLUGIN:CanPlayerAccessDoor(client, door, access)</a></li>
 									<li><span class="realm server"></span><a href="#CanPlayerDropItem">PLUGIN:CanPlayerDropItem(client, item)</a></li>
 									<li><span class="realm server"></span><a href="#CanPlayerEarnSalary">PLUGIN:CanPlayerEarnSalary(client, faction)</a></li>
 									<li><span class="realm server"></span><a href="#CanPlayerEnterObserver">PLUGIN:CanPlayerEnterObserver(client)</a></li>
@@ -112,7 +112,7 @@
 									<li><span class="realm server"></span><a href="#CanPlayerInteractItem">PLUGIN:CanPlayerInteractItem(client, action, item, data)</a></li>
 									<li><span class="realm shared"></span><a href="#CanPlayerJoinClass">PLUGIN:CanPlayerJoinClass(client, class, info)</a></li>
 									<li><span class="realm server"></span><a href="#CanPlayerKnock">PLUGIN:CanPlayerKnock(client, entity)</a></li>
-									<li><span class="realm server"></span><a href="#CanPlayerOpenShipment">PLUGIN:CanPlayerOpenShipment(client, self)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerOpenShipment">PLUGIN:CanPlayerOpenShipment(client, entity)</a></li>
 									<li><span class="realm server"></span><a href="#CanPlayerSpawnContainer">PLUGIN:CanPlayerSpawnContainer(client, model, entity)</a></li>
 									<li><span class="realm server"></span><a href="#CanPlayerTakeItem">PLUGIN:CanPlayerTakeItem(client, item)</a></li>
 									<li><span class="realm server"></span><a href="#CanPlayerThrowPunch">PLUGIN:CanPlayerThrowPunch(client)</a></li>
@@ -265,14 +265,18 @@
 					<h1 class="title">Functions</h1>
 
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:AdjustCreationPayload(client, payload, newPayload)
+	newPayload.money = payload.attributes["stm"] -- Sets the characters initial money to the stamina attribute value.
+end
+</code></pre>
+								</aside>
 							<header><a name="AdjustCreationPayload"></a>
 								<h1><span class="realm server"></span>PLUGIN:AdjustCreationPayload(client, payload, newPayload)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Adjusts the data used just before creating a new character.</p>
 							</header>
 
 
@@ -284,11 +288,10 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player that is creating the character</p>
 											</li>
 									</ul>
 
@@ -297,11 +300,10 @@
 											<li>
 												<span class="tag parameter">payload</span>
 
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
 
 
-												<p>
-
-</p>
+												<p> Table of data to be used for character creation</p>
 											</li>
 									</ul>
 
@@ -310,25 +312,29 @@
 											<li>
 												<span class="tag parameter">newPayload</span>
 
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
 
 
-												<p>
-
-</p>
+												<p> Table of data be merged with the current payload</p>
 											</li>
 									</ul>
 
 
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:AdjustStaminaOffset(client, baseOffset)
+	return baseOffset * 2 -- Drain/Regain stamina twice as fast.
+end
+</code></pre>
+								</aside>
 							<header><a name="AdjustStaminaOffset"></a>
 								<h1><span class="realm shared"></span>PLUGIN:AdjustStaminaOffset(client, baseOffset)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Adjusts a player's current stamina offset amount.  This is called when the player's stamina is about to be changed; every
+ <code>0.25</code> seconds on the server, and every frame on the client.</p>
 							</header>
 
 
@@ -340,11 +346,10 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player whose stamina is changing</p>
 											</li>
 									</ul>
 
@@ -353,55 +358,69 @@
 											<li>
 												<span class="tag parameter">baseOffset</span>
 
+													<span class="tag"><span class="type">number</span></span>
 
 
-												<p>
-
-</p>
+												<p> Amount the stamina is changing by. This can be a positive or negative number depending if they are
+ exhausting or regaining stamina</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>New offset to use</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:BuildBusinessMenu(tabs)
+	return LocalPlayer():IsAdmin() -- Only builds the business menu for admins.
+end
+</code></pre>
+								</aside>
 							<header><a name="BuildBusinessMenu"></a>
-								<h1><span class="realm client"></span>PLUGIN:BuildBusinessMenu(tabs)</h1>
+								<h1><span class="realm client"></span>PLUGIN:BuildBusinessMenu()</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Creates the business panel in the tab menu.</p>
 							</header>
 
 
-									<h3>Parameters</h3>
 
-
-									<ul>
+								<h3>Returns</h3>
+								<ul>
 
 											<li>
-												<span class="tag parameter">tabs</span>
+													<span class="type">bool</span>
 
-
-
-												<p>
-
-</p>
+												<p>Whether or not to create the business menu</p>
 											</li>
-									</ul>
 
+								</ul>
 
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanAutoFormatMessage(speaker, chatType, text)
+	return false -- Disable auto formatting outright.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanAutoFormatMessage"></a>
 								<h1><span class="realm server"></span>PLUGIN:CanAutoFormatMessage(speaker, chatType, text)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not a message can be auto formatted with punctuation and capitalization.</p>
 							</header>
 
 
@@ -413,11 +432,10 @@
 											<li>
 												<span class="tag parameter">speaker</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player that sent the message</p>
 											</li>
 									</ul>
 
@@ -426,11 +444,10 @@
 											<li>
 												<span class="tag parameter">chatType</span>
 
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p>
-
-</p>
+												<p> Chat type of the message. This will be something registered with <a href="../libraries/ix.chat.html#ix.chat.Register">ix.chat.Register</a> - like <code>ic</code>, <code>ooc</code>, etc.</p>
 											</li>
 									</ul>
 
@@ -439,25 +456,39 @@
 											<li>
 												<span class="tag parameter">text</span>
 
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p>
-
-</p>
+												<p> Unformatted text of the message</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow auto formatting on the message</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanCreateCharacterInfo(suppress)
+	suppress.attributes = true -- Hides the attributes panel from the character info tab
+end
+</code></pre>
+								</aside>
 							<header><a name="CanCreateCharacterInfo"></a>
 								<h1><span class="realm client"></span>PLUGIN:CanCreateCharacterInfo(suppress)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not certain information can be displayed in the character info panel in the tab menu.</p>
 							</header>
 
 
@@ -469,25 +500,44 @@
 											<li>
 												<span class="tag parameter">suppress</span>
 
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
 
 
-												<p>
+												<p> Information to <strong>NOT</strong> display in the UI - modify this to change the behaviour. This is a table of the names of
+ some panels to avoid displaying. Valid names include:</p>
 
-</p>
+<ul>
+    <li><code>time</code> - current in-game time</li>
+    <li><code>name</code> - name of the character</li>
+    <li><code>description</code> - description of the character</li>
+    <li><code>characterInfo</code> - entire panel showing a list of additional character info</li>
+    <li><code>faction</code> - faction name of the character</li>
+    <li><code>class</code> - name of the character's class if they're in one</li>
+    <li><code>money</code> - current money the character has</li>
+    <li><code>attributes</code> - attributes list for the character</li>
+</ul>
+
+<p> Note that schemas/plugins can add additional character info panels.</p>
 											</li>
 									</ul>
 
 
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanDrawAmmoHUD(weapon)
+	if (weapon:GetClass() == "weapon_frag") then -- Hides the ammo hud when holding grenades.
+		return false
+	end
+end
+</code></pre>
+								</aside>
 							<header><a name="CanDrawAmmoHUD"></a>
 								<h1><span class="realm client"></span>PLUGIN:CanDrawAmmoHUD(weapon)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not the ammo HUD should be drawn.</p>
 							</header>
 
 
@@ -499,25 +549,39 @@
 											<li>
 												<span class="tag parameter">weapon</span>
 
+													<span class="tag"><span class="type">entity</span></span>
 
 
-												<p>
-
-</p>
+												<p> Weapon the player currently is holding</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to draw the ammo hud</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerAccessDoor(client, door, access)
+	return true -- Always allow access.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerAccessDoor"></a>
-								<h1><span class="realm shared"></span>PLUGIN:CanPlayerAccessDoor(client, self, access)</h1>
+								<h1><span class="realm shared"></span>PLUGIN:CanPlayerAccessDoor(client, door, access)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Called when a player tries to use abilities on the door, such as locking.</p>
 							</header>
 
 
@@ -529,24 +593,22 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> The client trying something on the door.</p>
 											</li>
 									</ul>
 
 									<ul>
 
 											<li>
-												<span class="tag parameter">self</span>
+												<span class="tag parameter">door</span>
+
+													<span class="tag"><span class="type">entity</span></span>
 
 
-
-												<p>
-
-</p>
+												<p> The door entity itself.</p>
 											</li>
 									</ul>
 
@@ -555,25 +617,39 @@
 											<li>
 												<span class="tag parameter">access</span>
 
+													<span class="tag"><span class="type">number</span></span>
 
 
-												<p>
-
-</p>
+												<p> The access level used when called.</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the client access.</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerDropItem(client, item)
+	return false -- Never allow dropping items.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerDropItem"></a>
 								<h1><span class="realm server"></span>PLUGIN:CanPlayerDropItem(client, item)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not a player is allowed to drop the given <code>item</code>.</p>
 							</header>
 
 
@@ -585,11 +661,10 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player attempting to drop an item</p>
 											</li>
 									</ul>
 
@@ -598,25 +673,40 @@
 											<li>
 												<span class="tag parameter">item</span>
 
+													<span class="tag"><span class="type">number</span></span>
 
 
-												<p>
-
-</p>
+												<p> instance ID of the item being dropped</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the player to drop the item</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerEarnSalary(client, faction)
+	return client:IsAdmin() -- Restricts earning salary to admins only.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerEarnSalary"></a>
 								<h1><span class="realm server"></span>PLUGIN:CanPlayerEarnSalary(client, faction)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not a player can earn money at regular intervals.  This hook runs only if the player's character faction has
+ a salary set - i.e <code>FACTION.pay</code> is set to something other than <code>0</code> for their faction.</p>
 							</header>
 
 
@@ -628,11 +718,10 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player to give money to</p>
 											</li>
 									</ul>
 
@@ -641,25 +730,40 @@
 											<li>
 												<span class="tag parameter">faction</span>
 
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
 
 
-												<p>
-
-</p>
+												<p> Faction of the player's character</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the player to earn salary</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerEnterObserver(client)
+	return true -- Always allow observer.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerEnterObserver"></a>
 								<h1><span class="realm server"></span>PLUGIN:CanPlayerEnterObserver(client)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not the player is allowed to enter observer mode.  This is allowed only for admins by default and can be
+ customized by server owners if the server is using a CAMI-compliant admin mod.</p>
 							</header>
 
 
@@ -671,25 +775,40 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player attempting to enter observer</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the player to enter observer</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerEquipItem(client, item)
+	return client:IsAdmin() -- Restrict equipping items to admins only.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerEquipItem"></a>
 								<h1><span class="realm server"></span>PLUGIN:CanPlayerEquipItem(client, item)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not a player can equip the given <code>item</code>.  This is called for items with <code>outfit</code>, <code>pacoutfit</code>, or <code>weapons</code> as
+ their base. Schemas/plugins can utilize this hook for their items.</p>
 							</header>
 
 
@@ -701,11 +820,10 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player attempting to equip the item</p>
 											</li>
 									</ul>
 
@@ -714,25 +832,43 @@
 											<li>
 												<span class="tag parameter">item</span>
 
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
 
 
-												<p>
-
-</p>
+												<p> Item being equipped</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the player to equip the item</p>
+											</li>
+
+								</ul>
+
+								<h3>See Also</h3>
+								<ul>
+										<li><a href="../hooks/Plugin.html#CanPlayerUnequipItem">CanPlayerUnequipItem</a></li>
+								</ul>
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerHoldObject(client, entity)
+	return !(client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle()) -- Disallow players in observer holding objects.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerHoldObject"></a>
 								<h1><span class="realm server"></span>PLUGIN:CanPlayerHoldObject(client, entity)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not a player is allowed to hold an entity with the hands SWEP.</p>
 							</header>
 
 
@@ -744,11 +880,10 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player attempting to hold an entity</p>
 											</li>
 									</ul>
 
@@ -757,25 +892,39 @@
 											<li>
 												<span class="tag parameter">entity</span>
 
+													<span class="tag"><span class="type">entity</span></span>
 
 
-												<p>
-
-</p>
+												<p> Entity being held</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the player to hold the entity</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerInteractEntity(client, entity, option, data)
+	return false -- Disallow interacting with any entity.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerInteractEntity"></a>
 								<h1><span class="realm server"></span>PLUGIN:CanPlayerInteractEntity(client, entity, option, data)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not a player is allowed to interact with an entity's interaction menu if it has one.</p>
 							</header>
 
 
@@ -787,11 +936,10 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player attempting interaction</p>
 											</li>
 									</ul>
 
@@ -800,11 +948,10 @@
 											<li>
 												<span class="tag parameter">entity</span>
 
+													<span class="tag"><span class="type">entity</span></span>
 
 
-												<p>
-
-</p>
+												<p> Entity being interacted with</p>
 											</li>
 									</ul>
 
@@ -813,11 +960,10 @@
 											<li>
 												<span class="tag parameter">option</span>
 
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p>
-
-</p>
+												<p> Option selected by the player</p>
 											</li>
 									</ul>
 
@@ -828,23 +974,38 @@
 
 
 
-												<p>
-
-</p>
+												<p> Any data passed with the interaction option</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the player to interact with the entity</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerInteractItem(client, action, item, data)
+	return false -- Disallow interacting with any item.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerInteractItem"></a>
 								<h1><span class="realm server"></span>PLUGIN:CanPlayerInteractItem(client, action, item, data)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not a player is allowed to interact with an item via an inventory action (e.g picking up, dropping, transferring
+ inventories, etc).  Note that this is for an item <em>table</em>, not an item <em>entity</em>. This is called after <a href="../hooks/Plugin.html#CanPlayerDropItem">CanPlayerDropItem</a>
+ and <a href="../hooks/Plugin.html#CanPlayerTakeItem">CanPlayerTakeItem</a>.</p>
 							</header>
 
 
@@ -856,11 +1017,10 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player attempting interaction</p>
 											</li>
 									</ul>
 
@@ -869,11 +1029,10 @@
 											<li>
 												<span class="tag parameter">action</span>
 
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p>
-
-</p>
+												<p> The action being performed</p>
 											</li>
 									</ul>
 
@@ -884,9 +1043,7 @@
 
 
 
-												<p>
-
-</p>
+												<p> Item's instance ID or item table</p>
 											</li>
 									</ul>
 
@@ -897,23 +1054,36 @@
 
 
 
-												<p>
-
-</p>
+												<p> Any data passed with the action</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the player to interact with the item</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerJoinClass(client, class, info)
+	return client:IsAdmin() -- Restrict joining classes to admins only.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerJoinClass"></a>
 								<h1><span class="realm shared"></span>PLUGIN:CanPlayerJoinClass(client, class, info)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not a plyer is allowed to join a class.</p>
 							</header>
 
 
@@ -925,11 +1095,10 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player attempting to join</p>
 											</li>
 									</ul>
 
@@ -938,11 +1107,10 @@
 											<li>
 												<span class="tag parameter">class</span>
 
+													<span class="tag"><span class="type">number</span></span>
 
 
-												<p>
-
-</p>
+												<p> ID of the class</p>
 											</li>
 									</ul>
 
@@ -951,25 +1119,39 @@
 											<li>
 												<span class="tag parameter">info</span>
 
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
 
 
-												<p>
-
-</p>
+												<p> The class table</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the player to join the class</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerKnock(client, entity)
+	return false -- Disable knocking on doors outright.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerKnock"></a>
 								<h1><span class="realm server"></span>PLUGIN:CanPlayerKnock(client, entity)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not a player can knock on the door with the hands SWEP.</p>
 							</header>
 
 
@@ -981,11 +1163,10 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player attempting to knock</p>
 											</li>
 									</ul>
 
@@ -994,25 +1175,39 @@
 											<li>
 												<span class="tag parameter">entity</span>
 
+													<span class="tag"><span class="type">entity</span></span>
 
 
-												<p>
-
-</p>
+												<p> Door being knocked on</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the player to knock on the door</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerOpenShipment(client, entity)
+	return client:Team() == FACTION_BMD -- Restricts opening shipments to FACTION_BMD.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerOpenShipment"></a>
-								<h1><span class="realm server"></span>PLUGIN:CanPlayerOpenShipment(client, self)</h1>
+								<h1><span class="realm server"></span>PLUGIN:CanPlayerOpenShipment(client, entity)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not a player can open a shipment spawned from the business menu.</p>
 							</header>
 
 
@@ -1024,38 +1219,51 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player attempting to open the shipment</p>
 											</li>
 									</ul>
 
 									<ul>
 
 											<li>
-												<span class="tag parameter">self</span>
+												<span class="tag parameter">entity</span>
+
+													<span class="tag"><span class="type">entity</span></span>
 
 
-
-												<p>
-
-</p>
+												<p> Shipment entity</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the player to open the shipment</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerSpawnContainer(client, model, entity)
+	return client:IsAdmin() -- Restrict spawning containers to admins.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerSpawnContainer"></a>
 								<h1><span class="realm server"></span>PLUGIN:CanPlayerSpawnContainer(client, model, entity)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not a player is allowed to spawn a container entity.</p>
 							</header>
 
 
@@ -1067,11 +1275,10 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player attempting to spawn a container</p>
 											</li>
 									</ul>
 
@@ -1080,11 +1287,10 @@
 											<li>
 												<span class="tag parameter">model</span>
 
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p>
-
-</p>
+												<p> Model of the container being spawned</p>
 											</li>
 									</ul>
 
@@ -1093,25 +1299,39 @@
 											<li>
 												<span class="tag parameter">entity</span>
 
+													<span class="tag"><span class="type">entity</span></span>
 
 
-												<p>
-
-</p>
+												<p> Container entity</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the player to spawn the container</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerTakeItem(client, item)
+	return !(client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle()) -- Disallow players in observer taking items.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerTakeItem"></a>
 								<h1><span class="realm server"></span>PLUGIN:CanPlayerTakeItem(client, item)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not a player is allowed to take an item and put it in their inventory.</p>
 							</header>
 
 
@@ -1123,11 +1343,10 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player attempting to take the item</p>
 											</li>
 									</ul>
 
@@ -1136,25 +1355,39 @@
 											<li>
 												<span class="tag parameter">item</span>
 
+													<span class="tag"><span class="type">entity</span></span>
 
 
-												<p>
-
-</p>
+												<p> Entity corresponding to the item</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the player to take the item</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerThrowPunch(client)
+	return client:GetCharacter():GetAttribute("str", 0) > 0 -- Only allow players with strength to punch.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerThrowPunch"></a>
 								<h1><span class="realm server"></span>PLUGIN:CanPlayerThrowPunch(client)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not the player is allowed to punch with the hands SWEP.</p>
 							</header>
 
 
@@ -1166,25 +1399,39 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player attempting throw a punch</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the player to punch</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerTradeWithVendor(client, entity, uniqueID, isSellingToVendor)
+	return false -- Disallow trading with vendors outright.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerTradeWithVendor"></a>
 								<h1><span class="realm server"></span>PLUGIN:CanPlayerTradeWithVendor(client, entity, uniqueID, isSellingToVendor)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not a player can trade with a vendor.</p>
 							</header>
 
 
@@ -1196,11 +1443,10 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player attempting to trade</p>
 											</li>
 									</ul>
 
@@ -1209,11 +1455,10 @@
 											<li>
 												<span class="tag parameter">entity</span>
 
+													<span class="tag"><span class="type">entity</span></span>
 
 
-												<p>
-
-</p>
+												<p> Vendor entity</p>
 											</li>
 									</ul>
 
@@ -1222,11 +1467,10 @@
 											<li>
 												<span class="tag parameter">uniqueID</span>
 
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p>
-
-</p>
+												<p> The uniqueID of the item being traded.</p>
 											</li>
 									</ul>
 
@@ -1235,25 +1479,39 @@
 											<li>
 												<span class="tag parameter">isSellingToVendor</span>
 
+													<span class="tag"><span class="type">boolean</span></span>
 
 
-												<p>
-
-</p>
+												<p> If the client is selling to the vendor</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the client to trade with the vendor</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerUnequipItem(client, item)
+	return false -- Disallow unequipping items.
+end
+</code></pre>
+								</aside>
 							<header><a name="CanPlayerUnequipItem"></a>
 								<h1><span class="realm server"></span>PLUGIN:CanPlayerUnequipItem(client, item)</h1>
 
 
 
-								<p>
-
-</p>
+								<p>Whether or not a player can unequip an item.</p>
 							</header>
 
 
@@ -1265,11 +1523,10 @@
 											<li>
 												<span class="tag parameter">client</span>
 
+													<span class="tag"><span class="type">player</span></span>
 
 
-												<p>
-
-</p>
+												<p> Player attempting to unequip an item</p>
 											</li>
 									</ul>
 
@@ -1278,15 +1535,29 @@
 											<li>
 												<span class="tag parameter">item</span>
 
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
 
 
-												<p>
-
-</p>
+												<p> Item being unequipped</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not to allow the player to unequip the item</p>
+											</li>
+
+								</ul>
+
+								<h3>See Also</h3>
+								<ul>
+										<li><a href="../hooks/Plugin.html#CanPlayerEquipItem">CanPlayerEquipItem</a></li>
+								</ul>
 						</section>
 						<section class="method">
 							<header><a name="CanPlayerUseBusiness"></a>
