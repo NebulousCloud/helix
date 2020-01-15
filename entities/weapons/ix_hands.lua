@@ -49,13 +49,6 @@ SWEP.HoldType = "fist"
 SWEP.holdDistance = 64
 SWEP.maxHoldDistance = 96 -- how far away the held object is allowed to travel before forcefully dropping
 SWEP.maxHoldStress = 4000 -- how much stress the held object can undergo before forcefully dropping
-SWEP.allowedHoldableClasses = {
-	["ix_item"] = true,
-	["prop_physics"] = true,
-	["prop_physics_override"] = true,
-	["prop_physics_multiplayer"] = true,
-	["prop_ragdoll"] = true
-}
 
 -- luacheck: globals ACT_VM_FISTS_DRAW ACT_VM_FISTS_HOLSTER
 ACT_VM_FISTS_DRAW = 3
@@ -204,7 +197,7 @@ function SWEP:CanHoldObject(entity)
 		(physics:GetMass() <= ix.config.Get("maxHoldWeight", 100) and physics:IsMoveable()) and
 		!self:IsHoldingObject() and
 		!IsValid(entity.ixHeldOwner) and
-		(self.allowedHoldableClasses[entity:GetClass()] or hook.Run("CanPlayerHoldObject", self.Owner, entity))
+		hook.Run("CanPlayerHoldObject", self.Owner, entity)
 end
 
 function SWEP:IsHoldingObject()
