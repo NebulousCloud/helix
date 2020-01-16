@@ -155,8 +155,9 @@ end
 function PANEL:Paint(width, height)
 	local x, y = self:LocalToScreen(0, 0)
 	local bTransition = self.lastCharacter:GetModel() != errorModel
+	local modelFOV = (ScrW() > ScrH() * 1.8) and 92 or 70
 
-	cam.Start3D(self.cameraPosition, self.cameraAngle, 70, x, y, width, height)
+	cam.Start3D(self.cameraPosition, self.cameraAngle, modelFOV, x, y, width, height)
 		render.SuppressEngineLighting(true)
 		render.SetLightingOrigin(self.activeCharacter:GetPos())
 
@@ -250,6 +251,7 @@ function PANEL:Init()
 	local padding = self:GetPadding()
 	local halfWidth = parent:GetWide() * 0.5 - (padding * 2)
 	local halfHeight = parent:GetTall() * 0.5 - (padding * 2)
+	local modelFOV = (ScrW() > ScrH() * 1.8) and 102 or 78
 
 	self.animationTime = 1
 	self.backgroundFraction = 1
@@ -359,7 +361,7 @@ function PANEL:Init()
 	self.deleteModel = deleteInfo:Add("ixModelPanel")
 	self.deleteModel:Dock(FILL)
 	self.deleteModel:SetModel(errorModel)
-	self.deleteModel:SetFOV(78)
+	self.deleteModel:SetFOV(modelFOV)
 	self.deleteModel.PaintModel = self.deleteModel.Paint
 
 	local deleteNag = self.delete:Add("Panel")
