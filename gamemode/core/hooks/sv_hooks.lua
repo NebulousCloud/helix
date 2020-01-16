@@ -411,6 +411,20 @@ function GM:PlayerSpawnedVehicle(client, entity)
 	entity:SetNetVar("owner", client:GetCharacter():GetID())
 end
 
+local allowedHoldableClasses = {
+	["ix_item"] = true,
+	["prop_physics"] = true,
+	["prop_physics_override"] = true,
+	["prop_physics_multiplayer"] = true,
+	["prop_ragdoll"] = true
+}
+
+function GM:CanPlayerHoldObject(client, entity)
+	if (allowedHoldableClasses[entity:GetClass()]) then
+		return true
+	end
+end
+
 local voiceDistance = 360000
 local function CalcPlayerCanHearPlayersVoice(listener)
 	if (!IsValid(listener)) then
