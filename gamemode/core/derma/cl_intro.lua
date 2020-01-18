@@ -53,7 +53,7 @@ function PANEL:BeginIntro()
 	local bLoaded = false
 
 	if (ix and ix.option and ix.option.Set) then
-		local bSuccess, _ = pcall(ix.option.Set, "ShowIntro", false)
+		local bSuccess, _ = pcall(ix.option.Set, "showIntro", false)
 		bLoaded = bSuccess
 	end
 
