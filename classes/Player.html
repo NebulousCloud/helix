@@ -1,0 +1,869 @@
+
+
+
+
+
+<html>
+	<head>
+		<title>Player - Helix Documentation</title>
+
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content="Player - Helix Documentation" />
+		<meta property="og:site_name" content="Helix Documentation" />
+
+			<meta property="og:description" content="Physical representation of connected player." />
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
+		<link rel="stylesheet" href="../ldoc.css" />
+		<link rel="stylesheet" href="../highlight.css" />
+	</head>
+
+	<body>
+		<aside>
+			<h1>Helix</h1>
+
+			<!-- project contents -->
+			<section>
+						<h2>Classes</h2>
+
+						<ul>
+								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Entity.html">Entity</a></li>
+								<li><a href="../classes/Inventory.html">Inventory</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
+								<li><a href="../classes/Player.html">Player</a></li>
+						</ul>
+						<h2>Hooks</h2>
+
+						<ul>
+								<li><a href="../hooks/Class.html">Class</a></li>
+								<li><a href="../hooks/Faction.html">Faction</a></li>
+								<li><a href="../hooks/Plugin.html">Plugin</a></li>
+						</ul>
+						<h2>Panels</h2>
+
+						<ul>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
+								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+						</ul>
+						<h2>Libraries</h2>
+
+						<ul>
+								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
+								<li><a href="../libraries/ix.char.html">ix.char</a></li>
+								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
+								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
+								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
+								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
+								<li><a href="../libraries/ix.log.html">ix.log</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
+								<li><a href="../libraries/ix.html">ix</a></li>
+								<li><a href="../libraries/ix.act.html">ix.act</a></li>
+						</ul>
+						<h2>Manual</h2>
+
+						<ul>
+								<li><a href="../manual/00-getting-started.md.html">Getting Started</a></li>
+								<li><a href="../manual/10-converting-from-clockwork.md.html">Clockwork to Helix Migration</a></li>
+						</ul>
+			</section>
+		</aside>
+
+		<!-- library functions -->
+		<article>
+				<header class="module">
+					<h1>Player</h1>
+					<h2>Physical representation of connected player.</h2>
+				</header>
+
+				<!-- description -->
+				<p><a href="../classes/Player.html#">Player</a>s are a type of <a href="../classes/Entity.html#">Entity</a>. They are a physical representation of a <a href="../classes/Character.html#">Character</a> - and can possess at most one <a href="../classes/Character.html#">Character</a>
+object at a time that you can interface with.</p>
+
+<p>See the <a href="https://wiki.garrysmod.com/page/Category:Player">Garry's Mod Wiki</a> for all other methods that the <a href="../classes/Player.html#">Player</a> class has.</p>
+
+				<!-- summary -->
+				<details open>
+					<summary>Reference</summary>
+
+					<div class="contents">
+							<h2>Functions</h2>
+							<ul>
+									<li><span class="realm shared"></span><a href="#meta:GetPlayTime">Player:GetPlayTime()</a></li>
+									<li><span class="realm shared"></span><a href="#meta:IsWepRaised">Player:IsWepRaised()</a></li>
+									<li><span class="realm shared"></span><a href="#meta:IsRestricted">Player:IsRestricted()</a></li>
+									<li><span class="realm shared"></span><a href="#meta:CanShootWeapon">Player:CanShootWeapon()</a></li>
+									<li><span class="realm shared"></span><a href="#meta:IsRunning">Player:IsRunning()</a></li>
+									<li><span class="realm shared"></span><a href="#meta:IsFemale">Player:IsFemale()</a></li>
+									<li><span class="realm shared"></span><a href="#meta:IsStuck">Player:IsStuck()</a></li>
+									<li><span class="realm shared"></span><a href="#meta:GetItemDropPos">Player:GetItemDropPos(entity)</a></li>
+									<li><span class="realm shared"></span><a href="#meta:DoStaredAction">Player:DoStaredAction(entity, callback, time[, onCancel=nil[, distance=96]])</a></li>
+									<li><span class="realm shared"></span><a href="#meta:ResetBodygroups">Player:ResetBodygroups()</a></li>
+									<li><span class="realm server"></span><a href="#meta:SetWepRaised">Player:SetWepRaised(bState[, weapon=GetActiveWeapon()])</a></li>
+									<li><span class="realm server"></span><a href="#meta:ToggleWepRaised">Player:ToggleWepRaised()</a></li>
+									<li><span class="realm server"></span><a href="#meta:PerformInteraction">Player:PerformInteraction(time, entity, callback)</a></li>
+									<li><span class="realm server"></span><a href="#meta:SetAction">Player:SetAction(text[, time=5], callback[, startTime=CurTime()[, finishTime=startTime + time]])</a></li>
+									<li><span class="realm server"></span><a href="#meta:RequestString">Player:RequestString(title, subTitle, callback[, default=nil])</a></li>
+									<li><span class="realm server"></span><a href="#meta:SetRestricted">Player:SetRestricted(bState, bNoMessage)</a></li>
+									<li><span class="realm server"></span><a href="#meta:CreateServerRagdoll">Player:CreateServerRagdoll([bDontSetPlayer=false])</a></li>
+									<li><span class="realm server"></span><a href="#meta:SetRagdolled">Player:SetRagdolled(bState[, time=0[, getUpGrace=5]])</a></li>
+							</ul>
+					</div>
+				</details>
+
+				<!-- methods -->
+					<h1 class="title">Functions</h1>
+
+						<section class="method">
+							<header><a name="meta:GetPlayTime"></a>
+								<h1><span class="realm shared"></span>Player:GetPlayTime()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L18">View source &raquo;</a>
+
+								<p>Returns the amount of time the player has played on the server.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>Number of seconds the player has played on the server</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="meta:IsWepRaised"></a>
+								<h1><span class="realm shared"></span>Player:IsWepRaised()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L32">View source &raquo;</a>
+
+								<p>Returns <code>true</code> if the player has their weapon raised.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not the player has their weapon raised</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="meta:IsRestricted"></a>
+								<h1><span class="realm shared"></span>Player:IsRestricted()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L40">View source &raquo;</a>
+
+								<p>Returns <code>true</code> if the player is restricted - that is to say that they are considered "bound" and cannot interact with
+ objects normally (e.g hold weapons, use items, etc).  An example of this would be a player in handcuffs.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not the player is restricted</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="meta:CanShootWeapon"></a>
+								<h1><span class="realm shared"></span>Player:CanShootWeapon()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L47">View source &raquo;</a>
+
+								<p>Returns <code>true</code> if the player is able to shoot their weapon.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not the player can shoot their weapon</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="meta:IsRunning"></a>
+								<h1><span class="realm shared"></span>Player:IsRunning()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L57">View source &raquo;</a>
+
+								<p>Returns <code>true</code> if the player is running.  Running in this case means that their current speed is greater than their
+ regularly set walk speed.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not the player is running</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="meta:IsFemale"></a>
+								<h1><span class="realm shared"></span>Player:IsFemale()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L65">View source &raquo;</a>
+
+								<p>Returns <code>true</code> if the player currently has a female model.  This checks if the model has <code>female</code>, <code>alyx</code> or <code>mossman</code> in its
+ name, or if the player's model class is <code>citizen_female</code>.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not the player has a female model</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="meta:IsStuck"></a>
+								<h1><span class="realm shared"></span>Player:IsStuck()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L74">View source &raquo;</a>
+
+								<p>Whether or not this player is stuck and cannot move.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not this player is stuck</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+								<aside>
+										<pre><code>local position = client:GetItemDropPos(entity)
+ entity:SetPos(position)
+</code></pre>
+								</aside>
+							<header><a name="meta:GetItemDropPos"></a>
+								<h1><span class="realm shared"></span>Player:GetItemDropPos(entity)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L88">View source &raquo;</a>
+
+								<p>Returns a good position in front of the player for an entity to be placed.  This is usually used for item entities.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+													<span class="tag"><a class="type" href="../classes/Entity.html#">Entity</a></span>
+
+
+												<p> Entity to get a position for</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">vector</span>
+
+												<p>Best guess for a good drop position in front of the player</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+								<aside>
+										<pre><code>client:SetAction("Searching...", 4) -- for displaying the progress bar
+client:DoStaredAction(entity, function()
+	print("hello!")
+end)
+-- prints "hello!" after looking at the entity for 4 seconds
+</code></pre>
+								</aside>
+							<header><a name="meta:DoStaredAction"></a>
+								<h1><span class="realm shared"></span>Player:DoStaredAction(entity, callback, time[, onCancel=nil[, distance=96]])</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L131">View source &raquo;</a>
+
+								<p>Performs a time-delay action that requires this player to look at an entity.  If this player looks away from the entity
+ before the action timer completes, the action is cancelled. This is usually used in conjunction with <a href="../classes/Player.html#meta:SetAction">SetAction</a> to display
+ progress to the player.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+													<span class="tag"><a class="type" href="../classes/Entity.html#">Entity</a></span>
+
+
+												<p> that this player must look at</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">callback</span>
+
+													<span class="tag"><span class="type">function</span></span>
+
+
+												<p> Function to call when the timer completes</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">time</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> How much time in seconds this player must look at the entity for</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">onCancel</span>
+
+													<span class="tag"><span class="type">function</span></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> Function to call when the timer has been cancelled</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">distance</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: 96</span>
+
+												<p> Maximum distance a player can move away from the entity before the action is cancelled</p>
+											</li>
+									</ul>
+
+
+								<h3>See Also</h3>
+								<ul>
+										<li><a href="../classes/Player.html#meta:SetAction">SetAction</a></li>
+								</ul>
+						</section>
+						<section class="method">
+							<header><a name="meta:ResetBodygroups"></a>
+								<h1><span class="realm shared"></span>Player:ResetBodygroups()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L162">View source &raquo;</a>
+
+								<p>Resets all bodygroups this player's model has to their defaults (<code>0</code>).</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="meta:SetWepRaised"></a>
+								<h1><span class="realm server"></span>Player:SetWepRaised(bState[, weapon=GetActiveWeapon()])</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L178">View source &raquo;</a>
+
+								<p>Sets whether or not this player's current weapon is raised.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bState</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+
+												<p> Whether or not the raise the weapon</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">weapon</span>
+
+													<span class="tag"><a class="type" href="../classes/Entity.html#">Entity</a></span>
+
+													<span class="tag default">default: GetActiveWeapon()</span>
+
+												<p> Weapon to raise or lower. You should pass this argument if you already have a
+ reference to this player's current weapon to avoid an expensive lookup for this player's current weapon.</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="meta:ToggleWepRaised"></a>
+								<h1><span class="realm server"></span>Player:ToggleWepRaised()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L206">View source &raquo;</a>
+
+								<p>Inverts this player's weapon raised state.  You should use <a href="../classes/Player.html#meta:SetWepRaised">SetWepRaised</a> instead of this if you already have a reference
+ to this player's current weapon.</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="meta:PerformInteraction"></a>
+								<h1><span class="realm server"></span>Player:PerformInteraction(time, entity, callback)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L232">View source &raquo;</a>
+
+								<p>Performs a delayed action that requires this player to hold use on an entity.  This is displayed to this player as a
+ closing ring over their crosshair.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">time</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> How much time in seconds this player has to hold use for</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">entity</span>
+
+													<span class="tag"><a class="type" href="../classes/Entity.html#">Entity</a></span>
+
+
+												<p> Entity that this player must be looking at</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">callback</span>
+
+													<span class="tag"><span class="type">function</span></span>
+
+
+												<p> Function to run when the timer completes. It will be ran right away if <code>time</code> is <code>0</code>. Returning <code>false</code> in
+ the callback will not mark this interaction as dirty if you're managing the interaction state manually.</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="meta:SetAction"></a>
+								<h1><span class="realm server"></span>Player:SetAction(text[, time=5], callback[, startTime=CurTime()[, finishTime=startTime + time]])</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L273">View source &raquo;</a>
+
+								<p>Displays a progress bar for this player that takes the given amount of time to complete.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">text</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Text to display above the progress bar</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">time</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: 5</span>
+
+												<p> How much time in seconds to wait before the timer completes</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">callback</span>
+
+													<span class="tag"><span class="type">function</span></span>
+
+
+												<p> Function to run once the timer completes</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">startTime</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: CurTime()</span>
+
+												<p> Game time in seconds that the timer started. If you are using <code>time</code>, then you shouldn't
+ use this argument</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">finishTime</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: startTime + time</span>
+
+												<p> Game time in seconds that the timer should complete at. If you are using <code>time</code>,
+ then you shouldn't use this argument</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+								<aside>
+										<pre><code>client:RequestString("Hello", "Please enter your name", function(text)
+	client:ChatPrint("Hello, " .. text)
+end)
+-- prints "Hello, <text>" in the player's chat
+</code></pre>
+								</aside>
+							<header><a name="meta:RequestString"></a>
+								<h1><span class="realm server"></span>Player:RequestString(title, subTitle, callback[, default=nil])</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L330">View source &raquo;</a>
+
+								<p>Opens up a text box on this player's screen for input and returns the result.  Remember to sanitize the user's input if
+ it's needed!</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">title</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Title to display on the panel</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">subTitle</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Subtitle to display on the panel</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">callback</span>
+
+													<span class="tag"><span class="type">function</span></span>
+
+
+												<p> Function to run when this player enters their input. Callback is ran with the user's input string.</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">default</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> Default value to put in the text box.</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="meta:SetRestricted"></a>
+								<h1><span class="realm server"></span>Player:SetRestricted(bState, bNoMessage)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L348">View source &raquo;</a>
+
+								<p>Sets this player's restricted status.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bState</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+
+												<p> Whether or not to restrict this player</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bNoMessage</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+
+												<p> Whether or not to suppress the restriction notification</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="meta:CreateServerRagdoll"></a>
+								<h1><span class="realm server"></span>Player:CreateServerRagdoll([bDontSetPlayer=false])</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L388">View source &raquo;</a>
+
+								<p>Creates a ragdoll entity of this player that will be synced with clients.  This does <strong>not</strong> affect the player like
+ <a href="../classes/Player.html#meta:SetRagdolled">SetRagdolled</a> does.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bDontSetPlayer</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether or not to avoid setting the ragdoll's owning player</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">entity</span>
+
+												<p>Created ragdoll entity</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="meta:SetRagdolled"></a>
+								<h1><span class="realm server"></span>Player:SetRagdolled(bState[, time=0[, getUpGrace=5]])</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_player.lua#L432">View source &raquo;</a>
+
+								<p>Sets this player's ragdoll status.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bState</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+
+												<p> Whether or not to ragdoll this player</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">time</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: 0</span>
+
+												<p> How long this player should stay ragdolled for. Set to <code>0</code> if they should stay ragdolled until they
+ get back up manually</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">getUpGrace</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: 5</span>
+
+												<p> How much time in seconds to wait before the player is able to get back up manually. Set to
+ the same number as <code>time</code> to disable getting up manually entirely</p>
+											</li>
+									</ul>
+
+
+						</section>
+		</article>
+
+		<footer>
+			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></p>
+		</footer>
+
+		<script type="text/javascript" src="../highlight.min.js"></script>
+		<script type="text/javascript">
+		var elements = document.querySelectorAll("aside code, pre code")
+
+		hljs.configure({
+			languages: ["lua"]
+		});
+
+		for (var i = 0; i < elements.length; i++)
+		{
+			hljs.highlightBlock(elements[i]);
+		}
+		</script>
+	</body>
+</html>
