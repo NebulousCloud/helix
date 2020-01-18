@@ -48,6 +48,28 @@ function PANEL:Think()
 end
 
 function PANEL:BeginIntro()
+	-- something could have errored on startup and invalidated all options, so we'll be extra careful with setting the option
+	-- because if it errors here, the sound will play each tick and proceed to hurt ears
+	local bLoaded = false
+
+	if (ix and ix.option and ix.option.Set) then
+		local bSuccess, _ = pcall(ix.option.Set, "ShowIntro", false)
+		bLoaded = bSuccess
+	end
+
+	if (!bLoaded) then
+		self:Remove()
+
+		if (ix and ix.gui and IsValid(ix.gui.characterMenu)) then
+			ix.gui.characterMenu:Remove()
+		end
+
+		ErrorNoHalt(
+			"[Helix] Something has errored and prevented the framework from loading correctly - check your console for errors!\n")
+
+		return
+	end
+
 	self:MoveToFront()
 	self:RequestFocus()
 
@@ -63,25 +85,6 @@ function PANEL:BeginIntro()
 			end)
 		end)
 	end)
-
-	-- something could have errored on startup and invalidated all options, so we'll be extra careful with setting the option
-	-- because if it errors here, the sound will play each tick and proceed to hurt ears
-	local bLoaded = false
-
-	if (ix and ix.option and ix.option.Set) then
-		bLoaded, _ = pcall(ix.option.Set, "ShowIntro", false)
-	end
-
-	if (!bLoaded) then
-		self:Remove()
-
-		if (ix and ix.gui and IsValid(ix.gui.characterMenu)) then
-			ix.gui.characterMenu:Remove()
-		end
-
-		ErrorNoHalt(
-			"[Helix] Something has errored and prevented the framework from loading correctly - check your console for errors!\n")
-	end
 end
 
 function PANEL:AnimateWaves(target, bReverse)
