@@ -212,12 +212,8 @@ function ix.plugin.LoadEntities(path)
 		Base = "base_gmodentity",
 		Spawnable = true
 	}, false, nil, function(ent)
-		if (ent.Holdable == true) then
-			local hands = weapons.GetStored("ix_hands")
-
-			if (hands) then
-				hands.allowedHoldableClasses[ent.ClassName] = true
-			end
+		if (SERVER and ent.Holdable == true) then
+			ix.allowedHoldableClasses[ent.ClassName] = true
 		end
 	end)
 

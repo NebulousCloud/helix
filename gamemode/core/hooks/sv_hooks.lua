@@ -411,7 +411,7 @@ function GM:PlayerSpawnedVehicle(client, entity)
 	entity:SetNetVar("owner", client:GetCharacter():GetID())
 end
 
-local allowedHoldableClasses = {
+ix.allowedHoldableClasses = {
 	["ix_item"] = true,
 	["prop_physics"] = true,
 	["prop_physics_override"] = true,
@@ -420,7 +420,7 @@ local allowedHoldableClasses = {
 }
 
 function GM:CanPlayerHoldObject(client, entity)
-	if (allowedHoldableClasses[entity:GetClass()]) then
+	if (ix.allowedHoldableClasses[entity:GetClass()]) then
 		return true
 	end
 end
