@@ -216,14 +216,14 @@ function GM:LoadFonts(font, genericFont)
 
 	surface.CreateFont("ixIntroTitleFont", {
 		font = font,
-		size = ScreenScale(128),
+		size = math.min(ScreenScale(128), 128),
 		extended = true,
 		weight = 100
 	})
 
 	surface.CreateFont("ixIntroTitleBlurFont", {
 		font = font,
-		size = ScreenScale(128),
+		size = math.min(ScreenScale(128), 128),
 		extended = true,
 		weight = 100,
 		blursize = 4
