@@ -970,13 +970,14 @@ do
 
 	--- Gets the amount of seconds from a given formatted string. If no time units are specified, it is assumed minutes.
 	-- The valid values are as follows:
-	-- - s - Seconds
-	-- - m - Minutes
-	-- - h - Hours
-	-- - d - Days
-	-- - w - Weeks
-	-- - mo - Months
-	-- - y - Years
+	--
+	-- - `s` - Seconds
+	-- - `m` - Minutes
+	-- - `h` - Hours
+	-- - `d` - Days
+	-- - `w` - Weeks
+	-- - `mo` - Months
+	-- - `y` - Years
 	-- @realm shared
 	-- @string text Text to interpret a length of time from
 	-- @treturn[1] number Amount of seconds from the length interpreted from the given string
