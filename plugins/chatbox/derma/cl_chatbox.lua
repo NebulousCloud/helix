@@ -393,7 +393,7 @@ end
 
 function PANEL:Think()
 	local text = self:GetText()
-	local maxLength = ix.config.Get("chatMax")
+	local maxLength = ix.config.Get("chatMax", 256)
 
 	if (string.len(text) > maxLength) then
 		local newText = string.sub(text, 0, maxLength)

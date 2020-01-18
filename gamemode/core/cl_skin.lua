@@ -380,7 +380,7 @@ end
 
 function SKIN:PaintChatboxTabButton(panel, width, height)
 	if (panel:GetActive()) then
-		surface.SetDrawColor(ix.config.Get("color"))
+		surface.SetDrawColor(ix.config.Get("color", Color(75, 119, 190, 255)))
 		surface.DrawRect(0, 0, width, height)
 	else
 		surface.SetDrawColor(0, 0, 0, 100)
