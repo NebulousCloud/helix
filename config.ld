@@ -6,6 +6,10 @@ file = {
 	exclude = {"gamemode/core/libs/thirdparty"}
 }
 
+module_file = {
+	Player = "gamemode/core/meta/sh_player.lua"
+}
+
 dir = "docs/html"
 project = "Helix"
 title = "Helix Documentation"
@@ -18,6 +22,7 @@ ignore = true
 topics = "docs/manual"
 use_markdown_titles = true
 kind_names = {module = "Libraries", topic = "Manual"}
+merge = true
 
 custom_tags = {
 	{"realm", hidden = true},
