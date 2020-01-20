@@ -247,7 +247,11 @@ if (SERVER) then
 					elseif (isstring(v.default)) then
 						value = tostring(value) == "NULL" and v.default or tostring(value or v.default)
 					elseif (isbool(v.default)) then
-						value = tobool(value)
+						if (tostring(value) != "NULL") then
+							value = tobool(value)
+						else
+							value = v.default
+						end
 					elseif (istable(v.default)) then
 						value = istable(value) and value or util.JSONToTable(value)
 					end
