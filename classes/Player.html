@@ -27,11 +27,11 @@
 						<h2>Classes</h2>
 
 						<ul>
-								<li><a href="../classes/Character.html">Character</a></li>
-								<li><a href="../classes/Entity.html">Entity</a></li>
+								<li><a href="../classes/Player.html">Player</a></li>
 								<li><a href="../classes/Inventory.html">Inventory</a></li>
 								<li><a href="../classes/Item.html">Item</a></li>
-								<li><a href="../classes/Player.html">Player</a></li>
+								<li><a href="../classes/Entity.html">Entity</a></li>
+								<li><a href="../classes/Character.html">Character</a></li>
 						</ul>
 						<h2>Hooks</h2>
 
@@ -49,27 +49,27 @@
 						<h2>Libraries</h2>
 
 						<ul>
+								<li><a href="../libraries/ix.html">ix</a></li>
+								<li><a href="../libraries/ix.act.html">ix.act</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
-								<li><a href="../libraries/ix.char.html">ix.char</a></li>
-								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
-								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
 								<li><a href="../libraries/ix.command.html">ix.command</a></li>
 								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
 								<li><a href="../libraries/ix.date.html">ix.date</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.char.html">ix.char</a></li>
+								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
 								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
-								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
 								<li><a href="../libraries/ix.item.html">ix.item</a></li>
-								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
-								<li><a href="../libraries/ix.log.html">ix.log</a></li>
-								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
 								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
 								<li><a href="../libraries/ix.option.html">ix.option</a></li>
-								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-								<li><a href="../libraries/ix.config.html">ix.config</a></li>
-								<li><a href="../libraries/ix.data.html">ix.data</a></li>
-								<li><a href="../libraries/ix.util.html">ix.util</a></li>
-								<li><a href="../libraries/ix.html">ix</a></li>
-								<li><a href="../libraries/ix.act.html">ix.act</a></li>
+								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
+								<li><a href="../libraries/ix.log.html">ix.log</a></li>
 						</ul>
 						<h2>Manual</h2>
 
@@ -118,6 +118,8 @@ object at a time that you can interface with.</p>
 									<li><span class="realm server"></span><a href="#meta:SetRestricted">Player:SetRestricted(bState, bNoMessage)</a></li>
 									<li><span class="realm server"></span><a href="#meta:CreateServerRagdoll">Player:CreateServerRagdoll([bDontSetPlayer=false])</a></li>
 									<li><span class="realm server"></span><a href="#meta:SetRagdolled">Player:SetRagdolled(bState[, time=0[, getUpGrace=5]])</a></li>
+									<li><span class="realm server"></span><a href="#playerMeta:ForceSequence">Player:ForceSequence(sequence[, callback=nil[, time=nil[, bNoFreeze=false]]])</a></li>
+									<li><span class="realm server"></span><a href="#playerMeta:LeaveSequence">Player:LeaveSequence()</a></li>
 							</ul>
 					</div>
 				</details>
@@ -843,6 +845,92 @@ end)
  the same number as <code>time</code> to disable getting up manually entirely</p>
 											</li>
 									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="playerMeta:ForceSequence"></a>
+								<h1><span class="realm server"></span>Player:ForceSequence(sequence[, callback=nil[, time=nil[, bNoFreeze=false]]])</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_anims.lua#L423">View source &raquo;</a>
+
+								<p>Forces this player's model to play an animation sequence.  It also prevents the player from firing their weapon while the
+ animation is playing.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">sequence</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Name of the animation sequence to play</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">callback</span>
+
+													<span class="tag"><span class="type">function</span></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> Function to call when the animation finishes. This is also called immediately if the animation
+ fails to play</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">time</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> How long to play the animation for. This defaults to the duration of the animation</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bNoFreeze</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether or not to avoid freezing this player in place while the animation is playing</p>
+											</li>
+									</ul>
+
+
+								<h3>See Also</h3>
+								<ul>
+										<li><a href="../classes/Player.html#playerMeta:LeaveSequence">LeaveSequence</a></li>
+								</ul>
+						</section>
+						<section class="method">
+							<header><a name="playerMeta:LeaveSequence"></a>
+								<h1><span class="realm server"></span>Player:LeaveSequence()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_anims.lua#L472">View source &raquo;</a>
+
+								<p>Forcefully stops this player's model from playing an animation that was started by <a href="../classes/Player.html#playerMeta:ForceSequence">ForceSequence</a>.</p>
+							</header>
+
 
 
 						</section>
