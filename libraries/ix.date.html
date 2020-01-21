@@ -29,25 +29,25 @@
 						<ul>
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
-								<li><a href="../libraries/ix.data.html">ix.data</a></li>
-								<li><a href="../libraries/ix.config.html">ix.config</a></li>
-								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
-								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-								<li><a href="../libraries/ix.command.html">ix.command</a></li>
-								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
-								<li><a href="../libraries/ix.date.html">ix.date</a></li>
-								<li><a href="../libraries/ix.class.html">ix.class</a></li>
 								<li><a href="../libraries/ix.char.html">ix.char</a></li>
 								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
 								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
-								<li><a href="../libraries/ix.item.html">ix.item</a></li>
-								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
-								<li><a href="../libraries/ix.option.html">ix.option</a></li>
 								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
-								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
 								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
 								<li><a href="../libraries/ix.log.html">ix.log</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 						</ul>
 						<h2>Hooks</h2>
 
@@ -59,17 +59,17 @@
 						<h2>Panels</h2>
 
 						<ul>
-								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 						</ul>
 						<h2>Classes</h2>
 
 						<ul>
-								<li><a href="../classes/Player.html">Player</a></li>
 								<li><a href="../classes/Inventory.html">Inventory</a></li>
-								<li><a href="../classes/Item.html">Item</a></li>
-								<li><a href="../classes/Entity.html">Entity</a></li>
 								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Entity.html">Entity</a></li>
+								<li><a href="../classes/Player.html">Player</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
 						</ul>
 						<h2>Manual</h2>
 
@@ -103,12 +103,12 @@ regarding the <a href="../libraries/ix.date.html">date</a> object and its method
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
-									<li><span class="realm server"></span><a href="#ix.date.Initialize">ix.date.Initialize()</a></li>
-									<li><span class="realm server"></span><a href="#ix.date.Send">ix.date.Send(client)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.date.Construct">ix.date.Construct(currentDate)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.date.Get">ix.date.Get()</a></li>
 									<li><span class="realm shared"></span><a href="#ix.date.GetFormatted">ix.date.GetFormatted(format[, currentDate=nil])</a></li>
 									<li><span class="realm shared"></span><a href="#ix.date.GetSerialized">ix.date.GetSerialized([currentDate=nil])</a></li>
-									<li><span class="realm shared"></span><a href="#ix.date.Construct">ix.date.Construct(currentDate)</a></li>
+									<li><span class="realm server"></span><a href="#ix.date.Initialize">ix.date.Initialize()</a></li>
+									<li><span class="realm server"></span><a href="#ix.date.Send">ix.date.Send(client)</a></li>
 							</ul>
 					</div>
 				</details>
@@ -117,28 +117,13 @@ regarding the <a href="../libraries/ix.date.html">date</a> object and its method
 					<h1 class="title">Functions</h1>
 
 						<section class="method">
-							<header><a name="ix.date.Initialize"></a>
-								<h1><span class="realm server"></span>ix.date.Initialize()</h1>
-
-									<div class="internal"></div>
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L26">View source &raquo;</a>
-
-								<p>Loads the date from disk.</p>
-							</header>
+							<header><a name="ix.date.Construct"></a>
+								<h1><span class="realm shared"></span>ix.date.Construct(currentDate)</h1>
 
 
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L101">View source &raquo;</a>
 
-						</section>
-						<section class="method">
-							<header><a name="ix.date.Send"></a>
-								<h1><span class="realm server"></span>ix.date.Send(client)</h1>
-
-									<div class="internal"></div>
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L41">View source &raquo;</a>
-
-								<p>Sends the current date to a player.  This is done automatically when the player joins the server.</p>
+								<p>Returns a date object from a table or serialized date.</p>
 							</header>
 
 
@@ -148,15 +133,25 @@ regarding the <a href="../libraries/ix.date.html">date</a> object and its method
 									<ul>
 
 											<li>
-												<span class="tag parameter">client</span>
-
-													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
+												<span class="tag parameter">currentDate</span>
 
 
-												<p> Player to send the date to</p>
+
+												<p> Date to construct</p>
 											</li>
 									</ul>
 
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">date</span>
+
+												<p>Constructed date object</p>
+											</li>
+
+								</ul>
 
 						</section>
 						<section class="method">
@@ -276,13 +271,28 @@ regarding the <a href="../libraries/ix.date.html">date</a> object and its method
 
 						</section>
 						<section class="method">
-							<header><a name="ix.date.Construct"></a>
-								<h1><span class="realm shared"></span>ix.date.Construct(currentDate)</h1>
+							<header><a name="ix.date.Initialize"></a>
+								<h1><span class="realm server"></span>ix.date.Initialize()</h1>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L26">View source &raquo;</a>
+
+								<p>Loads the date from disk.</p>
+							</header>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L101">View source &raquo;</a>
 
-								<p>Returns a date object from a table or serialized date.</p>
+						</section>
+						<section class="method">
+							<header><a name="ix.date.Send"></a>
+								<h1><span class="realm server"></span>ix.date.Send(client)</h1>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L41">View source &raquo;</a>
+
+								<p>Sends the current date to a player.  This is done automatically when the player joins the server.</p>
 							</header>
 
 
@@ -292,25 +302,15 @@ regarding the <a href="../libraries/ix.date.html">date</a> object and its method
 									<ul>
 
 											<li>
-												<span class="tag parameter">currentDate</span>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
 
 
-
-												<p> Date to construct</p>
+												<p> Player to send the date to</p>
 											</li>
 									</ul>
 
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="type">date</span>
-
-												<p>Constructed date object</p>
-											</li>
-
-								</ul>
 
 						</section>
 		</article>

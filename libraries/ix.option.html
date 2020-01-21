@@ -29,25 +29,25 @@
 						<ul>
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
-								<li><a href="../libraries/ix.data.html">ix.data</a></li>
-								<li><a href="../libraries/ix.config.html">ix.config</a></li>
-								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
-								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-								<li><a href="../libraries/ix.command.html">ix.command</a></li>
-								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
-								<li><a href="../libraries/ix.date.html">ix.date</a></li>
-								<li><a href="../libraries/ix.class.html">ix.class</a></li>
 								<li><a href="../libraries/ix.char.html">ix.char</a></li>
 								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
 								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
-								<li><a href="../libraries/ix.item.html">ix.item</a></li>
-								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
-								<li><a href="../libraries/ix.option.html">ix.option</a></li>
 								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
-								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
 								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
 								<li><a href="../libraries/ix.log.html">ix.log</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 						</ul>
 						<h2>Hooks</h2>
 
@@ -59,17 +59,17 @@
 						<h2>Panels</h2>
 
 						<ul>
-								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 						</ul>
 						<h2>Classes</h2>
 
 						<ul>
-								<li><a href="../classes/Player.html">Player</a></li>
 								<li><a href="../classes/Inventory.html">Inventory</a></li>
-								<li><a href="../classes/Item.html">Item</a></li>
-								<li><a href="../classes/Entity.html">Entity</a></li>
 								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Entity.html">Entity</a></li>
+								<li><a href="../classes/Player.html">Player</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
 						</ul>
 						<h2>Manual</h2>
 
@@ -119,14 +119,14 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 							<h2>Functions</h2>
 							<ul>
 									<li><span class="realm shared"></span><a href="#ix.option.Add">ix.option.Add(key, optionType, default, data)</a></li>
-									<li><span class="realm shared"></span><a href="#ix.option.Load">ix.option.Load()</a></li>
+									<li><span class="realm client"></span><a href="#ix.option.Get">ix.option.Get(key, default)</a></li>
+									<li><span class="realm server"></span><a href="#ix.option.Get">ix.option.Get(client, key, default)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.option.GetAll">ix.option.GetAll()</a></li>
 									<li><span class="realm shared"></span><a href="#ix.option.GetAllByCategories">ix.option.GetAllByCategories([bRemoveHidden=false])</a></li>
-									<li><span class="realm client"></span><a href="#ix.option.Set">ix.option.Set(key, value[, bNoSave=false])</a></li>
-									<li><span class="realm client"></span><a href="#ix.option.Get">ix.option.Get(key, default)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.option.Load">ix.option.Load()</a></li>
 									<li><span class="realm client"></span><a href="#ix.option.Save">ix.option.Save()</a></li>
+									<li><span class="realm client"></span><a href="#ix.option.Set">ix.option.Set(key, value[, bNoSave=false])</a></li>
 									<li><span class="realm client"></span><a href="#ix.option.Sync">ix.option.Sync()</a></li>
-									<li><span class="realm server"></span><a href="#ix.option.Get">ix.option.Get(client, key, default)</a></li>
 							</ul>
 							<h2>Tables</h2>
 							<ul>
@@ -211,17 +211,132 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 
 						</section>
 						<section class="method">
-							<header><a name="ix.option.Load"></a>
-								<h1><span class="realm shared"></span>ix.option.Load()</h1>
+							<header><a name="ix.option.Get"></a>
+								<h1><span class="realm client"></span>ix.option.Get(key, default)</h1>
 
-									<div class="internal"></div>
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L114">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L218">View source &raquo;</a>
 
-								<p>Loads all saved options from disk.</p>
+								<p>Retrieves an option value for the local player.  If it is not set, it'll return the default that you've specified.</p>
 							</header>
 
 
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Unique ID of the option</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">default</span>
+
+
+
+												<p> Default value to return if the option is not set</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="tag type">any</span>
+
+												<p>Value associated with the key</p>
+											</li>
+
+											<div class="or"><span>OR</span></div>
+
+											<li>
+													<span class="tag type">any</span>
+
+												<p>The given default if the option is not set</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ix.option.Get"></a>
+								<h1><span class="realm server"></span>ix.option.Get(client, key, default)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L278">View source &raquo;</a>
+
+								<p>Retrieves an option value from the specified player.  If it is not set, it'll return the default that you've specified.
+ This function will error when an invalid player is passed.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
+
+
+												<p> Player to retrieve option value from</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Unique ID of the option</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">default</span>
+
+
+
+												<p> Default value to return if the option is not set</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="tag type">any</span>
+
+												<p>Value associated with the key</p>
+											</li>
+
+											<div class="or"><span>OR</span></div>
+
+											<li>
+													<span class="tag type">any</span>
+
+												<p>The given default if the option is not set</p>
+											</li>
+
+								</ul>
 
 						</section>
 						<section class="method">
@@ -310,6 +425,34 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 
 						</section>
 						<section class="method">
+							<header><a name="ix.option.Load"></a>
+								<h1><span class="realm shared"></span>ix.option.Load()</h1>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L114">View source &raquo;</a>
+
+								<p>Loads all saved options from disk.</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.option.Save"></a>
+								<h1><span class="realm client"></span>ix.option.Save()</h1>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L237">View source &raquo;</a>
+
+								<p>Saves all options to disk.</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
 							<header><a name="ix.option.Set"></a>
 								<h1><span class="realm client"></span>ix.option.Set(key, value[, bNoSave=false])</h1>
 
@@ -363,78 +506,6 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 
 						</section>
 						<section class="method">
-							<header><a name="ix.option.Get"></a>
-								<h1><span class="realm client"></span>ix.option.Get(key, default)</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L218">View source &raquo;</a>
-
-								<p>Retrieves an option value for the local player.  If it is not set, it'll return the default that you've specified.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">key</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
-
-												<p> Unique ID of the option</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">default</span>
-
-
-
-												<p> Default value to return if the option is not set</p>
-											</li>
-									</ul>
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="tag type">any</span>
-
-												<p>Value associated with the key</p>
-											</li>
-
-											<div class="or"><span>OR</span></div>
-
-											<li>
-													<span class="tag type">any</span>
-
-												<p>The given default if the option is not set</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="ix.option.Save"></a>
-								<h1><span class="realm client"></span>ix.option.Save()</h1>
-
-									<div class="internal"></div>
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L237">View source &raquo;</a>
-
-								<p>Saves all options to disk.</p>
-							</header>
-
-
-
-						</section>
-						<section class="method">
 							<header><a name="ix.option.Sync"></a>
 								<h1><span class="realm client"></span>ix.option.Sync()</h1>
 
@@ -445,77 +516,6 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 							</header>
 
 
-
-						</section>
-						<section class="method">
-							<header><a name="ix.option.Get"></a>
-								<h1><span class="realm server"></span>ix.option.Get(client, key, default)</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L278">View source &raquo;</a>
-
-								<p>Retrieves an option value from the specified player.  If it is not set, it'll return the default that you've specified.
- This function will error when an invalid player is passed.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">client</span>
-
-													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
-
-
-												<p> Player to retrieve option value from</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">key</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
-
-												<p> Unique ID of the option</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">default</span>
-
-
-
-												<p> Default value to return if the option is not set</p>
-											</li>
-									</ul>
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="tag type">any</span>
-
-												<p>Value associated with the key</p>
-											</li>
-
-											<div class="or"><span>OR</span></div>
-
-											<li>
-													<span class="tag type">any</span>
-
-												<p>The given default if the option is not set</p>
-											</li>
-
-								</ul>
 
 						</section>
 					<h1 class="title">Tables</h1>

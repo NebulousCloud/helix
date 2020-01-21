@@ -27,11 +27,11 @@
 						<h2>Classes</h2>
 
 						<ul>
-								<li><a href="../classes/Player.html">Player</a></li>
+								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Entity.html">Entity</a></li>
 								<li><a href="../classes/Inventory.html">Inventory</a></li>
 								<li><a href="../classes/Item.html">Item</a></li>
-								<li><a href="../classes/Entity.html">Entity</a></li>
-								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Player.html">Player</a></li>
 						</ul>
 						<h2>Hooks</h2>
 
@@ -43,33 +43,33 @@
 						<h2>Panels</h2>
 
 						<ul>
-								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 						</ul>
 						<h2>Libraries</h2>
 
 						<ul>
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
-								<li><a href="../libraries/ix.data.html">ix.data</a></li>
-								<li><a href="../libraries/ix.config.html">ix.config</a></li>
-								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
-								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-								<li><a href="../libraries/ix.command.html">ix.command</a></li>
-								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
-								<li><a href="../libraries/ix.date.html">ix.date</a></li>
-								<li><a href="../libraries/ix.class.html">ix.class</a></li>
 								<li><a href="../libraries/ix.char.html">ix.char</a></li>
 								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
 								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
-								<li><a href="../libraries/ix.item.html">ix.item</a></li>
-								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
-								<li><a href="../libraries/ix.option.html">ix.option</a></li>
 								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
-								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
 								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
 								<li><a href="../libraries/ix.log.html">ix.log</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 						</ul>
 						<h2>Manual</h2>
 
@@ -100,12 +100,12 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
-									<li><span class="realm shared"></span><a href="#META:__tostring">Inventory:__tostring()</a></li>
 									<li><span class="realm shared"></span><a href="#META:GetID">Inventory:GetID()</a></li>
-									<li><span class="realm shared"></span><a href="#META:SetSize">Inventory:SetSize(width, height)</a></li>
-									<li><span class="realm shared"></span><a href="#META:GetSize">Inventory:GetSize()</a></li>
 									<li><span class="realm shared"></span><a href="#META:GetOwner">Inventory:GetOwner()</a></li>
+									<li><span class="realm shared"></span><a href="#META:GetSize">Inventory:GetSize()</a></li>
 									<li><span class="realm shared"></span><a href="#META:OnCheckAccess">Inventory:OnCheckAccess(client)</a></li>
+									<li><span class="realm shared"></span><a href="#META:SetSize">Inventory:SetSize(width, height)</a></li>
+									<li><span class="realm shared"></span><a href="#META:__tostring">Inventory:__tostring()</a></li>
 							</ul>
 					</div>
 				</details>
@@ -113,35 +113,6 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
-						<section class="method">
-								<aside>
-										<pre><code>print(ix.item.inventories[1])
- > "inventory[1]"
-</code></pre>
-								</aside>
-							<header><a name="META:__tostring"></a>
-								<h1><span class="realm shared"></span>Inventory:__tostring()</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L25">View source &raquo;</a>
-
-								<p>Returns a string representation of this inventory</p>
-							</header>
-
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
-
-												<p>String representation</p>
-											</li>
-
-								</ul>
-
-						</section>
 						<section class="method">
 							<header><a name="META:GetID"></a>
 								<h1><span class="realm shared"></span>Inventory:GetID()</h1>
@@ -161,6 +132,108 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 													<span class="type">number</span>
 
 												<p>Unique ID of inventory</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="META:GetOwner"></a>
+								<h1><span class="realm shared"></span>Inventory:GetOwner()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L115">View source &raquo;</a>
+
+								<p>Returns the player that owns this inventory.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">player</span>
+
+												<p>Owning player</p>
+											</li>
+
+											<div class="or"><span>OR</span></div>
+
+											<li>
+													<span class="type">nil</span>
+
+												<p>If no connected player owns this inventory</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="META:GetSize"></a>
+								<h1><span class="realm shared"></span>Inventory:GetSize()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L50">View source &raquo;</a>
+
+								<p>Returns the grid size of this inventory.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>Width of inventory</p>
+											</li>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>Height of inventory</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="META:OnCheckAccess"></a>
+								<h1><span class="realm shared"></span>Inventory:OnCheckAccess(client)</h1>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L155">View source &raquo;</a>
+
+								<p>Checks whether a player has access to an inventory</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
+
+
+												<p> Player to check access for</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not the player has access to the inventory</p>
 											</li>
 
 								</ul>
@@ -208,13 +281,18 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 
 						</section>
 						<section class="method">
-							<header><a name="META:GetSize"></a>
-								<h1><span class="realm shared"></span>Inventory:GetSize()</h1>
+								<aside>
+										<pre><code>print(ix.item.inventories[1])
+ > "inventory[1]"
+</code></pre>
+								</aside>
+							<header><a name="META:__tostring"></a>
+								<h1><span class="realm shared"></span>Inventory:__tostring()</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L50">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L25">View source &raquo;</a>
 
-								<p>Returns the grid size of this inventory.</p>
+								<p>Returns a string representation of this inventory</p>
 							</header>
 
 
@@ -223,87 +301,9 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 								<ul>
 
 											<li>
-													<span class="type">number</span>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
 
-												<p>Width of inventory</p>
-											</li>
-
-											<li>
-													<span class="type">number</span>
-
-												<p>Height of inventory</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="META:GetOwner"></a>
-								<h1><span class="realm shared"></span>Inventory:GetOwner()</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L115">View source &raquo;</a>
-
-								<p>Returns the player that owns this inventory.</p>
-							</header>
-
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="type">player</span>
-
-												<p>Owning player</p>
-											</li>
-
-											<div class="or"><span>OR</span></div>
-
-											<li>
-													<span class="type">nil</span>
-
-												<p>If no connected player owns this inventory</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="META:OnCheckAccess"></a>
-								<h1><span class="realm shared"></span>Inventory:OnCheckAccess(client)</h1>
-
-									<div class="internal"></div>
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L155">View source &raquo;</a>
-
-								<p>Checks whether a player has access to an inventory</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">client</span>
-
-													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
-
-
-												<p> Player to check access for</p>
-											</li>
-									</ul>
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="type">bool</span>
-
-												<p>Whether or not the player has access to the inventory</p>
+												<p>String representation</p>
 											</li>
 
 								</ul>

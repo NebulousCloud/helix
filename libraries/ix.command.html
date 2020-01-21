@@ -29,25 +29,25 @@
 						<ul>
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
-								<li><a href="../libraries/ix.data.html">ix.data</a></li>
-								<li><a href="../libraries/ix.config.html">ix.config</a></li>
-								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
-								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-								<li><a href="../libraries/ix.command.html">ix.command</a></li>
-								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
-								<li><a href="../libraries/ix.date.html">ix.date</a></li>
-								<li><a href="../libraries/ix.class.html">ix.class</a></li>
 								<li><a href="../libraries/ix.char.html">ix.char</a></li>
 								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
 								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
-								<li><a href="../libraries/ix.item.html">ix.item</a></li>
-								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
-								<li><a href="../libraries/ix.option.html">ix.option</a></li>
 								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
-								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
 								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
 								<li><a href="../libraries/ix.log.html">ix.log</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 						</ul>
 						<h2>Hooks</h2>
 
@@ -59,17 +59,17 @@
 						<h2>Panels</h2>
 
 						<ul>
-								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 						</ul>
 						<h2>Classes</h2>
 
 						<ul>
-								<li><a href="../classes/Player.html">Player</a></li>
 								<li><a href="../classes/Inventory.html">Inventory</a></li>
-								<li><a href="../classes/Item.html">Item</a></li>
-								<li><a href="../classes/Entity.html">Entity</a></li>
 								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Entity.html">Entity</a></li>
+								<li><a href="../classes/Player.html">Player</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
 						</ul>
 						<h2>Manual</h2>
 
@@ -99,18 +99,18 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 							<h2>Functions</h2>
 							<ul>
 									<li><span class="realm shared"></span><a href="#ix.command.Add">ix.command.Add(command, data)</a></li>
-									<li><span class="realm shared"></span><a href="#ix.command.HasAccess">ix.command.HasAccess(client, command)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.command.ExtractArgs">ix.command.ExtractArgs(text)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.command.FindAll">ix.command.FindAll(identifier[, bSorted=false[, bReorganize=false[, bRemoveDupes=false]]])</a></li>
 									<li><span class="realm server"></span><a href="#ix.command.FindPlayer">ix.command.FindPlayer(client, name)</a></li>
-									<li><span class="realm server"></span><a href="#ix.command.Run">ix.command.Run(client, command, arguments)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.command.HasAccess">ix.command.HasAccess(client, command)</a></li>
 									<li><span class="realm server"></span><a href="#ix.command.Parse">ix.command.Parse(client, text[, realCommand[, arguments]])</a></li>
+									<li><span class="realm server"></span><a href="#ix.command.Run">ix.command.Run(client, command, arguments)</a></li>
 									<li><span class="realm client"></span><a href="#ix.command.Send">ix.command.Send(command, ...)</a></li>
 							</ul>
 							<h2>Tables</h2>
 							<ul>
-									<li><span class="realm shared"></span><a href="#CommandStructure">CommandStructure</a></li>
 									<li><span class="realm shared"></span><a href="#CommandArgumentsStructure">CommandArgumentsStructure</a></li>
+									<li><span class="realm shared"></span><a href="#CommandStructure">CommandStructure</a></li>
 							</ul>
 					</div>
 				</details>
@@ -156,57 +156,6 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 											</li>
 									</ul>
 
-
-						</section>
-						<section class="method">
-							<header><a name="ix.command.HasAccess"></a>
-								<h1><span class="realm shared"></span>ix.command.HasAccess(client, command)</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L311">View source &raquo;</a>
-
-								<p>Returns true if a player is allowed to run a certain command.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">client</span>
-
-													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
-
-
-												<p> Player to check access for</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">command</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
-
-												<p> Name of the command to check access for</p>
-											</li>
-									</ul>
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="type">bool</span>
-
-												<p>Whether or not the player is allowed to run the command</p>
-											</li>
-
-								</ul>
 
 						</section>
 						<section class="method">
@@ -402,17 +351,13 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 								</ul>
 						</section>
 						<section class="method">
-								<aside>
-										<pre><code>ix.command.Run(player.GetByID(1), "Roll", {10})
-</code></pre>
-								</aside>
-							<header><a name="ix.command.Run"></a>
-								<h1><span class="realm server"></span>ix.command.Run(client, command, arguments)</h1>
+							<header><a name="ix.command.HasAccess"></a>
+								<h1><span class="realm shared"></span>ix.command.HasAccess(client, command)</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L460">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L311">View source &raquo;</a>
 
-								<p>Forces a player to execute a command by name.</p>
+								<p>Returns true if a player is allowed to run a certain command.</p>
 							</header>
 
 
@@ -427,7 +372,7 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
 
 
-												<p> Player who is executing the command</p>
+												<p> Player to check access for</p>
 											</li>
 									</ul>
 
@@ -439,23 +384,21 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p> Full name of the command to be executed. This string gets lowered, but it's good practice to stick with
- the exact name of the command</p>
+												<p> Name of the command to check access for</p>
 											</li>
 									</ul>
 
-									<ul>
+
+								<h3>Returns</h3>
+								<ul>
 
 											<li>
-												<span class="tag parameter">arguments</span>
+													<span class="type">bool</span>
 
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
-
-
-												<p> Array of arguments to be passed to the command</p>
+												<p>Whether or not the player is allowed to run the command</p>
 											</li>
-									</ul>
 
+								</ul>
 
 						</section>
 						<section class="method">
@@ -544,6 +487,63 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 						</section>
 						<section class="method">
 								<aside>
+										<pre><code>ix.command.Run(player.GetByID(1), "Roll", {10})
+</code></pre>
+								</aside>
+							<header><a name="ix.command.Run"></a>
+								<h1><span class="realm server"></span>ix.command.Run(client, command, arguments)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L460">View source &raquo;</a>
+
+								<p>Forces a player to execute a command by name.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
+
+
+												<p> Player who is executing the command</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">command</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Full name of the command to be executed. This string gets lowered, but it's good practice to stick with
+ the exact name of the command</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">arguments</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+
+												<p> Array of arguments to be passed to the command</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+								<aside>
 										<pre><code>ix.command.Send("roll", 10)
 </code></pre>
 								</aside>
@@ -587,6 +587,48 @@ restricted to certain usergroups using a <a href="https://github.com/glua/CAMI">
 						</section>
 					<h1 class="title">Tables</h1>
 
+						<section class="method">
+							<header><a name="CommandArgumentsStructure"></a>
+								<h1><span class="realm shared"></span>CommandArgumentsStructure</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L75">View source &raquo;</a>
+
+								<p>Rather than checking the validity for arguments in your command's <code>OnRun</code> function, you can have Helix do it for you to
+ reduce the amount of boilerplate code that needs to be written.  This can be done by populating the <code>arguments</code> field.</p>
+
+<p> When using the <code>arguments</code> field in your command, you are specifying specific types that you expect to receive when the
+ command is ran successfully. This means that before <code>OnRun</code> is called, the arguments passed to the command from a user will
+ be verified to be valid. Each argument is an <a href="../libraries/ix.html#type">ix.type</a> entry that specifies the expected type for that argument. Optional
+ arguments can be specified by using a bitwise OR with the special <code>ix.type.optional</code> type. When specified as optional, the
+ argument can be <code>nil</code> if the user has not entered anything for that argument - otherwise it will be valid.</p>
+
+<p> Note that optional arguments must always be at the end of a list of arguments - or rather, they must not follow a required
+ argument. The <code>syntax</code> field will be automatically populated when using strict arguments, which means you shouldn't fill out
+ the <code>syntax</code> field yourself. The arguments you specify will have the same names as the arguments in your OnRun function.</p>
+
+<p> Consider this example command:</p>
+<pre><code>ix.command.Add("CharSlap", {
+    description = "Slaps a character with a large trout.",
+    adminOnly = true,
+    arguments = {
+        ix.type.character,
+        bit.bor(ix.type.number, ix.type.optional)
+    },
+    OnRun = function(self, client, target, damage)
+        -- WHAM!
+    end
+})
+</code></pre>
+<p> Here, we've specified the first argument called <code>target</code> to be of type <code>character</code>, and the second argument called <code>damage</code>
+ to be of type <code>number</code>. The <code>damage</code> argument is optional, meaning that the command will still run if the user has not
+ specified any value for the damage. In this case, we'll need to check if it was specified by doing a simple
+ <code>if (damage) then</code>. The syntax field will be automatically populated with the value <code>&quot;&lt;target: character&gt; [damage: number]&quot;</code>.</p>
+							</header>
+
+
+
+						</section>
 						<section class="method">
 							<header><a name="CommandStructure"></a>
 								<h1><span class="realm shared"></span>CommandStructure</h1>
@@ -727,48 +769,6 @@ COMMAND.argumentNames = {"target char", "cash (1-1000)"}
 <p> Keep in mind that this is a <strong>SHARED</strong> callback; the command will not show up the client if the callback returns <code>false</code>.</p>
 											</li>
 									</ul>
-
-
-						</section>
-						<section class="method">
-							<header><a name="CommandArgumentsStructure"></a>
-								<h1><span class="realm shared"></span>CommandArgumentsStructure</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_command.lua#L75">View source &raquo;</a>
-
-								<p>Rather than checking the validity for arguments in your command's <code>OnRun</code> function, you can have Helix do it for you to
- reduce the amount of boilerplate code that needs to be written.  This can be done by populating the <code>arguments</code> field.</p>
-
-<p> When using the <code>arguments</code> field in your command, you are specifying specific types that you expect to receive when the
- command is ran successfully. This means that before <code>OnRun</code> is called, the arguments passed to the command from a user will
- be verified to be valid. Each argument is an <a href="../libraries/ix.html#type">ix.type</a> entry that specifies the expected type for that argument. Optional
- arguments can be specified by using a bitwise OR with the special <code>ix.type.optional</code> type. When specified as optional, the
- argument can be <code>nil</code> if the user has not entered anything for that argument - otherwise it will be valid.</p>
-
-<p> Note that optional arguments must always be at the end of a list of arguments - or rather, they must not follow a required
- argument. The <code>syntax</code> field will be automatically populated when using strict arguments, which means you shouldn't fill out
- the <code>syntax</code> field yourself. The arguments you specify will have the same names as the arguments in your OnRun function.</p>
-
-<p> Consider this example command:</p>
-<pre><code>ix.command.Add("CharSlap", {
-    description = "Slaps a character with a large trout.",
-    adminOnly = true,
-    arguments = {
-        ix.type.character,
-        bit.bor(ix.type.number, ix.type.optional)
-    },
-    OnRun = function(self, client, target, damage)
-        -- WHAM!
-    end
-})
-</code></pre>
-<p> Here, we've specified the first argument called <code>target</code> to be of type <code>character</code>, and the second argument called <code>damage</code>
- to be of type <code>number</code>. The <code>damage</code> argument is optional, meaning that the command will still run if the user has not
- specified any value for the damage. In this case, we'll need to check if it was specified by doing a simple
- <code>if (damage) then</code>. The syntax field will be automatically populated with the value <code>&quot;&lt;target: character&gt; [damage: number]&quot;</code>.</p>
-							</header>
-
 
 
 						</section>

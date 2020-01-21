@@ -27,11 +27,11 @@
 						<h2>Classes</h2>
 
 						<ul>
-								<li><a href="../classes/Player.html">Player</a></li>
+								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Entity.html">Entity</a></li>
 								<li><a href="../classes/Inventory.html">Inventory</a></li>
 								<li><a href="../classes/Item.html">Item</a></li>
-								<li><a href="../classes/Entity.html">Entity</a></li>
-								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Player.html">Player</a></li>
 						</ul>
 						<h2>Hooks</h2>
 
@@ -43,33 +43,33 @@
 						<h2>Panels</h2>
 
 						<ul>
-								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 						</ul>
 						<h2>Libraries</h2>
 
 						<ul>
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
-								<li><a href="../libraries/ix.data.html">ix.data</a></li>
-								<li><a href="../libraries/ix.config.html">ix.config</a></li>
-								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
-								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-								<li><a href="../libraries/ix.command.html">ix.command</a></li>
-								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
-								<li><a href="../libraries/ix.date.html">ix.date</a></li>
-								<li><a href="../libraries/ix.class.html">ix.class</a></li>
 								<li><a href="../libraries/ix.char.html">ix.char</a></li>
 								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
 								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
-								<li><a href="../libraries/ix.item.html">ix.item</a></li>
-								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
-								<li><a href="../libraries/ix.option.html">ix.option</a></li>
 								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
-								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
 								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
 								<li><a href="../libraries/ix.log.html">ix.log</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 						</ul>
 						<h2>Manual</h2>
 
@@ -105,14 +105,20 @@ for variables that automatically save to the character object.</p>
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
-									<li><span class="realm shared"></span><a href="#CHAR:__tostring">Character:__tostring()</a></li>
-									<li><span class="realm shared"></span><a href="#CHAR:__eq">Character:__eq(other)</a></li>
+									<li><span class="realm shared"></span><a href="#:GetInventory">Character:GetInventory()</a></li>
+									<li><span class="realm server"></span><a href="#CHAR:Ban">Character:Ban([time])</a></li>
 									<li><span class="realm shared"></span><a href="#CHAR:GetID">Character:GetID()</a></li>
+									<li><span class="realm shared"></span><a href="#CHAR:GetPlayer">Character:GetPlayer()</a></li>
+									<li><span class="realm server"></span><a href="#CHAR:Kick">Character:Kick()</a></li>
 									<li><span class="realm server"></span><a href="#CHAR:Save">Character:Save([callback=nil])</a></li>
 									<li><span class="realm server"></span><a href="#CHAR:Sync">Character:Sync([receiver=nil])</a></li>
-									<li><span class="realm server"></span><a href="#CHAR:Kick">Character:Kick()</a></li>
-									<li><span class="realm server"></span><a href="#CHAR:Ban">Character:Ban([time])</a></li>
-									<li><span class="realm shared"></span><a href="#CHAR:GetPlayer">Character:GetPlayer()</a></li>
+									<li><span class="realm shared"></span><a href="#CHAR:__eq">Character:__eq(other)</a></li>
+									<li><span class="realm shared"></span><a href="#CHAR:__tostring">Character:__tostring()</a></li>
+									<li><span class="realm server"></span><a href="#character:GetFlags">Character:GetFlags()</a></li>
+									<li><span class="realm server"></span><a href="#character:GiveFlags">Character:GiveFlags(flags)</a></li>
+									<li><span class="realm server"></span><a href="#character:HasFlags">Character:HasFlags(flags)</a></li>
+									<li><span class="realm server"></span><a href="#character:SetFlags">Character:SetFlags(flags)</a></li>
+									<li><span class="realm server"></span><a href="#character:TakeFlags">Character:TakeFlags(flags)</a></li>
 							</ul>
 					</div>
 				</details>
@@ -121,18 +127,13 @@ for variables that automatically save to the character object.</p>
 					<h1 class="title">Functions</h1>
 
 						<section class="method">
-								<aside>
-										<pre><code>print(ix.char.loaded[1])
- > "character[1]"
-</code></pre>
-								</aside>
-							<header><a name="CHAR:__tostring"></a>
-								<h1><span class="realm shared"></span>Character:__tostring()</h1>
+							<header><a name=":GetInventory"></a>
+								<h1><span class="realm shared"></span>Character:GetInventory()</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L32">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_item.lua#L980">View source &raquo;</a>
 
-								<p>Returns a string representation of this character</p>
+								<p>Returns this character's associated <a href="../classes/Inventory.html#">Inventory</a> object.</p>
 							</header>
 
 
@@ -141,27 +142,22 @@ for variables that automatically save to the character object.</p>
 								<ul>
 
 											<li>
-													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+													<a class="type" href="../classes/Inventory.html#">Inventory</a>
 
-												<p>String representation</p>
+												<p>This character's inventory</p>
 											</li>
 
 								</ul>
 
 						</section>
 						<section class="method">
-								<aside>
-										<pre><code>print(ix.char.loaded[1] == ix.char.loaded[2])
- > false
-</code></pre>
-								</aside>
-							<header><a name="CHAR:__eq"></a>
-								<h1><span class="realm shared"></span>Character:__eq(other)</h1>
+							<header><a name="CHAR:Ban"></a>
+								<h1><span class="realm server"></span>Character:Ban([time])</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L42">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L219">View source &raquo;</a>
 
-								<p>Returns true if this character is equal to another character.  Internally, this checks character IDs.</p>
+								<p>Forces a player off their current character, and prevents them from using the character for the specified amount of time.</p>
 							</header>
 
 
@@ -171,26 +167,16 @@ for variables that automatically save to the character object.</p>
 									<ul>
 
 											<li>
-												<span class="tag parameter">other</span>
+												<span class="tag parameter">time</span>
 
-													<span class="tag"><a class="type" href="../classes/Character.html#">Character</a></span>
+													<span class="tag"><span class="type">number</span></span>
 
+													<span class="tag default">optional</span>
 
-												<p> Character to compare to</p>
+												<p> Amount of seconds to ban the character for. If left as <code>nil</code>, the character will be banned permanently</p>
 											</li>
 									</ul>
 
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="type">bool</span>
-
-												<p>Whether or not this character is equal to the given character</p>
-											</li>
-
-								</ul>
 
 						</section>
 						<section class="method">
@@ -215,6 +201,43 @@ for variables that automatically save to the character object.</p>
 											</li>
 
 								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="CHAR:GetPlayer"></a>
+								<h1><span class="realm shared"></span>Character:GetPlayer()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L236">View source &raquo;</a>
+
+								<p>Returns the player that owns this character.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">player</span>
+
+												<p>Player that owns this character</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="CHAR:Kick"></a>
+								<h1><span class="realm server"></span>Character:Kick()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L194">View source &raquo;</a>
+
+								<p>Forces a player off their current character, and sends them to the character menu to select a character.</p>
+							</header>
+
+
 
 						</section>
 						<section class="method">
@@ -286,26 +309,18 @@ end)
 
 						</section>
 						<section class="method">
-							<header><a name="CHAR:Kick"></a>
-								<h1><span class="realm server"></span>Character:Kick()</h1>
+								<aside>
+										<pre><code>print(ix.char.loaded[1] == ix.char.loaded[2])
+ > false
+</code></pre>
+								</aside>
+							<header><a name="CHAR:__eq"></a>
+								<h1><span class="realm shared"></span>Character:__eq(other)</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L194">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L42">View source &raquo;</a>
 
-								<p>Forces a player off their current character, and sends them to the character menu to select a character.</p>
-							</header>
-
-
-
-						</section>
-						<section class="method">
-							<header><a name="CHAR:Ban"></a>
-								<h1><span class="realm server"></span>Character:Ban([time])</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L219">View source &raquo;</a>
-
-								<p>Forces a player off their current character, and prevents them from using the character for the specified amount of time.</p>
+								<p>Returns true if this character is equal to another character.  Internally, this checks character IDs.</p>
 							</header>
 
 
@@ -315,26 +330,41 @@ end)
 									<ul>
 
 											<li>
-												<span class="tag parameter">time</span>
+												<span class="tag parameter">other</span>
 
-													<span class="tag"><span class="type">number</span></span>
+													<span class="tag"><a class="type" href="../classes/Character.html#">Character</a></span>
 
-													<span class="tag default">optional</span>
 
-												<p> Amount of seconds to ban the character for. If left as <code>nil</code>, the character will be banned permanently</p>
+												<p> Character to compare to</p>
 											</li>
 									</ul>
 
 
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not this character is equal to the given character</p>
+											</li>
+
+								</ul>
+
 						</section>
 						<section class="method">
-							<header><a name="CHAR:GetPlayer"></a>
-								<h1><span class="realm shared"></span>Character:GetPlayer()</h1>
+								<aside>
+										<pre><code>print(ix.char.loaded[1])
+ > "character[1]"
+</code></pre>
+								</aside>
+							<header><a name="CHAR:__tostring"></a>
+								<h1><span class="realm shared"></span>Character:__tostring()</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L236">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_character.lua#L32">View source &raquo;</a>
 
-								<p>Returns the player that owns this character.</p>
+								<p>Returns a string representation of this character</p>
 							</header>
 
 
@@ -343,12 +373,179 @@ end)
 								<ul>
 
 											<li>
-													<span class="type">player</span>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
 
-												<p>Player that owns this character</p>
+												<p>String representation</p>
 											</li>
 
 								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="character:GetFlags"></a>
+								<h1><span class="realm server"></span>Character:GetFlags()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_flag.lua#L150">View source &raquo;</a>
+
+								<p>Returns all of the flags this character has.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>Flags this character has represented as one string. You can access individual flags by iterating through
+ the string letter by letter</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+								<aside>
+										<pre><code>character:GiveFlags("pet")
+ -- gives p, e, and t flags to the character
+</code></pre>
+								</aside>
+							<header><a name="character:GiveFlags"></a>
+								<h1><span class="realm server"></span>Character:GiveFlags(flags)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_flag.lua#L90">View source &raquo;</a>
+
+								<p>Adds a flag to the list of this character's accessible flags.  This does not overwrite existing flags.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">flags</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Flag(s) this character should be given</p>
+											</li>
+									</ul>
+
+
+								<h3>See Also</h3>
+								<ul>
+										<li><a href="../classes/Character.html#character:HasFlags">HasFlags</a></li>
+								</ul>
+						</section>
+						<section class="method">
+							<header><a name="character:HasFlags"></a>
+								<h1><span class="realm server"></span>Character:HasFlags(flags)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_flag.lua#L158">View source &raquo;</a>
+
+								<p>Returns <code>true</code> if the character has the given flag(s).</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">flags</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Flag(s) to check access for</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not this character has access to the given flag(s)</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="character:SetFlags"></a>
+								<h1><span class="realm server"></span>Character:SetFlags(flags)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_flag.lua#L80">View source &raquo;</a>
+
+								<p>Sets this character's accessible flags.  Note that this method overwrites <strong>all</strong> flags instead of adding them.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">flags</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Flag(s) this charater is allowed to have</p>
+											</li>
+									</ul>
+
+
+								<h3>See Also</h3>
+								<ul>
+										<li><a href="../classes/Character.html#character:GiveFlags">GiveFlags</a></li>
+								</ul>
+						</section>
+						<section class="method">
+								<aside>
+										<pre><code>-- for a character with "pet" flags
+character:TakeFlags("p")
+-- character now has e, and t flags
+</code></pre>
+								</aside>
+							<header><a name="character:TakeFlags"></a>
+								<h1><span class="realm server"></span>Character:TakeFlags(flags)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_flag.lua#L122">View source &raquo;</a>
+
+								<p>Removes this character's access to the given flags.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">flags</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Flag(s) to remove from this character</p>
+											</li>
+									</ul>
+
 
 						</section>
 		</article>

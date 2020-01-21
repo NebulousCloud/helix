@@ -27,11 +27,11 @@
 						<h2>Classes</h2>
 
 						<ul>
-								<li><a href="../classes/Player.html">Player</a></li>
+								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Entity.html">Entity</a></li>
 								<li><a href="../classes/Inventory.html">Inventory</a></li>
 								<li><a href="../classes/Item.html">Item</a></li>
-								<li><a href="../classes/Entity.html">Entity</a></li>
-								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Player.html">Player</a></li>
 						</ul>
 						<h2>Hooks</h2>
 
@@ -43,33 +43,33 @@
 						<h2>Panels</h2>
 
 						<ul>
-								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 						</ul>
 						<h2>Libraries</h2>
 
 						<ul>
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
-								<li><a href="../libraries/ix.data.html">ix.data</a></li>
-								<li><a href="../libraries/ix.config.html">ix.config</a></li>
-								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
-								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-								<li><a href="../libraries/ix.command.html">ix.command</a></li>
-								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
-								<li><a href="../libraries/ix.date.html">ix.date</a></li>
-								<li><a href="../libraries/ix.class.html">ix.class</a></li>
 								<li><a href="../libraries/ix.char.html">ix.char</a></li>
 								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
 								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
-								<li><a href="../libraries/ix.item.html">ix.item</a></li>
-								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
-								<li><a href="../libraries/ix.option.html">ix.option</a></li>
 								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
-								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
 								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
 								<li><a href="../libraries/ix.log.html">ix.log</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 						</ul>
 						<h2>Manual</h2>
 
@@ -100,12 +100,12 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
+									<li><span class="realm server"></span><a href="#meta:BlastDoor">Entity:BlastDoor(velocity, lifeTime, bIgnorePartner)</a></li>
+									<li><span class="realm server"></span><a href="#meta:GetBlocker">Entity:GetBlocker()</a></li>
+									<li><span class="realm shared"></span><a href="#meta:GetDoorPartner">Entity:GetDoorPartner()</a></li>
 									<li><span class="realm shared"></span><a href="#meta:IsChair">Entity:IsChair()</a></li>
 									<li><span class="realm shared"></span><a href="#meta:IsDoor">Entity:IsDoor()</a></li>
 									<li><span class="realm server"></span><a href="#meta:IsLocked">Entity:IsLocked()</a></li>
-									<li><span class="realm shared"></span><a href="#meta:GetDoorPartner">Entity:GetDoorPartner()</a></li>
-									<li><span class="realm server"></span><a href="#meta:GetBlocker">Entity:GetBlocker()</a></li>
-									<li><span class="realm server"></span><a href="#meta:BlastDoor">Entity:BlastDoor(velocity, lifeTime, bIgnorePartner)</a></li>
 							</ul>
 					</div>
 				</details>
@@ -113,6 +113,142 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
+						<section class="method">
+							<header><a name="meta:BlastDoor"></a>
+								<h1><span class="realm server"></span>Entity:BlastDoor(velocity, lifeTime, bIgnorePartner)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_entity.lua#L87">View source &raquo;</a>
+
+								<p>Blasts a door off its hinges.  Internally, this hides the door entity, spawns a physics prop with the same model, and
+ applies force to the prop.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">velocity</span>
+
+													<span class="tag"><span class="type">vector</span></span>
+
+
+												<p> Velocity to apply to the door</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">lifeTime</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> How long to wait in seconds before the door is put back on its hinges</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bIgnorePartner</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+
+												<p> Whether or not to ignore the door's partner in the case of double doors</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">nil</span>
+
+												<p>If the entity is not a door</p>
+											</li>
+
+											<div class="or"><span>OR</span></div>
+
+											<li>
+													<a class="type" href="../classes/Entity.html#">Entity</a>
+
+												<p>The physics prop created for the door</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="meta:GetBlocker"></a>
+								<h1><span class="realm server"></span>Entity:GetBlocker()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_entity.lua#L73">View source &raquo;</a>
+
+								<p>Returns the entity that is blocking this door from opening.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="../classes/Entity.html#">Entity</a>
+
+												<p>Entity that is blocking this door</p>
+											</li>
+
+											<div class="or"><span>OR</span></div>
+
+											<li>
+													<span class="type">nil</span>
+
+												<p>If this entity is not a door, or there is no blocking entity</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="meta:GetDoorPartner"></a>
+								<h1><span class="realm shared"></span>Entity:GetDoorPartner()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_entity.lua#L65">View source &raquo;</a>
+
+								<p>Returns the neighbouring door entity for double doors.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="../classes/Entity.html#">Entity</a>
+
+												<p>This door's partner</p>
+											</li>
+
+											<div class="or"><span>OR</span></div>
+
+											<li>
+													<span class="type">nil</span>
+
+												<p>If the door does not have a partner</p>
+											</li>
+
+								</ul>
+
+						</section>
 						<section class="method">
 							<header><a name="meta:IsChair"></a>
 								<h1><span class="realm shared"></span>Entity:IsChair()</h1>
@@ -181,142 +317,6 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 
 												<p>Whether or not this entity is locked; <code>false</code> if this entity cannot be locked at all
  (e.g not a button or door)</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="meta:GetDoorPartner"></a>
-								<h1><span class="realm shared"></span>Entity:GetDoorPartner()</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_entity.lua#L65">View source &raquo;</a>
-
-								<p>Returns the neighbouring door entity for double doors.</p>
-							</header>
-
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<a class="type" href="../classes/Entity.html#">Entity</a>
-
-												<p>This door's partner</p>
-											</li>
-
-											<div class="or"><span>OR</span></div>
-
-											<li>
-													<span class="type">nil</span>
-
-												<p>If the door does not have a partner</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="meta:GetBlocker"></a>
-								<h1><span class="realm server"></span>Entity:GetBlocker()</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_entity.lua#L73">View source &raquo;</a>
-
-								<p>Returns the entity that is blocking this door from opening.</p>
-							</header>
-
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<a class="type" href="../classes/Entity.html#">Entity</a>
-
-												<p>Entity that is blocking this door</p>
-											</li>
-
-											<div class="or"><span>OR</span></div>
-
-											<li>
-													<span class="type">nil</span>
-
-												<p>If this entity is not a door, or there is no blocking entity</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="meta:BlastDoor"></a>
-								<h1><span class="realm server"></span>Entity:BlastDoor(velocity, lifeTime, bIgnorePartner)</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_entity.lua#L87">View source &raquo;</a>
-
-								<p>Blasts a door off its hinges.  Internally, this hides the door entity, spawns a physics prop with the same model, and
- applies force to the prop.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">velocity</span>
-
-													<span class="tag"><span class="type">vector</span></span>
-
-
-												<p> Velocity to apply to the door</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">lifeTime</span>
-
-													<span class="tag"><span class="type">number</span></span>
-
-
-												<p> How long to wait in seconds before the door is put back on its hinges</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">bIgnorePartner</span>
-
-													<span class="tag"><span class="type">boolean</span></span>
-
-
-												<p> Whether or not to ignore the door's partner in the case of double doors</p>
-											</li>
-									</ul>
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="type">nil</span>
-
-												<p>If the entity is not a door</p>
-											</li>
-
-											<div class="or"><span>OR</span></div>
-
-											<li>
-													<a class="type" href="../classes/Entity.html#">Entity</a>
-
-												<p>The physics prop created for the door</p>
 											</li>
 
 								</ul>

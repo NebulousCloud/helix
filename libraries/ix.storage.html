@@ -29,25 +29,25 @@
 						<ul>
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
-								<li><a href="../libraries/ix.data.html">ix.data</a></li>
-								<li><a href="../libraries/ix.config.html">ix.config</a></li>
-								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
-								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-								<li><a href="../libraries/ix.command.html">ix.command</a></li>
-								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
-								<li><a href="../libraries/ix.date.html">ix.date</a></li>
-								<li><a href="../libraries/ix.class.html">ix.class</a></li>
 								<li><a href="../libraries/ix.char.html">ix.char</a></li>
 								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
 								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
-								<li><a href="../libraries/ix.item.html">ix.item</a></li>
-								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
-								<li><a href="../libraries/ix.option.html">ix.option</a></li>
 								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
-								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
 								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
 								<li><a href="../libraries/ix.log.html">ix.log</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 						</ul>
 						<h2>Hooks</h2>
 
@@ -59,17 +59,17 @@
 						<h2>Panels</h2>
 
 						<ul>
-								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 						</ul>
 						<h2>Classes</h2>
 
 						<ul>
-								<li><a href="../classes/Player.html">Player</a></li>
 								<li><a href="../classes/Inventory.html">Inventory</a></li>
-								<li><a href="../classes/Item.html">Item</a></li>
-								<li><a href="../classes/Entity.html">Entity</a></li>
 								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Entity.html">Entity</a></li>
+								<li><a href="../classes/Player.html">Player</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
 						</ul>
 						<h2>Manual</h2>
 
@@ -113,15 +113,15 @@ and the player's inventory in the player's UI, which allows them to drag items t
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
+									<li><span class="realm server"></span><a href="#ix.storage.AddReceiver">ix.storage.AddReceiver(client, inventory, bDontSync)</a></li>
+									<li><span class="realm server"></span><a href="#ix.storage.Close">ix.storage.Close(inventory)</a></li>
+									<li><span class="realm server"></span><a href="#ix.storage.CreateContext">ix.storage.CreateContext(inventory, info)</a></li>
 									<li><span class="realm server"></span><a href="#ix.storage.InUse">ix.storage.InUse(inventory)</a></li>
 									<li><span class="realm server"></span><a href="#ix.storage.InUseBy">ix.storage.InUseBy(inventory, client)</a></li>
-									<li><span class="realm server"></span><a href="#ix.storage.CreateContext">ix.storage.CreateContext(inventory, info)</a></li>
-									<li><span class="realm server"></span><a href="#ix.storage.RemoveContext">ix.storage.RemoveContext(inventory)</a></li>
-									<li><span class="realm server"></span><a href="#ix.storage.Sync">ix.storage.Sync(client, inventory)</a></li>
-									<li><span class="realm server"></span><a href="#ix.storage.AddReceiver">ix.storage.AddReceiver(client, inventory, bDontSync)</a></li>
-									<li><span class="realm server"></span><a href="#ix.storage.RemoveReceiver">ix.storage.RemoveReceiver(client, inventory, bDontRemove)</a></li>
 									<li><span class="realm server"></span><a href="#ix.storage.Open">ix.storage.Open(client, inventory, info)</a></li>
-									<li><span class="realm server"></span><a href="#ix.storage.Close">ix.storage.Close(inventory)</a></li>
+									<li><span class="realm server"></span><a href="#ix.storage.RemoveContext">ix.storage.RemoveContext(inventory)</a></li>
+									<li><span class="realm server"></span><a href="#ix.storage.RemoveReceiver">ix.storage.RemoveReceiver(client, inventory, bDontRemove)</a></li>
+									<li><span class="realm server"></span><a href="#ix.storage.Sync">ix.storage.Sync(client, inventory)</a></li>
 							</ul>
 							<h2>Tables</h2>
 							<ul>
@@ -133,6 +133,129 @@ and the player's inventory in the player's UI, which allows them to drag items t
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
+						<section class="method">
+							<header><a name="ix.storage.AddReceiver"></a>
+								<h1><span class="realm server"></span>ix.storage.AddReceiver(client, inventory, bDontSync)</h1>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L154">View source &raquo;</a>
+
+								<p>Adds a receiver to a given inventory with a storage context.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
+
+
+												<p> Player to sync storage for</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">inventory</span>
+
+													<span class="tag"><a class="type" href="../classes/Inventory.html#">Inventory</a></span>
+
+
+												<p> Inventory to sync storage for</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bDontSync</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+
+												<p> Whether or not to skip syncing the storage to the client. If this is <code>true</code>, the storage panel will not
+ show up for the player</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.storage.Close"></a>
+								<h1><span class="realm server"></span>ix.storage.Close(inventory)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L257">View source &raquo;</a>
+
+								<p>Forcefully makes clients close this inventory if they have it open.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">inventory</span>
+
+													<span class="tag"><a class="type" href="../classes/Inventory.html#">Inventory</a></span>
+
+
+												<p> Inventory to close</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.storage.CreateContext"></a>
+								<h1><span class="realm server"></span>ix.storage.CreateContext(inventory, info)</h1>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L84">View source &raquo;</a>
+
+								<p>Creates a storage context on the given inventory.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">inventory</span>
+
+													<span class="tag"><a class="type" href="../classes/Inventory.html#">Inventory</a></span>
+
+
+												<p> Inventory to create a storage context for</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">info</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+
+												<p> Information to store on the context</p>
+											</li>
+									</ul>
+
+
+						</section>
 						<section class="method">
 							<header><a name="ix.storage.InUse"></a>
 								<h1><span class="realm server"></span>ix.storage.InUse(inventory)</h1>
@@ -224,14 +347,14 @@ and the player's inventory in the player's UI, which allows them to drag items t
 
 						</section>
 						<section class="method">
-							<header><a name="ix.storage.CreateContext"></a>
-								<h1><span class="realm server"></span>ix.storage.CreateContext(inventory, info)</h1>
+							<header><a name="ix.storage.Open"></a>
+								<h1><span class="realm server"></span>ix.storage.Open(client, inventory, info)</h1>
 
-									<div class="internal"></div>
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L84">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L216">View source &raquo;</a>
 
-								<p>Creates a storage context on the given inventory.</p>
+								<p>Makes a player open an inventory that they can interact with.  This can be called multiple times on the same inventory,
+ if the info passed allows for multiple users.</p>
 							</header>
 
 
@@ -241,12 +364,24 @@ and the player's inventory in the player's UI, which allows them to drag items t
 									<ul>
 
 											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
+
+
+												<p> Player to open the inventory for</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
 												<span class="tag parameter">inventory</span>
 
 													<span class="tag"><a class="type" href="../classes/Inventory.html#">Inventory</a></span>
 
 
-												<p> Inventory to create a storage context for</p>
+												<p> Inventory to open</p>
 											</li>
 									</ul>
 
@@ -258,7 +393,7 @@ and the player's inventory in the player's UI, which allows them to drag items t
 													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
 
 
-												<p> Information to store on the context</p>
+												<p> <a href="../libraries/ix.storage.html#StorageInfoStructure">StorageInfoStructure</a> describing the storage properties</p>
 											</li>
 									</ul>
 
@@ -288,101 +423,6 @@ and the player's inventory in the player's UI, which allows them to drag items t
 
 
 												<p> Inventory to remove a storage context from</p>
-											</li>
-									</ul>
-
-
-						</section>
-						<section class="method">
-							<header><a name="ix.storage.Sync"></a>
-								<h1><span class="realm server"></span>ix.storage.Sync(client, inventory)</h1>
-
-									<div class="internal"></div>
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L125">View source &raquo;</a>
-
-								<p>Synchronizes an inventory with a storage context to the given client.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">client</span>
-
-													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
-
-
-												<p> Player to sync storage for</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">inventory</span>
-
-													<span class="tag"><a class="type" href="../classes/Inventory.html#">Inventory</a></span>
-
-
-												<p> Inventory to sync storage for</p>
-											</li>
-									</ul>
-
-
-						</section>
-						<section class="method">
-							<header><a name="ix.storage.AddReceiver"></a>
-								<h1><span class="realm server"></span>ix.storage.AddReceiver(client, inventory, bDontSync)</h1>
-
-									<div class="internal"></div>
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L154">View source &raquo;</a>
-
-								<p>Adds a receiver to a given inventory with a storage context.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">client</span>
-
-													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
-
-
-												<p> Player to sync storage for</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">inventory</span>
-
-													<span class="tag"><a class="type" href="../classes/Inventory.html#">Inventory</a></span>
-
-
-												<p> Inventory to sync storage for</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">bDontSync</span>
-
-													<span class="tag"><span class="type">boolean</span></span>
-
-
-												<p> Whether or not to skip syncing the storage to the client. If this is <code>true</code>, the storage panel will not
- show up for the player</p>
 											</li>
 									</ul>
 
@@ -442,14 +482,14 @@ and the player's inventory in the player's UI, which allows them to drag items t
 
 						</section>
 						<section class="method">
-							<header><a name="ix.storage.Open"></a>
-								<h1><span class="realm server"></span>ix.storage.Open(client, inventory, info)</h1>
+							<header><a name="ix.storage.Sync"></a>
+								<h1><span class="realm server"></span>ix.storage.Sync(client, inventory)</h1>
 
+									<div class="internal"></div>
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L216">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L125">View source &raquo;</a>
 
-								<p>Makes a player open an inventory that they can interact with.  This can be called multiple times on the same inventory,
- if the info passed allows for multiple users.</p>
+								<p>Synchronizes an inventory with a storage context to the given client.</p>
 							</header>
 
 
@@ -464,7 +504,7 @@ and the player's inventory in the player's UI, which allows them to drag items t
 													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
 
 
-												<p> Player to open the inventory for</p>
+												<p> Player to sync storage for</p>
 											</li>
 									</ul>
 
@@ -476,47 +516,7 @@ and the player's inventory in the player's UI, which allows them to drag items t
 													<span class="tag"><a class="type" href="../classes/Inventory.html#">Inventory</a></span>
 
 
-												<p> Inventory to open</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">info</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
-
-
-												<p> <a href="../libraries/ix.storage.html#StorageInfoStructure">StorageInfoStructure</a> describing the storage properties</p>
-											</li>
-									</ul>
-
-
-						</section>
-						<section class="method">
-							<header><a name="ix.storage.Close"></a>
-								<h1><span class="realm server"></span>ix.storage.Close(inventory)</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_storage.lua#L257">View source &raquo;</a>
-
-								<p>Forcefully makes clients close this inventory if they have it open.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">inventory</span>
-
-													<span class="tag"><a class="type" href="../classes/Inventory.html#">Inventory</a></span>
-
-
-												<p> Inventory to close</p>
+												<p> Inventory to sync storage for</p>
 											</li>
 									</ul>
 

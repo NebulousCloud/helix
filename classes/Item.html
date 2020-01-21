@@ -27,11 +27,11 @@
 						<h2>Classes</h2>
 
 						<ul>
-								<li><a href="../classes/Player.html">Player</a></li>
+								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Entity.html">Entity</a></li>
 								<li><a href="../classes/Inventory.html">Inventory</a></li>
 								<li><a href="../classes/Item.html">Item</a></li>
-								<li><a href="../classes/Entity.html">Entity</a></li>
-								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Player.html">Player</a></li>
 						</ul>
 						<h2>Hooks</h2>
 
@@ -43,33 +43,33 @@
 						<h2>Panels</h2>
 
 						<ul>
-								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 						</ul>
 						<h2>Libraries</h2>
 
 						<ul>
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
-								<li><a href="../libraries/ix.data.html">ix.data</a></li>
-								<li><a href="../libraries/ix.config.html">ix.config</a></li>
-								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
-								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-								<li><a href="../libraries/ix.command.html">ix.command</a></li>
-								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
-								<li><a href="../libraries/ix.date.html">ix.date</a></li>
-								<li><a href="../libraries/ix.class.html">ix.class</a></li>
 								<li><a href="../libraries/ix.char.html">ix.char</a></li>
 								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
 								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
-								<li><a href="../libraries/ix.item.html">ix.item</a></li>
-								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
-								<li><a href="../libraries/ix.option.html">ix.option</a></li>
 								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
-								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
 								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
 								<li><a href="../libraries/ix.log.html">ix.log</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 						</ul>
 						<h2>Manual</h2>
 
@@ -103,27 +103,27 @@ same name but different numerical IDs). You can think of items as the class, whi
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
-									<li><span class="realm shared"></span><a href="#ITEM:__tostring">Item:__tostring()</a></li>
-									<li><span class="realm shared"></span><a href="#ITEM:__eq">Item:__eq(other)</a></li>
-									<li><span class="realm shared"></span><a href="#ITEM:GetID">Item:GetID()</a></li>
-									<li><span class="realm shared"></span><a href="#ITEM:GetName">Item:GetName()</a></li>
-									<li><span class="realm shared"></span><a href="#ITEM:GetDescription">Item:GetDescription()</a></li>
-									<li><span class="realm shared"></span><a href="#ITEM:GetModel">Item:GetModel()</a></li>
-									<li><span class="realm shared"></span><a href="#ITEM:GetSkin">Item:GetSkin()</a></li>
-									<li><span class="realm shared"></span><a href="#ITEM:GetCharacterID">Item:GetCharacterID()</a></li>
-									<li><span class="realm shared"></span><a href="#ITEM:GetPlayerID">Item:GetPlayerID()</a></li>
-									<li><span class="realm shared"></span><a href="#ITEM:Print">Item:Print([detail=false])</a></li>
-									<li><span class="realm shared"></span><a href="#ITEM:PrintData">Item:PrintData()</a></li>
 									<li><span class="realm shared"></span><a href="#ITEM:Call">Item:Call(method, client, entity, ...)</a></li>
-									<li><span class="realm shared"></span><a href="#ITEM:GetOwner">Item:GetOwner()</a></li>
-									<li><span class="realm shared"></span><a href="#ITEM:SetData">Item:SetData(key[, value=nil[, receivers=nil[, noSave=false[, noCheckEntity=false]]]])</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetCharacterID">Item:GetCharacterID()</a></li>
 									<li><span class="realm shared"></span><a href="#ITEM:GetData">Item:GetData(key[, default=nil])</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetDescription">Item:GetDescription()</a></li>
+									<li><span class="realm server"></span><a href="#ITEM:GetEntity">Item:GetEntity()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetID">Item:GetID()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetModel">Item:GetModel()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetName">Item:GetName()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetOwner">Item:GetOwner()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetPlayerID">Item:GetPlayerID()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:GetSkin">Item:GetSkin()</a></li>
 									<li><span class="realm shared"></span><a href="#ITEM:Hook">Item:Hook(name, func)</a></li>
 									<li><span class="realm shared"></span><a href="#ITEM:PostHook">Item:PostHook(name, func)</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:Print">Item:Print([detail=false])</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:PrintData">Item:PrintData()</a></li>
 									<li><span class="realm shared"></span><a href="#ITEM:Remove">Item:Remove(bNoReplication, bNoDelete)</a></li>
-									<li><span class="realm server"></span><a href="#ITEM:GetEntity">Item:GetEntity()</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:SetData">Item:SetData(key[, value=nil[, receivers=nil[, noSave=false[, noCheckEntity=false]]]])</a></li>
 									<li><span class="realm server"></span><a href="#ITEM:Spawn">Item:Spawn(position, angles)</a></li>
 									<li><span class="realm server"></span><a href="#ITEM:Transfer">Item:Transfer(invID, x, y, client, noReplication, isLogical)</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:__eq">Item:__eq(other)</a></li>
+									<li><span class="realm shared"></span><a href="#ITEM:__tostring">Item:__tostring()</a></li>
 							</ul>
 					</div>
 				</details>
@@ -131,289 +131,6 @@ same name but different numerical IDs). You can think of items as the class, whi
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
-						<section class="method">
-								<aside>
-										<pre><code>print(ix.item.instances[1])
- > "item[1]"
-</code></pre>
-								</aside>
-							<header><a name="ITEM:__tostring"></a>
-								<h1><span class="realm shared"></span>Item:__tostring()</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L27">View source &raquo;</a>
-
-								<p>Returns a string representation of this item.</p>
-							</header>
-
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
-
-												<p>String representation</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-								<aside>
-										<pre><code>print(ix.item.instances[1] == ix.item.instances[2])
- > false
-</code></pre>
-								</aside>
-							<header><a name="ITEM:__eq"></a>
-								<h1><span class="realm shared"></span>Item:__eq(other)</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L37">View source &raquo;</a>
-
-								<p>Returns true if this item is equal to another item.  Internally, this checks item IDs.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">other</span>
-
-													<span class="tag"><a class="type" href="../classes/Item.html#">Item</a></span>
-
-
-												<p> Item to compare to</p>
-											</li>
-									</ul>
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="type">bool</span>
-
-												<p>Whether or not this item is equal to the given item</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="ITEM:GetID"></a>
-								<h1><span class="realm shared"></span>Item:GetID()</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L44">View source &raquo;</a>
-
-								<p>Returns this item's database ID.  This is guaranteed to be unique.</p>
-							</header>
-
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="type">number</span>
-
-												<p>Unique ID of item</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="ITEM:GetName"></a>
-								<h1><span class="realm shared"></span>Item:GetName()</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L51">View source &raquo;</a>
-
-								<p>Returns the name of the item.</p>
-							</header>
-
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
-
-												<p>The name of the item</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="ITEM:GetDescription"></a>
-								<h1><span class="realm shared"></span>Item:GetDescription()</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L58">View source &raquo;</a>
-
-								<p>Returns the description of the item.</p>
-							</header>
-
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
-
-												<p>The description of the item</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="ITEM:GetModel"></a>
-								<h1><span class="realm shared"></span>Item:GetModel()</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L67">View source &raquo;</a>
-
-								<p>Returns the model of the item.</p>
-							</header>
-
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
-
-												<p>The model of the item</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="ITEM:GetSkin"></a>
-								<h1><span class="realm shared"></span>Item:GetSkin()</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L74">View source &raquo;</a>
-
-								<p>Returns the skin of the item.</p>
-							</header>
-
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="type">number</span>
-
-												<p>The skin of the item</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="ITEM:GetCharacterID"></a>
-								<h1><span class="realm shared"></span>Item:GetCharacterID()</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L85">View source &raquo;</a>
-
-								<p>Returns the ID of the owning character, if one exists.</p>
-							</header>
-
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="type">number</span>
-
-												<p>The owning character's ID</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="ITEM:GetPlayerID"></a>
-								<h1><span class="realm shared"></span>Item:GetPlayerID()</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L92">View source &raquo;</a>
-
-								<p>Returns the SteamID64 of the owning player, if one exists.</p>
-							</header>
-
-
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="type">number</span>
-
-												<p>The owning player's SteamID64</p>
-											</li>
-
-								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="ITEM:Print"></a>
-								<h1><span class="realm shared"></span>Item:Print([detail=false])</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L99">View source &raquo;</a>
-
-								<p>A utility function which prints the item's details.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">detail</span>
-
-													<span class="tag"><span class="type">boolean</span></span>
-
-													<span class="tag default">default: false</span>
-
-												<p> Whether additional detail should be printed or not(Owner, X position, Y position)</p>
-											</li>
-									</ul>
-
-
-						</section>
-						<section class="method">
-							<header><a name="ITEM:PrintData"></a>
-								<h1><span class="realm shared"></span>Item:PrintData()</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L109">View source &raquo;</a>
-
-								<p>A utility function printing the item's stored data.</p>
-							</header>
-
-
-
-						</section>
 						<section class="method">
 							<header><a name="ITEM:Call"></a>
 								<h1><span class="realm shared"></span>Item:Call(method, client, entity, ...)</h1>
@@ -489,13 +206,13 @@ same name but different numerical IDs). You can think of items as the class, whi
 
 						</section>
 						<section class="method">
-							<header><a name="ITEM:GetOwner"></a>
-								<h1><span class="realm shared"></span>Item:GetOwner()</h1>
+							<header><a name="ITEM:GetCharacterID"></a>
+								<h1><span class="realm shared"></span>Item:GetCharacterID()</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L146">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L85">View source &raquo;</a>
 
-								<p>Returns the player that owns this item.</p>
+								<p>Returns the ID of the owning character, if one exists.</p>
 							</header>
 
 
@@ -504,91 +221,12 @@ same name but different numerical IDs). You can think of items as the class, whi
 								<ul>
 
 											<li>
-													<span class="type">player</span>
+													<span class="type">number</span>
 
-												<p>Player owning this item</p>
+												<p>The owning character's ID</p>
 											</li>
 
 								</ul>
-
-						</section>
-						<section class="method">
-							<header><a name="ITEM:SetData"></a>
-								<h1><span class="realm shared"></span>Item:SetData(key[, value=nil[, receivers=nil[, noSave=false[, noCheckEntity=false]]]])</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L171">View source &raquo;</a>
-
-								<p>Sets a key within the item's data.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">key</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
-
-												<p> The key to store the value within</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">value</span>
-
-
-													<span class="tag default">default: nil</span>
-
-												<p> The value to store within the key</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">receivers</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
-
-													<span class="tag default">default: nil</span>
-
-												<p> The players to replicate the data on</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">noSave</span>
-
-													<span class="tag"><span class="type">boolean</span></span>
-
-													<span class="tag default">default: false</span>
-
-												<p> Whether to disable saving the data on the database or not</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">noCheckEntity</span>
-
-													<span class="tag"><span class="type">boolean</span></span>
-
-													<span class="tag default">default: false</span>
-
-												<p> Whether to disable setting the data on the entity, if applicable</p>
-											</li>
-									</ul>
-
 
 						</section>
 						<section class="method">
@@ -637,6 +275,198 @@ same name but different numerical IDs). You can think of items as the class, whi
 													<span class="tag type">any</span>
 
 												<p>The value stored within the key</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetDescription"></a>
+								<h1><span class="realm shared"></span>Item:GetDescription()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L58">View source &raquo;</a>
+
+								<p>Returns the description of the item.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>The description of the item</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetEntity"></a>
+								<h1><span class="realm server"></span>Item:GetEntity()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L352">View source &raquo;</a>
+
+								<p>Returns the item's entity.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">entity</span>
+
+												<p>The entity of the item</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetID"></a>
+								<h1><span class="realm shared"></span>Item:GetID()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L44">View source &raquo;</a>
+
+								<p>Returns this item's database ID.  This is guaranteed to be unique.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>Unique ID of item</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetModel"></a>
+								<h1><span class="realm shared"></span>Item:GetModel()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L67">View source &raquo;</a>
+
+								<p>Returns the model of the item.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>The model of the item</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetName"></a>
+								<h1><span class="realm shared"></span>Item:GetName()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L51">View source &raquo;</a>
+
+								<p>Returns the name of the item.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>The name of the item</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetOwner"></a>
+								<h1><span class="realm shared"></span>Item:GetOwner()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L146">View source &raquo;</a>
+
+								<p>Returns the player that owns this item.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">player</span>
+
+												<p>Player owning this item</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetPlayerID"></a>
+								<h1><span class="realm shared"></span>Item:GetPlayerID()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L92">View source &raquo;</a>
+
+								<p>Returns the SteamID64 of the owning player, if one exists.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>The owning player's SteamID64</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:GetSkin"></a>
+								<h1><span class="realm shared"></span>Item:GetSkin()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L74">View source &raquo;</a>
+
+								<p>Returns the skin of the item.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>The skin of the item</p>
 											</li>
 
 								</ul>
@@ -723,6 +553,48 @@ same name but different numerical IDs). You can think of items as the class, whi
 
 						</section>
 						<section class="method">
+							<header><a name="ITEM:Print"></a>
+								<h1><span class="realm shared"></span>Item:Print([detail=false])</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L99">View source &raquo;</a>
+
+								<p>A utility function which prints the item's details.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">detail</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether additional detail should be printed or not(Owner, X position, Y position)</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ITEM:PrintData"></a>
+								<h1><span class="realm shared"></span>Item:PrintData()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L109">View source &raquo;</a>
+
+								<p>A utility function printing the item's stored data.</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
 							<header><a name="ITEM:Remove"></a>
 								<h1><span class="realm shared"></span>Item:Remove(bNoReplication, bNoDelete)</h1>
 
@@ -774,27 +646,82 @@ same name but different numerical IDs). You can think of items as the class, whi
 
 						</section>
 						<section class="method">
-							<header><a name="ITEM:GetEntity"></a>
-								<h1><span class="realm server"></span>Item:GetEntity()</h1>
+							<header><a name="ITEM:SetData"></a>
+								<h1><span class="realm shared"></span>Item:SetData(key[, value=nil[, receivers=nil[, noSave=false[, noCheckEntity=false]]]])</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L352">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L171">View source &raquo;</a>
 
-								<p>Returns the item's entity.</p>
+								<p>Sets a key within the item's data.</p>
 							</header>
 
 
+									<h3>Parameters</h3>
 
-								<h3>Returns</h3>
-								<ul>
+
+									<ul>
 
 											<li>
-													<span class="type">entity</span>
+												<span class="tag parameter">key</span>
 
-												<p>The entity of the item</p>
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> The key to store the value within</p>
 											</li>
+									</ul>
 
-								</ul>
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+
+													<span class="tag default">default: nil</span>
+
+												<p> The value to store within the key</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">receivers</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> The players to replicate the data on</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">noSave</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether to disable saving the data on the database or not</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">noCheckEntity</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether to disable setting the data on the entity, if applicable</p>
+											</li>
+									</ul>
+
 
 						</section>
 						<section class="method">
@@ -944,12 +871,83 @@ same name but different numerical IDs). You can think of items as the class, whi
 												<p>Whether the transfer was successful or not</p>
 											</li>
 
-											<div class="or"><span>OR</span></div>
-
 											<li>
 													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
 
 												<p>The error, if applicable</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+								<aside>
+										<pre><code>print(ix.item.instances[1] == ix.item.instances[2])
+ > false
+</code></pre>
+								</aside>
+							<header><a name="ITEM:__eq"></a>
+								<h1><span class="realm shared"></span>Item:__eq(other)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L37">View source &raquo;</a>
+
+								<p>Returns true if this item is equal to another item.  Internally, this checks item IDs.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">other</span>
+
+													<span class="tag"><a class="type" href="../classes/Item.html#">Item</a></span>
+
+
+												<p> Item to compare to</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not this item is equal to the given item</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+								<aside>
+										<pre><code>print(ix.item.instances[1])
+ > "item[1]"
+</code></pre>
+								</aside>
+							<header><a name="ITEM:__tostring"></a>
+								<h1><span class="realm shared"></span>Item:__tostring()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L27">View source &raquo;</a>
+
+								<p>Returns a string representation of this item.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>String representation</p>
 											</li>
 
 								</ul>

@@ -29,25 +29,25 @@
 						<ul>
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
-								<li><a href="../libraries/ix.data.html">ix.data</a></li>
-								<li><a href="../libraries/ix.config.html">ix.config</a></li>
-								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
-								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-								<li><a href="../libraries/ix.command.html">ix.command</a></li>
-								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
-								<li><a href="../libraries/ix.date.html">ix.date</a></li>
-								<li><a href="../libraries/ix.class.html">ix.class</a></li>
 								<li><a href="../libraries/ix.char.html">ix.char</a></li>
 								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
 								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
-								<li><a href="../libraries/ix.item.html">ix.item</a></li>
-								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
-								<li><a href="../libraries/ix.option.html">ix.option</a></li>
 								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
-								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
 								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
 								<li><a href="../libraries/ix.log.html">ix.log</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 						</ul>
 						<h2>Hooks</h2>
 
@@ -59,17 +59,17 @@
 						<h2>Panels</h2>
 
 						<ul>
-								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 						</ul>
 						<h2>Classes</h2>
 
 						<ul>
-								<li><a href="../classes/Player.html">Player</a></li>
 								<li><a href="../classes/Inventory.html">Inventory</a></li>
-								<li><a href="../classes/Item.html">Item</a></li>
-								<li><a href="../classes/Entity.html">Entity</a></li>
 								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Entity.html">Entity</a></li>
+								<li><a href="../classes/Player.html">Player</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
 						</ul>
 						<h2>Manual</h2>
 
@@ -128,8 +128,8 @@ does not have a set language. An example:</p>
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
-									<li><span class="realm shared"></span><a href="#ix.lang.LoadFromDir">ix.lang.LoadFromDir(directory)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.lang.AddTable">ix.lang.AddTable(language, data)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.lang.LoadFromDir">ix.lang.LoadFromDir(directory)</a></li>
 							</ul>
 					</div>
 				</details>
@@ -137,35 +137,6 @@ does not have a set language. An example:</p>
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
-						<section class="method">
-							<header><a name="ix.lang.LoadFromDir"></a>
-								<h1><span class="realm shared"></span>ix.lang.LoadFromDir(directory)</h1>
-
-									<div class="internal"></div>
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_language.lua#L40">View source &raquo;</a>
-
-								<p>Loads language files from a directory.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">directory</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
-
-												<p> Directory to load language files from</p>
-											</li>
-									</ul>
-
-
-						</section>
 						<section class="method">
 								<aside>
 										<pre><code>ix.lang.AddTable("english", {
@@ -208,6 +179,35 @@ does not have a set language. An example:</p>
 
 
 												<p> Language data to add to the given language</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.lang.LoadFromDir"></a>
+								<h1><span class="realm shared"></span>ix.lang.LoadFromDir(directory)</h1>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_language.lua#L40">View source &raquo;</a>
+
+								<p>Loads language files from a directory.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">directory</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Directory to load language files from</p>
 											</li>
 									</ul>
 

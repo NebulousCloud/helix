@@ -29,25 +29,25 @@
 						<ul>
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
-								<li><a href="../libraries/ix.data.html">ix.data</a></li>
-								<li><a href="../libraries/ix.config.html">ix.config</a></li>
-								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
-								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-								<li><a href="../libraries/ix.command.html">ix.command</a></li>
-								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
-								<li><a href="../libraries/ix.date.html">ix.date</a></li>
-								<li><a href="../libraries/ix.class.html">ix.class</a></li>
 								<li><a href="../libraries/ix.char.html">ix.char</a></li>
 								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
 								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
-								<li><a href="../libraries/ix.item.html">ix.item</a></li>
-								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
-								<li><a href="../libraries/ix.option.html">ix.option</a></li>
 								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
-								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
 								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
 								<li><a href="../libraries/ix.log.html">ix.log</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 						</ul>
 						<h2>Hooks</h2>
 
@@ -59,17 +59,17 @@
 						<h2>Panels</h2>
 
 						<ul>
-								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 						</ul>
 						<h2>Classes</h2>
 
 						<ul>
-								<li><a href="../classes/Player.html">Player</a></li>
 								<li><a href="../classes/Inventory.html">Inventory</a></li>
-								<li><a href="../classes/Item.html">Item</a></li>
-								<li><a href="../classes/Entity.html">Entity</a></li>
 								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Entity.html">Entity</a></li>
+								<li><a href="../classes/Player.html">Player</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
 						</ul>
 						<h2>Manual</h2>
 
@@ -99,15 +99,15 @@ character data using these functions!</p>
 							<h2>Functions</h2>
 							<ul>
 									<li><span class="realm server"></span><a href="#ix.char.Create">ix.char.Create(data, callback)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.char.New">ix.char.New(data, id, client[, steamID=client:SteamID64()])</a></li>
 									<li><span class="realm server"></span><a href="#ix.char.Restore">ix.char.Restore(client[, callback=nil[, bNoCache=false[, id=nil]]])</a></li>
 									<li><span class="realm server"></span><a href="#ix.char.RestoreVars">ix.char.RestoreVars(data, characterInfo)</a></li>
-									<li><span class="realm shared"></span><a href="#ix.char.New">ix.char.New(data, id, client[, steamID=client:SteamID64()])</a></li>
 							</ul>
 							<h2>Tables</h2>
 							<ul>
+									<li><span class="realm server"></span><a href="#ix.char.cache">ix.char.cache</a></li>
 									<li><span class="realm shared"></span><a href="#ix.char.loaded">ix.char.loaded</a></li>
 									<li><span class="realm shared"></span><a href="#ix.char.vars">ix.char.vars</a></li>
-									<li><span class="realm server"></span><a href="#ix.char.cache">ix.char.cache</a></li>
 							</ul>
 					</div>
 				</details>
@@ -151,6 +151,72 @@ character data using these functions!</p>
 
 
 												<p> Function to call after the character saves</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.char.New"></a>
+								<h1><span class="realm shared"></span>ix.char.New(data, id, client[, steamID=client:SteamID64()])</h1>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L273">View source &raquo;</a>
+
+								<p>Creates a new empty <a href="../classes/Character.html#">Character</a> object.  If you are looking to create a usable character, see <a href="../libraries/ix.char.html#ix.char.Create">ix.char.Create</a>.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">data</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+
+												<p> Character vars to assign</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">id</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Unique ID of the character</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
+
+
+												<p> Player that will own the character</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">steamID</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+													<span class="tag default">default: client:SteamID64()</span>
+
+												<p> SteamID64 of the player that will own the character</p>
 											</li>
 									</ul>
 
@@ -267,74 +333,22 @@ character data using these functions!</p>
 
 
 						</section>
+					<h1 class="title">Tables</h1>
+
 						<section class="method">
-							<header><a name="ix.char.New"></a>
-								<h1><span class="realm shared"></span>ix.char.New(data, id, client[, steamID=client:SteamID64()])</h1>
+							<header><a name="ix.char.cache"></a>
+								<h1><span class="realm server"></span>ix.char.cache</h1>
 
-									<div class="internal"></div>
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L273">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L35">View source &raquo;</a>
 
-								<p>Creates a new empty <a href="../classes/Character.html#">Character</a> object.  If you are looking to create a usable character, see <a href="../libraries/ix.char.html#ix.char.Create">ix.char.Create</a>.</p>
+								<p>Functions similar to <a href="../libraries/ix.char.html#ix.char.loaded">ix.char.loaded</a>, but is serverside only.  This contains a table of all loaded characters grouped by
+ the SteamID64 of the player that owns them.</p>
 							</header>
 
 
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">data</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
-
-
-												<p> Character vars to assign</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">id</span>
-
-													<span class="tag"><span class="type">number</span></span>
-
-
-												<p> Unique ID of the character</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">client</span>
-
-													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
-
-
-												<p> Player that will own the character</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">steamID</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
-													<span class="tag default">default: client:SteamID64()</span>
-
-												<p> SteamID64 of the player that will own the character</p>
-											</li>
-									</ul>
-
 
 						</section>
-					<h1 class="title">Tables</h1>
-
 						<section class="method">
 								<aside>
 										<pre><code>print(ix.char.loaded[1])
@@ -371,20 +385,6 @@ character data using these functions!</p>
 									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L29">View source &raquo;</a>
 
 								<p>Variables that are stored on characters.  This table is populated automatically by <code>ix.char.RegisterVar</code>.</p>
-							</header>
-
-
-
-						</section>
-						<section class="method">
-							<header><a name="ix.char.cache"></a>
-								<h1><span class="realm server"></span>ix.char.cache</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L35">View source &raquo;</a>
-
-								<p>Functions similar to <a href="../libraries/ix.char.html#ix.char.loaded">ix.char.loaded</a>, but is serverside only.  This contains a table of all loaded characters grouped by
- the SteamID64 of the player that owns them.</p>
 							</header>
 
 

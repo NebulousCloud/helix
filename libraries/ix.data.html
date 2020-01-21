@@ -29,25 +29,25 @@
 						<ul>
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
-								<li><a href="../libraries/ix.data.html">ix.data</a></li>
-								<li><a href="../libraries/ix.config.html">ix.config</a></li>
-								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
-								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-								<li><a href="../libraries/ix.command.html">ix.command</a></li>
-								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
-								<li><a href="../libraries/ix.date.html">ix.date</a></li>
-								<li><a href="../libraries/ix.class.html">ix.class</a></li>
 								<li><a href="../libraries/ix.char.html">ix.char</a></li>
 								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
 								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
-								<li><a href="../libraries/ix.item.html">ix.item</a></li>
-								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
-								<li><a href="../libraries/ix.option.html">ix.option</a></li>
 								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
-								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
 								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
 								<li><a href="../libraries/ix.log.html">ix.log</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 						</ul>
 						<h2>Hooks</h2>
 
@@ -59,17 +59,17 @@
 						<h2>Panels</h2>
 
 						<ul>
-								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 						</ul>
 						<h2>Classes</h2>
 
 						<ul>
-								<li><a href="../classes/Player.html">Player</a></li>
 								<li><a href="../classes/Inventory.html">Inventory</a></li>
-								<li><a href="../classes/Item.html">Item</a></li>
-								<li><a href="../classes/Entity.html">Entity</a></li>
 								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Entity.html">Entity</a></li>
+								<li><a href="../classes/Player.html">Player</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
 						</ul>
 						<h2>Manual</h2>
 
@@ -99,9 +99,9 @@
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
-									<li><span class="realm shared"></span><a href="#ix.data.Set">ix.data.Set(key, value[, bGlobal=false[, bIgnoreMap=false]])</a></li>
-									<li><span class="realm shared"></span><a href="#ix.data.Get">ix.data.Get(key, default[, bGlobal=false[, bIgnoreMap=false[, bRefresh=false]]])</a></li>
 									<li><span class="realm shared"></span><a href="#ix.data.Delete">ix.data.Delete(key[, bGlobal=false[, bIgnoreMap=false]])</a></li>
+									<li><span class="realm shared"></span><a href="#ix.data.Get">ix.data.Get(key, default[, bGlobal=false[, bIgnoreMap=false[, bRefresh=false]]])</a></li>
+									<li><span class="realm shared"></span><a href="#ix.data.Set">ix.data.Set(key, value[, bGlobal=false[, bIgnoreMap=false]])</a></li>
 							</ul>
 					</div>
 				</details>
@@ -110,13 +110,13 @@
 					<h1 class="title">Functions</h1>
 
 						<section class="method">
-							<header><a name="ix.data.Set"></a>
-								<h1><span class="realm shared"></span>ix.data.Set(key, value[, bGlobal=false[, bIgnoreMap=false]])</h1>
+							<header><a name="ix.data.Delete"></a>
+								<h1><span class="realm shared"></span>ix.data.Delete(key[, bGlobal=false[, bIgnoreMap=false]])</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_data.lua#L19">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_data.lua#L93">View source &raquo;</a>
 
-								<p>Populates a file in the <code>data/helix</code> folder with some serialized data.</p>
+								<p>Deletes the contents of a saved file in the <code>data/helix</code> folder.</p>
 							</header>
 
 
@@ -131,18 +131,7 @@
 													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p> Name of the file to save</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">value</span>
-
-
-
-												<p> Some sort of data to save</p>
+												<p> Name of the file to delete</p>
 											</li>
 									</ul>
 
@@ -155,7 +144,7 @@
 
 													<span class="tag default">default: false</span>
 
-												<p> Whether or not to write directly to the <code>data/helix</code> folder, or the <code>data/helix/schema</code> folder,
+												<p> Whether or not the data is in the <code>data/helix</code> folder, or the <code>data/helix/schema</code> folder,
  where <code>schema</code> is the name of the current schema.</p>
 											</li>
 									</ul>
@@ -169,11 +158,22 @@
 
 													<span class="tag default">default: false</span>
 
-												<p> Whether or not to ignore the map and save in the schema folder, rather than
+												<p> Whether or not to ignore the map and delete from the schema folder, rather than
  <code>data/helix/schema/map</code>, where <code>map</code> is the name of the current map.</p>
 											</li>
 									</ul>
 
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not the deletion has succeeded</p>
+											</li>
+
+								</ul>
 
 						</section>
 						<section class="method">
@@ -268,13 +268,13 @@
 
 						</section>
 						<section class="method">
-							<header><a name="ix.data.Delete"></a>
-								<h1><span class="realm shared"></span>ix.data.Delete(key[, bGlobal=false[, bIgnoreMap=false]])</h1>
+							<header><a name="ix.data.Set"></a>
+								<h1><span class="realm shared"></span>ix.data.Set(key, value[, bGlobal=false[, bIgnoreMap=false]])</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_data.lua#L93">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_data.lua#L19">View source &raquo;</a>
 
-								<p>Deletes the contents of a saved file in the <code>data/helix</code> folder.</p>
+								<p>Populates a file in the <code>data/helix</code> folder with some serialized data.</p>
 							</header>
 
 
@@ -289,7 +289,18 @@
 													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
-												<p> Name of the file to delete</p>
+												<p> Name of the file to save</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+
+
+												<p> Some sort of data to save</p>
 											</li>
 									</ul>
 
@@ -302,7 +313,7 @@
 
 													<span class="tag default">default: false</span>
 
-												<p> Whether or not the data is in the <code>data/helix</code> folder, or the <code>data/helix/schema</code> folder,
+												<p> Whether or not to write directly to the <code>data/helix</code> folder, or the <code>data/helix/schema</code> folder,
  where <code>schema</code> is the name of the current schema.</p>
 											</li>
 									</ul>
@@ -316,22 +327,11 @@
 
 													<span class="tag default">default: false</span>
 
-												<p> Whether or not to ignore the map and delete from the schema folder, rather than
+												<p> Whether or not to ignore the map and save in the schema folder, rather than
  <code>data/helix/schema/map</code>, where <code>map</code> is the name of the current map.</p>
 											</li>
 									</ul>
 
-
-								<h3>Returns</h3>
-								<ul>
-
-											<li>
-													<span class="type">bool</span>
-
-												<p>Whether or not the deletion has succeeded</p>
-											</li>
-
-								</ul>
 
 						</section>
 		</article>

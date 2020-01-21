@@ -29,25 +29,25 @@
 						<ul>
 								<li><a href="../libraries/ix.html">ix</a></li>
 								<li><a href="../libraries/ix.act.html">ix.act</a></li>
-								<li><a href="../libraries/ix.data.html">ix.data</a></li>
-								<li><a href="../libraries/ix.config.html">ix.config</a></li>
-								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 								<li><a href="../libraries/ix.anim.html">ix.anim</a></li>
-								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
-								<li><a href="../libraries/ix.command.html">ix.command</a></li>
-								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
-								<li><a href="../libraries/ix.date.html">ix.date</a></li>
-								<li><a href="../libraries/ix.class.html">ix.class</a></li>
 								<li><a href="../libraries/ix.char.html">ix.char</a></li>
 								<li><a href="../libraries/ix.chat.html">ix.chat</a></li>
+								<li><a href="../libraries/ix.class.html">ix.class</a></li>
+								<li><a href="../libraries/ix.command.html">ix.command</a></li>
+								<li><a href="../libraries/ix.config.html">ix.config</a></li>
+								<li><a href="../libraries/ix.currency.html">ix.currency</a></li>
+								<li><a href="../libraries/ix.data.html">ix.data</a></li>
+								<li><a href="../libraries/ix.date.html">ix.date</a></li>
 								<li><a href="../libraries/ix.faction.html">ix.faction</a></li>
-								<li><a href="../libraries/ix.item.html">ix.item</a></li>
-								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
-								<li><a href="../libraries/ix.option.html">ix.option</a></li>
 								<li><a href="../libraries/ix.flag.html">ix.flag</a></li>
-								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.item.html">ix.item</a></li>
 								<li><a href="../libraries/ix.lang.html">ix.lang</a></li>
 								<li><a href="../libraries/ix.log.html">ix.log</a></li>
+								<li><a href="../libraries/ix.menu.html">ix.menu</a></li>
+								<li><a href="../libraries/ix.notice.html">ix.notice</a></li>
+								<li><a href="../libraries/ix.option.html">ix.option</a></li>
+								<li><a href="../libraries/ix.storage.html">ix.storage</a></li>
+								<li><a href="../libraries/ix.util.html">ix.util</a></li>
 						</ul>
 						<h2>Hooks</h2>
 
@@ -59,17 +59,17 @@
 						<h2>Panels</h2>
 
 						<ul>
-								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 								<li><a href="../panels/ixTooltip.html">ixTooltip</a></li>
+								<li><a href="../panels/ixTooltipRow.html">ixTooltipRow</a></li>
 						</ul>
 						<h2>Classes</h2>
 
 						<ul>
-								<li><a href="../classes/Player.html">Player</a></li>
 								<li><a href="../classes/Inventory.html">Inventory</a></li>
-								<li><a href="../classes/Item.html">Item</a></li>
-								<li><a href="../classes/Entity.html">Entity</a></li>
 								<li><a href="../classes/Character.html">Character</a></li>
+								<li><a href="../classes/Entity.html">Entity</a></li>
+								<li><a href="../classes/Player.html">Player</a></li>
+								<li><a href="../classes/Item.html">Item</a></li>
 						</ul>
 						<h2>Manual</h2>
 
@@ -100,11 +100,11 @@
 							<h2>Functions</h2>
 							<ul>
 									<li><span class="realm shared"></span><a href="#ix.config.Add">ix.config.Add(key, value, description[, callback=nil[, data=nil[, bNoNetworking=false[, bSchemaOnly=false]]]])</a></li>
-									<li><span class="realm shared"></span><a href="#ix.config.SetDefault">ix.config.SetDefault(key, value)</a></li>
-									<li><span class="realm shared"></span><a href="#ix.config.Set">ix.config.Set(key, value)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.config.Get">ix.config.Get(key, default)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.config.Load">ix.config.Load()</a></li>
 									<li><span class="realm server"></span><a href="#ix.config.Save">ix.config.Save()</a></li>
+									<li><span class="realm shared"></span><a href="#ix.config.Set">ix.config.Set(key, value)</a></li>
+									<li><span class="realm shared"></span><a href="#ix.config.SetDefault">ix.config.SetDefault(key, value)</a></li>
 							</ul>
 					</div>
 				</details>
@@ -216,84 +216,6 @@
 
 						</section>
 						<section class="method">
-							<header><a name="ix.config.SetDefault"></a>
-								<h1><span class="realm shared"></span>ix.config.SetDefault(key, value)</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L57">View source &raquo;</a>
-
-								<p>Sets the default value for a config option.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">key</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
-
-												<p> Unique ID of the config</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">value</span>
-
-
-
-												<p> Default value for the config option</p>
-											</li>
-									</ul>
-
-
-						</section>
-						<section class="method">
-							<header><a name="ix.config.Set"></a>
-								<h1><span class="realm shared"></span>ix.config.Set(key, value)</h1>
-
-
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L87">View source &raquo;</a>
-
-								<p>Sets the value of a config option.</p>
-							</header>
-
-
-									<h3>Parameters</h3>
-
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">key</span>
-
-													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
-
-												<p> Unique ID of the config</p>
-											</li>
-									</ul>
-
-									<ul>
-
-											<li>
-												<span class="tag parameter">value</span>
-
-
-
-												<p> New value to assign to the config</p>
-											</li>
-									</ul>
-
-
-						</section>
-						<section class="method">
 							<header><a name="ix.config.Get"></a>
 								<h1><span class="realm shared"></span>ix.config.Get(key, default)</h1>
 
@@ -368,6 +290,84 @@
 								<p>Saves all config options to disk.</p>
 							</header>
 
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.config.Set"></a>
+								<h1><span class="realm shared"></span>ix.config.Set(key, value)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L87">View source &raquo;</a>
+
+								<p>Sets the value of a config option.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Unique ID of the config</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+
+
+												<p> New value to assign to the config</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.config.SetDefault"></a>
+								<h1><span class="realm shared"></span>ix.config.SetDefault(key, value)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_config.lua#L57">View source &raquo;</a>
+
+								<p>Sets the default value for a config option.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Unique ID of the config</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+
+
+												<p> Default value for the config option</p>
+											</li>
+									</ul>
 
 
 						</section>
