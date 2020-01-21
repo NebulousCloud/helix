@@ -405,7 +405,7 @@ if (SERVER) then
 	-- @bool noReplication Whether there should be no replication of the transferral
 	-- @bool isLogical Whether or not an entity should spawn if the item is transferred to the world
 	-- @treturn[1] bool Whether the transfer was successful or not
-	-- @treturn[2] string The error, if applicable
+	-- @treturn[1] string The error, if applicable
 	function ITEM:Transfer(invID, x, y, client, noReplication, isLogical)
 		invID = invID or 0
 

@@ -39,22 +39,41 @@ if (SERVER) then
 	end
 
 	do
+		--- Notification util functions for players
+		-- @classmod Player
+
 		local playerMeta = FindMetaTable("Player")
 
-		-- Utility function to notify a player.
+		--- Displays a prominent notification in the top-right of this player's screen.
+		-- @realm shared
+		-- @string message Text to display in the notification
 		function playerMeta:Notify(message)
 			ix.util.Notify(message, self)
 		end
 
-		-- Utility function to notify a localized message to a player.
+		--- Displays a notification for this player with the given language phrase.
+		-- @realm shared
+		-- @string message ID of the phrase to display to the player
+		-- @param ... Arguments to pass to the phrase
+		-- @usage client:NotifyLocalized("mapRestarting", 10)
+		-- -- displays "The map will restart in 10 seconds!" if the player's language is set to English
+		-- @see ix.lang
 		function playerMeta:NotifyLocalized(message, ...)
 			ix.util.NotifyLocalized(message, self, ...)
 		end
 
+		--- Displays a notification for this player in the chatbox.
+		-- @realm shared
+		-- @string message Text to display in the notification
 		function playerMeta:ChatNotify(message)
 			ix.chat.Send(nil, "notice", message, false, {self})
 		end
 
+		--- Displays a notification for this player in the chatbox with the given language phrase.
+		-- @realm shared
+		-- @string message ID of the phrase to display to the player
+		-- @param ... Arguments to pass to the phrase
+		-- @see NotifyLocalized
 		function playerMeta:ChatNotifyLocalized(message, ...)
 			ix.chat.Send(nil, "notice", L(message, self, ...), false, {self})
 		end

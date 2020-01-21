@@ -1068,23 +1068,33 @@ do
 	end
 end
 
--- Additions to the player metatable here.
 do
+	--- Character util functions for player
+	-- @classmod Player
+
 	local playerMeta = FindMetaTable("Player")
 	playerMeta.SteamName = playerMeta.SteamName or playerMeta.Name
 
+	--- Returns this player's currently possessed `Character` object if it exists.
+	-- @realm shared
+	-- @treturn[1] Character Currently loaded character
+	-- @treturn[2] nil If this player has no character loaded
 	function playerMeta:GetCharacter()
 		return ix.char.loaded[self:GetNetVar("char")]
 	end
 
 	playerMeta.GetChar = playerMeta.GetCharacter
 
-	function playerMeta:Name()
+	--- Returns this player's current name.
+	-- @realm shared
+	-- @treturn[1] string Name of this player's currently loaded character
+	-- @treturn[2] string Steam name of this player if the player has no character loaded
+	function playerMeta:GetName()
 		local character = self:GetCharacter()
 
 		return character and character:GetName() or self:SteamName()
 	end
 
-	playerMeta.Nick = playerMeta.Name
-	playerMeta.GetName = playerMeta.Name
+	playerMeta.Nick = playerMeta.GetName
+	playerMeta.Name = playerMeta.GetName
 end

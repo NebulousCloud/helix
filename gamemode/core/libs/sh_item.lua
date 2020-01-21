@@ -970,6 +970,13 @@ do
 	end
 end
 
+--- Inventory util functions for character
+-- @classmod Character
+
+--- Returns this character's associated `Inventory` object.
+-- @function :GetInventory
+-- @realm shared
+-- @treturn Inventory This character's inventory
 ix.char.RegisterVar("Inventory", {
 	bNoNetworking = true,
 	bNoDisplay = true,
