@@ -100,6 +100,10 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
+									<li><span class="realm server"></span><a href="#entityMeta:ClearNetVars">Entity:ClearNetVars([receiver=nil])</a></li>
+									<li><span class="realm shared"></span><a href="#entityMeta:GetNetVar">Entity:GetNetVar(key, default)</a></li>
+									<li><span class="realm server"></span><a href="#entityMeta:SendNetVar">Entity:SendNetVar(key[, receiver=nil])</a></li>
+									<li><span class="realm server"></span><a href="#entityMeta:SetNetVar">Entity:SetNetVar(key, value[, receiver=nil])</a></li>
 									<li><span class="realm server"></span><a href="#meta:BlastDoor">Entity:BlastDoor(velocity, lifeTime, bIgnorePartner)</a></li>
 									<li><span class="realm server"></span><a href="#meta:GetBlocker">Entity:GetBlocker()</a></li>
 									<li><span class="realm shared"></span><a href="#meta:GetDoorPartner">Entity:GetDoorPartner()</a></li>
@@ -113,6 +117,180 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
+						<section class="method">
+							<header><a name="entityMeta:ClearNetVars"></a>
+								<h1><span class="realm server"></span>Entity:ClearNetVars([receiver=nil])</h1>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L176">View source &raquo;</a>
+
+								<p>Clears all of the networked variables.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">receiver</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> The players to clear the networked variable for</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="entityMeta:GetNetVar"></a>
+								<h1><span class="realm shared"></span>Entity:GetNetVar(key, default)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L129">View source &raquo;</a>
+
+								<p>Retrieves a networked variable.  If it is not set, it'll return the default that you've specified.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Identifier of the networked variable</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">default</span>
+
+
+
+												<p> Default value to return if the networked variable is not set</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="tag type">any</span>
+
+												<p>Value associated with the key, or the default that was given if it doesn't exist</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="entityMeta:SendNetVar"></a>
+								<h1><span class="realm server"></span>Entity:SendNetVar(key[, receiver=nil])</h1>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L159">View source &raquo;</a>
+
+								<p>Sends a networked variable.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Identifier of the networked variable</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">receiver</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> The players to send the networked variable to</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="entityMeta:SetNetVar"></a>
+								<h1><span class="realm server"></span>Entity:SetNetVar(key, value[, receiver=nil])</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L142">View source &raquo;</a>
+
+								<p>Sets the value of a networked variable.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Identifier of the networked variable</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+
+
+												<p> New value to assign to the networked variable</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">receiver</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> The players to send the networked variable to</p>
+											</li>
+									</ul>
+
+
+						</section>
 						<section class="method">
 							<header><a name="meta:BlastDoor"></a>
 								<h1><span class="realm server"></span>Entity:BlastDoor(velocity, lifeTime, bIgnorePartner)</h1>

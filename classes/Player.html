@@ -122,10 +122,13 @@ object at a time that you can interface with.</p>
 									<li><span class="realm shared"></span><a href="#playerMeta:ChatNotifyLocalized">Player:ChatNotifyLocalized(message, ...)</a></li>
 									<li><span class="realm server"></span><a href="#playerMeta:ForceSequence">Player:ForceSequence(sequence[, callback=nil[, time=nil[, bNoFreeze=false]]])</a></li>
 									<li><span class="realm shared"></span><a href="#playerMeta:GetCharacter">Player:GetCharacter()</a></li>
+									<li><span class="realm server"></span><a href="#playerMeta:GetLocalVar">Player:GetLocalVar(key, default)</a></li>
 									<li><span class="realm shared"></span><a href="#playerMeta:GetName">Player:GetName()</a></li>
 									<li><span class="realm server"></span><a href="#playerMeta:LeaveSequence">Player:LeaveSequence()</a></li>
 									<li><span class="realm shared"></span><a href="#playerMeta:Notify">Player:Notify(message)</a></li>
 									<li><span class="realm shared"></span><a href="#playerMeta:NotifyLocalized">Player:NotifyLocalized(message, ...)</a></li>
+									<li><span class="realm server"></span><a href="#playerMeta:SetLocalVar">Player:SetLocalVar(key, value)</a></li>
+									<li><span class="realm server"></span><a href="#playerMeta:SyncVars">Player:SyncVars()</a></li>
 							</ul>
 					</div>
 				</details>
@@ -1031,6 +1034,56 @@ end)
 
 						</section>
 						<section class="method">
+							<header><a name="playerMeta:GetLocalVar"></a>
+								<h1><span class="realm server"></span>Player:GetLocalVar(key, default)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L97">View source &raquo;</a>
+
+								<p>Retrieves a local networked variable.  If it is not set, it'll return the default that you've specified.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Identifier of the local variable</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">default</span>
+
+
+
+												<p> Default value to return if the local variable is not set</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="tag type">any</span>
+
+												<p>Value associated with the key, or the default that was given if it doesn't exist</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
 							<header><a name="playerMeta:GetName"></a>
 								<h1><span class="realm shared"></span>Player:GetName()</h1>
 
@@ -1150,6 +1203,59 @@ end)
 								<ul>
 										<li><a href="../libraries/ix.lang.html#">ix.lang</a></li>
 								</ul>
+						</section>
+						<section class="method">
+							<header><a name="playerMeta:SetLocalVar"></a>
+								<h1><span class="realm server"></span>Player:SetLocalVar(key, value)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L109">View source &raquo;</a>
+
+								<p>Sets the value of a local networked variable.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Identifier of the local variable</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+
+
+												<p> New value to assign to the local variable</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="playerMeta:SyncVars"></a>
+								<h1><span class="realm server"></span>Player:SyncVars()</h1>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L62">View source &raquo;</a>
+
+								<p>Synchronizes networked variables to the client.</p>
+							</header>
+
+
+
 						</section>
 		</article>
 
