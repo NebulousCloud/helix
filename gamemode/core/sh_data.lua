@@ -27,8 +27,8 @@ function ix.data.Set(key, value, bGlobal, bIgnoreMap)
 
 	-- If we're not ignoring the map, create a folder for the map.
 	file.CreateDir(path)
-	-- Write the data using pON encoding.
-	file.Write(path .. key .. ".txt", pon.encode({value}))
+	-- Write the data using JSON encoding.
+	file.Write(path .. key .. ".txt", util.TableToJSON({value}))
 
 	-- Cache the data value here.
 	ix.data.stored[key] = value
@@ -62,24 +62,30 @@ function ix.data.Get(key, default, bGlobal, bIgnoreMap, bRefresh)
 	local contents = file.Read(path .. key .. ".txt", "DATA")
 
 	if (contents and contents != "") then
-		-- Decode the contents and return the data.
-		local status, decoded = pcall(pon.decode, contents)
+		local status, decoded = pcall(util.JSONToTable, contents)
 
 		if (status and decoded) then
 			local value = decoded[1]
 
 			if (value != nil) then
 				return value
-			else
-				return default
 			end
-		else
-			return default
 		end
-	else
-		-- If we provided a default, return that since we couldn't retrieve the data.
-		return default
+
+		-- Backwards compatibility.
+		-- This may be removed in the future.
+		status, decoded = pcall(pon.decode, contents)
+
+		if (status and decoded) then
+			local value = decoded[1]
+
+			if (value != nil) then
+				return value
+			end
+		end
 	end
+
+	return default
 end
 
 --- Deletes the contents of a saved file in the `data/helix` folder.
@@ -100,10 +106,9 @@ function ix.data.Delete(key, bGlobal, bIgnoreMap)
 		file.Delete(path .. key .. ".txt")
 		ix.data.stored[key] = nil
 		return true
-	else
-		-- If we provided a default, return that since we couldn't retrieve the data.
-		return false
 	end
+
+	return false
 end
 
 if (SERVER) then
