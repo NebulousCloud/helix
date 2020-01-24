@@ -135,6 +135,8 @@ for variables that automatically save to the character object.</p>
 									<li><span class="realm shared"></span><a href="#charMeta:GetAttribute">Character:GetAttribute(key, default)</a></li>
 									<li><span class="realm shared"></span><a href="#charMeta:GetBoost">Character:GetBoost(attribID)</a></li>
 									<li><span class="realm shared"></span><a href="#charMeta:GetBoosts">Character:GetBoosts()</a></li>
+									<li><span class="realm server"></span><a href="#charMeta:JoinClass">Character:JoinClass(class)</a></li>
+									<li><span class="realm server"></span><a href="#charMeta:KickClass">Character:KickClass()</a></li>
 									<li><span class="realm server"></span><a href="#charMeta:RemoveBoost">Character:RemoveBoost(boostID, attribID)</a></li>
 									<li><span class="realm server"></span><a href="#charMeta:SetAttrib">Character:SetAttrib(key, value)</a></li>
 									<li><span class="realm server"></span><a href="#charMeta:UpdateAttrib">Character:UpdateAttrib(key, value)</a></li>
@@ -1060,6 +1062,58 @@ end)
 											</li>
 
 								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="charMeta:JoinClass"></a>
+								<h1><span class="realm server"></span>Character:JoinClass(class)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L146">View source &raquo;</a>
+
+								<p>Makes this character join a class.  This automatically calls <a href="../classes/Character.html#charMeta:KickClass">KickClass</a> for you.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">class</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Index of the class to join</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not the character has successfully joined the class</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="charMeta:KickClass"></a>
+								<h1><span class="realm server"></span>Character:KickClass()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L167">View source &raquo;</a>
+
+								<p>Kicks this character out of the class they are currently in.</p>
+							</header>
+
+
 
 						</section>
 						<section class="method">
