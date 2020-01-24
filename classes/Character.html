@@ -105,7 +105,24 @@ for variables that automatically save to the character object.</p>
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
+									<li><span class="realm shared"></span><a href="#:GetClass">Character:GetClass()</a></li>
+									<li><span class="realm server"></span><a href="#:GetCreateTime">Character:GetCreateTime()</a></li>
+									<li><span class="realm shared"></span><a href="#:GetData">Character:GetData(key, default)</a></li>
+									<li><span class="realm shared"></span><a href="#:GetDescription">Character:GetDescription()</a></li>
+									<li><span class="realm shared"></span><a href="#:GetFaction">Character:GetFaction()</a></li>
 									<li><span class="realm shared"></span><a href="#:GetInventory">Character:GetInventory()</a></li>
+									<li><span class="realm server"></span><a href="#:GetLastJoinTime">Character:GetLastJoinTime()</a></li>
+									<li><span class="realm shared"></span><a href="#:GetModel">Character:GetModel()</a></li>
+									<li><span class="realm shared"></span><a href="#:GetMoney">Character:GetMoney()</a></li>
+									<li><span class="realm shared"></span><a href="#:GetName">Character:GetName()</a></li>
+									<li><span class="realm server"></span><a href="#:GetSchema">Character:GetSchema()</a></li>
+									<li><span class="realm server"></span><a href="#:GetSteamID">Character:GetSteamID()</a></li>
+									<li><span class="realm server"></span><a href="#:SetData">Character:SetData(key, value)</a></li>
+									<li><span class="realm server"></span><a href="#:SetDescription">Character:SetDescription(description)</a></li>
+									<li><span class="realm server"></span><a href="#:SetFaction">Character:SetFaction(faction)</a></li>
+									<li><span class="realm server"></span><a href="#:SetModel">Character:SetModel(model)</a></li>
+									<li><span class="realm server"></span><a href="#:SetMoney">Character:SetMoney(money)</a></li>
+									<li><span class="realm server"></span><a href="#:SetName">Character:SetName(name)</a></li>
 									<li><span class="realm server"></span><a href="#CHAR:Ban">Character:Ban([time])</a></li>
 									<li><span class="realm shared"></span><a href="#CHAR:GetID">Character:GetID()</a></li>
 									<li><span class="realm shared"></span><a href="#CHAR:GetPlayer">Character:GetPlayer()</a></li>
@@ -114,6 +131,13 @@ for variables that automatically save to the character object.</p>
 									<li><span class="realm server"></span><a href="#CHAR:Sync">Character:Sync([receiver=nil])</a></li>
 									<li><span class="realm shared"></span><a href="#CHAR:__eq">Character:__eq(other)</a></li>
 									<li><span class="realm shared"></span><a href="#CHAR:__tostring">Character:__tostring()</a></li>
+									<li><span class="realm server"></span><a href="#charMeta:AddBoost">Character:AddBoost(boostID, attribID, boostAmount)</a></li>
+									<li><span class="realm shared"></span><a href="#charMeta:GetAttribute">Character:GetAttribute(key, default)</a></li>
+									<li><span class="realm shared"></span><a href="#charMeta:GetBoost">Character:GetBoost(attribID)</a></li>
+									<li><span class="realm shared"></span><a href="#charMeta:GetBoosts">Character:GetBoosts()</a></li>
+									<li><span class="realm server"></span><a href="#charMeta:RemoveBoost">Character:RemoveBoost(boostID, attribID)</a></li>
+									<li><span class="realm server"></span><a href="#charMeta:SetAttrib">Character:SetAttrib(key, value)</a></li>
+									<li><span class="realm server"></span><a href="#charMeta:UpdateAttrib">Character:UpdateAttrib(key, value)</a></li>
 									<li><span class="realm server"></span><a href="#character:GetFlags">Character:GetFlags()</a></li>
 									<li><span class="realm server"></span><a href="#character:GiveFlags">Character:GiveFlags(flags)</a></li>
 									<li><span class="realm server"></span><a href="#character:HasFlags">Character:HasFlags(flags)</a></li>
@@ -126,6 +150,161 @@ for variables that automatically save to the character object.</p>
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
+						<section class="method">
+							<header><a name=":GetClass"></a>
+								<h1><span class="realm shared"></span>Character:GetClass()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L520">View source &raquo;</a>
+
+								<p>Returns this character's current class.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>Index of the class this character is in</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name=":GetCreateTime"></a>
+								<h1><span class="realm server"></span>Character:GetCreateTime()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L779">View source &raquo;</a>
+
+								<p>Returns the Unix timestamp of when this character was created (i.e the value of <code>os.time()</code> at the time of creation).</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>Unix timestamp of when this character was created</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name=":GetData"></a>
+								<h1><span class="realm shared"></span>Character:GetData(key, default)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L691">View source &raquo;</a>
+
+								<p>Returns a data field set on this character.  If it doesn't exist, it will return the given default or <code>nil</code>. This is only
+ valid on the server and the owning client.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Name of the field that's holding the data</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">default</span>
+
+
+
+												<p> Value to return if the given key doesn't exist, or is <code>nil</code></p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="tag type">any</span>
+
+												<p>Data stored in the field</p>
+											</li>
+
+											<div class="or"><span>OR</span></div>
+
+											<li>
+													<span class="type">nil</span>
+
+												<p>If the data doesn't exist, or is <code>nil</code></p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name=":GetDescription"></a>
+								<h1><span class="realm shared"></span>Character:GetDescription()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L367">View source &raquo;</a>
+
+								<p>Returns this character's physical description.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>This character's current description</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name=":GetFaction"></a>
+								<h1><span class="realm shared"></span>Character:GetFaction()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L534">View source &raquo;</a>
+
+								<p>Returns this character's faction.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>Index of the faction this character is currently in</p>
+											</li>
+
+								</ul>
+
+						</section>
 						<section class="method">
 							<header><a name=":GetInventory"></a>
 								<h1><span class="realm shared"></span>Character:GetInventory()</h1>
@@ -148,6 +327,334 @@ for variables that automatically save to the character object.</p>
 											</li>
 
 								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name=":GetLastJoinTime"></a>
+								<h1><span class="realm server"></span>Character:GetLastJoinTime()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L791">View source &raquo;</a>
+
+								<p>Returns the Unix timestamp of when this character was last used by its owning player.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>Unix timestamp of when this character was last used</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name=":GetModel"></a>
+								<h1><span class="realm shared"></span>Character:GetModel()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L407">View source &raquo;</a>
+
+								<p>Returns this character's model.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>This character's current model</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name=":GetMoney"></a>
+								<h1><span class="realm shared"></span>Character:GetMoney()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L667">View source &raquo;</a>
+
+								<p>Returns this character's money.  This is only valid on the server and the owning client.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>Current money of this character</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name=":GetName"></a>
+								<h1><span class="realm shared"></span>Character:GetName()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L318">View source &raquo;</a>
+
+								<p>Returns this character's name</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>This character's current name</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name=":GetSchema"></a>
+								<h1><span class="realm server"></span>Character:GetSchema()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L805">View source &raquo;</a>
+
+								<p>Returns the schema that this character belongs to.  This is useful if you are running multiple schemas off of the same
+ database, and need to differentiate between them.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>Schema this character belongs to</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name=":GetSteamID"></a>
+								<h1><span class="realm server"></span>Character:GetSteamID()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L818">View source &raquo;</a>
+
+								<p>Returns the 64-bit Steam ID of the player that owns this character.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>Owning player's Steam ID</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name=":SetData"></a>
+								<h1><span class="realm server"></span>Character:SetData(key, value)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L683">View source &raquo;</a>
+
+								<p>Sets a data field on this character.  This is useful for storing small bits of data that you need persisted on this
+ character. This is networked only to the owning client. If you are going to be accessing this data field frequently with
+ a getter/setter, consider using <code>ix.char.RegisterVar</code> instead.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Name of the field that holds the data</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+
+
+												<p> Any value to store in the field, as long as it's supported by GMod's JSON parser</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name=":SetDescription"></a>
+								<h1><span class="realm server"></span>Character:SetDescription(description)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L363">View source &raquo;</a>
+
+								<p>Sets this character's physical description.  This is automatically networked.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">description</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> New description for this character</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name=":SetFaction"></a>
+								<h1><span class="realm server"></span>Character:SetFaction(faction)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L530">View source &raquo;</a>
+
+								<p>Sets this character's faction.  Note that this doesn't do the initial setup for the player after the faction has been
+ changed, so you'll have to update some character vars manually.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">faction</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Index of the faction to transfer this character to</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name=":SetModel"></a>
+								<h1><span class="realm server"></span>Character:SetModel(model)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L403">View source &raquo;</a>
+
+								<p>Sets this character's model.  This sets the player's current model to the given one, and saves it to the character.
+ It is automatically networked.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">model</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> New model for the character</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name=":SetMoney"></a>
+								<h1><span class="realm server"></span>Character:SetMoney(money)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L663">View source &raquo;</a>
+
+								<p>Sets this character's current money.  Money is only networked to the player that owns this character.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">money</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> New amount of money this character should have</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name=":SetName"></a>
+								<h1><span class="realm server"></span>Character:SetName(name)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_character.lua#L314">View source &raquo;</a>
+
+								<p>Sets this character's name.  This is automatically networked.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">name</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> New name for the character</p>
+											</li>
+									</ul>
+
 
 						</section>
 						<section class="method">
@@ -379,6 +886,300 @@ end)
 											</li>
 
 								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="charMeta:AddBoost"></a>
+								<h1><span class="realm server"></span>Character:AddBoost(boostID, attribID, boostAmount)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_attribs.lua#L117">View source &raquo;</a>
+
+								<p>Temporarily increments one of this character's attributes.  Useful for things like consumable items.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">boostID</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Unique ID to use for the boost to remove it later</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">attribID</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Name of the attribute to boost</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">boostAmount</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Amount to increase the attribute by</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="charMeta:GetAttribute"></a>
+								<h1><span class="realm shared"></span>Character:GetAttribute(key, default)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_attribs.lua#L179">View source &raquo;</a>
+
+								<p>Returns the current value of an attribute.  This is only valid on the server and owning client.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Name of the attribute to get</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">default</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Value to return if the attribute doesn't exist</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>Value of the attribute</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="charMeta:GetBoost"></a>
+								<h1><span class="realm shared"></span>Character:GetBoost(attribID)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_attribs.lua#L161">View source &raquo;</a>
+
+								<p>Returns all boosts that this character has for the given attribute.  This is only valid on the server and owning client.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">attribID</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Name of the attribute to find boosts for</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>
+
+												<p>Table of boosts that this character has for the attribute</p>
+											</li>
+
+											<div class="or"><span>OR</span></div>
+
+											<li>
+													<span class="type">nil</span>
+
+												<p>If the character has no boosts for the given attribute</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="charMeta:GetBoosts"></a>
+								<h1><span class="realm shared"></span>Character:GetBoosts()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_attribs.lua#L170">View source &raquo;</a>
+
+								<p>Returns all boosts that this character has.  This is only valid on the server and owning client.</p>
+							</header>
+
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>
+
+												<p>Table of boosts this character has</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="charMeta:RemoveBoost"></a>
+								<h1><span class="realm server"></span>Character:RemoveBoost(boostID, attribID)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_attribs.lua#L132">View source &raquo;</a>
+
+								<p>Removes a temporary boost from this character.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">boostID</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Unique ID of the boost to remove</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">attribID</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Name of the attribute that was boosted</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="charMeta:SetAttrib"></a>
+								<h1><span class="realm server"></span>Character:SetAttrib(key, value)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_attribs.lua#L85">View source &raquo;</a>
+
+								<p>Sets the value of an attribute for this character.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Name of the attribute to update</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> New value for the attribute</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="charMeta:UpdateAttrib"></a>
+								<h1><span class="realm server"></span>Character:UpdateAttrib(key, value)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_attribs.lua#L54">View source &raquo;</a>
+
+								<p>Increments one of this character's attributes by the given amount.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">key</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Name of the attribute to update</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">value</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Amount to add to the attribute</p>
+											</li>
+									</ul>
+
 
 						</section>
 						<section class="method">

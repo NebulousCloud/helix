@@ -99,6 +99,8 @@ their faction by default, but you can restrict this as you need with <code>CLASS
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
+									<li><span class="realm server"></span><a href="#charMeta:JoinClass">charMeta:JoinClass(class)</a></li>
+									<li><span class="realm server"></span><a href="#charMeta:KickClass">charMeta:KickClass()</a></li>
 									<li><span class="realm shared"></span><a href="#ix.class.CanSwitchTo">ix.class.CanSwitchTo(client, class)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.class.Get">ix.class.Get(identifier)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.class.GetPlayers">ix.class.GetPlayers(class)</a></li>
@@ -110,6 +112,58 @@ their faction by default, but you can restrict this as you need with <code>CLASS
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
+						<section class="method">
+							<header><a name="charMeta:JoinClass"></a>
+								<h1><span class="realm server"></span>charMeta:JoinClass(class)</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L143">View source &raquo;</a>
+
+								<p>Makes this character join a class.  This automatically calls <a href="../libraries/ix.class.html#charMeta:KickClass">KickClass</a> for you.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">class</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> Index of the class to join</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether or not the character has successfully joined the class</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header><a name="charMeta:KickClass"></a>
+								<h1><span class="realm server"></span>charMeta:KickClass()</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L164">View source &raquo;</a>
+
+								<p>Kicks this character out of the class they are currently in.</p>
+							</header>
+
+
+
+						</section>
 						<section class="method">
 							<header><a name="ix.class.CanSwitchTo"></a>
 								<h1><span class="realm shared"></span>ix.class.CanSwitchTo(client, class)</h1>
