@@ -74,8 +74,7 @@ LANGUAGE = {
 	finish = "Finalizar",
 	finishTip = "Finalizar a criação do personagem.",
 	needModel = "Você precisa escolher um modelo válido!",
-	creating = "O seu persona
-	gem está sendo criado...",
+	creating = "O seu persona gem está sendo criado...",
 	unknownError = "Um erro desconhecido ocorreu!",
 	areYouSure = "Você tem certeza?",
 	delete = "Deletar",
