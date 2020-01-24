@@ -136,6 +136,9 @@ function ix.class.GetPlayers(class)
 end
 
 if (SERVER) then
+	--- Character class methods
+	-- @classmod Character
+
 	--- Makes this character join a class. This automatically calls `KickClass` for you.
 	-- @realm server
 	-- @number class Index of the class to join
