@@ -110,7 +110,7 @@ end
 -- @realm server
 -- @string key Identifier of the local variable
 -- @param value New value to assign to the local variable
--- @usage client:SetNetVar("secret", 12345678)
+-- @usage client:SetLocalVar("secret", 12345678)
 -- @see GetLocalVar
 function playerMeta:SetLocalVar(key, value)
 	if (CheckBadType(key, value)) then return end
