@@ -135,58 +135,68 @@ function ix.class.GetPlayers(class)
 	return players
 end
 
-function charMeta:JoinClass(class)
-	if (!class) then
-		self:KickClass()
+if (SERVER) then
+	--- Character class methods
+	-- @classmod Character
 
-		return
-	end
+	--- Makes this character join a class. This automatically calls `KickClass` for you.
+	-- @realm server
+	-- @number class Index of the class to join
+	-- @treturn bool Whether or not the character has successfully joined the class
+	function charMeta:JoinClass(class)
+		if (!class) then
+			self:KickClass()
+			return false
+		end
 
-	local oldClass = self:GetClass()
-	local client = self:GetPlayer()
+		local oldClass = self:GetClass()
+		local client = self:GetPlayer()
 
-	if (ix.class.CanSwitchTo(client, class)) then
-		self:SetClass(class)
-		hook.Run("PlayerJoinedClass", client, class, oldClass)
+		if (ix.class.CanSwitchTo(client, class)) then
+			self:SetClass(class)
+			hook.Run("PlayerJoinedClass", client, class, oldClass)
 
-		return true
-	else
+			return true
+		end
+
 		return false
 	end
-end
 
-function charMeta:KickClass()
-	local client = self:GetPlayer()
-	if (!client) then return end
+	--- Kicks this character out of the class they are currently in.
+	-- @realm server
+	function charMeta:KickClass()
+		local client = self:GetPlayer()
+		if (!client) then return end
 
-	local goClass
+		local goClass
 
-	for k, v in pairs(ix.class.list) do
-		if (v.faction == client:Team() and v.isDefault) then
-			goClass = k
+		for k, v in pairs(ix.class.list) do
+			if (v.faction == client:Team() and v.isDefault) then
+				goClass = k
 
-			break
+				break
+			end
 		end
+
+		self:JoinClass(goClass)
+
+		hook.Run("PlayerJoinedClass", client, goClass)
 	end
 
-	self:JoinClass(goClass)
+	function GM:PlayerJoinedClass(client, class, oldClass)
+		local info = ix.class.list[class]
+		local info2 = ix.class.list[oldClass]
 
-	hook.Run("PlayerJoinedClass", client, goClass)
-end
+		if (info.OnSet) then
+			info:OnSet(client)
+		end
 
-function GM:PlayerJoinedClass(client, class, oldClass)
-	local info = ix.class.list[class]
-	local info2 = ix.class.list[oldClass]
+		if (info2 and info2.OnLeave) then
+			info2:OnLeave(client)
+		end
 
-	if (info.OnSet) then
-		info:OnSet(client)
+		net.Start("ixClassUpdate")
+			net.WriteEntity(client)
+		net.Broadcast()
 	end
-
-	if (info2 and info2.OnLeave) then
-		info2:OnLeave(client)
-	end
-
-	net.Start("ixClassUpdate")
-		net.WriteEntity(client)
-	net.Broadcast()
 end
