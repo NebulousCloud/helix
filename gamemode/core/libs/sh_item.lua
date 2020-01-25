@@ -140,7 +140,7 @@ end
 
 --- Retrieves an item table.
 -- @realm shared
--- @param identifier Unique ID of the item
+-- @string identifier Unique ID of the item
 -- @treturn item Item table
 -- @usage print(ix.item.Get("example"))
 -- > "item[example][0]"
@@ -150,9 +150,8 @@ end
 
 --- Retrieves an inventory table.
 -- @realm shared
--- @param invID Index of the inventory
+-- @number invID Index of the inventory
 -- @treturn inventory Inventory table
--- @usage print(ix.item.GetInv(123))
 -- > "inventory[123]"
 function ix.item.GetInv(invID)
 	return ix.item.inventories[invID]
@@ -958,7 +957,13 @@ do
 		end)
 	end
 
-	-- Instances and spawns a given item type.
+	--- Instances and spawns a given item type.
+	-- @realm server
+	-- @string uniqueID Unique ID of the item
+	-- @vector position The position in which the item's entity will be spawned
+	-- @func[opt=nil] callback Function to call when the item entity is created
+	-- @angle[opt=angle_zero] angles The angles at which the item's entity will spawn
+	-- @tab[opt=nil] data Additional data for this item instance
 	function ix.item.Spawn(uniqueID, position, callback, angles, data)
 		ix.item.Instance(0, uniqueID, data or {}, 1, 1, function(item)
 			local entity = item:Spawn(position, angles)
