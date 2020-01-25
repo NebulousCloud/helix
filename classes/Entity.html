@@ -123,7 +123,7 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 
 									<div class="internal"></div>
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L176">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L187">View source &raquo;</a>
 
 								<p>Clears all of the networked variables.</p>
 							</header>
@@ -148,11 +148,16 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>print(client:GetNetVar("example"))
+ > Hello World!
+</code></pre>
+								</aside>
 							<header><a name="entityMeta:GetNetVar"></a>
 								<h1><span class="realm shared"></span>Entity:GetNetVar(key, default)</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L129">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L138">View source &raquo;</a>
 
 								<p>Retrieves a networked variable.  If it is not set, it'll return the default that you've specified.</p>
 							</header>
@@ -196,6 +201,10 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 
 								</ul>
 
+								<h3>See Also</h3>
+								<ul>
+										<li><a href="../classes/Entity.html#entityMeta:SetNetVar">SetNetVar</a></li>
+								</ul>
 						</section>
 						<section class="method">
 							<header><a name="entityMeta:SendNetVar"></a>
@@ -203,7 +212,7 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 
 									<div class="internal"></div>
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L159">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L170">View source &raquo;</a>
 
 								<p>Sends a networked variable.</p>
 							</header>
@@ -240,11 +249,15 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>client:SetNetVar("example", "Hello World!")
+</code></pre>
+								</aside>
 							<header><a name="entityMeta:SetNetVar"></a>
 								<h1><span class="realm server"></span>Entity:SetNetVar(key, value[, receiver=nil])</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L142">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L153">View source &raquo;</a>
 
 								<p>Sets the value of a networked variable.</p>
 							</header>
@@ -290,6 +303,10 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 									</ul>
 
 
+								<h3>See Also</h3>
+								<ul>
+										<li><a href="../classes/Entity.html#entityMeta:GetNetVar">GetNetVar</a></li>
+								</ul>
 						</section>
 						<section class="method">
 							<header><a name="meta:BlastDoor"></a>

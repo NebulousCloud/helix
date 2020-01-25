@@ -102,6 +102,7 @@
 									<li><span class="realm shared"></span><a href="#ix.item.Get">ix.item.Get(identifier)</a></li>
 									<li><span class="realm shared"></span><a href="#ix.item.GetInv">ix.item.GetInv(invID)</a></li>
 									<li><span class="realm server"></span><a href="#ix.item.RestoreInv">ix.item.RestoreInv(invID, width, height, callback)</a></li>
+									<li><span class="realm server"></span><a href="#ix.item.Spawn">ix.item.Spawn(uniqueID, position[, callback=nil[, angles=angle_zero[, data=nil]]])</a></li>
 							</ul>
 					</div>
 				</details>
@@ -133,6 +134,7 @@
 											<li>
 												<span class="tag parameter">identifier</span>
 
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
 												<p> Unique ID of the item</p>
@@ -153,16 +155,11 @@
 
 						</section>
 						<section class="method">
-								<aside>
-										<pre><code>print(ix.item.GetInv(123))
- > "inventory[123]"
-</code></pre>
-								</aside>
 							<header><a name="ix.item.GetInv"></a>
 								<h1><span class="realm shared"></span>ix.item.GetInv(invID)</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_item.lua#L157">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_item.lua#L156">View source &raquo;</a>
 
 								<p>Retrieves an inventory table.</p>
 							</header>
@@ -176,6 +173,7 @@
 											<li>
 												<span class="tag parameter">invID</span>
 
+													<span class="tag"><span class="type">number</span></span>
 
 
 												<p> Index of the inventory</p>
@@ -189,7 +187,8 @@
 											<li>
 													<span class="type">inventory</span>
 
-												<p>Inventory table</p>
+												<p>Inventory table
+ > "inventory[123]"</p>
 											</li>
 
 								</ul>
@@ -208,7 +207,7 @@
 								<h1><span class="realm server"></span>ix.item.RestoreInv(invID, width, height, callback)</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_item.lua#L378">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_item.lua#L377">View source &raquo;</a>
 
 								<p>Loads an inventory and associated items from the database into memory.  If you are passing a table into <code>invID</code>, it
  requires a table where the key is the inventory ID, and the value is a table of the width and height values. See below
@@ -263,6 +262,85 @@
 
 
 												<p> Function to call when inventory is restored</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header><a name="ix.item.Spawn"></a>
+								<h1><span class="realm server"></span>ix.item.Spawn(uniqueID, position[, callback=nil[, angles=angle_zero[, data=nil]]])</h1>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_item.lua#L967">View source &raquo;</a>
+
+								<p>Instances and spawns a given item type.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">uniqueID</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+												<p> Unique ID of the item</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">position</span>
+
+													<span class="tag"><span class="type">vector</span></span>
+
+
+												<p> The position in which the item's entity will be spawned</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">callback</span>
+
+													<span class="tag"><span class="type">function</span></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> Function to call when the item entity is created</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">angles</span>
+
+													<span class="tag"><span class="type">angle</span></span>
+
+													<span class="tag default">default: angle_zero</span>
+
+												<p> The angles at which the item's entity will spawn</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">data</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> Additional data for this item instance</p>
 											</li>
 									</ul>
 

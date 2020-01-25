@@ -122,7 +122,7 @@ object at a time that you can interface with.</p>
 									<li><span class="realm shared"></span><a href="#playerMeta:ChatNotifyLocalized">Player:ChatNotifyLocalized(message, ...)</a></li>
 									<li><span class="realm server"></span><a href="#playerMeta:ForceSequence">Player:ForceSequence(sequence[, callback=nil[, time=nil[, bNoFreeze=false]]])</a></li>
 									<li><span class="realm shared"></span><a href="#playerMeta:GetCharacter">Player:GetCharacter()</a></li>
-									<li><span class="realm server"></span><a href="#playerMeta:GetLocalVar">Player:GetLocalVar(key, default)</a></li>
+									<li><span class="realm shared"></span><a href="#playerMeta:GetLocalVar">Player:GetLocalVar(key, default)</a></li>
 									<li><span class="realm shared"></span><a href="#playerMeta:GetName">Player:GetName()</a></li>
 									<li><span class="realm server"></span><a href="#playerMeta:LeaveSequence">Player:LeaveSequence()</a></li>
 									<li><span class="realm shared"></span><a href="#playerMeta:Notify">Player:Notify(message)</a></li>
@@ -1034,13 +1034,19 @@ end)
 
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>print(client:GetLocalVar("secret"))
+ > 12345678
+</code></pre>
+								</aside>
 							<header><a name="playerMeta:GetLocalVar"></a>
-								<h1><span class="realm server"></span>Player:GetLocalVar(key, default)</h1>
+								<h1><span class="realm shared"></span>Player:GetLocalVar(key, default)</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L97">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L101">View source &raquo;</a>
 
-								<p>Retrieves a local networked variable.  If it is not set, it'll return the default that you've specified.</p>
+								<p>Retrieves a local networked variable.  If it is not set, it'll return the default that you've specified.
+ Locally networked variables can only be retrieved from the owning player when used from the client.</p>
 							</header>
 
 
@@ -1082,6 +1088,10 @@ end)
 
 								</ul>
 
+								<h3>See Also</h3>
+								<ul>
+										<li><a href="../classes/Player.html#playerMeta:SetLocalVar">SetLocalVar</a></li>
+								</ul>
 						</section>
 						<section class="method">
 							<header><a name="playerMeta:GetName"></a>
@@ -1205,11 +1215,15 @@ end)
 								</ul>
 						</section>
 						<section class="method">
+								<aside>
+										<pre><code>client:SetNetVar("secret", 12345678)
+</code></pre>
+								</aside>
 							<header><a name="playerMeta:SetLocalVar"></a>
 								<h1><span class="realm server"></span>Player:SetLocalVar(key, value)</h1>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L109">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sv_networking.lua#L115">View source &raquo;</a>
 
 								<p>Sets the value of a local networked variable.</p>
 							</header>
@@ -1242,6 +1256,10 @@ end)
 									</ul>
 
 
+								<h3>See Also</h3>
+								<ul>
+										<li><a href="../classes/Player.html#playerMeta:GetLocalVar">GetLocalVar</a></li>
+								</ul>
 						</section>
 						<section class="method">
 							<header><a name="playerMeta:SyncVars"></a>
