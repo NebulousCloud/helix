@@ -152,7 +152,6 @@ end
 -- @realm shared
 -- @number invID Index of the inventory
 -- @treturn inventory Inventory table
--- > "inventory[123]"
 function ix.item.GetInv(invID)
 	return ix.item.inventories[invID]
 end
