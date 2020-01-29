@@ -445,6 +445,22 @@ function GM:InitializedConfig()
 	voiceDistance = voiceDistance * voiceDistance
 end
 
+function GM:VoiceToggled(bAllowVoice)
+	for _, v in ipairs(player.GetAll()) do
+		local uniqueID = v:SteamID64() .. "ixCanHearPlayersVoice"
+
+		if (bAllowVoice) then
+			timer.Create(uniqueID, 0.5, 0, function()
+				CalcPlayerCanHearPlayersVoice(v)
+			end)
+		else
+			timer.Remove(uniqueID)
+
+			v.ixVoiceHear = nil
+		end
+	end
+end
+
 function GM:VoiceDistanceChanged(distance)
 	voiceDistance = distance * distance
 end
