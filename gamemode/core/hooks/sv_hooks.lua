@@ -764,7 +764,7 @@ function GM:PlayerCanHearPlayersVoice(listener, speaker)
 		return false
 	end
 
-	local bCanHear = listener.ixVoiceHear and listener.ixVoiceHear[speaker]
+	local bCanHear = listener.ixVoiceHear and listener.ixVoiceHear[speaker] and ix.config.Get("allowVoice")
 	return bCanHear, true
 end
 
