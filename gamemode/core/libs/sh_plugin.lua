@@ -275,7 +275,7 @@ function ix.plugin.SetUnloaded(uniqueID, state, bNoSave)
 	local plugin = ix.plugin.list[uniqueID]
 
 	if (state) then
-		if (plugin.OnUnload) then
+		if (plugin and plugin.OnUnload) then
 			plugin:OnUnload()
 		end
 
