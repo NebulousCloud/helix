@@ -104,7 +104,13 @@ if (SERVER) then
 				entity:SetBodygroup(id, bodygroup)
 			end
 
-			entity.items = v.items or {}
+			local items = {}
+
+			for uniqueID, data in pairs(v.items) do
+				items[tostring(uniqueID)] = data
+			end
+
+			entity.items = items
 			entity.factions = v.factions or {}
 			entity.classes = v.classes or {}
 			entity.money = v.money
