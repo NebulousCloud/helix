@@ -391,6 +391,8 @@ function GM:InitPostEntity()
 	ix.option.Sync()
 
 	LocalPlayer():SetIK(false)
+
+	ix.gui.bars = vgui.Create("ixInfoBarManager")
 end
 
 function GM:NetworkEntityCreated(entity)
@@ -653,7 +655,7 @@ function GM:PostDrawHUD()
 	ix.hud.DrawAll(true)
 
 	if (!IsValid(ix.gui.characterMenu) or ix.gui.characterMenu:IsClosing()) then
-		ix.bar.DrawAll()
+		ix.bar.DrawAction()
 	end
 end
 
@@ -929,6 +931,11 @@ function GM:ScreenResolutionChanged(oldW, oldH)
 	if (IsValid(ix.gui.notices)) then
 		ix.gui.notices:Remove()
 		ix.gui.notices = vgui.Create("ixNoticeManager")
+	end
+
+	if (IsValid(ix.gui.bars)) then
+		ix.gui.bars:Remove()
+		ix.gui.bars = vgui.Create("ixInfoBarManager")
 	end
 end
 

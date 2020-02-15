@@ -494,6 +494,17 @@ end
 function SKIN:PaintWindowMaximizeButton(panel, width, height)
 end
 
+function SKIN:PaintInfoBar(panel, width, height, color)
+	-- bar
+	surface.SetDrawColor(color.r, color.g, color.b, 250)
+	surface.DrawRect(0, 0, width, height)
+
+	-- gradient overlay
+	surface.SetDrawColor(230, 230, 230, 8)
+	surface.SetTexture(gradientUp)
+	surface.DrawTexturedRect(0, 0, width, height)
+end
+
 do
 	-- check if sounds exist, otherwise fall back to default UI sounds
 	local bWhoosh = file.Exists("sound/helix/ui/whoosh1.wav", "GAME")
