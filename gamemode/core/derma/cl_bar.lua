@@ -83,6 +83,8 @@ function PANEL:Organize()
 
 		currentY = currentY + self.padding + v:GetTall()
 	end
+
+	self:SetSize(self:GetWide(), currentY)
 end
 
 function PANEL:Think()
