@@ -289,6 +289,16 @@ article pre code {
 	order: -1;
 }
 
+.method header .anchor {
+	color: inherit;
+	text-decoration: inherit;
+}
+
+.method header .anchor:target h1 {
+	background-color: rgba(115, 53, 142, 0.2);
+	background-clip: content-box;
+}
+
 .method header h1 {
 	font-family: "Source Code Pro", monospace;
 	padding-bottom: 8px;
