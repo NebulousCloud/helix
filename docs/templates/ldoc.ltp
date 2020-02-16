@@ -101,8 +101,10 @@
 #									end
 								</aside>
 #							end
-							<header><a name="$(item.name)"></a>
-								<h1><span class="realm $(item.tags.realm[1])"></span>$(ldoc.display_name(item))</h1>
+							<header>
+								<a class="anchor" id="$(item.name)">
+									<h1><span class="realm $(item.tags.realm[1])"></span>$(ldoc.display_name(item))</h1>
+								</a>
 
 #								if (item.tags.internal) then
 									<div class="internal"></div>
