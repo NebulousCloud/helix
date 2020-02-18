@@ -234,6 +234,12 @@ if (SERVER) then
 			for _, v in pairs(ix.char.vars) do
 				if (v.field and v.fieldType and !v.bSaveLoadInitialOnly) then
 					data:Select(v.field)
+
+					-- if FilterValues is used, any rows that contain a value in the column that isn't in the valid values table
+					-- will be ignored entirely (i.e the character will not load if it has an invalid value)
+					if (v.FilterValues) then
+						data:WhereIn(v.field, v:FilterValues())
+					end
 				end
 			end
 		else
@@ -536,6 +542,16 @@ do
 		fieldType = ix.type.string,
 		default = "Citizen",
 		bNoDisplay = true,
+		FilterValues = function(self)
+			-- make sequential table of faction unique IDs
+			local values = {}
+
+			for k, v in ipairs(ix.faction.indices) do
+				values[k] = v.uniqueID
+			end
+
+			return values
+		end,
 		OnSet = function(self, value)
 			local client = self:GetPlayer()
 
