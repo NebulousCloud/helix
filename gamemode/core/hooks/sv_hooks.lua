@@ -46,23 +46,13 @@ function GM:PlayerInitialSpawn(client)
 			net.WriteUInt(client.ixPlayTime or 0, 32)
 		net.Send(client)
 
-		ix.char.Restore(client, function(characters)
+		ix.char.Restore(client, function(charList)
 			if (!IsValid(client)) then return end
 
-			MsgN("Loaded (" .. table.concat(characters, ", ") .. ") for " .. client:Name())
+			MsgN("Loaded (" .. table.concat(charList, ", ") .. ") for " .. client:Name())
 
-			local charList = {}
-
-			for _, v in ipairs(characters) do
-				local character = ix.char.loaded[v]
-
-				-- remove characters with an invalid faction
-				if (!ix.faction.indices[character:GetFaction()]) then
-					continue
-				end
-
-				character:Sync(client)
-				charList[#charList + 1] = v
+			for _, v in ipairs(charList) do
+				ix.char.loaded[v]:Sync(client)
 			end
 
 			client.ixCharList = charList
