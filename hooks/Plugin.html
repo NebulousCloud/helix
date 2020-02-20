@@ -105,6 +105,7 @@
 									<li><span class="realm client"></span><a href="#CanCreateCharacterInfo">PLUGIN:CanCreateCharacterInfo(suppress)</a></li>
 									<li><span class="realm client"></span><a href="#CanDrawAmmoHUD">PLUGIN:CanDrawAmmoHUD(weapon)</a></li>
 									<li><span class="realm shared"></span><a href="#CanPlayerAccessDoor">PLUGIN:CanPlayerAccessDoor(client, door, access)</a></li>
+									<li><span class="realm server"></span><a href="#CanPlayerCreateCharacter">PLUGIN:CanPlayerCreateCharacter(client, payload)</a></li>
 									<li><span class="realm server"></span><a href="#CanPlayerDropItem">PLUGIN:CanPlayerDropItem(client, item)</a></li>
 									<li><span class="realm server"></span><a href="#CanPlayerEarnSalary">PLUGIN:CanPlayerEarnSalary(client, faction)</a></li>
 									<li><span class="realm server"></span><a href="#CanPlayerEnterObserver">PLUGIN:CanPlayerEnterObserver(client)</a></li>
@@ -648,6 +649,81 @@ end
 													<span class="type">bool</span>
 
 												<p>Whether or not to allow the client access.</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+								<aside>
+										<pre><code>function PLUGIN:CanPlayerCreateCharacter(client, payload)
+	if (!client:IsAdmin()) then
+		return false, "notNow" -- only allow admins to create a character
+	end
+end
+-- non-admins will see the message "You are not allowed to do this right now!"
+</code></pre>
+								</aside>
+							<header>
+								<a class="anchor" id="CanPlayerCreateCharacter">
+									<h1><span class="realm server"></span>PLUGIN:CanPlayerCreateCharacter(client, payload)</h1>
+								</a>
+
+
+
+								<p>Whether or not a player is allowed to create a new character with the given payload.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
+
+
+												<p> Player attempting to create a new character</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">payload</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+
+												<p> Data that is going to be used for creating the character</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p> Whether or not the player is allowed to create the character. This function defaults to <code>true</code>, so you
+ should only ever return <code>false</code> if you're disallowing creation. Otherwise, don't return anything as you'll prevent any other
+ calls to this hook from running.</p>
+											</li>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+
+												<p>Language phrase to use for the error message</p>
+											</li>
+
+											<li>
+													<span class="type">...</span>
+
+												<p>Arguments to use for the language phrase</p>
 											</li>
 
 								</ul>
