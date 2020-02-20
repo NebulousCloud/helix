@@ -15,6 +15,9 @@ function ENT:SetupDataTables()
 end
 
 if (SERVER) then
+	local invalidBoundsMin = Vector(-8, -8, -8)
+	local invalidBoundsMax = Vector(8, 8, 8)
+
 	util.AddNetworkString("ixItemEntityAction")
 
 	function ENT:Initialize()
@@ -79,10 +82,8 @@ if (SERVER) then
 			local physObj = self:GetPhysicsObject()
 
 			if (!IsValid(physObj)) then
-				local min, max = Vector(-8, -8, -8), Vector(8, 8, 8)
-
-				self:PhysicsInitBox(min, max)
-				self:SetCollisionBounds(min, max)
+				self:PhysicsInitBox(invalidBoundsMin, invalidBoundsMax)
+				self:SetCollisionBounds(invalidBoundsMin, invalidBoundsMax)
 			end
 
 			if (IsValid(physObj)) then

@@ -703,9 +703,12 @@ do
 	local R = debug.getregistry()
 	local VECTOR = R.Vector
 	local CrossProduct = VECTOR.Cross
+	local right = Vector(0, -1, 0)
 
 	function VECTOR:Right(vUp)
-		if (self[1] == 0 and self[2] == 0) then return Vector(0, -1, 0) end
+		if (self[1] == 0 and self[2] == 0) then
+			return right
+		end
 
 		if (vUp == nil) then
 			vUp = vector_up
@@ -774,6 +777,8 @@ do
 
 	local NUM_TANGENTS = 8
 	local tangents = {0, 1, 0.57735026919, 0.3639702342, 0.267949192431, 0.1763269807, -0.1763269807, -0.267949192431}
+	local traceMin = Vector(-16, -16, -16)
+	local traceMax = Vector(16, 16, 16)
 
 	function ix.util.FindUseEntity(player, origin, forward)
 		local tr
@@ -809,8 +814,8 @@ do
 				tr = util.TraceHull({
 					start = searchCenter,
 					endpos = searchCenter + down * 72,
-					mins = -Vector(16,16,16),
-					maxs = Vector(16,16,16),
+					mins = traceMin,
+					maxs = traceMax,
 					mask = useableContents,
 					filter = player
 				})

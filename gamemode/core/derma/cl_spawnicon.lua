@@ -4,6 +4,7 @@ DEFINE_BASECLASS("DModelPanel")
 local PANEL = {}
 
 function PANEL:Init()
+	self.defaultEyeTarget = Vector(0, 0, 64)
 	self:SetHidden(false)
 
 	for i = 0, 5 do
@@ -58,7 +59,7 @@ function PANEL:SetModel(model, skin, hidden)
 	end
 
 	entity:SetIK(false)
-	entity:SetEyeTarget(Vector(0, 0, 64))
+	entity:SetEyeTarget(self.defaultEyeTarget)
 end
 
 function PANEL:SetHidden(hidden)

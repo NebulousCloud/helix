@@ -11,6 +11,8 @@ if (CLIENT) then
 	PLUGIN.alphaDelta = PLUGIN.alphaDelta or PLUGIN.alpha
 	PLUGIN.fadeTime = PLUGIN.fadeTime or 0
 
+	local matrixScale = Vector(1, 1, 0)
+
 	function PLUGIN:LoadFonts(font, genericFont)
 		surface.CreateFont("ixWeaponSelectFont", {
 			font = font,
@@ -79,7 +81,7 @@ if (CLIENT) then
 					shiftX + x + math.cos(theta * spacing + math.pi) * radius + radius,
 					y + lastY + math.sin(theta * spacing + math.pi) * radius - ty / 2 ,
 					1))
-				matrix:Scale(Vector(1, 1, 0) * scale)
+				matrix:Scale(matrixScale * scale)
 
 				cam.PushModelMatrix(matrix)
 					ix.util.DrawText(weaponName, 2, ty / 2, color, 0, 1, "ixWeaponSelectFont")

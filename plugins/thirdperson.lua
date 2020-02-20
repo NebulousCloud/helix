@@ -54,6 +54,8 @@ if (CLIENT) then
 	end
 
 	local playerMeta = FindMetaTable("Player")
+	local traceMin = Vector(-10, -10, -10)
+	local traceMax = Vector(10, 10, 10)
 
 	function playerMeta:CanOverrideView()
 		local entity = Entity(self:GetLocalVar("ragdoll", 0))
@@ -95,7 +97,7 @@ if (CLIENT) then
 				crouchFactor = Lerp(ft*5, crouchFactor, 0)
 			end
 
-			curAng = owner.camAng or Angle(0, 0, 0)
+			curAng = owner.camAng or angle_zero
 			view = {}
 			traceData = {}
 				traceData.start = 	client:GetPos() + client:GetViewOffset() +
@@ -105,8 +107,8 @@ if (CLIENT) then
 				traceData.endpos = traceData.start - curAng:Forward() * ix.option.Get("thirdpersonDistance", 50)
 				traceData.filter = client
 				traceData.ignoreworld = bNoclip
-				traceData.mins = Vector(-10, -10, -10)
-				traceData.maxs = Vector(10, 10, 10)
+				traceData.mins = traceMin
+				traceData.maxs = traceMax
 			view.origin = util.TraceHull(traceData).HitPos
 			aimOrigin = view.origin
 			view.angles = curAng + client:GetViewPunchAngles()

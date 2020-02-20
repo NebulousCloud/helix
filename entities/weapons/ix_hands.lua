@@ -42,6 +42,7 @@ SWEP.WorldModel = ""
 SWEP.UseHands = false
 SWEP.LowerAngles = Angle(0, 5, -14)
 SWEP.LowerAngles2 = Angle(0, 5, -19)
+SWEP.KnockViewPunchAngle = Angle(-1.3, 1.8, 0)
 
 SWEP.FireWhenLowered = true
 SWEP.HoldType = "fist"
@@ -444,7 +445,7 @@ function SWEP:SecondaryAttack()
 				return
 			end
 
-			self.Owner:ViewPunch(Angle(-1.3, 1.8, 0))
+			self.Owner:ViewPunch(self.KnockViewPunchAngle)
 			self.Owner:EmitSound("physics/wood/wood_crate_impact_hard"..math.random(2, 3)..".wav")
 			self.Owner:SetAnimation(PLAYER_ATTACK1)
 

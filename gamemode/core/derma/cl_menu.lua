@@ -1,5 +1,6 @@
 
 local animationTime = 1
+local matrixZScale = Vector(1, 1, 0.0001)
 
 DEFINE_BASECLASS("ixSubpanelParent")
 local PANEL = {}
@@ -17,6 +18,9 @@ function PANEL:Init()
 	self.manualChildren = {}
 	self.noAnchor = CurTime() + 0.4
 	self.anchorMode = true
+	self.rotationOffset = Angle(0, 180, 0)
+	self.projectedTexturePosition = Vector(0, 0, 6)
+	self.projectedTextureRotation = Angle(-45, 60, 0)
 
 	self.bCharacterOverview = false
 	self.bOverviewOut = false
@@ -204,7 +208,7 @@ function PANEL:GetOverviewInfo(origin, angles, fov)
 		newOrigin = origin - LocalPlayer():OBBCenter() * 0.6 + forward
 	end
 
-	local newAngles = originAngles + Angle(0, 180, 0)
+	local newAngles = originAngles + self.rotationOffset
 	newAngles.pitch = 5
 	newAngles.roll = 0
 
@@ -318,8 +322,8 @@ function PANEL:Think()
 		right.z = 0
 
 		self.projectedTexture:SetBrightness(self.overviewFraction * 4)
-		self.projectedTexture:SetPos(LocalPlayer():GetPos() + right * 16 - forward * 8 + Vector(0, 0, 6))
-		self.projectedTexture:SetAngles(forward:Angle() + Angle(-45, 60, 0))
+		self.projectedTexture:SetPos(LocalPlayer():GetPos() + right * 16 - forward * 8 + self.projectedTexturePosition)
+		self.projectedTexture:SetAngles(forward:Angle() + self.projectedTextureRotation)
 		self.projectedTexture:Update()
 	end
 
@@ -348,7 +352,7 @@ function PANEL:Paint(width, height)
 		local currentScale = Lerp(self.currentAlpha / 255, 0.9, 1)
 		local matrix = Matrix()
 
-		matrix:Scale(Vector(1, 1, 0.0001) * currentScale)
+		matrix:Scale(matrixZScale * currentScale)
 		matrix:Translate(Vector(
 			ScrW() * 0.5 - (ScrW() * currentScale * 0.5),
 			ScrH() * 0.5 - (ScrH() * currentScale * 0.5),
