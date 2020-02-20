@@ -922,6 +922,18 @@ do
 					net.WriteString("maxCharacters")
 					net.WriteTable({})
 				net.Send(client)
+
+				return
+			end
+
+			local results = {hook.Run("CanPlayerCreateCharacter", client, payload)}
+
+			if (table.remove(results, 1) == false) then
+				net.Start("ixCharacterAuthFailed")
+					net.WriteString(table.remove(results, 1) or "unknownError")
+					net.WriteTable(results)
+				net.Send(client)
+
 				return
 			end
 
@@ -949,6 +961,7 @@ do
 							net.WriteString(fault)
 							net.WriteTable(result)
 						net.Send(client)
+
 						return
 					else
 						if (result[1] != nil) then

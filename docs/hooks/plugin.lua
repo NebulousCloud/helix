@@ -99,6 +99,24 @@ end
 function CanPlayerAccessDoor(client, door, access)
 end
 
+--- Whether or not a player is allowed to create a new character with the given payload.
+-- @realm server
+-- @player client Player attempting to create a new character
+-- @tab payload Data that is going to be used for creating the character
+-- @treturn bool Whether or not the player is allowed to create the character. This function defaults to `true`, so you
+-- should only ever return `false` if you're disallowing creation. Otherwise, don't return anything as you'll prevent any other
+-- calls to this hook from running.
+-- @treturn string Language phrase to use for the error message
+-- @treturn ... Arguments to use for the language phrase
+-- @usage function PLUGIN:CanPlayerCreateCharacter(client, payload)
+-- 	if (!client:IsAdmin()) then
+-- 		return false, "notNow" -- only allow admins to create a character
+-- 	end
+-- end
+-- -- non-admins will see the message "You are not allowed to do this right now!"
+function CanPlayerCreateCharacter(client, payload)
+end
+
 --- Whether or not a player is allowed to drop the given `item`.
 -- @realm server
 -- @player client Player attempting to drop an item
