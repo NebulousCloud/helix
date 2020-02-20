@@ -189,7 +189,7 @@ ITEM.functions.Equip = {
 		if (!table.IsEmpty(groups)) then
 			char:SetData("oldGroups" .. item.outfitCategory, groups)
 
-			if (!item.bNoBodygroupReset) then
+			if (!item.bNoResetBodygroup) then
 				client:ResetBodygroups()
 			end
 		end
