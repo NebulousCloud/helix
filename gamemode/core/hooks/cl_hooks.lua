@@ -633,16 +633,16 @@ function GM:PostDrawOpaqueRenderables(bDepth, bSkybox)
 		render.SetStencilZFailOperation(STENCILOPERATION_KEEP)
 		render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
 		render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
-		render.SetStencilReferenceValue(1)
+		render.SetStencilReferenceValue(27)
 
 		for i = 1, #ix.blurRenderQueue do
 			ix.blurRenderQueue[i]()
 		end
 
-		render.SetStencilReferenceValue(2)
+		render.SetStencilReferenceValue(34)
 		render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
 		render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
-		render.SetStencilReferenceValue(1)
+		render.SetStencilReferenceValue(27)
 
 		cam.Start2D()
 			ix.util.DrawBlurAt(0, 0, ScrW(), ScrH())
@@ -844,9 +844,9 @@ function GM:RenderScreenspaceEffects()
 			render.SuppressEngineLighting(true)
 			cam.IgnoreZ(true)
 				render.SetColorModulation(1, 1, 1)
-				render.SetStencilWriteMask(1)
-				render.SetStencilTestMask(1)
-				render.SetStencilReferenceValue(1)
+				render.SetStencilWriteMask(28)
+				render.SetStencilTestMask(28)
+				render.SetStencilReferenceValue(35)
 
 				render.SetStencilCompareFunction(STENCIL_ALWAYS)
 				render.SetStencilPassOperation(STENCIL_REPLACE)

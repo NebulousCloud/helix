@@ -192,9 +192,9 @@ function PANEL:Paint(width, height)
 
 		ix.util.ResetStencilValues()
 		render.SetStencilEnable(true)
-			render.SetStencilWriteMask(1)
-			render.SetStencilTestMask(1)
-			render.SetStencilReferenceValue(1)
+			render.SetStencilWriteMask(30)
+			render.SetStencilTestMask(30)
+			render.SetStencilReferenceValue(31)
 
 			render.SetStencilCompareFunction(STENCIL_ALWAYS)
 			render.SetStencilPassOperation(STENCIL_REPLACE)
