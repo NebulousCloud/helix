@@ -1,7 +1,15 @@
+<p align="center">
+	<img src="https://raw.githubusercontent.com/NebulousCloud/helix/master/docs/banner.gif" alt="Helix" />
+</p>
 
-# helix
-
-[![Build Status](https://travis-ci.org/NebulousCloud/helix.svg?branch=master)](https://travis-ci.org/NebulousCloud/helix) [![Discord](https://img.shields.io/discord/505957257125691423.svg)](https://discord.gg/2AutUcF)
+<p align="center">
+	<a href="https://discord.gg/2AutUcF">
+		<img src="https://img.shields.io/discord/505957257125691423.svg" alt="Discord" />
+	</a>
+	<a href="https://travis-ci.org/NebulousCloud/helix">
+		<img src="https://travis-ci.org/NebulousCloud/helix.svg?branch=master" alt="Build Status" />
+	</a>
+</p>
 
 Helix is a framework for roleplay gamemodes in [Garry's Mod](https://gmod.facepunch.com/), based off of [NutScript 1.1](https://github.com/rebel1324/NutScript). Helix provides a stable, feature-filled, open-source, and DRM-free base so you can focus more on the things you want: making gameplay.
 
@@ -14,16 +22,23 @@ You can also use our HL2 RP schema at https://github.com/NebulousCloud/helix-hl2
 If you'd like to enhance your gamemode, you can use any of the freely provided plugins available at the [Helix Plugin Center](https://plugins.gethelix.co). It is also encouraged to submit your own plugins for others to find and use at https://github.com/nebulouscloud/helix-plugins
 
 ## Documentation
-Up-to-date documentation can be found at https://docs.gethelix.co. This is automatically updated when commits are pushed to the master branch. As it currently stands, you might find it a bit lacking. However, this will definitely improve over time as we continue polishing off the framework.
+Up-to-date documentation can be found at https://docs.gethelix.co. This is automatically updated when commits are pushed to the master branch.
 
-If you'd like to ask some questions or integrate with the community, you can always join our [Discord](https://discord.gg/2AutUcF) server.
+If you'd like to ask some questions or integrate with the community, you can always join our [Discord](https://discord.gg/2AutUcF) server. We highly encourage you to search through the documentation before posting a question - the docs contain a good deal of information about how the various systems in Helix work, and it might explain what you're looking for.
 
 ### Building documentation
-We use [LDoc](https://github.com/stevedonovan/LDoc) to build our documentation. The easiest way to start building is through [LuaRocks](https://luarocks.org/).
-```
-luarocks install ldoc
+If you're planning on contributing to the documentation, you'll probably want to preview your changes before you commit. The documentation can be built using [LDoc](https://github.com/impulsh/ldoc) - note that we use a forked version to add some functionality. You'll need [LuaRocks](https://luarocks.org/) installed in order to get started.
+
+```shell
+# installing ldoc
+git clone https://github.com/impulsh/ldoc
+cd ldoc
+luarocks make
+
+# navigate to the helix repo folder and run
 ldoc .
 ```
+
 You may not see the syntax highlighting work on your local copy - you'll need to copy the files in `docs/js` and `docs/css` over into the `docs/html` folder after it's done building.
 
 ## Contributing
