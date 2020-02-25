@@ -52,11 +52,12 @@ hook.Add("ColorSchemeChanged", "ixSkin", function(color)
 	SKIN.Colours.Area.Background = color
 end)
 
-function SKIN:DrawHelixCurved(x, y, radius, segments, barHeight, fraction, color)
+function SKIN:DrawHelixCurved(x, y, radius, segments, barHeight, fraction, color, altColor)
 	radius = radius or math.min(ScreenScale(72), 128) * 2
 	segments = segments or 76
 	barHeight = barHeight or 64
 	color = color or ix.config.Get("color")
+	altColor = altColor or Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, color.a)
 	fraction = fraction or 1
 
 	surface.SetTexture(-1)
@@ -70,7 +71,7 @@ function SKIN:DrawHelixCurved(x, y, radius, segments, barHeight, fraction, color
 		if (barOffset > 0) then
 			surface.SetDrawColor(color)
 		else
-			surface.SetDrawColor(color.r * 0.5, color.g * 0.5, color.b * 0.5, color.a)
+			surface.SetDrawColor(altColor)
 		end
 
 		surface.DrawTexturedRectRotated(barX, barY, 4, barOffset * (barHeight * fraction), math.deg(angle))
