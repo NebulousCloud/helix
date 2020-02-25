@@ -162,7 +162,7 @@ function PANEL:Populate()
 end
 
 function PANEL:UpdatePlugin(uniqueID, bEnabled)
-	for k, v in pairs(self:GetRows()) do
+	for _, v in pairs(self:GetRows()) do
 		if (v.id == uniqueID) then
 			v:SetValue(bEnabled, true)
 		end
@@ -171,7 +171,7 @@ end
 
 -- called from Populate and from the ixConfigUnloadedList net message
 function PANEL:UpdateUnloaded(bNoSizeToContents)
-	for k, v in pairs(self:GetRows()) do
+	for _, v in pairs(self:GetRows()) do
 		if (ix.plugin.unloaded[v.id]) then
 			v:SetValue(false, true)
 		end

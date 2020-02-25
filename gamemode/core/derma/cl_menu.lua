@@ -309,7 +309,6 @@ end
 function PANEL:PopulateTabs()
 	local default
 	local tabs = {}
-	local sections = {}
 
 	hook.Run("CreateMenuButtons", tabs)
 
