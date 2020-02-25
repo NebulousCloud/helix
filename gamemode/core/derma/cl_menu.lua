@@ -102,6 +102,11 @@ function PANEL:TransitionSubpanel(id)
 
 	if (IsValid(subpanel)) then
 		if (!subpanel.bPopulated) then
+			-- we need to set the size of the subpanel if it's a section since it will be 0, 0
+			if (subpanel.sectionParent) then
+				subpanel:SetSize(self:GetStandardSubpanelSize())
+			end
+
 			local info = subpanel.info
 			subpanel.Paint = nil
 
@@ -233,43 +238,83 @@ function PANEL:ShowBackground()
 	})
 end
 
-function PANEL:PopulateTabs()
-	local default
-	local tabs = {}
+function PANEL:GetStandardSubpanelSize()
+	return ScrW() * 0.75 - self:GetPadding() * 3, ScrH() - self:GetPadding() * 2
+end
 
-	hook.Run("CreateMenuButtons", tabs)
+function PANEL:SetupTab(name, info, sectionParent)
+	local bTable = istable(info)
+	local buttonColor = (bTable and info.buttonColor) or (ix.config.Get("color") or Color(140, 140, 140, 255))
+	local bDefault = (bTable and info.bDefault) or false
+	local qualifiedName = sectionParent and (sectionParent.name .. "/" .. name) or name
 
-	for name, info in SortedPairs(tabs) do
-		local bTable = istable(info)
-		local buttonColor = (bTable and info.buttonColor) or (ix.config.Get("color") or Color(140, 140, 140, 255))
-		local bDefault = (bTable and info.bDefault) or false
+	-- setup subpanels without populating them so we can retain the order
+	local subpanel = self:AddSubpanel(qualifiedName, true)
+	local id = subpanel.subpanelID
+	subpanel.info = info
+	subpanel.sectionParent = sectionParent and qualifiedName
+	subpanel:SetPaintedManually(true)
+	subpanel:SetTitle(nil)
 
-		-- setup subpanels without populating them so we can retain the order
-		local subpanel = self:AddSubpanel(name, true)
-		local id = subpanel.subpanelID
-		subpanel.info = info
-		subpanel:SetPaintedManually(true)
-		subpanel:SetTitle(nil)
-		subpanel:SetSize(ScrW() * 0.75 - self:GetPadding() * 3, ScrH() - self:GetPadding() * 2)
+	if (sectionParent) then
+		-- hide section subpanels if they haven't been populated to seeing more subpanels than necessary
+		-- fly by as you navigate tabs in the menu
+		subpanel:SetSize(0, 0)
+	else
+		subpanel:SetSize(self:GetStandardSubpanelSize())
 
 		-- this is called while the subpanel has not been populated
 		subpanel.Paint = function(panel, width, height)
 			derma.SkinFunc("PaintPlaceholderPanel", panel, width, height)
 		end
+	end
 
-		local button = self.tabs:Add("ixMenuSelectionButton")
+	local button
+
+	if (sectionParent) then
+		button = sectionParent:AddSection(L(name))
+		name = qualifiedName
+	else
+		button = self.tabs:Add("ixMenuSelectionButton")
 		button:SetText(L(name))
+		button:SizeToContents()
 		button:Dock(TOP)
 		button:SetButtonList(self.tabs.buttons)
 		button:SetBackgroundColor(buttonColor)
-		button.id = id
-		button.OnSelected = function()
-			self:TransitionSubpanel(id)
-		end
+	end
 
-		if (bTable and info.PopulateTabButton) then
-			info:PopulateTabButton(button)
-		end
+	button.name = name
+	button.id = id
+	button.OnSelected = function()
+		self:TransitionSubpanel(id)
+	end
+
+	if (bTable and info.PopulateTabButton) then
+		info:PopulateTabButton(button)
+	end
+
+	-- don't allow sections in sections
+	if (sectionParent or !bTable or !info.Sections) then
+		return bDefault, button, subpanel
+	end
+
+	-- create button sections
+	for sectionName, sectionInfo in pairs(info.Sections) do
+		self:SetupTab(sectionName, sectionInfo, button)
+	end
+
+	return bDefault, button, subpanel
+end
+
+function PANEL:PopulateTabs()
+	local default
+	local tabs = {}
+	local sections = {}
+
+	hook.Run("CreateMenuButtons", tabs)
+
+	for name, info in SortedPairs(tabs) do
+		local bDefault, button = self:SetupTab(name, info)
 
 		if (bDefault) then
 			default = button
