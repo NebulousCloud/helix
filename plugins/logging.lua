@@ -128,6 +128,14 @@ if (SERVER) then
 		return string.format("%s rolled %d out of %d.", client:Name(), value, max)
 	end)
 
+	ix.log.AddType("pluginLoaded", function(client, uniqueID)
+		return string.format("%s has enabled the %s plugin for next restart.", client:GetName(), uniqueID)
+	end)
+
+	ix.log.AddType("pluginUnloaded", function(client, uniqueID)
+		return string.format("%s has disabled the %s plugin for next restart.", client:GetName(), uniqueID)
+	end)
+
 	function PLUGIN:PlayerInitialSpawn(client)
 		ix.log.Add(client, "connect")
 	end
