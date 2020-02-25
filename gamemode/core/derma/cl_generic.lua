@@ -258,8 +258,12 @@ end
 vgui.Register("ixListRow", PANEL, "Panel")
 
 -- alternative checkbox
+DEFINE_BASECLASS("EditablePanel")
 PANEL = {}
 
+AccessorFunc(PANEL, "enabledText", "EnabledText", FORCE_STRING)
+AccessorFunc(PANEL, "disabledText", "DisabledText", FORCE_STRING)
+AccessorFunc(PANEL, "font", "Font", FORCE_STRING)
 AccessorFunc(PANEL, "bChecked", "Checked", FORCE_BOOL)
 AccessorFunc(PANEL, "animationTime", "AnimationTime", FORCE_NUMBER)
 AccessorFunc(PANEL, "labelPadding", "LabelPadding", FORCE_NUMBER)
@@ -270,14 +274,22 @@ function PANEL:Init()
 	self:SetMouseInputEnabled(true)
 	self:SetCursor("hand")
 
-	self.labelPadding = 8
-
-	self.animationOffset = 0
+	self.enabledText = L("yes"):upper()
+	self.disabledText = L("no"):upper()
+	self.font = "ixMenuButtonFont"
 	self.animationTime = 0.5
 	self.bChecked = false
+	self.labelPadding = 8
+	self.animationOffset = 0
 
-	surface.SetFont("ixMenuButtonFont")
-	self:SetWide(math.max(surface.GetTextSize(L("yes")), surface.GetTextSize(L("no"))) + self.labelPadding)
+	self:SizeToContents()
+end
+
+function PANEL:SizeToContents()
+	BaseClass.SizeToContents(self)
+
+	surface.SetFont(self.font)
+	self:SetWide(math.max(surface.GetTextSize(self.enabledText), surface.GetTextSize(self.disabledText)) + self.labelPadding)
 end
 
 -- can be overidden to change audio params
@@ -320,9 +332,9 @@ function PANEL:Paint(width, height)
 	surface.DrawRect(0, 0, width, height)
 
 	local offset = self.animationOffset
-	surface.SetFont("ixMenuButtonFont")
+	surface.SetFont(self.font)
 
-	local text = L("no"):upper()
+	local text = self.disabledText
 	local textWidth, textHeight = surface.GetTextSize(text)
 	local y = offset * -textHeight
 
@@ -330,7 +342,7 @@ function PANEL:Paint(width, height)
 	surface.SetTextPos(width * 0.5 - textWidth * 0.5, y + height * 0.5 - textHeight * 0.5)
 	surface.DrawText(text)
 
-	text = L("yes"):upper()
+	text = self.enabledText
 	y = y + textHeight
 	textWidth, textHeight = surface.GetTextSize(text)
 
