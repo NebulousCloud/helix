@@ -236,6 +236,7 @@ function PANEL:Init()
 	-- create character button
 	local createButton = self.mainButtonList:Add("ixMenuButton")
 	createButton:SetText("create")
+	createButton:SizeToContents()
 	createButton.DoClick = function()
 		local maximum = hook.Run("GetMaxPlayerCharacter", LocalPlayer()) or ix.config.Get("maxCharacters", 5)
 		-- don't allow creation if we've hit the character limit
@@ -252,6 +253,7 @@ function PANEL:Init()
 	-- load character button
 	self.loadButton = self.mainButtonList:Add("ixMenuButton")
 	self.loadButton:SetText("load")
+	self.loadButton:SizeToContents()
 	self.loadButton.DoClick = function()
 		self:Dim()
 		parent.loadCharacterPanel:SlideUp()
@@ -272,6 +274,7 @@ function PANEL:Init()
 
 		local extraButton = self.mainButtonList:Add("ixMenuButton")
 		extraButton:SetText(extraText, true)
+		extraButton:SizeToContents()
 		extraButton.DoClick = function()
 			gui.OpenURL(extraURL)
 		end
@@ -297,6 +300,7 @@ function PANEL:UpdateReturnButton(bValue)
 	end
 
 	self.returnButton:SetText(bValue and "return" or "leave")
+	self.returnButton:SizeToContents()
 end
 
 function PANEL:OnDim()

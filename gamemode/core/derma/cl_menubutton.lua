@@ -15,17 +15,34 @@ function PANEL:Init()
 	self:SetContentAlignment(4)
 	self:SetTextInset(buttonPadding, 0)
 
+	self.padding = {32, 12, 32, 12} -- left, top, right, bottom
 	self.backgroundColor = Color(0, 0, 0)
 	self.backgroundAlpha = 128
 	self.currentBackgroundAlpha = 0
 end
 
-function PANEL:SetText(text, noTranslation)
-	surface.SetFont("ixMenuButtonFont")
-	BaseClass.SetText(self, noTranslation and text:upper() or L(text):upper())
+function PANEL:GetPadding()
+	return self.padding
+end
 
-	local w, h = surface.GetTextSize(self:GetText())
-	self:SetSize(w + 64, h + 32)
+function PANEL:SetPadding(left, top, right, bottom)
+	self.padding = {
+		left or self.padding[1],
+		top or self.padding[2],
+		right or self.padding[3],
+		bottom or self.padding[4]
+	}
+end
+
+function PANEL:SetText(text, noTranslation)
+	BaseClass.SetText(self, noTranslation and text:upper() or L(text):upper())
+end
+
+function PANEL:SizeToContents()
+	BaseClass.SizeToContents(self)
+
+	local width, height = self:GetSize()
+	self:SetSize(width + self.padding[1] + self.padding[3], height + self.padding[2] + self.padding[4])
 end
 
 function PANEL:PaintBackground(width, height)
