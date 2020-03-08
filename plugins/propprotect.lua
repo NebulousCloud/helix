@@ -46,7 +46,11 @@ local PROP_BLACKLIST = {
 	["models/props_phx/huge/evildisc_corp.mdl"] = true,
 	["models/props_phx/misc/potato_launcher_explosive.mdl"] = true,
 	["models/props_combine/combine_citadel001.mdl"] = true,
-	["models/props_phx/oildrum001_explosive.mdl"] = true
+	["models/props_phx/oildrum001_explosive.mdl"] = true,
+	["models/props_junk/wood_crate01_explosive.mdl"] = true,
+	["models/props_junk/propane_tank001a.mdl"] = true,
+	["models/props_explosive/explosive_butane_can.mdl"] = true,
+	["models/props_explosive/explosive_butane_can02.mdl"] = true
 }
 
 if (SERVER) then
