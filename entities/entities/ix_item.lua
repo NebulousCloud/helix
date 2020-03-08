@@ -15,6 +15,9 @@ function ENT:SetupDataTables()
 end
 
 if (SERVER) then
+	local invalidBoundsMin = Vector(-8, -8, -8)
+	local invalidBoundsMax = Vector(8, 8, 8)
+
 	util.AddNetworkString("ixItemEntityAction")
 
 	function ENT:Initialize()
@@ -54,17 +57,6 @@ if (SERVER) then
 		end
 	end
 
-	function ENT:OnTakeDamage(damageInfo)
-		local damage = damageInfo:GetDamage()
-		self:SetHealth(self:Health() - damage)
-
-		if (self:Health() <= 0 and !self.ixIsDestroying) then
-			self.ixIsDestroying = true
-			self.ixDamageInfo = {damageInfo:GetAttacker(), damage, damageInfo:GetInflictor()}
-			self:Remove()
-		end
-	end
-
 	function ENT:SetItem(itemID)
 		local itemTable = ix.item.instances[itemID]
 
@@ -90,10 +82,8 @@ if (SERVER) then
 			local physObj = self:GetPhysicsObject()
 
 			if (!IsValid(physObj)) then
-				local min, max = Vector(-8, -8, -8), Vector(8, 8, 8)
-
-				self:PhysicsInitBox(min, max)
-				self:SetCollisionBounds(min, max)
+				self:PhysicsInitBox(invalidBoundsMin, invalidBoundsMax)
+				self:SetCollisionBounds(invalidBoundsMin, invalidBoundsMax)
 			end
 
 			if (IsValid(physObj)) then
@@ -114,6 +104,24 @@ if (SERVER) then
 		ix.item.Instance(0, itemTable.uniqueID, itemTable.data, 1, 1, function(item)
 			self:SetItem(item:GetID())
 		end)
+	end
+
+	function ENT:OnTakeDamage(damageInfo)
+		local itemTable = ix.item.instances[self.ixItemID]
+
+		if (itemTable.OnEntityTakeDamage
+		and itemTable:OnEntityTakeDamage(self, damageInfo) == false) then
+			return
+		end
+
+		local damage = damageInfo:GetDamage()
+		self:SetHealth(self:Health() - damage)
+
+		if (self:Health() <= 0 and !self.ixIsDestroying) then
+			self.ixIsDestroying = true
+			self.ixDamageInfo = {damageInfo:GetAttacker(), damage, damageInfo:GetInflictor()}
+			self:Remove()
+		end
 	end
 
 	function ENT:OnRemove()

@@ -41,13 +41,15 @@ local function CalcStaminaChange(client)
 		end
 	end
 
-	local walkSpeed = client:GetWalkSpeed()
-	local maxAttributes = ix.config.Get("maxAttributes", 30)
+
+	local walkSpeed = ix.config.Get("walkSpeed")
+	local maxAttributes = ix.config.Get("maxAttributes", 100)
+
 	local offset
 
 	if (client:KeyDown(IN_SPEED) and client:GetVelocity():LengthSqr() >= (walkSpeed * walkSpeed)) then
 		-- characters could have attribute values greater than max if the config was changed
-		offset = -ix.config.Get("staminaDrain", 1) + math.min(character:GetAttribute("end", 0), maxAttributes) / maxAttributes
+		offset = -ix.config.Get("staminaDrain", 1) + math.min(character:GetAttribute("end", 0), maxAttributes) / 100
 	else
 		offset = client:Crouching() and ix.config.Get("staminaCrouchRegeneration", 2) or ix.config.Get("staminaRegeneration", 1.75)
 	end

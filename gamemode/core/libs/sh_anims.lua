@@ -408,6 +408,18 @@ if (SERVER) then
 
 	local playerMeta = FindMetaTable("Player")
 
+	--- Player anim methods
+	-- @classmod Player
+
+	--- Forces this player's model to play an animation sequence. It also prevents the player from firing their weapon while the
+	-- animation is playing.
+	-- @realm server
+	-- @string sequence Name of the animation sequence to play
+	-- @func[opt=nil] callback Function to call when the animation finishes. This is also called immediately if the animation
+	-- fails to play
+	-- @number[opt=nil] time How long to play the animation for. This defaults to the duration of the animation
+	-- @bool[opt=false] bNoFreeze Whether or not to avoid freezing this player in place while the animation is playing
+	-- @see LeaveSequence
 	function playerMeta:ForceSequence(sequence, callback, time, bNoFreeze)
 		hook.Run("PlayerEnterSequence", self, sequence, callback, time, bNoFreeze)
 
@@ -455,6 +467,8 @@ if (SERVER) then
 		return false
 	end
 
+	--- Forcefully stops this player's model from playing an animation that was started by `ForceSequence`.
+	-- @realm server
 	function playerMeta:LeaveSequence()
 		hook.Run("PlayerLeaveSequence", self)
 

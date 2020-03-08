@@ -93,7 +93,9 @@ if (SERVER) then
 	end
 
 	function PLUGIN:SaveData()
-		self:SaveContainer()
+		if (!ix.shuttingDown) then
+			self:SaveContainer()
+		end
 	end
 
 	function PLUGIN:ContainerRemoved(entity, inventory)

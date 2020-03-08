@@ -20,7 +20,7 @@ functionality whenever the flag is added or removed. For example:
 	Entity(1):GetCharacter():TakeFlags("z")
 	> z flag given: false
 
-	print(Entity(1):GetCharacter():HasFlag("z"))
+	print(Entity(1):GetCharacter():HasFlags("z"))
 	> false
 ]]
 -- @module ix.flag
@@ -67,17 +67,26 @@ if (SERVER) then
 end
 
 do
-	-- Extend the character metatable to allow flag giving/taking.
 	local character = ix.meta.character
 
-	-- Flags can only be set server-side.
 	if (SERVER) then
-		-- Set the flag data to the flag string.
+		--- Flag util functions for character
+		-- @classmod Character
+
+		--- Sets this character's accessible flags. Note that this method overwrites **all** flags instead of adding them.
+		-- @realm server
+		-- @string flags Flag(s) this charater is allowed to have
+		-- @see GiveFlags
 		function character:SetFlags(flags)
 			self:SetData("f", flags)
 		end
 
-		-- Add a flag to the flag string.
+		--- Adds a flag to the list of this character's accessible flags. This does not overwrite existing flags.
+		-- @realm server
+		-- @string flags Flag(s) this character should be given
+		-- @usage character:GiveFlags("pet")
+		-- -- gives p, e, and t flags to the character
+		-- @see HasFlags
 		function character:GiveFlags(flags)
 			local addedFlags = ""
 
@@ -104,7 +113,12 @@ do
 			end
 		end
 
-		-- Remove the flags from the flag string.
+		--- Removes this character's access to the given flags.
+		-- @realm server
+		-- @string flags Flag(s) to remove from this character
+		-- @usage -- for a character with "pet" flags
+		-- character:TakeFlags("p")
+		-- -- character now has e, and t flags
 		function character:TakeFlags(flags)
 			local oldFlags = self:GetFlags()
 			local newFlags = oldFlags
@@ -129,12 +143,18 @@ do
 		end
 	end
 
-	-- Return the flag string.
+	--- Returns all of the flags this character has.
+	-- @realm server
+	-- @treturn string Flags this character has represented as one string. You can access individual flags by iterating through
+	-- the string letter by letter
 	function character:GetFlags()
 		return self:GetData("f", "")
 	end
 
-	-- Check if the flag string contains the flags specified.
+	--- Returns `true` if the character has the given flag(s).
+	-- @realm server
+	-- @string flags Flag(s) to check access for
+	-- @treturn bool Whether or not this character has access to the given flag(s)
 	function character:HasFlags(flags)
 		local bHasFlag = hook.Run("CharacterHasFlags", self, flags)
 

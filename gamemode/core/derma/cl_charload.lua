@@ -155,8 +155,9 @@ end
 function PANEL:Paint(width, height)
 	local x, y = self:LocalToScreen(0, 0)
 	local bTransition = self.lastCharacter:GetModel() != errorModel
+	local modelFOV = (ScrW() > ScrH() * 1.8) and 92 or 70
 
-	cam.Start3D(self.cameraPosition, self.cameraAngle, 70, x, y, width, height)
+	cam.Start3D(self.cameraPosition, self.cameraAngle, modelFOV, x, y, width, height)
 		render.SuppressEngineLighting(true)
 		render.SetLightingOrigin(self.activeCharacter:GetPos())
 
@@ -191,9 +192,9 @@ function PANEL:Paint(width, height)
 
 		ix.util.ResetStencilValues()
 		render.SetStencilEnable(true)
-			render.SetStencilWriteMask(1)
-			render.SetStencilTestMask(1)
-			render.SetStencilReferenceValue(1)
+			render.SetStencilWriteMask(30)
+			render.SetStencilTestMask(30)
+			render.SetStencilReferenceValue(31)
 
 			render.SetStencilCompareFunction(STENCIL_ALWAYS)
 			render.SetStencilPassOperation(STENCIL_REPLACE)
@@ -250,6 +251,7 @@ function PANEL:Init()
 	local padding = self:GetPadding()
 	local halfWidth = parent:GetWide() * 0.5 - (padding * 2)
 	local halfHeight = parent:GetTall() * 0.5 - (padding * 2)
+	local modelFOV = (ScrW() > ScrH() * 1.8) and 102 or 78
 
 	self.animationTime = 1
 	self.backgroundFraction = 1
@@ -273,21 +275,15 @@ function PANEL:Init()
 	local back = controlList:Add("ixMenuButton")
 	back:Dock(BOTTOM)
 	back:SetText("return")
+	back:SizeToContents()
 	back.DoClick = function()
 		self:SlideDown()
 		parent.mainPanel:Undim()
 	end
 
-	self.characterList = controlList:Add("Panel")
+	self.characterList = controlList:Add("ixCharMenuButtonList")
 	self.characterList.buttons = {}
 	self.characterList:Dock(FILL)
-	self.characterList.Clear = function(panel)
-		for _, v in pairs(panel:GetChildren()) do
-			if (IsValid(v)) then
-				v:Remove()
-			end
-		end
-	end
 
 	-- right-hand side with carousel and buttons
 	local infoPanel = self.panel:Add("Panel")
@@ -301,6 +297,7 @@ function PANEL:Init()
 	continueButton:Dock(FILL)
 	continueButton:SetText("choose")
 	continueButton:SetContentAlignment(6)
+	continueButton:SizeToContents()
 	continueButton.DoClick = function()
 		self:SetMouseInputEnabled(false)
 		self:Slide("down", self.animationTime, function()
@@ -315,6 +312,7 @@ function PANEL:Init()
 	deleteButton:SetText("delete")
 	deleteButton:SetContentAlignment(5)
 	deleteButton:SetTextInset(0, 0)
+	deleteButton:SizeToContents()
 	deleteButton:SetTextColor(derma.GetColor("Error", deleteButton))
 	deleteButton.DoClick = function()
 		self:SetActiveSubpanel("delete")
@@ -342,6 +340,7 @@ function PANEL:Init()
 	local deleteReturn = deleteInfo:Add("ixMenuButton")
 	deleteReturn:Dock(BOTTOM)
 	deleteReturn:SetText("no")
+	deleteReturn:SizeToContents()
 	deleteReturn.DoClick = function()
 		self:SetActiveSubpanel("main")
 	end
@@ -350,6 +349,7 @@ function PANEL:Init()
 	deleteConfirm:Dock(BOTTOM)
 	deleteConfirm:SetText("yes")
 	deleteConfirm:SetContentAlignment(6)
+	deleteConfirm:SizeToContents()
 	deleteConfirm:SetTextColor(derma.GetColor("Error", deleteConfirm))
 	deleteConfirm.DoClick = function()
 		local id = self.character:GetID()
@@ -366,7 +366,7 @@ function PANEL:Init()
 	self.deleteModel = deleteInfo:Add("ixModelPanel")
 	self.deleteModel:Dock(FILL)
 	self.deleteModel:SetModel(errorModel)
-	self.deleteModel:SetFOV(78)
+	self.deleteModel:SetFOV(modelFOV)
 	self.deleteModel.PaintModel = self.deleteModel.Paint
 
 	local deleteNag = self.delete:Add("Panel")
@@ -404,7 +404,7 @@ function PANEL:Populate(ignoreID)
 	local bSelected
 
 	-- loop backwards to preserve order since we're docking to the bottom
-	for i = #ix.characters, 1, -1 do
+	for i = 1, #ix.characters do
 		local id = ix.characters[i]
 		local character = ix.char.loaded[id]
 
@@ -419,7 +419,7 @@ function PANEL:Populate(ignoreID)
 		local button = self.characterList:Add("ixMenuSelectionButton")
 		button:SetBackgroundColor(color)
 		button:SetText(character:GetName())
-		button:Dock(BOTTOM)
+		button:SizeToContents()
 		button:SetButtonList(self.characterList.buttons)
 		button.character = character
 		button.OnSelected = function(panel)
@@ -431,17 +431,26 @@ function PANEL:Populate(ignoreID)
 
 		if (localCharacter and character:GetID() == localCharacter:GetID()) then
 			button:SetSelected(true)
+			self.characterList:ScrollToChild(button)
+
 			bSelected = true
 		end
 	end
 
 	if (!bSelected) then
-		if (#self.characterList.buttons > 0) then
-			self.characterList.buttons[1]:SetSelected(true)
+		local buttons = self.characterList.buttons
+
+		if (#buttons > 0) then
+			local button = buttons[#buttons]
+
+			button:SetSelected(true)
+			self.characterList:ScrollToChild(button)
 		else
 			self.character = nil
 		end
 	end
+
+	self.characterList:SizeToContents()
 end
 
 function PANEL:OnSlideUp()

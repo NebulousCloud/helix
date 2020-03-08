@@ -184,7 +184,7 @@ if (CLIENT) then
 	-- @param value New value to assign to the option
 	-- @bool[opt=false] bNoSave Whether or not to avoid saving
 	function ix.option.Set(key, value, bNoSave)
-		local option = assert(ix.option.stored[key], "expected valid option key")
+		local option = assert(ix.option.stored[key], "invalid option key \"" .. tostring(key) .. "\"")
 
 		if (option.type == ix.type.number) then
 			value = math.Clamp(math.Round(value, option.decimals), option.min, option.max)

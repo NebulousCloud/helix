@@ -12,8 +12,6 @@ function ENT:SetupDataTables()
 end
 
 if (SERVER) then
-	ENT.money = 0
-
 	function ENT:Initialize()
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -45,7 +43,7 @@ if (SERVER) then
 	end
 
 	function ENT:GetMoney()
-		return self.money
+		return self.money or 0
 	end
 
 	function ENT:OnRemove()

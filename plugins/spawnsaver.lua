@@ -31,7 +31,7 @@ function PLUGIN:PlayerLoadedCharacter(client, character, lastChar)
 				if (position[3] and position[3]:lower() == game.GetMap():lower()) then
 					-- Restore the player to that position.
 					client:SetPos(position[1].x and position[1] or client:GetPos())
-					client:SetEyeAngles(position[2].p and position[2] or Angle(0, 0, 0))
+					client:SetEyeAngles(position[2].p and position[2] or angle_zero)
 				end
 
 				-- Remove the position data since it is no longer needed.

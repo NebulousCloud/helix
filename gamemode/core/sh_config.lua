@@ -8,6 +8,9 @@ ix.config.stored = ix.config.stored or {}
 if (SERVER) then
 	util.AddNetworkString("ixConfigList")
 	util.AddNetworkString("ixConfigSet")
+	util.AddNetworkString("ixConfigRequestUnloadedList")
+	util.AddNetworkString("ixConfigUnloadedList")
+	util.AddNetworkString("ixConfigPluginToggle")
 
 	ix.config.server = ix.yaml.Read("gamemodes/helix/helix.yml") or {}
 end
@@ -228,6 +231,38 @@ if (SERVER) then
 			ix.log.Add(client, "cfgSet", key, value)
 		end
 	end)
+
+	net.Receive("ixConfigRequestUnloadedList", function(length, client)
+		if (!CAMI.PlayerHasAccess(client, "Helix - Manage Config", nil)) then
+			return
+		end
+
+		net.Start("ixConfigUnloadedList")
+			net.WriteTable(ix.plugin.unloaded)
+		net.Send(client)
+	end)
+
+	net.Receive("ixConfigPluginToggle", function(length, client)
+		if (!CAMI.PlayerHasAccess(client, "Helix - Manage Config", nil)) then
+			return
+		end
+
+		local uniqueID = net.ReadString()
+		local bUnloaded = !!ix.plugin.unloaded[uniqueID]
+		local bShouldEnable = net.ReadBool()
+
+		if ((bShouldEnable and bUnloaded) or (!bShouldEnable and !bUnloaded)) then
+			ix.plugin.SetUnloaded(uniqueID, !bShouldEnable) -- flip bool since we're setting unloaded, not enabled
+
+			ix.util.NotifyLocalized(bShouldEnable and "pluginLoaded" or "pluginUnloaded", nil, client:GetName(), uniqueID)
+			ix.log.Add(client, bShouldEnable and "pluginLoaded" or "pluginUnloaded", uniqueID)
+
+			net.Start("ixConfigPluginToggle")
+				net.WriteString(uniqueID)
+				net.WriteBool(bShouldEnable)
+			net.Broadcast()
+		end
+	end)
 else
 	net.Receive("ixConfigList", function()
 		local data = net.ReadTable()
@@ -268,9 +303,31 @@ else
 			end
 		end
 	end)
-end
 
-if (CLIENT) then
+	net.Receive("ixConfigUnloadedList", function()
+		ix.plugin.unloaded = net.ReadTable()
+		ix.gui.bReceivedUnloadedPlugins = true
+
+		if (IsValid(ix.gui.pluginManager)) then
+			ix.gui.pluginManager:UpdateUnloaded()
+		end
+	end)
+
+	net.Receive("ixConfigPluginToggle", function()
+		local uniqueID = net.ReadString()
+		local bEnabled = net.ReadBool()
+
+		if (bEnabled) then
+			ix.plugin.unloaded[uniqueID] = nil
+		else
+			ix.plugin.unloaded[uniqueID] = true
+		end
+
+		if (IsValid(ix.gui.pluginManager)) then
+			ix.gui.pluginManager:UpdatePlugin(uniqueID, bEnabled)
+		end
+	end)
+
 	hook.Add("CreateMenuButtons", "ixConfig", function(tabs)
 		if (!CAMI.PlayerHasAccess(LocalPlayer(), "Helix - Manage Config", nil)) then
 			return
@@ -278,100 +335,24 @@ if (CLIENT) then
 
 		tabs["config"] = {
 			Create = function(info, container)
-				local settings = container:Add("ixSettings")
-				settings:SetSearchEnabled(true)
-
-				-- gather categories
-				local categories = {}
-				local categoryIndices = {}
-
-				for k, v in pairs(ix.config.stored) do
-					local index = v.data and v.data.category or "misc"
-
-					categories[index] = categories[index] or {}
-					categories[index][k] = v
-				end
-
-				-- sort by category phrase
-				for k, _ in pairs(categories) do
-					categoryIndices[#categoryIndices + 1] = k
-				end
-
-				table.sort(categoryIndices, function(a, b)
-					return L(a) < L(b)
-				end)
-
-				-- add panels
-				for _, category in ipairs(categoryIndices) do
-					local categoryPhrase = L(category)
-					settings:AddCategory(categoryPhrase)
-
-					-- we can use sortedpairs since configs don't have phrases to account for
-					for k, v in SortedPairs(categories[category]) do
-						if (isfunction(v.hidden) and v.hidden()) then
-							continue
-						end
-
-						local data = v.data.data
-						local type = v.type
-						local value = ix.util.SanitizeType(type, ix.config.Get(k))
-
-						-- @todo check ix.gui.properties
-						local row = settings:AddRow(type, categoryPhrase)
-						row:SetText(ix.util.ExpandCamelCase(k))
-
-						-- type-specific properties
-						if (type == ix.type.number) then
-							row:SetMin(data and data.min or 0)
-							row:SetMax(data and data.max or 1)
-							row:SetDecimals(data and data.decimals or 0)
-						end
-
-						row:SetValue(value, true)
-						row:SetShowReset(value != v.default, k, v.default)
-
-						row.OnValueChanged = function(panel)
-							local newValue = ix.util.SanitizeType(type, panel:GetValue())
-
-							panel:SetShowReset(newValue != v.default, k, v.default)
-
-							net.Start("ixConfigSet")
-								net.WriteString(k)
-								net.WriteType(newValue)
-							net.SendToServer()
-						end
-
-						row.OnResetClicked = function(panel)
-							panel:SetValue(v.default, true)
-							panel:SetShowReset(false)
-
-							net.Start("ixConfigSet")
-								net.WriteString(k)
-								net.WriteType(v.default)
-							net.SendToServer()
-						end
-
-						row:GetLabel():SetHelixTooltip(function(tooltip)
-							local title = tooltip:AddRow("name")
-							title:SetImportant()
-							title:SetText(k)
-							title:SizeToContents()
-							title:SetMaxWidth(math.max(title:GetMaxWidth(), ScrW() * 0.5))
-
-							local description = tooltip:AddRow("description")
-							description:SetText(v.description)
-							description:SizeToContents()
-						end)
-					end
-				end
-
-				settings:SizeToContents()
-				container.panel = settings
+				container.panel = container:Add("ixConfigManager")
 			end,
 
 			OnSelected = function(info, container)
 				container.panel.searchEntry:RequestFocus()
-			end
+			end,
+
+			Sections = {
+				plugins = {
+					Create = function(info, container)
+						ix.gui.pluginManager = container:Add("ixPluginManager")
+					end,
+
+					OnSelected = function(info, container)
+						ix.gui.pluginManager.searchEntry:RequestFocus()
+					end
+				}
+			}
 		}
 	end)
 end

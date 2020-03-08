@@ -136,44 +136,6 @@ function GM:KeyRelease(client, key)
 	end
 end
 
-local function RemoveGrenade(client, entity)
-	if (IsValid(client) and client:IsPlayer() and client:GetCharacter()) then
-		local weapon = client:GetActiveWeapon()
-
-		if (!IsValid(weapon)) then
-			return
-		end
-
-		local ammoName = game.GetAmmoName(weapon:GetPrimaryAmmoType())
-
-		-- the ammo hasn't been removed at this point, so if it's <= 1 then we can assume that they threw their last one
-		if (isstring(ammoName) and ammoName:lower() == "grenade" and client:GetAmmoCount(ammoName) <= 1) then
-			if (weapon.ixItem and weapon.ixItem.Unequip) then
-				weapon.ixItem:Unequip(client, false, true)
-			end
-
-			client:StripWeapon(weapon:GetClass())
-		end
-	end
-end
-
-function GM:OnEntityCreated(entity)
-	if (!IsValid(entity)) then
-		return
-	end
-
-	-- hack to remove hl2 grenades after they've all been thrown
-	if (entity:GetClass() == "npc_grenade_frag") then
-		-- OnEntityCreated is called before the owner is set on the grenade entity, so we have to wait until next frame
-		timer.Simple(0, function()
-			-- Needed because engine entities are created on map load for some reason??
-			if (IsValid(entity)) then
-				RemoveGrenade(entity:GetOwner(), entity)
-			end
-		end)
-	end
-end
-
 function GM:CanPlayerInteractItem(client, action, item)
 	if (client:IsRestricted()) then
 		return false
@@ -244,8 +206,6 @@ function GM:EntityTakeDamage(entity, dmgInfo)
 			end
 		end
 
-		local fallDamage = hook.Run("GetFallDamage", entity.ixPlayer, entity:GetVelocity():Length())
-		dmgInfo:SetDamage(fallDamage)
 		entity.ixPlayer:TakeDamageInfo(dmgInfo)
 	end
 end
@@ -444,6 +404,20 @@ function GM:PlayerSpawnedVehicle(client, entity)
 	entity:SetNetVar("owner", client:GetCharacter():GetID())
 end
 
+ix.allowedHoldableClasses = {
+	["ix_item"] = true,
+	["prop_physics"] = true,
+	["prop_physics_override"] = true,
+	["prop_physics_multiplayer"] = true,
+	["prop_ragdoll"] = true
+}
+
+function GM:CanPlayerHoldObject(client, entity)
+	if (ix.allowedHoldableClasses[entity:GetClass()]) then
+		return true
+	end
+end
+
 local voiceDistance = 360000
 local function CalcPlayerCanHearPlayersVoice(listener)
 	if (!IsValid(listener)) then
@@ -462,6 +436,22 @@ end
 function GM:InitializedConfig()
 	voiceDistance = ix.config.Get("voiceDistance")
 	voiceDistance = voiceDistance * voiceDistance
+end
+
+function GM:VoiceToggled(bAllowVoice)
+	for _, v in ipairs(player.GetAll()) do
+		local uniqueID = v:SteamID64() .. "ixCanHearPlayersVoice"
+
+		if (bAllowVoice) then
+			timer.Create(uniqueID, 0.5, 0, function()
+				CalcPlayerCanHearPlayersVoice(v)
+			end)
+		else
+			timer.Remove(uniqueID)
+
+			v.ixVoiceHear = nil
+		end
+	end
 end
 
 function GM:VoiceDistanceChanged(distance)

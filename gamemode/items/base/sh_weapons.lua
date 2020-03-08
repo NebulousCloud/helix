@@ -255,7 +255,7 @@ end
 function ITEM:OnSave()
 	local weapon = self.player:GetWeapon(self.class)
 
-	if (IsValid(weapon)) then
+	if (IsValid(weapon) and weapon.ixItem == self and self:GetData("equip")) then
 		self:SetData("ammo", weapon:Clip1())
 	end
 end
@@ -285,6 +285,22 @@ hook.Add("PlayerDeath", "ixStripClip", function(client)
 
 			if (v.pacData) then
 				v:RemovePAC(client)
+			end
+		end
+	end
+end)
+
+hook.Add("EntityRemoved", "ixRemoveGrenade", function(entity)
+	-- hack to remove hl2 grenades after they've all been thrown
+	if (entity:GetClass() == "weapon_frag") then
+		local client = entity:GetOwner()
+
+		if (IsValid(client) and client:IsPlayer() and client:GetCharacter()) then
+			local ammoName = game.GetAmmoName(entity:GetPrimaryAmmoType())
+
+			if (isstring(ammoName) and ammoName:lower() == "grenade" and client:GetAmmoCount(ammoName) < 1
+			and entity.ixItem and entity.ixItem.Unequip) then
+				entity.ixItem:Unequip(client, false, true)
 			end
 		end
 	end

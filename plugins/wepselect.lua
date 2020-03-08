@@ -10,7 +10,8 @@ if (CLIENT) then
 	PLUGIN.alpha = PLUGIN.alpha or 0
 	PLUGIN.alphaDelta = PLUGIN.alphaDelta or PLUGIN.alpha
 	PLUGIN.fadeTime = PLUGIN.fadeTime or 0
-	PLUGIN.weapons = PLUGIN.weapons or {}
+
+	local matrixScale = Vector(1, 1, 0)
 
 	function PLUGIN:LoadFonts(font, genericFont)
 		surface.CreateFont("ixWeaponSelectFont", {
@@ -42,13 +43,14 @@ if (CLIENT) then
 
 			self.deltaIndex = Lerp(frameTime * 12, self.deltaIndex, self.index)
 
+			local weapons = LocalPlayer():GetWeapons()
 			local index = self.deltaIndex
 
-			if (!self.weapons[self.index]) then
-				self.index = #self.weapons
+			if (!weapons[self.index]) then
+				self.index = #weapons
 			end
 
-			for i = 1, #self.weapons do
+			for i = 1, #weapons do
 				local theta = (i - index) * 0.1
 				local color = ColorAlpha(
 					i == self.index and ix.config.Get("color") or color_white,
@@ -70,7 +72,7 @@ if (CLIENT) then
 				end
 
 				surface.SetFont("ixWeaponSelectFont")
-				local weaponName = self.weapons[i]:GetPrintName():upper()
+				local weaponName = weapons[i]:GetPrintName():upper()
 				local _, ty = surface.GetTextSize(weaponName)
 				local scale = 1 - math.abs(theta * 2)
 
@@ -79,7 +81,7 @@ if (CLIENT) then
 					shiftX + x + math.cos(theta * spacing + math.pi) * radius + radius,
 					y + lastY + math.sin(theta * spacing + math.pi) * radius - ty / 2 ,
 					1))
-				matrix:Scale(Vector(1, 1, 0) * scale)
+				matrix:Scale(matrixScale * scale)
 
 				cam.PushModelMatrix(matrix)
 					ix.util.DrawText(weaponName, 2, ty / 2, color, 0, 1, "ixWeaponSelectFont")
@@ -89,8 +91,6 @@ if (CLIENT) then
 			if (self.fadeTime < CurTime() and self.alpha > 0) then
 				self.alpha = 0
 			end
-		elseif (#self.weapons > 0) then
-			self.weapons = {}
 		end
 	end
 
@@ -142,18 +142,14 @@ if (CLIENT) then
 			bTool = tool and (tool.Scroll != nil)
 		end
 
-		self.weapons = {}
-
-		for _, v in pairs(client:GetWeapons()) do
-			self.weapons[#self.weapons + 1] = v
-		end
+		local weapons = client:GetWeapons()
 
 		if (bind:find("invprev") and !bTool) then
 			local oldIndex = self.index
-			self.index = math.min(self.index + 1, #self.weapons)
+			self.index = math.min(self.index + 1, #weapons)
 
 			if (self.alpha == 0 or oldIndex != self.index) then
-				self:OnIndexChanged(self.weapons[self.index])
+				self:OnIndexChanged(weapons[self.index])
 			end
 
 			return true
@@ -162,17 +158,17 @@ if (CLIENT) then
 			self.index = math.max(self.index - 1, 1)
 
 			if (self.alpha == 0 or oldIndex != self.index) then
-				self:OnIndexChanged(self.weapons[self.index])
+				self:OnIndexChanged(weapons[self.index])
 			end
 
 			return true
 		elseif (bind:find("slot")) then
-			self.index = math.Clamp(tonumber(bind:match("slot(%d)")) or 1, 1, #self.weapons)
-			self:OnIndexChanged(self.weapons[self.index])
+			self.index = math.Clamp(tonumber(bind:match("slot(%d)")) or 1, 1, #weapons)
+			self:OnIndexChanged(weapons[self.index])
 
 			return true
 		elseif (bind:find("attack") and self.alpha > 0) then
-			local weapon = self.weapons[self.index]
+			local weapon = weapons[self.index]
 
 			if (IsValid(weapon)) then
 				LocalPlayer():EmitSound(hook.Run("WeaponSelectSound", weapon) or "HL2Player.Use")

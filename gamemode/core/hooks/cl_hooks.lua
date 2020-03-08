@@ -61,6 +61,13 @@ function GM:LoadFonts(font, genericFont)
 		weight = 100
 	})
 
+	surface.CreateFont("ixMenuButtonFontSmall", {
+		font = "Roboto Th",
+		size = ScreenScale(10),
+		extended = true,
+		weight = 100
+	})
+
 	surface.CreateFont("ixMenuButtonFontThick", {
 		font = "Roboto",
 		size = ScreenScale(14),
@@ -216,14 +223,14 @@ function GM:LoadFonts(font, genericFont)
 
 	surface.CreateFont("ixIntroTitleFont", {
 		font = font,
-		size = ScreenScale(128),
+		size = math.min(ScreenScale(128), 128),
 		extended = true,
 		weight = 100
 	})
 
 	surface.CreateFont("ixIntroTitleBlurFont", {
 		font = font,
-		size = ScreenScale(128),
+		size = math.min(ScreenScale(128), 128),
 		extended = true,
 		weight = 100,
 		blursize = 4
@@ -391,6 +398,8 @@ function GM:InitPostEntity()
 	ix.option.Sync()
 
 	LocalPlayer():SetIK(false)
+
+	ix.gui.bars = vgui.Create("ixInfoBarManager")
 end
 
 function GM:NetworkEntityCreated(entity)
@@ -415,6 +424,7 @@ end
 local vignette = ix.util.GetMaterial("helix/gui/vignette.png")
 local vignetteAlphaGoal = 0
 local vignetteAlphaDelta = 0
+local vignetteTraceHeight = Vector(0, 0, 768)
 local blurGoal = 0
 local blurDelta = 0
 local hasVignetteMaterial = vignette != "___error"
@@ -425,7 +435,7 @@ timer.Create("ixVignetteChecker", 1, 0, function()
 	if (IsValid(client)) then
 		local data = {}
 			data.start = client:GetPos()
-			data.endpos = data.start + Vector(0, 0, 768)
+			data.endpos = data.start + vignetteTraceHeight
 			data.filter = client
 		local trace = util.TraceLine(data)
 
@@ -630,16 +640,16 @@ function GM:PostDrawOpaqueRenderables(bDepth, bSkybox)
 		render.SetStencilZFailOperation(STENCILOPERATION_KEEP)
 		render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
 		render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
-		render.SetStencilReferenceValue(1)
+		render.SetStencilReferenceValue(27)
 
 		for i = 1, #ix.blurRenderQueue do
 			ix.blurRenderQueue[i]()
 		end
 
-		render.SetStencilReferenceValue(2)
+		render.SetStencilReferenceValue(34)
 		render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
 		render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
-		render.SetStencilReferenceValue(1)
+		render.SetStencilReferenceValue(27)
 
 		cam.Start2D()
 			ix.util.DrawBlurAt(0, 0, ScrW(), ScrH())
@@ -653,7 +663,7 @@ function GM:PostDrawHUD()
 	ix.hud.DrawAll(true)
 
 	if (!IsValid(ix.gui.characterMenu) or ix.gui.characterMenu:IsClosing()) then
-		ix.bar.DrawAll()
+		ix.bar.DrawAction()
 	end
 end
 
@@ -807,6 +817,7 @@ hidden["CHudCrosshair"] = true
 hidden["CHudHistoryResource"] = true
 hidden["CHudPoisonDamageIndicator"] = true
 hidden["CHudSquadStatus"] = true
+hidden["CHUDQuickInfo"] = true
 
 function GM:HUDShouldDraw(element)
 	if (hidden[element]) then
@@ -840,9 +851,9 @@ function GM:RenderScreenspaceEffects()
 			render.SuppressEngineLighting(true)
 			cam.IgnoreZ(true)
 				render.SetColorModulation(1, 1, 1)
-				render.SetStencilWriteMask(1)
-				render.SetStencilTestMask(1)
-				render.SetStencilReferenceValue(1)
+				render.SetStencilWriteMask(28)
+				render.SetStencilTestMask(28)
+				render.SetStencilReferenceValue(35)
 
 				render.SetStencilCompareFunction(STENCIL_ALWAYS)
 				render.SetStencilPassOperation(STENCIL_REPLACE)
@@ -928,6 +939,11 @@ function GM:ScreenResolutionChanged(oldW, oldH)
 	if (IsValid(ix.gui.notices)) then
 		ix.gui.notices:Remove()
 		ix.gui.notices = vgui.Create("ixNoticeManager")
+	end
+
+	if (IsValid(ix.gui.bars)) then
+		ix.gui.bars:Remove()
+		ix.gui.bars = vgui.Create("ixInfoBarManager")
 	end
 end
 

@@ -193,9 +193,9 @@ function PANEL:Paint(width, height) -- luacheck: ignore 312
 				ix.util.ResetStencilValues()
 				render.SetStencilEnable(true)
 				cam.IgnoreZ(true)
-					render.SetStencilWriteMask(1)
-					render.SetStencilTestMask(1)
-					render.SetStencilReferenceValue(1)
+					render.SetStencilWriteMask(29)
+					render.SetStencilTestMask(29)
+					render.SetStencilReferenceValue(32)
 
 					render.SetStencilCompareFunction(STENCIL_ALWAYS)
 					render.SetStencilPassOperation(STENCIL_REPLACE)

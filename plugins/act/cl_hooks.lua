@@ -42,6 +42,8 @@ local forwardOffset = 16
 local backwardOffset = -32
 local heightOffset = Vector(0, 0, 20)
 local idleHeightOffset = Vector(0, 0, 6)
+local traceMin = Vector(-4, -4, -4)
+local traceMax = Vector(4, 4, 4)
 
 function PLUGIN:CalcView(client, origin)
 	local enterAngle = client:GetNetVar("actEnterAngle")
@@ -74,8 +76,8 @@ function PLUGIN:CalcView(client, origin)
 		local data = {
 			start = (client:GetBonePosition(head) or Vector(0, 0, 64)) + forward * 8,
 			endpos = position + forward * offset,
-			mins = Vector(-4, -4, -4),
-			maxs = Vector(4, 4, 4),
+			mins = traceMin,
+			maxs = traceMax,
 			filter = client
 		}
 

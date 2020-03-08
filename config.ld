@@ -2,7 +2,16 @@
 file = {
 	"gamemode",
 	"plugins",
+	"docs/hooks",
 	exclude = {"gamemode/core/libs/thirdparty"}
+}
+
+module_file = {
+	Character = "gamemode/core/meta/sh_character.lua",
+	Entity = "gamemode/core/meta/sh_entity.lua",
+	Inventory = "gamemode/core/meta/sh_inventory.lua",
+	Item = "gamemode/core/meta/sh_item.lua",
+	Player = "gamemode/core/meta/sh_player.lua"
 }
 
 dir = "docs/html"
@@ -14,7 +23,11 @@ style = "docs/css"
 template = "docs/templates"
 format = "markdown"
 ignore = true
-kind_names = {module = "Libraries"}
+topics = "docs/manual"
+use_markdown_titles = true
+kind_names = {module = "Libraries", topic = "Manual"}
+merge = true
+sort = true
 
 custom_tags = {
 	{"realm", hidden = true},
@@ -22,12 +35,19 @@ custom_tags = {
 }
 
 custom_display_name_handler = function(item, default_handler)
-	if (item.type == "function" and item.module and item.module.type == "classmod") then
-		return item.module.mod_name .. default_handler(item):gsub(".+:", ":")
+	if (item.type == "function" and item.module) then
+		if (item.module.type == "classmod" or item.module.type == "panel") then
+			return item.module.mod_name .. default_handler(item):gsub(".+:", ":")
+		elseif (item.module.type == "hooks") then
+			return item.module.mod_name:upper() .. ":" .. default_handler(item)
+		end
 	end
 
 	return default_handler(item)
 end
+
+new_type("hooks", "Hooks", true)
+new_type("panel", "Panels", true)
 
 -- helix types
 tparam_alias("char", "Character")
@@ -40,11 +60,10 @@ tparam_alias("date", "date")
 tparam_alias("string", "string")
 tparam_alias("bool", "boolean")
 tparam_alias("func", "function")
-tparam_alias("player", "player")
-tparam_alias("entity", "entity")
+tparam_alias("player", "Player")
+tparam_alias("entity", "Entity")
 tparam_alias("color", "color")
 tparam_alias("tab", "table")
-tparam_alias("panel", "panel")
 tparam_alias("material", "material")
 tparam_alias("vector", "vector")
 tparam_alias("angle", "angle")

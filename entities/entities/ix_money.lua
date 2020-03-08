@@ -12,8 +12,11 @@ function ENT:SetupDataTables()
 end
 
 if (SERVER) then
+	local invalidBoundsMin = Vector(-8, -8, -8)
+	local invalidBoundsMax = Vector(8, 8, 8)
+
 	function ENT:Initialize()
-		self:SetModel("models/props_lab/box01a.mdl")
+		self:SetModel(ix.currency.model)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetUseType(SIMPLE_USE)
@@ -24,10 +27,8 @@ if (SERVER) then
 			physObj:EnableMotion(true)
 			physObj:Wake()
 		else
-			local min, max = Vector(-8, -8, -8), Vector(8, 8, 8)
-
-			self:PhysicsInitBox(min, max)
-			self:SetCollisionBounds(min, max)
+			self:PhysicsInitBox(invalidBoundsMin, invalidBoundsMax)
+			self:SetCollisionBounds(invalidBoundsMin, invalidBoundsMax)
 		end
 	end
 

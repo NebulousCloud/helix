@@ -1,9 +1,6 @@
 
---[[
-	luacheck: globals
-	VENDOR_BUY VENDOR_SELL VENDOR_BOTH VENDOR_WELCOME VENDOR_LEAVE VENDOR_NOTRADE VENDOR_PRICE VENDOR_STOCK VENDOR_MODE
-	VENDOR_MAXSTOCK VENDOR_SELLANDBUY VENDOR_SELLONLY VENDOR_BUYONLY VENDOR_TEXT
-]]
+-- luacheck: globals VENDOR_BUY VENDOR_SELL VENDOR_BOTH VENDOR_WELCOME VENDOR_LEAVE VENDOR_NOTRADE VENDOR_PRICE
+-- luacheck: globals VENDOR_STOCK VENDOR_MODE VENDOR_MAXSTOCK VENDOR_SELLANDBUY VENDOR_SELLONLY VENDOR_BUYONLY VENDOR_TEXT
 
 local PLUGIN = PLUGIN
 
@@ -107,7 +104,13 @@ if (SERVER) then
 				entity:SetBodygroup(id, bodygroup)
 			end
 
-			entity.items = v.items or {}
+			local items = {}
+
+			for uniqueID, data in pairs(v.items) do
+				items[tostring(uniqueID)] = data
+			end
+
+			entity.items = items
 			entity.factions = v.factions or {}
 			entity.classes = v.classes or {}
 			entity.money = v.money

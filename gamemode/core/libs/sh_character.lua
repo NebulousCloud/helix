@@ -234,6 +234,12 @@ if (SERVER) then
 			for _, v in pairs(ix.char.vars) do
 				if (v.field and v.fieldType and !v.bSaveLoadInitialOnly) then
 					data:Select(v.field)
+
+					-- if FilterValues is used, any rows that contain a value in the column that isn't in the valid values table
+					-- will be ignored entirely (i.e the character will not load if it has an invalid value)
+					if (v.FilterValues) then
+						data:WhereIn(v.field, v:FilterValues())
+					end
 				end
 			end
 		else
@@ -247,7 +253,11 @@ if (SERVER) then
 					elseif (isstring(v.default)) then
 						value = tostring(value) == "NULL" and v.default or tostring(value or v.default)
 					elseif (isbool(v.default)) then
-						value = tobool(value)
+						if (tostring(value) != "NULL") then
+							value = tobool(value)
+						else
+							value = v.default
+						end
 					elseif (istable(v.default)) then
 						value = istable(value) and value or util.JSONToTable(value)
 					end
@@ -298,15 +308,27 @@ function ix.char.HookVar(varName, hookName, func)
 	ix.char.varHooks[varName][hookName] = func
 end
 
--- Registration of default variables go here.
 do
+	--- Default character vars
+	-- @classmod Character
+
+	--- Sets this character's name. This is automatically networked.
+	-- @realm server
+	-- @string name New name for the character
+	-- @function :SetName
+
+	--- Returns this character's name
+	-- @realm shared
+	-- @treturn string This character's current name
+	-- @function :GetName
 	ix.char.RegisterVar("name", {
 		field = "name",
 		fieldType = ix.type.string,
 		default = "John Doe",
 		index = 1,
 		OnValidate = function(self, value, payload, client)
-			value = string.Trim((tostring(value):gsub("\r\n", ""):gsub("\n", "")))
+			value = tostring(value):gsub("\r\n", ""):gsub("\n", "")
+			value = string.Trim(value)
 
 			local minLength = ix.config.Get("minNameLength", 4)
 			local maxLength = ix.config.Get("maxNameLength", 32)
@@ -339,6 +361,15 @@ do
 		end
 	})
 
+	--- Sets this character's physical description. This is automatically networked.
+	-- @realm server
+	-- @string description New description for this character
+	-- @function :SetDescription
+
+	--- Returns this character's physical description.
+	-- @realm shared
+	-- @treturn string This character's current description
+	-- @function :GetDescription
 	ix.char.RegisterVar("description", {
 		field = "description",
 		fieldType = ix.type.text,
@@ -365,9 +396,20 @@ do
 					return true
 				end
 			end
-		end
+		end,
+		alias = "Desc"
 	})
 
+	--- Sets this character's model. This sets the player's current model to the given one, and saves it to the character.
+	-- It is automatically networked.
+	-- @realm server
+	-- @string model New model for the character
+	-- @function :SetModel
+
+	--- Returns this character's model.
+	-- @realm shared
+	-- @treturn string This character's current model
+	-- @function :GetModel
 	ix.char.RegisterVar("model", {
 		field = "model",
 		fieldType = ix.type.string,
@@ -475,15 +517,41 @@ do
 		end
 	})
 
+	-- SetClass shouldn't be used here, character:JoinClass should be used instead
+
+	--- Returns this character's current class.
+	-- @realm shared
+	-- @treturn number Index of the class this character is in
+	-- @function :GetClass
 	ix.char.RegisterVar("class", {
 		bNoDisplay = true,
 	})
 
+	--- Sets this character's faction. Note that this doesn't do the initial setup for the player after the faction has been
+	-- changed, so you'll have to update some character vars manually.
+	-- @realm server
+	-- @number faction Index of the faction to transfer this character to
+	-- @function :SetFaction
+
+	--- Returns this character's faction.
+	-- @realm shared
+	-- @treturn number Index of the faction this character is currently in
+	-- @function :GetFaction
 	ix.char.RegisterVar("faction", {
 		field = "faction",
 		fieldType = ix.type.string,
 		default = "Citizen",
 		bNoDisplay = true,
+		FilterValues = function(self)
+			-- make sequential table of faction unique IDs
+			local values = {}
+
+			for k, v in ipairs(ix.faction.indices) do
+				values[k] = v.uniqueID
+			end
+
+			return values
+		end,
 		OnSet = function(self, value)
 			local client = self:GetPlayer()
 
@@ -517,6 +585,7 @@ do
 		end
 	})
 
+	-- attribute manipulation should be done with methods from the ix.attributes library
 	ix.char.RegisterVar("attributes", {
 		field = "attributes",
 		fieldType = ix.type.text,
@@ -525,7 +594,7 @@ do
 		category = "attributes",
 		isLocal = true,
 		OnDisplay = function(self, container, payload)
-			local maximum = hook.Run("GetDefaultAttributePoints", LocalPlayer(), payload) or ix.config.Get("maxAttributes", 30)
+			local maximum = hook.Run("GetDefaultAttributePoints", LocalPlayer(), payload) or 10
 
 			if (maximum < 1) then
 				return
@@ -589,7 +658,7 @@ do
 						count = count + v
 					end
 
-					if (count > (hook.Run("GetDefaultAttributePoints", client, count) or ix.config.Get("maxAttributes", 30))) then
+					if (count > (hook.Run("GetDefaultAttributePoints", client, count) or 10)) then
 						return false, "unknownError"
 					end
 				else
@@ -602,6 +671,15 @@ do
 		end
 	})
 
+	--- Sets this character's current money. Money is only networked to the player that owns this character.
+	-- @realm server
+	-- @number money New amount of money this character should have
+	-- @function :SetMoney
+
+	--- Returns this character's money. This is only valid on the server and the owning client.
+	-- @realm shared
+	-- @treturn number Current money of this character
+	-- @function :GetMoney
 	ix.char.RegisterVar("money", {
 		field = "money",
 		fieldType = ix.type.number,
@@ -610,6 +688,22 @@ do
 		bNoDisplay = true
 	})
 
+	--- Sets a data field on this character. This is useful for storing small bits of data that you need persisted on this
+	-- character. This is networked only to the owning client. If you are going to be accessing this data field frequently with
+	-- a getter/setter, consider using `ix.char.RegisterVar` instead.
+	-- @realm server
+	-- @string key Name of the field that holds the data
+	-- @param value Any value to store in the field, as long as it's supported by GMod's JSON parser
+	-- @function :SetData
+
+	--- Returns a data field set on this character. If it doesn't exist, it will return the given default or `nil`. This is only
+	-- valid on the server and the owning client.
+	-- @realm shared
+	-- @string key Name of the field that's holding the data
+	-- @param default Value to return if the given key doesn't exist, or is `nil`
+	-- @return[1] Data stored in the field
+	-- @treturn[2] nil If the data doesn't exist, or is `nil`
+	-- @function :GetData
 	ix.char.RegisterVar("data", {
 		default = {},
 		isLocal = true,
@@ -694,6 +788,10 @@ do
 		end
 	})
 
+	--- Returns the Unix timestamp of when this character was created (i.e the value of `os.time()` at the time of creation).
+	-- @realm server
+	-- @treturn number Unix timestamp of when this character was created
+	-- @function :GetCreateTime
 	ix.char.RegisterVar("createTime", {
 		field = "create_time",
 		fieldType = ix.type.number,
@@ -702,6 +800,10 @@ do
 		bNotModifiable = true
 	})
 
+	--- Returns the Unix timestamp of when this character was last used by its owning player.
+	-- @realm server
+	-- @treturn number Unix timestamp of when this character was last used
+	-- @function :GetLastJoinTime
 	ix.char.RegisterVar("lastJoinTime", {
 		field = "last_join_time",
 		fieldType = ix.type.number,
@@ -711,6 +813,11 @@ do
 		bSaveLoadInitialOnly = true
 	})
 
+	--- Returns the schema that this character belongs to. This is useful if you are running multiple schemas off of the same
+	-- database, and need to differentiate between them.
+	-- @realm server
+	-- @treturn string Schema this character belongs to
+	-- @function :GetSchema
 	ix.char.RegisterVar("schema", {
 		field = "schema",
 		fieldType = ix.type.string,
@@ -720,6 +827,10 @@ do
 		bSaveLoadInitialOnly = true
 	})
 
+	--- Returns the 64-bit Steam ID of the player that owns this character.
+	-- @realm server
+	-- @treturn string Owning player's Steam ID
+	-- @function :GetSteamID
 	ix.char.RegisterVar("steamID", {
 		field = "steamid",
 		fieldType = ix.type.steamid,
@@ -811,6 +922,18 @@ do
 					net.WriteString("maxCharacters")
 					net.WriteTable({})
 				net.Send(client)
+
+				return
+			end
+
+			local results = {hook.Run("CanPlayerCreateCharacter", client, payload)}
+
+			if (table.remove(results, 1) == false) then
+				net.Start("ixCharacterAuthFailed")
+					net.WriteString(table.remove(results, 1) or "unknownError")
+					net.WriteTable(results)
+				net.Send(client)
+
 				return
 			end
 
@@ -838,6 +961,7 @@ do
 							net.WriteString(fault)
 							net.WriteTable(result)
 						net.Send(client)
+
 						return
 					else
 						if (result[1] != nil) then
@@ -1062,23 +1186,33 @@ do
 	end
 end
 
--- Additions to the player metatable here.
 do
+	--- Character util functions for player
+	-- @classmod Player
+
 	local playerMeta = FindMetaTable("Player")
 	playerMeta.SteamName = playerMeta.SteamName or playerMeta.Name
 
+	--- Returns this player's currently possessed `Character` object if it exists.
+	-- @realm shared
+	-- @treturn[1] Character Currently loaded character
+	-- @treturn[2] nil If this player has no character loaded
 	function playerMeta:GetCharacter()
 		return ix.char.loaded[self:GetNetVar("char")]
 	end
 
 	playerMeta.GetChar = playerMeta.GetCharacter
 
-	function playerMeta:Name()
+	--- Returns this player's current name.
+	-- @realm shared
+	-- @treturn[1] string Name of this player's currently loaded character
+	-- @treturn[2] string Steam name of this player if the player has no character loaded
+	function playerMeta:GetName()
 		local character = self:GetCharacter()
 
 		return character and character:GetName() or self:SteamName()
 	end
 
-	playerMeta.Nick = playerMeta.Name
-	playerMeta.GetName = playerMeta.Name
+	playerMeta.Nick = playerMeta.GetName
+	playerMeta.Name = playerMeta.GetName
 end

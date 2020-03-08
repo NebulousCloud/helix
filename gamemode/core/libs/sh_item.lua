@@ -138,10 +138,20 @@ function ix.item.NewInv(owner, invType, callback)
 	query:Execute()
 end
 
+--- Retrieves an item table.
+-- @realm shared
+-- @string identifier Unique ID of the item
+-- @treturn item Item table
+-- @usage print(ix.item.Get("example"))
+-- > "item[example][0]"
 function ix.item.Get(identifier)
 	return ix.item.base[identifier] or ix.item.list[identifier]
 end
 
+--- Retrieves an inventory table.
+-- @realm shared
+-- @number invID Index of the inventory
+-- @treturn inventory Inventory table
 function ix.item.GetInv(invID)
 	return ix.item.inventories[invID]
 end
@@ -326,9 +336,11 @@ function ix.item.New(uniqueID, id)
 	local stockItem = ix.item.list[uniqueID]
 
 	if (stockItem) then
-		local item = setmetatable({}, {__index = stockItem})
-		item.id = id
-		item.data = {}
+		local item = setmetatable({id = id, data = {}}, {
+			__index = stockItem,
+			__eq = stockItem.__eq,
+			__tostring = stockItem.__tostring
+		})
 
 		ix.item.instances[id] = item
 
@@ -944,7 +956,13 @@ do
 		end)
 	end
 
-	-- Instances and spawns a given item type.
+	--- Instances and spawns a given item type.
+	-- @realm server
+	-- @string uniqueID Unique ID of the item
+	-- @vector position The position in which the item's entity will be spawned
+	-- @func[opt=nil] callback Function to call when the item entity is created
+	-- @angle[opt=angle_zero] angles The angles at which the item's entity will spawn
+	-- @tab[opt=nil] data Additional data for this item instance
 	function ix.item.Spawn(uniqueID, position, callback, angles, data)
 		ix.item.Instance(0, uniqueID, data or {}, 1, 1, function(item)
 			local entity = item:Spawn(position, angles)
@@ -956,6 +974,13 @@ do
 	end
 end
 
+--- Inventory util functions for character
+-- @classmod Character
+
+--- Returns this character's associated `Inventory` object.
+-- @function :GetInventory
+-- @realm shared
+-- @treturn Inventory This character's inventory
 ix.char.RegisterVar("Inventory", {
 	bNoNetworking = true,
 	bNoDisplay = true,
