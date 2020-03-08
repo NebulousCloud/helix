@@ -37,8 +37,8 @@ ix.config.Add("genericFont", "Roboto", "The font used to display generic texts."
 	end
 end, {category = "appearance"})
 
-ix.config.Add("maxAttributes", 30, "The total maximum amount of attribute points allowed.", nil, {
-	data = {min = 0, max = 250},
+ix.config.Add("maxAttributes", 100, "The maximum amount each attribute can be.", nil, {
+	data = {min = 0, max = 100},
 	category = "characters"
 })
 ix.config.Add("chatAutoFormat", true, "Whether or not to automatically capitalize and punctuate in-character text.", nil, {

@@ -200,7 +200,7 @@ function PANEL:Init()
 					bar:SetValue(value)
 				end
 
-				local maximum = v.maxValue or ix.config.Get("maxAttributes", 30)
+				local maximum = v.maxValue or ix.config.Get("maxAttributes", 100)
 				bar:SetMax(maximum)
 				bar:SetReadOnly()
 				bar:SetText(Format("%s [%.1f/%.1f] (%.1f%%)", L(v.name), value, maximum, value / maximum * 100))

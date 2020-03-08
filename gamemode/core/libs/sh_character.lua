@@ -594,7 +594,7 @@ do
 		category = "attributes",
 		isLocal = true,
 		OnDisplay = function(self, container, payload)
-			local maximum = hook.Run("GetDefaultAttributePoints", LocalPlayer(), payload) or ix.config.Get("maxAttributes", 30)
+			local maximum = hook.Run("GetDefaultAttributePoints", LocalPlayer(), payload) or 10
 
 			if (maximum < 1) then
 				return
@@ -658,7 +658,7 @@ do
 						count = count + v
 					end
 
-					if (count > (hook.Run("GetDefaultAttributePoints", client, count) or ix.config.Get("maxAttributes", 30))) then
+					if (count > (hook.Run("GetDefaultAttributePoints", client, count) or 10)) then
 						return false, "unknownError"
 					end
 				else
