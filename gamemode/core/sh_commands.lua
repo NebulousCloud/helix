@@ -790,7 +790,9 @@ ix.command.Add("CheckInventory", {
 	adminOnly = true,
 	arguments = ix.type.character,
 	OnRun = function(self, client, target)
-		if client:GetCharacter() == target then return end
+		if client:GetCharacter() == target then
+			return "@invalidInventory
+		end
 
 		local clientInv = client:GetCharacter():GetInventory()
 		local targetInv = target:GetInventory()
@@ -802,6 +804,8 @@ ix.command.Add("CheckInventory", {
 				searchTime = 0,
 				data = {money = target:GetMoney()}
 			})
+		else
+			return "@invalidInventory"
 		end
 	end
 })
