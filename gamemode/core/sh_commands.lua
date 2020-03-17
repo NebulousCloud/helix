@@ -791,7 +791,7 @@ ix.command.Add("CheckInventory", {
 	arguments = ix.type.character,
 	OnRun = function(self, client, target)
 		if client:GetCharacter() == target then
-			return "@invalidInventory
+			return "@invalidInventory"
 		end
 
 		local clientInv = client:GetCharacter():GetInventory()
