@@ -784,3 +784,24 @@ ix.command.Add("MapRestart", {
 		end)
 	end
 })
+
+ix.command.Add("CheckInventory", {
+	description = "@cmdCheckInventory",
+	adminOnly = true,
+	arguments = ix.type.character,
+	OnRun = function(self, client, target)
+		if client:GetCharacter() == target then return end
+
+		local clientInv = client:GetCharacter():GetInventory()
+		local targetInv = target:GetInventory()
+
+		if (clientInv and targetInv) then
+			ix.storage.Open(client, targetInv, {
+				name = target:GetName().."'s Inventory",
+				entity = target:GetPlayer(),
+				searchTime = 0,
+				data = {money = target:GetMoney()}
+			})
+		end
+	end
+})
