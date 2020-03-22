@@ -496,6 +496,10 @@ function SKIN:PaintWindowMaximizeButton(panel, width, height)
 end
 
 function SKIN:PaintInfoBar(panel, width, height, color)
+	if (isfunction(color)) then
+		color = color()
+	end
+
 	-- bar
 	surface.SetDrawColor(color.r, color.g, color.b, 250)
 	surface.DrawRect(0, 0, width, height)
