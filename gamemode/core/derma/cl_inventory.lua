@@ -83,7 +83,7 @@ function PANEL:DoRightClick()
 		end
 
 		for k, v in SortedPairs(itemTable.functions) do
-			if (k == "drop" or (v.OnCanRun and v.OnCanRun(itemTable) == false)) then
+			if (k == "drop" or k == "combine" or (v.OnCanRun and v.OnCanRun(itemTable) == false)) then
 				continue
 			end
 
@@ -180,7 +180,7 @@ function PANEL:DoRightClick()
 	end
 end
 
-function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY)
+function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY, centerX, centerY)
 	local item = self.itemTable
 
 	if (!item or !bDragging) then
@@ -198,6 +198,12 @@ function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY)
 
 		if (oldX != gridX or oldY != gridY or self.inventoryID != inventoryPanel.invID) then
 			self:Move(gridX, gridY, inventoryPanel)
+		end
+	elseif (!inventoryPanel:IsEmpty(centerX, centerY, self)) then
+		local itemPanel = inventoryPanel.slots[centerX][centerY].item
+
+		if (IsValid(itemPanel) and item.functions["combine"]) then
+			InventoryAction("combine", item.id, inventoryPanel.invID, {itemPanel.itemTable.id})
 		end
 	end
 end
@@ -682,7 +688,10 @@ function PANEL:ReceiveDrop(panels, bDropped, menuIndex, x, y)
 			local dropX = math.ceil((x - 4 - (panel.gridW - 1) * 32) / self.iconSize)
 			local dropY = math.ceil((y - self:GetPadding(2) - (panel.gridH - 1) * 32) / self.iconSize)
 
-			panel:OnDrop(true, self, inventory, dropX, dropY)
+			local centerX = math.ceil(x / self.iconSize)
+			local centerY = math.ceil(y / self.iconSize)
+
+			panel:OnDrop(true, self, inventory, dropX, dropY, centerX, centerY)
 		end
 
 		self.previewPanel = nil
