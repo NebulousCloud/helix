@@ -204,8 +204,10 @@ function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY, center
 		local combineFunction = item.functions.combine
 
 		if (IsValid(itemPanel) and combineFunction) then
-			if (combineFunction.OnCanRun and combineFunction.OnCanRun(item) != false) then
-				InventoryAction("combine", item.id, inventoryPanel.invID, {itemPanel.itemTable.id})
+			local itemTable = itemPanel.itemTable
+
+			if (combineFunction.OnCanRun and combineFunction.OnCanRun(item, {itemTable.id}) != false) then
+				InventoryAction("combine", item.id, inventoryPanel.invID, {itemTable.id})
 			end
 		end
 	end
