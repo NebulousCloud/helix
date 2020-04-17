@@ -200,17 +200,19 @@ function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY, center
 			self:Move(gridX, gridY, inventoryPanel)
 		end
 	elseif (!inventoryPanel:IsEmpty(centerX, centerY, self)) then
-		local itemPanel = inventoryPanel.slots[centerX][centerY].item
-		local combineFunction = item.functions.combine
+		if (inventoryPanel.slots[centerX] and inventoryPanel.slots[centerX][centerY]) then
+			local itemPanel = inventoryPanel.slots[centerX][centerY].item
+			local combineFunction = item.functions.combine
 
-		if (IsValid(itemPanel) and combineFunction) then
-			local itemTable = itemPanel.itemTable
+			if (IsValid(itemPanel) and combineFunction) then
+				local itemTable = itemPanel.itemTable
 
-			item.player = LocalPlayer()
-				if (combineFunction.OnCanRun and combineFunction.OnCanRun(item, {itemTable.id}) != false) then
-					InventoryAction("combine", item.id, inventoryPanel.invID, {itemTable.id})
-				end
-			item.player = nil
+				item.player = LocalPlayer()
+					if (combineFunction.OnCanRun and combineFunction.OnCanRun(item, {itemTable.id}) != false) then
+						InventoryAction("combine", item.id, inventoryPanel.invID, {itemTable.id})
+					end
+				item.player = nil
+			end
 		end
 	end
 end
