@@ -104,7 +104,7 @@ if (CLIENT) then
 
 	local function Recognize(level)
 		net.Start("ixRecognize")
-			net.WriteUInt(level, 2)
+			net.WriteUInt(level, 3)
 		net.SendToServer()
 	end
 
@@ -147,7 +147,7 @@ else
 	end
 
 	net.Receive("ixRecognize", function(length, client)
-		local level = net.ReadUInt(2)
+		local level = net.ReadUInt(3)
 
 		if (isnumber(level)) then
 			local targets = {}
