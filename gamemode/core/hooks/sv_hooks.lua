@@ -747,6 +747,10 @@ function GM:ShutDown()
 	end
 end
 
+function GM:GetGameDescription()
+	return (Schema and Schema.name or "Unknown")
+end
+
 function GM:OnPlayerUseBusiness(client, item)
 	-- You can manipulate purchased items with this hook.
 	-- does not requires any kind of return.
