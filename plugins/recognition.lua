@@ -104,23 +104,23 @@ if (CLIENT) then
 
 	local function Recognize(level)
 		net.Start("ixRecognize")
-			net.WriteUInt(level, 3)
+			net.WriteUInt(level, 2)
 		net.SendToServer()
 	end
 
 	net.Receive("ixRecognizeMenu", function(length)
 		local menu = DermaMenu()
 			menu:AddOption(L"rgnLookingAt", function()
-				Recognize(1)
+				Recognize(0)
 			end)
 			menu:AddOption(L"rgnWhisper", function()
-				Recognize(2)
+				Recognize(1)
 			end)
 			menu:AddOption(L"rgnTalk", function()
-				Recognize(3)
+				Recognize(2)
 			end)
 			menu:AddOption(L"rgnYell", function()
-				Recognize(4)
+				Recognize(3)
 			end)
 		menu:Open()
 		menu:MakePopup()
@@ -147,12 +147,12 @@ else
 	end
 
 	net.Receive("ixRecognize", function(length, client)
-		local level = net.ReadUInt(3)
+		local level = net.ReadUInt(2)
 
 		if (isnumber(level)) then
 			local targets = {}
 
-			if (level < 2) then
+			if (level < 1) then
 				local entity = client:GetEyeTraceNoCursor().Entity
 
 				if (IsValid(entity) and entity:IsPlayer() and entity:GetCharacter()
@@ -162,9 +162,9 @@ else
 			else
 				local class = "w"
 
-				if (level == 3) then
+				if (level == 2) then
 					class = "ic"
-				elseif (level == 4) then
+				elseif (level == 3) then
 					class = "y"
 				end
 
