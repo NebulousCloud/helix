@@ -205,11 +205,11 @@ function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY, center
 			local combineFunction = item.functions.combine
 
 			if (IsValid(itemPanel) and combineFunction) then
-				local itemTable = itemPanel.itemTable
+				local data = {itemPanel.itemTable.id}
 
 				item.player = LocalPlayer()
-					if (combineFunction.OnCanRun and combineFunction.OnCanRun(item, {itemTable.id}) != false) then
-						InventoryAction("combine", item.id, inventoryPanel.invID, {itemTable.id})
+					if (combineFunction.OnCanRun and combineFunction.OnCanRun(item, data) != false) then
+						InventoryAction("combine", item.id, inventoryPanel.invID, data)
 					end
 				item.player = nil
 			end
