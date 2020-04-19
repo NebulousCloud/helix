@@ -831,6 +831,12 @@ do
 					else
 						item:Remove()
 					end
+
+					if (type(result) == "string") then
+						ix.item.inventories[invID or 0]:Add(result, 1)
+					elseif (type(result) == "table") then
+						ix.item.inventories[invID or 0]:Add(result[1], 1, result[2])
+					end
 				end
 
 				item.entity = nil
