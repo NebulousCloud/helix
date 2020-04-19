@@ -809,14 +809,14 @@ do
 				hook.Run("PlayerInteractItem", client, action, item)
 
 				local entity = item.entity
-				local result
+				local result, replacement
 
 				if (item.hooks[action]) then
-					result = item.hooks[action](item, data)
+					result, replacement = item.hooks[action](item, data)
 				end
 
 				if (result == nil) then
-					result = callback.OnRun(item, data)
+					result, replacement = callback.OnRun(item, data)
 				end
 
 				if (item.postHooks[action]) then
@@ -824,13 +824,17 @@ do
 					item.postHooks[action](item, result, data)
 				end
 
-				if (result != false) then
+				if (result and result != false) then
 					if (IsValid(entity)) then
 						entity.ixIsSafe = true
 						entity:Remove()
 					else
 						item:Remove()
 					end
+				end
+
+				if (replacement and replacement != false) then
+					ix.item.inventories[invID]:Add(replacement, 1)
 				end
 
 				item.entity = nil
