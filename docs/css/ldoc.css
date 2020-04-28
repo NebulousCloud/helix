@@ -12,7 +12,11 @@ a {
 }
 
 h1, h2, h3, h4 {
-	font-weight: 100;
+	font-weight: 400;
+}
+
+ul li {
+	margin-left: 24px;
 }
 
 h1.title {
@@ -29,10 +33,12 @@ h1.title {
 
 code {
 	font-family: "Source Code Pro", monospace;
+	font-size: 85%;
 	white-space: pre;
 	tab-size: 4;
-	padding: 2px;
-	font-weight: 600;
+	-moz-tab-size: 4;
+	padding: 2px 4px;
+	background-color: rgb(33, 33, 33, 0.1);
 }
 
 span.realm {
@@ -88,7 +94,7 @@ body {
 	grid-gap: 0;
 
 	height: 100vh;
-	font-family: sans-serif;
+	font-family: Segoe UI, Helvetica, Arial, sans-serif;
 	background-color: rgb(230, 230, 230);
 }
 
@@ -101,6 +107,7 @@ aside {
 	grid-area: sidebar;
 	background-color: rgb(33, 33, 33);
 	color: rgb(200, 200, 200);
+	padding-bottom: 16px;
 }
 
 aside h1 {
@@ -134,6 +141,7 @@ aside section ul {
 
 aside section ul li {
 	list-style: none;
+	margin: 0;
 	padding: 2px 2px 2px 16px;
 }
 
@@ -165,6 +173,7 @@ article header h1 {
 	border-bottom: 1px solid rgba(255, 255, 255, 0.25);
 	padding-bottom: 8px;
 	font-family: "Source Code Pro", monospace;
+	margin: 0;
 }
 
 article header h2 {
@@ -172,6 +181,11 @@ article header h2 {
 	margin: 0;
 	font-weight: 600;
 	font-size: 16px;
+}
+
+article header.module a {
+	color: white !important;
+	text-decoration: underline;
 }
 
 /* function summary */
@@ -204,9 +218,26 @@ article details .contents ul li {
 	font-size: 18px;
 	font-family: "Source Code Pro", monospace;
 	list-style: none;
+	margin: 0;
+}
+
+article details a {
+	color: inherit !important;
+	font-weight: inherit !important;
+}
+
+article h1 {
+	font-size: 28px;
+	font-weight: 600;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+	margin-top: 24px;
+	margin-bottom: 16px;
+	padding-bottom: 8px;
 }
 
 article h2 {
+	font-size: 20px;
+	font-weight: 600;
 	margin-top: 12px;
 }
 
@@ -217,10 +248,13 @@ article h3 {
 }
 
 article p {
-	margin-top: 8px;
+	margin-top: 16px;
 }
 
-article p a {
+article p a,
+article ul li a,
+article h1 a,
+article h2 a {
 	color: rgb(115, 53, 142);
 	font-weight: 600;
 }
@@ -236,6 +270,7 @@ article pre code {
 	color: rgb(255, 255, 255);
 	background-color: rgb(33, 33, 33);
 	font-weight: 300;
+	padding: 0;
 }
 
 /* function/table */
@@ -254,13 +289,24 @@ article pre code {
 	order: -1;
 }
 
+.method header .anchor {
+	color: inherit;
+	text-decoration: inherit;
+}
+
+.method header .anchor:target h1 {
+	background-color: rgba(115, 53, 142, 0.2);
+	background-clip: content-box;
+}
+
 .method header h1 {
 	font-family: "Source Code Pro", monospace;
 	padding-bottom: 8px;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+	font-size: 20px;
 }
 
-.method header p {
+.method header p:first-of-type {
 	margin-top: 8px;
 }
 
@@ -277,12 +323,17 @@ article pre code {
 	margin-top: -8px;
 	width: calc(100% - 1148px);
 	padding: 16px;
+	overflow: auto;
 }
 
-.method aside code {
+.method aside pre {
 	color: rgb(255, 255, 255);
 	background-color: rgb(33, 33, 33);
 	padding: 0;
+	margin: 0;
+}
+
+.method aside pre code {
 	font-size: 16px;
 	font-weight: 300;
 }

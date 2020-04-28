@@ -1,4 +1,13 @@
 
+--[[--
+Helper library for loading/getting class information.
+
+Classes are temporary assignments for characters - analogous to a "job" in a faction. For example, you may have a police faction
+in your schema, and have "police recruit" and "police chief" as different classes in your faction. Anyone can join a class in
+their faction by default, but you can restrict this as you need with `CLASS.CanSwitchTo`.
+]]
+-- @module ix.class
+
 if (SERVER) then
 	util.AddNetworkString("ixClassUpdate")
 end
@@ -8,9 +17,11 @@ ix.class.list = {}
 
 local charMeta = ix.meta.character
 
--- Register classes from a directory.
+--- Loads classes from a directory.
+-- @realm shared
+-- @internal
+-- @string directory The path to the class files.
 function ix.class.LoadFromDir(directory)
-	-- Search the directory for .lua files.
 	for _, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
 		-- Get the name without the "sh_" prefix and ".lua" suffix.
 		local niceName = v:sub(4, -5)
@@ -30,7 +41,6 @@ function ix.class.LoadFromDir(directory)
 
 		-- Set up a global table so the file has access to the class table.
 		CLASS = {index = index, uniqueID = niceName}
-			-- Define some default variables.
 			CLASS.name = "Unknown"
 			CLASS.description = "No description available."
 			CLASS.limit = 0
@@ -40,7 +50,6 @@ function ix.class.LoadFromDir(directory)
 				CLASS.plugin = PLUGIN.uniqueID
 			end
 
-			-- Include the file so data can be modified.
 			ix.util.Include(directory.."/"..v, "shared")
 
 			-- Why have a class without a faction?
@@ -58,14 +67,16 @@ function ix.class.LoadFromDir(directory)
 				end
 			end
 
-			-- Add the class to the list of classes.
 			ix.class.list[index] = CLASS
-		-- Remove the global variable to prevent conflict.
 		CLASS = nil
 	end
 end
 
--- Determines if a player is allowed to join a specific class.
+--- Determines if a player is allowed to join a specific class.
+-- @realm shared
+-- @player client Player to check
+-- @number class Index of the class
+-- @treturn bool Whether or not the player can switch to the class
 function ix.class.CanSwitchTo(client, class)
 	-- Get the class table by its numeric identifier.
 	local info = ix.class.list[class]
@@ -98,10 +109,18 @@ function ix.class.CanSwitchTo(client, class)
 	return info:CanSwitchTo(client)
 end
 
+--- Retrieves a class table.
+-- @realm shared
+-- @number identifier Index of the class
+-- @treturn table Class table
 function ix.class.Get(identifier)
 	return ix.class.list[identifier]
 end
 
+--- Retrieves the players in a class
+-- @realm shared
+-- @number class Index of the class
+-- @treturn table Table of players in the class
 function ix.class.GetPlayers(class)
 	local players = {}
 
@@ -116,58 +135,68 @@ function ix.class.GetPlayers(class)
 	return players
 end
 
-function charMeta:JoinClass(class)
-	if (!class) then
-		self:KickClass()
+if (SERVER) then
+	--- Character class methods
+	-- @classmod Character
 
-		return
-	end
+	--- Makes this character join a class. This automatically calls `KickClass` for you.
+	-- @realm server
+	-- @number class Index of the class to join
+	-- @treturn bool Whether or not the character has successfully joined the class
+	function charMeta:JoinClass(class)
+		if (!class) then
+			self:KickClass()
+			return false
+		end
 
-	local oldClass = self:GetClass()
-	local client = self:GetPlayer()
+		local oldClass = self:GetClass()
+		local client = self:GetPlayer()
 
-	if (ix.class.CanSwitchTo(client, class)) then
-		self:SetClass(class)
-		hook.Run("PlayerJoinedClass", client, class, oldClass)
+		if (ix.class.CanSwitchTo(client, class)) then
+			self:SetClass(class)
+			hook.Run("PlayerJoinedClass", client, class, oldClass)
 
-		return true
-	else
+			return true
+		end
+
 		return false
 	end
-end
 
-function charMeta:KickClass()
-	local client = self:GetPlayer()
-	if (!client) then return end
+	--- Kicks this character out of the class they are currently in.
+	-- @realm server
+	function charMeta:KickClass()
+		local client = self:GetPlayer()
+		if (!client) then return end
 
-	local goClass
+		local goClass
 
-	for k, v in pairs(ix.class.list) do
-		if (v.faction == client:Team() and v.isDefault) then
-			goClass = k
+		for k, v in pairs(ix.class.list) do
+			if (v.faction == client:Team() and v.isDefault) then
+				goClass = k
 
-			break
+				break
+			end
 		end
+
+		self:JoinClass(goClass)
+
+		hook.Run("PlayerJoinedClass", client, goClass)
 	end
 
-	self:JoinClass(goClass)
+	function GM:PlayerJoinedClass(client, class, oldClass)
+		local info = ix.class.list[class]
+		local info2 = ix.class.list[oldClass]
 
-	hook.Run("PlayerJoinedClass", client, goClass)
-end
+		if (info.OnSet) then
+			info:OnSet(client)
+		end
 
-function GM:PlayerJoinedClass(client, class, oldClass)
-	local info = ix.class.list[class]
-	local info2 = ix.class.list[oldClass]
+		if (info2 and info2.OnLeave) then
+			info2:OnLeave(client)
+		end
 
-	if (info.OnSet) then
-		info:OnSet(client)
+		net.Start("ixClassUpdate")
+			net.WriteEntity(client)
+		net.Broadcast()
 	end
-
-	if (info2 and info2.OnLeave) then
-		info2:OnLeave(client)
-	end
-
-	net.Start("ixClassUpdate")
-		net.WriteEntity(client)
-	net.Broadcast()
 end

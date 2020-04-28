@@ -7,12 +7,13 @@ ix.bar.actionStart = 0
 ix.bar.actionEnd = 0
 ix.bar.totalHeight = 0
 
-function ix.bar.Get(identifier)
-	for i = 1, #ix.bar.list do
-		local bar = ix.bar.list[i]
+-- luacheck: globals BAR_HEIGHT
+BAR_HEIGHT = 10
 
-		if (bar and bar.identifier == identifier) then
-			return bar
+function ix.bar.Get(identifier)
+	for _, v in ipairs(ix.bar.list) do
+		if (v.identifier == identifier) then
+			return v
 		end
 	end
 end
@@ -21,7 +22,11 @@ function ix.bar.Remove(identifier)
 	local bar = ix.bar.Get(identifier)
 
 	if (bar) then
-		table.remove(ix.bar.list, bar.priority)
+		if (IsValid(ix.gui.bars)) then
+			ix.gui.bars:RemoveBar(bar.panel)
+		end
+
+		table.remove(ix.bar.list, bar.index)
 	end
 end
 
@@ -30,67 +35,27 @@ function ix.bar.Add(getValue, color, priority, identifier)
 		ix.bar.Remove(identifier)
 	end
 
-	priority = priority or table.Count(ix.bar.list) + 1
+	local index = #ix.bar.list + 1
 
-	local info = ix.bar.list[priority]
+	color = color or Color(math.random(150, 255), math.random(150, 255), math.random(150, 255))
+	priority = priority or index
 
-	ix.bar.list[priority] = {
-		GetValue = getValue,
-		color = color or info.color or Color(math.random(150, 255), math.random(150, 255), math.random(150, 255)),
+	ix.bar.list[index] = {
+		index = index,
+		color = color,
 		priority = priority,
-		lifeTime = 0,
+		GetValue = getValue,
 		identifier = identifier,
+		panel = IsValid(ix.gui.bars) and ix.gui.bars:AddBar(index, color, priority)
 	}
 
 	return priority
 end
 
-local gradientU = ix.util.GetMaterial("vgui/gradient-u")
 local gradientD = ix.util.GetMaterial("vgui/gradient-d")
-local surface = surface
-local draw = draw
 
 local TEXT_COLOR = Color(240, 240, 240)
 local SHADOW_COLOR = Color(20, 20, 20)
-
-function ix.bar.Draw(x, y, w, h, value, color, text)
-	local menu = IsValid(ix.gui.menu) and ix.gui.menu
-	local fraction = menu and 1 - menu.currentAlpha / 255 or 1
-
-	if (menu and fraction <= 0) then
-		return
-	end
-
-	local origX, origY, origW = x, y, w
-
-	surface.SetDrawColor(230, 230, 230, 15 * fraction)
-	surface.DrawRect(x, y, w, h)
-	surface.DrawOutlinedRect(x, y, w, h)
-
-	x, y, w, h = origX + 2, origY + 2, (w - 4) * math.min(value, 1), h - 4
-
-	surface.SetDrawColor(color.r, color.g, color.b, 250 * fraction)
-	surface.DrawRect(x, y, w, h)
-
-	surface.SetDrawColor(230, 230, 230, 8 * fraction)
-	surface.SetMaterial(gradientU)
-	surface.DrawTexturedRect(x, y, w, h)
-
-	if (isstring(text)) then
-		x, y = origW * 0.5, origY + (h * 0.5)
-
-		surface.SetFont("ixSmallFont")
-		local textWidth, textHeight = surface.GetTextSize(text)
-
-		surface.SetTextColor(ColorAlpha(SHADOW_COLOR, 255 * fraction))
-		surface.SetTextPos(math.max(6, x + 2 - textWidth * 0.5), y + 4 - textHeight * 0.5)
-		surface.DrawText(text)
-
-		surface.SetTextColor(ColorAlpha(TEXT_COLOR, 255 * fraction))
-		surface.SetTextPos(math.max(4, x - textWidth * 0.5), y + 2 - textHeight * 0.5)
-		surface.DrawText(text)
-	end
-end
 
 function ix.bar.DrawAction()
 	local start, finish = ix.bar.actionStart, ix.bar.actionEnd
@@ -124,53 +89,6 @@ function ix.bar.DrawAction()
 			draw.SimpleText(ix.bar.actionText, "ixMediumFont", x, y - 24, TEXT_COLOR)
 		end
 	end
-end
-
-local Approach = math.Approach
-
--- luacheck: globals BAR_HEIGHT
-BAR_HEIGHT = 10
-
-function ix.bar.DrawAll()
-	ix.bar.totalHeight = 4
-
-	if (hook.Run("ShouldHideBars")) then
-		return
-	end
-
-	local w, h = surface.ScreenWidth() * 0.35, BAR_HEIGHT
-	local x = 4
-	local deltas = ix.bar.delta
-	local frameTime = FrameTime()
-	local curTime = CurTime()
-	local updateValue = frameTime * 0.6
-
-	for i = 1, #ix.bar.list do
-		local bar = ix.bar.list[i]
-
-		if (bar) then
-			local realValue, barText = bar.GetValue()
-
-			if (realValue == false) then
-				continue
-			end
-
-			local value = Approach(deltas[i] or 0, realValue, updateValue)
-
-			deltas[i] = value
-
-			if (deltas[i] != realValue) then
-				bar.lifeTime = curTime + 5
-			end
-
-			if (bar.lifeTime >= curTime or bar.visible or ix.option.Get("alwaysShowBars", false) or hook.Run("ShouldBarDraw", bar)) then
-				ix.bar.Draw(x, ix.bar.totalHeight, w, h, value, bar.color, barText)
-				ix.bar.totalHeight = ix.bar.totalHeight + h + 2
-			end
-		end
-	end
-
-	ix.bar.DrawAction()
 end
 
 do

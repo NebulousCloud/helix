@@ -3,7 +3,7 @@ function GM:PlayerInitialSpawn(client)
 	client.ixJoinTime = RealTime()
 
 	if (client:IsBot()) then
-		local botID = os.time()
+		local botID = os.time() + client:EntIndex()
 		local index = math.random(1, table.Count(ix.faction.indices))
 		local faction = ix.faction.indices[index]
 
@@ -20,7 +20,7 @@ function GM:PlayerInitialSpawn(client)
 
 		character.vars.inv = {inventory}
 
-		ix.char.loaded[os.time()] = character
+		ix.char.loaded[botID] = character
 
 		character:Setup()
 		client:Spawn()
@@ -37,7 +37,7 @@ function GM:PlayerInitialSpawn(client)
 		if (!IsValid(client)) then return end
 
 		-- Don't use the character cache if they've connected to another server using the same database
-		local address = client:IPAddress():match("%d+%.%d+%.%d+%.%d+")
+		local address = ix.util.GetAddress()
 		local bNoCache = client:GetData("lastIP", address) != address
 		client:SetData("lastIP", address)
 
@@ -55,12 +55,6 @@ function GM:PlayerInitialSpawn(client)
 				ix.char.loaded[v]:Sync(client)
 			end
 
-			for _, v in ipairs(player.GetAll()) do
-				if (v:GetCharacter()) then
-					v:GetCharacter():Sync(client)
-				end
-			end
-
 			client.ixCharList = charList
 
 			net.Start("ixCharacterMenu")
@@ -73,8 +67,13 @@ function GM:PlayerInitialSpawn(client)
 			net.Send(client)
 
 			client.ixLoaded = true
-
 			client:SetData("intro", true)
+
+			for _, v in ipairs(player.GetAll()) do
+				if (v:GetCharacter()) then
+					v:GetCharacter():Sync(client)
+				end
+			end
 		end, bNoCache)
 
 		ix.chat.Send(nil, "connect", client:SteamName())
@@ -96,7 +95,7 @@ function GM:PlayerInitialSpawn(client)
 end
 
 function GM:PlayerUse(client, entity)
-	if (client:GetNetVar("restricted") or (isfunction(entity.GetEntityMenu) and entity:GetClass() != "ix_item")) then
+	if (client:IsRestricted() or (isfunction(entity.GetEntityMenu) and entity:GetClass() != "ix_item")) then
 		return false
 	end
 
@@ -137,38 +136,8 @@ function GM:KeyRelease(client, key)
 	end
 end
 
-function GM:OnEntityCreated(entity)
-	if (!IsValid(entity)) then
-		return
-	end
-
-	-- hack to remove hl2 grenades after they've all been thrown
-	if (entity:GetClass() == "npc_grenade_frag") then
-		local owner = entity:GetOwner()
-
-		if (IsValid(owner) and owner:IsPlayer() and owner:GetCharacter()) then
-			local weapon = owner:GetActiveWeapon()
-
-			if (!IsValid(weapon)) then
-				return
-			end
-
-			local ammoName = game.GetAmmoName(weapon:GetPrimaryAmmoType())
-
-			-- the ammo hasn't been removed at this point, so if it's 1 then we can assume that they threw their last one
-			if (isstring(ammoName) and ammoName:lower() == "grenade" and owner:GetAmmoCount(ammoName) == 1) then
-				if (weapon.ixItem and weapon.ixItem.Unequip) then
-					weapon.ixItem:Unequip(owner, false, true)
-				end
-
-				owner:StripWeapon(weapon:GetClass())
-			end
-		end
-	end
-end
-
 function GM:CanPlayerInteractItem(client, action, item)
-	if (client:GetNetVar("restricted")) then
+	if (client:IsRestricted()) then
 		return false
 	end
 
@@ -185,9 +154,9 @@ function GM:CanPlayerInteractItem(client, action, item)
 		return false
 	end
 
-	if (type(item) == "Entity" and item.ixSteamID and item.ixCharID
-	and item.ixSteamID == client:SteamID() and item.ixCharID != client:GetCharacter():GetID() and
-	!item:GetItemTable().bAllowMultiCharacterInteraction) then
+	if (isentity(item) and item.ixSteamID and item.ixCharID
+	and item.ixSteamID == client:SteamID() and item.ixCharID != client:GetCharacter():GetID()
+	and !item:GetItemTable().bAllowMultiCharacterInteraction) then
 		client:NotifyLocalized("itemOwned")
 		return false
 	end
@@ -435,6 +404,60 @@ function GM:PlayerSpawnedVehicle(client, entity)
 	entity:SetNetVar("owner", client:GetCharacter():GetID())
 end
 
+ix.allowedHoldableClasses = {
+	["ix_item"] = true,
+	["prop_physics"] = true,
+	["prop_physics_override"] = true,
+	["prop_physics_multiplayer"] = true,
+	["prop_ragdoll"] = true
+}
+
+function GM:CanPlayerHoldObject(client, entity)
+	if (ix.allowedHoldableClasses[entity:GetClass()]) then
+		return true
+	end
+end
+
+local voiceDistance = 360000
+local function CalcPlayerCanHearPlayersVoice(listener)
+	if (!IsValid(listener)) then
+		return
+	end
+
+	listener.ixVoiceHear = listener.ixVoiceHear or {}
+
+	local eyePos = listener:EyePos()
+	for _, speaker in ipairs(player.GetAll()) do
+		local speakerEyePos = speaker:EyePos()
+		listener.ixVoiceHear[speaker] = eyePos:DistToSqr(speakerEyePos) < voiceDistance
+	end
+end
+
+function GM:InitializedConfig()
+	voiceDistance = ix.config.Get("voiceDistance")
+	voiceDistance = voiceDistance * voiceDistance
+end
+
+function GM:VoiceToggled(bAllowVoice)
+	for _, v in ipairs(player.GetAll()) do
+		local uniqueID = v:SteamID64() .. "ixCanHearPlayersVoice"
+
+		if (bAllowVoice) then
+			timer.Create(uniqueID, 0.5, 0, function()
+				CalcPlayerCanHearPlayersVoice(v)
+			end)
+		else
+			timer.Remove(uniqueID)
+
+			v.ixVoiceHear = nil
+		end
+	end
+end
+
+function GM:VoiceDistanceChanged(distance)
+	voiceDistance = distance * distance
+end
+
 -- Called when weapons should be given to a player.
 function GM:PlayerLoadout(client)
 	if (client.ixSkipLoadout) then
@@ -445,6 +468,7 @@ function GM:PlayerLoadout(client)
 
 	client:SetWeaponColor(Vector(client:GetInfo("cl_weaponcolor")))
 	client:StripWeapons()
+	client:StripAmmo()
 	client:SetLocalVar("blur", nil)
 
 	local character = client:GetCharacter()
@@ -523,6 +547,12 @@ function GM:PostPlayerLoadout(client)
 				end
 			end
 		end
+	end
+
+	if (ix.config.Get("allowVoice")) then
+		timer.Create(client:SteamID64() .. "ixCanHearPlayersVoice", 0.5, 0, function()
+			CalcPlayerCanHearPlayersVoice(client)
+		end)
 	end
 end
 
@@ -658,6 +688,22 @@ function GM:PlayerDisconnected(client)
 	if (IsValid(client.ixRagdoll)) then
 		client.ixRagdoll:Remove()
 	end
+
+	client:ClearNetVars()
+
+	if (!client.ixVoiceHear) then
+		return
+	end
+
+	for _, v in ipairs(player.GetAll()) do
+		if (!v.ixVoiceHear) then
+			continue
+		end
+
+		v.ixVoiceHear[client] = nil
+	end
+
+	timer.Remove(client:SteamID64() .. "ixCanHearPlayersVoice")
 end
 
 function GM:InitPostEntity()
@@ -723,19 +769,12 @@ function GM:InitializedSchema()
 end
 
 function GM:PlayerCanHearPlayersVoice(listener, speaker)
-	local bAllowVoice = ix.config.Get("allowVoice")
-
-	if (bAllowVoice) then
-		local listenerPosition = listener:GetPos()
-		local speakerPosition = speaker:GetPos()
-		local distance = math.Distance(speakerPosition.x, speakerPosition.y, listenerPosition.x, listenerPosition.y)
-
-		if (distance > ix.config.Get("voiceDistance")) then
-			bAllowVoice = false
-		end
+	if (!speaker:Alive()) then
+		return false
 	end
 
-	return bAllowVoice
+	local bCanHear = listener.ixVoiceHear and listener.ixVoiceHear[speaker]
+	return bCanHear, true
 end
 
 function GM:PlayerCanPickupWeapon(client, weapon)

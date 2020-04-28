@@ -11,6 +11,8 @@ if (CLIENT) then
 	PLUGIN.alphaDelta = PLUGIN.alphaDelta or PLUGIN.alpha
 	PLUGIN.fadeTime = PLUGIN.fadeTime or 0
 
+	local matrixScale = Vector(1, 1, 0)
+
 	function PLUGIN:LoadFonts(font, genericFont)
 		surface.CreateFont("ixWeaponSelectFont", {
 			font = font,
@@ -33,24 +35,22 @@ if (CLIENT) then
 
 		local fraction = self.alphaDelta
 
-		if (fraction > 0) then
-			local weapons = LocalPlayer():GetWeapons()
-			local total = table.Count(weapons)
+		if (fraction > 0.01) then
 			local x, y = ScrW() * 0.5, ScrH() * 0.5
 			local spacing = math.pi * 0.85
 			local radius = 240 * self.alphaDelta
 			local shiftX = ScrW() * .02
-			local i = 1
 
 			self.deltaIndex = Lerp(frameTime * 12, self.deltaIndex, self.index)
 
+			local weapons = LocalPlayer():GetWeapons()
 			local index = self.deltaIndex
 
-			for _, v in pairs(weapons) do
-				if (!weapons[self.index]) then
-					self.index = total
-				end
+			if (!weapons[self.index]) then
+				self.index = #weapons
+			end
 
+			for i = 1, #weapons do
 				local theta = (i - index) * 0.1
 				local color = ColorAlpha(
 					i == self.index and ix.config.Get("color") or color_white,
@@ -72,21 +72,20 @@ if (CLIENT) then
 				end
 
 				surface.SetFont("ixWeaponSelectFont")
-				local _, ty = surface.GetTextSize(v:GetPrintName():upper())
-				local scale = (1 - math.abs(theta*2))
+				local weaponName = weapons[i]:GetPrintName():upper()
+				local _, ty = surface.GetTextSize(weaponName)
+				local scale = 1 - math.abs(theta * 2)
 
 				local matrix = Matrix()
 				matrix:Translate(Vector(
 					shiftX + x + math.cos(theta * spacing + math.pi) * radius + radius,
-					y + lastY + math.sin(theta * spacing + math.pi) * radius - ty/2 ,
+					y + lastY + math.sin(theta * spacing + math.pi) * radius - ty / 2 ,
 					1))
-				matrix:Scale(Vector(1, 1, 0) * scale)
+				matrix:Scale(matrixScale * scale)
 
 				cam.PushModelMatrix(matrix)
-					ix.util.DrawText(v:GetPrintName():upper(), 2, ty/2, color, 0, 1, "ixWeaponSelectFont")
+					ix.util.DrawText(weaponName, 2, ty / 2, color, 0, 1, "ixWeaponSelectFont")
 				cam.PopModelMatrix()
-
-				i = i + 1
 			end
 
 			if (self.fadeTime < CurTime() and self.alpha > 0) then
@@ -95,12 +94,9 @@ if (CLIENT) then
 		end
 	end
 
-	function PLUGIN:OnIndexChanged()
+	function PLUGIN:OnIndexChanged(weapon)
 		self.alpha = 1
 		self.fadeTime = CurTime() + 5
-
-		local weapon = LocalPlayer():GetWeapons()[self.index]
-
 		self.markup = nil
 
 		if (IsValid(weapon)) then
@@ -126,6 +122,13 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:PlayerBindPress(client, bind, pressed)
+		bind = bind:lower()
+
+		if (!pressed or !bind:find("invprev") and !bind:find("invnext")
+		and !bind:find("slot") and !bind:find("attack")) then
+			return
+		end
+
 		local currentWeapon = client:GetActiveWeapon()
 		local bValid = IsValid(currentWeapon)
 		local bTool
@@ -139,33 +142,33 @@ if (CLIENT) then
 			bTool = tool and (tool.Scroll != nil)
 		end
 
-		bind = bind:lower()
+		local weapons = client:GetWeapons()
 
-		if (bind:find("invprev") and pressed and !bTool) then
+		if (bind:find("invprev") and !bTool) then
 			local oldIndex = self.index
-			self.index = math.min(self.index + 1, table.Count(client:GetWeapons()))
+			self.index = math.min(self.index + 1, #weapons)
 
 			if (self.alpha == 0 or oldIndex != self.index) then
-				self:OnIndexChanged()
+				self:OnIndexChanged(weapons[self.index])
 			end
 
 			return true
-		elseif (bind:find("invnext") and pressed and !bTool) then
+		elseif (bind:find("invnext") and !bTool) then
 			local oldIndex = self.index
 			self.index = math.max(self.index - 1, 1)
 
 			if (self.alpha == 0 or oldIndex != self.index) then
-				self:OnIndexChanged()
+				self:OnIndexChanged(weapons[self.index])
 			end
 
 			return true
-		elseif (bind:find("slot") and pressed) then
-			self.index = math.Clamp(tonumber(bind:match("slot(%d)")) or 1, 1, table.Count(LocalPlayer():GetWeapons()))
-			self:OnIndexChanged()
+		elseif (bind:find("slot")) then
+			self.index = math.Clamp(tonumber(bind:match("slot(%d)")) or 1, 1, #weapons)
+			self:OnIndexChanged(weapons[self.index])
 
 			return true
-		elseif (bind:find("attack") and pressed and self.alpha > 0) then
-			local weapon = LocalPlayer():GetWeapons()[self.index]
+		elseif (bind:find("attack") and self.alpha > 0) then
+			local weapon = weapons[self.index]
 
 			if (IsValid(weapon)) then
 				LocalPlayer():EmitSound(hook.Run("WeaponSelectSound", weapon) or "HL2Player.Use")
@@ -176,6 +179,17 @@ if (CLIENT) then
 
 			return true
 		end
+	end
+
+	function PLUGIN:Think()
+		local client = LocalPlayer()
+		if (!IsValid(client) or !client:Alive()) then
+			self.alpha = 0
+		end
+	end
+
+	function PLUGIN:ScoreboardShow()
+		self.alpha = 0
 	end
 
 	function PLUGIN:ShouldPopulateEntityInfo(entity)

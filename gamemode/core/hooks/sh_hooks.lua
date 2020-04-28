@@ -37,6 +37,7 @@ PLAYER_HOLDTYPE_TRANSLATOR["bugbait"] = "normal"
 
 local PLAYER_HOLDTYPE_TRANSLATOR = PLAYER_HOLDTYPE_TRANSLATOR
 local HOLDTYPE_TRANSLATOR = HOLDTYPE_TRANSLATOR
+local animationFixOffset = Vector(16.5438, -0.1642, -20.5493)
 
 function GM:TranslateActivity(client, act)
 	local clientInfo = client:GetTable()
@@ -94,7 +95,7 @@ function GM:TranslateActivity(client, act)
 			local fixVector = clientInfo.ixAnimTable[2]
 
 			if (isvector(fixVector)) then
-				client:SetLocalPos(Vector(16.5438, -0.1642, -20.5493))
+				client:SetLocalPos(animationFixOffset)
 			end
 
 			if (isstring(act)) then
@@ -136,7 +137,7 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 	if (itemTable.factions) then
 		local allowed = false
 
-		if (type(itemTable.factions) == "table") then
+		if (istable(itemTable.factions)) then
 			for _, v in pairs(itemTable.factions) do
 				if (client:Team() == v) then
 					allowed = true
@@ -156,7 +157,7 @@ function GM:CanPlayerUseBusiness(client, uniqueID)
 	if (itemTable.classes) then
 		local allowed = false
 
-		if (type(itemTable.classes) == "table") then
+		if (istable(itemTable.classes)) then
 			for _, v in pairs(itemTable.classes) do
 				if (client:GetCharacter():GetClass() == v) then
 					allowed = true
@@ -288,7 +289,7 @@ function GM:PlayerWeaponChanged(client, weapon)
 	end
 
 	-- If the player has been forced to have their weapon lowered.
-	if (client:GetNetVar("restricted")) then
+	if (client:IsRestricted()) then
 		client:SetWepRaised(false, weapon)
 		return
 	end
@@ -418,8 +419,12 @@ function GM:CanPlayerUseCharacter(client, character)
 	local banned = character:GetData("banned")
 
 	if (banned) then
-		if (type(banned) == "number" and banned < os.time()) then
-			return
+		if (isnumber(banned)) then
+			if (banned < os.time()) then
+				return
+			end
+
+			return false, "@charBannedTemp"
 		end
 
 		return false, "@charBanned"
@@ -473,12 +478,9 @@ function GM:PhysgunDrop(client, entity)
 end
 
 do
-	local TOOL_SAFE = {}
-	TOOL_SAFE["lamp"] = true
-	TOOL_SAFE["camera"] = true
-
 	local TOOL_DANGEROUS = {}
 	TOOL_DANGEROUS["dynamite"] = true
+	TOOL_DANGEROUS["duplicator"] = true
 
 	function GM:CanTool(client, trace, tool)
 		if (client:IsAdmin()) then
@@ -489,17 +491,7 @@ do
 			return false
 		end
 
-		local entity = trace.Entity
-
-		if (IsValid(entity)) then
-			if (TOOL_SAFE[tool]) then
-				return true
-			end
-		else
-			return true
-		end
-
-		return false
+		return self.BaseClass:CanTool(client, trace, tool)
 	end
 end
 
@@ -510,7 +502,7 @@ function GM:Move(client, moveData)
 		if (client:GetNetVar("actEnterAngle")) then
 			moveData:SetForwardSpeed(0)
 			moveData:SetSideSpeed(0)
-			moveData:SetVelocity(Vector(0, 0, 0))
+			moveData:SetVelocity(vector_origin)
 		end
 
 		if (client:GetMoveType() == MOVETYPE_WALK and moveData:KeyDown(IN_WALK)) then

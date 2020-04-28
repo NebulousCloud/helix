@@ -4,6 +4,7 @@ if (SERVER) then
 	util.AddNetworkString("ixBusinessResponse")
 	util.AddNetworkString("ixShipmentUse")
 	util.AddNetworkString("ixShipmentOpen")
+	util.AddNetworkString("ixShipmentClose")
 
 	net.Receive("ixBusinessBuy", function(length, client)
 		local items = net.ReadTable()
@@ -19,7 +20,7 @@ if (SERVER) then
 			return
 		end
 
-		if (table.Count(items) < 1) then
+		if (table.IsEmpty(items)) then
 			return
 		end
 
@@ -41,7 +42,7 @@ if (SERVER) then
 			end
 		end
 
-		if (table.Count(items) < 1) then
+		if (table.IsEmpty(items)) then
 			return
 		end
 
@@ -112,6 +113,15 @@ if (SERVER) then
 					entity:Remove()
 				end
 			end
+		end
+	end)
+
+	net.Receive("ixShipmentClose", function(length, client)
+		local entity = client.ixShipment
+
+		if (IsValid(entity)) then
+			entity.ixInteractionDirty = false
+			client.ixShipment = nil
 		end
 	end)
 else

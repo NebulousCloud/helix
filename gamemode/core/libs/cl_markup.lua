@@ -1,18 +1,5 @@
 
 -- luacheck: ignore
-
-local string = string
-local table = table
-local surface = surface
-local tostring = tostring
-local pairs = pairs
-local Msg = Msg
-local setmetatable = setmetatable
-local math = math
-local Material = Material
-local tonumber = tonumber
-local file = file
-
 ix.markup = ix.markup or {}
 
 -- Temporary information used when building text frames.
@@ -152,8 +139,8 @@ local function CheckTextOrTag(p)
 
 		local text_block = {}
 		text_block.text = p
-		text_block.colour = colour_stack[ table.getn(colour_stack) ]
-		text_block.font = font_stack[ table.getn(font_stack) ]
+		text_block.colour = colour_stack[#colour_stack]
+		text_block.font = font_stack[#font_stack]
 		table.insert(blocks, text_block)
 
 	end

@@ -1,3 +1,7 @@
+
+--- Helper library for loading/getting faction information.
+-- @module ix.faction
+
 ix.faction = ix.faction or {}
 ix.faction.teams = ix.faction.teams or {}
 ix.faction.indices = ix.faction.indices or {}
@@ -27,6 +31,9 @@ local CITIZEN_MODELS = {
 	"models/humans/group01/female_04.mdl"
 }
 
+--- Loads factions from a directory.
+-- @realm shared
+-- @string directory The path to the factions files.
 function ix.faction.LoadFromDir(directory)
 	for _, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
 		local niceName = v:sub(4, -5)
@@ -59,9 +66,9 @@ function ix.faction.LoadFromDir(directory)
 			FACTION.uniqueID = FACTION.uniqueID or niceName
 
 			for _, v2 in pairs(FACTION.models) do
-				if (type(v2) == "string") then
+				if (isstring(v2)) then
 					util.PrecacheModel(v2)
-				elseif (type(v2) == "table") then
+				elseif (istable(v2)) then
 					util.PrecacheModel(v2[1])
 				end
 			end
@@ -78,10 +85,20 @@ function ix.faction.LoadFromDir(directory)
 	end
 end
 
+--- Retrieves a faction table.
+-- @realm shared
+-- @param identifier Index or name of the faction
+-- @treturn table Faction table
+-- @usage print(ix.faction.Get(Entity(1):Team()).name)
+-- > "Citizen"
 function ix.faction.Get(identifier)
 	return ix.faction.indices[identifier] or ix.faction.teams[identifier]
 end
 
+--- Retrieves a faction index.
+-- @realm shared
+-- @string uniqueID Unique ID of the faction
+-- @treturn number Faction index
 function ix.faction.GetIndex(uniqueID)
 	for k, v in ipairs(ix.faction.indices) do
 		if (v.uniqueID == uniqueID) then
@@ -91,6 +108,10 @@ function ix.faction.GetIndex(uniqueID)
 end
 
 if (CLIENT) then
+	--- Returns true if a faction requires a whitelist.
+	-- @realm client
+	-- @number faction Index of the faction
+	-- @treturn bool Whether or not the faction requires a whitelist
 	function ix.faction.HasWhitelist(faction)
 		local data = ix.faction.indices[faction]
 

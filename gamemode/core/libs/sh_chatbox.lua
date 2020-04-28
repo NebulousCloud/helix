@@ -1,4 +1,9 @@
 
+--[[--
+Chat manipulation and helper functions.
+]]
+-- @module ix.chat
+
 ix.chat = ix.chat or {}
 ix.chat.classes = ix.chat.classes or {}
 
@@ -11,7 +16,20 @@ CAMI.RegisterPrivilege({
 	MinAccess = "admin"
 })
 
--- Registers a new chat type with the information provided.
+--- Registers a new chat type with the information provided.
+-- @realm shared
+-- @string chatType Name of the chat type
+-- @tab data Table Properties and functions to assign to this chat class. If fields are missing from the table, then it
+-- will use a default value
+-- @usage ix.chat.Register("me", {
+-- 	format = "** %s %s",
+-- 	GetColor = Color(255, 50, 50),
+-- 	CanHear = ix.config.Get("chatRange", 280) * 2,
+-- 	prefix = {"/Me", "/Action"},
+-- 	description = "@cmdMe",
+-- 	indicator = "chatPerforming",
+-- 	deadCanChat = true
+-- })
 function ix.chat.Register(chatType, data)
 	chatType = string.lower(chatType)
 
@@ -21,7 +39,7 @@ function ix.chat.Register(chatType, data)
 			-- The speaker will be heard by everyone.
 			return true
 		end
-	elseif (type(data.CanHear) == "number") then
+	elseif (isnumber(data.CanHear)) then
 		-- Use the value as a range and create a function to compare distances.
 		local range = data.CanHear * data.CanHear
 		data.range = range
@@ -68,7 +86,7 @@ function ix.chat.Register(chatType, data)
 	end
 
 	if (CLIENT and data.prefix) then
-		if (type(data.prefix) == "table") then
+		if (istable(data.prefix)) then
 			for _, v in ipairs(data.prefix) do
 				if (v:sub(1, 1) == "/") then
 					ix.command.Add(v:sub(2), {
@@ -102,8 +120,15 @@ function ix.chat.Register(chatType, data)
 	ix.chat.classes[chatType] = data
 end
 
--- Identifies which chat mode should be used.
-function ix.chat.Parse(client, message, noSend)
+--- Identifies which chat mode should be used.
+-- @realm shared
+-- @player client Player who is speaking
+-- @string message Message to parse
+-- @bool[opt=false] bNoSend Whether or not to send the chat message after parsing
+-- @treturn string Name of the chat type
+-- @treturn string Message that was parsed
+-- @treturn bool Whether or not the speaker should be anonymous
+function ix.chat.Parse(client, message, bNoSend)
 	local anonymous = false
 	local chatType = "ic"
 
@@ -114,7 +139,7 @@ function ix.chat.Parse(client, message, noSend)
 		local noSpaceAfter = v.noSpaceAfter
 
 		-- Check through all prefixes if the chat type has more than one.
-		if (type(v.prefix) == "table") then
+		if (istable(v.prefix)) then
 			for _, prefix in ipairs(v.prefix) do
 				prefix = prefix:lower()
 
@@ -127,7 +152,7 @@ function ix.chat.Parse(client, message, noSend)
 				end
 			end
 		-- Otherwise the prefix itself is checked.
-		elseif (type(v.prefix) == "string") then
+		elseif (isstring(v.prefix)) then
 			local prefix = v.prefix:lower()
 
 			isChosen = message:sub(1, #prefix + (noSpaceAfter and 0 or 1)):lower() == prefix..(noSpaceAfter and "" or " "):lower()
@@ -156,7 +181,7 @@ function ix.chat.Parse(client, message, noSend)
 	end
 
 	-- Only send if needed.
-	if (SERVER and !noSend) then
+	if (SERVER and !bNoSend) then
 		-- Send the correct chat type out so other player see the message.
 		ix.chat.Send(client, chatType, hook.Run("PlayerMessageSend", client, chatType, message, anonymous) or message, anonymous)
 	end
@@ -169,8 +194,19 @@ end
 if (SERVER) then
 	util.AddNetworkString("ixChatMessage")
 
-	-- Send a chat message using the specified chat type.
+	--- Send a chat message using the specified chat type.
+	-- @realm server
+	-- @player speaker Player who is speaking
+	-- @string chatType Name of the chat type
+	-- @string text Message to send
+	-- @bool[opt=false] anonymous Whether or not the speaker should be anonymous
+	-- @tab[opt=nil] receivers The players to replicate send the message to
+	-- @tab[opt=nil] data Additional data for this chat message
 	function ix.chat.Send(speaker, chatType, text, anonymous, receivers, data)
+		if (!chatType) then
+			return
+		end
+
 		data = data or {}
 		chatType = string.lower(chatType)
 

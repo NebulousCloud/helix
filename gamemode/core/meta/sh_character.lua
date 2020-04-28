@@ -136,6 +136,10 @@ if (SERVER) then
 	end
 
 	-- Sets up the "appearance" related inforomation for the character.
+	--- Applies the character's appearance and synchronizes information to the owning player.
+	-- @realm server
+	-- @internal
+	-- @bool[opt] bNoNetworking Whether or not to sync the character info to other players
 	function CHAR:Setup(bNoNetworking)
 		local client = self:GetPlayer()
 
@@ -155,7 +159,7 @@ if (SERVER) then
 			-- Apply a saved skin.
 			client:SetSkin(self:GetData("skin", 0))
 
-			-- Synchronize the character if we should.`
+			-- Synchronize the character if we should.
 			if (!bNoNetworking) then
 				if (client:IsBot()) then
 					timer.Simple(0.33, function()
@@ -166,7 +170,7 @@ if (SERVER) then
 				end
 
 				for _, v in ipairs(self:GetInventory(true)) do
-					if (type(v) == "table") then
+					if (istable(v)) then
 						v:AddReceiver(client)
 						v:Sync(client)
 					end
@@ -185,7 +189,8 @@ if (SERVER) then
 		end
 	end
 
-	-- Forces the player to choose a character.
+	--- Forces a player off their current character, and sends them to the character menu to select a character.
+	-- @realm server
 	function CHAR:Kick()
 		-- Kill the player so they are not standing anywhere.
 		local client = self:GetPlayer()
@@ -208,7 +213,9 @@ if (SERVER) then
 		end
 	end
 
-	-- Prevents the use of this character permanently or for a certain amount of time.
+	--- Forces a player off their current character, and prevents them from using the character for the specified amount of time.
+	-- @realm server
+	-- @number[opt] time Amount of seconds to ban the character for. If left as `nil`, the character will be banned permanently
 	function CHAR:Ban(time)
 		time = tonumber(time)
 
@@ -223,7 +230,9 @@ if (SERVER) then
 	end
 end
 
--- Returns which player owns this character.
+--- Returns the player that owns this character.
+-- @realm shared
+-- @treturn player Player that owns this character
 function CHAR:GetPlayer()
 	-- Set the player from entity index.
 	if (isnumber(self.player)) then
@@ -321,7 +330,7 @@ function ix.char.RegisterVar(key, data)
 
 			if (default == nil) then
 				return ix.char.vars[key] and (istable(ix.char.vars[key].default) and table.Copy(ix.char.vars[key].default)
-					or ix.char.vars[key].default) or nil
+					or ix.char.vars[key].default)
 			end
 
 			return default

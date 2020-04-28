@@ -11,9 +11,9 @@ function PANEL:Init()
 
 	self.name = self:Add("DTextEntry")
 	self.name:Dock(TOP)
-	self.name:SetText(entity:GetNetVar("name", "John Doe"))
+	self.name:SetText(entity:GetDisplayName())
 	self.name.OnEnter = function(this)
-		if (entity:GetNetVar("name") != this:GetText()) then
+		if (entity:GetDisplayName() != this:GetText()) then
 			self:updateVendor("name", this:GetText())
 		end
 	end
@@ -21,9 +21,9 @@ function PANEL:Init()
 	self.description = self:Add("DTextEntry")
 	self.description:Dock(TOP)
 	self.description:DockMargin(0, 4, 0, 0)
-	self.description:SetText(entity:GetNetVar("description", ""))
+	self.description:SetText(entity:GetDescription())
 	self.description.OnEnter = function(this)
-		if (entity:GetNetVar("description") != this:GetText()) then
+		if (entity:GetDescription() != this:GetText()) then
 			self:updateVendor("description", this:GetText())
 		end
 	end
@@ -61,7 +61,7 @@ function PANEL:Init()
 	self.bubble:SetText(L"vendorNoBubble")
 	self.bubble:Dock(TOP)
 	self.bubble:DockMargin(0, 4, 0, 0)
-	self.bubble:SetValue(entity:GetNetVar("noBubble") and 1 or 0)
+	self.bubble:SetValue(entity:GetNoBubble() and 1 or 0)
 	self.bubble.OnChange = function(this, value)
 		if (this.noSend) then
 			this.noSend = nil

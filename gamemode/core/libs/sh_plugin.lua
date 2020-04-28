@@ -76,7 +76,7 @@ function ix.plugin.Load(uniqueID, path, isSingleFile, variable)
 		PLUGIN.description = PLUGIN.description or "No description available."
 
 		for k, v in pairs(PLUGIN) do
-			if (type(v) == "function") then
+			if (isfunction(v)) then
 				HOOKS_CACHE[k] = HOOKS_CACHE[k] or {}
 				HOOKS_CACHE[k][PLUGIN] = v
 			end
@@ -109,22 +109,22 @@ function ix.plugin.LoadEntities(path)
 	local bLoadedTools
 	local files, folders
 
-	local function IncludeFiles(path2, clientOnly)
-		if (SERVER and file.Exists(path2.."init.lua", "LUA") or CLIENT) then
-			ix.util.Include(path2.."init.lua", clientOnly and "client" or "server")
+	local function IncludeFiles(path2, bClientOnly)
+		if (SERVER and !bClientOnly) then
+			if (file.Exists(path2.."init.lua", "LUA")) then
+				ix.util.Include(path2.."init.lua", "server")
+			elseif (file.Exists(path2.."shared.lua", "LUA")) then
+				ix.util.Include(path2.."shared.lua")
+			end
 
 			if (file.Exists(path2.."cl_init.lua", "LUA")) then
 				ix.util.Include(path2.."cl_init.lua", "client")
 			end
-
-			return true
+		elseif (file.Exists(path2.."cl_init.lua", "LUA")) then
+			ix.util.Include(path2.."cl_init.lua", "client")
 		elseif (file.Exists(path2.."shared.lua", "LUA")) then
 			ix.util.Include(path2.."shared.lua")
-
-			return true
 		end
-
-		return false
 	end
 
 	local function HandleEntityInclusion(folder, variable, register, default, clientOnly, create, complete)
@@ -143,14 +143,14 @@ function ix.plugin.LoadEntities(path)
 				create(v)
 			end
 
-			if (IncludeFiles(path2, clientOnly)) then
-				if (clientOnly) then
-					if (CLIENT) then
-						register(_G[variable], v)
-					end
-				else
+			IncludeFiles(path2, clientOnly)
+
+			if (clientOnly) then
+				if (CLIENT) then
 					register(_G[variable], v)
 				end
+			else
+				register(_G[variable], v)
 			end
 
 			if (isfunction(complete)) then
@@ -212,12 +212,8 @@ function ix.plugin.LoadEntities(path)
 		Base = "base_gmodentity",
 		Spawnable = true
 	}, false, nil, function(ent)
-		if (ent.Holdable == true) then
-			local hands = weapons.GetStored("ix_hands")
-
-			if (hands) then
-				hands.allowedHoldableClasses[ent.ClassName] = true
-			end
+		if (SERVER and ent.Holdable == true) then
+			ix.allowedHoldableClasses[ent.ClassName] = true
 		end
 	end)
 
@@ -279,7 +275,7 @@ function ix.plugin.SetUnloaded(uniqueID, state, bNoSave)
 	local plugin = ix.plugin.list[uniqueID]
 
 	if (state) then
-		if (plugin.OnUnload) then
+		if (plugin and plugin.OnUnload) then
 			plugin:OnUnload()
 		end
 

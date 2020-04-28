@@ -19,7 +19,7 @@ if (CLIENT) then
 	})
 
 	ix.option.Add("chatFontScale", ix.type.number, 1, {
-		category = "chat", min = 0.1, max = 2, decimals = 1,
+		category = "chat", min = 0.1, max = 2, decimals = 2,
 		OnChanged = function()
 			hook.Run("LoadFonts", ix.config.Get("font"), ix.config.Get("genericFont"))
 			PLUGIN:CreateChat()

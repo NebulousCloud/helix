@@ -7,9 +7,16 @@ ENT.Spawnable = false
 ENT.ShowPlayerInteraction = true
 ENT.bNoPersist = true
 
+function ENT:SetupDataTables()
+	self:NetworkVar("Int", 0, "Amount")
+end
+
 if (SERVER) then
+	local invalidBoundsMin = Vector(-8, -8, -8)
+	local invalidBoundsMax = Vector(8, 8, 8)
+
 	function ENT:Initialize()
-		self:SetModel("models/props_lab/box01a.mdl")
+		self:SetModel(ix.currency.model)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetUseType(SIMPLE_USE)
@@ -20,10 +27,8 @@ if (SERVER) then
 			physObj:EnableMotion(true)
 			physObj:Wake()
 		else
-			local min, max = Vector(-8, -8, -8), Vector(8, 8, 8)
-
-			self:PhysicsInitBox(min, max)
-			self:SetCollisionBounds(min, max)
+			self:PhysicsInitBox(invalidBoundsMin, invalidBoundsMax)
+			self:SetCollisionBounds(invalidBoundsMin, invalidBoundsMax)
 		end
 	end
 
@@ -56,12 +61,4 @@ else
 		text:SetText(ix.currency.Get(self:GetAmount()))
 		text:SizeToContents()
 	end
-end
-
-function ENT:SetAmount(amount)
-	self:SetNetVar("amount", amount)
-end
-
-function ENT:GetAmount()
-	return self:GetNetVar("amount", 0)
 end

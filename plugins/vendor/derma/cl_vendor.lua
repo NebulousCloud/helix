@@ -32,7 +32,7 @@ function PANEL:Init()
 	local footer = self:Add("DPanel")
 	footer:SetTall(34)
 	footer:Dock(BOTTOM)
-	footer:SetDrawBackground(false)
+	footer:SetPaintBackground(false)
 
 	self.vendorSell = footer:Add("DButton")
 	self.vendorSell:SetFont("ixMediumFont")
@@ -72,7 +72,7 @@ function PANEL:Init()
 	self.selling:SetWide(self:GetWide() * 0.5 - 7)
 	self.selling:Dock(LEFT)
 	self.selling:DockMargin(0, 4, 0, 4)
-	self.selling:SetDrawBackground(true)
+	self.selling:SetPaintBackground(true)
 
 	self.sellingItems = self.selling:Add("DListLayout")
 	self.sellingItems:SetSize(self.selling:GetSize())
@@ -83,7 +83,7 @@ function PANEL:Init()
 	self.buying:SetWide(self:GetWide() * 0.5 - 7)
 	self.buying:Dock(RIGHT)
 	self.buying:DockMargin(0, 4, 0, 4)
-	self.buying:SetDrawBackground(true)
+	self.buying:SetPaintBackground(true)
 
 	self.buyingItems = self.buying:Add("DListLayout")
 	self.buyingItems:SetSize(self.buying:GetSize())
@@ -140,8 +140,8 @@ end
 
 function PANEL:Setup(entity)
 	self.entity = entity
-	self:SetTitle(entity:GetNetVar("name", ""))
-	self.vendorName:SetText(entity:GetNetVar("name", "")..(entity.money and " ("..entity.money..")" or ""))
+	self:SetTitle(entity:GetDisplayName())
+	self.vendorName:SetText(entity:GetDisplayName()..(entity.money and " ("..entity.money..")" or ""))
 
 	self.vendorBuy:SetEnabled(!self:GetReadOnly())
 	self.vendorSell:SetEnabled(!self:GetReadOnly())
@@ -174,8 +174,8 @@ function PANEL:Think()
 	end
 
 	if ((self.nextUpdate or 0) < CurTime()) then
-		self:SetTitle(self.entity:GetNetVar("name"))
-		self.vendorName:SetText(entity:GetNetVar("name", "")..(entity.money and " ("..ix.currency.Get(entity.money)..")" or ""))
+		self:SetTitle(self.entity:GetDisplayName())
+		self.vendorName:SetText(entity:GetDisplayName()..(entity.money and " ("..ix.currency.Get(entity.money)..")" or ""))
 		self.ourName:SetText(L"you".." ("..ix.currency.Get(LocalPlayer():GetCharacter():GetMoney())..")")
 
 		self.nextUpdate = CurTime() + 0.25
@@ -242,29 +242,34 @@ function PANEL:Setup(uniqueID)
 		self.icon:SetModel(item:GetModel(), item:GetSkin())
 		self.name:SetText(item:GetName())
 		self.itemName = item:GetName()
+
+		self.click:SetHelixTooltip(function(tooltip)
+			ix.hud.PopulateItemTooltip(tooltip, item)
+
+			local entity = ix.gui.vendor.entity
+			if (entity and entity.items[self.item] and entity.items[self.item][VENDOR_MAXSTOCK]) then
+				local info = entity.items[self.item]
+				local stock = tooltip:AddRowAfter("name", "stock")
+				stock:SetText(string.format("Stock: %d/%d", info[VENDOR_STOCK], info[VENDOR_MAXSTOCK]))
+				stock:SetBackgroundColor(derma.GetColor("Info", self))
+				stock:SizeToContents()
+			end
+		end)
 	end
 end
 
 function PANEL:Think()
 	if ((self.nextUpdate or 0) < CurTime()) then
-		local name = self.itemName
 		local entity = ix.gui.vendor.entity
 
-		if (entity) then
-			if (self.isLocal) then
-				local count = LocalPlayer():GetCharacter():GetInventory():GetItemCount(self.item)
+		if (entity and self.isLocal) then
+			local count = LocalPlayer():GetCharacter():GetInventory():GetItemCount(self.item)
 
-				if (count == 0) then
-					self:Remove()
-				end
-
-				name = name.." ("..count..")"
-			elseif (entity.items[self.item] and entity.items[self.item][VENDOR_MAXSTOCK]) then
-				name = name.." ("..entity.items[self.item][VENDOR_STOCK].."/"..entity.items[self.item][VENDOR_MAXSTOCK]..")"
+			if (count == 0) then
+				self:Remove()
 			end
 		end
 
-		self.name:SetText(name)
 		self.nextUpdate = CurTime() + 0.1
 	end
 end

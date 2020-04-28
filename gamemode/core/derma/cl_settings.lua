@@ -207,7 +207,7 @@ function PANEL:OpenEntry()
 	self.entry:Attach(self)
 	self.entry:SetValue(self:GetValue(), true)
 	self.entry.OnValueChanged = function(panel)
-		local value = panel:GetValue()
+		local value = math.Round(panel:GetValue(), self:GetDecimals())
 
 		if (value != self:GetValue()) then
 			self:SetValue(value, true)

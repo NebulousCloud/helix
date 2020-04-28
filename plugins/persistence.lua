@@ -13,7 +13,6 @@ properties.Add("persist", {
 
 	Filter = function(self, entity, client)
 		if (entity:IsPlayer() or entity.bNoPersist) then return false end
-		if (GetConVarString("sbox_persist") == "0") then return false end
 		if (!gamemode.Call("CanProperty", client, "persist", entity)) then return false end
 
 		return !entity:GetNetVar("Persistent", false)
@@ -89,24 +88,43 @@ if (SERVER) then
 
 		for _, v in ipairs(entities) do
 			local entity = ents.Create(v.Class)
+
+			if (IsValid(entity)) then
 				entity:SetPos(v.Pos)
 				entity:SetAngles(v.Angle)
 				entity:SetModel(v.Model)
 				entity:SetSkin(v.Skin)
 				entity:SetColor(v.Color)
 				entity:SetMaterial(v.Material)
-			entity:Spawn()
-			entity:Activate()
+				entity:Spawn()
+				entity:Activate()
 
-			local physicsObject = entity:GetPhysicsObject()
+				if (istable(v.BodyGroups)) then
+					for k2, v2 in pairs(v.BodyGroups) do
+						entity:SetBodygroup(k2, v2)
+					end
+				end
 
-			if (IsValid(physicsObject)) then
-				physicsObject:EnableMotion(v.Movable)
+				if (istable(v.SubMaterial)) then
+					for k2, v2 in pairs(v.SubMaterial) do
+						if (!isnumber(k2) or !isstring(v2)) then
+							continue
+						end
+
+						entity:SetSubMaterial(k2 - 1, v2)
+					end
+				end
+
+				local physicsObject = entity:GetPhysicsObject()
+
+				if (IsValid(physicsObject)) then
+					physicsObject:EnableMotion(v.Movable)
+				end
+
+				self.stored[#self.stored + 1] = entity
+
+				entity:SetNetVar("Persistent", true)
 			end
-
-			self.stored[#self.stored + 1] = entity
-
-			entity:SetNetVar("Persistent", true)
 		end
 	end
 
@@ -123,6 +141,30 @@ if (SERVER) then
 				data.Skin = v:GetSkin()
 				data.Color = v:GetColor()
 				data.Material = v:GetMaterial()
+
+				local materials = v:GetMaterials()
+
+				if (istable(materials)) then
+					data.SubMaterial = {}
+
+					for k2, _ in pairs(materials) do
+						if (v:GetSubMaterial(k2)) then
+							data.SubMaterial[k2] = v:GetSubMaterial(k2 - 1)
+						end
+					end
+				end
+
+				local bodyGroups = v:GetBodyGroups()
+
+				if (istable(bodyGroups)) then
+					data.BodyGroups = {}
+
+					for _, v2 in pairs(bodyGroups) do
+						if (v:GetBodygroup(v2.id) > 0) then
+							data.BodyGroups[v2.id] = v:GetBodygroup(v2.id)
+						end
+					end
+				end
 
 				local physicsObject = v:GetPhysicsObject()
 

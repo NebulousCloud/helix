@@ -73,7 +73,7 @@ function PANEL:SetItems(entity, items)
 					items[k] = nil
 				end
 
-				if (table.Count(items) == 0) then
+				if (table.IsEmpty(items)) then
 					self:Remove()
 				end
 			end
@@ -102,6 +102,13 @@ function PANEL:SetItems(entity, items)
 			self.itemPanels[k] = item
 		end
 	end
+end
+
+function PANEL:Close()
+	net.Start("ixShipmentClose")
+	net.SendToServer()
+
+	self:Remove()
 end
 
 function PANEL:Think()

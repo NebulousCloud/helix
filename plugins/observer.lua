@@ -1,7 +1,7 @@
 
 PLUGIN.name = "Observer"
 PLUGIN.author = "Chessnut"
-PLUGIN.description = "Adds on to the no-clip mode to prevent instrusion."
+PLUGIN.description = "Adds on to the no-clip mode to prevent intrusion."
 
 CAMI.RegisterPrivilege({
 	Name = "Helix - Observer",
@@ -129,6 +129,12 @@ else
 		end
 	end
 
+	function PLUGIN:CanPlayerEnterVehicle(client, vehicle, role)
+		if (client:GetMoveType() == MOVETYPE_NOCLIP) then
+			return false
+		end
+	end
+
 	function PLUGIN:PlayerNoClip(client, state)
 		if (hook.Run("CanPlayerEnterObserver", client)) then
 			if (state) then
@@ -170,6 +176,8 @@ else
 
 				hook.Run("OnPlayerObserve", client, state)
 			end
+
+			return true
 		end
 	end
 

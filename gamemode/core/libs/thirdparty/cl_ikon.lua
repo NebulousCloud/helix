@@ -300,14 +300,14 @@ function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
 	render.PopRenderTarget()
 
 	if (updateCache) then
-		local material = tostring(os.time())
-		file.Write(material .. ".png", capturedIcon)
+		local materialID = tostring(os.time())
+		file.Write(materialID .. ".png", capturedIcon)
 
 		timer.Simple(0, function()
-			local material = Material("../data/".. material ..".png")
+			local material = Material("../data/".. materialID ..".png")
 
 			ikon.cache[name]  = material
-			file.Delete(material .. ".png")
+			file.Delete(materialID .. ".png")
 		end)
 	end
 

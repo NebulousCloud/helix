@@ -8,6 +8,10 @@ ENT.Spawnable = false
 ENT.ShowPlayerInteraction = true
 ENT.bNoPersist = true
 
+function ENT:SetupDataTables()
+	self:NetworkVar("Int", 0, "DeliveryTime")
+end
+
 if (SERVER) then
 	function ENT:Initialize()
 		self:SetModel("models/Items/item_item_crate.mdl")
@@ -23,7 +27,7 @@ if (SERVER) then
 			physObj:Wake()
 		end
 
-		self:SetNetVar("delTime", CurTime() + 120)
+		self:SetDeliveryTime(CurTime() + 120)
 
 		timer.Simple(120, function()
 			if (IsValid(self)) then
@@ -86,16 +90,16 @@ else
 
 		self:DrawModel()
 
-		pos = pos + self:GetUp()*25
-		pos = pos + self:GetForward()*1
-		pos = pos + self:GetRight()*3
+		pos = pos + self:GetUp() * 25
+		pos = pos + self:GetForward() * 1
+		pos = pos + self:GetRight() * 3
 
-		local delTime = math.max(math.ceil(self:GetNetVar("delTime", 0) - CurTime()), 0)
+		local delTime = math.max(math.ceil(self:GetDeliveryTime() - CurTime()), 0)
 
 		local func = function()
 			surface.SetMaterial(tempMat)
 			surface.SetDrawColor(0, 0, 0, 200)
-			surface.DrawTexturedRect(-size/2, -size/2 - 10, size, size)
+			surface.DrawTexturedRect(-size / 2, -size / 2 - 10, size, size)
 
 			ix.util.DrawText("k", 0, 0, color_white, 1, 4, "ixIconsBig")
 			ix.util.DrawText(delTime, 0, -10, color_white, 1, 5, "ixBigFont")
@@ -106,7 +110,7 @@ else
 		cam.End3D2D()
 
 		ang:RotateAroundAxis(ang:Right(), 180)
-		pos = pos - self:GetUp()*26
+		pos = pos - self:GetUp() * 26
 
 		cam.Start3D2D(pos, ang, .15)
 			func()

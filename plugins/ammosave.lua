@@ -9,7 +9,11 @@ PLUGIN.ammoList = {}
 ix.ammo = ix.ammo or {}
 
 function ix.ammo.Register(name)
-	table.insert(PLUGIN.ammoList, name)
+	name = name:lower()
+
+	if (!table.HasValue(PLUGIN.ammoList, name)) then
+		PLUGIN.ammoList[#PLUGIN.ammoList + 1] = name
+	end
 end
 
 -- Register Default HL2 Ammunition.

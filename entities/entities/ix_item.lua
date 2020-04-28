@@ -10,7 +10,14 @@ ENT.ShowPlayerInteraction = true
 ENT.RenderGroup = RENDERGROUP_BOTH
 ENT.bNoPersist = true
 
+function ENT:SetupDataTables()
+	self:NetworkVar("String", 0, "ItemID")
+end
+
 if (SERVER) then
+	local invalidBoundsMin = Vector(-8, -8, -8)
+	local invalidBoundsMax = Vector(8, 8, 8)
+
 	util.AddNetworkString("ixItemEntityAction")
 
 	function ENT:Initialize()
@@ -50,17 +57,6 @@ if (SERVER) then
 		end
 	end
 
-	function ENT:OnTakeDamage(damageInfo)
-		local damage = damageInfo:GetDamage()
-		self:SetHealth(self:Health() - damage)
-
-		if (self:Health() <= 0 and !self.ixIsDestroying) then
-			self.ixIsDestroying = true
-			self.ixDamageInfo = {damageInfo:GetAttacker(), damage, damageInfo:GetInflictor()}
-			self:Remove()
-		end
-	end
-
 	function ENT:SetItem(itemID)
 		local itemTable = ix.item.instances[itemID]
 
@@ -76,20 +72,18 @@ if (SERVER) then
 
 			self:PhysicsInit(SOLID_VPHYSICS)
 			self:SetSolid(SOLID_VPHYSICS)
-			self:SetNetVar("id", itemTable.uniqueID)
+			self:SetItemID(itemTable.uniqueID)
 			self.ixItemID = itemID
 
-			if (table.Count(itemTable.data) > 0) then
+			if (!table.IsEmpty(itemTable.data)) then
 				self:SetNetVar("data", itemTable.data)
 			end
 
 			local physObj = self:GetPhysicsObject()
 
 			if (!IsValid(physObj)) then
-				local min, max = Vector(-8, -8, -8), Vector(8, 8, 8)
-
-				self:PhysicsInitBox(min, max)
-				self:SetCollisionBounds(min, max)
+				self:PhysicsInitBox(invalidBoundsMin, invalidBoundsMax)
+				self:SetCollisionBounds(invalidBoundsMin, invalidBoundsMax)
 			end
 
 			if (IsValid(physObj)) then
@@ -110,6 +104,24 @@ if (SERVER) then
 		ix.item.Instance(0, itemTable.uniqueID, itemTable.data, 1, 1, function(item)
 			self:SetItem(item:GetID())
 		end)
+	end
+
+	function ENT:OnTakeDamage(damageInfo)
+		local itemTable = ix.item.instances[self.ixItemID]
+
+		if (itemTable.OnEntityTakeDamage
+		and itemTable:OnEntityTakeDamage(self, damageInfo) == false) then
+			return
+		end
+
+		local damage = damageInfo:GetDamage()
+		self:SetHealth(self:Health() - damage)
+
+		if (self:Health() <= 0 and !self.ixIsDestroying) then
+			self.ixIsDestroying = true
+			self.ixDamageInfo = {damageInfo:GetAttacker(), damage, damageInfo:GetInflictor()}
+			self:Remove()
+		end
 	end
 
 	function ENT:OnRemove()
@@ -147,6 +159,10 @@ if (SERVER) then
 
 	function ENT:Think()
 		local itemTable = self:GetItemTable()
+
+		if (!itemTable) then
+			self:Remove()
+		end
 
 		if (itemTable.Think) then
 			itemTable:Think(self)
@@ -300,10 +316,6 @@ function ENT:GetEntityMenu(client)
 	itemTable.entity = nil
 
 	return options
-end
-
-function ENT:GetItemID()
-	return self:GetNetVar("id", "")
 end
 
 function ENT:GetItemTable()

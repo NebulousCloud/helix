@@ -1,14 +1,50 @@
+
+--[[--
+Grants abilities to characters.
+
+Flags are a simple way of adding/removing certain abilities to players on a per-character basis. Helix comes with a few flags
+by default, for example to restrict spawning of props, usage of the physgun, etc. All flags will be listed in the
+`Flags` section of the `Help` menu. Flags are usually used when server validation is required to allow a player to do something
+on their character. However, it's usually preferable to use in-character methods over flags when possible (i.e restricting
+the business menu to characters that have a permit item, rather than using flags to determine availability).
+
+Flags are a single alphanumeric character that can be checked on the server. Serverside callbacks can be used to provide
+functionality whenever the flag is added or removed. For example:
+	ix.flag.Add("z", "Access to some cool stuff.", function(client, bGiven)
+		print("z flag given:", bGiven)
+	end)
+
+	Entity(1):GetCharacter():GiveFlags("z")
+	> z flag given: true
+
+	Entity(1):GetCharacter():TakeFlags("z")
+	> z flag given: false
+
+	print(Entity(1):GetCharacter():HasFlags("z"))
+	> false
+]]
+-- @module ix.flag
+
 ix.flag = ix.flag or {}
 ix.flag.list = ix.flag.list or {}
 
--- Adds a flag that does something when set.
+--- Creates a flag. This should be called shared in order for the client to be aware of the flag's existence.
+-- @realm shared
+-- @string flag Alphanumeric character to use for the flag
+-- @string description Description of the flag
+-- @func callback Function to call when the flag is given or taken from a player
 function ix.flag.Add(flag, description, callback)
-	-- Add the flag to a list, storing the description and callback (if there is one).
-	ix.flag.list[flag] = {description = description, callback = callback}
+	ix.flag.list[flag] = {
+		description = description,
+		callback = callback
+	}
 end
 
 if (SERVER) then
 	-- Called to apply flags when a player has spawned.
+	-- @realm server
+	-- @internal
+	-- @player client Player to setup flags for
 	function ix.flag.OnSpawn(client)
 		-- Check if they have a valid character.
 		if (client:GetCharacter()) then
@@ -31,17 +67,26 @@ if (SERVER) then
 end
 
 do
-	-- Extend the character metatable to allow flag giving/taking.
 	local character = ix.meta.character
 
-	-- Flags can only be set server-side.
 	if (SERVER) then
-		-- Set the flag data to the flag string.
+		--- Flag util functions for character
+		-- @classmod Character
+
+		--- Sets this character's accessible flags. Note that this method overwrites **all** flags instead of adding them.
+		-- @realm server
+		-- @string flags Flag(s) this charater is allowed to have
+		-- @see GiveFlags
 		function character:SetFlags(flags)
 			self:SetData("f", flags)
 		end
 
-		-- Add a flag to the flag string.
+		--- Adds a flag to the list of this character's accessible flags. This does not overwrite existing flags.
+		-- @realm server
+		-- @string flags Flag(s) this character should be given
+		-- @usage character:GiveFlags("pet")
+		-- -- gives p, e, and t flags to the character
+		-- @see HasFlags
 		function character:GiveFlags(flags)
 			local addedFlags = ""
 
@@ -68,7 +113,12 @@ do
 			end
 		end
 
-		-- Remove the flags from the flag string.
+		--- Removes this character's access to the given flags.
+		-- @realm server
+		-- @string flags Flag(s) to remove from this character
+		-- @usage -- for a character with "pet" flags
+		-- character:TakeFlags("p")
+		-- -- character now has e, and t flags
 		function character:TakeFlags(flags)
 			local oldFlags = self:GetFlags()
 			local newFlags = oldFlags
@@ -93,12 +143,18 @@ do
 		end
 	end
 
-	-- Return the flag string.
+	--- Returns all of the flags this character has.
+	-- @realm server
+	-- @treturn string Flags this character has represented as one string. You can access individual flags by iterating through
+	-- the string letter by letter
 	function character:GetFlags()
 		return self:GetData("f", "")
 	end
 
-	-- Check if the flag string contains the flags specified.
+	--- Returns `true` if the character has the given flag(s).
+	-- @realm server
+	-- @string flags Flag(s) to check access for
+	-- @treturn bool Whether or not this character has access to the given flag(s)
 	function character:HasFlags(flags)
 		local bHasFlag = hook.Run("CharacterHasFlags", self, flags)
 

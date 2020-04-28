@@ -2,7 +2,8 @@
 --[[--
 Registration, parsing, and handling of commands.
 
-Commands can be ran through the chat with slash commands or they can be executed through the console.
+Commands can be ran through the chat with slash commands or they can be executed through the console. Commands can be manually
+restricted to certain usergroups using a [CAMI](https://github.com/glua/CAMI)-compliant admin mod.
 ]]
 -- @module ix.command
 
@@ -108,7 +109,7 @@ local function ArgumentCheckStub(command, client, given)
 			result[#result + 1] = value
 		elseif (argType == ix.type.player or argType == ix.type.character) then
 			local bPlayer = argType == ix.type.player
-			local value = ix.util.FindPlayer(argument)
+			local value = ix.util.FindPlayer(argument or "") -- argument could be nil due to optional type
 
 			-- FindPlayer emits feedback for us
 			if (!value and !bOptional) then
@@ -150,7 +151,7 @@ end
 --- Creates a new command.
 -- @realm shared
 -- @string command Name of the command (recommended in UpperCamelCase)
--- @tab data A `CommandStructure` describing the command
+-- @tparam CommandStructure data Data describing the command
 function ix.command.Add(command, data)
 	data.name = string.gsub(command, "%s", "")
 	data.description = data.description or ""
@@ -290,11 +291,11 @@ function ix.command.Add(command, data)
 	local alias = data.alias
 
 	if (alias) then
-		if (type(alias) == "table") then
+		if (istable(alias)) then
 			for _, v in ipairs(alias) do
 				ix.command.list[v:lower()] = data
 			end
-		elseif (type(alias) == "string") then
+		elseif (isstring(alias)) then
 			ix.command.list[alias:lower()] = data
 		end
 	end
@@ -440,7 +441,7 @@ if (SERVER) then
 	-- @treturn[2] nil If a player could not be found
 	-- @see ix.util.FindPlayer
 	function ix.command.FindPlayer(client, name)
-		local target = type(name) == "string" and ix.util.FindPlayer(name) or NULL
+		local target = isstring(name) and ix.util.FindPlayer(name) or NULL
 
 		if (IsValid(target)) then
 			return target

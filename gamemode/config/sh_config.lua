@@ -1,5 +1,5 @@
 
--- You can change the default language here:
+-- You can change the default language by setting this in your schema.
 ix.config.language = "english"
 
 --[[
@@ -37,8 +37,8 @@ ix.config.Add("genericFont", "Roboto", "The font used to display generic texts."
 	end
 end, {category = "appearance"})
 
-ix.config.Add("maxAttributes", 30, "The total maximum amount of attribute points allowed.", nil, {
-	data = {min = 0, max = 250},
+ix.config.Add("maxAttributes", 100, "The maximum amount each attribute can be.", nil, {
+	data = {min = 0, max = 100},
 	category = "characters"
 })
 ix.config.Add("chatAutoFormat", true, "Whether or not to automatically capitalize and punctuate in-character text.", nil, {
@@ -115,10 +115,6 @@ ix.config.Add("walkRatio", 0.5, "How fast one goes when holding ALT.", nil, {
 	data = {min = 0, max = 1, decimals = 1},
 	category = "characters"
 })
-ix.config.Add("punchStamina", 10, "How much stamina punches use up.", nil, {
-	data = {min = 0, max = 100},
-	category = "characters"
-})
 ix.config.Add("intro", true, "Whether or not the Helix intro is enabled for new players.", nil, {
 	category = "appearance"
 })
@@ -142,10 +138,18 @@ ix.config.Add("defaultMoney", 0, "The amount of money that players start with.",
 	category = "characters",
 	data = {min = 0, max = 1000}
 })
-ix.config.Add("allowVoice", false, "Whether or not voice chat is allowed.", nil, {
+ix.config.Add("allowVoice", false, "Whether or not voice chat is allowed.", function(oldValue, newValue)
+	if (SERVER) then
+		hook.Run("VoiceToggled", newValue)
+	end
+end, {
 	category = "server"
 })
-ix.config.Add("voiceDistance", 600.0, "How far can the voice be heard.", nil, {
+ix.config.Add("voiceDistance", 600.0, "How far can the voice be heard.", function(oldValue, newValue)
+	if (SERVER) then
+		hook.Run("VoiceDistanceChanged", newValue)
+	end
+end, {
 	category = "server",
 	data = {min = 0, max = 5000, decimals = 1}
 })

@@ -7,7 +7,7 @@ local CREDITS = {
 
 local SPECIALS = {
 	{
-		{"Mr. Meow", "76561197988658543"},
+		{"Luna", "76561197988658543"},
 		{"Rain GBizzle", "76561198036111376"}
 	},
 	{
@@ -21,7 +21,7 @@ local MISC = {
 	{"NutScript", "Providing the base framework to build upon"}
 }
 
-local url = "https://github.com/nebulouscloud/helix"
+local url = "https://gethelix.co/"
 local padding = 32
 
 -- logo

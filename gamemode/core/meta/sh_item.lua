@@ -45,20 +45,32 @@ function ITEM:GetID()
 	return self.id
 end
 
+--- Returns the name of the item.
+-- @realm shared
+-- @treturn string The name of the item
 function ITEM:GetName()
 	return (CLIENT and L(self.name) or self.name)
 end
 
+--- Returns the description of the item.
+-- @realm shared
+-- @treturn string The description of the item
 function ITEM:GetDescription()
 	if (!self.description) then return "ERROR" end
 
 	return L(self.description or "noDesc")
 end
 
+--- Returns the model of the item.
+-- @realm shared
+-- @treturn string The model of the item
 function ITEM:GetModel()
 	return self.model
 end
 
+--- Returns the skin of the item.
+-- @realm shared
+-- @treturn number The skin of the item
 function ITEM:GetSkin()
 	return self.skin or 0
 end
@@ -67,17 +79,23 @@ function ITEM:GetMaterial()
 	return nil
 end
 
--- returns the ID of the owning character if there is one
+--- Returns the ID of the owning character, if one exists.
+-- @realm shared
+-- @treturn number The owning character's ID
 function ITEM:GetCharacterID()
 	return self.characterID
 end
 
--- returns the steamid64 of the owning player if there is one
+--- Returns the SteamID64 of the owning player, if one exists.
+-- @realm shared
+-- @treturn number The owning player's SteamID64
 function ITEM:GetPlayerID()
 	return self.playerID
 end
 
--- Dev Buddy. You don't have to print the item data with PrintData();
+--- A utility function which prints the item's details.
+-- @realm shared
+-- @bool[opt=false] detail Whether additional detail should be printed or not(Owner, X position, Y position)
 function ITEM:Print(detail)
 	if (detail == true) then
 		print(Format("%s[%s]: >> [%s](%s,%s)", self.uniqueID, self.id, self.owner, self.gridX, self.gridY))
@@ -86,7 +104,8 @@ function ITEM:Print(detail)
 	end
 end
 
--- Dev Buddy, You don't have to make another function to print the item Data.
+--- A utility function printing the item's stored data.
+-- @realm shared
 function ITEM:PrintData()
 	self:Print(true)
 	print("ITEM DATA:")
@@ -95,13 +114,20 @@ function ITEM:PrintData()
 	end
 end
 
+--- Calls one of the item's methods.
+-- @realm shared
+-- @string method The method to be called
+-- @player client The client to pass when calling the method, if applicable
+-- @entity entity The eneity to pass when calling the method, if applicable
+-- @param ... Arguments to pass to the method
+-- @return The values returned by the method
 function ITEM:Call(method, client, entity, ...)
 	local oldPlayer, oldEntity = self.player, self.entity
 
 	self.player = client or self.player
 	self.entity = entity or self.entity
 
-	if (type(self[method]) == "function") then
+	if (isfunction(self[method])) then
 		local results = {self[method](self, ...)}
 
 		self.player = nil
@@ -114,6 +140,9 @@ function ITEM:Call(method, client, entity, ...)
 	self.entity = oldEntity
 end
 
+--- Returns the player that owns this item.
+-- @realm shared
+-- @treturn player Player owning this item
 function ITEM:GetOwner()
 	local inventory = ix.item.inventories[self.invID]
 
@@ -132,6 +161,13 @@ function ITEM:GetOwner()
 	end
 end
 
+--- Sets a key within the item's data.
+-- @realm shared
+-- @string key The key to store the value within
+-- @param[opt=nil] value The value to store within the key
+-- @tab[opt=nil] receivers The players to replicate the data on
+-- @bool[opt=false] noSave Whether to disable saving the data on the database or not
+-- @bool[opt=false] noCheckEntity Whether to disable setting the data on the entity, if applicable
 function ITEM:SetData(key, value, receivers, noSave, noCheckEntity)
 	self.data = self.data or {}
 	self.data[key] = value
@@ -165,6 +201,11 @@ function ITEM:SetData(key, value, receivers, noSave, noCheckEntity)
 	end
 end
 
+--- Returns the value stored on a key within the item's data.
+-- @realm shared
+-- @string key The key in which the value is stored
+-- @param[opt=nil] default The value to return in case there is no value stored in the key
+-- @return The value stored within the key
 function ITEM:GetData(key, default)
 	self.data = self.data or {}
 
@@ -196,19 +237,31 @@ function ITEM:GetData(key, default)
 	return
 end
 
-
+--- Changes the function called on specific events for the item.
+-- @realm shared
+-- @string name The name of the hook
+-- @func func The function to call once the event occurs
 function ITEM:Hook(name, func)
 	if (name) then
 		self.hooks[name] = func
 	end
 end
 
+--- Changes the function called after hooks for specific events for the item.
+-- @realm shared
+-- @string name The name of the hook
+-- @func func The function to call after the original hook was called
 function ITEM:PostHook(name, func)
 	if (name) then
 		self.postHooks[name] = func
 	end
 end
 
+--- Removes the item.
+-- @realm shared
+-- @bool bNoReplication Whether or not the item's removal should not be replicated.
+-- @bool bNoDelete Whether or not the item should not be fully deleted
+-- @treturn bool Whether the item was successfully deleted or not
 function ITEM:Remove(bNoReplication, bNoDelete)
 	local inv = ix.item.inventories[self.invID]
 
@@ -293,6 +346,9 @@ function ITEM:Remove(bNoReplication, bNoDelete)
 end
 
 if (SERVER) then
+	--- Returns the item's entity.
+	-- @realm server
+	-- @treturn entity The entity of the item
 	function ITEM:GetEntity()
 		local id = self:GetID()
 
@@ -302,7 +358,12 @@ if (SERVER) then
 			end
 		end
 	end
-	-- Spawn an item entity based off the item table.
+
+	--- Spawn an item entity based off the item table.
+	-- @realm server
+	-- @param[type=vector] position The position in which the item's entity will be spawned
+	-- @param[type=angle] angles The angles at which the item's entity will spawn
+	-- @treturn entity The spawned entity
 	function ITEM:Spawn(position, angles)
 		-- Check if the item has been created before.
 		if (ix.item.instances[self.id]) then
@@ -327,6 +388,7 @@ if (SERVER) then
 			if (IsValid(client)) then
 				entity.ixSteamID = client:SteamID()
 				entity.ixCharID = client:GetCharacter():GetID()
+				entity:SetNetVar("owner", entity.ixCharID)
 			end
 
 			-- Return the newly created entity.
@@ -334,7 +396,16 @@ if (SERVER) then
 		end
 	end
 
-	-- Transfers an item to a specific inventory.
+	--- Transfers an item to a specific inventory.
+	-- @realm server
+	-- @number invID The inventory to transfer the item to
+	-- @number x The X position to which the item should be transferred on the new inventory
+	-- @number y The Y position to which the item should be transferred on the new inventory
+	-- @player client The player to which the item is being transferred
+	-- @bool noReplication Whether there should be no replication of the transferral
+	-- @bool isLogical Whether or not an entity should spawn if the item is transferred to the world
+	-- @treturn[1] bool Whether the transfer was successful or not
+	-- @treturn[1] string The error, if applicable
 	function ITEM:Transfer(invID, x, y, client, noReplication, isLogical)
 		invID = invID or 0
 

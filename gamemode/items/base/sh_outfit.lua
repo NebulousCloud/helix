@@ -160,14 +160,14 @@ ITEM.functions.Equip = {
 
 		item:SetData("equip", true)
 
-		if (type(item.OnGetReplacement) == "function") then
+		if (isfunction(item.OnGetReplacement)) then
 			char:SetData("oldModel" .. item.outfitCategory, char:GetData("oldModel" .. item.outfitCategory, item.player:GetModel()))
 			char:SetModel(item:OnGetReplacement())
 		elseif (item.replacement or item.replacements) then
 			char:SetData("oldModel" .. item.outfitCategory, char:GetData("oldModel" .. item.outfitCategory, item.player:GetModel()))
 
-			if (type(item.replacements) == "table") then
-				if (#item.replacements == 2 and type(item.replacements[1]) == "string") then
+			if (istable(item.replacements)) then
+				if (#item.replacements == 2 and isstring(item.replacements[1])) then
 					char:SetModel(item.player:GetModel():gsub(item.replacements[1], item.replacements[2]))
 				else
 					for _, v in ipairs(item.replacements) do
@@ -186,7 +186,7 @@ ITEM.functions.Equip = {
 
 		local groups = char:GetData("groups", {})
 
-		if (table.Count(groups) > 0) then
+		if (!table.IsEmpty(groups)) then
 			char:SetData("oldGroups" .. item.outfitCategory, groups)
 
 			client:ResetBodygroups()
@@ -210,7 +210,7 @@ ITEM.functions.Equip = {
 				item.player:SetBodygroup(index, value)
 			end
 
-			if (table.Count(newGroups) > 0) then
+			if (!table.IsEmpty(newGroups)) then
 				char:SetData("groups", newGroups)
 			end
 		end

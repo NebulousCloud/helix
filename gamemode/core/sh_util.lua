@@ -29,35 +29,46 @@ ix.type = ix.type or {
 
 ix.blurRenderQueue = {}
 
--- Includes a file from the prefix.
-function ix.util.Include(fileName, state)
+--- Includes a lua file based on the prefix of the file. This will automatically call `include` and `AddCSLuaFile` based on the
+-- current realm. This function should always be called shared to ensure that the client will receive the file from the server.
+-- @realm shared
+-- @string fileName Path of the Lua file to include. The path is relative to the file that is currently running this function
+-- @string[opt] realm Realm that this file should be included in. You should usually ignore this since it
+-- will be automatically be chosen based on the `SERVER` and `CLIENT` globals. This value should either be `"server"` or
+-- `"client"` if it is filled in manually
+function ix.util.Include(fileName, realm)
 	if (!fileName) then
 		error("[Helix] No file name specified for including.")
 	end
 
 	-- Only include server-side if we're on the server.
-	if ((state == "server" or fileName:find("sv_")) and SERVER) then
-		include(fileName)
+	if ((realm == "server" or fileName:find("sv_")) and SERVER) then
+		return include(fileName)
 	-- Shared is included by both server and client.
-	elseif (state == "shared" or fileName:find("shared.lua") or fileName:find("sh_")) then
+	elseif (realm == "shared" or fileName:find("shared.lua") or fileName:find("sh_")) then
 		if (SERVER) then
 			-- Send the file to the client if shared so they can run it.
 			AddCSLuaFile(fileName)
 		end
 
-		include(fileName)
+		return include(fileName)
 	-- File is sent to client, included on client.
-	elseif (state == "client" or fileName:find("cl_")) then
+	elseif (realm == "client" or fileName:find("cl_")) then
 		if (SERVER) then
 			AddCSLuaFile(fileName)
 		else
-			include(fileName)
+			return include(fileName)
 		end
 	end
 end
 
--- Include files based off the prefix within a directory.
-function ix.util.IncludeDir(directory, fromLua)
+--- Includes multiple files in a directory.
+-- @realm shared
+-- @string directory Directory to include files from
+-- @bool[opt] bFromLua Whether or not to search from the base `lua/` folder, instead of contextually basing from `schema/`
+-- or `gamemode/`
+-- @see ix.util.Include
+function ix.util.IncludeDir(directory, bFromLua)
 	-- By default, we include relatively to Helix.
 	local baseDir = "helix"
 
@@ -69,7 +80,7 @@ function ix.util.IncludeDir(directory, fromLua)
 	end
 
 	-- Find all of the files within the directory.
-	for _, v in ipairs(file.Find((fromLua and "" or baseDir)..directory.."/*.lua", "LUA")) do
+	for _, v in ipairs(file.Find((bFromLua and "" or baseDir)..directory.."/*.lua", "LUA")) do
 		-- Include the file from the prefix.
 		ix.util.Include(directory.."/"..v)
 	end
@@ -212,7 +223,12 @@ function ix.util.GetAddress()
 	return table.concat(ip, ".")..":"..GetConVarString("hostport")
 end
 
--- Returns a single cached copy of a material or creates it if it doesn't exist.
+--- Returns a cached copy of the given material, or creates and caches one if it doesn't exist. This is a quick helper function
+-- if you aren't locally storing a `Material()` call.
+-- @realm shared
+-- @string materialPath Path to the material
+-- @treturn[1] material The cached material
+-- @treturn[2] nil If the material doesn't exist in the filesystem
 function ix.util.GetMaterial(materialPath)
 	-- Cache the material.
 	ix.util.cachedMaterials = ix.util.cachedMaterials or {}
@@ -242,7 +258,12 @@ function ix.util.FindPlayer(identifier, bAllowPatterns)
 	end
 end
 
--- Returns whether or a not a string matches.
+--- Checks to see if two strings are equivalent using a fuzzy manner. Both strings will be lowered, and will return `true` if
+-- the strings are identical, or if `a` is a substring of `b`.
+-- @realm shared
+-- @string a First string to check
+-- @string b Second string to check
+-- @treturn bool Whether or not the strings are equivalent
 function ix.util.StringMatches(a, b)
 	if (a and b) then
 		local a2, b2 = a:lower(), b:lower()
@@ -259,9 +280,15 @@ function ix.util.StringMatches(a, b)
 	return false
 end
 
--- Returns a string that has the items in the format string replaced with the input.
--- You can also pass in a table with regular indices to replace them in order
--- Example: ix.util.FormatStringNamed("Hello, my name is {name}.", {name = "Bobby"})
+--- Returns a string that has the named arguments in the format string replaced with the given arguments.
+-- @realm shared
+-- @string format Format string
+-- @tparam tab|... Arguments to pass to the formatted string. If passed a table, it will use that table as the lookup table for
+-- the named arguments. If passed multiple arguments, it will replace the arguments in the string in order.
+-- @usage print(ix.util.FormatStringNamed("Hi, my name is {name}.", {name = "Bobby"}))
+-- > Hi, my name is Bobby.
+-- @usage print(ix.util.FormatStringNamed("Hi, my name is {name}.", "Bobby"))
+-- > Hi, my name is Bobby.
 function ix.util.FormatStringNamed(format, ...)
 	local arguments = {...}
 	local bArray = false -- Whether or not the input has numerical indices or named ones
@@ -269,7 +296,7 @@ function ix.util.FormatStringNamed(format, ...)
 
 	-- If the first argument is a table, we can assumed it's going to specify which
 	-- keys to fill out. Otherwise we'll fill in specified arguments in order.
-	if (type(arguments[1]) == "table") then
+	if (istable(arguments[1])) then
 		input = arguments[1]
 	else
 		input = arguments
@@ -364,9 +391,17 @@ if (CLIENT) then
 	local blur = ix.util.GetMaterial("pp/blurscreen")
 	local surface = surface
 
-	-- Draws a blurred material over the screen, to blur things.
+	--- Blurs the content underneath the given panel. This will fall back to a simple darkened rectangle if the player has
+	-- blurring disabled.
+	-- @realm client
+	-- @tparam panel panel Panel to draw the blur for
+	-- @number[opt=5] amount Intensity of the blur. This should be kept between 0 and 10 for performance reasons
+	-- @number[opt=0.2] passes Quality of the blur. This should be kept as default
+	-- @number[opt=255] alpha Opacity of the blur
+	-- @usage function PANEL:Paint(width, height)
+	-- 	ix.util.DrawBlur(self)
+	-- end
 	function ix.util.DrawBlur(panel, amount, passes, alpha)
-		-- Intensity of the blur.
 		amount = amount or 5
 
 		if (ix.option.Get("cheapBlur", false)) then
@@ -390,36 +425,61 @@ if (CLIENT) then
 		end
 	end
 
-	function ix.util.DrawBlurAt(x, y, w, h, amount, passes, maxAlpha, alpha)
-		-- Intensity of the blur.
+	--- Draws a blurred rectangle with the given position and bounds. This shouldn't be used for panels, see `ix.util.DrawBlur`
+	-- instead.
+	-- @realm client
+	-- @number x X-position of the rectangle
+	-- @number y Y-position of the rectangle
+	-- @number width Width of the rectangle
+	-- @number height Height of the rectangle
+	-- @number[opt=5] amount Intensity of the blur. This should be kept between 0 and 10 for performance reasons
+	-- @number[opt=0.2] passes Quality of the blur. This should be kept as default
+	-- @number[opt=255] alpha Opacity of the blur
+	-- @usage hook.Add("HUDPaint", "MyHUDPaint", function()
+	-- 	ix.util.DrawBlurAt(0, 0, ScrW(), ScrH())
+	-- end)
+	function ix.util.DrawBlurAt(x, y, width, height, amount, passes, alpha)
 		amount = amount or 5
 
 		if (ix.option.Get("cheapBlur", false)) then
 			surface.SetDrawColor(30, 30, 30, amount * 20)
-			surface.DrawRect(x, y, w, h)
+			surface.DrawRect(x, y, width, height)
 		else
 			surface.SetMaterial(blur)
 			surface.SetDrawColor(255, 255, 255, alpha or 255)
 
 			local scrW, scrH = ScrW(), ScrH()
 			local x2, y2 = x / scrW, y / scrH
-			local w2, h2 = (x + w) / scrW, (y + h) / scrH
+			local w2, h2 = (x + width) / scrW, (y + height) / scrH
 
 			for i = -(passes or 0.2), 1, 0.2 do
 				blur:SetFloat("$blur", i * amount)
 				blur:Recompute()
 
 				render.UpdateScreenEffectTexture()
-				surface.DrawTexturedRectUV(x, y, w, h, x2, y2, w2, h2)
+				surface.DrawTexturedRectUV(x, y, width, height, x2, y2, w2, h2)
 			end
 		end
 	end
 
+	--- Pushes a 3D2D blur to be rendered in the world. The draw function will be called next frame in the
+	-- `PostDrawOpaqueRenderables` hook.
+	-- @realm client
+	-- @func drawFunc Function to call when it needs to be drawn
 	function ix.util.PushBlur(drawFunc)
 		ix.blurRenderQueue[#ix.blurRenderQueue + 1] = drawFunc
 	end
 
-	-- Draw a text with a shadow.
+	--- Draws some text with a shadow.
+	-- @realm client
+	-- @string text Text to draw
+	-- @number x X-position of the text
+	-- @number y Y-position of the text
+	-- @color color Color of the text to draw
+	-- @number[opt=TEXT_ALIGN_LEFT] alignX Horizontal alignment of the text, using one of the `TEXT_ALIGN_*` constants
+	-- @number[opt=TEXT_ALIGN_LEFT] alignY Vertical alignment of the text, using one of the `TEXT_ALIGN_*` constants
+	-- @string[opt="ixGenericFont"] font Font to use for the text
+	-- @number[opt=color.a * 0.575] alpha Alpha of the shadow
 	function ix.util.DrawText(text, x, y, color, alignX, alignY, font, alpha)
 		color = color or color_white
 
@@ -428,12 +488,17 @@ if (CLIENT) then
 			font = font or "ixGenericFont",
 			pos = {x, y},
 			color = color,
-			xalign = alignX or 0,
-			yalign = alignY or 0
+			xalign = alignX or TEXT_ALIGN_LEFT,
+			yalign = alignY or TEXT_ALIGN_LEFT
 		}, 1, alpha or (color.a * 0.575))
 	end
 
-	-- Wraps text so it does not pass a certain width.
+	--- Wraps text so it does not pass a certain width. This function will try and break lines between words if it can,
+	-- otherwise it will break a word if it's too long.
+	-- @realm client
+	-- @string text Text to wrap
+	-- @number maxWidth Maximum allowed width in pixels
+	-- @string[opt="ixChatFont"] font Font to use for the text
 	function ix.util.WrapText(text, maxWidth, font)
 		font = font or "ixChatFont"
 		surface.SetFont(font)
@@ -638,9 +703,12 @@ do
 	local R = debug.getregistry()
 	local VECTOR = R.Vector
 	local CrossProduct = VECTOR.Cross
+	local right = Vector(0, -1, 0)
 
 	function VECTOR:Right(vUp)
-		if (self[1] == 0 and self[2] == 0) then return Vector(0, -1, 0) end
+		if (self[1] == 0 and self[2] == 0) then
+			return right
+		end
 
 		if (vUp == nil) then
 			vUp = vector_up
@@ -667,916 +735,226 @@ do
 	end
 end
 
--- Utility entity extensions.
-do
-	local entityMeta = FindMetaTable("Entity")
+-- luacheck: globals FCAP_IMPULSE_USE FCAP_CONTINUOUS_USE FCAP_ONOFF_USE
+-- luacheck: globals FCAP_DIRECTIONAL_USE FCAP_USE_ONGROUND FCAP_USE_IN_RADIUS
+FCAP_IMPULSE_USE = 0x00000010
+FCAP_CONTINUOUS_USE = 0x00000020
+FCAP_ONOFF_USE = 0x00000040
+FCAP_DIRECTIONAL_USE = 0x00000080
+FCAP_USE_ONGROUND = 0x00000100
+FCAP_USE_IN_RADIUS = 0x00000200
 
-	-- Checks if an entity is a door by comparing its class.
-	function entityMeta:IsDoor()
-		local class = self:GetClass()
+function ix.util.IsUseableEntity(entity, requiredCaps)
+	if (IsValid(entity)) then
+		local caps = entity:ObjectCaps()
 
-		return (class and class:find("door") or false)
-	end
-
-	-- Make a cache of chairs on start.
-	local CHAIR_CACHE = {}
-
-	-- Add chair models to the cache by checking if its vehicle category is a class.
-	for _, v in pairs(list.Get("Vehicles")) do
-		if (v.Category == "Chairs") then
-			CHAIR_CACHE[v.Model] = true
-		end
-	end
-
-	-- Whether or not a vehicle is a chair by checking its model with the chair list.
-	function entityMeta:IsChair()
-		-- Micro-optimization in-case this gets used a lot.
-		return CHAIR_CACHE[self:GetModel()]
-	end
-
-	if (SERVER) then
-		-- Returns the door's slave entity.
-		function entityMeta:GetDoorPartner()
-			return self.ixPartner
-		end
-
-		-- Returns whether door/button is locked or not.
-		function entityMeta:IsLocked()
-			if (self:IsVehicle()) then
-				local datatable = self:GetSaveTable()
-
-				if (datatable) then
-					return datatable.VehicleLocked
-				end
-			else
-				local datatable = self:GetSaveTable()
-
-				if (datatable) then
-					return datatable.m_bLocked
-				end
+		if (bit.band(caps, bit.bor(FCAP_IMPULSE_USE, FCAP_CONTINUOUS_USE, FCAP_ONOFF_USE, FCAP_DIRECTIONAL_USE))) then
+			if (bit.band(caps, requiredCaps) == requiredCaps) then
+				return true
 			end
-
-			return
-		end
-
-		-- Returns the entity that blocking door's sequence.
-		function entityMeta:GetBlocker()
-			local datatable = self:GetSaveTable()
-
-			return datatable.pBlocker
-		end
-	else
-		-- Returns the door's slave entity.
-		function entityMeta:GetDoorPartner()
-			local owner = self:GetOwner() or self.ixDoorOwner
-
-			if (IsValid(owner) and owner:IsDoor()) then
-				return owner
-			end
-
-			for _, v in ipairs(ents.FindByClass("prop_door_rotating")) do
-				if (v:GetOwner() == self) then
-					self.ixDoorOwner = v
-
-					return v
-				end
-			end
-		end
-	end
-
-	-- Makes a fake door to replace it.
-	function entityMeta:BlastDoor(velocity, lifeTime, ignorePartner)
-		if (!self:IsDoor()) then
-			return
-		end
-
-		if (IsValid(self.ixDummy)) then
-			self.ixDummy:Remove()
-		end
-
-		velocity = velocity or VectorRand()*100
-		lifeTime = lifeTime or 120
-
-		local partner = self:GetDoorPartner()
-
-		if (IsValid(partner) and !ignorePartner) then
-			partner:BlastDoor(velocity, lifeTime, true)
-		end
-
-		local color = self:GetColor()
-
-		local dummy = ents.Create("prop_physics")
-		dummy:SetModel(self:GetModel())
-		dummy:SetPos(self:GetPos())
-		dummy:SetAngles(self:GetAngles())
-		dummy:Spawn()
-		dummy:SetColor(color)
-		dummy:SetMaterial(self:GetMaterial())
-		dummy:SetSkin(self:GetSkin() or 0)
-		dummy:SetRenderMode(RENDERMODE_TRANSALPHA)
-		dummy:CallOnRemove("restoreDoor", function()
-			if (IsValid(self)) then
-				self:SetNotSolid(false)
-				self:SetNoDraw(false)
-				self:DrawShadow(true)
-				self.ignoreUse = false
-				self.ixIsMuted = false
-
-				for _, v in ipairs(ents.GetAll()) do
-					if (v:GetParent() == self) then
-						v:SetNotSolid(false)
-						v:SetNoDraw(false)
-
-						if (v.OnDoorRestored) then
-							v:OnDoorRestored(self)
-						end
-					end
-				end
-			end
-		end)
-		dummy:SetOwner(self)
-		dummy:SetCollisionGroup(COLLISION_GROUP_WEAPON)
-
-		self:Fire("unlock")
-		self:Fire("open")
-		self:SetNotSolid(true)
-		self:SetNoDraw(true)
-		self:DrawShadow(false)
-		self.ignoreUse = true
-		self.ixDummy = dummy
-		self.ixIsMuted = true
-		self:DeleteOnRemove(dummy)
-
-		for _, v in ipairs(self:GetBodyGroups() or {}) do
-			dummy:SetBodygroup(v.id, self:GetBodygroup(v.id))
-		end
-
-		for _, v in ipairs(ents.GetAll()) do
-			if (v:GetParent() == self) then
-				v:SetNotSolid(true)
-				v:SetNoDraw(true)
-
-				if (v.OnDoorBlasted) then
-					v:OnDoorBlasted(self)
-				end
-			end
-		end
-
-		dummy:GetPhysicsObject():SetVelocity(velocity)
-
-		local uniqueID = "doorRestore"..self:EntIndex()
-		local uniqueID2 = "doorOpener"..self:EntIndex()
-
-		timer.Create(uniqueID2, 1, 0, function()
-			if (IsValid(self) and IsValid(self.ixDummy)) then
-				self:Fire("open")
-			else
-				timer.Remove(uniqueID2)
-			end
-		end)
-
-		timer.Create(uniqueID, lifeTime, 1, function()
-			if (IsValid(self) and IsValid(dummy)) then
-				uniqueID = "dummyFade"..dummy:EntIndex()
-				local alpha = 255
-
-				timer.Create(uniqueID, 0.1, 255, function()
-					if (IsValid(dummy)) then
-						alpha = alpha - 1
-						dummy:SetColor(ColorAlpha(color, alpha))
-
-						if (alpha <= 0) then
-							dummy:Remove()
-						end
-					else
-						timer.Remove(uniqueID)
-					end
-				end)
-			end
-		end)
-
-		return dummy
-	end
-
-	--[[
-		luacheck: globals
-		FCAP_IMPULSE_USE FCAP_CONTINUOUS_USE FCAP_ONOFF_USE FCAP_DIRECTIONAL_USE FCAP_USE_ONGROUND FCAP_USE_IN_RADIUS
-	]]
-	FCAP_IMPULSE_USE = 0x00000010
-	FCAP_CONTINUOUS_USE = 0x00000020
-	FCAP_ONOFF_USE = 0x00000040
-	FCAP_DIRECTIONAL_USE = 0x00000080
-	FCAP_USE_ONGROUND = 0x00000100
-	FCAP_USE_IN_RADIUS = 0x00000200
-
-	function ix.util.IsUseableEntity(pEntity, requiredCaps)
-		if (IsValid(pEntity)) then
-			local caps = pEntity:ObjectCaps()
-
-			if (bit.band(caps, bit.bor(FCAP_IMPULSE_USE, FCAP_CONTINUOUS_USE, FCAP_ONOFF_USE, FCAP_DIRECTIONAL_USE))) then
-				if (bit.band(caps, requiredCaps) == requiredCaps) then
-					return true
-				end
-			end
-		end
-	end
-
-	do
-		local function IntervalDistance(x, x0, x1)
-			-- swap so x0 < x1
-			if (x0 > x1) then
-				local tmp = x0
-
-				x0 = x1
-				x1 = tmp
-			end
-
-			if (x < x0) then
-				return x0-x
-			elseif (x > x1) then
-				return x - x1
-			end
-
-			return 0
-		end
-
-		local NUM_TANGENTS = 8
-		local tangents = {0, 1, 0.57735026919, 0.3639702342, 0.267949192431, 0.1763269807, -0.1763269807, -0.267949192431}
-
-		function ix.util.FindUseEntity(player, origin, forward)
-			local tr
-			local up = forward:Up()
-			-- Search for objects in a sphere (tests for entities that are not solid, yet still useable)
-			local searchCenter = origin
-
-			-- NOTE: Some debris objects are useable too, so hit those as well
-			-- A button, etc. can be made out of clip brushes, make sure it's +useable via a traceline, too.
-			local useableContents = bit.bor(MASK_SOLID, CONTENTS_DEBRIS, CONTENTS_PLAYERCLIP)
-
-			-- UNDONE: Might be faster to just fold this range into the sphere query
-			local pObject
-
-			local nearestDist = 1e37
-			-- try the hit entity if there is one, or the ground entity if there isn't.
-			local pNearest = NULL
-
-			for i = 1, NUM_TANGENTS do
-				if (i == 0) then
-					tr = util.TraceLine({
-						start = searchCenter,
-						endpos = searchCenter + forward * 1024,
-						mask = useableContents,
-						filter = player
-					})
-
-					tr.EndPos = searchCenter + forward * 1024
-				else
-					local down = forward - tangents[i] * up
-					down:Normalize()
-
-					tr = util.TraceHull({
-						start = searchCenter,
-						endpos = searchCenter + down * 72,
-						mins = -Vector(16,16,16),
-						maxs = Vector(16,16,16),
-						mask = useableContents,
-						filter = player
-					})
-
-					tr.EndPos = searchCenter + down * 72
-				end
-
-				pObject = tr.Entity
-
-				local bUsable = ix.util.IsUseableEntity(pObject, 0)
-
-				while (IsValid(pObject) and !bUsable and pObject:GetMoveParent()) do
-					pObject = pObject:GetMoveParent()
-					bUsable = ix.util.IsUseableEntity(pObject, 0)
-				end
-
-				if (bUsable) then
-					local delta = tr.EndPos - tr.StartPos
-					local centerZ = origin.z - player:WorldSpaceCenter().z
-					delta.z = IntervalDistance(tr.EndPos.z, centerZ - player:OBBMins().z, centerZ + player:OBBMaxs().z)
-					local dist = delta:Length()
-
-					if (dist < 80) then
-						pNearest = pObject
-
-						-- if this is directly under the cursor just return it now
-						if (i == 0) then
-							return pObject
-						end
-					end
-				end
-			end
-
-			-- check ground entity first
-			-- if you've got a useable ground entity, then shrink the cone of this search to 45 degrees
-			-- otherwise, search out in a 90 degree cone (hemisphere)
-			if (IsValid(player:GetGroundEntity()) and ix.util.IsUseableEntity(player:GetGroundEntity(), FCAP_USE_ONGROUND)) then
-				pNearest = player:GetGroundEntity()
-			end
-
-			if (IsValid(pNearest)) then
-				-- estimate nearest object by distance from the view vector
-				local point = pNearest:NearestPoint(searchCenter)
-				nearestDist = util.DistanceToLine(searchCenter, forward, point)
-			end
-
-			for _, v in pairs(ents.FindInSphere(searchCenter, 80)) do
-				if (!ix.util.IsUseableEntity(v, FCAP_USE_IN_RADIUS)) then
-					continue
-				end
-
-				-- see if it's more roughly in front of the player than previous guess
-				local point = v:NearestPoint(searchCenter)
-
-				local dir = point - searchCenter
-				dir:Normalize()
-				local dot = dir:Dot(forward)
-
-				-- Need to be looking at the object more or less
-				if (dot < 0.8) then
-					continue
-				end
-
-				local dist = util.DistanceToLine(searchCenter, forward, point)
-
-				if (dist < nearestDist) then
-					-- Since this has purely been a radius search to this point, we now
-					-- make sure the object isn't behind glass or a grate.
-					local trCheckOccluded = {}
-
-					util.TraceLine({
-						start = searchCenter,
-						endpos = point,
-						mask = useableContents,
-						filter = player,
-						output = trCheckOccluded
-					})
-
-					if (trCheckOccluded.fraction == 1.0 or trCheckOccluded.Entity == v) then
-						pNearest = v
-						nearestDist = dist
-					end
-				end
-			end
-
-			return pNearest
 		end
 	end
 end
 
--- Misc. player stuff.
 do
-	local playerMeta = FindMetaTable("Player")
-	ALWAYS_RAISED = {}
-	ALWAYS_RAISED["weapon_physgun"] = true
-	ALWAYS_RAISED["gmod_tool"] = true
-	ALWAYS_RAISED["ix_poshelper"] = true
+	local function IntervalDistance(x, x0, x1)
+		-- swap so x0 < x1
+		if (x0 > x1) then
+			local tmp = x0
 
-	-- Returns how many seconds the player has played on the server in total.
-	if (SERVER) then
-		function playerMeta:GetPlayTime()
-			return self.ixPlayTime + (RealTime() - (self.ixJoinTime or RealTime()))
-		end
-	else
-		ix.playTime = ix.playTime or 0
-
-		function playerMeta:GetPlayTime()
-			return ix.playTime + (RealTime() - ix.joinTime or 0)
-		end
-	end
-
-	-- Returns whether or not the player has their weapon raised.
-	function playerMeta:IsWepRaised()
-		return self:GetNetVar("raised", false)
-	end
-
-	function playerMeta:CanShootWeapon()
-		return self:GetNetVar("canShoot", true)
-	end
-
-	local vectorLength2D = FindMetaTable("Vector").Length2D
-
-	-- Checks if the player is running by seeing if the speed is faster than walking.
-	function playerMeta:IsRunning()
-		return vectorLength2D(self:GetVelocity()) > (self:GetWalkSpeed() + 10)
-	end
-
-	-- Checks if the player has a female model.
-	function playerMeta:IsFemale()
-		local model = self:GetModel():lower()
-
-		return model:find("female") or model:find("alyx") or model:find("mossman") or ix.anim.GetModelClass(model) == "citizen_female"
-	end
-
-	-- Returns a good position in front of the player for an entity.
-	function playerMeta:GetItemDropPos(entity)
-		local data = {}
-		local trace
-
-		data.start = self:GetShootPos()
-		data.endpos = self:GetShootPos() + self:GetAimVector() * 86
-		data.filter = self
-
-		if (IsValid(entity)) then
-			-- use a hull trace if there's a valid entity to avoid collisions
-			local mins, maxs = entity:GetRotatedAABB(entity:OBBMins(), entity:OBBMaxs())
-
-			data.mins = mins
-			data.maxs = maxs
-			data.filter = {entity, self}
-			trace = util.TraceHull(data)
-		else
-			-- trace along the normal for a few units so we can attempt to avoid a collision
-			trace = util.TraceLine(data)
-
-			data.start = trace.HitPos
-			data.endpos = data.start + trace.HitNormal * 48
-			trace = util.TraceLine(data)
+			x0 = x1
+			x1 = tmp
 		end
 
-		return trace.HitPos
+		if (x < x0) then
+			return x0-x
+		elseif (x > x1) then
+			return x - x1
+		end
+
+		return 0
 	end
 
-	-- Do an action that requires the player to stare at something.
-	function playerMeta:DoStaredAction(entity, callback, time, onCancel, distance)
-		local uniqueID = "ixStare"..self:UniqueID()
-		local data = {}
-		data.filter = self
+	local NUM_TANGENTS = 8
+	local tangents = {0, 1, 0.57735026919, 0.3639702342, 0.267949192431, 0.1763269807, -0.1763269807, -0.267949192431}
+	local traceMin = Vector(-16, -16, -16)
+	local traceMax = Vector(16, 16, 16)
 
-		timer.Create(uniqueID, 0.1, time / 0.1, function()
-			if (IsValid(self) and IsValid(entity)) then
-				data.start = self:GetShootPos()
-				data.endpos = data.start + self:GetAimVector()*(distance or 96)
+	function ix.util.FindUseEntity(player, origin, forward)
+		local tr
+		local up = forward:Up()
+		-- Search for objects in a sphere (tests for entities that are not solid, yet still useable)
+		local searchCenter = origin
 
-				if (util.TraceLine(data).Entity != entity) then
-					timer.Remove(uniqueID)
+		-- NOTE: Some debris objects are useable too, so hit those as well
+		-- A button, etc. can be made out of clip brushes, make sure it's +useable via a traceline, too.
+		local useableContents = bit.bor(MASK_SOLID, CONTENTS_DEBRIS, CONTENTS_PLAYERCLIP)
 
-					if (onCancel) then
-						onCancel()
-					end
-				elseif (callback and timer.RepsLeft(uniqueID) == 0) then
-					callback()
-				end
+		-- UNDONE: Might be faster to just fold this range into the sphere query
+		local pObject
+
+		local nearestDist = 1e37
+		-- try the hit entity if there is one, or the ground entity if there isn't.
+		local pNearest = NULL
+
+		for i = 1, NUM_TANGENTS do
+			if (i == 0) then
+				tr = util.TraceLine({
+					start = searchCenter,
+					endpos = searchCenter + forward * 1024,
+					mask = useableContents,
+					filter = player
+				})
+
+				tr.EndPos = searchCenter + forward * 1024
 			else
-				timer.Remove(uniqueID)
+				local down = forward - tangents[i] * up
+				down:Normalize()
 
-				if (onCancel) then
-					onCancel()
+				tr = util.TraceHull({
+					start = searchCenter,
+					endpos = searchCenter + down * 72,
+					mins = traceMin,
+					maxs = traceMax,
+					mask = useableContents,
+					filter = player
+				})
+
+				tr.EndPos = searchCenter + down * 72
+			end
+
+			pObject = tr.Entity
+
+			local bUsable = ix.util.IsUseableEntity(pObject, 0)
+
+			while (IsValid(pObject) and !bUsable and pObject:GetMoveParent()) do
+				pObject = pObject:GetMoveParent()
+				bUsable = ix.util.IsUseableEntity(pObject, 0)
+			end
+
+			if (bUsable) then
+				local delta = tr.EndPos - tr.StartPos
+				local centerZ = origin.z - player:WorldSpaceCenter().z
+				delta.z = IntervalDistance(tr.EndPos.z, centerZ - player:OBBMins().z, centerZ + player:OBBMaxs().z)
+				local dist = delta:Length()
+
+				if (dist < 80) then
+					pNearest = pObject
+
+					-- if this is directly under the cursor just return it now
+					if (i == 0) then
+						return pObject
+					end
 				end
 			end
-		end)
+		end
+
+		-- check ground entity first
+		-- if you've got a useable ground entity, then shrink the cone of this search to 45 degrees
+		-- otherwise, search out in a 90 degree cone (hemisphere)
+		if (IsValid(player:GetGroundEntity()) and ix.util.IsUseableEntity(player:GetGroundEntity(), FCAP_USE_ONGROUND)) then
+			pNearest = player:GetGroundEntity()
+		end
+
+		if (IsValid(pNearest)) then
+			-- estimate nearest object by distance from the view vector
+			local point = pNearest:NearestPoint(searchCenter)
+			nearestDist = util.DistanceToLine(searchCenter, forward, point)
+		end
+
+		for _, v in pairs(ents.FindInSphere(searchCenter, 80)) do
+			if (!ix.util.IsUseableEntity(v, FCAP_USE_IN_RADIUS)) then
+				continue
+			end
+
+			-- see if it's more roughly in front of the player than previous guess
+			local point = v:NearestPoint(searchCenter)
+
+			local dir = point - searchCenter
+			dir:Normalize()
+			local dot = dir:Dot(forward)
+
+			-- Need to be looking at the object more or less
+			if (dot < 0.8) then
+				continue
+			end
+
+			local dist = util.DistanceToLine(searchCenter, forward, point)
+
+			if (dist < nearestDist) then
+				-- Since this has purely been a radius search to this point, we now
+				-- make sure the object isn't behind glass or a grate.
+				local trCheckOccluded = {}
+
+				util.TraceLine({
+					start = searchCenter,
+					endpos = point,
+					mask = useableContents,
+					filter = player,
+					output = trCheckOccluded
+				})
+
+				if (trCheckOccluded.fraction == 1.0 or trCheckOccluded.Entity == v) then
+					pNearest = v
+					nearestDist = dist
+				end
+			end
+		end
+
+		return pNearest
 	end
+end
 
-	function playerMeta:ResetBodygroups()
-		for i = 0, (self:GetNumBodyGroups() - 1) do
-			self:SetBodygroup(i, 0)
-		end
-	end
+ALWAYS_RAISED = {}
+ALWAYS_RAISED["weapon_physgun"] = true
+ALWAYS_RAISED["gmod_tool"] = true
+ALWAYS_RAISED["ix_poshelper"] = true
 
-	if (SERVER) then
-		util.AddNetworkString("ixActionBar")
-		util.AddNetworkString("ixActionBarReset")
-		util.AddNetworkString("ixStringRequest")
+function ix.util.FindEmptySpace(entity, filter, spacing, size, height, tolerance)
+	spacing = spacing or 32
+	size = size or 3
+	height = height or 36
+	tolerance = tolerance or 5
 
-		-- Sets whether or not the weapon is raised.
-		function playerMeta:SetWepRaised(state, weapon)
-			weapon = weapon or self:GetActiveWeapon()
+	local position = entity:GetPos()
+	local mins, maxs = Vector(-spacing * 0.5, -spacing * 0.5, 0), Vector(spacing * 0.5, spacing * 0.5, height)
+	local output = {}
 
-			if (IsValid(weapon)) then
-				local bCanShoot = !state and weapon.FireWhenLowered or state
-				self:SetNetVar("raised", state)
+	for x = -size, size do
+		for y = -size, size do
+			local origin = position + Vector(x * spacing, y * spacing, 0)
 
-				if (bCanShoot) then
-					-- delay shooting while the raise animation is playing
-					timer.Create("ixWeaponRaise" .. self:SteamID64(), 1, 1, function()
-						if (IsValid(self)) then
-							self:SetNetVar("canShoot", true)
-						end
-					end)
-				else
-					timer.Remove("ixWeaponRaise" .. self:SteamID64())
-					self:SetNetVar("canShoot", false)
-				end
-			else
-				timer.Remove("ixWeaponRaise" .. self:SteamID64())
-				self:SetNetVar("raised", false)
-				self:SetNetVar("canShoot", false)
-			end
-		end
+			local data = {}
+				data.start = origin + mins + Vector(0, 0, tolerance)
+				data.endpos = origin + maxs
+				data.filter = filter or entity
+			local trace = util.TraceLine(data)
 
-		-- Inverts whether or not the weapon is raised.
-		function playerMeta:ToggleWepRaised()
-			local weapon = self:GetActiveWeapon()
+			data.start = origin + Vector(-maxs.x, -maxs.y, tolerance)
+			data.endpos = origin + Vector(mins.x, mins.y, height)
 
-			if (weapon.IsAlwaysRaised or ALWAYS_RAISED[weapon:GetClass()]
-			or weapon.IsAlwaysLowered or weapon.NeverRaised) then
-				return
+			local trace2 = util.TraceLine(data)
+
+			if (trace.StartSolid or trace.Hit or trace2.StartSolid or trace2.Hit or !util.IsInWorld(origin)) then
+				continue
 			end
 
-			self:SetWepRaised(!self:IsWepRaised(), weapon)
-
-			if (IsValid(weapon)) then
-				if (self:IsWepRaised() and weapon.OnRaised) then
-					weapon:OnRaised()
-				elseif (!self:IsWepRaised() and weapon.OnLowered) then
-					weapon:OnLowered()
-				end
-			end
-		end
-
-		-- Performs a delayed action that requires the user to hold use on an entity.
-		-- The callback will be ran right away if the time is zero. Return false in the callback to not mark this interaction
-		-- as dirty if you're managing the interaction state manually.
-		function playerMeta:PerformInteraction(time, entity, callback)
-			if (!IsValid(entity) or entity.ixInteractionDirty) then
-				return
-			end
-
-			if (time > 0) then
-				self.ixInteractionTarget = entity
-				self.ixInteractionCharacter = self:GetCharacter():GetID()
-
-				timer.Create("ixCharacterInteraction" .. self:SteamID(), time, 1, function()
-					if (IsValid(self) and IsValid(entity) and IsValid(self.ixInteractionTarget) and
-						self.ixInteractionCharacter == self:GetCharacter():GetID()) then
-						local data = {}
-							data.start = self:GetShootPos()
-							data.endpos = data.start + self:GetAimVector() * 96
-							data.filter = self
-						local traceEntity = util.TraceLine(data).Entity
-
-						if (IsValid(traceEntity) and traceEntity == self.ixInteractionTarget and !traceEntity.ixInteractionDirty) then
-							if (callback(self) != false) then
-								traceEntity.ixInteractionDirty = true
-							end
-						end
-					end
-				end)
-			else
-				if (callback(self) != false) then
-					entity.ixInteractionDirty = true
-				end
-			end
-		end
-
-		-- Performs a delayed action on a player.
-		function playerMeta:SetAction(text, time, callback, startTime, finishTime)
-			if (time and time <= 0) then
-				if (callback) then
-					callback(self)
-				end
-
-				return
-			end
-
-			-- Default the time to five seconds.
-			time = time or 5
-			startTime = startTime or CurTime()
-			finishTime = finishTime or (startTime + time)
-
-			if (text == false) then
-				timer.Remove("ixAct"..self:UniqueID())
-
-				net.Start("ixActionBarReset")
-				net.Send(self)
-
-				return
-			end
-
-			if (!text) then
-				net.Start("ixActionBarReset")
-				net.Send(self)
-			else
-				net.Start("ixActionBar")
-					net.WriteFloat(startTime)
-					net.WriteFloat(finishTime)
-					net.WriteString(text)
-				net.Send(self)
-			end
-
-			-- If we have provided a callback, run it delayed.
-			if (callback) then
-				-- Create a timer that runs once with a delay.
-				timer.Create("ixAct"..self:UniqueID(), time, 1, function()
-					-- Call the callback if the player is still valid.
-					if (IsValid(self)) then
-						callback(self)
-					end
-				end)
-			end
-		end
-
-		-- Sends a Derma string request to the client.
-		function playerMeta:RequestString(title, subTitle, callback, default)
-			local time = math.floor(os.time())
-
-			self.ixStrReqs = self.ixStrReqs or {}
-			self.ixStrReqs[time] = callback
-
-			net.Start("ixStringRequest")
-				net.WriteUInt(time, 32)
-				net.WriteString(title)
-				net.WriteString(subTitle)
-				net.WriteString(default)
-			net.Send(self)
-		end
-
-		-- Removes a player's weapon and restricts interactivity.
-		function playerMeta:SetRestricted(state, noMessage)
-			if (state) then
-				self:SetNetVar("restricted", true)
-
-				if (noMessage) then
-					self:SetLocalVar("restrictNoMsg", true)
-				end
-
-				self.ixRestrictWeps = self.ixRestrictWeps or {}
-
-				for _, v in pairs(self:GetWeapons()) do
-					self.ixRestrictWeps[#self.ixRestrictWeps + 1] = v:GetClass()
-					v:Remove()
-				end
-
-				hook.Run("OnPlayerRestricted", self)
-			else
-				self:SetNetVar("restricted")
-
-				if (self:GetLocalVar("restrictNoMsg")) then
-					self:SetLocalVar("restrictNoMsg")
-				end
-
-				if (self.ixRestrictWeps) then
-					for _, v in ipairs(self.ixRestrictWeps) do
-						self:Give(v)
-					end
-
-					self.ixRestrictWeps = nil
-				end
-
-				hook.Run("OnPlayerUnRestricted", self)
-			end
+			output[#output + 1] = origin
 		end
 	end
 
-	-- Player ragdoll utility stuff.
-	do
-		function ix.util.FindEmptySpace(entity, filter, spacing, size, height, tolerance)
-			spacing = spacing or 32
-			size = size or 3
-			height = height or 36
-			tolerance = tolerance or 5
+	table.sort(output, function(a, b)
+		return a:Distance(position) < b:Distance(position)
+	end)
 
-			local position = entity:GetPos()
-			local mins, maxs = Vector(-spacing * 0.5, -spacing * 0.5, 0), Vector(spacing * 0.5, spacing * 0.5, height)
-			local output = {}
-
-			for x = -size, size do
-				for y = -size, size do
-					local origin = position + Vector(x * spacing, y * spacing, 0)
-
-					local data = {}
-						data.start = origin + mins + Vector(0, 0, tolerance)
-						data.endpos = origin + maxs
-						data.filter = filter or entity
-					local trace = util.TraceLine(data)
-
-					data.start = origin + Vector(-maxs.x, -maxs.y, tolerance)
-					data.endpos = origin + Vector(mins.x, mins.y, height)
-
-					local trace2 = util.TraceLine(data)
-
-					if (trace.StartSolid or trace.Hit or trace2.StartSolid or trace2.Hit or !util.IsInWorld(origin)) then
-						continue
-					end
-
-					output[#output + 1] = origin
-				end
-			end
-
-			table.sort(output, function(a, b)
-				return a:Distance(position) < b:Distance(position)
-			end)
-
-			return output
-		end
-
-		function playerMeta:IsStuck()
-			return util.TraceEntity({
-				start = self:GetPos(),
-				endpos = self:GetPos(),
-				filter = self
-			}, self).StartSolid
-		end
-
-		-- Creates a ragdoll entity of the given player that will be synced with clients
-		function playerMeta:CreateServerRagdoll(bDontSetPlayer)
-			local entity = ents.Create("prop_ragdoll")
-			entity:SetPos(self:GetPos())
-			entity:SetAngles(self:EyeAngles())
-			entity:SetModel(self:GetModel())
-			entity:SetSkin(self:GetSkin())
-			entity:Spawn()
-
-			if (!bDontSetPlayer) then
-				entity:SetNetVar("player", self)
-			end
-
-			entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
-			entity:Activate()
-
-			local velocity = self:GetVelocity()
-
-			for i = 0, entity:GetPhysicsObjectCount() - 1 do
-				local physObj = entity:GetPhysicsObjectNum(i)
-
-				if (IsValid(physObj)) then
-					physObj:SetVelocity(velocity)
-
-					local index = entity:TranslatePhysBoneToBone(i)
-
-					if (index) then
-						local position, angles = self:GetBonePosition(index)
-
-						physObj:SetPos(position)
-						physObj:SetAngles(angles)
-					end
-				end
-			end
-
-			return entity
-		end
-
-		function playerMeta:SetRagdolled(state, time, getUpGrace)
-			if (!self:Alive()) then
-				return
-			end
-
-			getUpGrace = getUpGrace or time or 5
-
-			if (state) then
-				if (IsValid(self.ixRagdoll)) then
-					self.ixRagdoll:Remove()
-				end
-
-				local entity = self:CreateServerRagdoll()
-
-				entity:CallOnRemove("fixer", function()
-					if (IsValid(self)) then
-						self:SetLocalVar("blur", nil)
-						self:SetLocalVar("ragdoll", nil)
-
-						if (!entity.ixNoReset) then
-							self:SetPos(entity:GetPos())
-						end
-
-						self:SetNoDraw(false)
-						self:SetNotSolid(false)
-						self:SetMoveType(MOVETYPE_WALK)
-						self:SetLocalVelocity(IsValid(entity) and entity.ixLastVelocity or vector_origin)
-					end
-
-					if (IsValid(self) and !entity.ixIgnoreDelete) then
-						if (entity.ixWeapons) then
-							for _, v in ipairs(entity.ixWeapons) do
-								local weapon = self:Give(v.class, true)
-
-								if (v.item) then
-									weapon.ixItem = v.item
-								end
-
-								if (entity.ixAmmo) then
-									for k2, v2 in pairs(entity.ixAmmo) do
-										if (v.class == v2[1]) then
-											self:SetAmmo(v2[2], k2)
-										end
-									end
-								end
-							end
-
-							for _, v in pairs(self:GetWeapons()) do
-								v:SetClip1(0)
-							end
-						end
-
-						if (entity.ixActiveWeapon) then
-							self:SelectWeapon(entity.ixActiveWeapon)
-						end
-
-						if (self:IsStuck()) then
-							entity:DropToFloor()
-							self:SetPos(entity:GetPos() + Vector(0, 0, 16))
-
-							local positions = ix.util.FindEmptySpace(self, {entity, self})
-
-							for _, v in ipairs(positions) do
-								self:SetPos(v)
-
-								if (!self:IsStuck()) then
-									return
-								end
-							end
-						end
-					end
-				end)
-
-				self:SetLocalVar("blur", 25)
-				self.ixRagdoll = entity
-
-				entity.ixWeapons = {}
-				entity.ixAmmo = {}
-				entity.ixPlayer = self
-
-				if (getUpGrace) then
-					entity.ixGrace = CurTime() + getUpGrace
-				end
-
-				if (time and time > 0) then
-					entity.ixStart = CurTime()
-					entity.ixFinish = entity.ixStart + time
-
-					self:SetAction("@wakingUp", nil, nil, entity.ixStart, entity.ixFinish)
-				end
-
-				for _, v in pairs(self:GetWeapons()) do
-					entity.ixWeapons[#entity.ixWeapons + 1] = {class = v:GetClass(), item = v.ixItem}
-
-					local clip = v:Clip1()
-					local reserve = self:GetAmmoCount(v:GetPrimaryAmmoType())
-					local ammo = clip + reserve
-
-					entity.ixAmmo[v:GetPrimaryAmmoType()] = {v:GetClass(), ammo}
-				end
-
-				if (IsValid(self:GetActiveWeapon())) then
-					entity.ixActiveWeapon = self:GetActiveWeapon():GetClass()
-				end
-
-				self:GodDisable()
-				self:StripWeapons()
-				self:SetMoveType(MOVETYPE_OBSERVER)
-				self:SetNoDraw(true)
-				self:SetNotSolid(true)
-
-				local uniqueID = "ixUnRagdoll" .. self:SteamID()
-
-				if (time) then
-					timer.Create(uniqueID, 0.33, 0, function()
-						if (IsValid(entity) and IsValid(self) and self.ixRagdoll == entity) then
-							local velocity = entity:GetVelocity()
-							entity.ixLastVelocity = velocity
-
-							self:SetPos(entity:GetPos())
-
-							if (velocity:Length2D() >= 8) then
-								if (!entity.ixPausing) then
-									self:SetAction()
-									entity.ixPausing = true
-								end
-
-								return
-							elseif (entity.ixPausing) then
-								self:SetAction("@wakingUp", time)
-								entity.ixPausing = false
-							end
-
-							time = time - 0.33
-
-							if (time <= 0) then
-								entity:Remove()
-							end
-						else
-							timer.Remove(uniqueID)
-						end
-					end)
-				else
-					timer.Create(uniqueID, 0.33, 0, function()
-						if (IsValid(entity) and IsValid(self) and self.ixRagdoll == entity) then
-							self:SetPos(entity:GetPos())
-						else
-							timer.Remove(uniqueID)
-						end
-					end)
-				end
-
-				self:SetLocalVar("ragdoll", entity:EntIndex())
-				hook.Run("OnCharacterFallover", self, entity, true)
-			elseif (IsValid(self.ixRagdoll)) then
-				self.ixRagdoll:Remove()
-
-				hook.Run("OnCharacterFallover", self, nil, false)
-			end
-		end
-	end
+	return output
 end
 
 -- Time related stuff.
 do
-	-- Gets the current time in the UTC time-zone.
+	--- Gets the current time in the UTC time-zone.
+	-- @realm shared
+	-- @treturn number Current time in UTC
 	function ix.util.GetUTCTime()
 		local date = os.date("!*t")
 		local localDate = os.date("*t")
@@ -1595,9 +973,22 @@ do
 	TIME_UNITS["mo"] = TIME_UNITS["d"] * 30	-- Months
 	TIME_UNITS["y"] = TIME_UNITS["d"] * 365	-- Years
 
-	-- Gets the amount of seconds from a given formatted string.
-	-- Example: 5y2d7w = 5 years, 2 days, and 7 weeks.
-	-- If just given a minute, it is assumed minutes.
+	--- Gets the amount of seconds from a given formatted string. If no time units are specified, it is assumed minutes.
+	-- The valid values are as follows:
+	--
+	-- - `s` - Seconds
+	-- - `m` - Minutes
+	-- - `h` - Hours
+	-- - `d` - Days
+	-- - `w` - Weeks
+	-- - `mo` - Months
+	-- - `y` - Years
+	-- @realm shared
+	-- @string text Text to interpret a length of time from
+	-- @treturn[1] number Amount of seconds from the length interpreted from the given string
+	-- @treturn[2] 0 If the given string does not have a valid time
+	-- @usage print(ix.util.GetStringTime("5y2d7w"))
+	-- > 162086400 -- 5 years, 2 days, 7 weeks
 	function ix.util.GetStringTime(text)
 		local minutes = tonumber(text)
 
@@ -1713,7 +1104,15 @@ end
 
 local ADJUST_SOUND = SoundDuration("npc/metropolice/pain1.wav") > 0 and "" or "../../hl2/sound/"
 
--- Emits sounds one after the other from an entity.
+--- Emits sounds one after the other from an entity.
+-- @realm shared
+-- @entity entity Entity to play sounds from
+-- @tab sounds Sound paths to play
+-- @number delay[opt=0] How long to wait before starting to play the sounds
+-- @number spacing[opt=0.1] How long to wait between playing each sound
+-- @number volume[opt=75] The sound level of each sound
+-- @number pitch[opt=100] Pitch percentage of each sound
+-- @treturn number How long the entire sequence of sounds will take to play
 function ix.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
 	-- Let there be a delay before any sound is played.
 	delay = delay or 0
@@ -1724,7 +1123,7 @@ function ix.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
 		local postSet, preSet = 0, 0
 
 		-- Determine if this sound has special time offsets.
-		if (type(v) == "table") then
+		if (istable(v)) then
 			postSet, preSet = v[2] or 0, v[3] or 0
 			v = v[1]
 		end
@@ -1749,3 +1148,6 @@ function ix.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
 	-- Return how long it took for the whole thing.
 	return delay
 end
+
+ix.util.Include("helix/gamemode/core/meta/sh_entity.lua")
+ix.util.Include("helix/gamemode/core/meta/sh_player.lua")

@@ -208,3 +208,22 @@ OverridePanel("DComboBox", function()
 		end
 	end
 end)
+
+OverridePanel("DScrollPanel", function()
+	Override("ScrollToChild")
+	function PANEL:ScrollToChild(panel)
+		-- docked panels required InvalidateParent in order to retrieve their position correctly
+		if (panel:GetDock() != NODOCK) then
+			panel:InvalidateParent(true)
+		else
+			self:PerformLayout()
+		end
+
+		local _, y = self.pnlCanvas:GetChildPosition(panel)
+
+		y = y + panel:GetTall() * 0.5
+		y = y - self:GetTall() * 0.5
+
+		self.VBar:SetScroll(y)
+	end
+end)

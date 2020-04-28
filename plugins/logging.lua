@@ -124,6 +124,18 @@ if (SERVER) then
 			entity:GetInventory():GetID(), total, ix.currency.plural)
 	end)
 
+	ix.log.AddType("roll", function(client, value, max)
+		return string.format("%s rolled %d out of %d.", client:Name(), value, max)
+	end)
+
+	ix.log.AddType("pluginLoaded", function(client, uniqueID)
+		return string.format("%s has enabled the %s plugin for next restart.", client:GetName(), uniqueID)
+	end)
+
+	ix.log.AddType("pluginUnloaded", function(client, uniqueID)
+		return string.format("%s has disabled the %s plugin for next restart.", client:GetName(), uniqueID)
+	end)
+
 	function PLUGIN:PlayerInitialSpawn(client)
 		ix.log.Add(client, "connect")
 	end
@@ -158,14 +170,14 @@ if (SERVER) then
 	end
 
 	function PLUGIN:PlayerInteractItem(client, action, item)
-		if (type(item) == "Entity") then
+		if (isentity(item)) then
 			if (IsValid(item)) then
 				local itemID = item.ixItemID
 				item = ix.item.instances[itemID]
 			else
 				return
 			end
-		elseif (type(item) == "number") then
+		elseif (isnumber(item)) then
 			item = ix.item.instances[item]
 		end
 

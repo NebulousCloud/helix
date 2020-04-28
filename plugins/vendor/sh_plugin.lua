@@ -1,9 +1,6 @@
 
---[[
-	luacheck: globals
-	VENDOR_BUY VENDOR_SELL VENDOR_BOTH VENDOR_WELCOME VENDOR_LEAVE VENDOR_NOTRADE VENDOR_PRICE VENDOR_STOCK VENDOR_MODE
-	VENDOR_MAXSTOCK VENDOR_SELLANDBUY VENDOR_SELLONLY VENDOR_BUYONLY VENDOR_TEXT
-]]
+-- luacheck: globals VENDOR_BUY VENDOR_SELL VENDOR_BOTH VENDOR_WELCOME VENDOR_LEAVE VENDOR_NOTRADE VENDOR_PRICE
+-- luacheck: globals VENDOR_STOCK VENDOR_MODE VENDOR_MAXSTOCK VENDOR_SELLANDBUY VENDOR_SELLONLY VENDOR_BUYONLY VENDOR_TEXT
 
 local PLUGIN = PLUGIN
 
@@ -61,14 +58,14 @@ if (SERVER) then
 			end
 
 			data[#data + 1] = {
-				name = entity:GetNetVar("name"),
-				description = entity:GetNetVar("description"),
+				name = entity:GetDisplayName(),
+				description = entity:GetDescription(),
 				pos = entity:GetPos(),
 				angles = entity:GetAngles(),
 				model = entity:GetModel(),
 				skin = entity:GetSkin(),
 				bodygroups = bodygroups,
-				bubble = entity:GetNetVar("noBubble"),
+				bubble = entity:GetNoBubble(),
 				items = entity.items,
 				factions = entity.factions,
 				classes = entity.classes,
@@ -99,15 +96,21 @@ if (SERVER) then
 				physObj:Sleep()
 			end
 
-			entity:SetNetVar("noBubble", v.bubble)
-			entity:SetNetVar("name", v.name)
-			entity:SetNetVar("description", v.description)
+			entity:SetNoBubble(v.bubble)
+			entity:SetDisplayName(v.name)
+			entity:SetDescription(v.description)
 
 			for id, bodygroup in pairs(v.bodygroups or {}) do
 				entity:SetBodygroup(id, bodygroup)
 			end
 
-			entity.items = v.items or {}
+			local items = {}
+
+			for uniqueID, data in pairs(v.items) do
+				items[tostring(uniqueID)] = data
+			end
+
+			entity.items = items
 			entity.factions = v.factions or {}
 			entity.classes = v.classes or {}
 			entity.money = v.money
@@ -174,11 +177,11 @@ if (SERVER) then
 		local feedback = true
 
 		if (key == "name") then
-			entity:SetNetVar("name", data)
+			entity:SetDisplayName(data)
 		elseif (key == "description") then
-			entity:SetNetVar("description", data)
+			entity:SetDescription(data)
 		elseif (key == "bubble") then
-			entity:SetNetVar("noBubble", data)
+			entity:SetNoBubble(data)
 		elseif (key == "mode") then
 			local uniqueID = data[1]
 
@@ -524,9 +527,9 @@ else
 		local data = net.ReadType()
 
 		if (key == "name") then
-			editor.name:SetText(entity:GetNetVar("name"))
+			editor.name:SetText(data)
 		elseif (key == "description") then
-			editor.description:SetText(entity:GetNetVar("description"))
+			editor.description:SetText(data)
 		elseif (key == "bubble") then
 			editor.bubble.noSend = true
 			editor.bubble:SetValue(data and 1 or 0)
@@ -670,7 +673,7 @@ properties.Add("vendor_edit", {
 		local itemsTable = {}
 
 		for k, v in pairs(entity.items) do
-			if (table.Count(v) > 0) then
+			if (!table.IsEmpty(v)) then
 				itemsTable[k] = v
 			end
 		end

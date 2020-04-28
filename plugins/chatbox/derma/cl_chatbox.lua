@@ -190,7 +190,7 @@ function PANEL:RemoveTab(id)
 	self.tabs[id] = nil
 
 	-- add default tab if we don't have any tabs left
-	if (table.Count(self.tabs) < 1) then
+	if (table.IsEmpty(self.tabs)) then
 		self:AddTab(L("Chat"), {})
 		self:SetActiveTab(L("Chat"))
 	elseif (id == self:GetActiveTabID()) then
@@ -393,7 +393,7 @@ end
 
 function PANEL:Think()
 	local text = self:GetText()
-	local maxLength = ix.config.Get("chatMax")
+	local maxLength = ix.config.Get("chatMax", 256)
 
 	if (string.len(text) > maxLength) then
 		local newText = string.sub(text, 0, maxLength)
@@ -951,7 +951,7 @@ function PANEL:SetActive(bActive)
 end
 
 function PANEL:SetupTabs(tabs)
-	if (!tabs or table.Count(tabs) < 1) then
+	if (!tabs or table.IsEmpty(tabs)) then
 		self.tabs:AddTab(L("chat"), {})
 		self.tabs:SetActiveTab(L("chat"))
 

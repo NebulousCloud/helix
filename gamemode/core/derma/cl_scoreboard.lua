@@ -11,20 +11,27 @@ local rowPaintFunctions = {
 -- character icon
 -- we can't customize the rendering of ModelImage so we have to do it ourselves
 local PANEL = {}
+local BODYGROUPS_EMPTY = "000000000"
 
 AccessorFunc(PANEL, "model", "Model", FORCE_STRING)
 AccessorFunc(PANEL, "bHidden", "Hidden", FORCE_BOOL)
 
 function PANEL:Init()
 	self:SetSize(64, 64)
-	self.bodygroups = "000000000"
+	self.bodygroups = BODYGROUPS_EMPTY
 end
 
 function PANEL:SetModel(model, skin, bodygroups)
 	model = model:gsub("\\", "/")
 
-	if (isstring(bodygroups) and bodygroups:len() != 9) then
-		self.bodygroups = "000000000"
+	if (isstring(bodygroups)) then
+		if (bodygroups:len() == 9) then
+			for i = 1, bodygroups:len() do
+				self:SetBodygroup(i, tonumber(bodygroups[i]) or 0)
+			end
+		else
+			self.bodygroups = BODYGROUPS_EMPTY
+		end
 	end
 
 	self.model = model
@@ -32,7 +39,7 @@ function PANEL:SetModel(model, skin, bodygroups)
 	self.path = "materials/spawnicons/" ..
 		model:sub(1, #model - 4) .. -- remove extension
 		((isnumber(skin) and skin > 0) and ("_skin" .. tostring(skin)) or "") .. -- skin number
-		(self.bodygroups != "000000000" and ("_" .. self.bodygroups) or "") .. -- bodygroups
+		(self.bodygroups != BODYGROUPS_EMPTY and ("_" .. self.bodygroups) or "") .. -- bodygroups
 		".png"
 
 	local material = Material(self.path, "smooth")
@@ -62,7 +69,7 @@ function PANEL:SetModel(model, skin, bodygroups)
 end
 
 function PANEL:SetBodygroup(k, v)
-	if (k < 0 or k > 9 or v < 0 or v > 9) then
+	if (k < 0 or k > 8 or v < 0 or v > 9) then
 		return
 	end
 

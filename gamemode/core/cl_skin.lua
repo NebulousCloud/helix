@@ -52,11 +52,12 @@ hook.Add("ColorSchemeChanged", "ixSkin", function(color)
 	SKIN.Colours.Area.Background = color
 end)
 
-function SKIN:DrawHelixCurved(x, y, radius, segments, barHeight, fraction, color)
+function SKIN:DrawHelixCurved(x, y, radius, segments, barHeight, fraction, color, altColor)
 	radius = radius or math.min(ScreenScale(72), 128) * 2
 	segments = segments or 76
 	barHeight = barHeight or 64
 	color = color or ix.config.Get("color")
+	altColor = altColor or Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, color.a)
 	fraction = fraction or 1
 
 	surface.SetTexture(-1)
@@ -70,7 +71,7 @@ function SKIN:DrawHelixCurved(x, y, radius, segments, barHeight, fraction, color
 		if (barOffset > 0) then
 			surface.SetDrawColor(color)
 		else
-			surface.SetDrawColor(Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, color.a))
+			surface.SetDrawColor(altColor)
 		end
 
 		surface.DrawTexturedRectRotated(barX, barY, 4, barOffset * (barHeight * fraction), math.deg(angle))
@@ -92,7 +93,7 @@ function SKIN:DrawHelix(x, y, width, height, segments, color, fraction, speed)
 		if (offset > 0) then
 			surface.SetDrawColor(color)
 		else
-			surface.SetDrawColor(Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, color.a))
+			surface.SetDrawColor(color.r * 0.5, color.g * 0.5, color.b * 0.5, color.a)
 		end
 
 		surface.DrawTexturedRectRotated(x + (i / segments) * width, y + height * 0.5, 4, barHeight, 0)
@@ -143,16 +144,18 @@ end
 function SKIN:DrawCharacterStatusBackground(panel, fraction)
 	surface.SetDrawColor(0, 0, 0, fraction * 100)
 	surface.DrawRect(0, 0, ScrW(), ScrH())
-	ix.util.DrawBlurAt(0, 0, ScrW(), ScrH(), 5, nil, nil, fraction * 255)
+	ix.util.DrawBlurAt(0, 0, ScrW(), ScrH(), 5, nil, fraction * 255)
 end
 
 function SKIN:PaintPanel(panel)
 	if (panel.m_bBackground) then
 		local width, height = panel:GetSize()
-
-		surface.SetDrawColor(30, 30, 30, 100)
+		if (panel.m_bgColor) then
+			surface.SetDrawColor(panel.m_bgColor)
+		else
+			surface.SetDrawColor(30, 30, 30, 100)
+		end
 		surface.DrawRect(0, 0, width, height)
-
 		surface.SetDrawColor(0, 0, 0, 150)
 		surface.DrawOutlinedRect(0, 0, width, height)
 	end
@@ -176,7 +179,7 @@ function SKIN:PaintPlaceholderPanel(panel, width, height, barWidth, padding)
 
 	for i = 1, segments do
 		surface.SetTexture(-1)
-		surface.SetDrawColor(Color(0, 0, 0, 88))
+		surface.SetDrawColor(0, 0, 0, 88)
 		surface.DrawTexturedRectRotated(i * barWidth, i * barWidth, barWidth, size * 2, -45)
 	end
 end
@@ -190,7 +193,7 @@ function SKIN:PaintCategoryPanel(panel, text, color)
 	local textHeight = select(2, surface.GetTextSize(text)) + 6
 	local width, height = panel:GetSize()
 
-	surface.SetDrawColor(Color(0, 0, 0, 100))
+	surface.SetDrawColor(0, 0, 0, 100)
 	surface.DrawRect(0, textHeight, width, height - textHeight)
 
 	self:DrawImportantBackground(0, 0, width, textHeight, color)
@@ -277,13 +280,13 @@ function SKIN:PaintSegmentedProgress(panel, width, height)
 end
 
 function SKIN:PaintCharacterCreateBackground(panel, width, height)
-	surface.SetDrawColor(Color(40, 40, 40, 255))
+	surface.SetDrawColor(40, 40, 40, 255)
 	surface.SetTexture(gradient)
 	surface.DrawTexturedRect(0, 0, width, height)
 end
 
 function SKIN:PaintCharacterLoadBackground(panel, width, height)
-	surface.SetDrawColor(Color(40, 40, 40, panel:GetBackgroundFraction() * 255))
+	surface.SetDrawColor(40, 40, 40, panel:GetBackgroundFraction() * 255)
 	surface.SetTexture(gradient)
 	surface.DrawTexturedRect(0, 0, width, height)
 end
@@ -311,7 +314,7 @@ function SKIN:PaintSettingsRowBackground(panel, width, height)
 	local bReset = panel:GetShowReset()
 
 	if (index == 0) then
-		surface.SetDrawColor(Color(30, 30, 30, 45))
+		surface.SetDrawColor(30, 30, 30, 45)
 		surface.DrawRect(0, 0, width, height)
 	end
 
@@ -330,7 +333,7 @@ function SKIN:PaintScrollBarGrip(panel, width, height)
 	local downButtonHeight = parent.btnDown:GetTall()
 
 	DisableClipping(true)
-		surface.SetDrawColor(Color(30, 30, 30, 200))
+		surface.SetDrawColor(30, 30, 30, 200)
 		surface.DrawRect(4, -upButtonHeight, width - 8, height + upButtonHeight + downButtonHeight)
 	DisableClipping(false)
 end
@@ -358,7 +361,7 @@ end
 function SKIN:PaintMenu(panel, width, height)
 	ix.util.DrawBlur(panel)
 
-	surface.SetDrawColor(Color(30, 30, 30, 150))
+	surface.SetDrawColor(30, 30, 30, 150)
 	surface.DrawRect(0, 0, width, height)
 end
 
@@ -378,10 +381,10 @@ end
 
 function SKIN:PaintChatboxTabButton(panel, width, height)
 	if (panel:GetActive()) then
-		surface.SetDrawColor(ix.config.Get("color"))
+		surface.SetDrawColor(ix.config.Get("color", Color(75, 119, 190, 255)))
 		surface.DrawRect(0, 0, width, height)
 	else
-		surface.SetDrawColor(Color(0, 0, 0, 100))
+		surface.SetDrawColor(0, 0, 0, 100)
 		surface.DrawRect(0, 0, width, height)
 
 		if (panel:GetUnread()) then
@@ -456,7 +459,7 @@ function SKIN:DrawChatboxPreviewBox(x, y, text, color)
 	surface.DrawText(text)
 
 	-- outline
-	surface.SetDrawColor(Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, 255))
+	surface.SetDrawColor(color.r * 0.5, color.g * 0.5, color.b * 0.5, 255)
 	surface.DrawOutlinedRect(x, y, width, height)
 
 	return width
@@ -470,7 +473,7 @@ function SKIN:DrawChatboxPrefixBox(panel, width, height)
 	surface.DrawRect(0, 0, width, height)
 
 	-- outline
-	surface.SetDrawColor(Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, 255))
+	surface.SetDrawColor(color.r * 0.5, color.g * 0.5, color.b * 0.5, 255)
 	surface.DrawOutlinedRect(0, 0, width, height)
 end
 
@@ -490,6 +493,17 @@ function SKIN:PaintWindowMinimizeButton(panel, width, height)
 end
 
 function SKIN:PaintWindowMaximizeButton(panel, width, height)
+end
+
+function SKIN:PaintInfoBar(panel, width, height, color)
+	-- bar
+	surface.SetDrawColor(color.r, color.g, color.b, 250)
+	surface.DrawRect(0, 0, width, height)
+
+	-- gradient overlay
+	surface.SetDrawColor(230, 230, 230, 8)
+	surface.SetTexture(gradientUp)
+	surface.DrawTexturedRect(0, 0, width, height)
 end
 
 do

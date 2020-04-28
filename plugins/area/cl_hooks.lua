@@ -11,7 +11,7 @@ local function DrawTextBackground(x, y, text, font, backgroundColor, padding)
 	local width, height = textWidth + padding * 2, textHeight + padding * 2
 
 	ix.util.DrawBlurAt(x, y, width, height)
-	surface.SetDrawColor(Color(0, 0, 0, 40))
+	surface.SetDrawColor(0, 0, 0, 40)
 	surface.DrawRect(x, y, width, height)
 
 	derma.SkinFunc("DrawImportantBackground", x, y, width, height, backgroundColor)

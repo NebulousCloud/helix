@@ -2,6 +2,8 @@
 local waveSegments = 32
 local helixSegments = 76
 local helixHeight = 64
+local backgroundColor = Color(115, 53, 142)
+local dimColor = Color(165, 134, 179)
 
 DEFINE_BASECLASS("EditablePanel")
 
@@ -48,6 +50,28 @@ function PANEL:Think()
 end
 
 function PANEL:BeginIntro()
+	-- something could have errored on startup and invalidated all options, so we'll be extra careful with setting the option
+	-- because if it errors here, the sound will play each tick and proceed to hurt ears
+	local bLoaded = false
+
+	if (ix and ix.option and ix.option.Set) then
+		local bSuccess, _ = pcall(ix.option.Set, "showIntro", false)
+		bLoaded = bSuccess
+	end
+
+	if (!bLoaded) then
+		self:Remove()
+
+		if (ix and ix.gui and IsValid(ix.gui.characterMenu)) then
+			ix.gui.characterMenu:Remove()
+		end
+
+		ErrorNoHalt(
+			"[Helix] Something has errored and prevented the framework from loading correctly - check your console for errors!\n")
+
+		return
+	end
+
 	self:MoveToFront()
 	self:RequestFocus()
 
@@ -63,8 +87,6 @@ function PANEL:BeginIntro()
 			end)
 		end)
 	end)
-
-	ix.option.Set("showIntro", false)
 end
 
 function PANEL:AnimateWaves(target, bReverse)
@@ -175,12 +197,13 @@ function PANEL:Paint(width, height)
 	local time = SysTime()
 	local text = L("helix"):lower()
 	local centerY = height * self.waves[#self.waves][1] + height * 0.5
+	local sunbeamOffsetEasing = math.sin(math.pi * self.sunbeamOffset)
 	local textWidth, textHeight
 	local fft
 
 	-- background
 	if (self.bBackground) then
-		surface.SetDrawColor(Color(0, 0, 0, 255))
+		surface.SetDrawColor(0, 0, 0, 255)
 		surface.DrawRect(0, 0, width, height)
 	end
 
@@ -199,26 +222,34 @@ function PANEL:Paint(width, height)
 	for i = 1, #self.waves do
 		local wave = self.waves[i]
 		local ratio = i / #self.waves
-		local color = ratio * 33
+		local color = Color(
+			backgroundColor.r * ratio,
+			backgroundColor.g * ratio,
+			backgroundColor.b * ratio,
+			self.bBackground and 255 or (ratio * 320)
+		)
 
-		surface.SetDrawColor(Color(color, color, color, self.bBackground and 255 or ratio * 320))
+		surface.SetDrawColor(color)
 		self:PaintCurve(height * wave[1], width, wave[2])
 	end
 
 	-- helix
 	if (self.helix > 0) then
+		local alpha = self.helixAlpha * 255
+
 		derma.SkinFunc("DrawHelixCurved",
 			width * 0.5, centerY,
 			math.min(ScreenScale(72), 128) * 2, -- font sizes are clamped to 128
 			helixSegments * self.helix, helixHeight, self.helix,
-			ColorAlpha(ix.config.Get("color"), self.helixAlpha * 255)
+			ColorAlpha(color_white, alpha),
+			ColorAlpha(dimColor, alpha)
 		)
 	end
 
 	-- title text glow
-	surface.SetTextColor(Color(255, 255, 255,
-		self.sunbeamOffset == 1 and self.kickTarget or math.sin(math.pi * self.sunbeamOffset) * 255
-	))
+	surface.SetTextColor(255, 255, 255,
+		self.sunbeamOffset == 1 and self.kickTarget or sunbeamOffsetEasing * 255
+	)
 	surface.SetFont("ixIntroTitleBlurFont")
 
 	local logoTextWidth, logoTextHeight = surface.GetTextSize(text)
@@ -226,7 +257,7 @@ function PANEL:Paint(width, height)
 	surface.DrawText(text)
 
 	-- title text
-	surface.SetTextColor(Color(255, 255, 255, self.sunbeamOffset * 255))
+	surface.SetTextColor(255, 255, 255, self.sunbeamOffset * 255)
 	surface.SetFont("ixIntroTitleFont")
 
 	logoTextWidth, logoTextHeight = surface.GetTextSize(text)
@@ -238,7 +269,7 @@ function PANEL:Paint(width, height)
 	text = L("introTextOne"):lower()
 	textWidth = surface.GetTextSize(text)
 
-	surface.SetTextColor(Color(255, 255, 255, self.textOne * 255))
+	surface.SetTextColor(255, 255, 255, self.textOne * 255)
 	surface.SetTextPos(width * 0.5 - textWidth * 0.5, height * 0.66)
 	surface.DrawText(text)
 
@@ -246,7 +277,7 @@ function PANEL:Paint(width, height)
 	text = L("introTextTwo", Schema.author or "nebulous"):lower()
 	textWidth = surface.GetTextSize(text)
 
-	surface.SetTextColor(Color(255, 255, 255, self.textTwo * 255))
+	surface.SetTextColor(255, 255, 255, self.textTwo * 255)
 	surface.SetTextPos(width * 0.5 - textWidth * 0.5, height * 0.66)
 	surface.DrawText(text)
 
@@ -263,13 +294,13 @@ function PANEL:Paint(width, height)
 		end
 	end
 
-	surface.SetTextColor(Color(255, 255, 255, self.continueText * 255 - (math.sin(self.pulse) * 100), 0))
+	surface.SetTextColor(255, 255, 255, self.continueText * 255 - (math.sin(self.pulse) * 100), 0)
 	surface.SetTextPos(width * 0.5 - textWidth * 0.5, centerY * 2 - textHeight * 2)
 	surface.DrawText(text)
 
 	-- sunbeams
 	if (self.sunbeamOffset > 0 and self.sunbeamOffset != 1) then
-		DrawSunbeams(0.25, 0.1, 0.02,
+		DrawSunbeams(0.25, sunbeamOffsetEasing * 0.1, 0.02,
 			(((width * 0.5 - logoTextWidth * 0.5) - 32) / width) + ((logoTextWidth + 64) / width) * self.sunbeamOffset,
 			0.5 + math.sin(time * 2) * 0.01
 		)

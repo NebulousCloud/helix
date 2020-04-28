@@ -25,6 +25,7 @@ function PANEL:SetModel(model, skin, bodygroups)
 		return
 	end
 
+	entity:SetNoDraw(true)
 	entity:SetIK(false)
 
 	if (skin) then

@@ -77,7 +77,7 @@ if (SERVER) then
 					}
 				end
 			else
-				local index = v:GetNetVar("id")
+				local index = v:GetID()
 
 				local query = mysql:Delete("ix_items")
 					query:Where("inventory_id", index)
@@ -93,7 +93,9 @@ if (SERVER) then
 	end
 
 	function PLUGIN:SaveData()
-		self:SaveContainer()
+		if (!ix.shuttingDown) then
+			self:SaveContainer()
+		end
 	end
 
 	function PLUGIN:ContainerRemoved(entity, inventory)
@@ -128,13 +130,13 @@ if (SERVER) then
 
 					if (v[5]) then
 						entity.password = v[5]
-						entity:SetNetVar("locked", true)
+						entity:SetLocked(true)
 						entity.Sessions = {}
 					end
 
 					if (v[6]) then
 						entity.name = v[6]
-						entity:SetNetVar("name", v[6])
+						entity:SetDisplayName(v[6])
 					end
 
 					if (v[7]) then
@@ -152,7 +154,7 @@ if (SERVER) then
 
 					local physObject = entity:GetPhysicsObject()
 
-					if (physObject) then
+					if (IsValid(physObject)) then
 						physObject:EnableMotion()
 					end
 				end
@@ -260,19 +262,18 @@ properties.Add("container_setpassword", {
 		entity.Sessions = {}
 
 		if (password:len() != 0) then
-			entity:SetNetVar("locked", true)
+			entity:SetLocked(true)
 			entity.password = password
 
 			client:NotifyLocalized("containerPassword", password)
 		else
-			entity:SetNetVar("locked", nil)
+			entity:SetLocked(false)
 			entity.password = nil
 
 			client:NotifyLocalized("containerPasswordRemove")
 		end
 
-		local definition = ix.container.stored[entity:GetModel():lower()]
-		local name = entity:GetNetVar("name", definition.name)
+		local name = entity:GetDisplayName()
 		local inventory = entity:GetInventory()
 
 		ix.log.Add(client, "containerPassword", name, inventory:GetID(), password:len() != 0)
@@ -309,12 +310,14 @@ properties.Add("container_setname", {
 		local name = net.ReadString()
 
 		if (name:len() != 0) then
-			entity:SetNetVar("name", name)
+			entity:SetDisplayName(name)
 			entity.name = name
 
 			client:NotifyLocalized("containerName", name)
 		else
-			entity:SetNetVar("name", nil)
+			local definition = ix.container.stored[entity:GetModel():lower()]
+
+			entity:SetDisplayName(definition.name)
 			entity.name = nil
 
 			client:NotifyLocalized("containerNameRemove")
