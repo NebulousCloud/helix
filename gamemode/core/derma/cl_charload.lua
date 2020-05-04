@@ -375,7 +375,7 @@ function PANEL:Init()
 
 	local deleteTitle = deleteNag:Add("DLabel")
 	deleteTitle:SetFont("ixTitleFont")
-	deleteTitle:SetText(L("areYouSure"):upper())
+	deleteTitle:SetText(L("areYouSure"):utf8upper())
 	deleteTitle:SetTextColor(ix.config.Get("color"))
 	deleteTitle:SizeToContents()
 	deleteTitle:Dock(TOP)

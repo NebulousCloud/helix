@@ -242,7 +242,7 @@ if (SERVER) then
 					text = text .. "."
 				end
 
-				text = text:sub(1, 1):upper() .. text:sub(2)
+				text = text:sub(1, 1):utf8upper() .. text:sub(2)
 			end
 
 			text = hook.Run("PlayerMessageSend", speaker, chatType, text, anonymous, receivers, rawText) or text

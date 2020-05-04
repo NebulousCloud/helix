@@ -36,7 +36,7 @@ function PANEL:SetPadding(left, top, right, bottom)
 end
 
 function PANEL:SetText(text, noTranslation)
-	BaseClass.SetText(self, noTranslation and text:upper() or L(text):upper())
+	BaseClass.SetText(self, noTranslation and text:utf8upper() or L(text):utf8upper())
 end
 
 function PANEL:SizeToContents()
