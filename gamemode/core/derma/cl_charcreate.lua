@@ -349,7 +349,7 @@ function PANEL:Populate()
 			if (ix.faction.HasWhitelist(v.index)) then
 				local button = self.factionButtonsPanel:Add("ixMenuSelectionButton")
 				button:SetBackgroundColor(v.color or color_white)
-				button:SetText(L(v.name):upper())
+				button:SetText(L(v.name):utf8upper())
 				button:SizeToContents()
 				button:SetButtonList(self.factionButtons)
 				button.faction = v.index
@@ -417,7 +417,7 @@ function PANEL:Populate()
 				-- add label for entry
 				local label = container:Add("DLabel")
 				label:SetFont("ixMenuButtonLabelFont")
-				label:SetText(L(k):upper())
+				label:SetText(L(k):utf8upper())
 				label:SizeToContents()
 				label:DockMargin(0, 16, 0, 2)
 				label:Dock(TOP)

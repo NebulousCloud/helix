@@ -329,12 +329,12 @@ do
 	-- @usage print(ix.util.ExpandCamelCase("HelloWorld"))
 	-- > Hello World
 	function ix.util.ExpandCamelCase(input, bNoUpperFirst)
-		input = bNoUpperFirst and input or input:sub(1, 1):upper() .. input:sub(2)
+		input = bNoUpperFirst and input or input:sub(1, 1):utf8upper() .. input:sub(2)
 
 		-- extra parentheses to select first return value of gsub
 		return string.TrimRight((input:gsub("%u%l+", function(word)
 			if (upperMap[word:lower()]) then
-				word = word:upper()
+				word = word:utf8upper()
 			end
 
 			return word .. " "

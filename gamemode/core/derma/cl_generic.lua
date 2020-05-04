@@ -274,8 +274,8 @@ function PANEL:Init()
 	self:SetMouseInputEnabled(true)
 	self:SetCursor("hand")
 
-	self.enabledText = L("yes"):upper()
-	self.disabledText = L("no"):upper()
+	self.enabledText = L("yes"):utf8upper()
+	self.disabledText = L("no"):utf8upper()
 	self.font = "ixMenuButtonFont"
 	self.animationTime = 0.5
 	self.bChecked = false

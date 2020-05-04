@@ -37,7 +37,7 @@ function ix.hud.DrawDeath()
 	surface.DrawRect(-1, -1, w+2, h+2)
 
 	ix.util.DrawText(
-		string.upper(L"youreDead"), w/2, h/2, ColorAlpha(color_white, aprg2 * 255), 1, 1, "ixMenuButtonHugeFont", aprg2 * 255
+		string.utf8upper(L"youreDead"), w/2, h/2, ColorAlpha(color_white, aprg2 * 255), 1, 1, "ixMenuButtonHugeFont", aprg2 * 255
 	)
 end
 
