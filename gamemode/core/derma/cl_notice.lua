@@ -33,9 +33,11 @@ function PANEL:AddNotice(text, bError)
 		return
 	end
 
+	local textLength = text:utf8len()
+
 	local panel = self:Add("ixNotice")
 	panel:SetText(text)
-	panel:SetError(bError or text:sub(#text, #text) == "!")
+	panel:SetError(bError or text:utf8sub(textLength, textLength) == "!")
 	panel:SizeToContents()
 	panel.currentY = -panel:GetTall()
 	panel:SetPos(self.padding, panel.currentY)

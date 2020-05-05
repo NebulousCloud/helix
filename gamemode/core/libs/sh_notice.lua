@@ -82,8 +82,10 @@ else
 	-- Create a notification panel.
 	function ix.util.Notify(message)
 		if (ix.option.Get("chatNotices", false)) then
+			local messageLength = message:utf8len()
+
 			ix.chat.Send(LocalPlayer(), "notice", message, false, {
-				bError = message:sub(#message, #message) == "!"
+				bError = message:utf8sub(messageLength, messageLength) == "!"
 			})
 
 			return

@@ -88,8 +88,8 @@ function ix.chat.Register(chatType, data)
 	if (CLIENT and data.prefix) then
 		if (istable(data.prefix)) then
 			for _, v in ipairs(data.prefix) do
-				if (v:sub(1, 1) == "/") then
-					ix.command.Add(v:sub(2), {
+				if (v:utf8sub(1, 1) == "/") then
+					ix.command.Add(v:utf8sub(2), {
 						description = data.description,
 						arguments = ix.type.text,
 						indicator = data.indicator,
@@ -101,7 +101,7 @@ function ix.chat.Register(chatType, data)
 				end
 			end
 		else
-			ix.command.Add(isstring(data.prefix) and data.prefix:sub(2) or chatType, {
+			ix.command.Add(isstring(data.prefix) and data.prefix:utf8sub(2) or chatType, {
 				description = data.description,
 				arguments = ix.type.text,
 				indicator = data.indicator,
@@ -141,22 +141,24 @@ function ix.chat.Parse(client, message, bNoSend)
 		-- Check through all prefixes if the chat type has more than one.
 		if (istable(v.prefix)) then
 			for _, prefix in ipairs(v.prefix) do
-				prefix = prefix:lower()
+				prefix = prefix:utf8lower()
+				local fullPrefix = prefix .. (noSpaceAfter and "" or " ")
 
 				-- Checking if the start of the message has the prefix.
-				if (message:sub(1, #prefix + (noSpaceAfter and 0 or 1)):lower() == prefix..(noSpaceAfter and "" or " "):lower()) then
+				if (message:utf8sub(1, prefix:utf8len() + (noSpaceAfter and 0 or 1)):utf8lower() == fullPrefix:utf8lower()) then
 					isChosen = true
-					chosenPrefix = prefix..(v.noSpaceAfter and "" or " ")
+					chosenPrefix = fullPrefix
 
 					break
 				end
 			end
 		-- Otherwise the prefix itself is checked.
 		elseif (isstring(v.prefix)) then
-			local prefix = v.prefix:lower()
+			local prefix = v.prefix:utf8lower()
+			local fullPrefix = prefix .. (noSpaceAfter and "" or " ")
 
-			isChosen = message:sub(1, #prefix + (noSpaceAfter and 0 or 1)):lower() == prefix..(noSpaceAfter and "" or " "):lower()
-			chosenPrefix = prefix..(v.noSpaceAfter and "" or " ")
+			isChosen = message:utf8sub(1, prefix:utf8len() + (noSpaceAfter and 0 or 1)):utf8lower() == fullPrefix:utf8lower()
+			chosenPrefix = fullPrefix
 		end
 
 		-- If the checks say we have the proper chat type, then the chat type is the chosen one!
@@ -166,10 +168,10 @@ function ix.chat.Parse(client, message, bNoSend)
 			-- Set the chat type to the chosen one.
 			chatType = k
 			-- Remove the prefix from the chat type so it does not show in the message.
-			message = message:sub(#chosenPrefix + 1)
+			message = message:utf8sub(chosenPrefix:utf8len() + 1)
 
-			if (ix.chat.classes[k].noSpaceAfter and message:sub(1, 1):match("%s")) then
-				message = message:sub(2)
+			if (ix.chat.classes[k].noSpaceAfter and message:utf8sub(1, 1):match("%s")) then
+				message = message:utf8sub(2)
 			end
 
 			break
@@ -231,18 +233,18 @@ if (SERVER) then
 			local rawText = text
 			local maxLength = ix.config.Get("chatMax")
 
-			if (text:len() > maxLength) then
-				text = text:sub(0, maxLength)
+			if (text:utf8len() > maxLength) then
+				text = text:utf8sub(0, maxLength)
 			end
 
 			if (ix.config.Get("chatAutoFormat") and hook.Run("CanAutoFormatMessage", speaker, chatType, text)) then
-				local last = text:sub(-1)
+				local last = text:utf8sub(-1)
 
 				if (last != "." and last != "?" and last != "!" and last != "-" and last != "\"") then
 					text = text .. "."
 				end
 
-				text = text:sub(1, 1):utf8upper() .. text:sub(2)
+				text = text:utf8sub(1, 1):utf8upper() .. text:utf8sub(2)
 			end
 
 			text = hook.Run("PlayerMessageSend", speaker, chatType, text, anonymous, receivers, rawText) or text

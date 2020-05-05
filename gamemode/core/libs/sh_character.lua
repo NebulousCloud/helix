@@ -333,15 +333,15 @@ do
 			local minLength = ix.config.Get("minNameLength", 4)
 			local maxLength = ix.config.Get("maxNameLength", 32)
 
-			if (#value < minLength) then
+			if (value:utf8len() < minLength) then
 				return false, "nameMinLen", minLength
 			elseif (!value:find("%S")) then
 				return false, "invalid", "name"
-			elseif (#value:gsub("%s", "") > maxLength) then
+			elseif (value:gsub("%s", ""):utf8len() > maxLength) then
 				return false, "nameMaxLen", maxLength
 			end
 
-			return hook.Run("GetDefaultCharacterName", client, payload.faction) or value:sub(1, 70)
+			return hook.Run("GetDefaultCharacterName", client, payload.faction) or value:utf8sub(1, 70)
 		end,
 		OnPostSetup = function(self, panel, payload)
 			local faction = ix.faction.indices[payload.faction]
@@ -379,7 +379,7 @@ do
 			value = string.Trim((tostring(value):gsub("\r\n", ""):gsub("\n", "")))
 			local minLength = ix.config.Get("minDescriptionLength", 16)
 
-			if (#value < minLength) then
+			if (value:utf8len() < minLength) then
 				return false, "descMinLen", minLength
 			elseif (!value:find("%s+") or !value:find("%S")) then
 				return false, "invalid", "description"

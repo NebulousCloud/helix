@@ -301,7 +301,7 @@ ix.command.Add("DoorSetTitle", {
 				title, which could lead to unwanted things.
 			--]]
 
-			name = name:sub(1, 24)
+			name = name:utf8sub(1, 24)
 
 			-- Check if they are allowed to change the door's name.
 			if (entity:CheckDoorAccess(client, DOOR_TENANT)) then

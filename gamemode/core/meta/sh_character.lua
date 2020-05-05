@@ -266,7 +266,7 @@ function ix.char.RegisterVar(key, data)
 	ix.char.vars[key] = data
 	data.index = data.index or table.Count(ix.char.vars)
 
-	local upperName = key:sub(1, 1):utf8upper() .. key:sub(2)
+	local upperName = key:sub(1, 1):upper() .. key:sub(2)
 
 	if (SERVER) then
 		if (data.field) then
@@ -342,13 +342,13 @@ function ix.char.RegisterVar(key, data)
 	if (alias) then
 		if (istable(alias)) then
 			for _, v in ipairs(alias) do
-				local aliasName = v:sub(1, 1):utf8upper()..v:sub(2)
+				local aliasName = v:sub(1, 1):upper()..v:sub(2)
 
 				CHAR["Get"..aliasName] = CHAR["Get"..upperName]
 				CHAR["Set"..aliasName] = CHAR["Set"..upperName]
 			end
 		elseif (isstring(alias)) then
-			local aliasName = alias:sub(1, 1):utf8upper()..alias:sub(2)
+			local aliasName = alias:sub(1, 1):upper()..alias:sub(2)
 
 			CHAR["Get"..aliasName] = CHAR["Get"..upperName]
 			CHAR["Set"..aliasName] = CHAR["Set"..upperName]

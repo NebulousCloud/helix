@@ -48,7 +48,7 @@ function ix.option.Add(key, optionType, default, data)
 
 	local categories = ix.option.categories
 	local category = data.category or "misc"
-	local upperName = key:sub(1, 1):utf8upper() .. key:sub(2)
+	local upperName = key:sub(1, 1):upper() .. key:sub(2)
 
 	categories[category] = categories[category] or {}
 	categories[category][key] = true

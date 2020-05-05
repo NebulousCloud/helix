@@ -53,7 +53,7 @@ ix.option.Add("language", ix.type.array, ix.config.language or "english", {
 
 		for k, _ in SortedPairs(ix.lang.stored) do
 			local name = ix.lang.names[k]
-			local name2 = k:sub(1, 1):utf8upper() .. k:sub(2)
+			local name2 = k:utf8sub(1, 1):utf8upper() .. k:utf8sub(2)
 
 			if (name) then
 				name = name .. " (" .. name2 .. ")"

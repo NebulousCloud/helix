@@ -14,6 +14,9 @@ if (CLIENT) then
 	local shadowColor = Color(66, 66, 66)
 	local currentClass
 
+	-- we can't rely on matching non-alphanumeric characters (i.e %W) due to patterns matching single bytes and not UTF-8 chars
+	local symbolPattern = "[~`!@#$%%%^&*()_%+%-={}%[%]|;:'\",%./<>?]"
+
 	function PLUGIN:LoadFonts(font, genericFont)
 		surface.CreateFont("ixTypingIndicator", {
 			font = genericFont,
@@ -64,9 +67,9 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:GetTypingIndicator(character, text)
-		local prefix = text:sub(1, 1)
+		local prefix = text:utf8sub(1, 1)
 
-		if (prefix:find("%w") and text:len() > 1) then
+		if (!prefix:find(symbolPattern) and text:utf8len() > 1) then
 			return "ic"
 		else
 			local chatType = ix.chat.Parse(nil, text)
@@ -76,11 +79,9 @@ if (CLIENT) then
 			end
 
 			-- some commands will have their own typing indicator, so we'll make sure we're actually typing out a command first
-			local start, _, commandName = text:find("(/(%w+)%s.)")
+			local start, _, commandName = text:find("/(%S+)%s")
 
-			if (prefix == "/" and start == 1) then
-				commandName = commandName:sub(2, #commandName - 2):lower()
-
+			if (start == 1) then
 				for uniqueID, command in pairs(ix.command.list) do
 					if (command.bNoIndicator) then
 						continue

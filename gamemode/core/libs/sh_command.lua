@@ -280,7 +280,7 @@ function ix.command.Add(command, data)
 			bLastOptional = bOptional
 		end
 
-		if (data.syntax:len() == 0) then
+		if (data.syntax:utf8len() == 0) then
 			data.syntax = "<none>"
 		end
 	else
@@ -337,18 +337,18 @@ function ix.command.ExtractArgs(text)
 	local arguments = {}
 	local curString = ""
 
-	for i = 1, #text do
+	for i = 1, text:utf8len() do
 		if (i <= skip) then continue end
 
-		local c = text:sub(i, i)
+		local c = text:utf8sub(i, i)
 
 		if (c == "\"") then
-			local match = text:sub(i):match("%b"..c..c)
+			local match = text:utf8sub(i):match("%b\"\"")
 
 			if (match) then
 				curString = ""
 				skip = i + #match
-				arguments[#arguments + 1] = match:sub(2, -2)
+				arguments[#arguments + 1] = match:utf8sub(2, -2)
 			else
 				curString = curString..c
 			end
@@ -394,8 +394,8 @@ function ix.command.FindAll(identifier, bSorted, bReorganize, bRemoveDupes)
 		end
 
 		return result
-	elseif (identifier:sub(1, 1) == "/") then
-		identifier = identifier:sub(2)
+	elseif (identifier:utf8sub(1, 1) == "/") then
+		identifier = identifier:utf8sub(2)
 	end
 
 	for k, v in iterator(ix.command.list) do
@@ -535,8 +535,7 @@ if (SERVER) then
 	function ix.command.Parse(client, text, realCommand, arguments)
 		if (realCommand or text:utf8sub(1, 1) == COMMAND_PREFIX) then
 			-- See if the string contains a command.
-
-			local match = realCommand or text:lower():match(COMMAND_PREFIX.."([_%w]+)")
+			local match = realCommand or text:utf8lower():match(COMMAND_PREFIX.."([_%w]+)")
 
 			-- is it unicode text?
 			if (!match) then
@@ -546,14 +545,14 @@ if (SERVER) then
 				match = post[1]:utf8sub(2, len)
 			end
 
-			match = match:lower()
+			match = match:utf8lower()
 
 			local command = ix.command.list[match]
 			-- We have a valid, registered command.
 			if (command) then
 				-- Get the arguments like a console command.
 				if (!arguments) then
-					arguments = ix.command.ExtractArgs(text:sub(#match + 3))
+					arguments = ix.command.ExtractArgs(text:utf8sub(match:utf8len() + 3))
 				end
 
 				-- Runs the actual command.
