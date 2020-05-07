@@ -217,7 +217,7 @@ function META:FindEmptySlot(w, h, onlyMain)
 	for y = 1, self.h - (h - 1) do
 		for x = 1, self.w - (w - 1) do
 			if (self:CanItemFit(x, y, w, h)) then
-				return x, y
+				return x, y, self
 			end
 		end
 	end
@@ -227,13 +227,17 @@ function META:FindEmptySlot(w, h, onlyMain)
 
 		if (#bags > 0) then
 			for _, invID in ipairs(bags) do
-				local bagInv = ix.item.inventories[invID]
+				local targetInv = ix.item.inventories[invID]
 
-				if (bagInv) then
-					local x, y = bagInv:FindEmptySlot(w, h)
+				if (targetInv) then
+					local x, y, bagInv = targetInv:FindEmptySlot(w, h)
+
+					if (bagInv) then
+						targetInv = bagInv
+					end
 
 					if (x and y) then
-						return x, y, bagInv
+						return x, y, targetInv
 					end
 				end
 			end
