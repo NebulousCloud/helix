@@ -14,6 +14,11 @@ PLUGIN.author = "`impulse"
 ix.act = ix.act or {}
 ix.act.stored = ix.act.stored or {}
 
+CAMI.RegisterPrivilege({
+	Name = "Helix - Player Acts",
+	MinAccess = "user"
+})
+
 --- Registers a sequence as a performable animation.
 -- @realm shared
 -- @string name Name of the animation (in CamelCase)
@@ -82,7 +87,9 @@ function PLUGIN:PostSetupActs()
 	-- create chat commands for all stored acts
 	for act, classes in pairs(ix.act.stored) do
 		local variants = 1
-		local COMMAND = {}
+		local COMMAND = {
+			privilege = "Player Acts"
+		}
 
 		-- check if this act has any variants (i.e /ActSit 2)
 		for _, v in pairs(classes) do
@@ -101,8 +108,16 @@ function PLUGIN:PostSetupActs()
 			return L("cmdAct", act)
 		end
 
+		local privilege = "Helix - " .. COMMAND.privilege
+
 		-- we'll perform a model class check in OnCheckAccess to prevent the command from showing up on the client at all
 		COMMAND.OnCheckAccess = function(command, client)
+			local bHasAccess, _ = CAMI.PlayerHasAccess(client, privilege, nil)
+
+			if (!bHasAccess) then
+				return false
+			end
+
 			local modelClass = ix.anim.GetModelClass(client:GetModel())
 
 			if (!classes[modelClass]) then
@@ -207,6 +222,7 @@ function PLUGIN:PostSetupActs()
 
 	-- setup exit act command
 	local COMMAND = {
+		privilege = "Player Acts",
 		OnRun = function(command, client)
 			if (client.ixUntimedSequence) then
 				client:LeaveSequence()
