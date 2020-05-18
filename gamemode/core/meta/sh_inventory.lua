@@ -247,6 +247,14 @@ function META:GetItemAt(x, y)
 	end
 end
 
+--- Removes an item from the inventory.
+-- @realm shared
+-- @number id The item instance ID to remove
+-- @bool[opt=false] bNoReplication Whether or not the item's removal should not be replicated
+-- @bool[opt=false] bNoDelete Whether or not the item should not be fully deleted
+-- @bool[opt=false] bTransferring Whether or not the item is being transferred to another inventory
+-- @treturn number The X position that the item was removed from
+-- @treturn number The Y position that the item was removed from
 function META:Remove(id, bNoReplication, bNoDelete, bTransferring)
 	local x2, y2
 
@@ -520,6 +528,19 @@ if (SERVER) then
 		end
 	end
 
+	--- Add an item to the inventory.
+	-- @realm server
+	-- @param uniqueID The item unique ID or instance ID to add to the inventory
+	-- @number[opt=1] quantity The quantity of the item to add
+	-- @tab data Item data to add to the item
+	-- @number[opt=nil] x The X position for the item
+	-- @number[opt=nil] y The Y position for the item
+	-- @bool[opt=false] noReplication Whether or not the item's addition should not be replicated
+	-- @treturn[1] bool Whether the add was successful or not
+	-- @treturn[1] string The error, if applicable
+	-- @treturn[2] number The X position that the item was added to
+	-- @treturn[2] number The Y position that the item was added to
+	-- @treturn[2] number The inventory ID that the item was added to
 	function META:Add(uniqueID, quantity, data, x, y, noReplication)
 		quantity = quantity or 1
 
