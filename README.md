@@ -6,8 +6,8 @@
 	<a href="https://discord.gg/2AutUcF">
 		<img src="https://img.shields.io/discord/505957257125691423.svg" alt="Discord" />
 	</a>
-	<a href="https://travis-ci.org/NebulousCloud/helix">
-		<img src="https://travis-ci.org/NebulousCloud/helix.svg?branch=master" alt="Build Status" />
+	<a href="https://github.com/NebulousCloud/helix/actions">
+		<img src="https://img.shields.io/github/workflow/status/NebulousCloud/helix/CI" alt="Build Status" />
 	</a>
 </p>
 
