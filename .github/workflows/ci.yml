@@ -1,0 +1,68 @@
+
+name: CI
+on: [push, pull_request]
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        path: helix
+
+    - uses: leafo/gh-actions-lua@v5
+    - uses: leafo/gh-actions-luarocks@v2
+
+    - name: Pull gluacheck
+      uses: actions/checkout@v2
+      with:
+        repository: impulsh/gluacheck
+        path: luacheck
+
+    - name: Build gluacheck
+      working-directory: luacheck
+      run: luarocks make
+
+    - name: Lint
+      working-directory: helix
+      run: luacheck .
+
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: helix
+
+      - uses: leafo/gh-actions-lua@v5
+      - uses: leafo/gh-actions-luarocks@v2
+
+      - name: Pull LDoc
+        uses: actions/checkout@v2
+        with:
+          repository: impulsh/LDoc
+          path: ldoc
+
+      - name: Build LDoc
+        working-directory: ldoc
+        run: luarocks make
+
+      - name: Build docs
+        working-directory: helix
+        run: ldoc . --fatalwarnings
+
+      - name: Copy assets
+        working-directory: helix
+        run: |
+          cp -v docs/css/* docs/html
+          cp -v docs/js/* docs/html
+
+      - name: Deploy
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'NebulousCloud/helix' && success()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: helix/docs/html
+          cname: docs.gethelix.co
