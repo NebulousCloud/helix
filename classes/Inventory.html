@@ -100,10 +100,12 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 					<div class="contents">
 							<h2>Functions</h2>
 							<ul>
+									<li><span class="realm server"></span><a href="#META:Add">Inventory:Add(uniqueID[, quantity=1], data[, x=nil[, y=nil[, noReplication=false]]])</a></li>
 									<li><span class="realm shared"></span><a href="#META:GetID">Inventory:GetID()</a></li>
 									<li><span class="realm shared"></span><a href="#META:GetOwner">Inventory:GetOwner()</a></li>
 									<li><span class="realm shared"></span><a href="#META:GetSize">Inventory:GetSize()</a></li>
 									<li><span class="realm shared"></span><a href="#META:OnCheckAccess">Inventory:OnCheckAccess(client)</a></li>
+									<li><span class="realm shared"></span><a href="#META:Remove">Inventory:Remove(id[, bNoReplication=false[, bNoDelete=false[, bTransferring=false]]])</a></li>
 									<li><span class="realm shared"></span><a href="#META:SetSize">Inventory:SetSize(width, height)</a></li>
 									<li><span class="realm shared"></span><a href="#META:__tostring">Inventory:__tostring()</a></li>
 							</ul>
@@ -113,6 +115,136 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 				<!-- methods -->
 					<h1 class="title">Functions</h1>
 
+						<section class="method">
+							<header>
+								<a class="anchor" id="META:Add">
+									<h1><span class="realm server"></span>Inventory:Add(uniqueID[, quantity=1], data[, x=nil[, y=nil[, noReplication=false]]])</h1>
+								</a>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L544">View source &raquo;</a>
+
+								<p>Add an item to the inventory.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">uniqueID</span>
+
+
+
+												<p> The item unique ID or instance ID to add to the inventory</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">quantity</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: 1</span>
+
+												<p> The quantity of the item to add</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">data</span>
+
+													<span class="tag"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.6">table</a></span>
+
+
+												<p> Item data to add to the item</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">x</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> The X position for the item</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">y</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+													<span class="tag default">default: nil</span>
+
+												<p> The Y position for the item</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">noReplication</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether or not the item's addition should not be replicated</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">bool</span>
+
+												<p>Whether the add was successful or not</p>
+											</li>
+
+											<li>
+													<a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a>
+
+												<p>The error, if applicable</p>
+											</li>
+
+											<div class="or"><span>OR</span></div>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>The X position that the item was added to</p>
+											</li>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>The Y position that the item was added to</p>
+											</li>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>The inventory ID that the item was added to</p>
+											</li>
+
+								</ul>
+
+						</section>
 						<section class="method">
 							<header>
 								<a class="anchor" id="META:GetID">
@@ -249,6 +381,92 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 						</section>
 						<section class="method">
 							<header>
+								<a class="anchor" id="META:Remove">
+									<h1><span class="realm shared"></span>Inventory:Remove(id[, bNoReplication=false[, bNoDelete=false[, bTransferring=false]]])</h1>
+								</a>
+
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L258">View source &raquo;</a>
+
+								<p>Removes an item from the inventory.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">id</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> The item instance ID to remove</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bNoReplication</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether or not the item's removal should not be replicated</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bNoDelete</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether or not the item should not be fully deleted</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">bTransferring</span>
+
+													<span class="tag"><span class="type">boolean</span></span>
+
+													<span class="tag default">default: false</span>
+
+												<p> Whether or not the item is being transferred to another inventory</p>
+											</li>
+									</ul>
+
+
+								<h3>Returns</h3>
+								<ul>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>The X position that the item was removed from</p>
+											</li>
+
+											<li>
+													<span class="type">number</span>
+
+												<p>The Y position that the item was removed from</p>
+											</li>
+
+								</ul>
+
+						</section>
+						<section class="method">
+							<header>
 								<a class="anchor" id="META:SetSize">
 									<h1><span class="realm shared"></span>Inventory:SetSize(width, height)</h1>
 								</a>
@@ -313,7 +531,7 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 								<ul>
 
 											<li>
-													<a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>
+													<a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a>
 
 												<p>String representation</p>
 											</li>
