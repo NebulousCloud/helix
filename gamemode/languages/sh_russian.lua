@@ -434,6 +434,6 @@ LANGUAGE = {
 	cmdEvent = "Выполнить действие, которое увидят все игроки.",
 	cmdOOC = "Отправить сообщение в глобальный out-of-character чат .",
 	cmdLOOC = "Отправить сообщение в локальный out-of-character чат.",
-	
+
 	Instructions = "Информация"
 }
