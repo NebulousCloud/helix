@@ -321,7 +321,7 @@ do
 	}
 	--- Returns a string that is the given input with spaces in between each CamelCase word. This function will ignore any words
 	-- that do not begin with a capital letter. The words `ooc`, `looc`, `afk`, and `url` will be automatically transformed
-	-- into uppercase text.
+	-- into uppercase text. This will not capitalize non-ASCII letters due to limitations with Lua's pattern matching.
 	-- @realm shared
 	-- @string input String to expand
 	-- @bool[opt=false] bNoUpperFirst Whether or not to avoid capitalizing the first character. This is useful for lowerCamelCase
@@ -329,11 +329,11 @@ do
 	-- @usage print(ix.util.ExpandCamelCase("HelloWorld"))
 	-- > Hello World
 	function ix.util.ExpandCamelCase(input, bNoUpperFirst)
-		input = bNoUpperFirst and input or input:sub(1, 1):utf8upper() .. input:sub(2)
+		input = bNoUpperFirst and input or input:utf8sub(1, 1):utf8upper() .. input:utf8sub(2)
 
 		-- extra parentheses to select first return value of gsub
 		return string.TrimRight((input:gsub("%u%l+", function(word)
-			if (upperMap[word:lower()]) then
+			if (upperMap[word:utf8lower()]) then
 				word = word:utf8upper()
 			end
 
