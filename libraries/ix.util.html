@@ -622,7 +622,7 @@ end)
 
 								<p>Returns a string that is the given input with spaces in between each CamelCase word.  This function will ignore any words
  that do not begin with a capital letter. The words <code>ooc</code>, <code>looc</code>, <code>afk</code>, and <code>url</code> will be automatically transformed
- into uppercase text.</p>
+ into uppercase text. This will not capitalize non-ASCII letters due to limitations with Lua's pattern matching.</p>
 							</header>
 
 
