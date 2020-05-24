@@ -13,10 +13,10 @@ local function insertSorted(tbl, plugin, func, priority)
 		-- Clean out the old function from the table
 		for i = 1, #tbl do
 			if (tbl[i][1] == plugin) then
-				table.remove(tbl, k)
+				table.remove(tbl, i)
 				break
 			end
-		end	
+		end
 	end
 
 	-- Attempt to insert into an empty table or at the end first
@@ -24,7 +24,7 @@ local function insertSorted(tbl, plugin, func, priority)
 		tbl[#tbl + 1] = {plugin, func, priority}
 		return
 	end
-	
+
 	-- Find where to insert
 	for i = #tbl - 1, 1, -1 do
 		if (tbl[i][3] >= priority) then
@@ -108,7 +108,9 @@ function ix.plugin.Load(uniqueID, path, isSingleFile, variable)
 		for k, v in pairs(PLUGIN) do
 			if (isfunction(v)) then
 				HOOKS_CACHE[k] = HOOKS_CACHE[k] or {}
-				insertSorted(HOOKS_CACHE[k], PLUGIN, v, (PLUGIN.GetHookCallPriority and PLUGIN:GetHookCallPriority(k)) or PLUGIN.hookCallPriority)
+				insertSorted(HOOKS_CACHE[k], PLUGIN, v,
+					(PLUGIN.GetHookCallPriority and PLUGIN:GetHookCallPriority(k))
+					or PLUGIN.hookCallPriority)
 			end
 		end
 
@@ -128,7 +130,7 @@ function ix.plugin.GetHook(pluginName, hookName)
 		local p = ix.plugin.list[pluginName]
 
 		if (p) then
-			for k, v in ipairs(h) do
+			for _, v in ipairs(h) do
 				if (v[1] == p) then
 					return v[2]
 				end
