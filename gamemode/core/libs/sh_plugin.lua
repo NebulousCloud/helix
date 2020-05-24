@@ -8,6 +8,35 @@ ix.util.Include("helix/gamemode/core/meta/sh_tool.lua")
 -- luacheck: globals HOOKS_CACHE
 HOOKS_CACHE = {}
 
+local function insertSorted(tbl, plugin, func, priority)
+	if (IX_RELOADED) then
+		-- Clean out the old function from the table
+		for i = 1, #tbl do
+			if (tbl[i][1] == plugin) then
+				table.remove(tbl, k)
+				break
+			end
+		end	
+	end
+
+	-- Attempt to insert into an empty table or at the end first
+	if (#tbl == 0 or tbl[#tbl][3] >= priority) then
+		tbl[#tbl + 1] = {plugin, func, priority}
+		return
+	end
+	
+	-- Find where to insert
+	for i = #tbl - 1, 1, -1 do
+		if (tbl[i][3] >= priority) then
+			table.insert(tbl, i + 1, {plugin, func, priority})
+			return
+		end
+	end
+
+	-- Insert at the front
+	table.insert(tbl, 1, {plugin, func, priority})
+end
+
 function ix.plugin.Load(uniqueID, path, isSingleFile, variable)
 	if (hook.Run("PluginShouldLoad", uniqueID) == false) then return end
 
@@ -75,10 +104,11 @@ function ix.plugin.Load(uniqueID, path, isSingleFile, variable)
 		PLUGIN.name = PLUGIN.name or "Unknown"
 		PLUGIN.description = PLUGIN.description or "No description available."
 
+		PLUGIN.hookCallPriority = PLUGIN.hookCallPriority or 1000
 		for k, v in pairs(PLUGIN) do
 			if (isfunction(v)) then
 				HOOKS_CACHE[k] = HOOKS_CACHE[k] or {}
-				HOOKS_CACHE[k][PLUGIN] = v
+				insertSorted(HOOKS_CACHE[k], PLUGIN, v, (PLUGIN.GetHookCallPriority and PLUGIN:GetHookCallPriority(k)) or PLUGIN.hookCallPriority)
 			end
 		end
 
@@ -98,7 +128,11 @@ function ix.plugin.GetHook(pluginName, hookName)
 		local p = ix.plugin.list[pluginName]
 
 		if (p) then
-			return h[p]
+			for k, v in ipairs(h) do
+				if (v[1] == p) then
+					return v[2]
+				end
+			end
 		end
 	end
 
@@ -473,8 +507,8 @@ do
 		local cache = HOOKS_CACHE[name]
 
 		if (cache) then
-			for k, v in pairs(cache) do
-				local a, b, c, d, e, f = v(k, ...)
+			for i = 1, #cache do
+				local a, b, c, d, e, f = cache[i][2](cache[i][1], ...)
 
 				if (a != nil) then
 					return a, b, c, d, e, f
