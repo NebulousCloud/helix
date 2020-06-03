@@ -461,28 +461,31 @@ if (SERVER) then
 				if (IsValid(self) and !entity.ixIgnoreDelete) then
 					if (entity.ixWeapons) then
 						for _, v in ipairs(entity.ixWeapons) do
-							local weapon = self:Give(v.class, true)
+							if (v.class) then
+								local weapon = self:Give(v.class, true)
 
-							if (v.item) then
-								weapon.ixItem = v.item
-							end
-
-							if (entity.ixAmmo) then
-								for k2, v2 in pairs(entity.ixAmmo) do
-									if (v.class == v2[1]) then
-										self:SetAmmo(v2[2], k2)
-									end
+								if (v.item) then
+									weapon.ixItem = v.item
 								end
-							end
-						end
 
-						for _, v in ipairs(self:GetWeapons()) do
-							v:SetClip1(0)
+								self:SetAmmo(v.ammo, weapon:GetPrimaryAmmoType())
+								weapon:SetClip1(v.clip)
+							elseif (v.item and v.invID == v.item.invID) then
+								v.item:Equip(self, true, true)
+								self:SetAmmo(v.ammo, self.carryWeapons[v.item.weaponCategory]:GetPrimaryAmmoType())
+							end
 						end
 					end
 
 					if (entity.ixActiveWeapon) then
-						self:SelectWeapon(entity.ixActiveWeapon)
+						if (self:HasWeapon(entity.ixActiveWeapon)) then
+							self:SetActiveWeapon(self:GetWeapon(entity.ixActiveWeapon))
+						else
+							local weapons = self:GetWeapons()
+							if (#weapons > 0) then
+								self:SetActiveWeapon(weapons[1])
+							end
+						end
 					end
 
 					if (self:IsStuck()) then
@@ -506,7 +509,6 @@ if (SERVER) then
 			self.ixRagdoll = entity
 
 			entity.ixWeapons = {}
-			entity.ixAmmo = {}
 			entity.ixPlayer = self
 
 			if (getUpGrace) then
@@ -520,18 +522,28 @@ if (SERVER) then
 				self:SetAction("@wakingUp", nil, nil, entity.ixStart, entity.ixFinish)
 			end
 
-			for _, v in ipairs(self:GetWeapons()) do
-				entity.ixWeapons[#entity.ixWeapons + 1] = {class = v:GetClass(), item = v.ixItem}
-
-				local clip = v:Clip1()
-				local reserve = self:GetAmmoCount(v:GetPrimaryAmmoType())
-				local ammo = clip + reserve
-
-				entity.ixAmmo[v:GetPrimaryAmmoType()] = {v:GetClass(), ammo}
-			end
-
 			if (IsValid(self:GetActiveWeapon())) then
 				entity.ixActiveWeapon = self:GetActiveWeapon():GetClass()
+			end
+
+			for _, v in ipairs(self:GetWeapons()) do
+				if (v.ixItem and v.ixItem.Equip and v.ixItem.Unequip) then
+					entity.ixWeapons[#entity.ixWeapons + 1] = {
+						item = v.ixItem,
+						invID = v.ixItem.invID,
+						ammo = self:GetAmmoCount(v:GetPrimaryAmmoType())
+					}
+					v.ixItem:Unequip(self, false)
+				else
+					local clip = v:Clip1()
+					local reserve = self:GetAmmoCount(v:GetPrimaryAmmoType())
+					entity.ixWeapons[#entity.ixWeapons + 1] = {
+						class = v:GetClass(),
+						item = v.ixItem,
+						clip = clip,
+						ammo = reserve
+					}
+				end
 			end
 
 			self:GodDisable()
