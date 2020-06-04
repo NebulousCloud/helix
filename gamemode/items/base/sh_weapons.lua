@@ -118,7 +118,7 @@ function ITEM:RemovePAC(client)
 	end
 end
 
-function ITEM:Equip(client)
+function ITEM:Equip(client, bNoSelect, bNoSound)
 	local items = client:GetCharacter():GetInventory():GetItems()
 
 	client.carryWeapons = client.carryWeapons or {}
@@ -151,8 +151,14 @@ function ITEM:Equip(client)
 		local ammoType = weapon:GetPrimaryAmmoType()
 
 		client.carryWeapons[self.weaponCategory] = weapon
-		client:SelectWeapon(weapon:GetClass())
-		client:EmitSound("items/ammo_pickup.wav", 80)
+
+		if (!bNoSelect) then
+			client:SelectWeapon(weapon:GetClass())
+		end
+
+		if (!bNoSound) then
+			client:EmitSound("items/ammo_pickup.wav", 80)
+		end
 
 		-- Remove default given ammo.
 		if (client:GetAmmoCount(ammoType) == weapon:Clip1() and self:GetData("ammo", 0) == 0) then
