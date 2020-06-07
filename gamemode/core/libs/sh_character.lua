@@ -501,7 +501,7 @@ do
 					-- save skin/bodygroups to character data
 					local bodygroups = {}
 
-					for i = 1, table.Count(model[3]) or 9 do
+					for i = 1, #model[3] do
 						bodygroups[i - 1] = tonumber(model[3][i]) or 0
 					end
 
