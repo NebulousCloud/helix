@@ -3,14 +3,38 @@ function GM:ForceDermaSkin()
 	return "helix"
 end
 
+hook.Add( "PlayerBindPress", "PlayerBindPressExample", function( ply, bind, pressed )
+	--To block more commands, you could add another line similar to
+	--the one below, just replace the command
+	if ( string.find( bind, "gm_showspare1" ) ) then 
+		if (IsValid(ix.gui.menu)) then return false end
+		if (LocalPlayer():GetCharacter()) then
+			vgui.Create("ixMenu")
+		end	
+	return true end
+end )
+
 function GM:ScoreboardShow()
-	if (LocalPlayer():GetCharacter()) then
-		vgui.Create("ixMenu")
-	end
 end
+
+
+
+--[[
+concommand.Add( "gm_showhelp2", function()
+	if (LocalPlayer():GetCharacter()) then
+		if (IsValid(ix.gui.menu)) then
+			ix.gui.menu:Remove()
+		else
+			vgui.Create("ixMenu")
+		end
+	end
+end)
+]]
+
 
 function GM:ScoreboardHide()
 end
+
 
 function GM:LoadFonts(font, genericFont)
 	surface.CreateFont("ix3D2DFont", {
@@ -489,7 +513,7 @@ end
 local hookRun = hook.Run
 
 do
-	local aimLength = 0.35
+	local aimLength = 0
 	local aimTime = 0
 	local aimEntity
 	local lastEntity
@@ -718,9 +742,7 @@ end
 function GM:PopulateCharacterInfo(client, character, container)
 	-- description
 	local descriptionText = character:GetDescription()
-	descriptionText = (descriptionText:utf8len() > 128 and
-		string.format("%s...", descriptionText:utf8sub(1, 125)) or
-		descriptionText)
+	descriptionText = descriptionText:len() > 128 and string.format("%s...", descriptionText:sub(1, 125)) or descriptionText
 
 	if (descriptionText != "") then
 		local description = container:AddRow("description")
@@ -784,6 +806,39 @@ function GM:PlayerBindPress(client, bind, pressed)
 		if (IsValid(entity)) then
 			ix.command.Send("CharGetUp")
 		end
+	end
+end
+
+--[[
+function GM:PlayerBindPress(client, bind, pressed)
+	bind = bind:lower()
+
+	if (bind:find("use") and pressed) then
+		local pickupTime = ix.config.Get("itemPickupTime", 0.5)
+
+		if (pickupTime > 0) then
+			local data = {}
+				data.start = client:GetShootPos()
+				data.endpos = data.start + client:GetAimVector() * 96
+				data.filter = client
+			local entity = util.TraceLine(data).Entity
+
+			if (IsValid(entity) and entity.ShowPlayerInteraction and !ix.menu.IsOpen()) then
+				client.ixInteractionTarget = entity
+				client.ixInteractionStartTime = SysTime()
+
+				timer.Create("ixItemUse", pickupTime, 1, function()
+					client.ixInteractionTarget = nil
+					client.ixInteractionStartTime = nil
+				end)
+			end
+		end
+	elseif (bind:find("jump")) then
+		local entity = Entity(client:GetLocalVar("ragdoll", 0))
+
+		if (IsValid(entity)) then
+			ix.command.Send("CharGetUp")
+		end
 	elseif (bind:find("speed") and client:KeyDown(IN_WALK) and pressed) then
 		if (LocalPlayer():Crouching()) then
 			RunConsoleCommand("-duck")
@@ -792,6 +847,7 @@ function GM:PlayerBindPress(client, bind, pressed)
 		end
 	end
 end
+]]
 
 function GM:CreateMove(command)
 	if ((IsValid(ix.gui.characterMenu) and !ix.gui.characterMenu.bClosing) or
@@ -949,9 +1005,11 @@ function GM:ScreenResolutionChanged(oldW, oldH)
 	end
 end
 
+--[[
 function GM:DrawDeathNotice()
 	return false
 end
+]]
 
 function GM:HUDAmmoPickedUp()
 	return false

@@ -239,7 +239,7 @@ function PANEL:Init()
 
 	local specials = self:Add("ixKLabel")
 	specials:SetFont("ixMenuButtonFont")
-	specials:SetText(L("creditSpecial"):utf8upper())
+	specials:SetText(L("creditSpecial"):upper())
 	specials:SetTextColor(ix.config.Get("color"))
 	specials:SetExpensiveShadow(1)
 	specials:SetKerning(16)

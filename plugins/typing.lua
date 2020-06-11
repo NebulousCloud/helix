@@ -14,9 +14,6 @@ if (CLIENT) then
 	local shadowColor = Color(66, 66, 66)
 	local currentClass
 
-	-- we can't rely on matching non-alphanumeric characters (i.e %W) due to patterns matching single bytes and not UTF-8 chars
-	local symbolPattern = "[~`!@#$%%%^&*()_%+%-={}%[%]|;:'\",%./<>?]"
-
 	function PLUGIN:LoadFonts(font, genericFont)
 		surface.CreateFont("ixTypingIndicator", {
 			font = genericFont,
@@ -67,9 +64,9 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:GetTypingIndicator(character, text)
-		local prefix = text:utf8sub(1, 1)
+		local prefix = text:sub(1, 1)
 
-		if (!prefix:find(symbolPattern) and text:utf8len() > 1) then
+		if (prefix:find("%w") and text:len() > 1) then
 			return "ic"
 		else
 			local chatType = ix.chat.Parse(nil, text)
@@ -79,9 +76,11 @@ if (CLIENT) then
 			end
 
 			-- some commands will have their own typing indicator, so we'll make sure we're actually typing out a command first
-			local start, _, commandName = text:find("/(%S+)%s")
+			local start, _, commandName = text:find("(/(%w+)%s.)")
 
-			if (start == 1) then
+			if (prefix == "/" and start == 1) then
+				commandName = commandName:sub(2, #commandName - 2):lower()
+
 				for uniqueID, command in pairs(ix.command.list) do
 					if (command.bNoIndicator) then
 						continue
@@ -225,10 +224,6 @@ else
 	end
 
 	net.Receive("ixTypeClass", function(length, client)
-		if ((client.ixNextTypeClass or 0) > RealTime()) then
-			return
-		end
-
 		local newClass = net.ReadString()
 
 		-- send message to players in pvs only since they're the only ones who can see the indicator
@@ -242,7 +237,5 @@ else
 		else
 			net.SendPVS(client:GetPos())
 		end
-
-		client.ixNextTypeClass = RealTime() + 0.2
 	end)
 end

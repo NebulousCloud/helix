@@ -401,15 +401,20 @@ do
 			query:Select("y")
 			query:WhereIn("inventory_id", table.GetKeys(inventories))
 			query:Callback(function(result)
+				local badItemsUniqueID = {}
+
 				if (istable(result) and #result > 0) then
 					local invSlots = {}
+					local badItems = {}
 
 					for _, item in ipairs(result) do
 						local itemInvID = tonumber(item.inventory_id)
 						local invInfo = inventories[itemInvID]
 
 						if (!itemInvID or !invInfo) then
-							-- don't restore items with an invalid inventory id or type
+							badItemsUniqueID[#badItemsUniqueID + 1] = item.unique_id
+							badItems[#badItems + 1] = tonumber(item.item_id)
+
 							continue
 						end
 
@@ -449,7 +454,13 @@ do
 									if (item2.OnRestored) then
 										item2:OnRestored(item2, itemInvID)
 									end
+								else
+									badItemsUniqueID[#badItemsUniqueID + 1] = item.unique_id
+									badItems[#badItems + 1] = itemID
 								end
+							else
+								badItemsUniqueID[#badItemsUniqueID + 1] = item.unique_id
+								badItems[#badItems + 1] = itemID
 							end
 						end
 					end
@@ -457,11 +468,17 @@ do
 					for k, v in pairs(invSlots) do
 						ix.item.inventories[k].slots = v
 					end
+
+					if (!table.IsEmpty(badItems)) then
+						local deleteQuery = mysql:Delete("ix_items")
+							deleteQuery:WhereIn("item_id", badItems)
+						deleteQuery:Execute()
+					end
 				end
 
 				if (callback) then
 					for k, _ in pairs(inventories) do
-						callback(ix.item.inventories[k])
+						callback(ix.item.inventories[k], badItemsUniqueID)
 					end
 				end
 			end)

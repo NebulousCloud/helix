@@ -132,8 +132,8 @@ function PANEL:Populate()
 		local row = self:AddRow(ix.type.bool, self.loadedCategory)
 		row.id = k
 
-		row.setting:SetEnabledText(L("on"):utf8upper())
-		row.setting:SetDisabledText(L("off"):utf8upper())
+		row.setting:SetEnabledText(L("on"):upper())
+		row.setting:SetDisabledText(L("off"):upper())
 		row.setting:SizeToContents()
 
 		-- if this plugin is not in the unloaded list currently, then it's queued for an unload

@@ -1,0 +1,39 @@
+
+sudo: false
+language: python
+
+cache:
+  directories:
+    - $HOME/env
+
+before_install:
+  - pip install hererocks
+  - hererocks $HOME/env --luajit 2.0.4 --luarocks latest
+  - source $HOME/env/bin/activate
+  - git clone https://github.com/impulsh/LDoc $HOME/ldoc
+  - git clone https://github.com/impulsh/gluacheck $HOME/gluacheck
+
+install:
+  - cd $HOME/ldoc
+  - luarocks make
+  - cd $HOME/gluacheck
+  - luarocks make
+  - cd $TRAVIS_BUILD_DIR
+
+script:
+  - ldoc . --fatalwarnings
+  - luacheck .
+
+before_deploy:
+  - cp -v docs/css/* docs/html
+  - cp -v docs/js/* docs/html
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: true
+  local-dir: docs/html
+  fqdn: docs.gethelix.co
+  on:
+    branch: master

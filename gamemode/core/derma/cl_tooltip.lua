@@ -5,7 +5,7 @@
 -- will be largely the same as any DLabel panel.
 -- @panel ixTooltipRow
 
-local animationTime = 1
+local animationTime = 0.4
 
 -- panel meta
 do
@@ -27,7 +27,7 @@ do
 
 		RemoveTooltip()
 
-		timer.Create("ixTooltip", 0.1, 1, function()
+		timer.Create("ixTooltip", animationTime, 1, function()
 			if (!IsValid(panel) or lastHover != panel) then
 				return
 			end
@@ -423,7 +423,7 @@ function PANEL:Remove()
 	end
 
 	self.bClosing = true
-	self:CreateAnimation(animationTime * 0.5, {
+	self:CreateAnimation(animationTime * 0.1, {
 		target = {fraction = 0},
 		easing = "outQuint",
 

@@ -332,10 +332,10 @@ function PANEL:AddLine(elements, bShouldScroll)
 				v:GetName():gsub("<", "&lt;"):gsub(">", "&gt;"))
 		else
 			buffer[#buffer + 1] = tostring(v):gsub("<", "&lt;"):gsub(">", "&gt;"):gsub("%b**", function(value)
-				local inner = value:utf8sub(2, -2)
+				local inner = value:sub(2, -2)
 
 				if (inner:find("%S")) then
-					return "<font=ixChatFontItalics>" .. value:utf8sub(2, -2) .. "</font>"
+					return "<font=ixChatFontItalics>" .. value:sub(2, -2) .. "</font>"
 				end
 			end)
 		end
@@ -381,12 +381,11 @@ function PANEL:SetFont(font)
 	self:SetTall(height + 8)
 end
 
-function PANEL:AllowInput(newCharacter)
+function PANEL:AllowInput(newText)
 	local text = self:GetText()
 	local maxLength = ix.config.Get("chatMax")
 
-	-- we can't check for the proper length using utf-8 since AllowInput is called for single bytes instead of full characters
-	if (string.len(text .. newCharacter) > maxLength) then
+	if (string.len(text .. newText) > maxLength) then
 		surface.PlaySound("common/talk.wav")
 		return true
 	end
@@ -396,11 +395,11 @@ function PANEL:Think()
 	local text = self:GetText()
 	local maxLength = ix.config.Get("chatMax", 256)
 
-	if (text:utf8len() > maxLength) then
-		local newText = text:utf8sub(0, maxLength)
+	if (string.len(text) > maxLength) then
+		local newText = string.sub(text, 0, maxLength)
 
 		self:SetText(newText)
-		self:SetCaretPos(newText:utf8len())
+		self:SetCaretPos(string.len(newText))
 	end
 end
 
@@ -537,7 +536,7 @@ function PANEL:UpdateArguments(text)
 	end
 
 	local commandName = text:match("(/(%w+)%s)") or self.command -- we could be using a chat class prefix and not a proper command
-	local givenArguments = ix.command.ExtractArgs(text:utf8sub(commandName:utf8len()))
+	local givenArguments = ix.command.ExtractArgs(text:sub(commandName:len()))
 	local commandArguments = self.commandTable.arguments or {}
 	local arguments = {}
 
@@ -704,7 +703,7 @@ function PANEL:Update(text)
 		local panel = self:Add("ixChatboxAutocompleteEntry")
 		panel:SetCommand(v)
 
-		if (!bSelected and text:utf8lower():utf8sub(1, v.uniqueID:utf8len()) == v.uniqueID) then
+		if (!bSelected and text:lower():sub(1, v.uniqueID:len()) == v.uniqueID) then
 			panel:SetHighlighted(true)
 
 			self.commandIndex = i
@@ -1141,12 +1140,12 @@ function PANEL:GetTextEntryChatClass(text)
 
 		if (istable(class.prefix)) then
 			for _, v in ipairs(class.prefix) do
-				if (v:utf8sub(1, 1) == "/") then
-					return v:utf8sub(2):utf8lower()
+				if (v:sub(1, 1) == "/") then
+					return v:sub(2):lower()
 				end
 			end
-		elseif (class.prefix:utf8sub(1, 1) == "/") then
-			return class.prefix:utf8sub(2):utf8lower()
+		elseif (class.prefix:sub(1, 1) == "/") then
+			return class.prefix:sub(2):lower()
 		end
 	end
 end
@@ -1172,7 +1171,7 @@ function PANEL:OnTextChanged(text)
 	end
 
 	local start, _, command = text:find("(/(%w+)%s)")
-	command = ix.command.list[tostring(command):utf8sub(2, tostring(command):utf8len() - 1):utf8lower()]
+	command = ix.command.list[tostring(command):sub(2, tostring(command):len() - 1):lower()]
 
 	-- update preview if we've found a command
 	if (start == 1 and command) then
@@ -1184,11 +1183,11 @@ function PANEL:OnTextChanged(text)
 		autocomplete:SetVisible(false)
 		return
 	-- if there's a slash then we're probably going to be (or are currently) typing out a command
-	elseif (text:utf8sub(1, 1) == "/") then
+	elseif (text:sub(1, 1) == "/") then
 		command = text:match("(/(%w+))") or "/"
 
 		preview:SetVisible(false) -- we don't have a valid command yet
-		autocomplete:Update(command:utf8sub(2))
+		autocomplete:Update(command:sub(2))
 		autocomplete:SetVisible(true)
 
 		return
@@ -1211,7 +1210,7 @@ function PANEL:OnKeyCodeTyped(key)
 			local newText = self.autocomplete:SelectNext()
 
 			self.entry:SetText(newText)
-			self.entry:SetCaretPos(newText:utf8len())
+			self.entry:SetCaretPos(newText:len())
 		end
 
 		return true

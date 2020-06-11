@@ -132,6 +132,11 @@ vgui.Register("ixCharMenuButtonList", PANEL, "DScrollPanel")
 -- main character menu panel
 PANEL = {}
 
+surface.CreateFont( "Abel", {
+	font = "Aurebesh", --  Use the font-name which is shown to you by your operating system Font Viewer, not the file name
+	size = 60,
+})
+
 AccessorFunc(PANEL, "bUsingCharacter", "UsingCharacter", FORCE_BOOL)
 
 function PANEL:Init()
@@ -175,7 +180,7 @@ function PANEL:Init()
 		surface.DrawRect(0, y, width, newHeight)
 
 		-- border lines
-		surface.SetDrawColor(ix.config.Get("color") or color_white)
+		surface.SetDrawColor(color_white)
 		surface.DrawRect(0, y, width, 1)
 		surface.DrawRect(0, y + newHeight - 1, width, 1)
 

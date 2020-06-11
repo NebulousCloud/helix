@@ -2,7 +2,7 @@
 local waveSegments = 32
 local helixSegments = 76
 local helixHeight = 64
-local backgroundColor = Color(115, 53, 142)
+local backgroundColor = Color(52, 152, 219)
 local dimColor = Color(165, 134, 179)
 
 DEFINE_BASECLASS("EditablePanel")

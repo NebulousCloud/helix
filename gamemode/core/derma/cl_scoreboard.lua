@@ -104,7 +104,7 @@ function PANEL:Paint(width, height)
 	end
 
 	surface.SetMaterial(self.material)
-	surface.SetDrawColor(self.bHidden and color_black or color_white)
+	surface.SetDrawColor(255, 255, 255, 255)
 	surface.DrawTexturedRect(0, 0, width, height)
 end
 
@@ -251,9 +251,13 @@ function PANEL:Init()
 	self.nextThink = 0
 end
 
-function PANEL:AddPlayer(client, index)
-	if (!IsValid(client) or !client:GetCharacter() or hook.Run("ShouldShowPlayerOnScoreboard", client) == false) then
+function PANEL:AddPlayer(client, index) -- or !client:GetCharacter()
+	if (!IsValid(client) or hook.Run("ShouldShowPlayerOnScoreboard", client) == false) then
 		return false
+	end
+
+	if !client:GetCharacter() then
+		self.icon:SetHidden( true )
 	end
 
 	local id = index % 2 == 0 and 1 or 2

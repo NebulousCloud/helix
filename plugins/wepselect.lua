@@ -72,7 +72,7 @@ if (CLIENT) then
 				end
 
 				surface.SetFont("ixWeaponSelectFont")
-				local weaponName = weapons[i]:GetPrintName():utf8upper()
+				local weaponName = weapons[i]:GetPrintName():upper()
 				local _, ty = surface.GetTextSize(weaponName)
 				local scale = 1 - math.abs(theta * 2)
 
@@ -95,6 +95,8 @@ if (CLIENT) then
 	end
 
 	function PLUGIN:OnIndexChanged(weapon)
+		--if client:GetActiveWeapon().ForceSelectEnabled then return false end
+
 		self.alpha = 1
 		self.fadeTime = CurTime() + 5
 		self.markup = nil
@@ -133,7 +135,7 @@ if (CLIENT) then
 		local bValid = IsValid(currentWeapon)
 		local bTool
 
-		if (client:InVehicle() or (bValid and currentWeapon:GetClass() == "weapon_physgun" and client:KeyDown(IN_ATTACK))) then
+		if (client:InVehicle() or (bValid and currentWeapon:GetClass() == "weapon_physgun" and client:KeyDown(IN_ATTACK)))  or client:GetActiveWeapon().ForceSelectEnabled then
 			return
 		end
 

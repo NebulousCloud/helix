@@ -482,6 +482,7 @@ if (SERVER) then
 					if (self.invID > 0 and prevID != 0) then
 						-- we are transferring this item from one inventory to another
 						curInv:Remove(self.id, false, true, true)
+						self.invID = invID
 
 						if (self.OnTransferred) then
 							self:OnTransferred(curInv, inventory)

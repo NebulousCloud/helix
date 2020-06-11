@@ -111,7 +111,7 @@ net.Receive("ixActionBar", function()
 
 	ix.bar.actionStart = start
 	ix.bar.actionEnd = finish
-	ix.bar.actionText = text:utf8upper()
+	ix.bar.actionText = text:upper()
 end)
 
 net.Receive("ixActionBarReset", function()

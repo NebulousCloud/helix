@@ -6,7 +6,9 @@ ceil = math.ceil
 clmp = math.Clamp
 local aprg, aprg2 = 0, 0
 
+--[[]]
 function ix.hud.DrawDeath()
+	--[[
 	owner = LocalPlayer()
 	ft = FrameTime()
 	w, h = ScrW(), ScrH()
@@ -37,8 +39,9 @@ function ix.hud.DrawDeath()
 	surface.DrawRect(-1, -1, w+2, h+2)
 
 	ix.util.DrawText(
-		string.utf8upper(L"youreDead"), w/2, h/2, ColorAlpha(color_white, aprg2 * 255), 1, 1, "ixMenuButtonHugeFont", aprg2 * 255
+		string.upper(L"youreDead"), w/2, h/2, ColorAlpha(color_white, aprg2 * 255), 1, 1, "ixMenuButtonHugeFont", aprg2 * 255
 	)
+	]]
 end
 
 function ix.hud.DrawItemPickup()

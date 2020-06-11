@@ -333,15 +333,15 @@ do
 			local minLength = ix.config.Get("minNameLength", 4)
 			local maxLength = ix.config.Get("maxNameLength", 32)
 
-			if (value:utf8len() < minLength) then
+			if (#value < minLength) then
 				return false, "nameMinLen", minLength
 			elseif (!value:find("%S")) then
 				return false, "invalid", "name"
-			elseif (value:gsub("%s", ""):utf8len() > maxLength) then
+			elseif (#value:gsub("%s", "") > maxLength) then
 				return false, "nameMaxLen", maxLength
 			end
 
-			return hook.Run("GetDefaultCharacterName", client, payload.faction) or value:utf8sub(1, 70)
+			return hook.Run("GetDefaultCharacterName", client, payload.faction) or value:sub(1, 70)
 		end,
 		OnPostSetup = function(self, panel, payload)
 			local faction = ix.faction.indices[payload.faction]
@@ -379,7 +379,7 @@ do
 			value = string.Trim((tostring(value):gsub("\r\n", ""):gsub("\n", "")))
 			local minLength = ix.config.Get("minDescriptionLength", 16)
 
-			if (value:utf8len() < minLength) then
+			if (#value < minLength) then
 				return false, "descMinLen", minLength
 			elseif (!value:find("%s+") or !value:find("%S")) then
 				return false, "invalid", "description"
@@ -501,7 +501,7 @@ do
 					-- save skin/bodygroups to character data
 					local bodygroups = {}
 
-					for i = 1, #model[3] do
+					for i = 1, 9 do
 						bodygroups[i - 1] = tonumber(model[3][i]) or 0
 					end
 
@@ -594,7 +594,7 @@ do
 		category = "attributes",
 		isLocal = true,
 		OnDisplay = function(self, container, payload)
-			local maximum = hook.Run("GetDefaultAttributePoints", LocalPlayer(), payload) or 10
+			local maximum = hook.Run("GetDefaultAttributePoints", LocalPlayer(), payload) or ix.config.Get("maxAttributes", 30)
 
 			if (maximum < 1) then
 				return
@@ -658,7 +658,7 @@ do
 						count = count + v
 					end
 
-					if (count > (hook.Run("GetDefaultAttributePoints", client, count) or 10)) then
+					if (count > (hook.Run("GetDefaultAttributePoints", client, count) or ix.config.Get("maxAttributes", 30))) then
 						return false, "unknownError"
 					end
 				else
@@ -899,7 +899,7 @@ do
 				character:Setup()
 				client:Spawn()
 
-				hook.Run("PlayerLoadedCharacter", client, character, currentChar)
+				local test = hook.Run("PlayerLoadedCharacter", client, character, currentChar)
 			else
 				net.Start("ixCharacterLoadFailure")
 					net.WriteString("@unknownError")

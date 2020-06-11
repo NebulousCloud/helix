@@ -9,6 +9,7 @@
 	})
 ]]--
 
+--[[
 ix.container.Register("models/props_junk/wood_crate001a.mdl", {
 	name = "Crate",
 	description = "A simple wooden crate.",
@@ -124,3 +125,4 @@ ix.container.Register("models/props_c17/cashregister01a.mdl", {
 	width = 2,
 	height = 1
 })
+]]

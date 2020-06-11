@@ -66,7 +66,7 @@ function PANEL:Think()
 	local time = RealTime()
 
 	if (time >= self.nextThink) then
-		if (self.character < self.text:utf8len()) then
+		if (self.character < self.text:len()) then
 			self.character = self.character + 1
 			self.label:SetText(string.utf8sub(self.text, 1, self.character))
 

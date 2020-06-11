@@ -5,7 +5,7 @@ function GM:PlayerInitialSpawn(client)
 	if (client:IsBot()) then
 		local botID = os.time() + client:EntIndex()
 		local index = math.random(1, table.Count(ix.faction.indices))
-		local faction = ix.faction.indices[index]
+		local faction = ix.faction.indices[1]
 
 		local character = ix.char.New({
 			name = client:Name(),
@@ -103,6 +103,27 @@ function GM:PlayerUse(client, entity)
 end
 
 function GM:KeyPress(client, key)
+	if (key == IN_USE) then
+		local data = {}
+			data.start = client:GetShootPos()
+			data.endpos = data.start + client:GetAimVector() * 96
+			data.filter = client
+		local entity = util.TraceLine(data).Entity
+
+		if (IsValid(entity) and hook.Run("PlayerUse", client, entity)) then
+			if (entity:IsDoor()) then
+				local result = hook.Run("CanPlayerUseDoor", client, entity)
+
+				if (result != false) then
+					hook.Run("PlayerUseDoor", client, entity)
+				end
+			end
+		end
+	end
+end
+
+--[[
+function GM:KeyPress(client, key)
 	if (key == IN_RELOAD) then
 		timer.Create("ixToggleRaise"..client:SteamID(), ix.config.Get("weaponRaiseTime"), 1, function()
 			if (IsValid(client)) then
@@ -127,11 +148,20 @@ function GM:KeyPress(client, key)
 		end
 	end
 end
+]]
 
+--[[
 function GM:KeyRelease(client, key)
 	if (key == IN_RELOAD) then
 		timer.Remove("ixToggleRaise" .. client:SteamID())
 	elseif (key == IN_USE) then
+		timer.Remove("ixCharacterInteraction" .. client:SteamID())
+	end
+end
+]]
+
+function GM:KeyRelease(client, key)
+	if (key == IN_USE) then
 		timer.Remove("ixCharacterInteraction" .. client:SteamID())
 	end
 end
@@ -307,7 +337,7 @@ function GM:PlayerSay(client, text)
 	text = ix.chat.Send(client, chatType, message, anonymous)
 
 	if (isstring(text) and chatType != "ic") then
-		ix.log.Add(client, "chat", chatType and chatType:utf8upper() or "??", text)
+		ix.log.Add(client, "chat", chatType and chatType:upper() or "??", text)
 	end
 
 	hook.Run("PostPlayerSay", client, chatType, message, anonymous)
@@ -348,6 +378,7 @@ function GM:PlayerSpawnSWEP(client, weapon, info)
 	return client:IsAdmin()
 end
 
+--[[
 function GM:PlayerSpawnProp(client)
 	if (client:GetCharacter() and client:GetCharacter():HasFlags("e")) then
 		return true
@@ -375,6 +406,7 @@ function GM:PlayerSpawnVehicle(client, model, name, data)
 
 	return false
 end
+]]
 
 function GM:PlayerSpawnedEffect(client, model, entity)
 	entity:SetNetVar("owner", client:GetCharacter():GetID())
@@ -475,7 +507,10 @@ function GM:PlayerLoadout(client)
 
 	-- Check if they have loaded a character.
 	if (character) then
-		client:SetupHands()
+		timer.Simple(0.1, function() 
+			client:SetupHands()
+		end)
+		
 		-- Set their player model to the character's model.
 		client:SetModel(character:GetModel())
 		client:Give("ix_hands")
@@ -524,6 +559,7 @@ function GM:PlayerLoadout(client)
 		ix.attributes.Setup(client)
 
 		hook.Run("PostPlayerLoadout", client)
+		client:SetupHands()
 
 		client:SelectWeapon("ix_hands")
 	else
@@ -556,12 +592,15 @@ function GM:PostPlayerLoadout(client)
 	end
 end
 
+--[[
 local deathSounds = {
 	Sound("vo/npc/male01/pain07.wav"),
 	Sound("vo/npc/male01/pain08.wav"),
 	Sound("vo/npc/male01/pain09.wav")
 }
+]]
 
+--[[
 function GM:DoPlayerDeath(client, attacker, damageinfo)
 	client:AddDeaths(1)
 
@@ -580,6 +619,7 @@ function GM:DoPlayerDeath(client, attacker, damageinfo)
 	client:SetAction("@respawning", ix.config.Get("spawnTime", 5))
 	client:SetDSP(31)
 end
+
 
 function GM:PlayerDeath(client, inflictor, attacker)
 	local character = client:GetCharacter()
@@ -617,6 +657,7 @@ function GM:PlayerDeath(client, inflictor, attacker)
 			attacker:GetName() ~= "" and attacker:GetName() or attacker:GetClass(), IsValid(weapon) and weapon:GetClass())
 	end
 end
+]]
 
 local painSounds = {
 	Sound("vo/npc/male01/pain01.wav"),
@@ -654,6 +695,7 @@ function GM:PlayerHurt(client, attacker, health, damage)
 	ix.log.Add(client, "playerHurt", damage, attacker:GetName() ~= "" and attacker:GetName() or attacker:GetClass())
 end
 
+--[[
 function GM:PlayerDeathThink(client)
 	if (client:GetCharacter()) then
 		local deathTime = client:GetNetVar("deathTime")
@@ -665,6 +707,7 @@ function GM:PlayerDeathThink(client)
 
 	return false
 end
+]]
 
 function GM:PlayerDisconnected(client)
 	client:SaveData()
@@ -748,7 +791,7 @@ function GM:ShutDown()
 end
 
 function GM:GetGameDescription()
-	return "IX: "..(Schema and Schema.name or "Unknown")
+	return Schema and Schema.name or "Unknown"
 end
 
 function GM:OnPlayerUseBusiness(client, item)

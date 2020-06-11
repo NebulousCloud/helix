@@ -282,7 +282,7 @@ function PANEL:SetValue(value, bInitial)
 	self.textEntry:SetValue(value)
 
 	if (bInitial) then
-		self.textEntry:SetCaretPos(value:utf8len())
+		self.textEntry:SetCaretPos(value:len())
 	end
 end
 

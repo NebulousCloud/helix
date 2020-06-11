@@ -8,7 +8,7 @@ CAMI.RegisterPrivilege({
 	MinAccess = "admin"
 })
 
-ix.option.Add("observerTeleportBack", ix.type.bool, true, {
+ix.option.Add("observerTeleportBack", ix.type.bool, false, {
 	bNetworked = true,
 	category = "observer",
 	hidden = function()
@@ -129,23 +129,37 @@ else
 		end
 	end
 
+	--[[
 	function PLUGIN:CanPlayerEnterVehicle(client, vehicle, role)
 		if (client:GetMoveType() == MOVETYPE_NOCLIP) then
 			return false
 		end
 	end
+	]]
 
 	function PLUGIN:PlayerNoClip(client, state)
 		if (hook.Run("CanPlayerEnterObserver", client)) then
 			if (state) then
 				client.ixObsData = {client:GetPos(), client:EyeAngles()}
 
+				local hide_weapons = function(ply, should_hide)
+					for _, v in pairs(ply:GetWeapons()) do
+						v:SetNoDraw(should_hide)
+					end
+			
+					local physgun_beams = ents.FindByClassAndParent("physgun_beam", ply)
+					if physgun_beams then
+						for i = 1, #physgun_beams do
+							physgun_beams[i]:SetNoDraw(should_hide)
+						end
+					end
+				end
 				-- Hide them so they are not visible.
 				client:SetNoDraw(true)
 				client:SetNotSolid(true)
 				client:DrawWorldModel(false)
 				client:DrawShadow(false)
-				client:GodEnable()
+				--client:GodEnable()
 				client:SetNoTarget(true)
 
 				hook.Run("OnPlayerObserve", client, state)
@@ -171,7 +185,7 @@ else
 				client:SetNotSolid(false)
 				client:DrawWorldModel(true)
 				client:DrawShadow(true)
-				client:GodDisable()
+				--client:GodDisable()
 				client:SetNoTarget(false)
 
 				hook.Run("OnPlayerObserve", client, state)

@@ -37,11 +37,11 @@ ix.config.Add("genericFont", "Roboto", "The font used to display generic texts."
 	end
 end, {category = "appearance"})
 
-ix.config.Add("maxAttributes", 100, "The maximum amount each attribute can be.", nil, {
-	data = {min = 0, max = 100},
+ix.config.Add("maxAttributes", 30, "The total maximum amount of attribute points allowed.", nil, {
+	data = {min = 0, max = 250},
 	category = "characters"
 })
-ix.config.Add("chatAutoFormat", true, "Whether or not to automatically capitalize and punctuate in-character text.", nil, {
+ix.config.Add("chatAutoFormat", false, "Whether or not to automatically capitalize and punctuate in-character text.", nil, {
 	category = "Chat"
 })
 ix.config.Add("chatRange", 280, "The maximum distance a person's IC chat message goes to.", nil, {
@@ -87,7 +87,7 @@ ix.config.Add("maxNameLength", 32, "The maximum number of characters in a name."
 	data = {min = 16, max = 128},
 	category = "characters"
 })
-ix.config.Add("minDescriptionLength", 16, "The minimum number of characters in a description.", nil, {
+ix.config.Add("minDescriptionLength", 0, "The minimum number of characters in a description.", nil, {
 	data = {min = 0, max = 300},
 	category = "characters"
 })
@@ -95,7 +95,7 @@ ix.config.Add("saveInterval", 300, "How often characters save in seconds.", nil,
 	data = {min = 60, max = 3600},
 	category = "characters"
 })
-ix.config.Add("walkSpeed", 130, "How fast a player normally walks.", function(oldValue, newValue)
+ix.config.Add("walkSpeed", 155, "How fast a player normally walks.", function(oldValue, newValue)
 	for _, v in ipairs(player.GetAll())	do
 		v:SetWalkSpeed(newValue)
 	end
@@ -111,7 +111,15 @@ end, {
 	data = {min = 75, max = 500},
 	category = "characters"
 })
-ix.config.Add("walkRatio", 0.5, "How fast one goes when holding ALT.", nil, {
+ix.config.Add("crouchSpeed", 0.4, "How fast a player normally crouch walks. (Multplier)", function(oldValue, newValue)
+	for _, v in ipairs(player.GetAll())	do
+		v:SetCrouchedWalkSpeed(newValue)
+	end
+end, {
+	data = {min = 0, max = 1, decimals = 1},
+	category = "characters"
+})
+ix.config.Add("walkRatio", 0.5, "How fast one goes when holding ALT. (Multipler)", nil, {
 	data = {min = 0, max = 1, decimals = 1},
 	category = "characters"
 })
@@ -138,7 +146,7 @@ ix.config.Add("defaultMoney", 0, "The amount of money that players start with.",
 	category = "characters",
 	data = {min = 0, max = 1000}
 })
-ix.config.Add("allowVoice", false, "Whether or not voice chat is allowed.", function(oldValue, newValue)
+ix.config.Add("allowVoice", true, "Whether or not voice chat is allowed.", function(oldValue, newValue)
 	if (SERVER) then
 		hook.Run("VoiceToggled", newValue)
 	end

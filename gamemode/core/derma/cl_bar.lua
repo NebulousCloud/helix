@@ -144,6 +144,12 @@ AccessorFunc(PANEL, "value", "Value", FORCE_NUMBER)
 AccessorFunc(PANEL, "delta", "Delta", FORCE_NUMBER)
 AccessorFunc(PANEL, "lifetime", "Lifetime", FORCE_NUMBER)
 
+surface.CreateFont( "Exo", {
+	font = "CircularStd-Medium", --  Use the font-name which is shown to you by your operating system Font Viewer, not the file name
+	size = 18,
+	weight = 100,
+})
+
 function PANEL:Init()
 	self.value = 0
 	self.delta = 0
@@ -160,11 +166,11 @@ function PANEL:Init()
 	end
 
 	self.label = self:Add("DLabel")
-	self.label:SetFont("ixSmallFont")
+	self.label:SetFont("Exo")
 	self.label:SetContentAlignment(5)
 	self.label:SetText("")
 	self.label:SetTextColor(Color(240, 240, 240))
-	self.label:SetExpensiveShadow(2, Color(20, 20, 20))
+	--self.label:SetExpensiveShadow(2, Color(20, 20, 20))
 	self.label:SetPaintedManually(true)
 	self.label:SizeToContents()
 	self.label:Dock(FILL)

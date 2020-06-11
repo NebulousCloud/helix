@@ -111,16 +111,16 @@ if (CLIENT) then
 	net.Receive("ixRecognizeMenu", function(length)
 		local menu = DermaMenu()
 			menu:AddOption(L"rgnLookingAt", function()
-				Recognize(0)
-			end)
-			menu:AddOption(L"rgnWhisper", function()
 				Recognize(1)
 			end)
-			menu:AddOption(L"rgnTalk", function()
+			menu:AddOption(L"rgnWhisper", function()
 				Recognize(2)
 			end)
-			menu:AddOption(L"rgnYell", function()
+			menu:AddOption(L"rgnTalk", function()
 				Recognize(3)
+			end)
+			menu:AddOption(L"rgnYell", function()
+				Recognize(4)
 			end)
 		menu:Open()
 		menu:MakePopup()
@@ -152,7 +152,7 @@ else
 		if (isnumber(level)) then
 			local targets = {}
 
-			if (level < 1) then
+			if (level < 2) then
 				local entity = client:GetEyeTraceNoCursor().Entity
 
 				if (IsValid(entity) and entity:IsPlayer() and entity:GetCharacter()
@@ -162,9 +162,9 @@ else
 			else
 				local class = "w"
 
-				if (level == 2) then
+				if (level == 3) then
 					class = "ic"
-				elseif (level == 3) then
+				elseif (level == 4) then
 					class = "y"
 				end
 

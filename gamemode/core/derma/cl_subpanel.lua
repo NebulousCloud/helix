@@ -30,7 +30,7 @@ function PANEL:SetTitle(text, bNoTranslation, bNoUpper)
 	end
 
 	local newText = bNoTranslation and text or L(text)
-	newText = bNoUpper and newText or newText:utf8upper()
+	newText = bNoUpper and newText or newText:upper()
 
 	self.title:SetText(newText)
 	self.title:SizeToContents()

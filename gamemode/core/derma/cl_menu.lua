@@ -161,6 +161,7 @@ function PANEL:SetCharacterOverview(bValue, length)
 		end
 
 		local faction = ix.faction.indices[LocalPlayer():Team()]
+		
 		local color = faction and faction.color or color_white
 
 		self.projectedTexture:SetEnableShadows(false)

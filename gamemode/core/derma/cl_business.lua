@@ -12,7 +12,7 @@ function PANEL:SetItem(itemTable)
 
 	self.price = self:Add("DLabel")
 	self.price:Dock(BOTTOM)
-	self.price:SetText(itemTable.price and ix.currency.Get(itemTable.price) or L"free":utf8upper())
+	self.price:SetText(itemTable.price and ix.currency.Get(itemTable.price) or L"free":upper())
 	self.price:SetContentAlignment(5)
 	self.price:SetTextColor(color_white)
 	self.price:SetFont("ixSmallFont")
@@ -417,7 +417,7 @@ function PANEL:SetCart(items)
 			slot.name:SetText(string.format(
 				"%s (%s)",
 				L(itemTable.GetName and itemTable:GetName() or L(itemTable.name)),
-				itemTable.price and ix.currency.Get(itemTable.price) or L"free":utf8upper()
+				itemTable.price and ix.currency.Get(itemTable.price) or L"free":upper()
 			))
 			slot.name:SetTextColor(color_white)
 			slot.name:SizeToContents()
