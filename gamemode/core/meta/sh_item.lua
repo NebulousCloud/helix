@@ -454,7 +454,7 @@ if (SERVER) then
 			authorized = true
 		end
 
-		if (!authorized and self.CanTransfer and self:CanTransfer(curInv, inventory) == false) then
+		if (!authorized or self.CanTransfer and self:CanTransfer(curInv, inventory) == false) then
 			return false, "notAllowed"
 		end
 
