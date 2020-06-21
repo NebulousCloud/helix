@@ -243,7 +243,10 @@ end
 function PANEL:PaintOver(width, height)
 	local itemTable = self.itemTable
 	
-	if hook.Run("PaintOverItem", self, itemTable, width, height) == false then
+	local override = hook.Run("PaintOverItem", self, itemTable, width, height)
+	if override == true then
+		return true
+	else override == false then
 		return
 	end
 
