@@ -84,6 +84,10 @@ function ix.hud.PopulateItemTooltip(tooltip, item)
 	local description = tooltip:AddRow("description")
 	description:SetText(item:GetDescription() or "")
 	description:SizeToContents()
+	
+	if hook.Run("PrePopulateItemTooltip", tooltip, item) == false then
+		return
+	end
 
 	if (item.PopulateTooltip) then
 		item:PopulateTooltip(tooltip)

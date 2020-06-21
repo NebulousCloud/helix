@@ -242,6 +242,10 @@ end
 
 function PANEL:PaintOver(width, height)
 	local itemTable = self.itemTable
+	
+	if hook.Run("PaintOverItem", self, itemTable, width, height) == false then
+		return
+	end
 
 	if (itemTable and itemTable.PaintOver) then
 		itemTable.PaintOver(self, itemTable, width, height)
