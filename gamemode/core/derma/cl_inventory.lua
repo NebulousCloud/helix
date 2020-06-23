@@ -201,18 +201,17 @@ function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY)
 			self:Move(gridX, gridY, inventoryPanel)
 		end
 		
-		local inventories = ix.item.inventories
-		local inventory = inventories[self:GetParent().invID]
+		local curInventory = ix.item.inventories[self:GetParent().invID]
 		
-		local item
-		if (inventory) then
-			item = inventory:GetItemAt(oldX, oldY)
-			if (!item) then
+		local itemObject
+		if (curInventory) then
+			itemObject = curInventory:GetItemAt(oldX, oldY)
+			if (!itemObject) then
 				return
 			end
 			
 			-- itemObject, curInv, newInventory, newX, newY, bIsEmptySlot
-			hook.Run("InventoryItemOnDrop", item, inventory, inventories[inventoryPanel.invID], gridX, gridY, bIsEmptySlot)
+			hook.Run("InventoryItemOnDrop", itemObject, curInventory, ix.item.inventories[inventoryPanel.invID], gridX, gridY, bIsEmptySlot)
 		end
 	end
 end
