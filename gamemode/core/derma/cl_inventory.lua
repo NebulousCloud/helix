@@ -186,6 +186,8 @@ function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY)
 	if (!item or !bDragging) then
 		return
 	end
+	
+	local oldX, oldY = self.gridX, self.gridY
 
 	if (!IsValid(inventoryPanel)) then
 		local inventoryID = self.inventoryID
@@ -193,11 +195,24 @@ function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY)
 		if (inventoryID) then
 			InventoryAction("drop", item.id, inventoryID, {})
 		end
-	elseif (inventoryPanel:IsAllEmpty(gridX, gridY, item.width, item.height, self)) then
-		local oldX, oldY = self.gridX, self.gridY
-
-		if (oldX != gridX or oldY != gridY or self.inventoryID != inventoryPanel.invID) then
+	elseif (oldX != gridX or oldY != gridY or self.inventoryID != inventoryPanel.invID) then
+		local bIsEmptySlot = inventoryPanel:IsAllEmpty(gridX, gridY, item.width, item.height, self)
+		if (bIsEmptySlot) then
 			self:Move(gridX, gridY, inventoryPanel)
+		end
+		
+		local inventories = ix.item.inventories
+		local inventory = inventories[self:GetParent().invID]
+		
+		local item
+		if (inventory) then
+			item = inventory:GetItemAt(oldX, oldY)
+			if (!item) then
+				return
+			end
+			
+			-- itemObject, curInv, newInventory, newX, newY, bIsEmptySlot
+			hook.Run("InventoryItemOnDrop", item, inventory, inventories[inventoryPanel.invID], gridX, gridY, bIsEmptySlot)
 		end
 	end
 end
