@@ -184,6 +184,7 @@ LANGUAGE = {
 	whitelist = "%s has whitelisted %s for the %s faction.",
 	unwhitelist = "%s has unwhitelisted %s from the %s faction.",
 	noWhitelist = "You do not have the whitelist for this character!",
+	charNotWhitelisted = "%s is not whitelisted for the %s faction.",
 	gettingUp = "You are now getting up...",
 	wakingUp = "You are regaining consciousness...",
 	Weapons = "Weapons",

@@ -716,15 +716,21 @@ ix.command.Add("PlyTransfer", {
 		end
 
 		if (faction) then
-			target.vars.faction = faction.uniqueID
-			target:SetFaction(faction.index)
+			local bHasWhitelist = client:HasWhitelist(faction.index)
 
-			if (faction.OnTransferred) then
-				faction:OnTransferred(target)
-			end
+			if (bHasWhitelist) then
+				target.vars.faction = faction.uniqueID
+				target:SetFaction(faction.index)
 
-			for _, v in ipairs(player.GetAll()) do
-				v:NotifyLocalized("cChangeFaction", client:GetName(), target:GetName(), L(faction.name, v))
+				if (faction.OnTransferred) then
+					faction:OnTransferred(target)
+				end
+
+				for _, v in ipairs(player.GetAll()) do
+					v:NotifyLocalized("cChangeFaction", client:GetName(), target:GetName(), L(faction.name, v))
+				end
+			else
+				return "@charNotWhitelisted", target:GetName(), L(faction.name, client)
 			end
 		else
 			return "@invalidFaction"
