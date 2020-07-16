@@ -262,7 +262,7 @@ local function UpdateAnimationTable(client, vehicle)
 		if (baseTable.vehicle and baseTable.vehicle[vehicleClass]) then
 			client.ixAnimTable = baseTable.vehicle[vehicleClass]
 		else
-			client.ixAnimTable = baseTable.normal[ACT_MP_CROUCH_IDLE]
+			client.ixAnimTable = baseTable.player[ACT_MP_CROUCH_IDLE]
 		end
 	else
 		client.ixAnimTable = baseTable[client.ixAnimHoldType]
