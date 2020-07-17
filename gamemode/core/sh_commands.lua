@@ -716,7 +716,7 @@ ix.command.Add("PlyTransfer", {
 		end
 
 		if (faction) then
-			local bHasWhitelist = client:HasWhitelist(faction.index)
+			local bHasWhitelist = target:GetPlayer():HasWhitelist(faction.index)
 
 			if (bHasWhitelist) then
 				target.vars.faction = faction.uniqueID
