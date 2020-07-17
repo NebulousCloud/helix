@@ -287,6 +287,7 @@ LANGUAGE = {
 	vendorNoTrade = "You are not able to trade with this vendor!",
 	vendorNoMoney = "This vendor can not afford that item!",
 	vendorNoStock = "This vendor does not have that item in stock!",
+	vendorMaxStock = "This vendor has full stock of that item!",
 	contentTitle = "Helix Content Missing",
 	contentWarning = "You do not have the Helix content mounted. This may result in certain features missing.\nWould you like to open the Workshop page for the Helix content?",
 	flags = "Flags",

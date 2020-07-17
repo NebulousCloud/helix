@@ -343,6 +343,12 @@ if (SERVER) then
 					return client:NotifyLocalized("vendorNoMoney")
 				end
 
+				local stock, max = entity:GetStock(uniqueID)
+
+				if (stock and stock >= max) then
+					return client:NotifyLocalized("vendorMaxStock")
+				end
+
 				local invOkay = true
 
 				for _, v in pairs(client:GetCharacter():GetInventory():GetItems()) do
