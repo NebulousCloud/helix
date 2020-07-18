@@ -33,7 +33,7 @@ end
 function GetNetVar(key, default) -- luacheck: globals GetNetVar
 	local value = ix.net.globals[key]
 
-	return value != nil and value or default
+	return value or default
 end
 
 function SetNetVar(key, value, receiver) -- luacheck: globals SetNetVar
