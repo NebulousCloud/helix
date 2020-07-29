@@ -541,50 +541,62 @@ if (SERVER) then
 	-- @treturn[2] number The X position that the item was added to
 	-- @treturn[2] number The Y position that the item was added to
 	-- @treturn[2] number The inventory ID that the item was added to
-    function META:Add(uniqueID, quantity, data, x, y, noReplication)
-        quantity = quantity or 1
-        if (quantity < 1) then return false, "noOwner" end
+	function META:Add(uniqueID, quantity, data, x, y, noReplication)
+		quantity = quantity or 1
 
-        if (not isnumber(uniqueID) and quantity > 1) then
-            for _ = 1, quantity do
-                local bSuccess, error = self:Add(uniqueID, 1, data)
-                if (not bSuccess) then return false, error end
-            end
+		if (quantity < 1) then
+			return false, "noOwner"
+		end
 
-            return true
+		if (!isnumber(uniqueID) and quantity > 1) then
+			for _ = 1, quantity do
+				local bSuccess, error = self:Add(uniqueID, 1, data)
+
+				if (!bSuccess) then
+					return false, error
+				end
+			end
+
+			return true
+		end
+
+		local client = self.GetOwner and self:GetOwner() or nil
+		local item = isnumber(uniqueID) and ix.item.instances[uniqueID] or ix.item.list[uniqueID]
+		local targetInv = self
+		local bagInv
+
+		if (!item) then
+			return false, "invalidItem"
+		end
+
+        if !(x and y) or (x < 1 or y < 1 or x + item.width - 1 > self.w or y + item.height - 1 > self.h) then
+            x, y, bagInv = self:FindEmptySlot(item.width, item.height)
         end
 
-        local client = self.GetOwner and self:GetOwner() or nil
-        local item = isnumber(uniqueID) and ix.item.instances[uniqueID] or ix.item.list[uniqueID]
-        local targetInv = self
-        local bagInv
-        if (not item) then
-            return false, "invalidItem"
-        end
-
-        if (hook.Run("CanTransferItem", item, ix.item.inventories[0], targetInv) == false) then
-            return false, "notAllowed"
-        end
-
-        if (not x and y) or (x < 1 or y < 1 or x + item.width - 1 > self.w or y + item.height - 1 > self.h) then
-            x, y = self:FindEmptySlot(item.width, item.height)
-        end
-
-        if not (x and y) then
+        if !(x and y) then
             return false, "noFit"
         end
 
-        if (isnumber(uniqueID)) then
-            local oldInvID = item.invID
+		if (isnumber(uniqueID)) then
+			local oldInvID = item.invID
 
-            if (bagInv) then
-                targetInv = bagInv
-            end
+			if (bagInv) then
+				targetInv = bagInv
+			end
 
-            -- we need to check for owner since the item instance already exists
-            if (not item.bAllowMultiCharacterInteraction and IsValid(client) and client:GetCharacter() and item:GetPlayerID() == client:SteamID64() and item:GetCharacterID() ~= client:GetCharacter():GetID()) then return false, "itemOwned" end
+			if (hook.Run("CanTransferItem", item, ix.item.inventories[0], targetInv) == false) then
+				return false, "notAllowed"
+			end
+
+			-- we need to check for owner since the item instance already exists
+			if (!item.bAllowMultiCharacterInteraction and IsValid(client) and client:GetCharacter() and
+				item:GetPlayerID() == client:SteamID64() and item:GetCharacterID() != client:GetCharacter():GetID()) then
+				return false, "itemOwned"
+			end
+
             targetInv.slots[x] = targetInv.slots[x] or {}
             targetInv.slots[x][y] = true
+
             item.gridX = x
             item.gridY = y
             item.invID = targetInv:GetID()
@@ -598,26 +610,30 @@ if (SERVER) then
                 end
             end
 
-            if (not noReplication) then
+            if (!noReplication) then
                 targetInv:SendSlot(x, y, item)
             end
 
-            if (not self.noSave) then
+            if (!self.noSave) then
                 local query = mysql:Update("ix_items")
-                query:Update("inventory_id", targetInv:GetID())
-                query:Update("x", x)
-                query:Update("y", y)
-                query:Where("item_id", item.id)
+                    query:Update("inventory_id", targetInv:GetID())
+                    query:Update("x", x)
+                    query:Update("y", y)
+                    query:Where("item_id", item.id)
                 query:Execute()
             end
 
             hook.Run("InventoryItemAdded", ix.item.inventories[oldInvID], targetInv, item)
 
             return x, y, targetInv:GetID()
-        else
-            if (bagInv) then
-                targetInv = bagInv
-            end
+		else
+			if (bagInv) then
+				targetInv = bagInv
+			end
+
+			if (hook.Run("CanTransferItem", item, ix.item.inventories[0], targetInv) == false) then
+				return false, "notAllowed"
+			end
 
             for x2 = 0, item.width - 1 do
                 local index = x + x2
@@ -653,7 +669,7 @@ if (SERVER) then
                     end
                 end
 
-                if (not noReplication) then
+                if (!noReplication) then
                     targetInv:SendSlot(x, y, newItem)
                 end
 
@@ -661,8 +677,8 @@ if (SERVER) then
             end, characterID, playerID)
 
             return x, y, targetInv:GetID()
-        end
-    end
+		end
+	end
 
 	function META:Sync(receiver, fullUpdate)
 		local slots = {}
