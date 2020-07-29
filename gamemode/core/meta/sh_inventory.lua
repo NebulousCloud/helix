@@ -562,7 +562,7 @@ if (SERVER) then
             return false, "invalidItem"
         end
 
-        if (hook.Run("CanTransferItem", item, targetInv) == false) then
+        if (hook.Run("CanTransferItem", item, ix.item.inventories[0], targetInv) == false) then
             return false, "notAllowed"
         end
 
