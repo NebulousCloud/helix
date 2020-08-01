@@ -9,6 +9,7 @@ ITEM.height = 2
 ITEM.isWeapon = true
 ITEM.isGrenade = false
 ITEM.weaponCategory = "sidearm"
+ITEM.useSound = "items/ammo_pickup.wav"
 
 -- Inventory drawing
 if (CLIENT) then
@@ -65,7 +66,7 @@ ITEM:Hook("drop", function(item)
 
 			owner:StripWeapon(item.class)
 			owner.carryWeapons[item.weaponCategory] = nil
-			owner:EmitSound("items/ammo_pickup.wav", 80)
+			owner:EmitSound(item.useSound, 80)
 		end
 
 		item:RemovePAC(owner)
@@ -157,7 +158,7 @@ function ITEM:Equip(client, bNoSelect, bNoSound)
 		end
 
 		if (!bNoSound) then
-			client:EmitSound("items/ammo_pickup.wav", 80)
+			client:EmitSound(self.useSound, 80)
 		end
 
 		-- Remove default given ammo.
@@ -209,7 +210,7 @@ function ITEM:Unequip(client, bPlaySound, bRemoveItem)
 	end
 
 	if (bPlaySound) then
-		client:EmitSound("items/ammo_pickup.wav", 80)
+		client:EmitSound(self.useSound, 80)
 	end
 
 	client.carryWeapons[self.weaponCategory] = nil

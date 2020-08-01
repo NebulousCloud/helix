@@ -7,6 +7,7 @@ ITEM.ammo = "pistol" -- type of the ammo
 ITEM.ammoAmount = 30 -- amount of the ammo
 ITEM.description = "A Box that contains %s of Pistol Ammo"
 ITEM.category = "Ammunition"
+ITEM.useSound = "items/ammo_pickup.wav"
 
 function ITEM:GetDescription()
 	return Format(self.description, self.ammoAmount)
@@ -27,7 +28,7 @@ ITEM.functions.use = { -- sorry, for name order.
 	icon = "icon16/add.png",
 	OnRun = function(item)
 		item.player:GiveAmmo(item.ammoAmount, item.ammo)
-		item.player:EmitSound("items/ammo_pickup.wav", 110)
+		item.player:EmitSound(item.useSound, 110)
 
 		return true
 	end,
