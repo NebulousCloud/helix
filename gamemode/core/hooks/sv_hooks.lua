@@ -406,6 +406,8 @@ end
 
 ix.allowedHoldableClasses = {
 	["ix_item"] = true,
+	["ix_money"] = true,
+	["ix_shipment"] = true,
 	["prop_physics"] = true,
 	["prop_physics_override"] = true,
 	["prop_physics_multiplayer"] = true,
