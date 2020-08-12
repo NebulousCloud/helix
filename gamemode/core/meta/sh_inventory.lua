@@ -23,7 +23,7 @@ META.receivers = META.receivers or {}
 -- @usage print(ix.item.inventories[1])
 -- > "inventory[1]"
 function META:__tostring()
-	return "inventory["..(self.id or 0).."]"
+	return "inventory[" .. (self.id or 0) .. "]"
 end
 
 --- Returns this inventory's database ID. This is guaranteed to be unique.
@@ -79,7 +79,7 @@ function META:FindError()
 				local item = self.slots[x][y]
 
 				if (item and item.id != v.id) then
-					print("Error Found: ".. item.name)
+					print("Error Found: " .. item.name)
 				end
 			end
 		end

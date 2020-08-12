@@ -30,7 +30,7 @@ end
 -- @usage print(ix.char.loaded[1])
 -- > "character[1]"
 function CHAR:__tostring()
-	return "character["..(self.id or 0).."]"
+	return "character[" .. (self.id or 0) .. "]"
 end
 
 --- Returns true if this character is equal to another character. Internally, this checks character IDs.
@@ -277,15 +277,15 @@ function ix.char.RegisterVar(key, data)
 		if (!data.bNotModifiable) then
 			-- Overwrite the set function if desired.
 			if (data.OnSet) then
-				CHAR["Set"..upperName] = data.OnSet
+				CHAR["Set" .. upperName] = data.OnSet
 			-- Have the set function only set on the server if no networking.
 			elseif (data.bNoNetworking) then
-				CHAR["Set"..upperName] = function(self, value)
+				CHAR["Set" .. upperName] = function(self, value)
 					self.vars[key] = value
 				end
 			-- If the variable is a local one, only send the variable to the local player.
 			elseif (data.isLocal) then
-				CHAR["Set"..upperName] = function(self, value)
+				CHAR["Set" .. upperName] = function(self, value)
 					local oldVar = self.vars[key]
 					self.vars[key] = value
 
@@ -299,7 +299,7 @@ function ix.char.RegisterVar(key, data)
 				end
 			-- Otherwise network the variable to everyone.
 			else
-				CHAR["Set"..upperName] = function(self, value)
+				CHAR["Set" .. upperName] = function(self, value)
 					local oldVar = self.vars[key]
 					self.vars[key] = value
 
@@ -318,10 +318,10 @@ function ix.char.RegisterVar(key, data)
 	-- The get functions are shared.
 	-- Overwrite the get function if desired.
 	if (data.OnGet) then
-		CHAR["Get"..upperName] = data.OnGet
+		CHAR["Get" .. upperName] = data.OnGet
 	-- Otherwise return the character variable or default if it does not exist.
 	else
-		CHAR["Get"..upperName] = function(self, default)
+		CHAR["Get" .. upperName] = function(self, default)
 			local value = self.vars[key]
 
 			if (value != nil) then
@@ -342,16 +342,16 @@ function ix.char.RegisterVar(key, data)
 	if (alias) then
 		if (istable(alias)) then
 			for _, v in ipairs(alias) do
-				local aliasName = v:sub(1, 1):upper()..v:sub(2)
+				local aliasName = v:sub(1, 1):upper() .. v:sub(2)
 
-				CHAR["Get"..aliasName] = CHAR["Get"..upperName]
-				CHAR["Set"..aliasName] = CHAR["Set"..upperName]
+				CHAR["Get" .. aliasName] = CHAR["Get" .. upperName]
+				CHAR["Set" .. aliasName] = CHAR["Set" .. upperName]
 			end
 		elseif (isstring(alias)) then
-			local aliasName = alias:sub(1, 1):upper()..alias:sub(2)
+			local aliasName = alias:sub(1, 1):upper() .. alias:sub(2)
 
-			CHAR["Get"..aliasName] = CHAR["Get"..upperName]
-			CHAR["Set"..aliasName] = CHAR["Set"..upperName]
+			CHAR["Get" .. aliasName] = CHAR["Get" .. upperName]
+			CHAR["Set" .. aliasName] = CHAR["Set" .. upperName]
 		end
 	end
 

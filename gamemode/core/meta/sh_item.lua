@@ -25,7 +25,7 @@ ITEM.uniqueID = "undefined"
 -- @usage print(ix.item.instances[1])
 -- > "item[1]"
 function ITEM:__tostring()
-	return "item["..self.uniqueID.."]["..self.id.."]"
+	return "item[" .. self.uniqueID .. "][" .. self.id .. "]"
 end
 
 --- Returns true if this item is equal to another item. Internally, this checks item IDs.

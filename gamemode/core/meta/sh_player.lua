@@ -129,14 +129,14 @@ end
 -- end)
 -- -- prints "hello!" after looking at the entity for 4 seconds
 function meta:DoStaredAction(entity, callback, time, onCancel, distance)
-	local uniqueID = "ixStare"..self:UniqueID()
+	local uniqueID = "ixStare" .. self:UniqueID()
 	local data = {}
 	data.filter = self
 
 	timer.Create(uniqueID, 0.1, time / 0.1, function()
 		if (IsValid(self) and IsValid(entity)) then
 			data.start = self:GetShootPos()
-			data.endpos = data.start + self:GetAimVector()*(distance or 96)
+			data.endpos = data.start + self:GetAimVector() * (distance or 96)
 
 			if (util.TraceLine(data).Entity != entity) then
 				timer.Remove(uniqueID)
@@ -285,7 +285,7 @@ if (SERVER) then
 		finishTime = finishTime or (startTime + time)
 
 		if (text == false) then
-			timer.Remove("ixAct"..self:UniqueID())
+			timer.Remove("ixAct" .. self:UniqueID())
 
 			net.Start("ixActionBarReset")
 			net.Send(self)
@@ -307,7 +307,7 @@ if (SERVER) then
 		-- If we have provided a callback, run it delayed.
 		if (callback) then
 			-- Create a timer that runs once with a delay.
-			timer.Create("ixAct"..self:UniqueID(), time, 1, function()
+			timer.Create("ixAct" .. self:UniqueID(), time, 1, function()
 				-- Call the callback if the player is still valid.
 				if (IsValid(self)) then
 					callback(self)

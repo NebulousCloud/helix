@@ -93,7 +93,7 @@ if (SERVER) then
 			self.ixDummy:Remove()
 		end
 
-		velocity = velocity or VectorRand()*100
+		velocity = velocity or VectorRand() * 100
 		lifeTime = lifeTime or 120
 
 		local partner = self:GetDoorPartner()
@@ -163,8 +163,8 @@ if (SERVER) then
 
 		dummy:GetPhysicsObject():SetVelocity(velocity)
 
-		local uniqueID = "doorRestore"..self:EntIndex()
-		local uniqueID2 = "doorOpener"..self:EntIndex()
+		local uniqueID = "doorRestore" .. self:EntIndex()
+		local uniqueID2 = "doorOpener" .. self:EntIndex()
 
 		timer.Create(uniqueID2, 1, 0, function()
 			if (IsValid(self) and IsValid(self.ixDummy)) then
@@ -176,7 +176,7 @@ if (SERVER) then
 
 		timer.Create(uniqueID, lifeTime, 1, function()
 			if (IsValid(self) and IsValid(dummy)) then
-				uniqueID = "dummyFade"..dummy:EntIndex()
+				uniqueID = "dummyFade" .. dummy:EntIndex()
 				local alpha = 255
 
 				timer.Create(uniqueID, 0.1, 255, function()
