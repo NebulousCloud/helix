@@ -366,7 +366,7 @@ function SWEP:PrimaryAttack()
 	end
 
 	if (SERVER) then
-		self.Owner:EmitSound("npc/vort/claw_swing"..math.random(1, 2)..".wav")
+		self.Owner:EmitSound("npc/vort/claw_swing" .. math.random(1, 2) .. ".wav")
 	end
 
 	self:DoPunchAnimation()
@@ -406,7 +406,7 @@ function SWEP:PrimaryAttack()
 							damageInfo:SetDamageForce(self.Owner:GetAimVector() * 1024)
 						entity:DispatchTraceAttack(damageInfo, data.start, data.endpos)
 
-						self.Owner:EmitSound("physics/body/body_medium_impact_hard"..math.random(1, 6)..".wav", 80)
+						self.Owner:EmitSound("physics/body/body_medium_impact_hard" .. math.random(1, 6) .. ".wav", 80)
 					end
 				end
 
@@ -446,7 +446,7 @@ function SWEP:SecondaryAttack()
 			end
 
 			self.Owner:ViewPunch(self.KnockViewPunchAngle)
-			self.Owner:EmitSound("physics/wood/wood_crate_impact_hard"..math.random(2, 3)..".wav")
+			self.Owner:EmitSound("physics/wood/wood_crate_impact_hard" .. math.random(2, 3) .. ".wav")
 			self.Owner:SetAnimation(PLAYER_ATTACK1)
 
 			self:DoPunchAnimation()

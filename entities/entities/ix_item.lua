@@ -130,7 +130,7 @@ if (SERVER) then
 
 			if (itemTable) then
 				if (self.ixIsDestroying) then
-					self:EmitSound("physics/cardboard/cardboard_box_break"..math.random(1, 3)..".wav")
+					self:EmitSound("physics/cardboard/cardboard_box_break" .. math.random(1, 3) .. ".wav")
 					local position = self:LocalToWorld(self:OBBCenter())
 
 					local effect = EffectData()

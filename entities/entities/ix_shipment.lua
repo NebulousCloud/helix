@@ -65,7 +65,7 @@ if (SERVER) then
 	end
 
 	function ENT:OnRemove()
-		self:EmitSound("physics/cardboard/cardboard_box_break"..math.random(1, 3)..".wav")
+		self:EmitSound("physics/cardboard/cardboard_box_break" .. math.random(1, 3) .. ".wav")
 
 		local position = self:LocalToWorld(self:OBBCenter())
 
