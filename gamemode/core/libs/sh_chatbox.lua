@@ -79,7 +79,7 @@ function ix.chat.Register(chatType, data)
 				color = self:GetColor(speaker, text, info)
 			end
 
-			local translated = L2(chatType.."Format", name, text)
+			local translated = L2(chatType .. "Format", name, text)
 
 			chat.AddText(color, translated or string.format(self.format, name, text))
 		end
@@ -330,7 +330,7 @@ do
 		-- Actions and such.
 		ix.chat.Register("it", {
 			OnChatAdd = function(self, speaker, text)
-				chat.AddText(ix.config.Get("chatColor"), "** "..text)
+				chat.AddText(ix.config.Get("chatColor"), "** " .. text)
 			end,
 			CanHear = ix.config.Get("chatRange", 280) * 2,
 			prefix = {"/It"},
@@ -414,7 +414,7 @@ do
 
 				icon = Material(hook.Run("GetPlayerIcon", speaker) or icon)
 
-				chat.AddText(icon, Color(255, 50, 50), "[OOC] ", speaker, color_white, ": "..text)
+				chat.AddText(icon, Color(255, 50, 50), "[OOC] ", speaker, color_white, ": " .. text)
 			end,
 			prefix = {"//", "/OOC"},
 			description = "@cmdOOC",
@@ -442,7 +442,7 @@ do
 				speaker.ixLastLOOC = CurTime()
 			end,
 			OnChatAdd = function(self, speaker, text)
-				chat.AddText(Color(255, 50, 50), "[LOOC] ", ix.config.Get("chatColor"), speaker:Name()..": "..text)
+				chat.AddText(Color(255, 50, 50), "[LOOC] ", ix.config.Get("chatColor"), speaker:Name() .. ": " .. text)
 			end,
 			CanHear = ix.config.Get("chatRange", 280),
 			prefix = {".//", "[[", "/LOOC"},

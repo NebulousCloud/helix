@@ -25,9 +25,9 @@ end
 -- @treturn string The formatted string.
 function ix.currency.Get(amount)
 	if (amount == 1) then
-		return ix.currency.symbol.."1 "..ix.currency.singular
+		return ix.currency.symbol .. "1 " .. ix.currency.singular
 	else
-		return ix.currency.symbol..amount.." "..ix.currency.plural
+		return ix.currency.symbol .. amount .. " " .. ix.currency.plural
 	end
 end
 

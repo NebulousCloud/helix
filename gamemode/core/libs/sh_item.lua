@@ -160,11 +160,11 @@ function ix.item.Load(path, baseID, isBaseItem)
 	local uniqueID = path:match("sh_([_%w]+)%.lua")
 
 	if (uniqueID) then
-		uniqueID = (isBaseItem and "base_" or "")..uniqueID
+		uniqueID = (isBaseItem and "base_" or "") .. uniqueID
 		ix.item.Register(uniqueID, baseID, isBaseItem, path)
 	else
 		if (!path:find(".txt")) then
-			ErrorNoHalt("[Helix] Item at '"..path.."' follows invalid naming convention!\n")
+			ErrorNoHalt("[Helix] Item at '" .. path .. "' follows invalid naming convention!\n")
 		end
 	end
 end
@@ -242,7 +242,7 @@ function ix.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 					local mergeTable = table.Copy(baseTable)
 					ITEM = table.Merge(mergeTable, ITEM)
 				else
-					ErrorNoHalt("[Helix] Item '"..ITEM.uniqueID.."' has a non-existent base! ("..ITEM.base..")\n")
+					ErrorNoHalt("[Helix] Item '" .. ITEM.uniqueID .. "' has a non-existent base! (" .. ITEM.base .. ")\n")
 				end
 			end
 
@@ -269,7 +269,7 @@ function ix.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 					local mergeTable = table.Copy(baseTable)
 					ITEM = table.Merge(mergeTable, ITEM)
 				else
-					ErrorNoHalt("[Helix] Item '"..ITEM.uniqueID.."' has a non-existent base! ("..ITEM.base..")\n")
+					ErrorNoHalt("[Helix] Item '" .. ITEM.uniqueID .. "' has a non-existent base! (" .. ITEM.base .. ")\n")
 				end
 			end
 
@@ -305,26 +305,26 @@ end
 function ix.item.LoadFromDir(directory)
 	local files, folders
 
-	files = file.Find(directory.."/base/*.lua", "LUA")
+	files = file.Find(directory .. "/base/*.lua", "LUA")
 
 	for _, v in ipairs(files) do
-		ix.item.Load(directory.."/base/"..v, nil, true)
+		ix.item.Load(directory .. "/base/" .. v, nil, true)
 	end
 
-	files, folders = file.Find(directory.."/*", "LUA")
+	files, folders = file.Find(directory .. "/*", "LUA")
 
 	for _, v in ipairs(folders) do
 		if (v == "base") then
 			continue
 		end
 
-		for _, v2 in ipairs(file.Find(directory.."/"..v.."/*.lua", "LUA")) do
-			ix.item.Load(directory.."/"..v .. "/".. v2, "base_"..v)
+		for _, v2 in ipairs(file.Find(directory .. "/" .. v .. "/*.lua", "LUA")) do
+			ix.item.Load(directory .. "/" .. v .. "/" .. v2, "base_" .. v)
 		end
 	end
 
 	for _, v in ipairs(files) do
-		ix.item.Load(directory.."/"..v)
+		ix.item.Load(directory .. "/" .. v)
 	end
 end
 
@@ -346,7 +346,7 @@ function ix.item.New(uniqueID, id)
 
 		return item
 	else
-		ErrorNoHalt("[Helix] Attempt to index unknown item '"..uniqueID.."'\n")
+		ErrorNoHalt("[Helix] Attempt to index unknown item '" .. uniqueID .. "'\n")
 	end
 end
 

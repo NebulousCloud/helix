@@ -39,20 +39,20 @@ function ix.plugin.Load(uniqueID, path, isSingleFile, variable)
 	PLUGIN.loading = true
 
 	if (!isSingleFile) then
-		ix.lang.LoadFromDir(path.."/languages")
-		ix.util.IncludeDir(path.."/libs", true)
-		ix.attributes.LoadFromDir(path.."/attributes")
-		ix.faction.LoadFromDir(path.."/factions")
-		ix.class.LoadFromDir(path.."/classes")
-		ix.item.LoadFromDir(path.."/items")
-		ix.plugin.LoadFromDir(path.."/plugins")
-		ix.util.IncludeDir(path.."/derma", true)
-		ix.plugin.LoadEntities(path.."/entities")
+		ix.lang.LoadFromDir(path .. "/languages")
+		ix.util.IncludeDir(path .. "/libs", true)
+		ix.attributes.LoadFromDir(path .. "/attributes")
+		ix.faction.LoadFromDir(path .. "/factions")
+		ix.class.LoadFromDir(path .. "/classes")
+		ix.item.LoadFromDir(path .. "/items")
+		ix.plugin.LoadFromDir(path .. "/plugins")
+		ix.util.IncludeDir(path .. "/derma", true)
+		ix.plugin.LoadEntities(path .. "/entities")
 
 		hook.Run("DoPluginIncludes", path, PLUGIN)
 	end
 
-	ix.util.Include(isSingleFile and path or path.."/sh_"..variable:lower()..".lua", "shared")
+	ix.util.Include(isSingleFile and path or path .. "/sh_" .. variable:lower() .. ".lua", "shared")
 	PLUGIN.loading = false
 
 	local uniqueID2 = uniqueID
@@ -111,28 +111,28 @@ function ix.plugin.LoadEntities(path)
 
 	local function IncludeFiles(path2, bClientOnly)
 		if (SERVER and !bClientOnly) then
-			if (file.Exists(path2.."init.lua", "LUA")) then
-				ix.util.Include(path2.."init.lua", "server")
-			elseif (file.Exists(path2.."shared.lua", "LUA")) then
-				ix.util.Include(path2.."shared.lua")
+			if (file.Exists(path2 .. "init.lua", "LUA")) then
+				ix.util.Include(path2 .. "init.lua", "server")
+			elseif (file.Exists(path2 .. "shared.lua", "LUA")) then
+				ix.util.Include(path2 .. "shared.lua")
 			end
 
-			if (file.Exists(path2.."cl_init.lua", "LUA")) then
-				ix.util.Include(path2.."cl_init.lua", "client")
+			if (file.Exists(path2 .. "cl_init.lua", "LUA")) then
+				ix.util.Include(path2 .. "cl_init.lua", "client")
 			end
-		elseif (file.Exists(path2.."cl_init.lua", "LUA")) then
-			ix.util.Include(path2.."cl_init.lua", "client")
-		elseif (file.Exists(path2.."shared.lua", "LUA")) then
-			ix.util.Include(path2.."shared.lua")
+		elseif (file.Exists(path2 .. "cl_init.lua", "LUA")) then
+			ix.util.Include(path2 .. "cl_init.lua", "client")
+		elseif (file.Exists(path2 .. "shared.lua", "LUA")) then
+			ix.util.Include(path2 .. "shared.lua")
 		end
 	end
 
 	local function HandleEntityInclusion(folder, variable, register, default, clientOnly, create, complete)
-		files, folders = file.Find(path.."/"..folder.."/*", "LUA")
+		files, folders = file.Find(path .. "/" .. folder .. "/*", "LUA")
 		default = default or {}
 
 		for _, v in ipairs(folders) do
-			local path2 = path.."/"..folder.."/"..v.."/"
+			local path2 = path .. "/" .. folder .. "/" .. v .. "/"
 			v = ix.util.StripRealmPrefix(v)
 
 			_G[variable] = table.Copy(default)
@@ -171,7 +171,7 @@ function ix.plugin.LoadEntities(path)
 				create(niceName)
 			end
 
-			ix.util.Include(path.."/"..folder.."/"..v, clientOnly and "client" or "shared")
+			ix.util.Include(path .. "/" .. folder .. "/" .. v, clientOnly and "client" or "shared")
 
 			if (clientOnly) then
 				if (CLIENT) then
@@ -248,10 +248,10 @@ function ix.plugin.Initialize()
 
 	ix.plugin.LoadFromDir("helix/plugins")
 
-	ix.plugin.Load("schema", engine.ActiveGamemode().."/schema")
+	ix.plugin.Load("schema", engine.ActiveGamemode() .. "/schema")
 	hook.Run("InitializedSchema")
 
-	ix.plugin.LoadFromDir(engine.ActiveGamemode().."/plugins")
+	ix.plugin.LoadFromDir(engine.ActiveGamemode() .. "/plugins")
 	hook.Run("InitializedPlugins")
 end
 
@@ -260,14 +260,14 @@ function ix.plugin.Get(identifier)
 end
 
 function ix.plugin.LoadFromDir(directory)
-	local files, folders = file.Find(directory.."/*", "LUA")
+	local files, folders = file.Find(directory .. "/*", "LUA")
 
 	for _, v in ipairs(folders) do
-		ix.plugin.Load(v, directory.."/"..v)
+		ix.plugin.Load(v, directory .. "/" .. v)
 	end
 
 	for _, v in ipairs(files) do
-		ix.plugin.Load(string.StripExtension(v), directory.."/"..v, true)
+		ix.plugin.Load(string.StripExtension(v), directory .. "/" .. v, true)
 	end
 end
 
@@ -316,7 +316,7 @@ if (SERVER) then
 		local curPluginName = ""
 		local cache = {data = {url = url}, files = {}}
 
-		MsgN("Loading plugins from '"..url.."'")
+		MsgN("Loading plugins from '" .. url .. "'")
 
 		http.Fetch(url, function(body)
 			if (body:find("<h1>")) then
@@ -326,12 +326,12 @@ if (SERVER) then
 					faultCallback(fault)
 				end
 
-				return MsgN("\t* ERROR: "..fault)
+				return MsgN("\t* ERROR: " .. fault)
 			end
 
 			local exploded = string.Explode("\n", body)
 
-			print("   * Repository identifier set to '"..name.."'")
+			print("   * Repository identifier set to '" .. name .. "'")
 
 			for _, line in ipairs(exploded) do
 				if (line:sub(1, 1) == "@") then
@@ -339,7 +339,7 @@ if (SERVER) then
 
 					if (key and value) then
 						if (key == "name") then
-							print("   * "..value)
+							print("   * " .. value)
 						end
 
 						cache.data[key] = value
@@ -353,7 +353,7 @@ if (SERVER) then
 						curPluginName = fullName
 						cache.files[fullName] = {}
 
-						MsgN("\t* Found '"..fullName.."'")
+						MsgN("\t* Found '" .. fullName .. "'")
 					elseif (curPlugin and line:sub(1, #curPlugin) == curPlugin and cache.files[curPluginName]) then
 						table.insert(cache.files[curPluginName], line:sub(#curPlugin + 2))
 					end
@@ -361,7 +361,7 @@ if (SERVER) then
 			end
 
 			file.CreateDir("helix/plugins")
-			file.CreateDir("helix/plugins/"..cache.data.id)
+			file.CreateDir("helix/plugins/" .. cache.data.id)
 
 			if (callback) then
 				callback(cache)
@@ -373,7 +373,7 @@ if (SERVER) then
 				faultCallback(fault)
 			end
 
-			MsgN("\t* ERROR: "..fault)
+			MsgN("\t* ERROR: " .. fault)
 		end)
 	end
 
@@ -383,11 +383,11 @@ if (SERVER) then
 		if (plugins) then
 			if (plugins.files[plugin]) then
 				local files = plugins.files[plugin]
-				local baseDir = "helix/plugins/"..plugins.data.id.."/"..plugin.."/"
+				local baseDir = "helix/plugins/" .. plugins.data.id .. "/" .. plugin .. "/"
 
 				-- Re-create the old file.Write behavior.
 				local function WriteFile(name, contents)
-					name = string.StripExtension(name)..".txt"
+					name = string.StripExtension(name) .. ".txt"
 
 					if (name:find("/")) then
 						local exploded = string.Explode("/", name)
@@ -395,28 +395,28 @@ if (SERVER) then
 
 						for k, v in ipairs(exploded) do
 							if (k == #exploded) then
-								file.Write(baseDir..tree..v, contents)
+								file.Write(baseDir .. tree .. v, contents)
 							else
-								tree = tree..v.."/"
-								file.CreateDir(baseDir..tree)
+								tree = tree .. v .. "/"
+								file.CreateDir(baseDir .. tree)
 							end
 						end
 					else
-						file.Write(baseDir..name, contents)
+						file.Write(baseDir .. name, contents)
 					end
 				end
 
-				MsgN("* Downloading plugin '"..plugin.."' from '"..repo.."'")
-				ix.plugin.files[repo.."/"..plugin] = {}
+				MsgN("* Downloading plugin '" .. plugin .. "' from '" .. repo .. "'")
+				ix.plugin.files[repo .. "/" .. plugin] = {}
 
 				local function DownloadFile(i)
-					MsgN("\t* Downloading... "..(math.Round(i / #files, 2) * 100).."%")
+					MsgN("\t* Downloading... " .. (math.Round(i / #files, 2) * 100) .. "%")
 
-					local url = plugins.data.url.."/repo/"..plugin.."/"..files[i]
+					local url = plugins.data.url .. "/repo/" .. plugin .. "/" .. files[i]
 
 					http.Fetch(url, function(body)
 						WriteFile(files[i], body)
-						ix.plugin.files[repo.."/"..plugin][files[i]] = body
+						ix.plugin.files[repo .. "/" .. plugin][files[i]] = body
 
 						if (i < #files) then
 							DownloadFile(i + 1)
@@ -425,7 +425,7 @@ if (SERVER) then
 								callback(true)
 							end
 
-							MsgN("* '"..plugin.."' has completed downloading")
+							MsgN("* '" .. plugin .. "' has completed downloading")
 						end
 					end, function(fault)
 						callback(false, fault)
@@ -459,7 +459,7 @@ if (SERVER) then
 			local status, result = ix.plugin.Download(arguments[2] or "default", arguments[1])
 
 			if (status == false) then
-				MsgN("* ERROR: "..result)
+				MsgN("* ERROR: " .. result)
 			end
 		end
 	end)

@@ -22,7 +22,7 @@ local charMeta = ix.meta.character
 -- @internal
 -- @string directory The path to the class files.
 function ix.class.LoadFromDir(directory)
-	for _, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
+	for _, v in ipairs(file.Find(directory .. "/*.lua", "LUA")) do
 		-- Get the name without the "sh_" prefix and ".lua" suffix.
 		local niceName = v:sub(4, -5)
 		-- Determine a numeric identifier for this class.
@@ -50,11 +50,11 @@ function ix.class.LoadFromDir(directory)
 				CLASS.plugin = PLUGIN.uniqueID
 			end
 
-			ix.util.Include(directory.."/"..v, "shared")
+			ix.util.Include(directory .. "/" .. v, "shared")
 
 			-- Why have a class without a faction?
 			if (!CLASS.faction or !team.Valid(CLASS.faction)) then
-				ErrorNoHalt("Class '"..niceName.."' does not have a valid faction!\n")
+				ErrorNoHalt("Class '" .. niceName .. "' does not have a valid faction!\n")
 				CLASS = nil
 
 				continue

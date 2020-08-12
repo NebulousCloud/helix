@@ -97,7 +97,7 @@ do
 
 				if (info) then
 					if (!self:HasFlags(flag)) then
-						addedFlags = addedFlags..flag
+						addedFlags = addedFlags .. flag
 					end
 
 					if (info.callback) then
@@ -109,7 +109,7 @@ do
 
 			-- Only change the flag string if it is different.
 			if (addedFlags != "") then
-				self:SetFlags(self:GetFlags()..addedFlags)
+				self:SetFlags(self:GetFlags() .. addedFlags)
 			end
 		end
 

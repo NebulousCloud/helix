@@ -161,7 +161,7 @@ function ix.command.Add(command, data)
 
 	-- Why bother adding a command if it doesn't do anything.
 	if (!data.OnRun) then
-		return ErrorNoHalt("Command '"..command.."' does not have a callback, not adding!\n")
+		return ErrorNoHalt("Command '" .. command .. "' does not have a callback, not adding!\n")
 	end
 
 	-- Add a function to get the description that can be overridden.
@@ -350,7 +350,7 @@ function ix.command.ExtractArgs(text)
 				skip = i + #match
 				arguments[#arguments + 1] = match:utf8sub(2, -2)
 			else
-				curString = curString..c
+				curString = curString .. c
 			end
 		elseif (c == " " and curString != "") then
 			arguments[#arguments + 1] = curString
@@ -360,7 +360,7 @@ function ix.command.ExtractArgs(text)
 				continue
 			end
 
-			curString = curString..c
+			curString = curString .. c
 		end
 	end
 
@@ -535,7 +535,7 @@ if (SERVER) then
 	function ix.command.Parse(client, text, realCommand, arguments)
 		if (realCommand or text:utf8sub(1, 1) == COMMAND_PREFIX) then
 			-- See if the string contains a command.
-			local match = realCommand or text:utf8lower():match(COMMAND_PREFIX.."([_%w]+)")
+			local match = realCommand or text:utf8lower():match(COMMAND_PREFIX .. "([_%w]+)")
 
 			-- is it unicode text?
 			if (!match) then

@@ -3,7 +3,7 @@
 ix.markup = ix.markup or {}
 
 -- Temporary information used when building text frames.
-local colour_stack = { {r=255,g=255,b=255,a=255} }
+local colour_stack = { { r=255, g=255, b=255, a=255 } }
 local font_stack = { "DermaDefault" }
 local curtag = nil
 local blocks = {}

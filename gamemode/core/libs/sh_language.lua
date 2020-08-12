@@ -38,10 +38,10 @@ ix.lang.names = ix.lang.names or {}
 -- @internal
 -- @string directory Directory to load language files from
 function ix.lang.LoadFromDir(directory)
-	for _, v in ipairs(file.Find(directory.."/sh_*.lua", "LUA")) do
+	for _, v in ipairs(file.Find(directory .. "/sh_*.lua", "LUA")) do
 		local niceName = v:sub(4, -5):lower()
 
-		ix.util.Include(directory.."/"..v, "shared")
+		ix.util.Include(directory .. "/" .. v, "shared")
 
 		if (LANGUAGE) then
 			if (NAME) then

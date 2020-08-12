@@ -9,7 +9,7 @@ ix.attributes = ix.attributes or {}
 ix.attributes.list = ix.attributes.list or {}
 
 function ix.attributes.LoadFromDir(directory)
-	for _, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
+	for _, v in ipairs(file.Find(directory .. "/*.lua", "LUA")) do
 		local niceName = v:sub(4, -5)
 
 		ATTRIBUTE = ix.attributes.list[niceName] or {}
@@ -17,7 +17,7 @@ function ix.attributes.LoadFromDir(directory)
 				ATTRIBUTE.plugin = PLUGIN.uniqueID
 			end
 
-			ix.util.Include(directory.."/"..v)
+			ix.util.Include(directory .. "/" .. v)
 
 			ATTRIBUTE.name = ATTRIBUTE.name or "Unknown"
 			ATTRIBUTE.description = ATTRIBUTE.description or "No description availalble."

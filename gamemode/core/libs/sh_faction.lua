@@ -35,7 +35,7 @@ local CITIZEN_MODELS = {
 -- @realm shared
 -- @string directory The path to the factions files.
 function ix.faction.LoadFromDir(directory)
-	for _, v in ipairs(file.Find(directory.."/*.lua", "LUA")) do
+	for _, v in ipairs(file.Find(directory .. "/*.lua", "LUA")) do
 		local niceName = v:sub(4, -5)
 
 		FACTION = ix.faction.teams[niceName] or {index = table.Count(ix.faction.teams) + 1, isDefault = false}
@@ -43,21 +43,21 @@ function ix.faction.LoadFromDir(directory)
 				FACTION.plugin = PLUGIN.uniqueID
 			end
 
-			ix.util.Include(directory.."/"..v, "shared")
+			ix.util.Include(directory .. "/" .. v, "shared")
 
 			if (!FACTION.name) then
 				FACTION.name = "Unknown"
-				ErrorNoHalt("Faction '"..niceName.."' is missing a name. You need to add a FACTION.name = \"Name\"\n")
+				ErrorNoHalt("Faction '" .. niceName .. "' is missing a name. You need to add a FACTION.name = \"Name\"\n")
 			end
 
 			if (!FACTION.description) then
 				FACTION.description = "noDesc"
-				ErrorNoHalt("Faction '"..niceName.."' is missing a description. You need to add a FACTION.description = \"Description\"\n")
+				ErrorNoHalt("Faction '" .. niceName .. "' is missing a description. You need to add a FACTION.description = \"Description\"\n")
 			end
 
 			if (!FACTION.color) then
 				FACTION.color = Color(150, 150, 150)
-				ErrorNoHalt("Faction '"..niceName.."' is missing a color. You need to add FACTION.color = Color(1, 2, 3)\n")
+				ErrorNoHalt("Faction '" .. niceName .. "' is missing a color. You need to add FACTION.color = Color(1, 2, 3)\n")
 			end
 
 			team.SetUp(FACTION.index, FACTION.name or "Unknown", FACTION.color or Color(125, 125, 125))
