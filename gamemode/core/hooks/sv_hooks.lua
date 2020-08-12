@@ -104,7 +104,7 @@ end
 
 function GM:KeyPress(client, key)
 	if (key == IN_RELOAD) then
-		timer.Create("ixToggleRaise"..client:SteamID(), ix.config.Get("weaponRaiseTime"), 1, function()
+		timer.Create("ixToggleRaise" .. client:SteamID(), ix.config.Get("weaponRaiseTime"), 1, function()
 			if (IsValid(client)) then
 				client:ToggleWepRaised()
 			end
@@ -279,7 +279,7 @@ function GM:CharacterLoaded(character)
 	local client = character:GetPlayer()
 
 	if (IsValid(client)) then
-		local uniqueID = "ixSaveChar"..client:SteamID()
+		local uniqueID = "ixSaveChar" .. client:SteamID()
 
 		timer.Create(uniqueID, ix.config.Get("saveInterval"), 0, function()
 			if (IsValid(client) and client:GetCharacter()) then
@@ -767,7 +767,7 @@ end
 function GM:InitializedSchema()
 	ix.date.Initialize()
 
-	game.ConsoleCommand("sbox_persist ix_"..Schema.folder.."\n")
+	game.ConsoleCommand("sbox_persist ix_" .. Schema.folder .. "\n")
 end
 
 function GM:PlayerCanHearPlayersVoice(listener, speaker)

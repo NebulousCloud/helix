@@ -616,7 +616,7 @@ function GM:HUDPaintBackground()
 			surface.SetDrawColor(255, 255, 255, 3)
 			surface.DrawOutlinedRect(x, y, 128, 64)
 
-			ix.util.DrawText((clip == -1 or clipMax == -1) and count or clip.."/"..count, x + 64, y + 32, nil, 1, 1, "ixBigFont")
+			ix.util.DrawText((clip == -1 or clipMax == -1) and count or clip .. "/" .. count, x + 64, y + 32, nil, 1, 1, "ixBigFont")
 		end
 	end
 
