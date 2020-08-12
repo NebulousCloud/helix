@@ -34,7 +34,7 @@ ix.command.Add("PM", {
 		local voiceMail = target:GetData("vm")
 
 		if (voiceMail and voiceMail:find("%S")) then
-			return target:GetName()..": "..voiceMail
+			return target:GetName() .. ": " .. voiceMail
 		end
 
 		if ((client.ixNextPM or 0) < CurTime()) then

@@ -74,15 +74,15 @@ function ix.util.IncludeDir(directory, bFromLua)
 
 	-- If we're in a schema, include relative to the schema.
 	if (Schema and Schema.folder and Schema.loading) then
-		baseDir = Schema.folder.."/schema/"
+		baseDir = Schema.folder .. "/schema/"
 	else
-		baseDir = baseDir.."/gamemode/"
+		baseDir = baseDir .. "/gamemode/"
 	end
 
 	-- Find all of the files within the directory.
-	for _, v in ipairs(file.Find((bFromLua and "" or baseDir)..directory.."/*.lua", "LUA")) do
+	for _, v in ipairs(file.Find((bFromLua and "" or baseDir) .. directory .. "/*.lua", "LUA")) do
 		-- Include the file from the prefix.
-		ix.util.Include(directory.."/"..v)
+		ix.util.Include(directory .. "/" .. v)
 	end
 end
 
@@ -212,7 +212,7 @@ function ix.util.GetAddress()
 	local address = tonumber(GetConVarString("hostip"))
 
 	if (!address) then
-		return "127.0.0.1"..":"..GetConVarString("hostport")
+		return "127.0.0.1" .. ":" .. GetConVarString("hostport")
 	end
 
 	local ip = {}
@@ -220,7 +220,7 @@ function ix.util.GetAddress()
 		ip[2] = bit.rshift(bit.band(address, 0x00FF0000), 16)
 		ip[3] = bit.rshift(bit.band(address, 0x0000FF00), 8)
 		ip[4] = bit.band(address, 0x000000FF)
-	return table.concat(ip, ".")..":"..GetConVarString("hostport")
+	return table.concat(ip, ".") .. ":" .. GetConVarString("hostport")
 end
 
 --- Returns a cached copy of the given material, or creates and caches one if it doesn't exist. This is a quick helper function
@@ -1129,7 +1129,7 @@ function ix.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
 		end
 
 		-- Get the length of the sound.
-		local length = SoundDuration(ADJUST_SOUND..v)
+		local length = SoundDuration(ADJUST_SOUND .. v)
 		-- If the sound has a pause before it is played, add it here.
 		delay = delay + preSet
 
