@@ -275,11 +275,11 @@ function PANEL:SetVisible(bState)
 end
 
 DEFINE_BASECLASS("DScrollPanel")
-function PANEL:PerformLayout(width, height)
+function PANEL:PerformLayoutInternal()
 	local bar = self:GetVBar()
 	local bScroll = !ix.gui.chat:GetActive() or bar.Scroll == bar.CanvasSize -- only scroll when we're not at the bottom/inactive
 
-	BaseClass.PerformLayout(self, width, height)
+	BaseClass.PerformLayoutInternal(self)
 
 	if (bScroll) then
 		self:ScrollToBottom()
