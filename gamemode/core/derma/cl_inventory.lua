@@ -116,12 +116,12 @@ function PANEL:DoRightClick()
 							itemTable.player = LocalPlayer()
 								local send = true
 
-								if (v.OnClick) then
-									send = v.OnClick(itemTable)
+								if (sub.OnClick) then
+									send = sub.OnClick(itemTable)
 								end
 
-								if (v.sound) then
-									surface.PlaySound(v.sound)
+								if (sub.sound) then
+									surface.PlaySound(sub.sound)
 								end
 
 								if (send != false) then
