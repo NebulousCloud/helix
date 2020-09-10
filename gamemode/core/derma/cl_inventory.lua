@@ -116,8 +116,6 @@ function PANEL:DoRightClick()
 							itemTable.player = LocalPlayer()
 								local send = true
 
-								PrintTable(sub)
-
 								if (sub.OnClick) then
 									send = sub.OnClick(itemTable)
 								end
