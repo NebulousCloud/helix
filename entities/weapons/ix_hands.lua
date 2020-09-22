@@ -10,7 +10,7 @@ if (CLIENT) then
 end
 
 SWEP.Author = "Chessnut"
-SWEP.Instructions = "Primary Fire: Throw/Punch\nSecondary Fire: Knock/Pickup\nReload: Drop"
+SWEP.Instructions = "Primary Fire: Throw/Punch\nSecondary Fire: Knock/Pickup\nSecondary Fire + Mouse: Rotate Object\nReload: Drop"
 SWEP.Purpose = "Hitting things and knocking on doors."
 SWEP.Drop = false
 
@@ -60,7 +60,7 @@ function SWEP:Initialize()
 
 	self.lastHand = 0
 	self.maxHoldDistanceSquared = self.maxHoldDistance ^ 2
-	self.heldObjectAngle = angle_zero
+	self.heldObjectAngle = Angle(angle_zero)
 end
 
 if (CLIENT) then
@@ -78,14 +78,26 @@ if (CLIENT) then
 		surface.SetDrawColor(255, 255, 255, 66)
 		surface.DrawRect(x - 2, y - 2, 4, 4)
 	end
+
+	hook.Add("CreateMove", "ixHandsCreateMove", function(cmd)
+		local weapon = LocalPlayer():GetActiveWeapon()
+		if (weapon.ClassName == "ix_hands"
+		and weapon:GetNetVar("bIsHoldingObject", false)
+		and cmd:KeyDown(IN_ATTACK2)) then
+			cmd:ClearMovement()
+			local angle = RenderAngles()
+			angle.z = 0
+			cmd:SetViewAngles(angle)
+		end
+	end)
 end
 
 function SWEP:Deploy()
-	if (!IsValid(self.Owner)) then
+	if (!IsValid(self:GetOwner())) then
 		return
 	end
 
-	local viewModel = self.Owner:GetViewModel()
+	local viewModel = self:GetOwner():GetViewModel()
 
 	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(1)
@@ -116,11 +128,11 @@ function SWEP:OnReloaded()
 end
 
 function SWEP:Holster()
-	if (!IsValid(self.Owner)) then
+	if (!IsValid(self:GetOwner())) then
 		return
 	end
 
-	local viewModel = self.Owner:GetViewModel()
+	local viewModel = self:GetOwner():GetViewModel()
 
 	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(1)
@@ -134,12 +146,13 @@ function SWEP:Holster()
 end
 
 function SWEP:Think()
-	if (!IsValid(self.Owner)) then
+	if (!IsValid(self:GetOwner())) then
 		return
 	end
 
 	if (CLIENT) then
-		local viewModel = self.Owner:GetViewModel()
+		local viewModel = self:GetOwner():GetViewModel()
+		local player = self:GetOwner()
 
 		if (IsValid(viewModel) and self.NextAllowedPlayRateChange < CurTime()) then
 			viewModel:SetPlaybackRate(1)
@@ -149,10 +162,10 @@ function SWEP:Think()
 			local physics = self:GetHeldPhysicsObject()
 			local bIsRagdoll = self.heldEntity:IsRagdoll()
 			local holdDistance = bIsRagdoll and self.holdDistance * 0.5 or self.holdDistance
-			local targetLocation = (self.Owner:GetShootPos() + self.Owner:GetForward() * holdDistance) - self.heldEntity:OBBCenter()
+			local targetLocation = self:GetOwner():GetShootPos() + self:GetOwner():GetForward() * holdDistance
 
 			if (bIsRagdoll) then
-				targetLocation.z = math.min(targetLocation.z, self.Owner:GetShootPos().z - 32)
+				targetLocation.z = math.min(targetLocation.z, self:GetOwner():GetShootPos().z - 32)
 			end
 
 			if (!IsValid(physics)) then
@@ -164,6 +177,18 @@ function SWEP:Think()
 				self:DropObject()
 			else
 				local physicsObject = self.holdEntity:GetPhysicsObject()
+				local currentPlayerAngles = self:GetOwner():EyeAngles()
+				local player = self:GetOwner()
+
+				if (player:KeyDown(IN_ATTACK2)) then
+					local cmd = player:GetCurrentCommand()
+					self.heldObjectAngle:RotateAroundAxis(currentPlayerAngles:Forward(), cmd:GetMouseX() / 15)
+					self.heldObjectAngle:RotateAroundAxis(currentPlayerAngles:Right(), cmd:GetMouseY() / 15)
+				end
+
+				self.lastPlayerAngles = self.lastPlayerAngles or currentPlayerAngles
+				self.heldObjectAngle.y = self.heldObjectAngle.y - math.AngleDifference(self.lastPlayerAngles.y, currentPlayerAngles.y)
+				self.lastPlayerAngles = currentPlayerAngles
 
 				physicsObject:Wake()
 				physicsObject:ComputeShadowControl({
@@ -198,13 +223,13 @@ function SWEP:CanHoldObject(entity)
 		(physics:GetMass() <= ix.config.Get("maxHoldWeight", 100) and physics:IsMoveable()) and
 		!self:IsHoldingObject() and
 		!IsValid(entity.ixHeldOwner) and
-		hook.Run("CanPlayerHoldObject", self.Owner, entity)
+		hook.Run("CanPlayerHoldObject", self:GetOwner(), entity)
 end
 
 function SWEP:IsHoldingObject()
 	return IsValid(self.heldEntity) and
 		IsValid(self.heldEntity.ixHeldOwner) and
-		self.heldEntity.ixHeldOwner == self.Owner
+		self.heldEntity.ixHeldOwner == self:GetOwner()
 end
 
 function SWEP:PickupObject(entity)
@@ -218,7 +243,7 @@ function SWEP:PickupObject(entity)
 	physics:EnableGravity(false)
 	physics:AddGameFlag(FVPHYSICS_PLAYER_HELD)
 
-	entity.ixHeldOwner = self.Owner
+	entity.ixHeldOwner = self:GetOwner()
 	entity.ixCollisionGroup = entity:GetCollisionGroup()
 	entity:StartMotionController()
 	entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
@@ -227,10 +252,10 @@ function SWEP:PickupObject(entity)
 	self.heldEntity = entity
 
 	self.holdEntity = ents.Create("prop_physics")
-	self.holdEntity:SetPos(self.heldEntity:GetPos())
+	self.holdEntity:SetPos(self.heldEntity:LocalToWorld(self.heldEntity:OBBCenter()))
 	self.holdEntity:SetAngles(self.heldEntity:GetAngles())
 	self.holdEntity:SetModel("models/weapons/w_bugbait.mdl")
-	self.holdEntity:SetOwner(self.Owner)
+	self.holdEntity:SetOwner(self:GetOwner())
 
 	self.holdEntity:SetNoDraw(true)
 	self.holdEntity:SetNotSolid(true)
@@ -239,7 +264,7 @@ function SWEP:PickupObject(entity)
 
 	self.holdEntity:Spawn()
 
-	local trace = self.Owner:GetEyeTrace()
+	local trace = self:GetOwner():GetEyeTrace()
 	local physicsObject = self.holdEntity:GetPhysicsObject()
 
 	if (IsValid(physicsObject)) then
@@ -250,14 +275,22 @@ function SWEP:PickupObject(entity)
 		physicsObject:EnableMotion(false)
 	end
 
+	if (trace.Entity:IsRagdoll()) then
+		local tracedEnt = trace.Entity
+		self.holdEntity:SetPos(tracedEnt:GetBonePosition(tracedEnt:TranslatePhysBoneToBone(trace.PhysicsBone)))
+	end
+
 	self.constraint = constraint.Weld(self.holdEntity, self.heldEntity, 0,
 		trace.Entity:IsRagdoll() and trace.PhysicsBone or 0, 0, true, true)
 end
 
 function SWEP:DropObject(bThrow)
-	if (!IsValid(self.heldEntity) or self.heldEntity.ixHeldOwner != self.Owner) then
+	if (!IsValid(self.heldEntity) or self.heldEntity.ixHeldOwner != self:GetOwner()) then
 		return
 	end
+
+	self.lastPlayerAngles = nil
+	self:SetNetVar("bIsHoldingObject", false, self:GetOwner())
 
 	self.constraint:Remove()
 	self.holdEntity:Remove()
@@ -272,9 +305,9 @@ function SWEP:DropObject(bThrow)
 
 	if (bThrow) then
 		timer.Simple(0, function()
-			if (IsValid(physics) and IsValid(self.Owner)) then
+			if (IsValid(physics) and IsValid(self:GetOwner())) then
 				physics:AddGameFlag(FVPHYSICS_WAS_THROWN)
-				physics:ApplyForceCenter(self.Owner:GetAimVector() * ix.config.Get("throwForce", 732))
+				physics:ApplyForceCenter(self:GetOwner():GetAimVector() * ix.config.Get("throwForce", 732))
 			end
 		end)
 	end
@@ -296,7 +329,7 @@ function SWEP:PlayPickupSound(surfaceProperty)
 		end
 	end
 
-	self.Owner:EmitSound(result, 75, 100, 40)
+	self:GetOwner():EmitSound(result, 75, 100, 40)
 end
 
 function SWEP:Holster()
@@ -324,7 +357,7 @@ function SWEP:DoPunchAnimation()
 	self.lastHand = math.abs(1 - self.lastHand)
 
 	local sequence = 4 + self.lastHand
-	local viewModel = self.Owner:GetViewModel()
+	local viewModel = self:GetOwner():GetViewModel()
 
 	if (IsValid(viewModel)) then
 		viewModel:SetPlaybackRate(0.5)
@@ -347,7 +380,7 @@ function SWEP:PrimaryAttack()
 
 	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
 
-	if (hook.Run("CanPlayerThrowPunch", self.Owner) == false) then
+	if (hook.Run("CanPlayerThrowPunch", self:GetOwner()) == false) then
 		return
 	end
 
@@ -355,30 +388,30 @@ function SWEP:PrimaryAttack()
 		local staminaUse = ix.config.Get("punchStamina")
 
 		if (staminaUse > 0) then
-			local value = self.Owner:GetLocalVar("stm", 0) - staminaUse
+			local value = self:GetOwner():GetLocalVar("stm", 0) - staminaUse
 
 			if (value < 0) then
 				return
 			elseif (SERVER) then
-				self.Owner:ConsumeStamina(staminaUse)
+				self:GetOwner():ConsumeStamina(staminaUse)
 			end
 		end
 	end
 
 	if (SERVER) then
-		self.Owner:EmitSound("npc/vort/claw_swing"..math.random(1, 2)..".wav")
+		self:GetOwner():EmitSound("npc/vort/claw_swing"..math.random(1, 2)..".wav")
 	end
 
 	self:DoPunchAnimation()
 
-	self.Owner:SetAnimation(PLAYER_ATTACK1)
-	self.Owner:ViewPunch(Angle(self.lastHand + 2, self.lastHand + 5, 0.125))
+	self:GetOwner():SetAnimation(PLAYER_ATTACK1)
+	self:GetOwner():ViewPunch(Angle(self.lastHand + 2, self.lastHand + 5, 0.125))
 
 	timer.Simple(0.055, function()
-		if (IsValid(self) and IsValid(self.Owner)) then
+		if (IsValid(self) and IsValid(self:GetOwner())) then
 			local damage = self.Primary.Damage
 			local context = {damage = damage}
-			local result = hook.Run("GetPlayerPunchDamage", self.Owner, damage, context)
+			local result = hook.Run("GetPlayerPunchDamage", self:GetOwner(), damage, context)
 
 			if (result != nil) then
 				damage = result
@@ -386,11 +419,11 @@ function SWEP:PrimaryAttack()
 				damage = context.damage
 			end
 
-			self.Owner:LagCompensation(true)
+			self:GetOwner():LagCompensation(true)
 				local data = {}
-					data.start = self.Owner:GetShootPos()
-					data.endpos = data.start + self.Owner:GetAimVector() * 96
-					data.filter = self.Owner
+					data.start = self:GetOwner():GetShootPos()
+					data.endpos = data.start + self:GetOwner():GetAimVector() * 96
+					data.filter = self:GetOwner()
 				local trace = util.TraceLine(data)
 
 				if (SERVER and trace.Hit) then
@@ -398,20 +431,20 @@ function SWEP:PrimaryAttack()
 
 					if (IsValid(entity)) then
 						local damageInfo = DamageInfo()
-							damageInfo:SetAttacker(self.Owner)
+							damageInfo:SetAttacker(self:GetOwner())
 							damageInfo:SetInflictor(self)
 							damageInfo:SetDamage(damage)
 							damageInfo:SetDamageType(DMG_SLASH)
 							damageInfo:SetDamagePosition(trace.HitPos)
-							damageInfo:SetDamageForce(self.Owner:GetAimVector() * 1024)
+							damageInfo:SetDamageForce(self:GetOwner():GetAimVector() * 1024)
 						entity:DispatchTraceAttack(damageInfo, data.start, data.endpos)
 
-						self.Owner:EmitSound("physics/body/body_medium_impact_hard"..math.random(1, 6)..".wav", 80)
+						self:GetOwner():EmitSound("physics/body/body_medium_impact_hard"..math.random(1, 6)..".wav", 80)
 					end
 				end
 
-				hook.Run("PlayerThrowPunch", self.Owner, trace)
-			self.Owner:LagCompensation(false)
+				hook.Run("PlayerThrowPunch", self:GetOwner(), trace)
+			self:GetOwner():LagCompensation(false)
 		end
 	end)
 end
@@ -422,14 +455,14 @@ function SWEP:SecondaryAttack()
 	end
 
 	local data = {}
-		data.start = self.Owner:GetShootPos()
-		data.endpos = data.start + self.Owner:GetAimVector() * 84
-		data.filter = {self, self.Owner}
+		data.start = self:GetOwner():GetShootPos()
+		data.endpos = data.start + self:GetOwner():GetAimVector() * 84
+		data.filter = {self, self:GetOwner()}
 	local trace = util.TraceLine(data)
 	local entity = trace.Entity
 
 	if CLIENT then
-		local viewModel = self.Owner:GetViewModel()
+		local viewModel = self:GetOwner():GetViewModel()
 
 		if (IsValid(viewModel)) then
 			viewModel:SetPlaybackRate(0.5)
@@ -441,26 +474,27 @@ function SWEP:SecondaryAttack()
 
 	if (SERVER and IsValid(entity)) then
 		if (entity:IsDoor()) then
-			if (hook.Run("CanPlayerKnock", self.Owner, entity) == false) then
+			if (hook.Run("CanPlayerKnock", self:GetOwner(), entity) == false) then
 				return
 			end
 
-			self.Owner:ViewPunch(self.KnockViewPunchAngle)
-			self.Owner:EmitSound("physics/wood/wood_crate_impact_hard"..math.random(2, 3)..".wav")
-			self.Owner:SetAnimation(PLAYER_ATTACK1)
+			self:GetOwner():ViewPunch(self.KnockViewPunchAngle)
+			self:GetOwner():EmitSound("physics/wood/wood_crate_impact_hard"..math.random(2, 3)..".wav")
+			self:GetOwner():SetAnimation(PLAYER_ATTACK1)
 
 			self:DoPunchAnimation()
 			self:SetNextSecondaryFire(CurTime() + 0.4)
 			self:SetNextPrimaryFire(CurTime() + 1)
 		elseif (entity:IsPlayer() and ix.config.Get("allowPush", true)) then
-			local direction = self.Owner:GetAimVector() * (300 + (self.Owner:GetCharacter():GetAttribute("str", 0) * 3))
+			local direction = self:GetOwner():GetAimVector() * (300 + (self:GetOwner():GetCharacter():GetAttribute("str", 0) * 3))
 				direction.z = 0
 			entity:SetVelocity(direction)
 
-			self.Owner:EmitSound("Weapon_Crossbow.BoltHitBody")
+			self:GetOwner():EmitSound("Weapon_Crossbow.BoltHitBody")
 			self:SetNextSecondaryFire(CurTime() + 1.5)
 			self:SetNextPrimaryFire(CurTime() + 1.5)
 		elseif (!entity:IsNPC() and self:CanHoldObject(entity)) then
+			self:SetNetVar("bIsHoldingObject", true, self:GetOwner())
 			self:PickupObject(entity)
 			self:PlayPickupSound(trace.SurfaceProps)
 			self:SetNextSecondaryFire(CurTime() + self.Secondary.Delay)
