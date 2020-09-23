@@ -208,6 +208,10 @@ function SWEP:Think()
 				end
 			end
 		end
+		-- Prevents the camera from getting stuck when the object that the client is holding gets deleted.
+		if(!IsValid(self.heldEntity) and self:GetOwner():GetLocalVar("bIsHoldingObject", true)) then
+			self:GetOwner():SetLocalVar("bIsHoldingObject", false)
+		end
 	end
 end
 
