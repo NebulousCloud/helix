@@ -10,7 +10,10 @@ if (CLIENT) then
 end
 
 SWEP.Author = "Chessnut"
-SWEP.Instructions = "Primary Fire: Throw/Punch\nSecondary Fire: Knock/Pickup\nSecondary Fire + Mouse: Rotate Object\nReload: Drop"
+SWEP.Instructions = [[Primary Fire: Throw/Punch
+Secondary Fire: Knock/Pickup
+Secondary Fire + Mouse: Rotate Object
+Reload: Drop]]
 SWEP.Purpose = "Hitting things and knocking on doors."
 SWEP.Drop = false
 
@@ -152,7 +155,6 @@ function SWEP:Think()
 
 	if (CLIENT) then
 		local viewModel = self:GetOwner():GetViewModel()
-		local player = self:GetOwner()
 
 		if (IsValid(viewModel) and self.NextAllowedPlayRateChange < CurTime()) then
 			viewModel:SetPlaybackRate(1)
