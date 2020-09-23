@@ -83,10 +83,7 @@ if (CLIENT) then
 	end
 
 	hook.Add("CreateMove", "ixHandsCreateMove", function(cmd)
-		local weapon = LocalPlayer():GetActiveWeapon()
-		if (weapon.ClassName == "ix_hands"
-		and weapon:GetNetVar("bIsHoldingObject", false)
-		and cmd:KeyDown(IN_ATTACK2)) then
+		if (LocalPlayer():GetLocalVar("bIsHoldingObject", false) and cmd:KeyDown(IN_ATTACK2)) then
 			cmd:ClearMovement()
 			local angle = RenderAngles()
 			angle.z = 0
@@ -292,7 +289,7 @@ function SWEP:DropObject(bThrow)
 	end
 
 	self.lastPlayerAngles = nil
-	self:SetNetVar("bIsHoldingObject", false, self:GetOwner())
+	self:GetOwner():SetLocalVar("bIsHoldingObject", false)
 
 	self.constraint:Remove()
 	self.holdEntity:Remove()
@@ -496,7 +493,7 @@ function SWEP:SecondaryAttack()
 			self:SetNextSecondaryFire(CurTime() + 1.5)
 			self:SetNextPrimaryFire(CurTime() + 1.5)
 		elseif (!entity:IsNPC() and self:CanHoldObject(entity)) then
-			self:SetNetVar("bIsHoldingObject", true, self:GetOwner())
+			self:GetOwner():SetLocalVar("bIsHoldingObject", true)
 			self:PickupObject(entity)
 			self:PlayPickupSound(trace.SurfaceProps)
 			self:SetNextSecondaryFire(CurTime() + self.Secondary.Delay)
