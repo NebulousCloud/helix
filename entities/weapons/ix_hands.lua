@@ -180,10 +180,10 @@ function SWEP:Think()
 			else
 				local physicsObject = self.holdEntity:GetPhysicsObject()
 				local currentPlayerAngles = self:GetOwner():EyeAngles()
-				local player = self:GetOwner()
+				local client = self:GetOwner()
 
-				if (player:KeyDown(IN_ATTACK2)) then
-					local cmd = player:GetCurrentCommand()
+				if (client:KeyDown(IN_ATTACK2)) then
+					local cmd = client:GetCurrentCommand()
 					self.heldObjectAngle:RotateAroundAxis(currentPlayerAngles:Forward(), cmd:GetMouseX() / 15)
 					self.heldObjectAngle:RotateAroundAxis(currentPlayerAngles:Right(), cmd:GetMouseY() / 15)
 				end
