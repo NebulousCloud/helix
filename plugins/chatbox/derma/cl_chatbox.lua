@@ -191,8 +191,8 @@ function PANEL:RemoveTab(id)
 
 	-- add default tab if we don't have any tabs left
 	if (table.IsEmpty(self.tabs)) then
-		self:AddTab(L("Chat"), {})
-		self:SetActiveTab(L("Chat"))
+		self:AddTab(L("chat"), {})
+		self:SetActiveTab(L("chat"))
 	elseif (id == self:GetActiveTabID()) then
 		-- set a different active tab if we've removed a tab that is currently active
 		self:SetActiveTab(next(self.tabs))
