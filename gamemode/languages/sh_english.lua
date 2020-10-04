@@ -29,6 +29,7 @@ LANGUAGE = {
 	chatCustomize = "Customize...",
 	chatCloseTab = "Close Tab",
 	chatTabName = "Tab Name",
+	chatNewTabTitle = "New Tab",
 	chatAllowedClasses = "Allowed Chat Classes",
 	chatTabExists = "A chat tab with that name already exists!",
 	chatMarkRead = "Mark all as read",

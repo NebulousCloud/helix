@@ -29,6 +29,7 @@ LANGUAGE = {
 	chatCustomize = "Настроить...",
 	chatCloseTab = "Закрыть вкладку",
 	chatTabName = "Имя вкладки",
+	chatNewTabTitle = "Новая Вкладка",
 	chatAllowedClasses = "Разрешенные классы чата",
 	chatTabExists = "Вкладка чата с таким именем уже существует!",
 	chatMarkRead = "Отметить как прочитанные",
