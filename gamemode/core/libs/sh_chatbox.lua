@@ -461,7 +461,7 @@ do
 				local translated = L2(self.uniqueID.."Format", speaker:Name(), text, max)
 
 				chat.AddText(self.color, translated and "** "..translated or string.format(self.format,
-					name, text, max
+					speaker:Name(), text, max
 				))
 			end
 		})
