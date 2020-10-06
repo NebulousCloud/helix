@@ -457,10 +457,11 @@ do
 			CanHear = ix.config.Get("chatRange", 280),
 			deadCanChat = true,
 			OnChatAdd = function(self, speaker, text, bAnonymous, data)
-				local translated = L2(self.uniqueID.."Format", speaker:Name(), text, data.max)
+				local max = data.max or 100
+				local translated = L2(self.uniqueID.."Format", speaker:Name(), text, max)
 
 				chat.AddText(self.color, translated and "** "..translated or string.format(self.format,
-					name, text, data.max or 100
+					name, text, max
 				))
 			end
 		})
