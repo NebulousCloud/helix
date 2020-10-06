@@ -253,6 +253,10 @@ function ITEM:OnLoadout()
 
 			weapon.ixItem = self
 			weapon:SetClip1(self:GetData("ammo", 0))
+
+			if (self.OnEquipWeapon) then
+				self:OnEquipWeapon(client, weapon)
+			end
 		else
 			print(Format("[Helix] Cannot give weapon - %s does not exist!", self.class))
 		end
