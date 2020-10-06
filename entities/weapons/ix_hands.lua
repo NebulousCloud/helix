@@ -36,10 +36,10 @@ SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = ""
 SWEP.Secondary.Delay = 0.5
 
-SWEP.ViewModel = Model("models/weapons/c_arms_citizen.mdl")
+SWEP.ViewModel = Model("models/weapons/c_arms.mdl")
 SWEP.WorldModel = ""
 
-SWEP.UseHands = false
+SWEP.UseHands = true
 SWEP.LowerAngles = Angle(0, 5, -14)
 SWEP.LowerAngles2 = Angle(0, 5, -19)
 SWEP.KnockViewPunchAngle = Angle(-1.3, 1.8, 0)
@@ -52,8 +52,8 @@ SWEP.maxHoldDistance = 96 -- how far away the held object is allowed to travel b
 SWEP.maxHoldStress = 4000 -- how much stress the held object can undergo before forcefully dropping
 
 -- luacheck: globals ACT_VM_FISTS_DRAW ACT_VM_FISTS_HOLSTER
-ACT_VM_FISTS_DRAW = 3
-ACT_VM_FISTS_HOLSTER = 2
+ACT_VM_FISTS_DRAW = 2
+ACT_VM_FISTS_HOLSTER = 1
 
 function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
@@ -64,16 +64,6 @@ function SWEP:Initialize()
 end
 
 if (CLIENT) then
-	function SWEP:PreDrawViewModel(viewModel, weapon, client)
-		local hands = player_manager.TranslatePlayerHands(player_manager.TranslateToPlayerModelName(client:GetModel()))
-
-		if (hands and hands.model) then
-			viewModel:SetModel(hands.model)
-			viewModel:SetSkin(hands.skin)
-			viewModel:SetBodyGroups(hands.body)
-		end
-	end
-
 	function SWEP:DoDrawCrosshair(x, y)
 		surface.SetDrawColor(255, 255, 255, 66)
 		surface.DrawRect(x - 2, y - 2, 4, 4)
@@ -323,7 +313,7 @@ end
 function SWEP:DoPunchAnimation()
 	self.lastHand = math.abs(1 - self.lastHand)
 
-	local sequence = 4 + self.lastHand
+	local sequence = 3 + self.lastHand
 	local viewModel = self.Owner:GetViewModel()
 
 	if (IsValid(viewModel)) then
