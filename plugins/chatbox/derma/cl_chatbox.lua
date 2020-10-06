@@ -925,6 +925,11 @@ function PANEL:SetActive(bActive)
 		hook.Run("StartChat")
 		self.prefix:SetText(hook.Run("GetChatPrefixInfo", ""))
 	else
+		-- make sure we aren't still sizing/dragging anything
+		if (self.bSizing or self.DragOffset) then
+			self:OnMouseReleased(MOUSE_LEFT)
+		end
+
 		self:SetAlpha(0)
 		self:SetMouseInputEnabled(false)
 		self:SetKeyboardInputEnabled(false)
@@ -1069,16 +1074,14 @@ function PANEL:OnMouseReleased()
 end
 
 function PANEL:Think()
-	if (gui.IsGameUIVisible() and self.bActive) then
-		if (self.bSizing or self.DragOffset) then
-			self:OnMouseReleased(MOUSE_LEFT) -- make sure we aren't still sizing/dragging anything
-		end
-
-		self:SetActive(false)
+	if (!self.bActive) then
 		return
 	end
 
-	if (!self.bActive) then
+	if (gui.IsGameUIVisible()) then
+		self:SetActive(false)
+		gui.HideGameUI()
+
 		return
 	end
 
