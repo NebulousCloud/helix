@@ -1069,12 +1069,14 @@ function PANEL:OnMouseReleased()
 end
 
 function PANEL:Think()
-	if (gui.IsGameUIVisible() and self.bActive) then
+	if (gui.IsGameUIVisible() and self.bActive) or (input.IsKeyDown(KEY_ESCAPE)) then
 		if (self.bSizing or self.DragOffset) then
 			self:OnMouseReleased(MOUSE_LEFT) -- make sure we aren't still sizing/dragging anything
 		end
 
 		self:SetActive(false)
+
+		if (input.IsKeyDown(KEY_ESCAPE)) then RunConsoleCommand("cancelselect") end
 		return
 	end
 
