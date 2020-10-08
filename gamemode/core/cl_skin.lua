@@ -226,6 +226,11 @@ function SKIN:PaintButton(panel)
 			alpha = 75
 		end
 
+		if (panel:GetParent():GetName() == "DListView_Column") then
+			surface.SetDrawColor(color_white)
+			surface.DrawRect(0, 0, w, h)
+		end
+
 		surface.SetDrawColor(30, 30, 30, alpha)
 		surface.DrawRect(0, 0, w, h)
 
