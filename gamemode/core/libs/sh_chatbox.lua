@@ -46,7 +46,7 @@ function ix.chat.Register(chatType, data)
 
 		function data:CanHear(speaker, listener)
 			-- Length2DSqr is faster than Length2D, so just check the squares.
-			return (speaker:GetPos() - listener:GetPos()):LengthSqr() <= range
+			return (speaker:GetPos() - listener:GetPos()):LengthSqr() <= self.range
 		end
 	end
 

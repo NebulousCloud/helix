@@ -683,18 +683,9 @@ if (CLIENT) then
 		return skin.Colours[name] or default
 	end
 
-	local LAST_WIDTH = ScrW()
-	local LAST_HEIGHT = ScrH()
 
-	timer.Create("ixResolutionMonitor", 1, 0, function()
-		local scrW, scrH = ScrW(), ScrH()
-
-		if (scrW != LAST_WIDTH or scrH != LAST_HEIGHT) then
-			hook.Run("ScreenResolutionChanged", LAST_WIDTH, LAST_HEIGHT)
-
-			LAST_WIDTH = scrW
-			LAST_HEIGHT = scrH
-		end
+	hook.Add("OnScreenSizeChanged", "ix.OnScreenSizeChanged", function(oldWidth, oldHeight)
+		hook.Run("ScreenResolutionChanged", oldWidth, oldHeight)
 	end)
 end
 

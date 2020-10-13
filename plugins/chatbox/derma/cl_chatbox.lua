@@ -191,8 +191,8 @@ function PANEL:RemoveTab(id)
 
 	-- add default tab if we don't have any tabs left
 	if (table.IsEmpty(self.tabs)) then
-		self:AddTab(L("Chat"), {})
-		self:SetActiveTab(L("Chat"))
+		self:AddTab(L("chat"), {})
+		self:SetActiveTab(L("chat"))
 	elseif (id == self:GetActiveTabID()) then
 		-- set a different active tab if we've removed a tab that is currently active
 		self:SetActiveTab(next(self.tabs))
@@ -925,6 +925,11 @@ function PANEL:SetActive(bActive)
 		hook.Run("StartChat")
 		self.prefix:SetText(hook.Run("GetChatPrefixInfo", ""))
 	else
+		-- make sure we aren't still sizing/dragging anything
+		if (self.bSizing or self.DragOffset) then
+			self:OnMouseReleased(MOUSE_LEFT)
+		end
+
 		self:SetAlpha(0)
 		self:SetMouseInputEnabled(false)
 		self:SetKeyboardInputEnabled(false)
@@ -1069,16 +1074,14 @@ function PANEL:OnMouseReleased()
 end
 
 function PANEL:Think()
-	if (gui.IsGameUIVisible() and self.bActive) then
-		if (self.bSizing or self.DragOffset) then
-			self:OnMouseReleased(MOUSE_LEFT) -- make sure we aren't still sizing/dragging anything
-		end
-
-		self:SetActive(false)
+	if (!self.bActive) then
 		return
 	end
 
-	if (!self.bActive) then
+	if (gui.IsGameUIVisible()) then
+		self:SetActive(false)
+		gui.HideGameUI()
+
 		return
 	end
 

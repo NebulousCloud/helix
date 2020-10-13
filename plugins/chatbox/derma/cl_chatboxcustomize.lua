@@ -48,7 +48,7 @@ function PANEL:Init()
 	-- chat class settings
 	self.name = self.settings:AddRow(ix.type.string)
 	self.name:SetText(L("chatTabName"))
-	self.name:SetValue("New Tab")
+	self.name:SetValue(L("chatNewTabTitle"))
 	self.name:SetZPos(-1)
 
 	for k, _ in SortedPairs(ix.chat.classes) do
