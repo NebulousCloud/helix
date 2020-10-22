@@ -259,7 +259,7 @@ function ix.util.FindPlayer(identifier, bAllowPatterns)
 end
 
 --- Checks to see if two strings are equivalent using a fuzzy manner. Both strings will be lowered, and will return `true` if
--- the strings are identical, or if `a` is a substring of `b`.
+-- the strings are identical, or if `b` is a substring of `a`.
 -- @realm shared
 -- @string a First string to check
 -- @string b Second string to check
