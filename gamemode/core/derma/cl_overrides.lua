@@ -205,7 +205,7 @@ OverridePanel("DComboBox", function()
 
 		if (IsValid(self.Menu)) then
 			self.Menu:SetFont(self:GetFont())
-			local x,y = self.Menu:LocalToScreen( self.Menu:GetPos() )
+			local _, y = self.Menu:LocalToScreen(self.Menu:GetPos())
 			self.Menu:SetMaxHeight(ScrH() - y)
 		end
 	end
