@@ -501,7 +501,12 @@ function PANEL:PaintDragPreview(width, height, mouseX, mouseY, itemPanel)
 				local bEmpty = self:IsEmpty(x2, y2, itemPanel)
 
 				if (bEmpty) then
-					surface.SetDrawColor(0, 255, 0, 10)
+					local itemInv = ix.item.inventories[item.invID or 0]
+					if hook.Run("CanTransferItem", item, itemInv, inventory) == false then
+						surface.SetDrawColor(255, 0, 0, 10)
+					else
+						surface.SetDrawColor(0, 255, 0, 10)
+					end
 				else
 					surface.SetDrawColor(255, 255, 0, 10)
 				end
