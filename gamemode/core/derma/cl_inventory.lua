@@ -494,21 +494,32 @@ function PANEL:PaintDragPreview(width, height, mouseX, mouseY, itemPanel)
 			end
 		end
 
+		local bEmpty = true
+
 		for x = 0, itemPanel.gridW - 1 do
 			for y = 0, itemPanel.gridH - 1 do
-				local x2, y2 = dropX + x, dropY + y
+				local x2 = dropX + x
+				local y2 = dropY + y
 
-				local bEmpty = self:IsEmpty(x2, y2, itemPanel)
+				bEmpty = self:IsEmpty(x2, y2, itemPanel)
 
-				if (bEmpty) then
-					surface.SetDrawColor(0, 255, 0, 10)
-				else
-					surface.SetDrawColor(255, 255, 0, 10)
+				if (!bEmpty) then
+					-- no need to iterate further since we know something is blocking the hovered grid cells, break through both loops
+					goto finish
 				end
-
-				surface.DrawRect((x2 - 1) * iconSize + 4, (y2 - 1) * iconSize + self:GetPadding(2), iconSize, iconSize)
 			end
 		end
+
+		::finish::
+		local previewColor = ColorAlpha(derma.GetColor(bEmpty and "Success" or "Error", self, Color(200, 0, 0)), 20)
+
+		surface.SetDrawColor(previewColor)
+		surface.DrawRect(
+			(dropX - 1) * iconSize + 4,
+			(dropY - 1) * iconSize + self:GetPadding(2),
+			itemPanel:GetWide(),
+			itemPanel:GetTall()
+		)
 	end
 end
 
