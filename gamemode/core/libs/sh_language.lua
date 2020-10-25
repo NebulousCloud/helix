@@ -75,7 +75,7 @@ if (SERVER) then
 		local langKey = ix.option.Get(client, "language", "english")
 		local info = languages[langKey] or languages.english
 
-		return string.format(info and info[key] or key, ...)
+		return string.format(info and info[key] or languages.english[key] or key, ...)
 	end
 
 	-- luacheck: globals L2
@@ -94,7 +94,7 @@ else
 		local langKey = ix.option.Get("language", "english")
 		local info = languages[langKey] or languages.english
 
-		return string.format(info and info[key] or key, ...)
+		return string.format(info and info[key] or languages.english[key] or key, ...)
 	end
 
 	function L2(key, ...)
