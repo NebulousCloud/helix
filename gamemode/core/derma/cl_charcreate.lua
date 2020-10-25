@@ -363,6 +363,7 @@ function PANEL:Populate()
 
 				if ((lastSelected and lastSelected == v.index) or (!lastSelected and v.isDefault)) then
 					button:SetSelected(true)
+					lastSelected = v.index
 				end
 			end
 		end
