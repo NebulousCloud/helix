@@ -186,6 +186,7 @@
 									<li><span class="realm shared"></span><a href="#OnCharacterCreated">PLUGIN:OnCharacterCreated(client, character)</a></li>
 									<li><span class="realm shared"></span><a href="#OnCharacterDisconnect">PLUGIN:OnCharacterDisconnect(client, character)</a></li>
 									<li><span class="realm shared"></span><a href="#OnCharacterFallover">PLUGIN:OnCharacterFallover(client, entity, bFallenOver)</a></li>
+									<li><span class="realm server"></span><a href="#OnCharacterGetup">PLUGIN:OnCharacterGetup(client, ragdoll)</a></li>
 									<li><span class="realm client"></span><a href="#OnCharacterMenuCreated">PLUGIN:OnCharacterMenuCreated(panel)</a></li>
 									<li><span class="realm shared"></span><a href="#OnItemSpawned">PLUGIN:OnItemSpawned(entity)</a></li>
 									<li><span class="realm shared"></span><a href="#OnItemTransferred">PLUGIN:OnItemTransferred(item, curInv, inventory)</a></li>
@@ -4243,6 +4244,47 @@ end
 												<p>
 
 </p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header>
+								<a class="anchor" id="OnCharacterGetup">
+									<h1><span class="realm server"></span>PLUGIN:OnCharacterGetup(client, ragdoll)</h1>
+								</a>
+
+
+
+								<p>Called when a character has gotten up from the ground.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">client</span>
+
+													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
+
+
+												<p> Player that has gotten up</p>
+											</li>
+									</ul>
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">ragdoll</span>
+
+													<span class="tag"><a class="type" href="../classes/Entity.html#">Entity</a></span>
+
+
+												<p> Ragdoll used to represent the player</p>
 											</li>
 									</ul>
 
