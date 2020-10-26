@@ -44,8 +44,8 @@ SWEP.FireWhenLowered = true
 SWEP.HoldType = "passive"
 
 -- luacheck: globals ACT_VM_FISTS_DRAW ACT_VM_FISTS_HOLSTER
-ACT_VM_FISTS_DRAW = 3
-ACT_VM_FISTS_HOLSTER = 2
+ACT_VM_FISTS_DRAW = 2
+ACT_VM_FISTS_HOLSTER = 1
 
 function SWEP:Holster()
 	if (!IsValid(self.Owner)) then
