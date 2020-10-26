@@ -546,6 +546,7 @@ ix.command.Add("CharGetUp", {
 					return
 				end
 
+				hook.Run("OnCharacterGetup", client, entity)
 				entity:Remove()
 			end)
 		end
