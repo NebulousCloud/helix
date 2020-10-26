@@ -54,20 +54,20 @@ do
 		bNetworked = true,
 		populate = function()
 			local entries = {}
-	
+
 			for k, _ in SortedPairs(ix.lang.stored) do
 				local name = ix.lang.names[k]
 				local name2 = k:utf8sub(1, 1):utf8upper() .. k:utf8sub(2)
-	
+
 				if (name) then
 					name = name .. " (" .. name2 .. ")"
 				else
 					name = name2
 				end
-	
+
 				entries[k] = name
 			end
-	
+
 			return entries
 		end
 	})
