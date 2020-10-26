@@ -3,7 +3,7 @@
 -- http://steamcommunity.com/id/sadness81
 -- https://steamcommunity.com/id/Azphal
 
-NAME = "Français"	
+NAME = "Français"
 CODE = "fr"
 
 LANGUAGE = {
