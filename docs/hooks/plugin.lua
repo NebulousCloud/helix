@@ -557,8 +557,8 @@ end
 
 --- Called when a character has gotten up from the ground.
 -- @realm server
--- @player client The client that has gotten up.
--- @entity ragdoll The ragdoll used to represent the player.
+-- @player client Player that has gotten up
+-- @entity ragdoll Ragdoll used to represent the player
 function OnCharacterGetup(client, ragdoll)
 end
 
