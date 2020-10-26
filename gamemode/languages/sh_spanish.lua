@@ -1,5 +1,6 @@
 
 NAME = "Español"
+CODE = "es-ES"
 
 LANGUAGE = {
 	helix = "Helix",

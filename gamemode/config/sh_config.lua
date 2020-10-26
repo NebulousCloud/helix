@@ -1,6 +1,6 @@
 
 -- You can change the default language by setting this in your schema.
-ix.config.language = "english"
+-- ix.config.language = "english"
 
 --[[
 	DO NOT CHANGE ANYTHING BELOW THIS.

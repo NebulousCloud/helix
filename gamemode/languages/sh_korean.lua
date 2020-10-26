@@ -1,5 +1,6 @@
 
 NAME = "한국어"
+CODE = "ko"
 
 LANGUAGE = {
 	loading = "불러오는 중",
