@@ -40,15 +40,17 @@ if (CLIENT) then
 		end
 
 		curGap = Lerp(ft * 2, curGap, crossGap)
-		curAlpha = Lerp(ft * 2, curAlpha, (!LocalPlayer():IsWepRaised() and 255 or 150))
+		curAlpha = Lerp(ft * 2, curAlpha, !LocalPlayer():IsWepRaised() and 255 or 150)
 		curAlpha = hook.Run("GetCrosshairAlpha", curAlpha) or curAlpha
 		colors[2] = Color(255, curAlpha, curAlpha, curAlpha)
 
-		drawdot( {math_round(screen.x), math_round(screen.y)}, crossSize, colors)
-		drawdot( {math_round(screen.x + curGap), math_round(screen.y)}, crossSize, colors)
-		drawdot( {math_round(screen.x - curGap), math_round(screen.y)}, crossSize, colors)
-		drawdot( {math_round(screen.x), math_round(screen.y + curGap * .8)}, crossSize, colors)
-		drawdot( {math_round(screen.x), math_round(screen.y - curGap * .8)}, crossSize, colors)
+		if (curAlpha > 1) then
+			drawdot( {math_round(screen.x), math_round(screen.y)}, crossSize, colors)
+			drawdot( {math_round(screen.x + curGap), math_round(screen.y)}, crossSize, colors)
+			drawdot( {math_round(screen.x - curGap), math_round(screen.y)}, crossSize, colors)
+			drawdot( {math_round(screen.x), math_round(screen.y + curGap * .8)}, crossSize, colors)
+			drawdot( {math_round(screen.x), math_round(screen.y - curGap * .8)}, crossSize, colors)
+		end
 	end
 
 	-- luacheck: globals g_ContextMenu
