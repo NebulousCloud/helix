@@ -238,6 +238,7 @@ LANGUAGE = {
 	vendorSettings = "Vendor Settings",
 	vendorUseMoney = "Vendor should use money?",
 	vendorNoBubble = "Hide vendor bubble?",
+	category = "Category",
 	mode = "Mode",
 	price = "Price",
 	stock = "Stock",

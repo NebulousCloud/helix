@@ -1,3 +1,4 @@
+
 local PANEL = {}
 
 function PANEL:Init()
@@ -125,12 +126,22 @@ function PANEL:Init()
 		ix.gui.editorFaction:Setup()
 	end
 
+	self.searchBar = self:Add("DTextEntry")
+	self.searchBar:Dock(TOP)
+	self.searchBar:DockMargin(0, 4, 0, 0)
+	self.searchBar:SetUpdateOnType(true)
+	self.searchBar:SetPlaceholderText("Search...")
+	self.searchBar.OnValueChange = function(this, value)
+		self:ReloadItemList(value)
+	end
+
 	local menu
 
 	self.items = self:Add("DListView")
 	self.items:Dock(FILL)
 	self.items:DockMargin(0, 4, 0, 0)
 	self.items:AddColumn(L"name").Header:SetTextColor(color_black)
+	self.items:AddColumn(L"category").Header:SetTextColor(color_black)
 	self.items:AddColumn(L"mode").Header:SetTextColor(color_black)
 	self.items:AddColumn(L"price").Header:SetTextColor(color_black)
 	self.items:AddColumn(L"stock").Header:SetTextColor(color_black)
@@ -224,13 +235,27 @@ function PANEL:Init()
 		menu:Open()
 	end
 
+	self:ReloadItemList()
+end
+
+function PANEL:ReloadItemList(filter)
+	local entity = ix.gui.vendor.entity
 	self.lines = {}
 
+	self.items:Clear()
+
 	for k, v in SortedPairs(ix.item.list) do
+		local itemName = v.GetName and v:GetName() or L(v.name)
+
+		if (filter and !itemName:lower():find(filter:lower(), 1, false)) then
+			continue
+		end
+
 		local mode = entity.items[k] and entity.items[k][VENDOR_MODE]
 		local current, max = entity:GetStock(k)
 		local panel = self.items:AddLine(
-			v.GetName and v:GetName() or L(v.name),
+			itemName,
+			v.category or L"none",
 			mode and L(VENDOR_TEXT[mode]) or L"none",
 			entity:GetPrice(k),
 			max and current.."/"..max or "-"
