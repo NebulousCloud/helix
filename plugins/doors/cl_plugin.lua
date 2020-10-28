@@ -6,14 +6,13 @@ ACCESS_LABELS[DOOR_TENANT] = "tenant"
 ACCESS_LABELS[DOOR_GUEST] = "guest"
 ACCESS_LABELS[DOOR_NONE] = "none"
 
-function PLUGIN:DrawDoorInfo(door, width, position, angles, scale, clientPosition)
+function PLUGIN:GetDefaultDoorInfo(door)
 	local owner = IsValid(door:GetDTEntity(0)) and door:GetDTEntity(0) or nil
 	local name = door:GetNetVar("title", door:GetNetVar("name", IsValid(owner) and L"dTitleOwned" or L"dTitle"))
+	local description = door:GetNetVar("ownable") and L("dIsOwnable") or L("dIsNotOwnable")
+	local color = ix.config.Get("color")
 	local faction = door:GetNetVar("faction")
 	local class = door:GetNetVar("class")
-	local color = ix.config.Get("color")
-	local alpha = math.max((1 - clientPosition:DistToSqr(door:GetPos()) / 65536) * 255, 0)
-	local text
 
 	if (class) then
 		local classData = ix.class.list[class]
@@ -24,7 +23,7 @@ function PLUGIN:DrawDoorInfo(door, width, position, angles, scale, clientPositio
 			end
 
 			if (!owner) then
-				text = L("dOwnedBy", L2(classData.name) or classData.name)
+				description = L("dOwnedBy", L2(classData.name) or classData.name)
 			end
 		end
 	elseif (faction) then
@@ -32,28 +31,46 @@ function PLUGIN:DrawDoorInfo(door, width, position, angles, scale, clientPositio
 		color = team.GetColor(faction)
 
 		if (info and !owner) then
-			text = L("dOwnedBy", L2(info.name) or info.name)
+			description = L("dOwnedBy", L2(info.name) or info.name)
 		end
 	end
 
 	if (owner) then
-		text = L("dOwnedBy", owner:GetName())
-	elseif (!text) then
-		text = door:GetNetVar("ownable") and L("dIsOwnable") or L("dIsNotOwnable")
+		description = L("dOwnedBy", owner:GetName())
+	end
+
+	return {
+		name = name,
+		description = description,
+		color = color
+	}
+end
+
+function PLUGIN:DrawDoorInfo(door, width, position, angles, scale, clientPosition)
+	local alpha = math.max((1 - clientPosition:DistToSqr(door:GetPos()) / 65536) * 255, 0)
+
+	if (alpha < 1) then
+		return
+	end
+
+	local info = hook.Run("GetDoorInfo", door) or self:GetDefaultDoorInfo(door)
+
+	if (!istable(info) or table.IsEmpty(info)) then
+		return
 	end
 
 	-- title + background
 	surface.SetFont("ix3D2DMediumFont")
-	local nameWidth, nameHeight = surface.GetTextSize(name)
+	local nameWidth, nameHeight = surface.GetTextSize(info.name)
 
-	derma.SkinFunc("DrawImportantBackground", -width * 0.5, -nameHeight * 0.5, width, nameHeight, ColorAlpha(color, alpha * 0.5))
+	derma.SkinFunc("DrawImportantBackground", -width * 0.5, -nameHeight * 0.5, width, nameHeight, ColorAlpha(info.color, alpha * 0.5))
 
 	surface.SetTextColor(ColorAlpha(color_white, alpha))
 	surface.SetTextPos(-nameWidth * 0.5, -nameHeight * 0.5)
-	surface.DrawText(name)
+	surface.DrawText(info.name)
 
 	-- description
-	local lines = ix.util.WrapText(text, width, "ix3D2DSmallFont")
+	local lines = ix.util.WrapText(info.description, width, "ix3D2DSmallFont")
 	local y = nameHeight * 0.5 + 4
 
 	for i = 1, #lines do
