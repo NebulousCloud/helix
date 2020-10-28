@@ -551,7 +551,7 @@ end
 function OnCharacterDisconnect(client, character)
 end
 
---- @realm shared
+--- @realm server
 function OnCharacterFallover(client, entity, bFallenOver)
 end
 
