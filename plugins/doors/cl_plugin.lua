@@ -63,7 +63,8 @@ function PLUGIN:DrawDoorInfo(door, width, position, angles, scale, clientPositio
 	surface.SetFont("ix3D2DMediumFont")
 	local nameWidth, nameHeight = surface.GetTextSize(info.name)
 
-	derma.SkinFunc("DrawImportantBackground", -width * 0.5, -nameHeight * 0.5, width, nameHeight, ColorAlpha(info.color, alpha * 0.5))
+	derma.SkinFunc("DrawImportantBackground", -width * 0.5, -nameHeight * 0.5,
+		width, nameHeight, ColorAlpha(info.color, alpha * 0.5))
 
 	surface.SetTextColor(ColorAlpha(color_white, alpha))
 	surface.SetTextPos(-nameWidth * 0.5, -nameHeight * 0.5)
