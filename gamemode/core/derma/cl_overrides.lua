@@ -58,7 +58,7 @@ OverridePanel("DMenuOption", function()
 end)
 
 OverridePanel("DMenu", function()
-	local animationTime = 0.5
+	local animationTime = 0.33
 
 	Override("Init")
 	function PANEL:Init(...)
@@ -89,8 +89,19 @@ OverridePanel("DMenu", function()
 		self:ixPerformLayout(...)
 
 		if (self.ixAnimating) then
+			self.VBar:SetAlpha(0) -- setvisible doesn't seem to work here
 			self:SetTall(self.ixAnimation * self.ixTargetHeight)
+		else
+			self.VBar:SetAlpha(255)
 		end
+	end
+
+	Override("OnMouseWheeled")
+	function PANEL:OnMouseWheeled(delta)
+		self:ixOnMouseWheeled(delta)
+
+		-- don't allow the input event to fall through
+		return true
 	end
 
 	Override("AddOption")
@@ -130,7 +141,7 @@ OverridePanel("DMenu", function()
 		self:CreateAnimation(animationTime, {
 			index = 1,
 			target = {ixAnimation = 1},
-			easing = "outElastic",
+			easing = "outQuint",
 
 			Think = function(animation, panel)
 				panel:InvalidateLayout(true)
@@ -151,7 +162,6 @@ OverridePanel("DMenu", function()
 
 		self.ixAnimating = true
 		self:SetVisible(true)
-
 		self:CreateAnimation(animationTime * 0.5, {
 			index = 1,
 			target = {ixAnimation = 0},
@@ -162,6 +172,7 @@ OverridePanel("DMenu", function()
 			end,
 
 			OnComplete = function(animation, panel)
+				panel.ixAnimating = false
 				panel:ixHide()
 			end
 		})
