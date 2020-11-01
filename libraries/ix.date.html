@@ -108,7 +108,10 @@ regarding the <a href="../libraries/ix.date.html">date</a> object and its method
 									<li><span class="realm shared"></span><a href="#ix.date.GetFormatted">ix.date.GetFormatted(format[, currentDate=nil])</a></li>
 									<li><span class="realm shared"></span><a href="#ix.date.GetSerialized">ix.date.GetSerialized([currentDate=nil])</a></li>
 									<li><span class="realm server"></span><a href="#ix.date.Initialize">ix.date.Initialize()</a></li>
-									<li><span class="realm server"></span><a href="#ix.date.Send">ix.date.Send(client)</a></li>
+									<li><span class="realm server"></span><a href="#ix.date.ResolveOffset">ix.date.ResolveOffset()</a></li>
+									<li><span class="realm server"></span><a href="#ix.date.Save">ix.date.Save()</a></li>
+									<li><span class="realm server"></span><a href="#ix.date.Send">ix.date.Send([client=nil])</a></li>
+									<li><span class="realm server"></span><a href="#ix.date.UpdateTimescale">ix.date.UpdateTimescale(secondsPerMinute)</a></li>
 							</ul>
 					</div>
 				</details>
@@ -123,7 +126,7 @@ regarding the <a href="../libraries/ix.date.html">date</a> object and its method
 								</a>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L101">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L144">View source &raquo;</a>
 
 								<p>Returns a date object from a table or serialized date.</p>
 							</header>
@@ -163,7 +166,7 @@ regarding the <a href="../libraries/ix.date.html">date</a> object and its method
 								</a>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L51">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L117">View source &raquo;</a>
 
 								<p>Returns the currently set date.</p>
 							</header>
@@ -189,7 +192,7 @@ regarding the <a href="../libraries/ix.date.html">date</a> object and its method
 								</a>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L85">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L128">View source &raquo;</a>
 
 								<p>Returns a string formatted version of a date.</p>
 							</header>
@@ -243,9 +246,9 @@ regarding the <a href="../libraries/ix.date.html">date</a> object and its method
 								</a>
 
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L93">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L136">View source &raquo;</a>
 
-								<p>Returns a serialized version of a date.</p>
+								<p>Returns a serialized version of a date.  This is useful when you need to network a date to clients, or save a date to disk.</p>
 							</header>
 
 
@@ -286,7 +289,7 @@ regarding the <a href="../libraries/ix.date.html">date</a> object and its method
 
 									<div class="internal"></div>
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L26">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L27">View source &raquo;</a>
 
 								<p>Loads the date from disk.</p>
 							</header>
@@ -296,13 +299,45 @@ regarding the <a href="../libraries/ix.date.html">date</a> object and its method
 						</section>
 						<section class="method">
 							<header>
-								<a class="anchor" id="ix.date.Send">
-									<h1><span class="realm server"></span>ix.date.Send(client)</h1>
+								<a class="anchor" id="ix.date.ResolveOffset">
+									<h1><span class="realm server"></span>ix.date.ResolveOffset()</h1>
 								</a>
 
 									<div class="internal"></div>
 
-									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L41">View source &raquo;</a>
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L52">View source &raquo;</a>
+
+								<p>Updates the internal in-game date/time representation and resets the offset.</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header>
+								<a class="anchor" id="ix.date.Save">
+									<h1><span class="realm server"></span>ix.date.Save()</h1>
+								</a>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L89">View source &raquo;</a>
+
+								<p>Saves the current in-game date to disk.</p>
+							</header>
+
+
+
+						</section>
+						<section class="method">
+							<header>
+								<a class="anchor" id="ix.date.Send">
+									<h1><span class="realm server"></span>ix.date.Send([client=nil])</h1>
+								</a>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L72">View source &raquo;</a>
 
 								<p>Sends the current date to a player.  This is done automatically when the player joins the server.</p>
 							</header>
@@ -318,8 +353,42 @@ regarding the <a href="../libraries/ix.date.html">date</a> object and its method
 
 													<span class="tag"><a class="type" href="../classes/Player.html#">Player</a></span>
 
+													<span class="tag default">default: nil</span>
 
-												<p> Player to send the date to</p>
+												<p> Player to send the date to, or <code>nil</code> to send to everyone</p>
+											</li>
+									</ul>
+
+
+						</section>
+						<section class="method">
+							<header>
+								<a class="anchor" id="ix.date.UpdateTimescale">
+									<h1><span class="realm server"></span>ix.date.UpdateTimescale(secondsPerMinute)</h1>
+								</a>
+
+									<div class="internal"></div>
+
+									<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_date.lua#L63">View source &raquo;</a>
+
+								<p>Updates the time scale of the in-game date/time.  The time scale is given in seconds per minute (i.e how many real life
+ seconds it takes for an in-game minute to pass). You should avoid using this function and use the in-game config menu to
+ change the time scale instead.</p>
+							</header>
+
+
+									<h3>Parameters</h3>
+
+
+									<ul>
+
+											<li>
+												<span class="tag parameter">secondsPerMinute</span>
+
+													<span class="tag"><span class="type">number</span></span>
+
+
+												<p> New time scale</p>
 											</li>
 									</ul>
 
