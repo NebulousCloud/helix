@@ -15,7 +15,7 @@ function PANEL:Init()
 	hook.Run("CanCreateCharacterInfo", suppress)
 
 	if (!suppress.time) then
-		local format = "%A, %B %d, %Y. %H:%M:%S"
+		local format = "%A, %B %d, %Y. %H:%M"
 
 		self.time = self:Add("DLabel")
 		self.time:SetFont("ixMediumFont")

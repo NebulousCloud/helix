@@ -175,15 +175,42 @@ ix.config.Add("itemPickupTime", 0.5, "How long it takes to pick up and put an it
 	data = {min = 0, max = 5, decimals = 1},
 	category = "interaction"
 })
-ix.config.Add("year", 2015, "The starting year of the schema.", nil, {
+ix.config.Add("year", 2015, "The current in-game year.", function(oldValue, newValue)
+	if (SERVER and !ix.date.bSaving) then
+		ix.date.ResolveOffset()
+		ix.date.current:setyear(newValue)
+		ix.date.Send()
+	end
+end, {
 	data = {min = 1, max = 9999},
 	category = "date"
 })
-ix.config.Add("month", 1, "The starting month of the schema.", nil, {
+ix.config.Add("month", 1, "The current in-game month.", function(oldValue, newValue)
+	if (SERVER and !ix.date.bSaving) then
+		ix.date.ResolveOffset()
+		ix.date.current:setmonth(newValue)
+		ix.date.Send()
+	end
+end, {
 	data = {min = 1, max = 12},
 	category = "date"
 })
-ix.config.Add("day", 1, "The starting day of the schema.", nil, {
+ix.config.Add("day", 1, "The current in-game day.", function(oldValue, newValue)
+	if (SERVER and !ix.date.bSaving) then
+		ix.date.ResolveOffset()
+		ix.date.current:setday(newValue)
+		ix.date.Send()
+	end
+end, {
 	data = {min = 1, max = 31},
+	category = "date"
+})
+ix.config.Add("secondsPerMinute", 60, "How many seconds it takes for a minute to pass in-game.", function(oldValue, newValue)
+	if (SERVER and !ix.date.bSaving) then
+		ix.date.UpdateTimescale(newValue)
+		ix.date.Send()
+	end
+end, {
+	data = {min = 0.01, max = 120},
 	category = "date"
 })

@@ -14,8 +14,9 @@ regarding the `date` object and its methods there.
 
 ix.date = ix.date or {}
 ix.date.lib = ix.date.lib or include("thirdparty/sh_date.lua")
-ix.date.cache = ix.date.cache or {}
-ix.date.start = ix.date.start or ix.date.lib()
+ix.date.timeScale = ix.date.timeScale or ix.config.Get("secondsPerMinute", 60) -- seconds per minute
+ix.date.current = ix.date.current or ix.date.lib() -- current in-game date/time
+ix.date.start = ix.date.start or CurTime() -- arbitrary start time for calculating date/time offset
 
 if (SERVER) then
 	util.AddNetworkString("ixDateSync")
@@ -24,57 +25,99 @@ if (SERVER) then
 	-- @realm server
 	-- @internal
 	function ix.date.Initialize()
-		local startDate = ix.data.Get("date", nil, false, true)
+		local currentDate = ix.data.Get("date", nil, false, true)
 
-		if (!startDate) then
-			startDate = ix.date.lib()
-			ix.data.Set("date", ix.date.lib.serialize(startDate), false, true)
+		-- construct new starting date if we don't have it saved already
+		if (!currentDate) then
+			currentDate = {
+				year = ix.config.Get("year"),
+				month = ix.config.Get("month"),
+				day = ix.config.Get("day"),
+				hour = tonumber(os.date("%H")) or 0,
+				min = tonumber(os.date("%M")) or 0,
+				sec = tonumber(os.date("%S")) or 0
+			}
+
+			currentDate = ix.date.lib.serialize(ix.date.lib(currentDate))
+			ix.data.Set("date", currentDate, false, true)
 		end
 
-		ix.date.start = ix.date.lib.construct(startDate)
+		ix.date.timeScale = ix.config.Get("secondsPerMinute", 60)
+		ix.date.current = ix.date.lib.construct(currentDate)
+	end
+
+	--- Updates the internal in-game date/time representation and resets the offset.
+	-- @realm server
+	-- @internal
+	function ix.date.ResolveOffset()
+		ix.date.current = ix.date.Get()
+		ix.date.start = CurTime()
+	end
+
+	--- Updates the time scale of the in-game date/time. The time scale is given in seconds per minute (i.e how many real life
+	-- seconds it takes for an in-game minute to pass). You should avoid using this function and use the in-game config menu to
+	-- change the time scale instead.
+	-- @realm server
+	-- @internal
+	-- @number secondsPerMinute New time scale
+	function ix.date.UpdateTimescale(secondsPerMinute)
+		ix.date.ResolveOffset()
+		ix.date.timeScale = secondsPerMinute
 	end
 
 	--- Sends the current date to a player. This is done automatically when the player joins the server.
 	-- @realm server
 	-- @internal
-	-- @player client Player to send the date to
+	-- @player[opt=nil] client Player to send the date to, or `nil` to send to everyone
 	function ix.date.Send(client)
 		net.Start("ixDateSync")
-			net.WriteFloat(CurTime())
-			net.WriteTable(ix.date.lib.serialize(ix.date.lib() - ix.date.start))
-		net.Send(client)
+
+		net.WriteFloat(ix.date.timeScale)
+		net.WriteTable(ix.date.current)
+		net.WriteFloat(ix.date.start)
+
+		if (client) then
+			net.Send(client)
+		else
+			net.Broadcast()
+		end
 	end
 
-	--- Returns the currently set date.
-	-- @realm shared
-	-- @treturn date Current in-game date
-	function ix.date.Get()
-		local currentDate = ix.date.lib()
+	--- Saves the current in-game date to disk.
+	-- @realm server
+	-- @internal
+	function ix.date.Save()
+		ix.date.bSaving = true
 
-		return (currentDate - (ix.date.start or currentDate)) + ix.date.lib(
-			ix.config.Get("year"),
-			ix.config.Get("month"),
-			ix.config.Get("day")
-		)
+		ix.date.ResolveOffset() -- resolve offset so we save the actual time to disk
+		ix.data.Set("date", ix.date.lib.serialize(ix.date.current), false, true)
+
+		-- update config to reflect current saved date
+		ix.config.Set("year", ix.date.current:getyear())
+		ix.config.Set("month", ix.date.current:getmonth())
+		ix.config.Set("day", ix.date.current:getday())
+
+		ix.date.bSaving = nil
 	end
 else
-	function ix.date.Get()
-		local realTime = RealTime()
-
-		-- Add the starting time + offset + current time played.
-		return ix.date.start + ix.date.lib(
-			ix.config.Get("year"),
-			ix.config.Get("month"),
-			ix.config.Get("day")
-		):addseconds(realTime - (ix.joinTime or realTime))
-	end
-
 	net.Receive("ixDateSync", function()
-		local curTime = net.ReadFloat()
-		local offsetDate = net.ReadTable()
+		local timeScale = net.ReadFloat()
+		local currentDate = ix.date.lib.construct(net.ReadTable())
+		local startTime = net.ReadFloat()
 
-		ix.date.start = ix.date.lib.construct(offsetDate):addseconds(CurTime() - curTime)
+		ix.date.timeScale = timeScale
+		ix.date.current = currentDate
+		ix.date.start = startTime
 	end)
+end
+
+--- Returns the currently set date.
+-- @realm shared
+-- @treturn date Current in-game date
+function ix.date.Get()
+	local minutesSinceStart = (CurTime() - ix.date.start) / ix.date.timeScale
+
+	return ix.date.current:copy():addminutes(minutesSinceStart)
 end
 
 --- Returns a string formatted version of a date.
@@ -86,7 +129,7 @@ function ix.date.GetFormatted(format, currentDate)
 	return (currentDate or ix.date.Get()):fmt(format)
 end
 
---- Returns a serialized version of a date.
+--- Returns a serialized version of a date. This is useful when you need to network a date to clients, or save a date to disk.
 -- @realm shared
 -- @date[opt=nil] currentDate Date to serialize. If nil, it will use the currently set date
 -- @treturn table Serialized date
