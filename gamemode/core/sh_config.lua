@@ -39,11 +39,17 @@ function ix.config.Add(key, value, description, callback, data, bNoNetworking, b
 	end
 
 	data.type = nil
+	
+	local storedValue = value
+	
+	if oldConfig ~= nil and oldConfig.value ~= nil then
+		storedValue = oldConfig.value
+	end
 
 	ix.config.stored[key] = {
 		type = type,
 		data = data,
-		value = oldConfig and oldConfig.value or value,
+		value = storedValue,
 		default = oldConfig and oldConfig.default or value,
 		description = description,
 		bNoNetworking = bNoNetworking,
