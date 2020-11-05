@@ -206,19 +206,18 @@ if (SERVER) then
 	function meta:ToggleWepRaised()
 		local weapon = self:GetActiveWeapon()
 
-		if (weapon.IsAlwaysRaised or ALWAYS_RAISED[weapon:GetClass()]
-		or weapon.IsAlwaysLowered or weapon.NeverRaised) then
+		if (!IsValid(weapon) or
+			weapon.IsAlwaysRaised or ALWAYS_RAISED[weapon:GetClass()] or
+			weapon.IsAlwaysLowered or weapon.NeverRaised) then
 			return
 		end
 
 		self:SetWepRaised(!self:IsWepRaised(), weapon)
 
-		if (IsValid(weapon)) then
-			if (self:IsWepRaised() and weapon.OnRaised) then
-				weapon:OnRaised()
-			elseif (!self:IsWepRaised() and weapon.OnLowered) then
-				weapon:OnLowered()
-			end
+		if (self:IsWepRaised() and weapon.OnRaised) then
+			weapon:OnRaised()
+		elseif (!self:IsWepRaised() and weapon.OnLowered) then
+			weapon:OnLowered()
 		end
 	end
 
