@@ -688,7 +688,7 @@ ix.command.Add("CharDesc", {
 		local result, fault, count = info:OnValidate(description)
 
 		if (result == false) then
-			return "@" .. fault, count
+			return "@" .. fault, L(count, client)
 		end
 
 		client:GetCharacter():SetDescription(description)
