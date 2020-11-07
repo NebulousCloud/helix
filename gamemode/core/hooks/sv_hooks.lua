@@ -46,6 +46,8 @@ function GM:PlayerInitialSpawn(client)
 			net.WriteUInt(client.ixPlayTime or 0, 32)
 		net.Send(client)
 
+		hook.Run("PlayerInitialized", client)
+
 		ix.char.Restore(client, function(charList)
 			if (!IsValid(client)) then return end
 
