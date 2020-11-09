@@ -157,6 +157,7 @@ LANGUAGE = {
 	businessTooFast = "Подождите, прежде чем покупать другой товар!",
 	cChangeModel = "%s сменил %s модель на %s.",
 	cChangeName = "%s сменил %s имя на %s.",
+	cChangeDescription = "%s сменил %s описание.",
 	cmdCharSetDescription = "Изменить описание пользователя на заданное.",
 	cChangeSkin = "%s сменил %s скин на %s.",
 	cChangeGroups = "%s сменил %s \"%s\" на бодигруппу %s.",
