@@ -158,7 +158,6 @@ LANGUAGE = {
 	cChangeModel = "%s сменил %s модель на %s.",
 	cChangeName = "%s сменил %s имя на %s.",
 	cChangeDescription = "%s сменил %s описание.",
-	cmdCharSetDescription = "Изменить описание пользователя на заданное.",
 	cChangeSkin = "%s сменил %s скин на %s.",
 	cChangeGroups = "%s сменил %s \"%s\" на бодигруппу %s.",
 	cChangeFaction = "%s перенес персонажа %s во фракцию %s ",
