@@ -315,7 +315,7 @@ if (SERVER) then
 
 		-- remove the SaveData and PostLoadData hooks for any plugins that error during LoadData since they would probably be
 		-- saving bad data. this doesn't prevent plugins from saving data via other means, but there's only so much we can do
-		for k, v in pairs(errors or {}) do
+		for _, v in pairs(errors or {}) do
 			if (v.plugin) then
 				local plugin = ix.plugin.Get(v.plugin)
 
