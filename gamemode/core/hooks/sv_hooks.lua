@@ -836,8 +836,7 @@ function GM:PreCleanupMap()
 end
 
 function GM:PostCleanupMap()
-	hook.Run("LoadData")
-	hook.Run("PostLoadData")
+	ix.plugin.RunLoadData()
 end
 
 function GM:CharacterPreSave(character)
@@ -926,5 +925,5 @@ function GM:DatabaseConnected()
 		mysql:Think()
 	end)
 
-	hook.Run("LoadData")
+	ix.plugin.RunLoadData()
 end

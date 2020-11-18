@@ -306,163 +306,31 @@ function ix.plugin.SetUnloaded(uniqueID, state, bNoSave)
 end
 
 if (SERVER) then
-	ix.plugin.repos = ix.plugin.repos or {}
-	ix.plugin.files = ix.plugin.files or {}
+	--- Runs the `LoadData` and `PostLoadData` hooks for the gamemode, schema, and plugins. Any plugins that error during the
+	-- hook will have their `SaveData` and `PostLoadData` hooks removed to prevent them from saving junk data.
+	-- @internal
+	-- @realm server
+	function ix.plugin.RunLoadData()
+		local errors = hook.SafeRun("LoadData")
 
-	function ix.plugin.LoadRepo(url, name, callback, faultCallback)
-		name = name or url
+		-- remove the SaveData and PostLoadData hooks for any plugins that error during LoadData since they would probably be
+		-- saving bad data. this doesn't prevent plugins from saving data via other means, but there's only so much we can do
+		for k, v in pairs(errors or {}) do
+			if (v.plugin) then
+				local plugin = ix.plugin.Get(v.plugin)
 
-		local curPlugin = ""
-		local curPluginName = ""
-		local cache = {data = {url = url}, files = {}}
+				if (plugin) then
+					local saveDataHooks = HOOKS_CACHE["SaveData"] or {}
+					saveDataHooks[plugin] = nil
 
-		MsgN("Loading plugins from '"..url.."'")
-
-		http.Fetch(url, function(body)
-			if (body:find("<h1>")) then
-				local fault = body:match("<h1>([_%w%s]+)</h1>") or "Unknown Error"
-
-				if (faultCallback) then
-					faultCallback(fault)
+					local postLoadDataHooks = HOOKS_CACHE["PostLoadData"] or {}
+					postLoadDataHooks[plugin] = nil
 				end
-
-				return MsgN("\t* ERROR: "..fault)
-			end
-
-			local exploded = string.Explode("\n", body)
-
-			print("   * Repository identifier set to '"..name.."'")
-
-			for _, line in ipairs(exploded) do
-				if (line:sub(1, 1) == "@") then
-					local key, value = line:match("@repo%-([_%w]+):[%s*](.+)")
-
-					if (key and value) then
-						if (key == "name") then
-							print("   * "..value)
-						end
-
-						cache.data[key] = value
-					end
-				else
-					local fullName = line:match("!%b[]")
-
-					if (fullName) then
-						curPlugin = fullName:sub(3, -2)
-						fullName = fullName:sub(8, -2)
-						curPluginName = fullName
-						cache.files[fullName] = {}
-
-						MsgN("\t* Found '"..fullName.."'")
-					elseif (curPlugin and line:sub(1, #curPlugin) == curPlugin and cache.files[curPluginName]) then
-						table.insert(cache.files[curPluginName], line:sub(#curPlugin + 2))
-					end
-				end
-			end
-
-			file.CreateDir("helix/plugins")
-			file.CreateDir("helix/plugins/"..cache.data.id)
-
-			if (callback) then
-				callback(cache)
-			end
-
-			ix.plugin.repos[name] = cache
-		end, function(fault)
-			if (faultCallback) then
-				faultCallback(fault)
-			end
-
-			MsgN("\t* ERROR: "..fault)
-		end)
-	end
-
-	function ix.plugin.Download(repo, plugin, callback)
-		local plugins = ix.plugin.repos[repo]
-
-		if (plugins) then
-			if (plugins.files[plugin]) then
-				local files = plugins.files[plugin]
-				local baseDir = "helix/plugins/"..plugins.data.id.."/"..plugin.."/"
-
-				-- Re-create the old file.Write behavior.
-				local function WriteFile(name, contents)
-					name = string.StripExtension(name)..".txt"
-
-					if (name:find("/")) then
-						local exploded = string.Explode("/", name)
-						local tree = ""
-
-						for k, v in ipairs(exploded) do
-							if (k == #exploded) then
-								file.Write(baseDir..tree..v, contents)
-							else
-								tree = tree..v.."/"
-								file.CreateDir(baseDir..tree)
-							end
-						end
-					else
-						file.Write(baseDir..name, contents)
-					end
-				end
-
-				MsgN("* Downloading plugin '"..plugin.."' from '"..repo.."'")
-				ix.plugin.files[repo.."/"..plugin] = {}
-
-				local function DownloadFile(i)
-					MsgN("\t* Downloading... "..(math.Round(i / #files, 2) * 100).."%")
-
-					local url = plugins.data.url.."/repo/"..plugin.."/"..files[i]
-
-					http.Fetch(url, function(body)
-						WriteFile(files[i], body)
-						ix.plugin.files[repo.."/"..plugin][files[i]] = body
-
-						if (i < #files) then
-							DownloadFile(i + 1)
-						else
-							if (callback) then
-								callback(true)
-							end
-
-							MsgN("* '"..plugin.."' has completed downloading")
-						end
-					end, function(fault)
-						callback(false, fault)
-					end)
-				end
-
-				DownloadFile(1)
-			else
-				return false, "cloud_no_plugin"
-			end
-		else
-			return false, "cloud_no_repo"
-		end
-	end
-
-	function ix.plugin.LoadFromLocal(repo, plugin)
-
-	end
-
-	concommand.Add("ix_cloudloadrepo", function(client, _, arguments)
-		local url = arguments[1]
-		local name = arguments[2] or "default"
-
-		if (!IsValid(client)) then
-			ix.plugin.LoadRepo(url, name)
-		end
-	end)
-
-	concommand.Add("ix_cloudget", function(client, _, arguments)
-		if (!IsValid(client)) then
-			local status, result = ix.plugin.Download(arguments[2] or "default", arguments[1])
-
-			if (status == false) then
-				MsgN("* ERROR: "..result)
 			end
 		end
-	end)
+
+		hook.Run("PostLoadData")
+	end
 end
 
 do
@@ -491,5 +359,83 @@ do
 		end
 
 		return hook.ixCall(name, gm, ...)
+	end
+
+	--- Runs the given hook in a protected call so that the calling function will continue executing even if any errors occur
+	-- while running the hook. This function is much more expensive to call than `hook.Run`, so you should avoid using it unless
+	-- you absolutely need to avoid errors from stopping the execution of your function.
+	-- @internal
+	-- @realm shared
+	-- @string name Name of the hook to run
+	-- @param ... Arguments to pass to the hook functions
+	-- @treturn[1] table Table of error data if an error occurred while running
+	-- @treturn[1] ... Any arguments returned by the hook functions
+	-- @usage local errors, bCanSpray = hook.SafeRun("PlayerSpray", Entity(1))
+	-- if (!errors) then
+	-- 	-- do stuff with bCanSpray
+	-- else
+	-- 	PrintTable(errors)
+	-- end
+	function hook.SafeRun(name, ...)
+		local errors = {}
+		local gm = gmod and gmod.GetGamemode() or nil
+		local cache = HOOKS_CACHE[name]
+
+		if (cache) then
+			for k, v in pairs(cache) do
+				local bSuccess, a, b, c, d, e, f = pcall(v, k, ...)
+
+				if (bSuccess) then
+					if (a != nil) then
+						return errors, a, b, c, d, e, f
+					end
+				else
+					ErrorNoHalt(string.format("[Helix] hook.SafeRun error for plugin hook \"%s:%s\":\n\t%s\n%s\n",
+						tostring(k and k.uniqueID or nil), tostring(name), tostring(a), debug.traceback()))
+
+					errors[#errors + 1] = {
+						name = name,
+						plugin = k and k.uniqueID or nil,
+						errorMessage = tostring(a)
+					}
+				end
+			end
+		end
+
+		if (Schema and Schema[name]) then
+			local bSuccess, a, b, c, d, e, f = pcall(Schema[name], Schema, ...)
+
+			if (bSuccess) then
+				if (a != nil) then
+					return errors, a, b, c, d, e, f
+				end
+			else
+				ErrorNoHalt(string.format("[Helix] hook.SafeRun error for schema hook \"%s\":\n\t%s\n%s\n",
+					tostring(name), tostring(a), debug.traceback()))
+
+				errors[#errors + 1] = {
+					name = name,
+					schema = Schema.name,
+					errorMessage = tostring(a)
+				}
+			end
+		end
+
+		local bSuccess, a, b, c, d, e, f = pcall(hook.ixCall, name, gm, ...)
+
+		if (bSuccess) then
+			return errors, a, b, c, d, e, f
+		else
+			ErrorNoHalt(string.format("[Helix] hook.SafeRun error for gamemode hook \"%s\":\n\t%s\n%s\n",
+				tostring(name), tostring(a), debug.traceback()))
+
+			errors[#errors + 1] = {
+				name = name,
+				gamemode = "gamemode",
+				errorMessage = tostring(a)
+			}
+
+			return errors
+		end
 	end
 end

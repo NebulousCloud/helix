@@ -151,7 +151,7 @@ end
 --- Retrieves an inventory table.
 -- @realm shared
 -- @number invID Index of the inventory
--- @treturn inventory Inventory table
+-- @treturn Inventory Inventory table
 function ix.item.GetInv(invID)
 	return ix.item.inventories[invID]
 end
