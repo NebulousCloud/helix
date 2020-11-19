@@ -28,7 +28,8 @@ CAMI.RegisterPrivilege({
 -- 	prefix = {"/Me", "/Action"},
 -- 	description = "@cmdMe",
 -- 	indicator = "chatPerforming",
--- 	deadCanChat = true
+-- 	deadCanChat = true,
+--	font  = "ixChatFont"
 -- })
 function ix.chat.Register(chatType, data)
 	chatType = string.lower(chatType)
