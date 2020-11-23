@@ -146,6 +146,16 @@ class SearchManager
 	}
 }
 
+window.onload = function()
+{
+	const openDetails = document.querySelector(".category > ul > li > details[open]");
+
+	if (openDetails)
+	{
+		openDetails.scrollIntoView();
+	}
+}
+
 document.addEventListener("DOMContentLoaded", function()
 {
 	const searchInput = document.getElementById("search");
