@@ -1,0 +1,123 @@
+
+<header class="module">
+	<h1>{{mod.name}}</h1>
+	<h2>{* ldoc.markup(mod.summary) *}</h2>
+</header>
+
+<p>{* ldoc.markup(mod.description) *}</p>
+
+{% for kind, items in mod.kinds() do %}
+	<h1 class="title">{{kind}}</h1>
+
+	{% for item in items() do %}
+		<section class="method">
+			<header>
+				<a class="anchor" id="{{item.name}}">
+					<h1>{* ldoc.realm_icon(item.tags.realm[1]) *}</span>{{ldoc.display_name(item)}}</h1>
+				</a>
+
+				{% if (item.tags.internal) then %}
+					<div class="notice error">
+						<div class="title">Internal</div>
+						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
+					</div>
+				{% end %}
+
+				{% if (item.module and item.module.type ~= "hooks") then %}
+					<a class="reference" href="{* ldoc.repo_reference(item) *}">View source &raquo;</a>
+				{% end %}
+
+				{% if (ldoc.descript(item):len() == 0) then %}
+					<div class="notice warning">
+						<div class="title">Incomplete</div>
+						<p>Documentation for this section is incomplete and needs expanding.</p>
+					</div>
+				{% else %}
+					<p>{* ldoc.markup(ldoc.descript(item)) *}</p>
+				{% end %}
+			</header>
+
+			{# function arguments #}
+			{% if (item.params and #item.params > 0) then %}
+				{% local subnames = mod.kinds:type_of(item).subnames %}
+
+				{% if (subnames) then %}
+					<h3>{{subnames}}</h3>
+				{% end %}
+
+				{% for argument in ldoc.modules.iter(item.params) do %}
+					{% local argument, sublist = item:subparam(argument) %}
+
+					<ul>
+						{% for argumentName in ldoc.modules.iter(argument) do %}
+							{% local displayName = item:display_name_of(argumentName) %}
+							{% local type = ldoc.typename(item:type_of_param(argumentName)) %}
+							{% local default = item:default_of_param(argumentName) %}
+
+							<li>
+								<span class="tag parameter">{{displayName}}</span>
+
+								{% if (type ~= "") then %}
+									<span class="tag">{* type *}</span>
+								{% end %}
+
+								{% if (default and default ~= true) then %}
+									<span class="tag default">default: {{default}}</span>
+								{% elseif (default) then %}
+									<span class="tag default">optional</span>
+								{% end %}
+
+								<p>{* ldoc.markup(item.params.map[argumentName]) *}</p>
+							</li>
+						{% end %}
+					</ul>
+				{% end %}
+			{% end %}
+
+			{# function returns #}
+			{% if ((not ldoc.no_return_or_parms) and item.retgroups) then %}
+				{% local groups = item.retgroups %}
+
+				<h3>Returns</h3>
+				<ul>
+					{% for i, group in ldoc.ipairs(groups) do %}
+						{% for returnValue in group:iter() do %}
+							{% local type, ctypes = item:return_type(returnValue) %}
+							{% type = ldoc.typename(type) %}
+
+							<li>
+								{% if (type ~= "") then %}
+									{* type *}
+								{% else -- we'll assume that it will return a variable type if none is set %}
+									<span class="tag type">any</span>
+								{% end %}
+
+								<p>{* ldoc.markup(returnValue.text) *}</p>
+							</li>
+						{% end %}
+
+						{% if (i ~= #groups) then %}
+							<div class="or"><span>OR</span></div>
+						{% end %}
+					{% end %}
+				</ul>
+			{% end %}
+
+			{% if (item.usage) then -- function usage %}
+				<h3>Example Usage</h3>
+				{% for usage in ldoc.modules.iter(item.usage) do %}
+					<pre><code>{* usage *}</code></pre>
+				{% end %}
+			{% end %}
+
+			{% if (item.see) then %}
+				<h3>See Also</h3>
+				<ul>
+					{% for see in ldoc.modules.iter(item.see) do %}
+						<li><a href="{* ldoc.href(see) *}">{{see.label}}</a></li>
+					{% end %}
+				</ul>
+			{% end %}
+		</section>
+	{% end %}
+{% end %}

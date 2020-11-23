@@ -1,217 +1,90 @@
 
-# local root = ldoc.css:gsub("ldoc.css", "")
-# local iter = ldoc.modules.iter
-# local repo = "https://github.com/nebulouscloud/helix/"
-# local pageTitle = module and (ldoc.display_name(module) .. " - " .. ldoc.title) or ldoc.title
+{%
+local baseUrl = ldoc.css:gsub("ldoc.css", "")
+local repo = "https://github.com/nebulouscloud/helix/"
+local pageTitle = mod and (ldoc.display_name(mod) .. " - " .. ldoc.title) or ldoc.title
 
-# local function markup(text, item)
-#	return ldoc.markup(text, item, ldoc.plain)
-# end
+local oldmarkup = ldoc.markup
+function ldoc.markup(text, item)
+	return oldmarkup(text, item, ldoc.plain)
+end
 
-# local function moduleDescription(mod)
-#	if (mod.type == "topic") then
-#		return mod.body:gsub(mod.display_name, ""):gsub("#", ""):sub(1, 256) .. "..."
-#	end
-#	return mod.summary
-# end
+function ldoc.url(path)
+	return baseUrl .. path
+end
 
-# local function repoReference(item)
-#   return repo .. "tree/master" .. item.file.filename:gsub(item.file.base, "/gamemode") .. "#L" .. item.lineno
-# end
+function ldoc.realm_icon(realm)
+	return "<span class=\"realm " .. (realm or "") .. "\"></span>";
+end
+
+function ldoc.is_kind_classmethod(kind)
+	return kind ~= "libraries"
+end
+
+function ldoc.repo_reference(item)
+	return repo .. "tree/master" .. item.file.filename:gsub(item.file.base, "/gamemode") .. "#L" .. item.lineno
+end
+
+local function moduleDescription(mod)
+	if (mod.type == "topic") then
+		return mod.body:gsub(mod.display_name, ""):gsub("#", ""):sub(1, 256) .. "..."
+	end
+
+	return mod.summary
+end
+%}
 
 <html>
 	<head>
-		<title>$(pageTitle)</title>
+		<title>{{pageTitle}}</title>
 
 		<meta property="og:type" content="website" />
-		<meta property="og:title" content="$(pageTitle)" />
+		<meta property="og:title" content="{{pageTitle}}" />
 		<meta property="og:site_name" content="Helix Documentation" />
 
-#		if (module) then
-			<meta property="og:description" content="$(moduleDescription(module))" />
-#		else
+		{% if (mod) then %}
+			<meta property="og:description" content="{{moduleDescription(mod)}}" />
+		{% else %}
 			<meta property="og:description" content="Documentation and function reference for the Helix framework." />
-#		end
+		{% end %}
 
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
-		<link rel="stylesheet" href="$(ldoc.css)" />
-		<link rel="stylesheet" href="$(root)highlight.css" />
+		<link rel="stylesheet" href="{* ldoc.css *}" />
+		<link rel="stylesheet" href="{* ldoc.url('highlight.css') *}" />
 	</head>
 
 	<body>
-		<aside>
-			<h1>Helix</h1>
+		<main>
+			{(docs/templates/sidebar.ltp)}
 
-			<!-- project contents -->
-			<section>
-#				for kind, mods, type in ldoc.kinds() do
-#					if (ldoc.allowed_in_contents(type, module)) then
-						<h2>$(kind)</h2>
-
-						<ul>
-#							for mod in mods() do
-#								local name = ldoc.display_name(mod)
-								<li><a href="$(ldoc.ref_to_module(mod))">$(name)</a></li>
-#							end
-						</ul>
-#					end
-#				end
-			</section>
-		</aside>
-
-		<!-- library functions -->
-		<article>
-#			if (ldoc.body) then -- we're rendering non-code elements
-				$(ldoc.body)
-#			elseif (module) then -- we're rendering libary contents
-				<header class="module">
-					<h1>$(module.name)</h1>
-					<h2>$(markup(module.summary))</h2>
-				</header>
-
-				<!-- description -->
-				<p>$(markup(module.description))</p>
-
-				<!-- summary -->
-				<details open>
-					<summary>Reference</summary>
-
-					<div class="contents">
-#						for kind, items in module.kinds() do
-							<h2>$(kind)</h2>
-							<ul>
-#								for item in items() do
-									<li><span class="realm $(item.tags.realm[1])"></span><a href="#$(item.name)">$(ldoc.display_name(item))</a></li>
-#								end
-							</ul>
-#						end
+			<article>
+				{% if (ldoc.root) then -- we're rendering the landing page (index.html) %}
+					{(docs/templates/landing.ltp)}
+				{% elseif (ldoc.body) then -- we're rendering non-code elements %}
+					<div class="wrapper">
+						{* ldoc.body *}
 					</div>
-				</details>
+				{% elseif (module) then -- we're rendering libary contents %}
+					<div class="wrapper">
+						{(docs/templates/module.ltp)}
+					</div>
+				{% end %}
+			</article>
+		</main>
 
-				<!-- methods -->
-#				for kind, items in module.kinds() do
-					<h1 class="title">$(kind)</h1>
-
-#					for item in items() do
-						<section class="method">
-#							if (item.usage) then -- function usage
-								<aside>
-#									for usage in iter(item.usage) do
-										<pre><code>$(usage)</code></pre>
-#									end
-								</aside>
-#							end
-							<header>
-								<a class="anchor" id="$(item.name)">
-									<h1><span class="realm $(item.tags.realm[1])"></span>$(ldoc.display_name(item))</h1>
-								</a>
-
-#								if (item.tags.internal) then
-									<div class="internal"></div>
-#								end
-
-#								if (item.module and item.module.type ~= "hooks") then
-									<a class="reference" href="$(repoReference(item))">View source &raquo;</a>
-#								end
-
-								<p>$(markup(ldoc.descript(item)))</p>
-							</header>
-
-#							if (item.params and #item.params > 0) then -- function arguments
-#								local subnames = module.kinds:type_of(item).subnames
-
-#								if (subnames) then
-									<h3>$(subnames)</h3>
-#								end
-
-#								for argument in iter(item.params) do
-#									local argument, sublist = item:subparam(argument)
-
-									<ul>
-#
-#										for argumentName in iter(argument) do
-#											local displayName = item:display_name_of(argumentName)
-#											local type = ldoc.typename(item:type_of_param(argumentName))
-#											local default = item:default_of_param(argumentName)
-
-											<li>
-												<span class="tag parameter">$(displayName)</span>
-
-#												if (type ~= "") then -- type
-													<span class="tag">$(type)</span>
-#												end
-
-#												if (default and default ~= true) then
-													<span class="tag default">default: $(default)</span>
-#												elseif (default) then
-													<span class="tag default">optional</span>
-#												end
-
-												<p>$(markup(item.params.map[argumentName]))</p>
-											</li>
-#										end
-									</ul>
-#								end
-#							end
-
-#							if ((not ldoc.no_return_or_parms) and item.retgroups) then -- function returns
-#								local groups = item.retgroups
-
-								<h3>Returns</h3>
-								<ul>
-#									for i, group in ldoc.ipairs(groups) do
-#										for returnValue in group:iter() do
-#											local type, ctypes = item:return_type(returnValue)
-#											type = ldoc.typename(type)
-
-											<li>
-#												if (type ~= "") then
-													$(type)
-#												else -- we'll assume that it will return a variable type if none is set
-													<span class="tag type">any</span>
-#												end
-
-												<p>$(markup(returnValue.text))</p>
-											</li>
-#										end
-
-#										if (i ~= #groups) then
-											<div class="or"><span>OR</span></div>
-#										end
-#									end
-								</ul>
-#							end
-
-#							if (item.see) then
-								<h3>See Also</h3>
-								<ul>
-#									for see in iter(item.see) do
-										<li><a href="$(ldoc.href(see))">$(see.label)</a></li>
-#									end
-								</ul>
-#							end
-						</section>
-#					end
-#				end
-# 			end
-		</article>
-
-		<footer>
-			<p>Generated by <a href="http://github.com/stevedonovan/LDoc">LDoc $(ldoc.version)</a></p>
-		</footer>
-
-		<script type="text/javascript" src="$(root)highlight.min.js"></script>
+		<script type="text/javascript" src="{* ldoc.url('app.js') *}"></script>
+		<script type="text/javascript" src="{* ldoc.url('highlight.min.js') *}"></script>
 		<script type="text/javascript">
-		var elements = document.querySelectorAll("aside code, pre code")
+			var elements = document.querySelectorAll("pre code")
 
-		hljs.configure({
-			languages: ["lua"]
-		});
+			hljs.configure({
+				languages: ["lua"]
+			});
 
-		for (var i = 0; i < elements.length; i++)
-		{
-			hljs.highlightBlock(elements[i]);
-		}
+			for (var i = 0; i < elements.length; i++)
+			{
+				hljs.highlightBlock(elements[i]);
+			}
 		</script>
 	</body>
 </html>

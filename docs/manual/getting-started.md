@@ -44,7 +44,7 @@ You'll need to download the schema from [GitHub](https://github.com/NebulousClou
 Next up is to modify the gamemode info so that Garry's Mod will properly recognize it. Rename `skeleton.txt` in your schema folder to your folder's name. In our example we would rename `skeleton.txt` to `myschema.txt`. Next, you'll need to modify the contents of `myschema.txt` and replace the existing information with your own - making sure to replace the `"skeleton"` at the top of the file to your folder's name. In our case we would replace it with `"myschema"`. Once you've renamed the file, you're all good to go!
 
 # Converting from Clockwork (Intermediate)
-If you are looking to switch to Helix from Clockwork, you can follow the @{10-converting-from-clockwork.md|conversion guide}.
+If you are looking to switch to Helix from Clockwork, you can follow the @{converting-from-clockwork|conversion guide}.
 
 # Starting from scratch (Intermediate)
 You can always create the gamemode files yourself if you'd like (although we suggest the skeleton schema in general). In general, a schema is a gamemode that is derived from `helix` and automatically loads `schema/sh_schema.lua`. You shouldn't have your schema files outside of the `schema` folder. The files you'll need are as follows:

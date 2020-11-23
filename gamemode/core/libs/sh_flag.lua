@@ -22,6 +22,8 @@ functionality whenever the flag is added or removed. For example:
 
 	print(Entity(1):GetCharacter():HasFlags("z"))
 	> false
+
+Check out `Character:GiveFlags` and `Character:TakeFlags` for additional info.
 ]]
 -- @module ix.flag
 

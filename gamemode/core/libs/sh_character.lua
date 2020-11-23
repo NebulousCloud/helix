@@ -315,12 +315,12 @@ do
 	--- Sets this character's name. This is automatically networked.
 	-- @realm server
 	-- @string name New name for the character
-	-- @function :SetName
+	-- @function SetName
 
 	--- Returns this character's name
 	-- @realm shared
 	-- @treturn string This character's current name
-	-- @function :GetName
+	-- @function GetName
 	ix.char.RegisterVar("name", {
 		field = "name",
 		fieldType = ix.type.string,
@@ -364,12 +364,12 @@ do
 	--- Sets this character's physical description. This is automatically networked.
 	-- @realm server
 	-- @string description New description for this character
-	-- @function :SetDescription
+	-- @function SetDescription
 
 	--- Returns this character's physical description.
 	-- @realm shared
 	-- @treturn string This character's current description
-	-- @function :GetDescription
+	-- @function GetDescription
 	ix.char.RegisterVar("description", {
 		field = "description",
 		fieldType = ix.type.text,
@@ -404,12 +404,12 @@ do
 	-- It is automatically networked.
 	-- @realm server
 	-- @string model New model for the character
-	-- @function :SetModel
+	-- @function SetModel
 
 	--- Returns this character's model.
 	-- @realm shared
 	-- @treturn string This character's current model
-	-- @function :GetModel
+	-- @function GetModel
 	ix.char.RegisterVar("model", {
 		field = "model",
 		fieldType = ix.type.string,
@@ -522,7 +522,7 @@ do
 	--- Returns this character's current class.
 	-- @realm shared
 	-- @treturn number Index of the class this character is in
-	-- @function :GetClass
+	-- @function GetClass
 	ix.char.RegisterVar("class", {
 		bNoDisplay = true,
 	})
@@ -531,12 +531,12 @@ do
 	-- changed, so you'll have to update some character vars manually.
 	-- @realm server
 	-- @number faction Index of the faction to transfer this character to
-	-- @function :SetFaction
+	-- @function SetFaction
 
 	--- Returns this character's faction.
 	-- @realm shared
 	-- @treturn number Index of the faction this character is currently in
-	-- @function :GetFaction
+	-- @function GetFaction
 	ix.char.RegisterVar("faction", {
 		field = "faction",
 		fieldType = ix.type.string,
@@ -674,12 +674,12 @@ do
 	--- Sets this character's current money. Money is only networked to the player that owns this character.
 	-- @realm server
 	-- @number money New amount of money this character should have
-	-- @function :SetMoney
+	-- @function SetMoney
 
 	--- Returns this character's money. This is only valid on the server and the owning client.
 	-- @realm shared
 	-- @treturn number Current money of this character
-	-- @function :GetMoney
+	-- @function GetMoney
 	ix.char.RegisterVar("money", {
 		field = "money",
 		fieldType = ix.type.number,
@@ -694,7 +694,7 @@ do
 	-- @realm server
 	-- @string key Name of the field that holds the data
 	-- @param value Any value to store in the field, as long as it's supported by GMod's JSON parser
-	-- @function :SetData
+	-- @function SetData
 
 	--- Returns a data field set on this character. If it doesn't exist, it will return the given default or `nil`. This is only
 	-- valid on the server and the owning client.
@@ -703,7 +703,7 @@ do
 	-- @param default Value to return if the given key doesn't exist, or is `nil`
 	-- @return[1] Data stored in the field
 	-- @treturn[2] nil If the data doesn't exist, or is `nil`
-	-- @function :GetData
+	-- @function GetData
 	ix.char.RegisterVar("data", {
 		default = {},
 		isLocal = true,
@@ -791,7 +791,7 @@ do
 	--- Returns the Unix timestamp of when this character was created (i.e the value of `os.time()` at the time of creation).
 	-- @realm server
 	-- @treturn number Unix timestamp of when this character was created
-	-- @function :GetCreateTime
+	-- @function GetCreateTime
 	ix.char.RegisterVar("createTime", {
 		field = "create_time",
 		fieldType = ix.type.number,
@@ -803,7 +803,7 @@ do
 	--- Returns the Unix timestamp of when this character was last used by its owning player.
 	-- @realm server
 	-- @treturn number Unix timestamp of when this character was last used
-	-- @function :GetLastJoinTime
+	-- @function GetLastJoinTime
 	ix.char.RegisterVar("lastJoinTime", {
 		field = "last_join_time",
 		fieldType = ix.type.number,
@@ -817,7 +817,7 @@ do
 	-- database, and need to differentiate between them.
 	-- @realm server
 	-- @treturn string Schema this character belongs to
-	-- @function :GetSchema
+	-- @function GetSchema
 	ix.char.RegisterVar("schema", {
 		field = "schema",
 		fieldType = ix.type.string,
@@ -830,7 +830,7 @@ do
 	--- Returns the 64-bit Steam ID of the player that owns this character.
 	-- @realm server
 	-- @treturn string Owning player's Steam ID
-	-- @function :GetSteamID
+	-- @function GetSteamID
 	ix.char.RegisterVar("steamID", {
 		field = "steamid",
 		fieldType = ix.type.steamid,

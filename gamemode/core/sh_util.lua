@@ -180,7 +180,7 @@ do
 	--- Returns the `ix.type` of the given value.
 	-- @realm shared
 	-- @param value Value to get the type of
-	-- @treturn ixtype Type of value
+	-- @treturn ix.type Type of value
 	-- @see ix.type
 	-- @usage print(ix.util.GetTypeFromValue("hello"))
 	-- > 2 -- i.e the value of ix.type.string

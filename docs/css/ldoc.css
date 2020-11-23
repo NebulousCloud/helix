@@ -1,9 +1,45 @@
 
-/* accent: rgb(115, 53, 142) */
+:root {
+	--content-width: 1200px;
+	--sidebar-width: 330px;
+
+	--padding-big: 48px;
+	--padding-normal: 24px;
+	--padding-small: 16px;
+	--padding-tiny: 10px;
+
+	--font-massive: 32px;
+	--font-huge: 24px;
+	--font-big: 18px;
+	--font-normal: 16px;
+	--font-tiny: 12px;
+
+	--font-style-normal: Segoe UI, Helvetica, Arial, sans-serif;
+	--font-style-code: Consolas, monospace;
+
+	--color-accent: rgb(115, 53, 142);
+	--color-accent-dark: rgb(85, 39, 105);
+	--color-white: rgb(255, 255, 255);
+	--color-offwhite: rgb(200, 200, 200);
+	--color-white-accent: rgb(203, 190, 209);
+	--color-black: rgb(0, 0, 0);
+	--color-lightgrey: rgb(160, 160, 160);
+	--color-background-light: rgb(240, 240, 240);
+	--color-background-dark: rgb(33, 33, 33);
+}
 
 * {
 	padding: 0;
 	margin: 0;
+	box-sizing: border-box;
+}
+
+body {
+	background-color: var(--color-background-light);
+	font-family: var(--font-style-normal);
+
+	display: flex;
+	flex-direction: column;
 }
 
 a {
@@ -16,19 +52,37 @@ h1, h2, h3, h4 {
 }
 
 ul li {
-	margin-left: 24px;
+	margin-left: var(--padding-small);
 }
 
-h1.title {
-	color: rgb(255, 255, 255);
-	background-color: rgb(115, 53, 142);
-	margin: 16px 0 16px 0;
-	padding: 8px;
+/* landing */
+.landing {
+	background-color: var(--color-accent);
+	color: var(--color-white);
 
-	font-size: 20px;
+	padding: 128px 0 128px 0;
+}
+
+.landing h1 {
+	margin: 0;
+	padding: 0;
+	border: none;
+
 	font-weight: 100;
-	letter-spacing: 2px;
-	text-transform: uppercase;
+	font-size: var(--font-massive);
+	text-align: center;
+}
+
+.wrapper {
+	padding: var(--padding-small);
+}
+
+details {
+	user-select: none;
+}
+
+details summary {
+	outline: none;
 }
 
 code {
@@ -39,6 +93,17 @@ code {
 	-moz-tab-size: 4;
 	padding: 2px 4px;
 	background-color: rgb(33, 33, 33, 0.1);
+}
+
+pre {
+	background-color: rgb(33, 33, 33, 0.1);
+	margin-top: var(--padding-small);
+	padding: var(--padding-tiny);
+	overflow: auto;
+}
+
+pre code {
+	background-color: transparent;
 }
 
 span.realm {
@@ -61,126 +126,162 @@ span.realm.server {
 	background-color: #08f;
 }
 
-a.reference {
-	color: rgb(115, 53, 142);
-	float: right;
-	margin-top: 8px;
-	padding-left: 8px;
-	font-size: 14px;
-	font-weight: 600;
-}
+/* wrapper element for sidebar/content */
+main {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: flex-start;
 
-.internal::before {
-	content: "This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.";
-}
-
-.internal {
-	color: rgb(255, 255, 255);
-	background-color: rgb(237, 54, 96);
-	margin-top: 8px;
-	padding: 8px;
-}
-
-body {
-	display: grid;
-
-	grid-template-areas:
-		"header header"
-		"sidebar content"
-		"footer footer";
-
-	grid-template-columns: 300px 1fr;
-	grid-template-rows: auto 1fr;
-	grid-gap: 0;
-
-	height: 100vh;
-	font-family: Segoe UI, Helvetica, Arial, sans-serif;
-	background-color: rgb(230, 230, 230);
-}
-
-header {
-	grid-area: header;
+	width: var(--content-width);
+	margin: auto;
 }
 
 /* sidebar */
-aside {
-	grid-area: sidebar;
-	background-color: rgb(33, 33, 33);
-	color: rgb(200, 200, 200);
-	padding-bottom: 16px;
+nav {
+	color: var(--color-offwhite);
+	background-color: var(--color-background-dark);
+
+	position: fixed;
+	display: flex;
+	flex-direction: column;
+
+	width: var(--sidebar-width);
+	height: 100%;
 }
 
-aside h1 {
-	color: rgb(255, 255, 255);
-	background-color: rgb(115, 53, 142);
-	padding: 16px;
-	margin-bottom: 12px;
+/* sidebar header */
+nav header {
+	color: var(--color-white);
+	background-color: var(--color-accent);
 
-	font-size: 24px;
+	padding: var(--padding-small);
+}
+
+nav header h1 {
+	font-size: var(--font-huge);
+	font-weight: 100;
 	text-align: center;
+
+	margin-bottom: var(--padding-small);
 }
 
-aside section {
+#search {
+	background-color: var(--color-accent-dark);
+	color: var(--color-white);
+
+	border: none;
+	font-size: var(--font-normal);
+	outline: none;
+
+	width: 100%;
+	padding: 6px;
 }
 
-aside section > :not(ul) {
-	padding-left: 16px;
+#search::placeholder {
+	color: var(--color-white-accent);
 }
 
-aside section h2 {
-	color: rgb(115, 53, 142);
-	margin: 8px 0 8px 0;
+#search::-webkit-search-cancel-button {
+	display: none;
+}
 
-	font-size: 18px;
+/* sidebar contents */
+nav section {
+	padding: var(--padding-small);
+	overflow: auto;
+}
+
+nav section ul {
+	list-style-type: none;
+}
+
+nav section::-webkit-scrollbar,
+pre::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+nav section::-webkit-scrollbar-track,
+pre::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+nav section::-webkit-scrollbar-thumb {
+	background-color: var(--color-lightgrey);
+}
+
+pre::-webkit-scrollbar-thumb {
+	background-color: var(--color-lightgrey);
+}
+
+/* sidebar contents category */
+nav section details.category {
+	padding-top: var(--padding-tiny);
+}
+
+nav section details.category > ul > li {
+	margin: 0;
+	line-height: 1.5;
+}
+
+nav section details.category > ul > li a {
+	display: inline-block;
+	width: 90%;
+}
+
+nav section details.category:first-of-type {
+	padding-top: calc(var(--padding-tiny) * -1);
+}
+
+nav section details.category summary::-webkit-details-marker {
+	opacity: 0.5;
+	cursor: pointer;
+}
+
+nav section details.category summary h2 {
+	color: var(--color-accent);
+
+	font-size: var(--font-big);
 	letter-spacing: 2px;
 	text-transform: uppercase;
-}
+	cursor: pointer;
 
-aside section ul {
-}
-
-aside section ul li {
-	list-style: none;
-	margin: 0;
-	padding: 2px 2px 2px 16px;
-}
-
-aside section ul li:hover {
-	background-color: rgba(115, 53, 142, 0.2);
-}
-
-aside section ul li a {
-	display: block;
+	padding-bottom: var(--padding-tiny);
 }
 
 /* content */
 article {
-	grid-area: content;
-	padding: 8px;
-	max-width: 800px;
-
 	background-color: rgb(255, 255, 255);
+
+	width: calc(100% - var(--sidebar-width));
+	min-height: 100vh;
+	margin-left: var(--sidebar-width);
+}
+
+article .wrapper > *:first-child {
+	margin-top: 0;
 }
 
 /* header */
 article header {
 	color: rgb(255, 255, 255);
 	background-color: rgb(115, 53, 142);
-	padding: 8px;
+	padding: var(--padding-tiny);
 }
 
 article header h1 {
 	border-bottom: 1px solid rgba(255, 255, 255, 0.25);
 	padding-bottom: 8px;
-	font-family: "Source Code Pro", monospace;
+	font-family: var(--font-style-code);
 	margin: 0;
 }
 
 article header h2 {
-	padding-top: 8px;
+	padding-top: var(--padding-tiny);
 	margin: 0;
-	font-weight: 600;
-	font-size: 16px;
+	font-size: var(--font-normal);
+	font-weight: normal;
 }
 
 article header.module a {
@@ -188,42 +289,12 @@ article header.module a {
 	text-decoration: underline;
 }
 
-/* function summary */
-article details {
-	background-color: rgb(230, 230, 230);
-	margin-top: 8px;
-}
-
-article details summary {
-	background-color: rgb(115, 53, 142);
-	color: rgb(255, 255, 255);
-	padding: 8px;
-}
-
-article details .contents {
-	padding: 0 8px 8px 8px;
-	margin: 0;
-}
-
-article details .contents h2 {
-	color: rgb(115, 53, 142);
-	margin: 0;
-	margin: 8px 0 6px 0;
-	font-size: 20px;
-	letter-spacing: 2px;
-	text-transform: uppercase;
-}
-
-article details .contents ul li {
-	font-size: 18px;
-	font-family: "Source Code Pro", monospace;
+details.category > summary {
 	list-style: none;
-	margin: 0;
 }
 
-article details a {
-	color: inherit !important;
-	font-weight: inherit !important;
+details.category > summary::-webkit-details-marker {
+	display: none;
 }
 
 article h1 {
@@ -243,12 +314,12 @@ article h2 {
 
 article h3 {
 	color: rgb(115, 53, 142);
-	margin-top: 12px;
+	margin-top: var(--padding-tiny);
 	text-transform: uppercase;
 }
 
 article p {
-	margin-top: 16px;
+	margin-top: var(--padding-small);
 }
 
 article p a,
@@ -259,18 +330,61 @@ article h2 a {
 	font-weight: 600;
 }
 
-article pre {
+article h1.title {
 	color: rgb(255, 255, 255);
-	background-color: rgb(33, 33, 33);
-	padding: 8px;
-	margin-top: 8px;
+	background-color: rgb(115, 53, 142);
+	margin-top: var(--padding-small);
+	margin-bottom: 0;
+	padding: var(--padding-tiny);
+
+	font-size: var(--font-big);
+	font-weight: 100;
+	letter-spacing: 2px;
+	text-transform: uppercase;
 }
 
-article pre code {
-	color: rgb(255, 255, 255);
-	background-color: rgb(33, 33, 33);
-	font-weight: 300;
-	padding: 0;
+a.reference {
+	color: rgb(115, 53, 142);
+	float: right;
+	margin-top: 8px;
+	padding-left: 8px;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.notice {
+	--color-notice-background: var(--color-accent);
+	--color-notice-text: var(--color-notice-background);
+
+	margin-top: var(--padding-tiny);
+	border: 2px solid var(--color-notice-background);
+}
+
+.notice.error {
+	--color-notice-background: rgb(194, 52, 130);
+}
+
+.notice.warning {
+	--color-notice-background: rgb(224, 169, 112);
+	--color-notice-text: rgb(167, 104, 37);
+}
+
+.notice .title {
+	color: var(--color-white);
+	background-color: var(--color-notice-background);
+
+	padding: var(--padding-tiny);
+	font-size: var(--font-normal);
+
+	text-transform: uppercase;
+	letter-spacing: 2px;
+}
+
+.notice p {
+	color: var(--color-notice-text);
+
+	margin: 0 !important;
+	padding: var(--padding-tiny);
 }
 
 /* function/table */
@@ -278,8 +392,8 @@ article pre code {
 	display: flex;
 	flex-flow: column;
 	background-color: rgb(230, 230, 230);
-	padding: 8px;
-	margin-top: 8px;
+	padding: var(--padding-tiny);
+	margin-top: var(--padding-small);
 }
 
 .method header {
@@ -301,75 +415,56 @@ article pre code {
 
 .method header h1 {
 	font-family: "Source Code Pro", monospace;
-	padding-bottom: 8px;
+	padding-bottom: var(--padding-tiny);
 	border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 	font-size: 20px;
 }
 
 .method header p:first-of-type {
-	margin-top: 8px;
+	margin-top: var(--padding-tiny);
 }
 
 .method h3 {
 	color: rgb(115, 53, 142);
-	font-size: 16px;
+	font-size: var(--font-normal);
 	letter-spacing: 2px;
 	text-transform: uppercase;
 }
 
-.method aside {
-	position: absolute;
-	left: 1116px;
-	margin-top: -8px;
-	width: calc(100% - 1148px);
-	padding: 16px;
-	overflow: auto;
+.method pre {
+	margin-top: var(--padding-tiny);
 }
 
-.method aside pre {
-	color: rgb(255, 255, 255);
-	background-color: rgb(33, 33, 33);
-	padding: 0;
-	margin: 0;
-}
-
-.method aside pre code {
-	font-size: 16px;
-	font-weight: 300;
-}
-
-@media only screen and (max-width: 1500px)
-{
-	.method aside {
+@media only screen and (max-width: 1100px) {
+	main nav {
 		position: inherit;
-		left: 0;
-		margin-top: 8px;
-		width: auto;
-		padding: 8px;
-		order: 0;
 	}
 
-	.method aside code {
-		font-size: 14px;
+	main article {
+		margin-left: 0;
 	}
 }
 
 .method ul {
-	margin-top: 2px;
+	margin-top: var(--padding-tiny);
 	background-color: inherit;
 }
 
 .method ul li {
 	list-style: none;
-	margin: 4px 0 0 32px;
+	margin: 4px 0 0 var(--padding-normal);
+}
+
+.method ul li:first-of-type {
+	margin-top: 0;
 }
 
 .method ul li p {
-	margin: 4px 0 0 32px;
+	margin: 4px 0 0 var(--padding-normal);
 }
 
 .method ul li pre {
-	margin: 4px 0 0 32px;
+	margin: 4px 0 0 var(--padding-normal);
 }
 
 .method ul li a {
@@ -424,18 +519,4 @@ a.type {
 .or span {
 	background-color: inherit;
 	padding: 0 8px 0 8px;
-}
-
-/* footer */
-footer {
-	grid-area: footer;
-	color: rgb(180, 180, 180);
-	background-color: rgb(66, 66, 66);
-
-	padding: 8px;
-	text-align: center;
-}
-
-footer .timestamp {
-	font-family: "Source Code Pro", monospace;
 }

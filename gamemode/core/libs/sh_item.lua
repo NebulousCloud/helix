@@ -961,7 +961,7 @@ end
 -- @classmod Character
 
 --- Returns this character's associated `Inventory` object.
--- @function :GetInventory
+-- @function GetInventory
 -- @realm shared
 -- @treturn Inventory This character's inventory
 ix.char.RegisterVar("Inventory", {

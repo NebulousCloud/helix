@@ -1,0 +1,69 @@
+
+{%
+local function isKindExpandable(kind)
+	return kind ~= "Manual"
+end
+%}
+
+<nav>
+	<header>
+		{% if (not ldoc.root) then %}
+			<h1><a href="{* ldoc.url('') *}">Helix Documentation</a></h1>
+		{% end %}
+		<input id="search" type="search" autocomplete="off" placeholder="Search..." />
+	</header>
+
+	<section>
+		{% for kind, mods, type in ldoc.kinds() do %}
+			{% if (ldoc.allowed_in_contents(type, mod)) then %}
+				<details class="category" open>
+					<summary>
+						<h2>{{kind}}</h2>
+					</summary>
+
+					<ul>
+						{% for currentMod in mods() do %}
+							{% local name = ldoc.display_name(currentMod) %}
+							<li>
+								{% if (isKindExpandable(kind)) then %}
+									<details {{currentMod.name == (mod or {}).name and "open" or ""}}>
+									<summary><a href="{* ldoc.ref_to_module(currentMod) *}">{{name}}</a></summary>
+
+									<ul>
+								{% else %}
+									<a href="{* ldoc.ref_to_module(currentMod) *}">{{name}}</a>
+								{% end %}
+
+								{% if (isKindExpandable(kind)) then
+									currentMod.items:sort(function(a, b)
+										return a.name < b.name
+									end)
+								end %}
+
+								{% for k, v in pairs(currentMod.items) do %}
+									{% if (v.kind == "functions") then %}
+										<li>
+											{* ldoc.realm_icon(v.tags.realm[1]) *}
+											<a href="{* ldoc.ref_to_module(currentMod) *}#{{v.name}}">
+												{% if (ldoc.is_kind_classmethod(currentMod.kind)) then
+													echo((v.name:gsub(".+:", "")))
+												else
+													echo((v.name:gsub(currentMod.name .. ".", "")))
+												end %}
+											</a>
+										</li>
+									{% end %}
+								{% end %}
+
+								{% if (isKindExpandable(kind)) then %}
+									</ul>
+									</details>
+								{% end %}
+							</li>
+						{% end %}
+					</ul>
+				</details>
+			{% end %}
+		{% end %}
+	</section>
+</nav>

@@ -152,6 +152,8 @@ end
 -- @realm shared
 -- @string command Name of the command (recommended in UpperCamelCase)
 -- @tparam CommandStructure data Data describing the command
+-- @see CommandStructure
+-- @see CommandArgumentsStructure
 function ix.command.Add(command, data)
 	data.name = string.gsub(command, "%s", "")
 	data.description = data.description or ""

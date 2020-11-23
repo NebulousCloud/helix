@@ -1,0 +1,19 @@
+
+<div class="landing">
+	<h1>Helix Documentation</h1>
+</div>
+
+<div class="wrapper">
+	<p style="text-align: center;">Welcome to the documentation for Helix - the better gamemode framework.</p>
+	<h2>Developers</h2>
+	<p>The sidebar shows the entire contents of the documentation. Libraries, functions, etc are all searchable with the search box at the top of the sidebar. Migrating from Clockwork? Check out the <a href="{* ldoc.url('manual/converting-from-clockwork') *}">conversion guide</a> in the manual.</p>
+	<h2>Server owners</h2>
+	<p>If you're looking to get your Helix server up and running as soon as possible, check out the <a href="{* ldoc.url('manual/getting-started') *}">Getting Started</a> guide in the manual.</p>
+	<h2>Community</h2>
+	<p>Questions? Want to show off your work? Maybe drop a new plugin release? Come join our community <a href="https://discord.gg/2AutUcF" target="_blank">Discord server</a>.</p>
+	<h2>Contributing</h2>
+	<p>Helix is a large project and there are still a few things missing here and there. Contributions to the documentation - from function references, to simple typo fixes - are welcomed! Check out the <code>ix.storage</code> library's <a href="https://github.com/NebulousCloud/helix/blob/master/gamemode/core/libs/sh_storage.lua" target="_blank">source code</a> for a good example on how to write documentation. You'll need a basic understanding of <a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Markdown</a>, since it's used extensively to generate the markup.</p>
+	<p>If you'd like to contribute code, you can visit the <a href="https://github.com/NebulousCloud/helix/" target="_blank">GitHub repository</a> and make a pull request.</p>
+	<h2>Learning</h2>
+	<p>Getting started on developing with the Helix framework requires an intermediate level of Garry's Mod Lua knowledge. You'll want to learn the basics before you get starting making a schema. The <a href="https://wiki.facepunch.com/gmod/" target="_blank">Garry's Mod Wiki</a> is a good place to start.</p>
+</div>
