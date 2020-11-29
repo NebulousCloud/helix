@@ -33,8 +33,6 @@ if (SERVER) then
 			physObj:EnableMotion(true)
 			physObj:Wake()
 		end
-
-		hook.Run("OnItemSpawned", self)
 	end
 
 	function ENT:Use(activator, caller)

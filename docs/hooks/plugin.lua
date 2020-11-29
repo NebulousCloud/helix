@@ -566,7 +566,14 @@ end
 function OnCharacterMenuCreated(panel)
 end
 
---- @realm shared
+--- Called whenever an item entity has spawned in the world. You can access the entity's item table with
+-- `entity:GetItemTable()`.
+-- @realm server
+-- @entity entity Spawned item entity
+-- @usage function PLUGIN:OnItemSpawned(entity)
+-- 	local item = entity:GetItemTable()
+-- 	-- do something with the item here
+-- end
 function OnItemSpawned(entity)
 end
 

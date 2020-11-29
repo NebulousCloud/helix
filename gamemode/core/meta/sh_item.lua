@@ -373,7 +373,6 @@ if (SERVER) then
 			local entity = ents.Create("ix_item")
 			entity:Spawn()
 			entity:SetAngles(angles or Angle(0, 0, 0))
-			-- Make the item represent this item.
 			entity:SetItem(self.id)
 
 			-- If the first argument is a player, then we will find a position to drop
@@ -391,7 +390,7 @@ if (SERVER) then
 				entity:SetNetVar("owner", entity.ixCharID)
 			end
 
-			-- Return the newly created entity.
+			hook.Run("OnItemSpawned", entity)
 			return entity
 		end
 	end
