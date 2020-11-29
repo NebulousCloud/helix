@@ -552,7 +552,7 @@ OnCharacterGetup											</a>
 OnCharacterMenuCreated											</a>
 										</li>
 										<li>
-											<span class="realm shared"></span>
+											<span class="realm server"></span>
 											<a href="../../hooks/plugin/#OnItemSpawned">
 OnItemSpawned											</a>
 										</li>
@@ -6606,15 +6606,13 @@ end
 		<section class="method">
 			<header>
 				<a class="anchor" id="OnItemSpawned">
-					<h1><span class="realm shared"></span></span>PLUGIN:OnItemSpawned(entity)</h1>
+					<h1><span class="realm server"></span></span>PLUGIN:OnItemSpawned(entity)</h1>
 				</a>
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called whenever an item entity has spawned in the world.  You can access the entity's item table with
+ <code>entity:GetItemTable()</code>.</p>
 			</header>
 
 
@@ -6626,15 +6624,20 @@ end
 							<li>
 								<span class="tag parameter">entity</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Spawned item entity</p>
 							</li>
 					</ul>
 
 
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:OnItemSpawned(entity)
+	local item = entity:GetItemTable()
+	-- do something with the item here
+end
+</code></pre>
 
 		</section>
 		<section class="method">
