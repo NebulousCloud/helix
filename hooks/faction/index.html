@@ -2545,7 +2545,7 @@ end
 		<section class="method">
 			<header>
 				<a class="anchor" id="OnTransferred">
-					<h1><span class="realm server"></span></span>FACTION:OnTransferred(client)</h1>
+					<h1><span class="realm server"></span></span>FACTION:OnTransferred(character)</h1>
 				</a>
 
 
@@ -2560,19 +2560,18 @@ end
 					<ul>
 
 							<li>
-								<span class="tag parameter">client</span>
+								<span class="tag parameter">character</span>
 
-									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
+									<span class="tag"><a class="type" href="../../classes/character/#">Character</a></span>
 
 
-								<p> Player whose character has been transferred</p>
+								<p> Character that was transferred</p>
 							</li>
 					</ul>
 
 
 				<h3>Example Usage</h3>
-					<pre><code>function FACTION:OnTransferred(client)
-	local character = client:GetCharacter()
+					<pre><code>function FACTION:OnTransferred(character)
 	character:SetModel(self.models[1])
 end
 </code></pre>
