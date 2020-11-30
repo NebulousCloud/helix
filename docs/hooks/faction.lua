@@ -40,9 +40,8 @@ end
 
 --- Called when a player's character has been transferred to this faction.
 -- @realm server
--- @player client Player whose character has been transferred
--- @usage function FACTION:OnTransferred(client)
--- 	local character = client:GetCharacter()
+-- @character character Character that has been transferred
+-- @usage function FACTION:OnTransferred(character)
 -- 	character:SetModel(self.models[1])
 -- end
 function OnTransferred(client)
