@@ -466,7 +466,7 @@ if (SERVER) then
 				if !(x and y) or (x < 1 or y < 1 or x + self.width - 1 > inventory.w or y + self.height - 1 > inventory.h) then
 					x, y, bagInv = inventory:FindEmptySlot(self.width, self.height)
 				end
-				
+
 				if !(x and y) then
 					return false, "noFit"
 				end
