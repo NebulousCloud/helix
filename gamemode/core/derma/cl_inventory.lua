@@ -83,6 +83,7 @@ function PANEL:DoRightClick()
 		end
 
 		for k, v in SortedPairs(itemTable.functions) do
+			if (k == "combine") then continue end
 			if (k == "drop" or (v.OnCanRun and v.OnCanRun(itemTable) == false)) then
 				continue
 			end
@@ -187,17 +188,39 @@ function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY)
 		return
 	end
 
-	if (!IsValid(inventoryPanel)) then
-		local inventoryID = self.inventoryID
+	local inventoryID = self.inventoryID
 
+	if (IsValid(inventoryPanel)) then
+		local data = self.dropPos[inventoryPanel]
+
+		if (IsValid(data) and inventoryID) then
+			local targetItem = data.itemTable
+			if (targetItem.id == item.id) then return end
+
+			if (item.functions) then
+				local combine = item.functions.combine
+
+				if (combine) then
+					item.player = LocalPlayer()
+
+					-- CanRun == can item combine into?
+					if (combine.OnCanRun and (combine.OnCanRun(item, {targetItem.id}) != false)) then
+						InventoryAction("combine", item.id, inventoryID, {targetItem.id})
+					end
+
+					item.player = nil
+				end
+			end
+		elseif (inventoryPanel:IsAllEmpty(gridX, gridY, item.width, item.height, self)) then
+			local oldX, oldY = self.gridX, self.gridY
+
+			if (oldX != gridX or oldY != gridY or self.inventoryID != inventoryPanel.invID) then
+				self:Move(gridX, gridY, inventoryPanel)
+			end
+		end
+	else
 		if (inventoryID) then
 			InventoryAction("drop", item.id, inventoryID, {})
-		end
-	elseif (inventoryPanel:IsAllEmpty(gridX, gridY, item.width, item.height, self)) then
-		local oldX, oldY = self.gridX, self.gridY
-
-		if (oldX != gridX or oldY != gridY or self.inventoryID != inventoryPanel.invID) then
-			self:Move(gridX, gridY, inventoryPanel)
 		end
 	end
 end
@@ -493,13 +516,16 @@ function PANEL:PaintDragPreview(width, height, mouseX, mouseY, itemPanel)
 				return
 			end
 		end
+		
+		itemPanel.dropPos = itemPanel.dropPos or {}
 
 		local bEmpty = true
+		local x2, y2 = 0, 0
 
 		for x = 0, itemPanel.gridW - 1 do
 			for y = 0, itemPanel.gridH - 1 do
-				local x2 = dropX + x
-				local y2 = dropY + y
+				x2 = dropX + x
+				y2 = dropY + y
 
 				bEmpty = self:IsEmpty(x2, y2, itemPanel)
 
@@ -511,6 +537,8 @@ function PANEL:PaintDragPreview(width, height, mouseX, mouseY, itemPanel)
 		end
 
 		::finish::
+		itemPanel.dropPos[self] = self.slots[x2][y2].item
+		
 		local previewColor = ColorAlpha(derma.GetColor(bEmpty and "Success" or "Error", self, Color(200, 0, 0)), 20)
 
 		surface.SetDrawColor(previewColor)
