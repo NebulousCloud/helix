@@ -76,9 +76,9 @@ function ITEM:OnInstanced(invID, x, y)
 	if self:GetData("id") then
 		return
 	end
-	
+
 	local inventory = ix.item.inventories[invID]
-	
+
 	ix.item.NewInv(inventory and inventory.owner or 0, self.uniqueID, function(inv)
 		local client = inv:GetOwner()
 
