@@ -516,7 +516,7 @@ function PANEL:PaintDragPreview(width, height, mouseX, mouseY, itemPanel)
 				return
 			end
 		end
-		
+
 		itemPanel.dropPos = itemPanel.dropPos or {}
 
 		local bEmpty = true
@@ -538,7 +538,7 @@ function PANEL:PaintDragPreview(width, height, mouseX, mouseY, itemPanel)
 
 		::finish::
 		itemPanel.dropPos[self] = self.slots[x2][y2].item
-		
+
 		local previewColor = ColorAlpha(derma.GetColor(bEmpty and "Success" or "Error", self, Color(200, 0, 0)), 20)
 
 		surface.SetDrawColor(previewColor)
