@@ -593,7 +593,7 @@ if (SERVER) then
 			end
 
 			local oldInvID = item.invID
-			
+
 			targetInv.slots[x] = targetInv.slots[x] or {}
 			targetInv.slots[x][y] = true
 
