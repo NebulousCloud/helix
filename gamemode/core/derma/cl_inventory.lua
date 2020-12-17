@@ -191,10 +191,10 @@ function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY)
 	local inventoryID = self.inventoryID
 
 	if (IsValid(inventoryPanel)) then
-		local data = self.dropPos[inventoryPanel]
+		local dropSlot = inventoryPanel.dropSlot
 
-		if (IsValid(data) and inventoryID) then
-			local targetItem = data.itemTable
+		if (IsValid(dropSlot) and inventoryID) then
+			local targetItem = dropSlot.itemTable
 			if (targetItem.id == item.id) then return end
 
 			if (item.functions) then
@@ -517,7 +517,7 @@ function PANEL:PaintDragPreview(width, height, mouseX, mouseY, itemPanel)
 			end
 		end
 
-		itemPanel.dropPos = itemPanel.dropPos or {}
+		self.dropSlot = nil
 
 		local bEmpty = true
 		local x2, y2 = 0, 0
@@ -537,7 +537,7 @@ function PANEL:PaintDragPreview(width, height, mouseX, mouseY, itemPanel)
 		end
 
 		::finish::
-		itemPanel.dropPos[self] = self.slots[x2][y2].item
+		self.dropSlot = self.slots[x2][y2].item
 
 		local previewColor = ColorAlpha(derma.GetColor(bEmpty and "Success" or "Error", self, Color(200, 0, 0)), 20)
 
