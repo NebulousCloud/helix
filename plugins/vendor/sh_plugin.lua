@@ -541,18 +541,18 @@ else
 			editor.bubble:SetValue(data and 1 or 0)
 		elseif (key == "mode") then
 			if (data[2] == nil) then
-				editor.lines[data[1]]:SetValue(2, L"none")
+				editor.lines[data[1]]:SetValue(3, L"none")
 			else
-				editor.lines[data[1]]:SetValue(2, L(VENDOR_TEXT[data[2]]))
+				editor.lines[data[1]]:SetValue(3, L(VENDOR_TEXT[data[2]]))
 			end
 		elseif (key == "price") then
-			editor.lines[data]:SetValue(3, entity:GetPrice(data))
+			editor.lines[data]:SetValue(4, entity:GetPrice(data))
 		elseif (key == "stockDisable") then
-			editor.lines[data]:SetValue(4, "-")
+			editor.lines[data]:SetValue(5, "-")
 		elseif (key == "stockMax" or key == "stock") then
 			local current, max = entity:GetStock(data)
 
-			editor.lines[data]:SetValue(4, current.."/"..max)
+			editor.lines[data]:SetValue(5, current.."/"..max)
 		elseif (key == "faction") then
 			local uniqueID = data[1]
 			local state = data[2]
