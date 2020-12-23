@@ -146,7 +146,7 @@ do
 	end
 
 	--- Returns all of the flags this character has.
-	-- @realm server
+	-- @realm shared
 	-- @treturn string Flags this character has represented as one string. You can access individual flags by iterating through
 	-- the string letter by letter
 	function character:GetFlags()
@@ -154,7 +154,7 @@ do
 	end
 
 	--- Returns `true` if the character has the given flag(s).
-	-- @realm server
+	-- @realm shared
 	-- @string flags Flag(s) to check access for
 	-- @treturn bool Whether or not this character has access to the given flag(s)
 	function character:HasFlags(flags)
