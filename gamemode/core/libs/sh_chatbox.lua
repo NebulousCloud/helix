@@ -238,6 +238,8 @@ if (SERVER) then
 			end
 
 			if (ix.config.Get("chatAutoFormat") and hook.Run("CanAutoFormatMessage", speaker, chatType, text)) then
+				text = string.Trim(text)
+
 				local last = text:utf8sub(-1)
 
 				if (last != "." and last != "?" and last != "!" and last != "-" and last != "\"") then
