@@ -436,5 +436,15 @@ LANGUAGE = {
 	cmdOOC = "Отправить сообщение в глобальный out-of-character чат .",
 	cmdLOOC = "Отправить сообщение в локальный out-of-character чат.",
 
+	Ammunition = "Боеприпасы",
+	Storage = "Вместилища",
+	Outfit = "Одежда",
+	Weapons = "Оружие",
+
+	Load = "Зарядить",
+	View = "Просмотреть",
+	Unequip = "Стянуть",
+	Equip = "Экипировать",
+
 	Instructions = "Информация"
 }
