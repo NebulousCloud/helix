@@ -193,14 +193,13 @@ function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY)
 	if (IsValid(inventoryPanel)) then
 		local dropSlot = inventoryPanel.dropSlot
 
-		if (IsValid(dropSlot) and inventoryID) then
-			local targetItem = dropSlot.itemTable
-			if (targetItem.id == item.id) then return end
-
+		if (IsValid(dropSlot) and inventoryID and dropSlot.itemTable.id != item.id) then
 			if (item.functions) then
 				local combine = item.functions.combine
 
 				if (combine) then
+					local targetItem = dropSlot.itemTable
+
 					item.player = LocalPlayer()
 
 					-- CanRun == can item combine into?
