@@ -385,12 +385,16 @@ function PANEL:OnQuantityChanged()
 		end
 	end
 
-	self.current:SetText(L"currentMoney"..ix.currency.Get(money))
-	self.total:SetText("- "..ix.currency.Get(price))
-	self.final:SetText(L"moneyLeft"..ix.currency.Get(money - price))
+	self.current:SetText(L"currentMoney" .. ix.currency.Get(money))
+	self.total:SetText("- " .. ix.currency.Get(price))
+	self.final:SetText(L"moneyLeft" .. ix.currency.Get(money - price))
 	self.final:SetTextColor((money - price) >= 0 and Color(46, 204, 113) or Color(217, 30, 24))
 
 	self.preventBuy = (money - price) < 0 or valid == 0
+
+	if (IsValid(ix.gui.business)) then
+		ix.gui.business.checkout:SetText(L("checkout", ix.gui.business:GetCartCount()))
+	end
 end
 
 function PANEL:SetCart(items)
@@ -435,12 +439,22 @@ function PANEL:SetCart(items)
 			slot.quantity.OnTextChanged = function(this)
 				local value = tonumber(this:GetValue())
 
-				if (value) then
-					items[k] = math.Clamp(math.Round(value), 0, 10)
-					self:OnQuantityChanged()
-				else
+				if (!value) then
 					this:SetValue(1)
+					return
 				end
+
+				value = math.Clamp(math.Round(value), 0, 10)
+
+				if (value == 0) then
+					items[k] = nil
+
+					slot:Remove()
+				else
+					items[k] = value
+				end
+
+				self:OnQuantityChanged()
 			end
 		else
 			items[k] = nil
