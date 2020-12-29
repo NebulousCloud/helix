@@ -176,13 +176,7 @@ function PANEL:SetText(text)
 end
 
 function PANEL:Think()
-	local value = math.Approach(self.delta, self.value, FrameTime())
-	-- fix for smooth bar changes (increase of 0.01 every 0.1sec for example)
-	if (value == self.value and self.delta != self.value and self.value != 0 and self.value != 1) then
-		value = self.delta
-	end
-
-	self.delta = value
+	self.delta = math.Approach(self.delta, self.value, FrameTime())
 end
 
 function PANEL:Paint(width, height)
