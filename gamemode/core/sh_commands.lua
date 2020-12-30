@@ -726,12 +726,12 @@ ix.command.Add("PlyTransfer", {
 				if (faction.OnTransferred) then
 					faction:OnTransferred(target)
 				end
+					
+				hook.Run("CharacterTransferred", target, faction.uniqueID)
 
 				for _, v in ipairs(player.GetAll()) do
 					v:NotifyLocalized("cChangeFaction", client:GetName(), target:GetName(), L(faction.name, v))
 				end
-					
-				hook.Run("OnPlayerTransferred", target, faction)
 			else
 				return "@charNotWhitelisted", target:GetName(), L(faction.name, client)
 			end
