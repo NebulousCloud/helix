@@ -727,6 +727,8 @@ ix.command.Add("PlyTransfer", {
 					faction:OnTransferred(target)
 				end
 
+				hook.Run("CharacterTransferred", target, faction.index)
+
 				for _, v in ipairs(player.GetAll()) do
 					v:NotifyLocalized("cChangeFaction", client:GetName(), target:GetName(), L(faction.name, v))
 				end
