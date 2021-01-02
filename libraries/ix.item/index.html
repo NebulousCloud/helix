@@ -8,7 +8,7 @@
 		<meta property="og:title" content="ix.item - Helix Documentation" />
 		<meta property="og:site_name" content="Helix Documentation" />
 
-			<meta property="og:description" content="Item&#47;inventory manipulation and helper functions." />
+			<meta property="og:description" content="Item manipulation and helper functions." />
 
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
 		<link rel="stylesheet" href="../../ldoc.css" />
@@ -1417,6 +1417,27 @@ Add											</a>
 									</details>
 							</li>
 							<li>
+									<details >
+									<summary><a href="../../libraries/ix.inventory/">ix.inventory</a></summary>
+
+									<ul>
+
+
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../libraries/ix.inventory/#ix.inventory.Get">
+Get											</a>
+										</li>
+										<li>
+											<span class="realm server"></span>
+											<a href="../../libraries/ix.inventory/#ix.inventory.Restore">
+Restore											</a>
+										</li>
+
+									</ul>
+									</details>
+							</li>
+							<li>
 									<details open>
 									<summary><a href="../../libraries/ix.item/">ix.item</a></summary>
 
@@ -1427,16 +1448,6 @@ Add											</a>
 											<span class="realm shared"></span>
 											<a href="../../libraries/ix.item/#ix.item.Get">
 Get											</a>
-										</li>
-										<li>
-											<span class="realm shared"></span>
-											<a href="../../libraries/ix.item/#ix.item.GetInv">
-GetInv											</a>
-										</li>
-										<li>
-											<span class="realm server"></span>
-											<a href="../../libraries/ix.item/#ix.item.RestoreInv">
-RestoreInv											</a>
 										</li>
 										<li>
 											<span class="realm server"></span>
@@ -2408,7 +2419,7 @@ ToggleWepRaised											</a>
 
 <header class="module">
 	<h1>ix.item</h1>
-	<h2>Item/inventory manipulation and helper functions.</h2>
+	<h2>Item manipulation and helper functions.</h2>
 </header>
 
 <p>
@@ -2424,7 +2435,7 @@ ToggleWepRaised											</a>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_item.lua#L147">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_item.lua#L106">View source &raquo;</a>
 
 					<p>Retrieves an item table.</p>
 			</header>
@@ -2465,129 +2476,12 @@ ToggleWepRaised											</a>
 		</section>
 		<section class="method">
 			<header>
-				<a class="anchor" id="ix.item.GetInv">
-					<h1><span class="realm shared"></span></span>ix.item.GetInv(invID)</h1>
-				</a>
-
-
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_item.lua#L155">View source &raquo;</a>
-
-					<p>Retrieves an inventory table.</p>
-			</header>
-
-
-					<h3>Parameters</h3>
-
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">invID</span>
-
-									<span class="tag"><span class="type">number</span></span>
-
-
-								<p> Index of the inventory</p>
-							</li>
-					</ul>
-
-
-				<h3>Returns</h3>
-				<ul>
-
-							<li>
-									<a class="type" href="../../classes/inventory/#">Inventory</a>
-
-								<p>Inventory table</p>
-							</li>
-
-				</ul>
-
-
-		</section>
-		<section class="method">
-			<header>
-				<a class="anchor" id="ix.item.RestoreInv">
-					<h1><span class="realm server"></span></span>ix.item.RestoreInv(invID, width, height, callback)</h1>
-				</a>
-
-
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_item.lua#L376">View source &raquo;</a>
-
-					<p>Loads an inventory and associated items from the database into memory.  If you are passing a table into <code>invID</code>, it
- requires a table where the key is the inventory ID, and the value is a table of the width and height values. See below
- for an example.</p>
-			</header>
-
-
-					<h3>Parameters</h3>
-
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">invID</span>
-
-
-
-								<p> Inventory ID or table of inventory IDs</p>
-							</li>
-					</ul>
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">width</span>
-
-									<span class="tag"><span class="type">number</span></span>
-
-
-								<p> Width of inventory (this is not used when passing a table to <code>invID</code>)</p>
-							</li>
-					</ul>
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">height</span>
-
-									<span class="tag"><span class="type">number</span></span>
-
-
-								<p> Height of inventory (this is not used when passing a table to <code>invID</code>)</p>
-							</li>
-					</ul>
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">callback</span>
-
-									<span class="tag"><span class="type">function</span></span>
-
-
-								<p> Function to call when inventory is restored</p>
-							</li>
-					</ul>
-
-
-				<h3>Example Usage</h3>
-					<pre><code>ix.item.RestoreInv({
-	[10] = {5, 5},
-	[11] = {7, 4}
-})
--- inventories 10 and 11 with sizes (5, 5) and (7, 4) will be loaded
-</code></pre>
-
-		</section>
-		<section class="method">
-			<header>
 				<a class="anchor" id="ix.item.Spawn">
 					<h1><span class="realm server"></span></span>ix.item.Spawn(uniqueID, position, callback, angles, data)</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_item.lua#L949">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_item.lua#L808">View source &raquo;</a>
 
 					<p>Instances and spawns a given item type.</p>
 			</header>

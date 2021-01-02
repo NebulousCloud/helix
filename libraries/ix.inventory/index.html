@@ -2,13 +2,13 @@
 
 <html>
 	<head>
-		<title>ix.anim - Helix Documentation</title>
+		<title>ix.inventory - Helix Documentation</title>
 
 		<meta property="og:type" content="website" />
-		<meta property="og:title" content="ix.anim - Helix Documentation" />
+		<meta property="og:title" content="ix.inventory - Helix Documentation" />
 		<meta property="og:site_name" content="Helix Documentation" />
 
-			<meta property="og:description" content="Player model animation." />
+			<meta property="og:description" content="Inventory manipulation and helper functions." />
 
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
 		<link rel="stylesheet" href="../../ldoc.css" />
@@ -1061,7 +1061,7 @@ Remove											</a>
 									</details>
 							</li>
 							<li>
-									<details open>
+									<details >
 									<summary><a href="../../libraries/ix.anim/">ix.anim</a></summary>
 
 									<ul>
@@ -1417,7 +1417,7 @@ Add											</a>
 									</details>
 							</li>
 							<li>
-									<details >
+									<details open>
 									<summary><a href="../../libraries/ix.inventory/">ix.inventory</a></summary>
 
 									<ul>
@@ -2418,38 +2418,26 @@ ToggleWepRaised											</a>
 					<div class="wrapper">
 
 <header class="module">
-	<h1>ix.anim</h1>
-	<h2>Player model animation.</h2>
+	<h1>ix.inventory</h1>
+	<h2>Inventory manipulation and helper functions.</h2>
 </header>
 
-<p>Helix comes with support for using NPC animations/models as regular player models by manually translating animations. There are
-a few standard animation sets that are built-in that should cover most non-player models:</p>
-<pre><code>citizen_male
-citizen_female
-metrocop
-overwatch
-vortigaunt
-player
-zombie
-fastZombie
-</code></pre>
+<p>
 
-<p>If you find that your models are T-posing when they work elsewhere, you'll probably need to set the model class for your
-model with <a href="../../libraries/ix.anim/#ix.anim.SetModelClass">ix.anim.SetModelClass</a> in order for the correct animations to be used. If you'd like to add your own animation
-class, simply add to the <a href="../../libraries/ix.anim/#">ix.anim</a> table with a model class name and the required animation translation table.</p>
+</p>
 
 	<h1 class="title">Functions</h1>
 
 		<section class="method">
 			<header>
-				<a class="anchor" id="ix.anim.GetModelClass">
-					<h1><span class="realm shared"></span></span>ix.anim.GetModelClass(model)</h1>
+				<a class="anchor" id="ix.inventory.Get">
+					<h1><span class="realm shared"></span></span>ix.inventory.Get(invID)</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_anims.lua#L376">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_inventory.lua#L15">View source &raquo;</a>
 
-					<p>Gets a model's animation class.</p>
+					<p>Retrieves an inventory table.</p>
 			</header>
 
 
@@ -2459,12 +2447,12 @@ class, simply add to the <a href="../../libraries/ix.anim/#">ix.anim</a> table w
 					<ul>
 
 							<li>
-								<span class="tag parameter">model</span>
+								<span class="tag parameter">invID</span>
 
-									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+									<span class="tag"><span class="type">number</span></span>
 
 
-								<p> Model to get the animation class for</p>
+								<p> Index of the inventory</p>
 							</li>
 					</ul>
 
@@ -2473,37 +2461,27 @@ class, simply add to the <a href="../../libraries/ix.anim/#">ix.anim</a> table w
 				<ul>
 
 							<li>
-									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a>
+									<a class="type" href="../../classes/inventory/#">Inventory</a>
 
-								<p>Animation class of the model</p>
-							</li>
-
-							<div class="or"><span>OR</span></div>
-
-							<li>
-									<span class="type">nil</span>
-
-								<p>If there was no animation associated with the given model</p>
+								<p>Inventory table</p>
 							</li>
 
 				</ul>
 
-				<h3>Example Usage</h3>
-					<pre><code>ix.anim.GetModelClass("models/police.mdl")
- > metrocop
-</code></pre>
 
 		</section>
 		<section class="method">
 			<header>
-				<a class="anchor" id="ix.anim.SetModelClass">
-					<h1><span class="realm shared"></span></span>ix.anim.SetModelClass(model, class)</h1>
+				<a class="anchor" id="ix.inventory.Restore">
+					<h1><span class="realm server"></span></span>ix.inventory.Restore(invID, width, height, callback)</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_anims.lua#L361">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_inventory.lua#L38">View source &raquo;</a>
 
-					<p>Sets a model's animation class.</p>
+					<p>Loads an inventory and associated items from the database into memory.  If you are passing a table into <code>invID</code>, it
+ requires a table where the key is the inventory ID, and the value is a table of the width and height values. See below
+ for an example.</p>
 			</header>
 
 
@@ -2513,30 +2491,57 @@ class, simply add to the <a href="../../libraries/ix.anim/#">ix.anim</a> table w
 					<ul>
 
 							<li>
-								<span class="tag parameter">model</span>
-
-									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+								<span class="tag parameter">invID</span>
 
 
-								<p> Model name to set the animation class for</p>
+
+								<p> Inventory ID or table of inventory IDs</p>
 							</li>
 					</ul>
 
 					<ul>
 
 							<li>
-								<span class="tag parameter">class</span>
+								<span class="tag parameter">width</span>
 
-									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+									<span class="tag"><span class="type">number</span></span>
 
 
-								<p> Animation class to assign to the model</p>
+								<p> Width of inventory (this is not used when passing a table to <code>invID</code>)</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">height</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> Height of inventory (this is not used when passing a table to <code>invID</code>)</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">callback</span>
+
+									<span class="tag"><span class="type">function</span></span>
+
+
+								<p> Function to call when inventory is restored</p>
 							</li>
 					</ul>
 
 
 				<h3>Example Usage</h3>
-					<pre><code>ix.anim.SetModelClass("models/police.mdl", "metrocop")
+					<pre><code>ix.inventory.Restore({
+	[10] = {5, 5},
+	[11] = {7, 4}
+})
+-- inventories 10 and 11 with sizes (5, 5) and (7, 4) will be loaded
 </code></pre>
 
 		</section>
