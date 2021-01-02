@@ -39,7 +39,7 @@ if (SERVER) then
 			container:SetModel(model)
 			container:Spawn()
 
-			ix.item.NewInv(0, "container:" .. model, function(inventory)
+			ix.inventory.New(0, "container:" .. model, function(inventory)
 				-- we'll technically call this a bag since we don't want other bags to go inside
 				inventory.vars.isBag = true
 				inventory.vars.isContainer = true
@@ -143,7 +143,7 @@ if (SERVER) then
 						entity:SetMoney(v[7])
 					end
 
-					ix.item.RestoreInv(inventoryID, data2.width, data2.height, function(inventory)
+					ix.inventory.Restore(inventoryID, data2.width, data2.height, function(inventory)
 						inventory.vars.isBag = true
 						inventory.vars.isContainer = true
 
@@ -221,7 +221,7 @@ end
 function PLUGIN:InitializedPlugins()
 	for k, v in pairs(ix.container.stored) do
 		if (v.name and v.width and v.height) then
-			ix.item.RegisterInv("container:" .. k:lower(), v.width, v.height)
+			ix.inventory.Register("container:" .. k:lower(), v.width, v.height)
 		else
 			ErrorNoHalt("[Helix] Container for '"..k.."' is missing all inventory information!\n")
 			ix.container.stored[k] = nil

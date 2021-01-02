@@ -71,7 +71,7 @@ if (SERVER) then
 
 						local w, h = ix.config.Get("inventoryWidth"), ix.config.Get("inventoryHeight")
 						local character = ix.char.New(data, lastID, client, data.steamID)
-						local inventory = ix.item.CreateInv(w, h, invLastID)
+						local inventory = ix.inventory.Create(w, h, invLastID)
 
 						character.vars.inv = {inventory}
 						inventory:SetOwner(lastID)
@@ -177,7 +177,7 @@ if (SERVER) then
 										end
 									end
 
-									ix.item.RestoreInv(inventories, nil, nil, function(inventory)
+									ix.inventory.Restore(inventories, nil, nil, function(inventory)
 										local inventoryType = inventories[inventory:GetID()][3]
 
 										if (inventoryType) then
@@ -194,7 +194,7 @@ if (SERVER) then
 										insertQuery:Insert("character_id", charID)
 										insertQuery:Callback(function(_, status, lastID)
 											local w, h = ix.config.Get("inventoryWidth"), ix.config.Get("inventoryHeight")
-											local inventory = ix.item.CreateInv(w, h, lastID)
+											local inventory = ix.inventory.Create(w, h, lastID)
 											inventory:SetOwner(charID)
 
 											character.vars.inv = {

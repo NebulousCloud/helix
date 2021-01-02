@@ -87,7 +87,7 @@ function PLUGIN:LoadData()
 							-- we need to manually restore bag inventories in the world since they don't have a current owner
 							-- that it can automatically restore along with the character when it's loaded
 							if (!table.IsEmpty(bagInventories)) then
-								ix.item.RestoreInv(bagInventories)
+								ix.inventory.Restore(bagInventories)
 							end
 
 							hook.Run("OnSavedItemLoaded", loadedItems) -- when you have something in the dropped item.
