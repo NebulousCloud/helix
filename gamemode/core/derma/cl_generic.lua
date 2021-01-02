@@ -391,7 +391,7 @@ function PANEL:Init()
 		self:OnValueChanged()
 	end
 	self.slider.OnValueUpdated = function(panel)
-		self.label:SetText(tostring(panel:GetValue()))
+		self.label:SetText(string.format("%0." .. tostring(panel:GetDecimals()) .. "f", tostring(panel:GetValue())))
 		self.label:SizeToContents()
 
 		self:OnValueUpdated()
@@ -410,7 +410,7 @@ function PANEL:SetValue(value, bNoNotify)
 	value = tonumber(value) or self.slider:GetMin()
 
 	self.slider:SetValue(value, bNoNotify)
-	self.label:SetText(tostring(self.slider:GetValue()))
+	self.label:SetText(string.format("%0." .. tostring(self:GetDecimals()) .. "f", tostring(self.slider:GetValue())))
 	self.label:SizeToContents()
 end
 
