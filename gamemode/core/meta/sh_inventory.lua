@@ -9,8 +9,8 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 ]]
 -- @classmod Inventory
 
-local META = ix.meta.inventory or {}
-META.__index = META
+local META = ix.meta.inventory or ix.middleclass("ix_inventory")
+
 META.slots = META.slots or {}
 META.w = META.w or 4
 META.h = META.h or 4
@@ -24,6 +24,16 @@ META.receivers = META.receivers or {}
 -- > "inventory[1]"
 function META:__tostring()
 	return "inventory["..(self.id or 0).."]"
+end
+
+function META:Initialize(id, width, height)
+	self.id = id
+	self.w = width
+	self.h = height
+
+	self.slots = {}
+	self.vars = {}
+	self.receivers = {}
 end
 
 --- Returns this inventory's database ID. This is guaranteed to be unique.
