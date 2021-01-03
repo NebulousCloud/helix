@@ -215,7 +215,7 @@ if (SERVER) then
 	-- @tab info `StorageInfoStructure` describing the storage properties
 	function ix.storage.Open(client, inventory, info)
 		assert(IsValid(client) and client:IsPlayer(), "expected valid player")
-		assert(getmetatable(inventory) == ix.meta.inventory, "expected valid inventory")
+		assert(type(inventory) == "table" and inventory:IsInstanceOf(ix.meta.inventory), "expected valid inventory")
 
 		-- create storage context if one isn't already created
 		if (!inventory.storageInfo) then
