@@ -109,7 +109,7 @@ local function _includeMixin(aClass, mixin)
     aClass.static[name] = method
   end
 
-  if type(mixin.included)=="function" then mixin:Included(aClass) end
+  if type(mixin.Included)=="function" then mixin:Included(aClass) end
   return aClass
 end
 
