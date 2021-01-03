@@ -587,6 +587,14 @@ function GM:CanTransferItem(itemObject, curInv, inventory)
 	end
 end
 
+function GM:CanPlayerEquipItem(client, item)
+	return item.invID == client:GetCharacter():GetInventory():GetID()
+end
+
+function GM:CanPlayerUnequipItem(client, item)
+	return item.invID == client:GetCharacter():GetInventory():GetID()
+end
+
 function GM:OnItemTransferred(item, curInv, inventory)
 	local bagInventory = item.GetInventory and item:GetInventory()
 
