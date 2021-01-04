@@ -27,6 +27,8 @@ function ix.bar.Remove(identifier)
 		end
 
 		table.remove(ix.bar.list, bar.index)
+
+		ix.bar.totalHeight = ix.bar.totalHeight - BAR_HEIGHT
 	end
 end
 
@@ -48,6 +50,8 @@ function ix.bar.Add(getValue, color, priority, identifier)
 		identifier = identifier,
 		panel = IsValid(ix.gui.bars) and ix.gui.bars:AddBar(index, color, priority)
 	}
+
+	ix.bar.totalHeight = ix.bar.totalHeight + BAR_HEIGHT
 
 	return priority
 end
