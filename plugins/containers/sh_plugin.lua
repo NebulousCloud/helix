@@ -170,7 +170,6 @@ if (SERVER) then
 		local entity = net.ReadEntity()
 		local password = net.ReadString()
 		local dist = entity:GetPos():DistToSqr(client:GetPos())
-		
 		if (client.lastPasswordAttempt and CurTime() < client.lastPasswordAttempt + ix.config.Get("containerPasswordDelay",1)) then
 			client:NotifyLocalized("passwordTooQuick")
 		else
