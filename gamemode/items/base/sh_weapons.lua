@@ -182,6 +182,17 @@ function ITEM:Equip(client, bNoSelect, bNoSound)
 		end
 
 		weapon.ixItem = self
+		weapon:CallOnRemove("ixItem", function(entity)
+			-- make sure this item is removed if the weapon is removed for a reason we didn't intend (e.g grenade thrown, weapon
+			-- was removed from player externally, etc)
+			local client = entity:GetOwner()
+
+			if (IsValid(client) and client:IsPlayer() and client:GetCharacter()) then
+				if (entity.ixItem and entity.ixItem.Unequip) then
+					entity.ixItem:Unequip(client, false, true)
+				end
+			end
+		end)
 
 		if (self.OnEquipWeapon) then
 			self:OnEquipWeapon(client, weapon)
@@ -201,6 +212,7 @@ function ITEM:Unequip(client, bPlaySound, bRemoveItem)
 	end
 
 	if (IsValid(weapon)) then
+		weapon:RemoveCallOnRemove("ixItem")
 		weapon.ixItem = nil
 
 		self:SetData("ammo", weapon:Clip1())
@@ -296,22 +308,6 @@ hook.Add("PlayerDeath", "ixStripClip", function(client)
 
 			if (v.pacData) then
 				v:RemovePAC(client)
-			end
-		end
-	end
-end)
-
-hook.Add("EntityRemoved", "ixRemoveGrenade", function(entity)
-	-- hack to remove hl2 grenades after they've all been thrown
-	if (entity:GetClass() == "weapon_frag") then
-		local client = entity:GetOwner()
-
-		if (IsValid(client) and client:IsPlayer() and client:GetCharacter()) then
-			local ammoName = game.GetAmmoName(entity:GetPrimaryAmmoType())
-
-			if (isstring(ammoName) and ammoName:lower() == "grenade" and client:GetAmmoCount(ammoName) < 1
-			and entity.ixItem and entity.ixItem.Unequip) then
-				entity.ixItem:Unequip(client, false, true)
 			end
 		end
 	end
