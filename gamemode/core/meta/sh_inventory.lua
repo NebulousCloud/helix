@@ -726,7 +726,7 @@ if (SERVER) then
 			net.WriteUInt(self:GetID(), 32)
 			net.WriteUInt(self.w, 6)
 			net.WriteUInt(self.h, 6)
-			net.WriteType((receiver == nil or fullUpdate) and self.owner or nil)
+			net.WriteType(self.owner)
 			net.WriteTable(self.vars or {})
 		net.Send(receiver)
 

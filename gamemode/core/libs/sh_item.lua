@@ -335,32 +335,35 @@ do
 			local owner = net.ReadType()
 			local vars = net.ReadTable()
 
-			local character = owner and ix.char.loaded[owner] or LocalPlayer():GetCharacter()
+			if (!LocalPlayer():GetCharacter()) then
+				return
+			end
 
-			if (character) then
-				local inventory = ix.inventory.Create(w, h, id)
-				inventory:SetOwner(character:GetID())
-				inventory.slots = {}
-				inventory.vars = vars
+			local character = owner and ix.char.loaded[owner]
+			local inventory = ix.inventory.Create(w, h, id)
+			inventory.slots = {}
+			inventory.vars = vars
 
-				local x, y
+			local x, y
 
-				for _, v in ipairs(slots) do
-					x, y = v[1], v[2]
+			for _, v in ipairs(slots) do
+				x, y = v[1], v[2]
 
-					inventory.slots[x] = inventory.slots[x] or {}
+				inventory.slots[x] = inventory.slots[x] or {}
 
-					local item = ix.item.New(v[3], v[4])
+				local item = ix.item.New(v[3], v[4])
 
-					item.data = {}
-					if (v[5]) then
-						item.data = v[5]
-					end
-
-					item.invID = item.invID or id
-					inventory.slots[x][y] = item
+				item.data = {}
+				if (v[5]) then
+					item.data = v[5]
 				end
 
+				item.invID = item.invID or id
+				inventory.slots[x][y] = item
+			end
+
+			if (character) then
+				inventory:SetOwner(character:GetID())
 				character.vars.inv = character.vars.inv or {}
 
 				for k, v in ipairs(character:GetInventory(true)) do
