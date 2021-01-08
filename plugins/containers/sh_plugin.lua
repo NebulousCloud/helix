@@ -163,6 +163,10 @@ if (SERVER) then
 	end
 
 	net.Receive("ixContainerPassword", function(length, client)
+		if ((client.ixNextContainerPassword or 0) > RealTime()) then
+			return
+		end
+
 		local entity = net.ReadEntity()
 		local password = net.ReadString()
 		local dist = entity:GetPos():DistToSqr(client:GetPos())
@@ -174,6 +178,8 @@ if (SERVER) then
 				client:NotifyLocalized("wrongPassword")
 			end
 		end
+
+		client.ixNextContainerPassword = RealTime() + 0.5
 	end)
 
 	ix.log.AddType("containerPassword", function(client, ...)
