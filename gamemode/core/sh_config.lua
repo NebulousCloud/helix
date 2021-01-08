@@ -40,13 +40,25 @@ function ix.config.Add(key, value, description, callback, data, bNoNetworking, b
 		return
 	end
 
+	local default = value
 	data.type = nil
+
+	-- using explicit nil comparisons so we don't get caught by a config's value being `false`
+	if (oldConfig != nil) then
+		if (oldConfig.value != nil) then
+			value = oldConfig.value
+		end
+
+		if (oldConfig.default != nil) then
+			default = oldConfig.default
+		end
+	end
 
 	ix.config.stored[key] = {
 		type = type,
 		data = data,
-		value = oldConfig and oldConfig.value or value,
-		default = oldConfig and oldConfig.default or value,
+		value = value,
+		default = default,
 		description = description,
 		bNoNetworking = bNoNetworking,
 		global = !bSchemaOnly,
