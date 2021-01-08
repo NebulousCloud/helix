@@ -83,7 +83,7 @@ end
 -- On item is dropped, Remove a weapon from the player and keep the ammo in the item.
 ITEM:Hook("drop", function(item)
 	if (item:GetData("equip")) then
-		item:RemovePart(item.player)
+		item:RemovePart(item:GetOwner())
 	end
 end)
 

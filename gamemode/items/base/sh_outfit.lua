@@ -118,6 +118,10 @@ end
 
 ITEM:Hook("drop", function(item)
 	if (item:GetData("equip")) then
+		local character = ix.char.loaded[item.owner]
+		local client = character and character:GetPlayer() or item:GetOwner()
+
+		item.player = client
 		item:RemoveOutfit(item:GetOwner())
 	end
 end)
