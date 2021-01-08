@@ -47,6 +47,9 @@ if (SERVER) then
 					net.WriteTable(self.items)
 				net.Send(client)
 			end
+
+			-- don't mark dirty since the player could come back and use this shipment again later
+			return false
 		end)
 	end
 
