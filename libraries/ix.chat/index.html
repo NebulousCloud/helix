@@ -1121,6 +1121,11 @@ RestoreVars											</a>
 
 										<li>
 											<span class="realm shared"></span>
+											<a href="../../libraries/ix.chat/#ix.chat.Format">
+Format											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
 											<a href="../../libraries/ix.chat/#ix.chat.Parse">
 Parse											</a>
 										</li>
@@ -2430,6 +2435,56 @@ ToggleWepRaised											</a>
 
 		<section class="method">
 			<header>
+				<a class="anchor" id="ix.chat.Format">
+					<h1><span class="realm shared"></span></span>ix.chat.Format(text)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L205">View source &raquo;</a>
+
+					<p>Formats a string to fix basic grammar - removing extra spacing at the beginning and end, capitalizing the first character,
+ and making sure it ends in punctuation.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">text</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+
+								<p> String to format</p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a>
+
+								<p>Formatted string</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>print(ix.chat.Format("hello"))
+ > Hello.
+</code></pre>
+					<pre><code>print(ix.chat.format("wow!"))
+ > Wow!
+</code></pre>
+
+		</section>
+		<section class="method">
+			<header>
 				<a class="anchor" id="ix.chat.Parse">
 					<h1><span class="realm shared"></span></span>ix.chat.Parse(client, message, bNoSend)</h1>
 				</a>
@@ -2569,7 +2624,7 @@ ToggleWepRaised											</a>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L207">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L227">View source &raquo;</a>
 
 					<p>Send a chat message using the specified chat type.</p>
 			</header>
