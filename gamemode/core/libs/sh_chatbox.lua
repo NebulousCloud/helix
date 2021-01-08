@@ -193,6 +193,26 @@ function ix.chat.Parse(client, message, bNoSend)
 	return chatType, message, anonymous
 end
 
+--- Formats a string to fix basic grammar - removing extra spacing at the beginning and end, capitalizing the first character,
+-- and making sure it ends in punctuation.
+-- @realm shared
+-- @string text String to format
+-- @treturn string Formatted string
+-- @usage print(ix.chat.Format("hello"))
+-- > Hello.
+-- @usage print(ix.chat.format("wow!"))
+-- > Wow!
+function ix.chat.Format(text)
+	text = string.Trim(text)
+	local last = text:utf8sub(-1)
+
+	if (last != "." and last != "?" and last != "!" and last != "-" and last != "\"") then
+		text = text .. "."
+	end
+
+	return text:utf8sub(1, 1):utf8upper() .. text:utf8sub(2)
+end
+
 if (SERVER) then
 	util.AddNetworkString("ixChatMessage")
 
@@ -238,13 +258,7 @@ if (SERVER) then
 			end
 
 			if (ix.config.Get("chatAutoFormat") and hook.Run("CanAutoFormatMessage", speaker, chatType, text)) then
-				local last = text:utf8sub(-1)
-
-				if (last != "." and last != "?" and last != "!" and last != "-" and last != "\"") then
-					text = text .. "."
-				end
-
-				text = text:utf8sub(1, 1):utf8upper() .. text:utf8sub(2)
+				text = ix.chat.Format(text)
 			end
 
 			text = hook.Run("PlayerMessageSend", speaker, chatType, text, anonymous, receivers, rawText) or text
