@@ -46,10 +46,9 @@ function PLUGIN:AreaThink()
 		end
 
 		local overlappingBoxes = {}
+		local position = client:GetPos() + client:OBBCenter()
 
 		for id, info in pairs(ix.area.stored) do
-			local position = client:GetPos() + client:OBBCenter()
-
 			if (position:WithinAABox(info.startPosition, info.endPosition)) then
 				overlappingBoxes[#overlappingBoxes + 1] = id
 			end
