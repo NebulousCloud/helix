@@ -439,11 +439,7 @@ timer.Create("ixVignetteChecker", 1, 0, function()
 			data.filter = client
 		local trace = util.TraceLine(data)
 
-		if trace == nil then
-			vignetteAlphaGoal = 0
-		end
-
-		if (trace.Hit) then
+		if trace ~= nil and (trace.Hit) then
 			vignetteAlphaGoal = 80
 		else
 			vignetteAlphaGoal = 0
