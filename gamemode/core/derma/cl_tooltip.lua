@@ -117,7 +117,6 @@ function PANEL:SizeToContents()
 		self:SetWrap(true)
 
 		self:SizeToContentsY()
-		self:SetWide(self:GetContentSize())
 	else
 		self:SetSize(contentWidth, contentHeight)
 	end
