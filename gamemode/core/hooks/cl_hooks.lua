@@ -397,8 +397,6 @@ function GM:InitPostEntity()
 	ix.joinTime = RealTime() - 0.9716
 	ix.option.Sync()
 
-	LocalPlayer():SetIK(false)
-
 	ix.gui.bars = vgui.Create("ixInfoBarManager")
 end
 
@@ -972,5 +970,6 @@ hook.Add("player_spawn", "ixPlayerSpawn", function(data)
 	if (IsValid(client)) then
 		-- GetBoneName returns __INVALIDBONE__ for everything the first time you use it, so we'll force an update to make them valid
 		client:SetupBones()
+		client:SetIK(false)
 	end
 end)
