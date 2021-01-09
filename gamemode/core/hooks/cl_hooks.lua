@@ -437,7 +437,8 @@ timer.Create("ixVignetteChecker", 1, 0, function()
 			data.filter = client
 		local trace = util.TraceLine(data)
 
-		if (trace.Hit) then
+		-- this timer could run before InitPostEntity is called, so we have to check for the validity of the trace table
+		if (trace and trace.Hit) then
 			vignetteAlphaGoal = 80
 		else
 			vignetteAlphaGoal = 0
