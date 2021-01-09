@@ -200,7 +200,7 @@ end
 -- @treturn string Formatted string
 -- @usage print(ix.chat.Format("hello"))
 -- > Hello.
--- @usage print(ix.chat.format("wow!"))
+-- @usage print(ix.chat.Format("wow!"))
 -- > Wow!
 function ix.chat.Format(text)
 	text = string.Trim(text)
