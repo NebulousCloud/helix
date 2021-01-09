@@ -195,6 +195,7 @@ function PANEL:Init()
 	self:SetAlpha(0)
 	self:SetSize(0, 0)
 	self:SetDrawOnTop(true)
+	self:SetMouseInputEnabled(false)
 
 	self:CreateAnimation(animationTime, {
 		index = 1,
