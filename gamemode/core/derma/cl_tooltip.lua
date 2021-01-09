@@ -117,7 +117,6 @@ function PANEL:SizeToContents()
 		self:SetWrap(true)
 
 		self:SizeToContentsY()
-		self:SetWide(self:GetContentSize())
 	else
 		self:SetSize(contentWidth, contentHeight)
 	end
@@ -195,6 +194,7 @@ function PANEL:Init()
 	self:SetAlpha(0)
 	self:SetSize(0, 0)
 	self:SetDrawOnTop(true)
+	self:SetMouseInputEnabled(false)
 
 	self:CreateAnimation(animationTime, {
 		index = 1,
