@@ -379,7 +379,7 @@ function PANEL:Think()
 			max = entity:LocalToWorld(max):ToScreen().x
 
 			self:SetPos(
-				math.Clamp(math.max(min, max), ScrW() * 0.5 + 32, ScrW() * 0.66 - self:GetWide()),
+				math.Clamp(math.max(min, max), ScrW() * 0.5 + 64, ScrW() - self:GetWide()),
 				ScrH() * 0.5 - self:GetTall() * 0.5
 			)
 		end
