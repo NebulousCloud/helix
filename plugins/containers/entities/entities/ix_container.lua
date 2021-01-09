@@ -22,6 +22,7 @@ if (SERVER) then
 
 		if (definition) then
 			self:SetDisplayName(definition.name)
+			self.name = definition.name
 		end
 
 		local physObj = self:GetPhysicsObject()
