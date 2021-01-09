@@ -31,10 +31,10 @@ function PANEL:Dim(length, callback)
 	self:CreateAnimation(length, {
 		target = {
 			currentDimAmount = self.targetDimAmount,
-			currentScale = self.targetScale,
-			OnComplete = callback
+			currentScale = self.targetScale
 		},
-		easing = "outCubic"
+		easing = "outCubic",
+		OnComplete = callback
 	})
 
 	self:OnDim()
