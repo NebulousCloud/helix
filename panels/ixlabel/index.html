@@ -2,13 +2,13 @@
 
 <html>
 	<head>
-		<title>Item - Helix Documentation</title>
+		<title>ixLabel - Helix Documentation</title>
 
 		<meta property="og:type" content="website" />
-		<meta property="og:title" content="Item - Helix Documentation" />
+		<meta property="og:title" content="ixLabel - Helix Documentation" />
 		<meta property="og:site_name" content="Helix Documentation" />
 
-			<meta property="og:description" content="Interactable entities that can be held in inventories." />
+			<meta property="og:description" content="Alternative to DLabel that adds extra functionality." />
 
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />
 		<link rel="stylesheet" href="../../ldoc.css" />
@@ -929,7 +929,7 @@ WeaponSelectSound											</a>
 
 					<ul>
 							<li>
-									<details >
+									<details open>
 									<summary><a href="../../panels/ixlabel/">ixLabel</a></summary>
 
 									<ul>
@@ -2243,7 +2243,7 @@ __tostring											</a>
 									</details>
 							</li>
 							<li>
-									<details open>
+									<details >
 									<summary><a href="../../classes/item/">Item</a></summary>
 
 									<ul>
@@ -2544,30 +2544,44 @@ ToggleWepRaised											</a>
 					<div class="wrapper">
 
 <header class="module">
-	<h1>Item</h1>
-	<h2>Interactable entities that can be held in inventories.</h2>
+	<h1>ixLabel</h1>
+	<h2>Alternative to DLabel that adds extra functionality.</h2>
 </header>
 
-<p>Items are objects that are contained inside of an <a href="../../classes/inventory/#">Inventory</a>, or as standalone entities if they are dropped in the world. They
-usually have functionality that provides more gameplay aspects to the schema. For example, the zipties in the HL2 RP schema
-allow a player to tie up and search a player.</p>
+<p>
 
-<p>For an item to have an actual presence, they need to be instanced (usually with <code>ix.item.Instance</code>). Items describe the
-properties, while instances are a clone of these properties that can have their own unique data (e.g an ID card will have the
-same name but different numerical IDs). You can think of items as the class, while instances are objects of the <a href="../../classes/item/#">Item</a> class.</p>
+<p> This panel is meant for drawing single-line text. It can add extra kerning (spaces between letters), and it can forcefully
+ scale the text down to fit the current width, without cutting off any letters. Text scaling is most useful when docking this
+ this panel without knowing what the width could be. For example, text scaling is used for the character name in the character
+ status menu.</p>
+<pre><code>local label = vgui.Create("ixLabel")
+label:SetText("hello world")
+label:SetFont("ixMenuButtonHugeFont")
+label:SetContentAlignment(5)
+label:SetTextColor(Color(255, 255, 255, 255))
+label:SetBackgroundColor(Color(200, 30, 30, 255))
+label:SetPadding(8)
+label:SetScaleWidth(true)
+label:SizeToContents()
+</code></pre>
+</p>
 
 	<h1 class="title">Functions</h1>
 
 		<section class="method">
 			<header>
-				<a class="anchor" id="Call">
-					<h1><span class="realm shared"></span></span>Item:Call(method, client, entity, ...)</h1>
+				<a class="anchor" id="CalculateAlignment">
+					<h1><span class="realm client"></span></span>ixLabel:CalculateAlignment(width, height, textWidth, textHeight)</h1>
 				</a>
 
+					<div class="notice error">
+						<div class="title">Internal</div>
+						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
+					</div>
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L124">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L719">View source &raquo;</a>
 
-					<p>Calls one of the item's methods.</p>
+					<p>Returns the X and Y location of the text taking into account the text alignment and padding.</p>
 			</header>
 
 
@@ -2577,47 +2591,48 @@ same name but different numerical IDs). You can think of items as the class, whi
 					<ul>
 
 							<li>
-								<span class="tag parameter">method</span>
+								<span class="tag parameter">width</span>
 
-									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+									<span class="tag"><span class="type">number</span></span>
 
 
-								<p> The method to be called</p>
+								<p> Width of the panel</p>
 							</li>
 					</ul>
 
 					<ul>
 
 							<li>
-								<span class="tag parameter">client</span>
+								<span class="tag parameter">height</span>
 
-									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
+									<span class="tag"><span class="type">number</span></span>
 
 
-								<p> The client to pass when calling the method, if applicable</p>
+								<p> Height of the panel</p>
 							</li>
 					</ul>
 
 					<ul>
 
 							<li>
-								<span class="tag parameter">entity</span>
+								<span class="tag parameter">textWidth</span>
 
-									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
+									<span class="tag"><span class="type">number</span></span>
 
 
-								<p> The eneity to pass when calling the method, if applicable</p>
+								<p> Width of the text</p>
 							</li>
 					</ul>
 
 					<ul>
 
 							<li>
-								<span class="tag parameter">...</span>
+								<span class="tag parameter">textHeight</span>
+
+									<span class="tag"><span class="type">number</span></span>
 
 
-
-								<p> Arguments to pass to the method</p>
+								<p> Height of the text</p>
 							</li>
 					</ul>
 
@@ -2626,9 +2641,15 @@ same name but different numerical IDs). You can think of items as the class, whi
 				<ul>
 
 							<li>
-									<span class="tag type">any</span>
+									<span class="type">number</span>
 
-								<p>The values returned by the method</p>
+								<p>X location to draw the text</p>
+							</li>
+
+							<li>
+									<span class="type">number</span>
+
+								<p>Y location to draw the text</p>
 							</li>
 
 				</ul>
@@ -2637,14 +2658,135 @@ same name but different numerical IDs). You can think of items as the class, whi
 		</section>
 		<section class="method">
 			<header>
-				<a class="anchor" id="GetCharacterID">
-					<h1><span class="realm shared"></span></span>Item:GetCharacterID()</h1>
+				<a class="anchor" id="DrawKernedText">
+					<h1><span class="realm client"></span></span>ixLabel:DrawKernedText(width, height)</h1>
+				</a>
+
+					<div class="notice error">
+						<div class="title">Internal</div>
+						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
+					</div>
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L759">View source &raquo;</a>
+
+					<p>Draws the current text with the current kerning.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">width</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> Width of the panel</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">height</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> Height of the panel</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="DrawText">
+					<h1><span class="realm client"></span></span>ixLabel:DrawText(width, height)</h1>
+				</a>
+
+					<div class="notice error">
+						<div class="title">Internal</div>
+						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
+					</div>
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L790">View source &raquo;</a>
+
+					<p>Draws the current text.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">width</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> Width of the panel</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">height</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> Height of the panel</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="GetBackgroundColor">
+					<h1><span class="realm client"></span></span>ixLabel:GetBackgroundColor()</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L85">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L615">View source &raquo;</a>
 
-					<p>Returns the ID of the owning character, if one exists.</p>
+					<p>Returns the current background color for this panel.</p>
+			</header>
+
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">color</span>
+
+								<p>Current background color</p>
+							</li>
+
+				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="GetContentAlignment">
+					<h1><span class="realm client"></span></span>ixLabel:GetContentAlignment()</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L650">View source &raquo;</a>
+
+					<p>Returns the current content alignment for this panel.</p>
 			</header>
 
 
@@ -2655,7 +2797,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 							<li>
 									<span class="type">number</span>
 
-								<p>The owning character's ID</p>
+								<p>Current content alignment</p>
 							</li>
 
 				</ul>
@@ -2664,14 +2806,14 @@ same name but different numerical IDs). You can think of items as the class, whi
 		</section>
 		<section class="method">
 			<header>
-				<a class="anchor" id="GetData">
-					<h1><span class="realm shared"></span></span>Item:GetData(key, default)</h1>
+				<a class="anchor" id="GetContentSize">
+					<h1><span class="realm client"></span></span>ixLabel:GetContentSize(bCalculate)</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L209">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L853">View source &raquo;</a>
 
-					<p>Returns the value stored on a key within the item's data.</p>
+					<p>Returns the size of the text, taking into account the current kerning.</p>
 			</header>
 
 
@@ -2681,430 +2823,129 @@ same name but different numerical IDs). You can think of items as the class, whi
 					<ul>
 
 							<li>
-								<span class="tag parameter">key</span>
-
-									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-
-
-								<p> The key in which the value is stored</p>
-							</li>
-					</ul>
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">default</span>
-
-
-									<span class="tag default">default: nil</span>
-
-								<p> The value to return in case there is no value stored in the key</p>
-							</li>
-					</ul>
-
-
-				<h3>Returns</h3>
-				<ul>
-
-							<li>
-									<span class="tag type">any</span>
-
-								<p>The value stored within the key</p>
-							</li>
-
-				</ul>
-
-
-		</section>
-		<section class="method">
-			<header>
-				<a class="anchor" id="GetDescription">
-					<h1><span class="realm shared"></span></span>Item:GetDescription()</h1>
-				</a>
-
-
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L58">View source &raquo;</a>
-
-					<p>Returns the description of the item.</p>
-			</header>
-
-
-
-				<h3>Returns</h3>
-				<ul>
-
-							<li>
-									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a>
-
-								<p>The description of the item</p>
-							</li>
-
-				</ul>
-
-
-		</section>
-		<section class="method">
-			<header>
-				<a class="anchor" id="GetEntity">
-					<h1><span class="realm server"></span></span>Item:GetEntity()</h1>
-				</a>
-
-
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L352">View source &raquo;</a>
-
-					<p>Returns the item's entity.</p>
-			</header>
-
-
-
-				<h3>Returns</h3>
-				<ul>
-
-							<li>
-									<span class="type">entity</span>
-
-								<p>The entity of the item</p>
-							</li>
-
-				</ul>
-
-
-		</section>
-		<section class="method">
-			<header>
-				<a class="anchor" id="GetID">
-					<h1><span class="realm shared"></span></span>Item:GetID()</h1>
-				</a>
-
-
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L44">View source &raquo;</a>
-
-					<p>Returns this item's database ID.  This is guaranteed to be unique.</p>
-			</header>
-
-
-
-				<h3>Returns</h3>
-				<ul>
-
-							<li>
-									<span class="type">number</span>
-
-								<p>Unique ID of item</p>
-							</li>
-
-				</ul>
-
-
-		</section>
-		<section class="method">
-			<header>
-				<a class="anchor" id="GetModel">
-					<h1><span class="realm shared"></span></span>Item:GetModel()</h1>
-				</a>
-
-
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L67">View source &raquo;</a>
-
-					<p>Returns the model of the item.</p>
-			</header>
-
-
-
-				<h3>Returns</h3>
-				<ul>
-
-							<li>
-									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a>
-
-								<p>The model of the item</p>
-							</li>
-
-				</ul>
-
-
-		</section>
-		<section class="method">
-			<header>
-				<a class="anchor" id="GetName">
-					<h1><span class="realm shared"></span></span>Item:GetName()</h1>
-				</a>
-
-
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L51">View source &raquo;</a>
-
-					<p>Returns the name of the item.</p>
-			</header>
-
-
-
-				<h3>Returns</h3>
-				<ul>
-
-							<li>
-									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a>
-
-								<p>The name of the item</p>
-							</li>
-
-				</ul>
-
-
-		</section>
-		<section class="method">
-			<header>
-				<a class="anchor" id="GetOwner">
-					<h1><span class="realm shared"></span></span>Item:GetOwner()</h1>
-				</a>
-
-
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L146">View source &raquo;</a>
-
-					<p>Returns the player that owns this item.</p>
-			</header>
-
-
-
-				<h3>Returns</h3>
-				<ul>
-
-							<li>
-									<span class="type">player</span>
-
-								<p>Player owning this item</p>
-							</li>
-
-				</ul>
-
-
-		</section>
-		<section class="method">
-			<header>
-				<a class="anchor" id="GetPlayerID">
-					<h1><span class="realm shared"></span></span>Item:GetPlayerID()</h1>
-				</a>
-
-
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L92">View source &raquo;</a>
-
-					<p>Returns the SteamID64 of the owning player, if one exists.</p>
-			</header>
-
-
-
-				<h3>Returns</h3>
-				<ul>
-
-							<li>
-									<span class="type">number</span>
-
-								<p>The owning player's SteamID64</p>
-							</li>
-
-				</ul>
-
-
-		</section>
-		<section class="method">
-			<header>
-				<a class="anchor" id="GetSkin">
-					<h1><span class="realm shared"></span></span>Item:GetSkin()</h1>
-				</a>
-
-
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L74">View source &raquo;</a>
-
-					<p>Returns the skin of the item.</p>
-			</header>
-
-
-
-				<h3>Returns</h3>
-				<ul>
-
-							<li>
-									<span class="type">number</span>
-
-								<p>The skin of the item</p>
-							</li>
-
-				</ul>
-
-
-		</section>
-		<section class="method">
-			<header>
-				<a class="anchor" id="Hook">
-					<h1><span class="realm shared"></span></span>Item:Hook(name, func)</h1>
-				</a>
-
-
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L244">View source &raquo;</a>
-
-					<p>Changes the function called on specific events for the item.</p>
-			</header>
-
-
-					<h3>Parameters</h3>
-
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">name</span>
-
-									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-
-
-								<p> The name of the hook</p>
-							</li>
-					</ul>
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">func</span>
-
-									<span class="tag"><span class="type">function</span></span>
-
-
-								<p> The function to call once the event occurs</p>
-							</li>
-					</ul>
-
-
-
-		</section>
-		<section class="method">
-			<header>
-				<a class="anchor" id="PostHook">
-					<h1><span class="realm shared"></span></span>Item:PostHook(name, func)</h1>
-				</a>
-
-
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L254">View source &raquo;</a>
-
-					<p>Changes the function called after hooks for specific events for the item.</p>
-			</header>
-
-
-					<h3>Parameters</h3>
-
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">name</span>
-
-									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-
-
-								<p> The name of the hook</p>
-							</li>
-					</ul>
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">func</span>
-
-									<span class="tag"><span class="type">function</span></span>
-
-
-								<p> The function to call after the original hook was called</p>
-							</li>
-					</ul>
-
-
-
-		</section>
-		<section class="method">
-			<header>
-				<a class="anchor" id="Print">
-					<h1><span class="realm shared"></span></span>Item:Print(detail)</h1>
-				</a>
-
-
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L99">View source &raquo;</a>
-
-					<p>A utility function which prints the item's details.</p>
-			</header>
-
-
-					<h3>Parameters</h3>
-
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">detail</span>
+								<span class="tag parameter">bCalculate</span>
 
 									<span class="tag"><span class="type">boolean</span></span>
 
 									<span class="tag default">default: false</span>
 
-								<p> Whether additional detail should be printed or not(Owner, X position, Y position)</p>
+								<p> Whether or not to recalculate the content size instead of using the cached copy</p>
 							</li>
 					</ul>
 
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">number</span>
+
+								<p>Width of the text</p>
+							</li>
+
+							<li>
+									<span class="type">number</span>
+
+								<p>Height of the text</p>
+							</li>
+
+				</ul>
 
 
 		</section>
 		<section class="method">
 			<header>
-				<a class="anchor" id="PrintData">
-					<h1><span class="realm shared"></span></span>Item:PrintData()</h1>
+				<a class="anchor" id="GetFont">
+					<h1><span class="realm client"></span></span>ixLabel:GetFont()</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L109">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L637">View source &raquo;</a>
 
-					<p>A utility function printing the item's stored data.</p>
+					<p>Returns the current font for this panel.</p>
 			</header>
 
 
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a>
+
+								<p>Name of current font</p>
+							</li>
+
+				</ul>
 
 
 		</section>
 		<section class="method">
 			<header>
-				<a class="anchor" id="Remove">
-					<h1><span class="realm shared"></span></span>Item:Remove(bNoReplication, bNoDelete)</h1>
+				<a class="anchor" id="GetKerning">
+					<h1><span class="realm client"></span></span>ixLabel:GetKerning()</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L265">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L626">View source &raquo;</a>
 
-					<p>Removes the item.</p>
+					<p>Returns the current kerning for this panel.</p>
 			</header>
 
 
-					<h3>Parameters</h3>
 
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">bNoReplication</span>
-
-									<span class="tag"><span class="type">boolean</span></span>
-
-
-								<p> Whether or not the item's removal should not be replicated.</p>
-							</li>
-					</ul>
-
-					<ul>
+				<h3>Returns</h3>
+				<ul>
 
 							<li>
-								<span class="tag parameter">bNoDelete</span>
+									<span class="type">number</span>
 
-									<span class="tag"><span class="type">boolean</span></span>
-
-
-								<p> Whether or not the item should not be fully deleted</p>
+								<p>Current kerning</p>
 							</li>
-					</ul>
+
+				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="GetPadding">
+					<h1><span class="realm client"></span></span>ixLabel:GetPadding()</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L673">View source &raquo;</a>
+
+					<p>Returns how much padding this panel has around its text.</p>
+			</header>
+
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">number</span>
+
+								<p>Current padding</p>
+							</li>
+
+				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="GetScaleWidth">
+					<h1><span class="realm client"></span></span>ixLabel:GetScaleWidth()</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L661">View source &raquo;</a>
+
+					<p>Returns whether or not this panel will scale its text down to fit its width.</p>
+			</header>
+
 
 
 				<h3>Returns</h3>
@@ -3113,7 +2954,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 							<li>
 									<span class="type">bool</span>
 
-								<p>Whether the item was successfully deleted or not</p>
+								<p>Whether or not this panel will scale its text</p>
 							</li>
 
 				</ul>
@@ -3122,14 +2963,68 @@ same name but different numerical IDs). You can think of items as the class, whi
 		</section>
 		<section class="method">
 			<header>
-				<a class="anchor" id="SetData">
-					<h1><span class="realm shared"></span></span>Item:SetData(key, value, receivers, noSave, noCheckEntity)</h1>
+				<a class="anchor" id="GetText">
+					<h1><span class="realm client"></span></span>ixLabel:GetText()</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L171">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L593">View source &raquo;</a>
 
-					<p>Sets a key within the item's data.</p>
+					<p>Returns the current text for this panel.</p>
+			</header>
+
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a>
+
+								<p>Current text</p>
+							</li>
+
+				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="GetTextColor">
+					<h1><span class="realm client"></span></span>ixLabel:GetTextColor()</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L604">View source &raquo;</a>
+
+					<p>Returns the current text color for this panel.</p>
+			</header>
+
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">color</span>
+
+								<p>Current text color</p>
+							</li>
+
+				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="SetBackgroundColor">
+					<h1><span class="realm client"></span></span>ixLabel:SetBackgroundColor(color)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L611">View source &raquo;</a>
+
+					<p>Sets the color of the background to draw behind the text.</p>
 			</header>
 
 
@@ -3139,63 +3034,120 @@ same name but different numerical IDs). You can think of items as the class, whi
 					<ul>
 
 							<li>
-								<span class="tag parameter">key</span>
+								<span class="tag parameter">color</span>
+
+									<span class="tag"><span class="type">color</span></span>
+
+
+								<p> New color to use</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="SetContentAlignment">
+					<h1><span class="realm client"></span></span>ixLabel:SetContentAlignment(alignment)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L646">View source &raquo;</a>
+
+					<p>Changes how the text is aligned when drawing.  Valid content alignment values include numbers <code>1</code> through <code>9</code>. Each number's
+ corresponding alignment is based on its position on a numpad. For example, <code>1</code> is bottom-left, <code>5</code> is centered, <code>9</code> is
+ top-right, etc.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">alignment</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> Alignment to use</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="SetDropShadow">
+					<h1><span class="realm client"></span></span>ixLabel:SetDropShadow(distance, color)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L703">View source &raquo;</a>
+
+					<p>Sets the drop shadow to draw behind the text.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">distance</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> How far away to draw the shadow in pixels. Set to <code>0</code> to disable</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">color</span>
+
+									<span class="tag"><span class="type">color</span></span>
+
+									<span class="tag default">optional</span>
+
+								<p> Color of the shadow. Defaults to a dimmed version of the text color</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="SetFont">
+					<h1><span class="realm client"></span></span>ixLabel:SetFont(font)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L633">View source &raquo;</a>
+
+					<p>Sets the font used to draw the text.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">font</span>
 
 									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p> The key to store the value within</p>
-							</li>
-					</ul>
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">value</span>
-
-
-									<span class="tag default">default: nil</span>
-
-								<p> The value to store within the key</p>
-							</li>
-					</ul>
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">receivers</span>
-
-									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
-
-									<span class="tag default">default: nil</span>
-
-								<p> The players to replicate the data on</p>
-							</li>
-					</ul>
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">noSave</span>
-
-									<span class="tag"><span class="type">boolean</span></span>
-
-									<span class="tag default">default: false</span>
-
-								<p> Whether to disable saving the data on the database or not</p>
-							</li>
-					</ul>
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">noCheckEntity</span>
-
-									<span class="tag"><span class="type">boolean</span></span>
-
-									<span class="tag default">default: false</span>
-
-								<p> Whether to disable setting the data on the entity, if applicable</p>
+								<p> Name of the font to use</p>
 							</li>
 					</ul>
 
@@ -3204,14 +3156,14 @@ same name but different numerical IDs). You can think of items as the class, whi
 		</section>
 		<section class="method">
 			<header>
-				<a class="anchor" id="Spawn">
-					<h1><span class="realm server"></span></span>Item:Spawn(position, angles)</h1>
+				<a class="anchor" id="SetKerning">
+					<h1><span class="realm client"></span></span>ixLabel:SetKerning(kerning)</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L367">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L622">View source &raquo;</a>
 
-					<p>Spawn an item entity based off the item table.</p>
+					<p>Sets the spacing between each character of the text in pixels.  Set to <code>0</code> to disable. Kerning is disabled by default.</p>
 			</header>
 
 
@@ -3221,51 +3173,29 @@ same name but different numerical IDs). You can think of items as the class, whi
 					<ul>
 
 							<li>
-								<span class="tag parameter">position</span>
+								<span class="tag parameter">kerning</span>
 
-									<span class="tag"><span class="type">vector</span></span>
+									<span class="tag"><span class="type">number</span></span>
 
 
-								<p> The position in which the item's entity will be spawned</p>
+								<p> How far apart to draw each letter</p>
 							</li>
 					</ul>
 
-					<ul>
-
-							<li>
-								<span class="tag parameter">angles</span>
-
-									<span class="tag"><span class="type">angle</span></span>
-
-
-								<p> The angles at which the item's entity will spawn</p>
-							</li>
-					</ul>
-
-
-				<h3>Returns</h3>
-				<ul>
-
-							<li>
-									<span class="type">entity</span>
-
-								<p>The spawned entity</p>
-							</li>
-
-				</ul>
 
 
 		</section>
 		<section class="method">
 			<header>
-				<a class="anchor" id="Transfer">
-					<h1><span class="realm server"></span></span>Item:Transfer(invID, x, y, client, noReplication, isLogical)</h1>
+				<a class="anchor" id="SetPadding">
+					<h1><span class="realm client"></span></span>ixLabel:SetPadding(padding)</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L408">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L669">View source &raquo;</a>
 
-					<p>Transfers an item to a specific inventory.</p>
+					<p>How much spacing to use around the text when its drawn.  This uses uniform padding on the top, left, right, and bottom of
+ this panel.</p>
 			</header>
 
 
@@ -3275,105 +3205,28 @@ same name but different numerical IDs). You can think of items as the class, whi
 					<ul>
 
 							<li>
-								<span class="tag parameter">invID</span>
+								<span class="tag parameter">padding</span>
 
 									<span class="tag"><span class="type">number</span></span>
 
 
-								<p> The inventory to transfer the item to</p>
+								<p> Padding to use</p>
 							</li>
 					</ul>
 
-					<ul>
-
-							<li>
-								<span class="tag parameter">x</span>
-
-									<span class="tag"><span class="type">number</span></span>
-
-
-								<p> The X position to which the item should be transferred on the new inventory</p>
-							</li>
-					</ul>
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">y</span>
-
-									<span class="tag"><span class="type">number</span></span>
-
-
-								<p> The Y position to which the item should be transferred on the new inventory</p>
-							</li>
-					</ul>
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">client</span>
-
-									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
-
-
-								<p> The player to which the item is being transferred</p>
-							</li>
-					</ul>
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">noReplication</span>
-
-									<span class="tag"><span class="type">boolean</span></span>
-
-
-								<p> Whether there should be no replication of the transferral</p>
-							</li>
-					</ul>
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">isLogical</span>
-
-									<span class="tag"><span class="type">boolean</span></span>
-
-
-								<p> Whether or not an entity should spawn if the item is transferred to the world</p>
-							</li>
-					</ul>
-
-
-				<h3>Returns</h3>
-				<ul>
-
-							<li>
-									<span class="type">bool</span>
-
-								<p>Whether the transfer was successful or not</p>
-							</li>
-
-							<li>
-									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a>
-
-								<p>The error, if applicable</p>
-							</li>
-
-				</ul>
 
 
 		</section>
 		<section class="method">
 			<header>
-				<a class="anchor" id="__eq">
-					<h1><span class="realm shared"></span></span>Item:__eq(other)</h1>
+				<a class="anchor" id="SetScaleWidth">
+					<h1><span class="realm client"></span></span>ixLabel:SetScaleWidth(bScale)</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L37">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L657">View source &raquo;</a>
 
-					<p>Returns true if this item is equal to another item.  Internally, this checks item IDs.</p>
+					<p>Whether or not to scale the width of the text down to fit the width of this panel, if needed.</p>
 			</header>
 
 
@@ -3383,62 +3236,95 @@ same name but different numerical IDs). You can think of items as the class, whi
 					<ul>
 
 							<li>
-								<span class="tag parameter">other</span>
+								<span class="tag parameter">bScale</span>
 
-									<span class="tag"><a class="type" href="../../classes/item/#">Item</a></span>
+									<span class="tag"><span class="type">boolean</span></span>
 
 
-								<p> Item to compare to</p>
+								<p> Whether or not to scale</p>
 							</li>
 					</ul>
 
 
-				<h3>Returns</h3>
-				<ul>
-
-							<li>
-									<span class="type">bool</span>
-
-								<p>Whether or not this item is equal to the given item</p>
-							</li>
-
-				</ul>
-
-				<h3>Example Usage</h3>
-					<pre><code>print(ix.item.instances[1] == ix.item.instances[2])
- > false
-</code></pre>
 
 		</section>
 		<section class="method">
 			<header>
-				<a class="anchor" id="__tostring">
-					<h1><span class="realm shared"></span></span>Item:__tostring()</h1>
+				<a class="anchor" id="SetText">
+					<h1><span class="realm client"></span></span>ixLabel:SetText(text)</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L27">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L589">View source &raquo;</a>
 
-					<p>Returns a string representation of this item.</p>
+					<p>Sets the text for this label to display.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">text</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+
+								<p> Text to display</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="SetTextColor">
+					<h1><span class="realm client"></span></span>ixLabel:SetTextColor(color)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L600">View source &raquo;</a>
+
+					<p>Sets the color of the text to use when drawing.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">color</span>
+
+									<span class="tag"><span class="type">color</span></span>
+
+
+								<p> New color to use</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="SizeToContents">
+					<h1><span class="realm client"></span></span>ixLabel:SizeToContents()</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/derma/cl_generic.lua#L877">View source &raquo;</a>
+
+					<p>Sets the size of the panel to fit the content size with the current padding.  The content size is recalculated when this
+ method is called.</p>
 			</header>
 
 
 
-				<h3>Returns</h3>
-				<ul>
-
-							<li>
-									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a>
-
-								<p>String representation</p>
-							</li>
-
-				</ul>
-
-				<h3>Example Usage</h3>
-					<pre><code>print(ix.item.instances[1])
- > "item[1]"
-</code></pre>
 
 		</section>
 
