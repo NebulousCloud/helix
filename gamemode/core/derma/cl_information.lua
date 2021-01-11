@@ -35,45 +35,20 @@ function PANEL:Init()
 	end
 
 	if (!suppress.name) then
-		-- container panel so we can center the label horizontally without colouring the entire background
-		local namePanel = self:Add("Panel")
-		namePanel:Dock(TOP)
-		namePanel:DockMargin(0, 0, 0, 8)
-		namePanel.PerformLayout = function(_, width, height)
-			self.name:SetPos(width * 0.5 - self.name:GetWide() * 0.5, height * 0.5 - self.name:GetTall() * 0.5)
-		end
-
-		self.name = namePanel:Add("DLabel")
-		self.name.backgroundColor = Color(0, 0, 0, 150)
+		self.name = self:Add("ixLabel")
+		self.name:Dock(TOP)
+		self.name:DockMargin(0, 0, 0, 8)
 		self.name:SetFont("ixMenuButtonHugeFont")
 		self.name:SetContentAlignment(5)
 		self.name:SetTextColor(color_white)
-		self.name.Paint = function(this, width, height)
-			surface.SetDrawColor(this.backgroundColor)
-			surface.DrawRect(0, 0, width, height)
-		end
-
-		self.name.SizeToContents = function(this)
-			local width, height = this:GetContentSize()
-			width = width + 16
-			height = height + 16
-
-			this:SetSize(width, height)
-			namePanel:SetTall(height)
-		end
+		self.name:SetPadding(8)
+		self.name:SetScaleWidth(true)
 	end
 
 	if (!suppress.description) then
-		local descriptionPanel = self:Add("Panel")
-		descriptionPanel:Dock(TOP)
-		descriptionPanel:DockMargin(0, 0, 0, 8)
-		descriptionPanel.PerformLayout = function(_, width, height)
-			if (!self.description.bWrap) then
-				self.description:SetPos(width * 0.5 - self.description:GetWide() * 0.5, height * 0.5 - self.description:GetTall() * 0.5)
-			end
-		end
-
-		self.description = descriptionPanel:Add("DLabel")
+		self.description = self:Add("DLabel")
+		self.description:Dock(TOP)
+		self.description:DockMargin(0, 0, 0, 8)
 		self.description:SetFont("ixMenuButtonFont")
 		self.description:SetTextColor(color_white)
 		self.description:SetContentAlignment(5)
@@ -116,8 +91,6 @@ function PANEL:Init()
 			else
 				this:SetSize(width + 16, height + 16)
 			end
-
-			descriptionPanel:SetTall(this:GetTall())
 		end
 	end
 
