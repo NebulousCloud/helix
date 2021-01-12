@@ -703,8 +703,6 @@ hook.Add("CreateMenuButtons", "ixSettings", function(tabs)
 		end,
 
 		Create = function(info, container)
-			container:SetTitle(L("settings"))
-
 			local panel = container:Add("ixSettings")
 			panel:SetSearchEnabled(true)
 
