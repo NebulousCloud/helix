@@ -455,7 +455,22 @@ end
 function GetMaxPlayerCharacter(client)
 end
 
---- @realm server
+--- Called whenever the player dies.
+-- @realm server
+-- @player client Player that dies.
+-- @treturn string The sound that'll be played.
+-- @usage function PLUGIN:GetPlayerDeathSound(client)
+--  if (client:IsCombine()) then
+--      local sound = "NPC_MetroPolice.Die"
+--      for k, v in ipairs(player.GetAll()) do
+--          if (v:IsCombine()) then
+--              v:EmitSound(sound)
+--          end
+--      end
+--      return sound
+--  end
+-- end
+-- If the player is in the combine factions, they'll play the Metropolice death sound when they die.
 function GetPlayerDeathSound(client)
 end
 
