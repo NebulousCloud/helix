@@ -470,7 +470,7 @@ end
 --      return sound
 --  end
 -- end
--- If the player is in the combine factions, they'll play the Metropolice death sound when they die.
+-- If the player is in any of the Combine factions, they'll play the Metropolice death sound when they die.
 function GetPlayerDeathSound(client)
 end
 
