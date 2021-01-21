@@ -2548,9 +2548,11 @@ ToggleWepRaised											</a>
 	<h2>Chat manipulation and helper functions.</h2>
 </header>
 
-<p>
-
-</p>
+<p>Chat messages are a core part of the framework - it's takes up a good chunk of the gameplay, and is also used to interact with
+the framework. Chat messages can have types or "classes" that describe how the message should be interpreted. All chat messages
+will have some type of class: <code>ic</code> for regular in-character speech, <code>me</code> for actions, <code>ooc</code> for out-of-character, etc. These
+chat classes can affect how the message is displayed in each player's chatbox. See <a href="../../libraries/ix.chat/#ix.chat.Register">ix.chat.Register</a> and <a href="../../libraries/ix.chat/#ChatClassStructure">ChatClassStructure</a>
+to create your own chat classes.</p>
 
 	<h1 class="title">Functions</h1>
 
@@ -2561,7 +2563,7 @@ ToggleWepRaised											</a>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L205">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L281">View source &raquo;</a>
 
 					<p>Formats a string to fix basic grammar - removing extra spacing at the beginning and end, capitalizing the first character,
  and making sure it ends in punctuation.</p>
@@ -2611,7 +2613,7 @@ ToggleWepRaised											</a>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L131">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L207">View source &raquo;</a>
 
 					<p>Identifies which chat mode should be used.</p>
 			</header>
@@ -2690,9 +2692,10 @@ ToggleWepRaised											</a>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L33">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L112">View source &raquo;</a>
 
-					<p>Registers a new chat type with the information provided.</p>
+					<p>Registers a new chat type with the information provided.  Chat classes should usually be created inside of the
+ <code>InitializedChatClasses</code> hook.</p>
 			</header>
 
 
@@ -2716,19 +2719,19 @@ ToggleWepRaised											</a>
 							<li>
 								<span class="tag parameter">data</span>
 
-									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+									<span class="tag"><a class="type" href="../../libraries/ix.chat/#ChatClassStructure">ChatClassStructure</a></span>
 
 
-								<p> Table Properties and functions to assign to this chat class. If fields are missing from the table, then it
- will use a default value</p>
+								<p> Properties and functions to assign to this chat class</p>
 							</li>
 					</ul>
 
 
 				<h3>Example Usage</h3>
-					<pre><code>ix.chat.Register("me", {
+					<pre><code>-- this is the "me" chat class taken straight from the framework as an example
+ix.chat.Register("me", {
 	format = "** %s %s",
-	GetColor = Color(255, 50, 50),
+	color = Color(255, 50, 50),
 	CanHear = ix.config.Get("chatRange", 280) * 2,
 	prefix = {"/Me", "/Action"},
 	description = "@cmdMe",
@@ -2737,15 +2740,19 @@ ToggleWepRaised											</a>
 })
 </code></pre>
 
+				<h3>See Also</h3>
+				<ul>
+						<li><a href="../../libraries/ix.chat/#ChatClassStructure">ChatClassStructure</a></li>
+				</ul>
 		</section>
 		<section class="method">
 			<header>
 				<a class="anchor" id="ix.chat.Send">
-					<h1><span class="realm server"></span></span>ix.chat.Send(speaker, chatType, text, anonymous, receivers, data)</h1>
+					<h1><span class="realm server"></span></span>ix.chat.Send(speaker, chatType, text, bAnonymous, receivers, data)</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L227">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L303">View source &raquo;</a>
 
 					<p>Send a chat message using the specified chat type.</p>
 			</header>
@@ -2793,7 +2800,7 @@ ToggleWepRaised											</a>
 					<ul>
 
 							<li>
-								<span class="tag parameter">anonymous</span>
+								<span class="tag parameter">bAnonymous</span>
 
 									<span class="tag"><span class="type">boolean</span></span>
 
@@ -2830,6 +2837,279 @@ ToggleWepRaised											</a>
 					</ul>
 
 
+
+		</section>
+	<h1 class="title">Tables</h1>
+
+		<section class="method">
+			<header>
+				<a class="anchor" id="ChatClassStructure">
+					<h1><span class="realm shared"></span></span>ChatClassStructure</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L96">View source &raquo;</a>
+
+					<p>Chat messages can have different classes or "types" of messages that have different properties.  This can include how the
+ text is formatted, color, hearing distance, etc.</p>
+			</header>
+
+
+					<h3>Fields</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">prefix</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+
+								<p> What the player must type before their message in order to use this chat class. For example,
+ having a prefix of <code>/Y</code> will require to type <code>/Y I am yelling</code> in order to send a message with this chat class. This can also
+ be a table of strings if you want to allow multiple prefixes, such as <code>{&quot;//&quot;, &quot;/OOC&quot;}</code>.</p>
+
+<p> <strong>NOTE:</strong> the prefix should usually start with a <code>/</code> to be consistent with the rest of the framework. However, you are able
+ to use something different like the <code>LOOC</code> chat class where the prefixes are <code>.//</code>, <code>[[</code>, and <code>/LOOC</code>.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">noSpaceAfter</span>
+
+									<span class="tag"><span class="type">bool</span></span>
+
+									<span class="tag default">default: false</span>
+
+								<p> Whether or not the <code>prefix</code> can be used without a space after it. For example, the
+ <code>OOC</code> chat class allows you to type <code>//my message</code> instead of <code>// my message</code>. <strong>NOTE:</strong> this only works if the last
+ character in the prefix is non-alphanumeric (i.e <code>noSpaceAfter</code> with <code>/Y</code> will not work, but <code>/!</code> will).</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">description</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+									<span class="tag default">optional</span>
+
+								<p> Description to show to the user in the chatbox when they're using this chat class</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">format</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+									<span class="tag default">default: &quot;%s: \&quot;%s\&quot;&quot;</span>
+
+								<p> How to format a message with this chat class. The first <code>%s</code> will be the speaking
+ player's name, and the second one will be their message</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">color</span>
+
+									<span class="tag"><span class="type">color</span></span>
+
+									<span class="tag default">default: Color(242 230 160)</span>
+
+								<p> Color to use when displaying a message with this chat class</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">indicator</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+									<span class="tag default">default: &quot;chatTyping&quot;</span>
+
+								<p> Language phrase to use when displaying the typing indicator above the
+ speaking player's head</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">bNoIndicator</span>
+
+									<span class="tag"><span class="type">bool</span></span>
+
+									<span class="tag default">default: false</span>
+
+								<p> Whether or not to avoid showing the typing indicator above the speaking player's
+ head</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">font</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+									<span class="tag default">default: ixChatFont</span>
+
+								<p> Font to use for displaying a message with this chat class</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">deadCanChat</span>
+
+									<span class="tag"><span class="type">bool</span></span>
+
+									<span class="tag default">default: false</span>
+
+								<p> Whether or not a dead player can send a message with this chat class</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">CanHear</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p>
+<p> This can be either a <code>number</code> representing how far away another player can hear this message.
+ IC messages will use the <code>chatRange</code> config, for example. This can also be a function, which returns <code>true</code> if the given
+ listener can hear the message emitted from a speaker.</p>
+<pre><code>-- message can be heard by any player 1000 units away from the speaking player
+CanHear = 1000
+</code></pre>
+<p> OR</p>
+<pre><code>CanHear = function(self, speaker, listener)
+    -- the speaking player will be heard by everyone
+    return true
+end
+</code></pre>
+
+</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">CanSay</span>
+
+									<span class="tag"><span class="type">function</span></span>
+
+									<span class="tag default">optional</span>
+
+								<p>
+<p> Function to run to check whether or not a player can send a message with this chat class.
+ By default, it will return <code>false</code> if the player is dead and <code>deadCanChat</code> is <code>false</code>. Overriding this function will prevent
+ <code>deadCanChat</code> from working, and you must implement this functionality manually.</p>
+<pre><code>CanSay = function(self, speaker, text)
+    -- the speaker will never be able to send a message with this chat class
+    return false
+end
+</code></pre>
+
+</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">GetColor</span>
+
+									<span class="tag"><span class="type">function</span></span>
+
+									<span class="tag default">optional</span>
+
+								<p>
+<p> Function to run to set the color of a message with this chat class. You should generally
+ stick to using <code>color</code>, but this is useful for when you want the color of the message to change with some criteria.</p>
+<pre><code>GetColor = function(self, speaker, text)
+    -- each message with this chat class will be colored a random shade of red
+    return Color(math.random(120, 200), 0, 0)
+end
+</code></pre>
+
+</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">OnChatAdd</span>
+
+									<span class="tag"><span class="type">function</span></span>
+
+									<span class="tag default">optional</span>
+
+								<p>
+<p> Function to run when a message with this chat class should be added to the chatbox. If
+ using this function, make sure you end the function by calling <code>chat.AddText</code> in order for the text to show up.</p>
+
+<p> <strong>NOTE:</strong> using your own <code>OnChatAdd</code> function will prevent <code>color</code>, <code>GetColor</code>, or <code>format</code> from being used since you'll be
+ overriding the base function that uses those properties. In such cases you'll need to add that functionality back in
+ manually. In general, you should avoid overriding this function where possible. The <a href="../../libraries/ix.data/">data</a> argument in the function is
+ whatever is passed into the same <a href="../../libraries/ix.data/">data</a> argument in <a href="../../libraries/ix.chat/#ix.chat.Send">ix.chat.Send</a>.</p>
+
+<pre><code>OnChatAdd = function(self, speaker, text, bAnonymous, data)
+    -- adds white text in the form of "Player Name: Message contents"
+    chat.AddText(color_white, speaker:GetName(), ": ", text)
+end
+</code></pre>
+
+</p>
+							</li>
+					</ul>
+
+
+
+				<h3>See Also</h3>
+				<ul>
+						<li><a href="../../libraries/ix.chat/#ix.chat.Register">ix.chat.Register</a></li>
+				</ul>
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="ix.chat.classes">
+					<h1><span class="realm shared"></span></span>ix.chat.classes</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L22">View source &raquo;</a>
+
+					<p>List of all chat classes that have been registered by the framework, where each key is the name of the chat class, and value
+ is the chat class data.  Accessing a chat class's data is useful for when you want to copy some functionality or properties
+ to use in your own. Note that if you're accessing this table, you should do so inside of the <code>InitializedChatClasses</code> hook.</p>
+			</header>
+
+
+
+				<h3>Example Usage</h3>
+					<pre><code>print(ix.chat.classes.ic.format)
+ > "%s says \"%s\""
+</code></pre>
 
 		</section>
 

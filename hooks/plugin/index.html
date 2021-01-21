@@ -6027,15 +6027,33 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Registers chat classes after the core framework chat classes have been registered.  You should usually create your chat
+ classes in this hook - especially if you want to reference the properties of a framework chat class.</p>
 			</header>
 
 
 
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:InitializedChatClasses()
+	-- let's say you wanted to reference an existing chat class's color
+	ix.chat.Register("myclass", {
+		format = "%s says \"%s\"",
+		GetColor = function(self, speaker, text)
+			-- make the chat class slightly brighter than the "ic" chat class
+			local color = ix.chat.classes.ic:GetColor(speaker, text)
 
+			return Color(color.r + 35, color.g + 35, color.b + 35)
+		end,
+		-- etc.
+	})
+end
+</code></pre>
+
+				<h3>See Also</h3>
+				<ul>
+						<li><a href="../../libraries/ix.chat/#ix.chat.Register">ix.chat.Register</a></li>
+						<li><a href="../../libraries/ix.chat/#ix.chat.classes">ix.chat.classes</a></li>
+				</ul>
 		</section>
 		<section class="method">
 			<header>
