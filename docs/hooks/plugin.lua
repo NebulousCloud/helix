@@ -496,7 +496,24 @@ end
 function GetTypingIndicator(character, text)
 end
 
---- @realm shared
+--- Registers chat classes after the core framework chat classes have been registered. You should usually create your chat
+-- classes in this hook - especially if you want to reference the properties of a framework chat class.
+-- @realm shared
+-- @usage function PLUGIN:InitializedChatClasses()
+-- 	-- let's say you wanted to reference an existing chat class's color
+-- 	ix.chat.Register("myclass", {
+-- 		format = "%s says \"%s\"",
+-- 		GetColor = function(self, speaker, text)
+-- 			-- make the chat class slightly brighter than the "ic" chat class
+-- 			local color = ix.chat.classes.ic:GetColor(speaker, text)
+--
+-- 			return Color(color.r + 35, color.g + 35, color.b + 35)
+-- 		end,
+-- 		-- etc.
+-- 	})
+-- end
+-- @see ix.chat.Register
+-- @see ix.chat.classes
 function InitializedChatClasses()
 end
 
