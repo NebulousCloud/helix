@@ -5697,10 +5697,8 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Returns the sound to emit from the player upon death.  If nothing is returned then it will use the default male/female death
+ sounds.</p>
 			</header>
 
 
@@ -5712,15 +5710,44 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that died</p>
 							</li>
 					</ul>
 
 
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a>
+
+								<p>Sound to play</p>
+							</li>
+
+							<div class="or"><span>OR</span></div>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p><code>false</code> if a sound shouldn't be played at all</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:GetPlayerDeathSound(client)
+	-- play impact sound every time someone dies
+	return "physics/body/body_medium_impact_hard1.wav"
+end
+</code></pre>
+					<pre><code>function PLUGIN:GetPlayerDeathSound(client)
+	-- don't play a sound at all
+	return false
+end
+</code></pre>
 
 		</section>
 		<section class="method">
