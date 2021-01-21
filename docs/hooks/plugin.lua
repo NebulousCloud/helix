@@ -455,7 +455,20 @@ end
 function GetMaxPlayerCharacter(client)
 end
 
---- @realm server
+--- Returns the sound to emit from the player upon death. If nothing is returned then it will use the default male/female death
+-- sounds.
+-- @realm server
+-- @player client Player that died
+-- @treturn[1] string Sound to play
+-- @treturn[2] bool `false` if a sound shouldn't be played at all
+-- @usage function PLUGIN:GetPlayerDeathSound(client)
+-- 	-- play impact sound every time someone dies
+-- 	return "physics/body/body_medium_impact_hard1.wav"
+-- end
+-- @usage function PLUGIN:GetPlayerDeathSound(client)
+-- 	-- don't play a sound at all
+-- 	return false
+-- end
 function GetPlayerDeathSound(client)
 end
 
