@@ -119,7 +119,7 @@ ITEM.functions.Equip = {
 				local itemTable = ix.item.instances[v.id]
 
 				if (itemTable.pacData and v.outfitCategory == item.outfitCategory and itemTable:GetData("equip")) then
-					item.player:Notify("You're already equipping this kind of outfit")
+					item.player:NotifyLocalized(item.equippedNotify or "outfitAlreadyEquipped")
 
 					return false
 				end
