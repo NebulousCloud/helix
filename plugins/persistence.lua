@@ -34,7 +34,7 @@ properties.Add("persist", {
 
 		entity:SetNetVar("Persistent", true)
 
-		ix.log.Add(client, "persist", entity:GetClass() == "prop_physics" and entity:GetModel() or entity, true)
+		ix.log.Add(client, "persist", entity:GetClass() == "prop_effect" and entity.AttachedEntity:GetModel() or entity:GetModel(), true)
 	end
 })
 
@@ -72,7 +72,7 @@ properties.Add("persist_end", {
 
 		entity:SetNetVar("Persistent", false)
 
-		ix.log.Add(client, "persist", entity:GetClass() == "prop_physics" and entity:GetModel() or entity, false)
+		ix.log.Add(client, "persist", entity:GetClass() == "prop_effect" and entity.AttachedEntity:GetModel() or entity:GetModel(), false)
 	end
 })
 
@@ -137,7 +137,7 @@ if (SERVER) then
 				data.Class = v.ClassOverride or v:GetClass()
 				data.Pos = v:GetPos()
 				data.Angle = v:GetAngles()
-				data.Model = v:GetModel()
+				data.Model = v:GetClass() == "prop_effect" and v.AttachedEntity:GetModel() or v:GetModel()
 				data.Skin = v:GetSkin()
 				data.Color = v:GetColor()
 				data.Material = v:GetMaterial()
