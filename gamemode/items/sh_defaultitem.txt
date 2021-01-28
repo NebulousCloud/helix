@@ -1,3 +1,12 @@
 ITEM.name = "Test Item"
 ITEM.description = "A test item!"
 ITEM.model = "models/props_c17/oildrum001.mdl"
+
+ITEM.noBusiness = true //disables buying that item from bussiness
+
+ITEM.factions = FACTION_CITIZEN //only citizens will be able to buy that item
+ITEM.factions = {FACTION_CP,FACTION_OTA} //allow buying this item only for CP and OTA faction
+
+ITEM.classes = CLASS_CITIZEN //only character with class citizen will be able to buy it
+ITEM.classes = {CLASS_CITIZEN,CLASS_TRASHMAN} //only character with class citizen and trashman will be able to buy it
+ITEM.flag = "s" //players with s flag will be able to buy that item
