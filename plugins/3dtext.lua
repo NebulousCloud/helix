@@ -87,6 +87,7 @@ if (SERVER) then
 		net.Broadcast()
 
 		self.list[id] = nil
+		self:SaveText()
 		return true
 	end
 
