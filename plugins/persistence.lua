@@ -6,6 +6,10 @@ PLUGIN.description = "Define entities to persist through restarts."
 PLUGIN.author = "alexgrist"
 PLUGIN.stored = PLUGIN.stored or {}
 
+local function GetRealModel(entity)
+	return entity:GetClass() == "prop_effect" and entity.AttachedEntity:GetModel() or entity:GetModel()
+end
+
 properties.Add("persist", {
 	MenuLabel = "#makepersistent",
 	Order = 400,
@@ -34,7 +38,7 @@ properties.Add("persist", {
 
 		entity:SetNetVar("Persistent", true)
 
-		ix.log.Add(client, "persist", entity:GetClass() == "prop_physics" and entity:GetModel() or entity, true)
+		ix.log.Add(client, "persist", GetRealModel(entity), true)
 	end
 })
 
@@ -72,7 +76,7 @@ properties.Add("persist_end", {
 
 		entity:SetNetVar("Persistent", false)
 
-		ix.log.Add(client, "persist", entity:GetClass() == "prop_physics" and entity:GetModel() or entity, false)
+		ix.log.Add(client, "persist", GetRealModel(entity), false)
 	end
 })
 
@@ -137,7 +141,7 @@ if (SERVER) then
 				data.Class = v.ClassOverride or v:GetClass()
 				data.Pos = v:GetPos()
 				data.Angle = v:GetAngles()
-				data.Model = v:GetModel()
+				data.Model = GetRealModel(v)
 				data.Skin = v:GetSkin()
 				data.Color = v:GetColor()
 				data.Material = v:GetMaterial()
