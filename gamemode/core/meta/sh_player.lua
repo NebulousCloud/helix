@@ -65,7 +65,8 @@ end
 function meta:IsFemale()
 	local model = self:GetModel():lower()
 
-	return model:find("female") != nil or model:find("alyx") != nil or model:find("mossman") != nil or ix.anim.GetModelClass(model) == "citizen_female"
+	return model:find("female") != nil or model:find("alyx") != nil or model:find("mossman") != nil or
+		ix.anim.GetModelClass(model) == "citizen_female"
 end
 
 --- Whether or not this player is stuck and cannot move.
