@@ -452,6 +452,10 @@ function GetDefaultCharacterName(client, faction)
 end
 
 --- @realm shared
+function GetDefaultCharacterDescription(client, faction)
+end
+
+--- @realm shared
 function GetMaxPlayerCharacter(client)
 end
 
