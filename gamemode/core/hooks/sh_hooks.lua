@@ -415,6 +415,14 @@ function GM:GetDefaultCharacterName(client, faction)
 	end
 end
 
+function GM:GetDefaultCharacterDescription(client, faction)
+	local info = ix.faction.indices[faction]
+
+	if (info and info.GetDefaultDescription) then
+		return info:GetDefaultDescription(client)
+	end
+end
+
 function GM:CanPlayerUseCharacter(client, character)
 	local banned = character:GetData("banned")
 
