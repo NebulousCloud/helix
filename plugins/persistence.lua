@@ -103,6 +103,10 @@ if (SERVER) then
 				entity:Spawn()
 				entity:Activate()
 
+				if (v.bNoCollision) then
+					entity:SetCollisionGroup(COLLISION_GROUP_WORLD)
+				end
+
 				if (istable(v.BodyGroups)) then
 					for k2, v2 in pairs(v.BodyGroups) do
 						entity:SetBodygroup(k2, v2)
@@ -145,6 +149,7 @@ if (SERVER) then
 				data.Skin = v:GetSkin()
 				data.Color = v:GetColor()
 				data.Material = v:GetMaterial()
+				data.bNoCollision = v:GetCollisionGroup() == COLLISION_GROUP_WORLD
 
 				local materials = v:GetMaterials()
 
