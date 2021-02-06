@@ -31,6 +31,7 @@ if (SERVER) then
 
 			if (itemTable and hook.Run("CanPlayerUseBusiness", client, k) != false) then
 				local amount = math.Clamp(tonumber(v) or 0, 0, 10)
+				items[k] = amount
 
 				if (amount == 0) then
 					items[k] = nil

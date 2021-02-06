@@ -42,12 +42,15 @@ function PANEL:SetItem(itemTable)
 	end)
 	self.icon.itemTable = itemTable
 	self.icon.DoClick = function(this)
-		if (!IsValid(ix.gui.checkout) and (this.nextClick or 0) < CurTime()) then
-			local parent = ix.gui.business
-			parent:BuyItem(itemTable.uniqueID)
+		if (IsValid(ix.gui.checkout)) then
+			return
+		end
 
+		local parent = ix.gui.business
+		local bAdded = parent:BuyItem(itemTable.uniqueID)
+
+		if (bAdded) then
 			surface.PlaySound("buttons/button14.wav")
-			this.nextClick = CurTime() + 0.5
 		end
 	end
 	self.icon.PaintOver = function(this)
@@ -202,8 +205,16 @@ function PANEL:GetCartCount()
 end
 
 function PANEL:BuyItem(uniqueID)
-	self.cart[uniqueID] = (self.cart[uniqueID] or 0) + 1
+	local currentCount = self.cart[uniqueID] or 0
+
+	if (currentCount >= 10) then
+		return false
+	end
+
+	self.cart[uniqueID] = currentCount + 1
 	self.checkout:SetText(L("checkout", self:GetCartCount()))
+
+	return true
 end
 
 function PANEL:LoadItems(category, search)
@@ -365,7 +376,6 @@ function PANEL:Init()
 	self.finalGlow:SetAlpha(0)
 	self.finalGlow:SetTextInset(4, 0)
 
-
 	self:SetFocusTopLevel(true)
 	self.itemData = {}
 	self:OnQuantityChanged()
@@ -455,6 +465,10 @@ function PANEL:SetCart(items)
 				end
 
 				self:OnQuantityChanged()
+			end
+			slot.quantity.OnLoseFocus = function(this)
+				local value = math.Clamp(tonumber(this:GetValue()) or 1, 0, 10)
+				this:SetText(value)
 			end
 		else
 			items[k] = nil
