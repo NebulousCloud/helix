@@ -63,7 +63,7 @@ ix.command.Add("SetVoicemail", {
 	description = "@cmdSetVoicemail",
 	arguments = bit.bor(ix.type.text, ix.type.optional),
 	OnRun = function(self, client, message)
-		if (isstring(message) or message:find("%S")) then
+		if (isstring(message) and message:find("%S")) then
 			client:SetData("vm", message:utf8sub(1, 240))
 			return "@vmSet"
 		else
