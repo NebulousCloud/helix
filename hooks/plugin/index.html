@@ -9163,15 +9163,13 @@ end
 		<section class="method">
 			<header>
 				<a class="anchor" id="PrePlayerMessageSend">
-					<h1><span class="realm server"></span></span>PLUGIN:PrePlayerMessageSend(client, chatType, message, anonymous)</h1>
+					<h1><span class="realm server"></span></span>PLUGIN:PrePlayerMessageSend(client, chatType, message, bAnonymous)</h1>
 				</a>
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called before a message sent by a player is processed to be sent to other players - i.e this is ran as early as possible
+ and before things like the auto chat formatting.  Can be used to prevent the message from being sent at all.</p>
 			</header>
 
 
@@ -9183,11 +9181,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player sending the message</p>
 							</li>
 					</ul>
 
@@ -9196,11 +9193,10 @@ end
 							<li>
 								<span class="tag parameter">chatType</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p>
-
-</p>
+								<p> Chat class of the message</p>
 							</li>
 					</ul>
 
@@ -9209,28 +9205,44 @@ end
 							<li>
 								<span class="tag parameter">message</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p>
-
-</p>
+								<p> Contents of the message</p>
 							</li>
 					</ul>
 
 					<ul>
 
 							<li>
-								<span class="tag parameter">anonymous</span>
+								<span class="tag parameter">bAnonymous</span>
+
+									<span class="tag"><span class="type">boolean</span></span>
 
 
-
-								<p>
-
-</p>
+								<p> Whether or not the player is sending the message anonymously</p>
 							</li>
 					</ul>
 
 
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Whether or not to prevent the message from being sent</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:PrePlayerMessageSend(client, chatType, message, bAnonymous)
+	if (!client:IsAdmin()) then
+		return false -- only allow admins to talk in chat
+	end
+end
+</code></pre>
 
 		</section>
 		<section class="method">
