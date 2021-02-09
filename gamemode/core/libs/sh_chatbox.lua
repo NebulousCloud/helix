@@ -308,6 +308,10 @@ if (SERVER) then
 		data = data or {}
 		chatType = string.lower(chatType)
 
+		if (IsValid(speaker) and hook.Run("PrePlayerMessageSend", speaker, chatType, text, bAnonymous) == false) then
+			return
+		end
+
 		local class = ix.chat.classes[chatType]
 
 		if (class and class:CanSay(speaker, text, data) != false) then
