@@ -14,9 +14,10 @@ function PLUGIN:PlayerDeath(client, inflictor, attacker)
 	local character = client:GetCharacter()
 
 	if (ix.config.Get("permakill")) then
-		if !(ix.config.Get("permakillWorld") and (client == attacker or inflictor:IsWorld())) then
+		if (ix.config.Get("permakillWorld") and !(client == attacker or inflictor:IsWorld())) then
 			return
 		end
+
 		character:SetData("permakilled", true)
 	end
 end
@@ -25,5 +26,6 @@ function PLUGIN:PlayerSpawn(client)
 	local character = client:GetCharacter()
 	if (ix.config.Get("permakill") and character and character:GetData("permakilled")) then
 		character:Ban()
+		character:SetData("permakilled")
 	end
 end
