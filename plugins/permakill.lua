@@ -13,7 +13,7 @@ ix.config.Add("permakillWorld", false, "Whether or not world and self damage pro
 function PLUGIN:PlayerDeath(client, inflictor, attacker)
 	local character = client:GetCharacter()
 
-	if (ix.config.Get("permakill")) then
+	if (ix.config.Get("permakill") and character) then
 		if (ix.config.Get("permakillWorld") and !(client == attacker or inflictor:IsWorld())) then
 			return
 		end
