@@ -9,8 +9,160 @@ allow a player to tie up and search a player.
 For an item to have an actual presence, they need to be instanced (usually with `ix.item.Instance`). Items describe the
 properties, while instances are a clone of these properties that can have their own unique data (e.g an ID card will have the
 same name but different numerical IDs). You can think of items as the class, while instances are objects of the `Item` class.
+
+## Creating item classes (`ItemStructure`)
+Item classes are defined in their own file inside of your schema or plugin's `items/` folder. In these item class files you
+specify how instances of the item behave. This includes default values for basic things like the item's name and description,
+to more advanced things by overriding extra methods from an item base. See `ItemStructure` for information on how to define
+a basic item class.
+
+Item classes in this folder are automatically loaded by Helix when the server starts up.
+
+## Item bases
+If many items share the same functionality (i.e a can of soda and a bottle of water can both be consumed), then you might want
+to consider using an item base to reduce the amount of duplication for these items. Item bases are defined the same way as
+regular item classes, but they are placed in the `items/base/` folder in your schema or plugin. For example, a `consumables`
+base would be in `items/base/sh_consumables.lua`.
+
+Any items that you want to use this base must be placed in a subfolder that has the name of the base you want that item to use.
+For example, for a bottled water item to use the consumable base, it must be placed in `items/consumables/sh_bottled_water.lua`.
+This also means that you cannot place items into subfolders as you wish, since the framework will try to use an item base that
+doesn't exist.
+
+The default item bases that come with Helix are:
+
+  - `ammo` - provides ammo to any items with the `weapons` base
+  - `bags` - holds an inventory that other items can be stored inside of
+  - `outfit` - changes the appearance of the player that wears it
+  - `pacoutfit` - changes the appearance of the player that wears it using PAC3
+  - `weapons` - makes any SWEP into an item that can be equipped
+
+These item bases usually come with extra values and methods that you can define/override in order to change their functionality.
+You should take a look at the source code for these bases to see their capabilities.
+
+## Item functions (`ItemFunctionStructure`)
+Requiring players to interact with items in order for them to do something is quite common. As such, there is already a built-in
+mechanism to allow players to right-click items and show a list of available options. Item functions are defined in your item
+class file in the `ITEM.functions` table. See `ItemFunctionStructure` on how to define them.
+
+Helix comes with `drop` and `take` item functions by default that allows items to be dropped from a player's inventory, and
+picked up from the world. These can be verridden by defining an item function in your item class file with the same name.
+
+## Item icons (`ItemIconStructure`)
+Icons for items sometimes don't line up quite right, in which case you can modify an item's `iconCam` value and line up the
+rendered model as needed. See `ItemIconStructure` for more details.
 ]]
 -- @classmod Item
+
+--[[--
+All item functions live inside of an item's `functions` table. An item function entry includes a few methods and fields you can
+use to customize the functionality and appearance of the item function. An example item function is below:
+
+	-- this item function's unique ID is "MyFunction"
+	ITEM.functions.MyFunction = {
+		name = "myFunctionPhrase", -- uses the "myFunctionPhrase" language phrase when displaying in the UI
+		tip = "myFunctionDescription", -- uses the "myFunctionDescription" language phrase when displaying in the UI
+		icon = "icon16/add.png", -- path to the icon material
+		OnRun = function(item)
+			local client = item.player
+			local entity = item.entity -- only set if this is function is being ran while the item is in the world
+
+			if (IsValid(client)) then
+				client:ChatPrint("This is a test.")
+
+				if (IsValid(entity)) then
+					client:ChatPrint(entity:GetName())
+				end
+			end
+
+			-- do not remove this item from the owning player's inventory
+			return false
+		end,
+		OnCanRun = function(item)
+			-- only allow admins to run this item function
+			local client = item.player
+			return IsValid(client) and client:IsAdmin()
+		end
+	}
+]]
+-- @table ItemFunctionStructure
+-- @realm shared
+-- @field[type=string,opt] name Language phrase to use when displaying this item function's name in the UI. If not specified,
+-- then it will use the unique ID of the item function
+-- @field[type=string,opt] tip Language phrase to use when displaying this item function's detailed description in the UI
+-- @field[type=string,opt] icon Path to the material to use when displaying this item function's icon
+-- @field[type=function] OnRun Function to call when the item function is ran. This function is **ONLY** ran on the server.
+--
+-- The only argument passed into this function is the instance of the item being called. The instance will have its `player`
+-- field set if the item function is being ran by a player (which it should be most of the time). It will also have its `entity`
+-- field set if the item function is being ran while the item is in the world, and not in a player's inventory.
+--
+-- The item will be removed after the item function is ran. If you want to prevent this behaviour, then you can return `false`
+-- in this function. See the example above.
+-- @field[type=function] OnCanRun Function to call when checking whether or not this item function can be ran. This function is
+-- ran **BOTH** on the client and server.
+--
+-- The arguments are the same as `OnCanRun`, and the `player` and `entity` fields will be set on the item instance accordingly.
+-- Returning `true` will allow the item function to be ran. Returning `false` will prevent it from running and additionally
+-- hide it from the UI. See the example above.
+-- @field[type=function,opt] OnClick This function is called when the player clicks on this item function's entry in the UI.
+-- This function is ran **ONLY** on the client, and is only ran if `OnCanRun` succeeds.
+--
+-- The same arguments from `OnCanRun` and `OnRun` apply to this function.
+
+--[[--
+Changing the way an item's icon is rendered is done by modifying the location and angle of the model, as well as the FOV of the
+camera. You can tweak the values in code, or use the `ix_dev_icon` console command to visually position the model and camera. An
+example entry for an item's icon is below:
+
+	ITEM.iconCam = {
+		pos = Vector(0, 0, 60),
+		ang = Angle(90, 0, 0),
+		fov = 45
+	}
+
+Note that this will probably not work for your item's specific model, since every model has a different size, origin, etc. All
+item icons need to be tweaked individually.
+]]
+-- @table ItemIconStructure
+-- @realm client
+-- @field[type=vector] pos Location of the model relative to the camera. +X is forward, +Z is up
+-- @field[type=angle] ang Angle of the model
+-- @field[type=number] fov FOV of the camera
+
+--[[--
+When creating an item class, the file will have a global table `ITEM` set that you use to define the item's values/methods. An
+example item class is below:
+
+`items/sh_brick.lua`
+	ITEM.name = "Brick"
+	ITEM.description = "A brick. Pretty self-explanatory. You can eat it but you'll probably lose some teeth."
+	ITEM.model = Model("models/props_debris/concrete_cynderblock001.mdl")
+	ITEM.width = 1
+	ITEM.height = 1
+	ITEM.price = 25
+
+Note that the below list only includes the default fields available for *all* items, and not special ones defined in custom
+item bases.
+]]
+-- @table ItemStructure
+-- @realm shared
+-- @field[type=string] name Display name of the item
+-- @field[type=string] description Detailed description of the item
+-- @field[type=string] model Model to use for the item's icon and when it's dropped in the world
+-- @field[type=number,opt=1] width Width of the item in grid cells
+-- @field[type=number,opt=1] height Height of the item in grid cells
+-- @field[type=number,opt=0] price How much money it costs to purchase this item in the business menu
+-- @field[type=string,opt] category Name of the category this item belongs to - mainly used for the business menu
+-- @field[type=boolean,opt=false] noBusiness Whether or not to disallow purchasing this item in the business menu
+-- @field[type=table,opt] factions List of factions allowed to purchase this item in the business menu
+-- @field[type=table,opt] classes List of character classes allowed to purchase this item in the business menu. Classes are
+-- checked after factions, so the character must also be in an allowed faction
+-- @field[type=string,opt] flag List of flags (as a string - e.g `"a"` or `"abc"`) allowed to purchase this item in the
+-- business menu. Flags are checked last, so the character must also be in an allowed faction and class
+-- @field[type=ItemIconStructure,opt] iconCam How to render this item's icon
+-- @field[type=table,opt] functions List of all item functions that this item has. See `ItemFunctionStructure` on how to define
+-- new item functions
 
 local ITEM = ix.meta.item or {}
 ITEM.__index = ITEM
