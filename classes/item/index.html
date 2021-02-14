@@ -2556,6 +2556,50 @@ allow a player to tie up and search a player.</p>
 properties, while instances are a clone of these properties that can have their own unique data (e.g an ID card will have the
 same name but different numerical IDs). You can think of items as the class, while instances are objects of the <a href="../../classes/item/#">Item</a> class.</p>
 
+<h2>Creating item classes (<a href="../../classes/item/#ItemStructure">ItemStructure</a>)</h2>
+<p>Item classes are defined in their own file inside of your schema or plugin's <code>items/</code> folder. In these item class files you
+specify how instances of the item behave. This includes default values for basic things like the item's name and description,
+to more advanced things by overriding extra methods from an item base. See <a href="../../classes/item/#ItemStructure">ItemStructure</a> for information on how to define
+a basic item class.</p>
+
+<p>Item classes in this folder are automatically loaded by Helix when the server starts up.</p>
+
+<h2>Item bases</h2>
+<p>If many items share the same functionality (i.e a can of soda and a bottle of water can both be consumed), then you might want
+to consider using an item base to reduce the amount of duplication for these items. Item bases are defined the same way as
+regular item classes, but they are placed in the <code>items/base/</code> folder in your schema or plugin. For example, a <code>consumables</code>
+base would be in <code>items/base/sh_consumables.lua</code>.</p>
+
+<p>Any items that you want to use this base must be placed in a subfolder that has the name of the base you want that item to use.
+For example, for a bottled water item to use the consumable base, it must be placed in <code>items/consumables/sh_bottled_water.lua</code>.
+This also means that you cannot place items into subfolders as you wish, since the framework will try to use an item base that
+doesn't exist.</p>
+
+<p>The default item bases that come with Helix are:</p>
+
+<ul>
+    <li><code>ammo</code> - provides ammo to any items with the <code>weapons</code> base</li>
+    <li><code>bags</code> - holds an inventory that other items can be stored inside of</li>
+    <li><code>outfit</code> - changes the appearance of the player that wears it</li>
+    <li><code>pacoutfit</code> - changes the appearance of the player that wears it using PAC3</li>
+    <li><code>weapons</code> - makes any SWEP into an item that can be equipped</li>
+</ul>
+
+<p>These item bases usually come with extra values and methods that you can define/override in order to change their functionality.
+You should take a look at the source code for these bases to see their capabilities.</p>
+
+<h2>Item functions (<a href="../../classes/item/#ItemFunctionStructure">ItemFunctionStructure</a>)</h2>
+<p>Requiring players to interact with items in order for them to do something is quite common. As such, there is already a built-in
+mechanism to allow players to right-click items and show a list of available options. Item functions are defined in your item
+class file in the <code>ITEM.functions</code> table. See <a href="../../classes/item/#ItemFunctionStructure">ItemFunctionStructure</a> on how to define them.</p>
+
+<p>Helix comes with <code>drop</code> and <code>take</code> item functions by default that allows items to be dropped from a player's inventory, and
+picked up from the world. These can be verridden by defining an item function in your item class file with the same name.</p>
+
+<h2>Item icons (<a href="../../classes/item/#ItemIconStructure">ItemIconStructure</a>)</h2>
+<p>Icons for items sometimes don't line up quite right, in which case you can modify an item's <code>iconCam</code> value and line up the
+rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">ItemIconStructure</a> for more details.</p>
+
 	<h1 class="title">Functions</h1>
 
 		<section class="method">
@@ -2565,7 +2609,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L124">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L276">View source &raquo;</a>
 
 					<p>Calls one of the item's methods.</p>
 			</header>
@@ -2642,7 +2686,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L85">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L237">View source &raquo;</a>
 
 					<p>Returns the ID of the owning character, if one exists.</p>
 			</header>
@@ -2669,7 +2713,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L209">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L361">View source &raquo;</a>
 
 					<p>Returns the value stored on a key within the item's data.</p>
 			</header>
@@ -2723,7 +2767,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L58">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L210">View source &raquo;</a>
 
 					<p>Returns the description of the item.</p>
 			</header>
@@ -2750,7 +2794,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L352">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L504">View source &raquo;</a>
 
 					<p>Returns the item's entity.</p>
 			</header>
@@ -2777,7 +2821,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L44">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L196">View source &raquo;</a>
 
 					<p>Returns this item's database ID.  This is guaranteed to be unique.</p>
 			</header>
@@ -2804,7 +2848,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L67">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L219">View source &raquo;</a>
 
 					<p>Returns the model of the item.</p>
 			</header>
@@ -2831,7 +2875,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L51">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L203">View source &raquo;</a>
 
 					<p>Returns the name of the item.</p>
 			</header>
@@ -2858,7 +2902,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L146">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L298">View source &raquo;</a>
 
 					<p>Returns the player that owns this item.</p>
 			</header>
@@ -2885,7 +2929,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L92">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L244">View source &raquo;</a>
 
 					<p>Returns the SteamID64 of the owning player, if one exists.</p>
 			</header>
@@ -2912,7 +2956,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L74">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L226">View source &raquo;</a>
 
 					<p>Returns the skin of the item.</p>
 			</header>
@@ -2939,7 +2983,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L244">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L396">View source &raquo;</a>
 
 					<p>Changes the function called on specific events for the item.</p>
 			</header>
@@ -2982,7 +3026,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L254">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L406">View source &raquo;</a>
 
 					<p>Changes the function called after hooks for specific events for the item.</p>
 			</header>
@@ -3025,7 +3069,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L99">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L251">View source &raquo;</a>
 
 					<p>A utility function which prints the item's details.</p>
 			</header>
@@ -3057,7 +3101,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L109">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L261">View source &raquo;</a>
 
 					<p>A utility function printing the item's stored data.</p>
 			</header>
@@ -3073,7 +3117,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L265">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L417">View source &raquo;</a>
 
 					<p>Removes the item.</p>
 			</header>
@@ -3127,7 +3171,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L171">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L323">View source &raquo;</a>
 
 					<p>Sets a key within the item's data.</p>
 			</header>
@@ -3209,7 +3253,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L367">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L519">View source &raquo;</a>
 
 					<p>Spawn an item entity based off the item table.</p>
 			</header>
@@ -3263,7 +3307,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L408">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L560">View source &raquo;</a>
 
 					<p>Transfers an item to a specific inventory.</p>
 			</header>
@@ -3371,7 +3415,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L37">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L189">View source &raquo;</a>
 
 					<p>Returns true if this item is equal to another item.  Internally, this checks item IDs.</p>
 			</header>
@@ -3417,7 +3461,7 @@ same name but different numerical IDs). You can think of items as the class, whi
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L27">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L179">View source &raquo;</a>
 
 					<p>Returns a string representation of this item.</p>
 			</header>
@@ -3439,6 +3483,418 @@ same name but different numerical IDs). You can think of items as the class, whi
 					<pre><code>print(ix.item.instances[1])
  > "item[1]"
 </code></pre>
+
+		</section>
+	<h1 class="title">Tables</h1>
+
+		<section class="method">
+			<header>
+				<a class="anchor" id="ItemFunctionStructure">
+					<h1><span class="realm shared"></span></span>ItemFunctionStructure</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L113">View source &raquo;</a>
+
+					<p>
+<p>All item functions live inside of an item's <code>functions</code> table.  An item function entry includes a few methods and fields you can
+use to customize the functionality and appearance of the item function. An example item function is below:</p>
+
+<pre><code>-- this item function's unique ID is "MyFunction"
+ITEM.functions.MyFunction = {
+    name = "myFunctionPhrase", -- uses the "myFunctionPhrase" language phrase when displaying in the UI
+    tip = "myFunctionDescription", -- uses the "myFunctionDescription" language phrase when displaying in the UI
+    icon = "icon16/add.png", -- path to the icon material
+    OnRun = function(item)
+        local client = item.player
+        local entity = item.entity -- only set if this is function is being ran while the item is in the world
+
+        if (IsValid(client)) then
+            client:ChatPrint("This is a test.")
+
+            if (IsValid(entity)) then
+                client:ChatPrint(entity:GetName())
+            end
+        end
+
+        -- do not remove this item from the owning player's inventory
+        return false
+    end,
+    OnCanRun = function(item)
+        -- only allow admins to run this item function
+        local client = item.player
+        return IsValid(client) and client:IsAdmin()
+    end
+}
+</code></pre>
+</p>
+			</header>
+
+
+					<h3>Fields</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">name</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+									<span class="tag default">optional</span>
+
+								<p> Language phrase to use when displaying this item function's name in the UI. If not specified,
+ then it will use the unique ID of the item function</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">tip</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+									<span class="tag default">optional</span>
+
+								<p> Language phrase to use when displaying this item function's detailed description in the UI</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">icon</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+									<span class="tag default">optional</span>
+
+								<p> Path to the material to use when displaying this item function's icon</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">OnRun</span>
+
+									<span class="tag"><span class="type">function</span></span>
+
+
+								<p> Function to call when the item function is ran. This function is <strong>ONLY</strong> ran on the server.</p>
+
+<p> The only argument passed into this function is the instance of the item being called. The instance will have its <code>player</code>
+ field set if the item function is being ran by a player (which it should be most of the time). It will also have its <code>entity</code>
+ field set if the item function is being ran while the item is in the world, and not in a player's inventory.</p>
+
+<p> The item will be removed after the item function is ran. If you want to prevent this behaviour, then you can return <code>false</code>
+ in this function. See the example above.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">OnCanRun</span>
+
+									<span class="tag"><span class="type">function</span></span>
+
+
+								<p> Function to call when checking whether or not this item function can be ran. This function is
+ ran <strong>BOTH</strong> on the client and server.</p>
+
+<p> The arguments are the same as <code>OnCanRun</code>, and the <code>player</code> and <code>entity</code> fields will be set on the item instance accordingly.
+ Returning <code>true</code> will allow the item function to be ran. Returning <code>false</code> will prevent it from running and additionally
+ hide it from the UI. See the example above.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">OnClick</span>
+
+									<span class="tag"><span class="type">function</span></span>
+
+									<span class="tag default">optional</span>
+
+								<p> This function is called when the player clicks on this item function's entry in the UI.
+ This function is ran <strong>ONLY</strong> on the client, and is only ran if <code>OnCanRun</code> succeeds.</p>
+
+<p> The same arguments from <code>OnCanRun</code> and <code>OnRun</code> apply to this function.</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="ItemIconStructure">
+					<h1><span class="realm client"></span></span>ItemIconStructure</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L133">View source &raquo;</a>
+
+					<p>Changing the way an item's icon is rendered is done by modifying the location and angle of the model, as well as the FOV of the
+camera.  You can tweak the values in code, or use the <code>ix_dev_icon</code> console command to visually position the model and camera. An
+example entry for an item's icon is below:</p>
+
+<pre><code>ITEM.iconCam = {
+    pos = Vector(0, 0, 60),
+    ang = Angle(90, 0, 0),
+    fov = 45
+}
+</code></pre>
+
+<p>Note that this will probably not work for your item's specific model, since every model has a different size, origin, etc. All
+item icons need to be tweaked individually.</p>
+			</header>
+
+
+					<h3>Fields</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">pos</span>
+
+									<span class="tag"><span class="type">vector</span></span>
+
+
+								<p> Location of the model relative to the camera. +X is forward, +Z is up</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">ang</span>
+
+									<span class="tag"><span class="type">angle</span></span>
+
+
+								<p> Angle of the model</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">fov</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> FOV of the camera</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="ItemStructure">
+					<h1><span class="realm shared"></span></span>ItemStructure</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L167">View source &raquo;</a>
+
+					<p>When creating an item class, the file will have a global table <code>ITEM</code> set that you use to define the item's values/methods.  An
+example item class is below:</p>
+
+<p><code>items/sh_brick.lua</code></p>
+<pre><code>ITEM.name = "Brick"
+ITEM.description = "A brick. Pretty self-explanatory. You can eat it but you'll probably lose some teeth."
+ITEM.model = Model("models/props_debris/concrete_cynderblock001.mdl")
+ITEM.width = 1
+ITEM.height = 1
+ITEM.price = 25
+</code></pre>
+
+<p>Note that the below list only includes the default fields available for <em>all</em> items, and not special ones defined in custom
+item bases.</p>
+			</header>
+
+
+					<h3>Fields</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">name</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+
+								<p> Display name of the item</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">description</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+
+								<p> Detailed description of the item</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">model</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+
+								<p> Model to use for the item's icon and when it's dropped in the world</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">width</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+									<span class="tag default">default: 1</span>
+
+								<p> Width of the item in grid cells</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">height</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+									<span class="tag default">default: 1</span>
+
+								<p> Height of the item in grid cells</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">price</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+									<span class="tag default">default: 0</span>
+
+								<p> How much money it costs to purchase this item in the business menu</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">category</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+									<span class="tag default">optional</span>
+
+								<p> Name of the category this item belongs to - mainly used for the business menu</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">noBusiness</span>
+
+									<span class="tag"><span class="type">boolean</span></span>
+
+									<span class="tag default">default: false</span>
+
+								<p> Whether or not to disallow purchasing this item in the business menu</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">factions</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+
+									<span class="tag default">optional</span>
+
+								<p> List of factions allowed to purchase this item in the business menu</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">classes</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+
+									<span class="tag default">optional</span>
+
+								<p> List of character classes allowed to purchase this item in the business menu. Classes are
+ checked after factions, so the character must also be in an allowed faction</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">flag</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+									<span class="tag default">optional</span>
+
+								<p> List of flags (as a string - e.g <code>&quot;a&quot;</code> or <code>&quot;abc&quot;</code>) allowed to purchase this item in the
+ business menu. Flags are checked last, so the character must also be in an allowed faction and class</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">iconCam</span>
+
+									<span class="tag"><a class="type" href="../../classes/item/#ItemIconStructure">ItemIconStructure</a></span>
+
+									<span class="tag default">optional</span>
+
+								<p> How to render this item's icon</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">functions</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+
+									<span class="tag default">optional</span>
+
+								<p> List of all item functions that this item has. See <a href="../../classes/item/#ItemFunctionStructure">ItemFunctionStructure</a> on how to define
+ new item functions</p>
+							</li>
+					</ul>
+
+
 
 		</section>
 
