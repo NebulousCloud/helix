@@ -27,8 +27,8 @@ if (SERVER) then
 	util.AddNetworkString("ixContainerPassword")
 
 	function PLUGIN:PlayerSpawnedProp(client, model, entity)
-		model = tostring(model):lower()
-		local data = ix.container.stored[model:lower()]
+		model = model:lower()
+		local data = ix.container.stored[model]
 
 		if (data) then
 			if (hook.Run("CanPlayerSpawnContainer", client, model, entity) == false) then return end
@@ -93,9 +93,7 @@ if (SERVER) then
 	end
 
 	function PLUGIN:SaveData()
-		if (!ix.shuttingDown) then
-			self:SaveContainer()
-		end
+		self:SaveContainer()
 	end
 
 	function PLUGIN:ContainerRemoved(entity, inventory)
