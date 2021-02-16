@@ -190,10 +190,9 @@ function GM:DoAnimationEvent(client, event, data)
 		return self.BaseClass:DoAnimationEvent(client, event, data)
 	else
 		local weapon = client:GetActiveWeapon()
+		local animation = client.ixAnimTable
 
-		if (IsValid(weapon)) then
-			local animation = client.ixAnimTable
-
+		if (IsValid(weapon) and animation) then
 			if (event == PLAYERANIMEVENT_ATTACK_PRIMARY) then
 				client:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, animation.attack or ACT_GESTURE_RANGE_ATTACK_SMG1, true)
 
