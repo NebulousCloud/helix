@@ -1,3 +1,4 @@
+
 PLUGIN.name = "Permakill"
 PLUGIN.author = "Thadah Denyse"
 PLUGIN.description = "Adds permanent death in the server options."
@@ -14,6 +15,10 @@ function PLUGIN:PlayerDeath(client, inflictor, attacker)
 	local character = client:GetCharacter()
 
 	if (ix.config.Get("permakill") and character) then
+		if (hook.Run("ShouldPermakillCharacter", client, character, inflictor, attacker) == false) then
+			return
+		end
+
 		if (ix.config.Get("permakillWorld") and !(client == attacker or inflictor:IsWorld())) then
 			return
 		end
@@ -24,6 +29,7 @@ end
 
 function PLUGIN:PlayerSpawn(client)
 	local character = client:GetCharacter()
+
 	if (ix.config.Get("permakill") and character and character:GetData("permakilled")) then
 		character:Ban()
 		character:SetData("permakilled")

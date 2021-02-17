@@ -859,6 +859,22 @@ end
 function ShouldHideBars()
 end
 
+--- Whether or not a character should be permakilled upon death. This is only called if the `permakill` server config is
+-- enabled.
+-- @realm server
+-- @player client Player to permakill
+-- @char character Player's current character
+-- @entity inflictor Entity that inflicted the killing blow
+-- @entity attacker Other player or entity that killed the player
+-- @treturn bool `false` if the player should not be permakilled
+-- @usage function PLUGIN:ShouldPermakillCharacter(client, character, inflictor, attacker)
+-- 		if (client:IsAdmin()) then
+-- 			return false -- all non-admin players will have their character permakilled
+-- 		end
+-- 	end
+function ShouldPermakillCharacter(client, character, inflictor, attacker)
+end
+
 --- @realm server
 function ShouldPlayerDrowned(v)
 end
