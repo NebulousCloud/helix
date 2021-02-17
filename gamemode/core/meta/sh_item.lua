@@ -45,8 +45,9 @@ Requiring players to interact with items in order for them to do something is qu
 mechanism to allow players to right-click items and show a list of available options. Item functions are defined in your item
 class file in the `ITEM.functions` table. See `ItemFunctionStructure` on how to define them.
 
-Helix comes with `drop` and `take` item functions by default that allows items to be dropped from a player's inventory, and
-picked up from the world. These can be verridden by defining an item function in your item class file with the same name.
+Helix comes with `drop`, `take`, and `combine` item functions by default that allows items to be dropped from a player's
+inventory, picked up from the world, and combining items together. These can be overridden by defining an item function
+in your item class file with the same name. See the `bags` base for example usage of the `combine` item function.
 
 ## Item icons (`ItemIconStructure`)
 Icons for items sometimes don't line up quite right, in which case you can modify an item's `iconCam` value and line up the
