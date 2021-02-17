@@ -67,9 +67,7 @@ ITEM.functions.combine = {
 			local inventory = ix.item.inventories[index]
 
 			if (inventory) then
-				local combineItem = ix.item.instances[data[1]]
-
-				return inventory:FindEmptySlot(combineItem.w, combineItem.h) != nil
+				return true
 			end
 		end
 
