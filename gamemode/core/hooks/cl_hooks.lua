@@ -974,3 +974,16 @@ hook.Add("player_spawn", "ixPlayerSpawn", function(data)
 		client:SetIK(false)
 	end
 end)
+
+-- Plugin author name fetching via Steam ID
+hook.Add("InitializedPlugins", "ixFetchAuthorNames", function()
+	for _, PLUGIN in pairs(ix.plugin.list) do
+		local authorSteamID = string.match(PLUGIN.author, "STEAM_", 1)
+
+		if (authorSteamID or tonumber(PLUGIN.author)) then
+			steamworks.RequestPlayerInfo(authorSteamID and util.SteamIDTo64(PLUGIN.author) or PLUGIN.author, function(steamName)
+				PLUGIN.author = steamName
+			end)
+		end
+	end
+end)
