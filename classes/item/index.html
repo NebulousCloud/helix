@@ -2593,8 +2593,9 @@ You should take a look at the source code for these bases to see their capabilit
 mechanism to allow players to right-click items and show a list of available options. Item functions are defined in your item
 class file in the <code>ITEM.functions</code> table. See <a href="../../classes/item/#ItemFunctionStructure">ItemFunctionStructure</a> on how to define them.</p>
 
-<p>Helix comes with <code>drop</code> and <code>take</code> item functions by default that allows items to be dropped from a player's inventory, and
-picked up from the world. These can be verridden by defining an item function in your item class file with the same name.</p>
+<p>Helix comes with <code>drop</code>, <code>take</code>, and <code>combine</code> item functions by default that allows items to be dropped from a player's
+inventory, picked up from the world, and combining items together. These can be overridden by defining an item function
+in your item class file with the same name. See the <code>bags</code> base for example usage of the <code>combine</code> item function.</p>
 
 <h2>Item icons (<a href="../../classes/item/#ItemIconStructure">ItemIconStructure</a>)</h2>
 <p>Icons for items sometimes don't line up quite right, in which case you can modify an item's <code>iconCam</code> value and line up the
@@ -2609,7 +2610,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L276">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L277">View source &raquo;</a>
 
 					<p>Calls one of the item's methods.</p>
 			</header>
@@ -2686,7 +2687,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L237">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L238">View source &raquo;</a>
 
 					<p>Returns the ID of the owning character, if one exists.</p>
 			</header>
@@ -2713,7 +2714,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L361">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L362">View source &raquo;</a>
 
 					<p>Returns the value stored on a key within the item's data.</p>
 			</header>
@@ -2767,7 +2768,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L210">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L211">View source &raquo;</a>
 
 					<p>Returns the description of the item.</p>
 			</header>
@@ -2794,7 +2795,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L504">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L505">View source &raquo;</a>
 
 					<p>Returns the item's entity.</p>
 			</header>
@@ -2821,7 +2822,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L196">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L197">View source &raquo;</a>
 
 					<p>Returns this item's database ID.  This is guaranteed to be unique.</p>
 			</header>
@@ -2848,7 +2849,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L219">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L220">View source &raquo;</a>
 
 					<p>Returns the model of the item.</p>
 			</header>
@@ -2875,7 +2876,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L203">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L204">View source &raquo;</a>
 
 					<p>Returns the name of the item.</p>
 			</header>
@@ -2902,7 +2903,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L298">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L299">View source &raquo;</a>
 
 					<p>Returns the player that owns this item.</p>
 			</header>
@@ -2929,7 +2930,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L244">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L245">View source &raquo;</a>
 
 					<p>Returns the SteamID64 of the owning player, if one exists.</p>
 			</header>
@@ -2956,7 +2957,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L226">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L227">View source &raquo;</a>
 
 					<p>Returns the skin of the item.</p>
 			</header>
@@ -2983,7 +2984,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L396">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L397">View source &raquo;</a>
 
 					<p>Changes the function called on specific events for the item.</p>
 			</header>
@@ -3026,7 +3027,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L406">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L407">View source &raquo;</a>
 
 					<p>Changes the function called after hooks for specific events for the item.</p>
 			</header>
@@ -3069,7 +3070,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L251">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L252">View source &raquo;</a>
 
 					<p>A utility function which prints the item's details.</p>
 			</header>
@@ -3101,7 +3102,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L261">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L262">View source &raquo;</a>
 
 					<p>A utility function printing the item's stored data.</p>
 			</header>
@@ -3117,7 +3118,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L417">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L418">View source &raquo;</a>
 
 					<p>Removes the item.</p>
 			</header>
@@ -3171,7 +3172,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L323">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L324">View source &raquo;</a>
 
 					<p>Sets a key within the item's data.</p>
 			</header>
@@ -3253,7 +3254,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L519">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L520">View source &raquo;</a>
 
 					<p>Spawn an item entity based off the item table.</p>
 			</header>
@@ -3307,7 +3308,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L560">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L561">View source &raquo;</a>
 
 					<p>Transfers an item to a specific inventory.</p>
 			</header>
@@ -3415,7 +3416,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L189">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L190">View source &raquo;</a>
 
 					<p>Returns true if this item is equal to another item.  Internally, this checks item IDs.</p>
 			</header>
@@ -3461,7 +3462,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L179">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L180">View source &raquo;</a>
 
 					<p>Returns a string representation of this item.</p>
 			</header>
@@ -3494,7 +3495,7 @@ rendered model as needed. See <a href="../../classes/item/#ItemIconStructure">It
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L113">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L114">View source &raquo;</a>
 
 					<p>
 <p>All item functions live inside of an item's <code>functions</code> table.  An item function entry includes a few methods and fields you can
@@ -3636,7 +3637,7 @@ ITEM.functions.MyFunction = {
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L133">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L134">View source &raquo;</a>
 
 					<p>Changing the way an item's icon is rendered is done by modifying the location and angle of the model, as well as the FOV of the
 camera.  You can tweak the values in code, or use the <code>ix_dev_icon</code> console command to visually position the model and camera. An
@@ -3703,7 +3704,7 @@ item icons need to be tweaked individually.</p>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L167">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_item.lua#L168">View source &raquo;</a>
 
 					<p>When creating an item class, the file will have a global table <code>ITEM</code> set that you use to define the item's values/methods.  An
 example item class is below:</p>
