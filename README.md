@@ -14,9 +14,11 @@
 Helix is a framework for roleplay gamemodes in [Garry's Mod](https://gmod.facepunch.com/), based off of [NutScript 1.1](https://github.com/rebel1324/NutScript). Helix provides a stable, feature-filled, open-source, and DRM-free base so you can focus more on the things you want: making gameplay.
 
 ## Getting Started
-To start working on your gamemode, you'll need to set up a schema for Helix. This is a specially structured gamemode that uses Helix as its base - but instead of creating all the files and bootstrapping properly yourself, you can fork/copy the skeleton schema that has all of this done already at https://github.com/NebulousCloud/helix-skeleton. The skeleton contains all the important elements you need to have a functioning schema so you can get coding right away.
+Visit the getting started guide in the [documentation](https://docs.gethelix.co/manual/getting-started/) for an in-depth guide.
 
-You can also use our HL2 RP schema at https://github.com/NebulousCloud/helix-hl2rp as a base to work off of if you need something more fleshed out.
+If you know what you're doing, a quick start for bootstrapping your own schema is forking/copying the skeleton schema at https://github.com/nebulouscloud/helix-skeleton. The skeleton contains all the important elements you need to have a functioning schema so you can get to coding right away.
+
+You can also use our HL2 RP schema at https://github.com/nebulouscloud/helix-hl2rp as a base to work off of if you need something more fleshed out.
 
 ## Plugins
 If you'd like to enhance your gamemode, you can use any of the freely provided plugins available at the [Helix Plugin Center](https://plugins.gethelix.co). It is also encouraged to submit your own plugins for others to find and use at https://github.com/nebulouscloud/helix-plugins
