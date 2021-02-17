@@ -858,6 +858,11 @@ ShouldHideBars											</a>
 										</li>
 										<li>
 											<span class="realm server"></span>
+											<a href="../../hooks/plugin/#ShouldPermakillCharacter">
+ShouldPermakillCharacter											</a>
+										</li>
+										<li>
+											<span class="realm server"></span>
 											<a href="../../hooks/plugin/#ShouldPlayerDrowned">
 ShouldPlayerDrowned											</a>
 										</li>
@@ -9589,6 +9594,91 @@ end
 
 
 
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="ShouldPermakillCharacter">
+					<h1><span class="realm server"></span></span>PLUGIN:ShouldPermakillCharacter(client, character, inflictor, attacker)</h1>
+				</a>
+
+
+
+					<p>Whether or not a character should be permakilled upon death.  This is only called if the <code>permakill</code> server config is
+ enabled.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">client</span>
+
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
+
+
+								<p> Player to permakill</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">character</span>
+
+									<span class="tag"><a class="type" href="../../classes/character/#">Character</a></span>
+
+
+								<p> Player's current character</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">inflictor</span>
+
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
+
+
+								<p> Entity that inflicted the killing blow</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">attacker</span>
+
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
+
+
+								<p> Other player or entity that killed the player</p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p><code>false</code> if the player should not be permakilled</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:ShouldPermakillCharacter(client, character, inflictor, attacker)
+		if (client:IsAdmin()) then
+			return false -- all non-admin players will have their character permakilled
+		end
+	end
+</code></pre>
 
 		</section>
 		<section class="method">
