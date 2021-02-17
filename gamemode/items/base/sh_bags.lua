@@ -54,6 +54,26 @@ ITEM.functions.View = {
 		return !IsValid(item.entity) and item:GetData("id") and !IsValid(ix.gui["inv" .. item:GetData("id", "")])
 	end
 }
+ITEM.functions.combine = {
+	OnRun = function(item, data)
+		ix.item.instances[data[1]]:Transfer(item:GetData("id"))
+
+		return false
+	end,
+	OnCanRun = function(item, data)
+		local index = item:GetData("id", "")
+
+		if (index) then
+			local inventory = ix.item.inventories[index]
+
+			if (inventory) then
+				return true
+			end
+		end
+
+		return false
+	end
+}
 
 if (CLIENT) then
 	function ITEM:PaintOver(item, width, height)
