@@ -499,10 +499,14 @@ do
 					newData.model = model[1]
 
 					-- save skin/bodygroups to character data
-					local bodygroups = {}
+					local bodygroups
 
-					for i = 1, #model[3] do
-						bodygroups[i - 1] = tonumber(model[3][i]) or 0
+					if (model[3]) then
+						bodygroups = {}
+
+						for i = 1, #model[3] do
+							bodygroups[i - 1] = tonumber(model[3][i]) or 0
+						end
 					end
 
 					newData.data = newData.data or {}
