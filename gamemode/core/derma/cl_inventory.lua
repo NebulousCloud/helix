@@ -43,13 +43,15 @@ function PANEL:Init()
 end
 
 function PANEL:OnMousePressed(code)
-	if (code == MOUSE_LEFT and self:IsDraggable()) then
-		self:MouseCapture(true)
-		self:DragMousePress(code)
+	if (hook.Run("InterceptClickItemIcon", self, code) != true) then
+		if (code == MOUSE_LEFT and self:IsDraggable()) then
+			self:MouseCapture(true)
+			self:DragMousePress(code)
 
-		self.clickX, self.clickY = input.GetCursorPos()
-	elseif (code == MOUSE_RIGHT and self.DoRightClick) then
-		self:DoRightClick()
+			self.clickX, self.clickY = input.GetCursorPos()
+		elseif (code == MOUSE_RIGHT and self.DoRightClick) then
+			self:DoRightClick()
+		end
 	end
 end
 
