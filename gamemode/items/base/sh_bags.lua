@@ -91,25 +91,6 @@ if (CLIENT) then
 	end
 end
 
--- Called when a new instance of this item has been made.
-function ITEM:OnInstanced(invID, x, y)
-	if (self:GetInventory()) then
-		return
-	end
-
-	local inventory = ix.item.inventories[invID]
-
-	ix.inventory.New(inventory and inventory.owner or 0, self.uniqueID, function(inv)
-		local client = inv:GetOwner()
-
-		self:SetData("id", inv:GetID())
-
-		if (IsValid(client)) then
-			inv:AddReceiver(client)
-		end
-	end)
-end
-
 function ITEM:GetInventory()
 	local index = self:GetData("id")
 
