@@ -100,9 +100,7 @@ function GM:PlayerUse(client, entity)
 	end
 
 	if (entity:IsDoor()) then
-		local result = hook.Run("CanPlayerUseDoor", client, entity)
-
-		if (result == false) then
+		if (hook.Run("CanPlayerUseDoor", client, entity) == false) then
 			return false
 		end
 
