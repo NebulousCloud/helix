@@ -50,11 +50,6 @@ function ix.faction.LoadFromDir(directory)
 				ErrorNoHalt("Faction '"..niceName.."' is missing a name. You need to add a FACTION.name = \"Name\"\n")
 			end
 
-			if (!FACTION.description) then
-				FACTION.description = "noDesc"
-				ErrorNoHalt("Faction '"..niceName.."' is missing a description. You need to add a FACTION.description = \"Description\"\n")
-			end
-
 			if (!FACTION.color) then
 				FACTION.color = Color(150, 150, 150)
 				ErrorNoHalt("Faction '"..niceName.."' is missing a color. You need to add FACTION.color = Color(1, 2, 3)\n")
