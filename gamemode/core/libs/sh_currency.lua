@@ -13,10 +13,12 @@ ix.currency.model = ix.currency.model or "models/props_lab/box01a.mdl"
 -- @string symbol The symbol of the currency.
 -- @string singular The name of the currency in it's singular form.
 -- @string plural The name of the currency in it's plural form.
-function ix.currency.Set(symbol, singular, plural)
+-- @string model The model of the currency entity.
+function ix.currency.Set(symbol, singular, plural, model)
 	ix.currency.symbol = symbol
 	ix.currency.singular = singular
 	ix.currency.plural = plural
+	ix.currency.model = model
 end
 
 --- Returns a formatted string according to the current currency.
