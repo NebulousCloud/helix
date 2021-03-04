@@ -140,7 +140,7 @@ function PLUGIN:SetupActs()
 
 	-- motion
 	ix.act.Register("Motion", "metrocop", {
-		sequence = {"motionleft", "motionright", "luggage"}
+		sequence = {"motionleft", "motionright", "luggagewarn"}
 	})
 
 	-- wave
