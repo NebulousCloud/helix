@@ -50,12 +50,12 @@ end
 
 local vectorLength2D = FindMetaTable("Vector").Length2D
 
---- Returns `true` if the player is running. Running in this case means that their current speed is greater than their
--- regularly set walk speed.
+--- Returns `true` if the player is running. Running in this case means that their +speed bound key is down and
+-- speed is greater than their regularly set walk speed.
 -- @realm shared
 -- @treturn bool Whether or not the player is running
 function meta:IsRunning()
-	return vectorLength2D(self:GetVelocity()) > (self:GetWalkSpeed() + 10)
+	return self:KeyDown(IN_SPEED) and vectorLength2D(self:GetVelocity()) > (self:GetWalkSpeed() + 10)
 end
 
 --- Returns `true` if the player currently has a female model. This checks if the model has `female`, `alyx` or `mossman` in its
