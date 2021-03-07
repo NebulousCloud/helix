@@ -292,7 +292,13 @@ function PANEL:Init()
 		end
 
 		net.Start("ixBusinessBuy")
-			net.WriteTable(self.itemData)
+		net.WriteUInt(table.Count(self.itemData), 8)
+
+		for k, v in pairs(self.itemData) do
+			net.WriteString(k)
+			net.WriteUInt(v, 8)
+		end
+
 		net.SendToServer()
 
 		self.itemData = {}
