@@ -910,8 +910,9 @@ do
 		end)
 
 		net.Receive("ixCharacterCreate", function(length, client)
-			local payload = net.ReadTable()
-			local newPayload = {}
+			if ((client.ixNextCharacterCreate or 0) > RealTime()) then
+				return
+			end
 
 			local maxChars = hook.Run("GetMaxPlayerCharacter", client) or ix.config.Get("maxCharacters", 5)
 			local charList = client.ixCharList
@@ -926,6 +927,16 @@ do
 				return
 			end
 
+			client.ixNextCharacterCreate = RealTime() + 1
+
+			local indicies = net.ReadUInt(8)
+			local payload = {}
+
+			for _ = 1, indicies do
+				payload[net.ReadString()] = net.ReadType()
+			end
+
+			local newPayload = {}
 			local results = {hook.Run("CanPlayerCreateCharacter", client, payload)}
 
 			if (table.remove(results, 1) == false) then
@@ -997,7 +1008,6 @@ do
 					hook.Run("OnCharacterCreated", client, ix.char.loaded[id])
 				end
 			end)
-
 		end)
 
 		net.Receive("ixCharacterDelete", function(length, client)

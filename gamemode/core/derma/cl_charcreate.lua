@@ -251,7 +251,13 @@ function PANEL:SendPayload()
 	self.payload:Prepare()
 
 	net.Start("ixCharacterCreate")
-		net.WriteTable(self.payload)
+	net.WriteUInt(table.Count(self.payload), 8)
+
+	for k, v in pairs(self.payload) do
+		net.WriteString(k)
+		net.WriteType(v)
+	end
+
 	net.SendToServer()
 end
 
