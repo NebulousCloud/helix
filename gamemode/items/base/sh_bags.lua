@@ -61,6 +61,10 @@ ITEM.functions.combine = {
 		return false
 	end,
 	OnCanRun = function(item, data)
+		if (IsValid(item.entity)) then
+			return false
+		end
+
 		local index = item:GetData("id", "")
 
 		if (index) then
