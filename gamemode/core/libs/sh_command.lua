@@ -349,7 +349,7 @@ function ix.command.ExtractArgs(text)
 
 			if (match) then
 				curString = ""
-				skip = i + #match
+				skip = i + match:utf8len()
 				arguments[#arguments + 1] = match:utf8sub(2, -2)
 			else
 				curString = curString..c
