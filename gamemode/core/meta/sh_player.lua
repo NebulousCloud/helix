@@ -392,10 +392,6 @@ if (SERVER) then
 		entity:SetAngles(self:EyeAngles())
 		entity:SetModel(self:GetModel())
 		entity:SetSkin(self:GetSkin())
-		for i = 0, (self:GetNumBodyGroups() - 1) do
-			local bodygroupValue = self:GetBodygroup(i)
-			entity:SetBodygroup(i, bodygroupValue)
-		end
 		entity:Spawn()
 
 		if (!bDontSetPlayer) then
