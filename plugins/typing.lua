@@ -225,11 +225,12 @@ else
 	end
 
 	net.Receive("ixTypeClass", function(length, client)
-		if ((client.ixNextTypeClass or 0) > RealTime()) then
+		if ((client.ixLastTypeClass or "") == "" and (client.ixNextTypeClass or 0) > RealTime()) then
 			return
 		end
 
 		local newClass = net.ReadString()
+		client.ixLastTypeClass = newClass
 
 		-- send message to players in pvs only since they're the only ones who can see the indicator
 		-- we'll broadcast if the type class is empty because they might move out of pvs before the ending net message is sent
