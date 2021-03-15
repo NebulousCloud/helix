@@ -306,7 +306,7 @@ OverridePanel("DTextEntry", function()
 
 		self.Menu = DermaMenu()
 
-		for k, v in pairs( tab ) do
+		for _, v in pairs( tab ) do
 
 			self.Menu:AddOption( v, function() self:SetText( v ) self:SetCaretPos( v:utf8len() ) self:RequestFocus() end )
 
