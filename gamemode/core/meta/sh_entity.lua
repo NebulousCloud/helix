@@ -32,7 +32,7 @@ end
 function meta:IsDoor()
 	local class = self:GetClass()
 
-	return (class and class:find("door") or false)
+	return (class and class:find("door") != nil)
 end
 
 if (SERVER) then
