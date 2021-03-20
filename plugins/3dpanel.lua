@@ -13,6 +13,10 @@ if (SERVER) then
 	util.AddNetworkString("ixPanelAdd")
 	util.AddNetworkString("ixPanelRemove")
 
+	ix.log.AddType("undo3dPanel", function(client)
+		return string.format("%s has removed their last 3D panel.", client:GetName())
+	end)
+
 	-- Called when the player is sending client info.
 	function PLUGIN:PlayerInitialSpawn(client)
 		-- Send the list of panel displays.
@@ -55,6 +59,7 @@ if (SERVER) then
 
 		-- Save the plugin data.
 		self:SavePanels()
+		return index
 	end
 
 	-- Removes a panel that are within the radius of a position.
@@ -88,6 +93,22 @@ if (SERVER) then
 
 		-- Return the number of deleted panels.
 		return i
+	end
+
+	function PLUGIN:RemovePanelByID(id)
+		local info = self.list[id]
+
+		if (!info) then
+			return false
+		end
+
+		net.Start("ixPanelRemove")
+			net.WriteUInt(id, 32)
+		net.Broadcast()
+
+		self.list[id] = nil
+		self:SavePanels()
+		return true
 	end
 
 	-- Called after entities have been loaded on the map.
@@ -230,7 +251,15 @@ ix.command.Add("PanelAdd", {
 		angles:RotateAroundAxis(angles:Forward(), 90)
 
 		-- Add the panel.
-		PLUGIN:AddPanel(position + angles:Up() * 0.1, angles, url, width, height, scale)
+		local index = PLUGIN:AddPanel(position + angles:Up() * 0.1, angles, url, width, height, scale)
+		undo.Create("ix3dPanel")
+			undo.SetPlayer(client)
+			undo.AddFunction(function()
+				if (PLUGIN:RemovePanelByID(index)) then
+					ix.log.Add(client, "undo3dPanel")
+				end
+			end)
+		undo.Finish()
 		return "@panelAdded"
 	end
 })
