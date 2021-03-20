@@ -266,7 +266,7 @@ end
 -- @treturn bool Whether or not the strings are equivalent
 function ix.util.StringMatches(a, b)
 	if (a and b) then
-		local a2, b2 = a:lower(), b:lower()
+		local a2, b2 = a:utf8lower(), b:utf8lower()
 
 		-- Check if the actual letters match.
 		if (a == b) then return true end
