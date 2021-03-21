@@ -31,16 +31,17 @@ if (SERVER) then
 	end
 
 	-- Adds a panel to the list, sends it to the players, and saves data.
-	function PLUGIN:AddPanel(position, angles, url, w, h, scale)
+	function PLUGIN:AddPanel(position, angles, url, w, h, scale, brightness)
 		w = w or 1024
 		h = h or 768
 		scale = math.Clamp((scale or 1) * 0.1, 0.001, 5)
+		brightness = brightness and math.Round(brightness * 2.55) or 255
 
 		-- Find an ID for this panel within the list.
 		local index = #self.list + 1
 
 		-- Add the panel to the list so it can be sent and saved.
-		self.list[index] = {position, angles, w, h, scale, url}
+		self.list[index] = {position, angles, w, h, scale, url, nil, brightness}
 
 		-- Send the panel information to the players.
 		net.Start("ixPanelAdd")
@@ -51,6 +52,7 @@ if (SERVER) then
 			net.WriteUInt(h, 16)
 			net.WriteFloat(scale)
 			net.WriteString(url)
+			net.WriteUInt(brightness, 8)
 		net.Broadcast()
 
 		-- Save the plugin data.
@@ -135,9 +137,10 @@ else
 		local w, h = net.ReadUInt(16), net.ReadUInt(16)
 		local scale = net.ReadFloat()
 		local url = net.ReadString()
+		local brightness = net.ReadUInt(8)
 
 		if (url != "") then
-			PLUGIN.list[index] = {position, angles, w, h, scale, url}
+			PLUGIN.list[index] = {position, angles, w, h, scale, url, nil, brightness}
 
 			CacheMaterial(index)
 		end
@@ -146,7 +149,7 @@ else
 	net.Receive("ixPanelRemove", function()
 		local index = net.ReadUInt(32)
 
-		table.remove(PLUGIN.list, index)
+		PLUGIN.list[index] = nil
 	end)
 
 	-- Receives a full update on ALL panels.
@@ -199,7 +202,7 @@ else
 					cam.Start3D2D(position, v[2], v[5] or 0.1)
 						render.PushFilterMin(TEXFILTER.ANISOTROPIC)
 						render.PushFilterMag(TEXFILTER.ANISOTROPIC)
-							surface.SetDrawColor(255, 255, 255)
+							surface.SetDrawColor(v[8], v[8], v[8])
 							surface.SetMaterial(v[7])
 							surface.DrawTexturedRect(0, 0, v[3], v[4])
 						render.PopFilterMag()
@@ -219,9 +222,10 @@ ix.command.Add("PanelAdd", {
 		ix.type.string,
 		bit.bor(ix.type.number, ix.type.optional),
 		bit.bor(ix.type.number, ix.type.optional),
+		bit.bor(ix.type.number, ix.type.optional),
 		bit.bor(ix.type.number, ix.type.optional)
 	},
-	OnRun = function(self, client, url, width, height, scale)
+	OnRun = function(self, client, url, width, height, scale, brightness)
 		-- Get the position and angles of the panel.
 		local trace = client:GetEyeTrace()
 		local position = trace.HitPos
@@ -230,7 +234,7 @@ ix.command.Add("PanelAdd", {
 		angles:RotateAroundAxis(angles:Forward(), 90)
 
 		-- Add the panel.
-		PLUGIN:AddPanel(position + angles:Up() * 0.1, angles, url, width, height, scale)
+		PLUGIN:AddPanel(position + angles:Up() * 0.1, angles, url, width, height, scale, brightness)
 		return "@panelAdded"
 	end
 })
