@@ -198,6 +198,9 @@ else
 			for _, v in pairs(self.list) do
 				local position = v[1]
 
+				-- Old panels before update don't have an eighth index, make sure to check.
+				v[8] = v[8] or 255
+
 				if (v[7] and ourPosition:DistToSqr(position) <= 4194304) then
 					cam.Start3D2D(position, v[2], v[5] or 0.1)
 						render.PushFilterMin(TEXFILTER.ANISOTROPIC)
