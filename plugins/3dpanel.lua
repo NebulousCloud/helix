@@ -32,8 +32,6 @@ if (SERVER) then
 
 	-- Adds a panel to the list, sends it to the players, and saves data.
 	function PLUGIN:AddPanel(position, angles, url, scale, brightness)
-		w = w or 1024
-		h = h or 768
 		scale = math.Clamp((scale or 1) * 0.1, 0.001, 5)
 		brightness = math.Clamp(math.Round((brightness or 100) * 2.55), 1, 255)
 
