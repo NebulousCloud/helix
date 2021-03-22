@@ -99,12 +99,7 @@ if (SERVER) then
 
 	-- Called after entities have been loaded on the map.
 	function PLUGIN:LoadData()
-		self.list = self:GetData() or {
-
-		-- Make sure older panels created before update have a brightness property
-		for _,v in ipairs(self.list) do
-			v[8] = v[8] or 255
-		end
+		self.list = self:GetData() or {}
 	end
 
 	-- Called when the plugin needs to save information.
@@ -216,12 +211,13 @@ else
 
 		for i = 1, #panels do
 			local position = panels[i][1]
+			local brightness = panels[i][8] or 255
 
 			if (panels[i][7] and ourPosition:DistToSqr(position) <= 4194304) then
 				cam.Start3D2D(position, panels[i][2], panels[i][5] or 0.1)
 					render.PushFilterMin(TEXFILTER.ANISOTROPIC)
 					render.PushFilterMag(TEXFILTER.ANISOTROPIC)
-						surface.SetDrawColor(panels[i][8], panels[i][8], panels[i][8])
+						surface.SetDrawColor(brightness, brightness, brightness)
 						surface.SetMaterial(panels[i][7])
 						surface.DrawTexturedRect(0, 0, panels[i][3], panels[i][4])
 					render.PopFilterMag()
