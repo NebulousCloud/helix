@@ -105,7 +105,6 @@ if (SERVER) then
 		self.list = self:GetData() or {}
 
 		-- Formats table to sequential to support legacy panels.
-		self.list[0] = nil
 		self.list = table.ClearKeys(self.list)
 	end
 
@@ -219,7 +218,7 @@ else
 	end)
 
 	-- Called after all translucent objects are drawn.
-	function PLUGIN:PostDrawTranslucentRenderables(drawingDepth, drawingSkyBox)
+	function PLUGIN:PostDrawTranslucentRenderables(bDrawingDepth, bDrawingSkybox)
 		if (bDrawingDepth or bDrawingSkybox) then
 			return
 		end

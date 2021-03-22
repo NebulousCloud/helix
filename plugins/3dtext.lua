@@ -106,7 +106,6 @@ if (SERVER) then
 		self.list = self:GetData() or {}
 
 		-- Formats table to sequential to support legacy panels.
-		self.list[0] = nil
 		self.list = table.ClearKeys(self.list)
 	end
 
