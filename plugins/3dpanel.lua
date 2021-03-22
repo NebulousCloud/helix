@@ -35,7 +35,7 @@ if (SERVER) then
 		w = w or 1024
 		h = h or 768
 		scale = math.Clamp((scale or 1) * 0.1, 0.001, 5)
-		brightness = brightness and math.Round(brightness * 2.55) or 255
+		brightness = math.Clamp(math.Round((brightness or 100) * 2.55), 0, 255)
 
 		-- Find an ID for this panel within the list.
 		local index = #self.list + 1
@@ -66,17 +66,13 @@ if (SERVER) then
 		-- Default the radius to 100.
 		radius = radius or 100
 
+		local panelsDeleted = {}
+
 		-- Loop through all of the panels.
 		for k, v in pairs(self.list) do
 			-- Check if the distance from our specified position to the panel is less than the radius.
 			if (v[1]:Distance(position) <= radius) then
-				-- Remove the panel from the list of panels.
-				self.list[k] = nil
-
-				-- Tell the players to stop showing the panel.
-				net.Start("ixPanelRemove")
-					net.WriteUInt(k, 32)
-				net.Broadcast()
+				panelsDeleted[#panelsDeleted + 1] = k
 
 				-- Increase the number of deleted panels by one.
 				i = i + 1
@@ -85,6 +81,19 @@ if (SERVER) then
 
 		-- Save the plugin data if we actually changed anything.
 		if (i > 0) then
+			-- Invert index table to delete from highest -> lowest
+			panelsDeleted = table.Reverse(panelsDeleted)
+
+			for _, v in ipairs(panelsDeleted) do
+				-- Remove the panel from the list of panels.
+				table.remove(self.list, v)
+
+				-- Tell the players to stop showing the panel.
+				net.Start("ixPanelRemove")
+					net.WriteUInt(v, 32)
+				net.Broadcast()
+			end
+
 			self:SavePanels()
 		end
 
@@ -149,7 +158,7 @@ else
 	net.Receive("ixPanelRemove", function()
 		local index = net.ReadUInt(32)
 
-		PLUGIN.list[index] = nil
+		table.remove(PLUGIN.list, index)
 	end)
 
 	-- Receives a full update on ALL panels.
@@ -190,28 +199,94 @@ else
 
 	-- Called after all translucent objects are drawn.
 	function PLUGIN:PostDrawTranslucentRenderables(drawingDepth, drawingSkyBox)
-		if (!drawingDepth and !drawingSkyBox) then
-			-- Store the position of the player to be more optimized.
+		if (bDrawingDepth or bDrawingSkybox) then
+			return
+		end
+
+		-- panel preview
+		if (ix.chat.currentCommand == "paneladd") then
+			self:PreviewPanel()
+		end
+		
+		-- Store the position of the player to be more optimized.
+		local ourPosition = LocalPlayer():GetPos()
+
+		local panel = self.list
+
+		for i = 1, #panel do
+			local position = panel[i][1]
+
+			if (panel[i][7] and ourPosition:DistToSqr(position) <= 4194304) then
+				cam.Start3D2D(position, panel[i][2], panel[i][5] or 0.1)
+					render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+					render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+						surface.SetDrawColor(panel[i][8], panel[i][8], panel[i][8])
+						surface.SetMaterial(panel[i][7])
+						surface.DrawTexturedRect(0, 0, panel[i][3], panel[i][4])
+					render.PopFilterMag()
+					render.PopFilterMin()
+				cam.End3D2D()
+			end
+		end
+	end
+
+	function PLUGIN:PreviewPanel()
+		local arguments = ix.chat.currentArguments
+
+		local path = "helix/"..Schema.folder.."/"..PLUGIN.uniqueID.."/"
+		local panelURL = tostring(arguments[1] or "")
+		local shouldPreview = false
+		local preview
+
+		-- Gets the file name
+		local exploded = string.Explode("/", panelURL)
+		local filename = exploded[#exploded]
+
+		if (file.Exists(path..filename, "DATA")) then
+			preview = Material("../data/"..path..filename, "noclamp smooth")
+
+			if (!preview:IsError()) then
+				shouldPreview = true
+			end
+		else
+			file.CreateDir(path)
+
+			http.Fetch(panelURL, function(body)
+				file.Write(path..filename, body)
+
+				preview = Material("../data/"..path..filename, "noclamp smooth")
+
+				if (!preview:IsError()) then
+					shouldPreview = true
+				end
+			end)
+		end
+
+		-- If the material is valid, preview the panel
+		if (shouldPreview) then
+			local trace = LocalPlayer():GetEyeTrace()
+			local angles = trace.HitNormal:Angle()
+			angles:RotateAroundAxis(angles:Up(), 90)
+			angles:RotateAroundAxis(angles:Forward(), 90)
+			local position = (trace.HitPos + angles:Up() * 0.1)
 			local ourPosition = LocalPlayer():GetPos()
 
-			-- Loop through all of the panel.
-			for _, v in pairs(self.list) do
-				local position = v[1]
+			-- validate argument types
+			local width = tonumber(arguments[2]) or 1024
+			local height = tonumber(arguments[3]) or 768
+			local scale = math.Clamp((tonumber(arguments[4]) or 1) * 0.1, 0.001, 5)
+			local brightness = math.Clamp(math.Round((tonumber(arguments[5]) or 100) * 2.55), 0, 255)
 
-				-- Old panels before update don't have an eighth index, make sure to check.
-				v[8] = v[8] or 255
-
-				if (v[7] and ourPosition:DistToSqr(position) <= 4194304) then
-					cam.Start3D2D(position, v[2], v[5] or 0.1)
-						render.PushFilterMin(TEXFILTER.ANISOTROPIC)
-						render.PushFilterMag(TEXFILTER.ANISOTROPIC)
-							surface.SetDrawColor(v[8], v[8], v[8])
-							surface.SetMaterial(v[7])
-							surface.DrawTexturedRect(0, 0, v[3], v[4])
-						render.PopFilterMag()
-						render.PopFilterMin()
-					cam.End3D2D()
-				end
+			if (ourPosition:DistToSqr(position) <= 4194304) then
+				cam.Start3D2D(position, angles, scale or 0.1)
+					render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+					render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+						surface.SetDrawColor(brightness, brightness, brightness)
+						surface.SetMaterial(preview)
+						surface.DrawTexturedRect(0, 0, width, height)
+					render.PopFilterMag()
+					render.PopFilterMin()
+				cam.End3D2D()
 			end
 		end
 	end
