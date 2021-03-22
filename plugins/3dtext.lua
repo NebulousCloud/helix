@@ -225,7 +225,11 @@ else
 
 		local i = 0
 
-		for _, v in pairs(self.list) do
+		for k, v in pairs(self.list) do
+			if (k == 0) then
+				continue
+			end
+
 			if (v[1]:Distance(LocalPlayer():GetEyeTraceNoCursor().HitPos) <= radius) then
 				local screen = v[1]:ToScreen()
 				surface.DrawLine(
