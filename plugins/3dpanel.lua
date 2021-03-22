@@ -198,7 +198,7 @@ else
 	end)
 
 	-- Called after all translucent objects are drawn.
-	function PLUGIN:PostDrawTranslucentRenderables(drawingDepth, drawingSkyBox)
+	function PLUGIN:PostDrawTranslucentRenderables(bDrawingDepth, bDrawingSkyBox)
 		if (bDrawingDepth or bDrawingSkybox) then
 			return
 		end
