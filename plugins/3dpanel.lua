@@ -64,11 +64,14 @@ if (SERVER) then
 		-- Default the radius to 100.
 		radius = radius or 100
 
-		-- Table of panels to delete
 		local panelsDeleted = {}
 
 		-- Loop through all of the panels.
 		for k, v in pairs(self.list) do
+			if (k == 0) then
+				continue
+			end
+
 			-- Check if the distance from our specified position to the panel is less than the radius.
 			if (v[1]:Distance(position) <= radius) then
 				panelsDeleted[#panelsDeleted + 1] = k
@@ -100,6 +103,10 @@ if (SERVER) then
 	-- Called after entities have been loaded on the map.
 	function PLUGIN:LoadData()
 		self.list = self:GetData() or {}
+
+		-- Formats table to sequential to support legacy panels.
+		self.list[0] = nil
+		self.list = table.ClearKeys(self.list)
 	end
 
 	-- Called when the plugin needs to save information.
@@ -107,7 +114,14 @@ if (SERVER) then
 		self:SetData(self.list)
 	end
 else
+	-- Pre-define the zero index in client before the net receives
+	PLUGIN.list[0] = PLUGIN.list[0] or 0
+
 	local function CacheMaterial(index)
+		if (index < 1) then
+			return
+		end
+
 		local info = PLUGIN.list[index]
 		local exploded = string.Explode("/", info[6])
 		local filename = exploded[#exploded]
@@ -148,6 +162,8 @@ else
 			PLUGIN.list[index] = {position, angles, w, h, scale, url, nil, brightness}
 
 			CacheMaterial(index)
+
+			PLUGIN.list[0] = #PLUGIN.list
 		end
 	end)
 
@@ -155,6 +171,8 @@ else
 		local index = net.ReadUInt(32)
 
 		table.remove(PLUGIN.list, index)
+
+		PLUGIN.list[0] = #PLUGIN.list
 	end)
 
 	-- Receives a full update on ALL panels.
@@ -171,10 +189,17 @@ else
 		-- Set the list of panels to the ones provided by the server.
 		PLUGIN.list = util.JSONToTable(uncompressed)
 
+		-- Will be saved, but refresh just to make sure.
+		PLUGIN.list[0] = #PLUGIN.list
+
 		local CacheQueue  = {}
 
 		-- Loop through the list of panels.
 		for k, _ in pairs(PLUGIN.list) do
+			if (k == 0) then
+				continue
+			end
+
 			CacheQueue[#CacheQueue + 1] = k
 		end
 
@@ -194,12 +219,12 @@ else
 	end)
 
 	-- Called after all translucent objects are drawn.
-	function PLUGIN:PostDrawTranslucentRenderables(bDrawingDepth, bDrawingSkybox)
+	function PLUGIN:PostDrawTranslucentRenderables(drawingDepth, drawingSkyBox)
 		if (bDrawingDepth or bDrawingSkybox) then
 			return
 		end
 
-		-- Preview the panel
+		-- Panel preview
 		if (ix.chat.currentCommand == "paneladd") then
 			self:PreviewPanel()
 		end
@@ -207,19 +232,18 @@ else
 		-- Store the position of the player to be more optimized.
 		local ourPosition = LocalPlayer():GetPos()
 
-		local panels = self.list
+		local panel = self.list
 
-		for i = 1, #panels do
-			local position = panels[i][1]
-			local brightness = panels[i][8] or 255
+		for i = 1, panel[0] do
+			local position = panel[i][1]
 
-			if (panels[i][7] and ourPosition:DistToSqr(position) <= 4194304) then
-				cam.Start3D2D(position, panels[i][2], panels[i][5] or 0.1)
+			if (panel[i][7] and ourPosition:DistToSqr(position) <= 4194304) then
+				cam.Start3D2D(position, panel[i][2], panel[i][5] or 0.1)
 					render.PushFilterMin(TEXFILTER.ANISOTROPIC)
 					render.PushFilterMag(TEXFILTER.ANISOTROPIC)
-						surface.SetDrawColor(brightness, brightness, brightness)
-						surface.SetMaterial(panels[i][7])
-						surface.DrawTexturedRect(0, 0, panels[i][3], panels[i][4])
+						surface.SetDrawColor(panel[i][8], panel[i][8], panel[i][8])
+						surface.SetMaterial(panel[i][7])
+						surface.DrawTexturedRect(0, 0, panel[i][3], panel[i][4])
 					render.PopFilterMag()
 					render.PopFilterMin()
 				cam.End3D2D()
@@ -232,11 +256,6 @@ else
 
 		local path = "helix/"..Schema.folder.."/"..PLUGIN.uniqueID.."/"
 		local panelURL = tostring(arguments[1] or "")
-
-		if (panelURL == "") then
-			return
-		end
-
 		local shouldPreview = false
 		local preview
 

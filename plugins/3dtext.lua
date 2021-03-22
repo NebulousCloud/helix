@@ -5,6 +5,7 @@ PLUGIN.name = "3D Text"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds text that can be placed on the map."
 
+-- List of available text panels
 PLUGIN.list = PLUGIN.list or {}
 
 if (SERVER) then
@@ -58,8 +59,12 @@ if (SERVER) then
 		local textDeleted = {}
 
 		for k, v in pairs(self.list) do
+			if (k == 0) then
+				continue
+			end
+
 			if (v[1]:Distance(position) <= radius) then
-				textDeleted[#textDeleted] = k
+				textDeleted[#textDeleted + 1] = k
 			end
 		end
 
@@ -99,6 +104,10 @@ if (SERVER) then
 	-- Called after entities have been loaded on the map.
 	function PLUGIN:LoadData()
 		self.list = self:GetData() or {}
+
+		-- Formats table to sequential to support legacy panels.
+		self.list[0] = nil
+		self.list = table.ClearKeys(self.list)
 	end
 
 	-- Called when the plugin needs to save information.
@@ -106,6 +115,9 @@ if (SERVER) then
 		self:SetData(self.list)
 	end
 else
+	-- Pre-define the zero index in client before the net receives
+	PLUGIN.list[0] = PLUGIN.list[0] or 0
+
 	language.Add("Undone_ix3dText", "Removed 3D Text")
 
 	function PLUGIN:GenerateMarkup(text)
@@ -142,11 +154,17 @@ else
 				PLUGIN:GenerateMarkup(text),
 				scale
 			}
+
+			PLUGIN.list[0] = #PLUGIN.list
 		end
 	end)
 
 	net.Receive("ixTextRemove", function()
-		table.remove(PLUGIN.list, net.ReadUInt(32))
+		local index = net.ReadUInt(32)
+
+		table.remove(PLUGIN.list, index)
+
+		PLUGIN.list[0] = #PLUGIN.list
 	end)
 
 	-- Receives a full update on ALL texts.
@@ -162,7 +180,14 @@ else
 
 		PLUGIN.list = util.JSONToTable(uncompressed)
 
-		for _, v in pairs(PLUGIN.list) do
+		-- Will be saved, but refresh just to make sure.
+		PLUGIN.list[0] = #PLUGIN.list
+
+		for k, v in pairs(PLUGIN.list) do
+			if (k == 0) then
+				continue
+			end
+
 			local object = ix.markup.Parse("<font=ix3D2DFont>"..v[3]:gsub("\\n", "\n"))
 
 			object.onDrawText = function(text, font, x, y, color, alignX, alignY, alpha)
@@ -255,7 +280,7 @@ else
 		local position = LocalPlayer():GetPos()
 		local texts = self.list
 
-		for i = 1, #texts do
+		for i = 1, texts[0] do
 			local distance = texts[i][1]:DistToSqr(position)
 
 			if (distance > 1048576) then
