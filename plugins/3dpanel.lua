@@ -236,11 +236,14 @@ else
 		for i = 1, panel[0] do
 			local position = panel[i][1]
 
+			-- Older panels do not have a brightness index
+			local brightness = panel[i][8] or 255
+
 			if (panel[i][7] and ourPosition:DistToSqr(position) <= 4194304) then
 				cam.Start3D2D(position, panel[i][2], panel[i][5] or 0.1)
 					render.PushFilterMin(TEXFILTER.ANISOTROPIC)
 					render.PushFilterMag(TEXFILTER.ANISOTROPIC)
-						surface.SetDrawColor(panel[i][8], panel[i][8], panel[i][8])
+						surface.SetDrawColor(brightness, brightness, brightness)
 						surface.SetMaterial(panel[i][7])
 						surface.DrawTexturedRect(0, 0, panel[i][3], panel[i][4])
 					render.PopFilterMag()
