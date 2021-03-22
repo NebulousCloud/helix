@@ -31,25 +31,23 @@ if (SERVER) then
 	end
 
 	-- Adds a panel to the list, sends it to the players, and saves data.
-	function PLUGIN:AddPanel(position, angles, url, w, h, scale, brightness)
+	function PLUGIN:AddPanel(position, angles, url, scale, brightness)
 		w = w or 1024
 		h = h or 768
 		scale = math.Clamp((scale or 1) * 0.1, 0.001, 5)
-		brightness = math.Clamp(math.Round((brightness or 100) * 2.55), 0, 255)
+		brightness = math.Clamp(math.Round((brightness or 100) * 2.55), 1, 255)
 
 		-- Find an ID for this panel within the list.
 		local index = #self.list + 1
 
 		-- Add the panel to the list so it can be sent and saved.
-		self.list[index] = {position, angles, w, h, scale, url, nil, brightness}
+		self.list[index] = {position, angles, nil, nil, scale, url, nil, brightness}
 
 		-- Send the panel information to the players.
 		net.Start("ixPanelAdd")
 			net.WriteUInt(index, 32)
 			net.WriteVector(position)
 			net.WriteAngle(angles)
-			net.WriteUInt(w, 16)
-			net.WriteUInt(h, 16)
 			net.WriteFloat(scale)
 			net.WriteString(url)
 			net.WriteUInt(brightness, 8)
@@ -152,13 +150,12 @@ else
 		local index = net.ReadUInt(32)
 		local position = net.ReadVector()
 		local angles = net.ReadAngle()
-		local w, h = net.ReadUInt(16), net.ReadUInt(16)
 		local scale = net.ReadFloat()
 		local url = net.ReadString()
 		local brightness = net.ReadUInt(8)
 
 		if (url != "") then
-			PLUGIN.list[index] = {position, angles, w, h, scale, url, nil, brightness}
+			PLUGIN.list[index] = {position, angles, nil, nil, scale, url, nil, brightness}
 
 			CacheMaterial(index)
 
@@ -235,6 +232,7 @@ else
 
 		for i = 1, panel[0] do
 			local position = panel[i][1]
+			local image = panel[i][7]
 
 			-- Older panels do not have a brightness index
 			local brightness = panel[i][8] or 255
@@ -244,8 +242,8 @@ else
 					render.PushFilterMin(TEXFILTER.ANISOTROPIC)
 					render.PushFilterMag(TEXFILTER.ANISOTROPIC)
 						surface.SetDrawColor(brightness, brightness, brightness)
-						surface.SetMaterial(panel[i][7])
-						surface.DrawTexturedRect(0, 0, panel[i][3], panel[i][4])
+						surface.SetMaterial(image)
+						surface.DrawTexturedRect(0, 0, image:Width(), image:Height())
 					render.PopFilterMag()
 					render.PopFilterMin()
 				cam.End3D2D()
@@ -295,10 +293,8 @@ else
 			local ourPosition = LocalPlayer():GetPos()
 
 			-- validate argument types
-			local width = tonumber(arguments[2]) or 1024
-			local height = tonumber(arguments[3]) or 768
-			local scale = math.Clamp((tonumber(arguments[4]) or 1) * 0.1, 0.001, 5)
-			local brightness = math.Clamp(math.Round((tonumber(arguments[5]) or 100) * 2.55), 0, 255)
+			local scale = math.Clamp((tonumber(arguments[2]) or 1) * 0.1, 0.001, 5)
+			local brightness = math.Clamp(math.Round((tonumber(arguments[3]) or 100) * 2.55), 1, 255)
 
 			if (ourPosition:DistToSqr(position) <= 4194304) then
 				cam.Start3D2D(position, angles, scale or 0.1)
@@ -306,7 +302,7 @@ else
 					render.PushFilterMag(TEXFILTER.ANISOTROPIC)
 						surface.SetDrawColor(brightness, brightness, brightness)
 						surface.SetMaterial(preview)
-						surface.DrawTexturedRect(0, 0, width, height)
+						surface.DrawTexturedRect(0, 0, preview:Width(), preview:Height())
 					render.PopFilterMag()
 					render.PopFilterMin()
 				cam.End3D2D()
@@ -322,11 +318,9 @@ ix.command.Add("PanelAdd", {
 	arguments = {
 		ix.type.string,
 		bit.bor(ix.type.number, ix.type.optional),
-		bit.bor(ix.type.number, ix.type.optional),
-		bit.bor(ix.type.number, ix.type.optional),
 		bit.bor(ix.type.number, ix.type.optional)
 	},
-	OnRun = function(self, client, url, width, height, scale, brightness)
+	OnRun = function(self, client, url, scale, brightness)
 		-- Get the position and angles of the panel.
 		local trace = client:GetEyeTrace()
 		local position = trace.HitPos
@@ -335,7 +329,7 @@ ix.command.Add("PanelAdd", {
 		angles:RotateAroundAxis(angles:Forward(), 90)
 
 		-- Add the panel.
-		PLUGIN:AddPanel(position + angles:Up() * 0.1, angles, url, width, height, scale, brightness)
+		PLUGIN:AddPanel(position + angles:Up() * 0.1, angles, url, scale, brightness)
 		return "@panelAdded"
 	end
 })
