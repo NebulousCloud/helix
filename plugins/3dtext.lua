@@ -227,8 +227,6 @@ else
 			return
 		end
 
-		print("HI")
-
 		-- preview for textadd command
 		if (ix.chat.currentCommand == "textadd") then
 			local arguments = ix.chat.currentArguments
