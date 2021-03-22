@@ -53,7 +53,6 @@ if (SERVER) then
 
 	-- Removes a text that are within the radius of a position.
 	function PLUGIN:RemoveText(position, radius)
-		local i = 0
 		radius = radius or 100
 
 		local textDeleted = {}
@@ -227,6 +226,8 @@ else
 		if (bDrawingDepth or bDrawingSkybox) then
 			return
 		end
+
+		print("HI")
 
 		-- preview for textadd command
 		if (ix.chat.currentCommand == "textadd") then

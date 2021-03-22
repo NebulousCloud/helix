@@ -61,11 +61,10 @@ if (SERVER) then
 
 	-- Removes a panel that are within the radius of a position.
 	function PLUGIN:RemovePanel(position, radius)
-		-- Store how many panels are removed.
-		local i = 0
 		-- Default the radius to 100.
 		radius = radius or 100
 
+		-- Table of panels to delete
 		local panelsDeleted = {}
 
 		-- Loop through all of the panels.
@@ -208,18 +207,18 @@ else
 		-- Store the position of the player to be more optimized.
 		local ourPosition = LocalPlayer():GetPos()
 
-		local panel = self.list
+		local panels = self.list
 
-		for i = 1, #panel do
-			local position = panel[i][1]
+		for i = 1, #panels do
+			local position = panels[i][1]
 
-			if (panel[i][7] and ourPosition:DistToSqr(position) <= 4194304) then
-				cam.Start3D2D(position, panel[i][2], panel[i][5] or 0.1)
+			if (panels[i][7] and ourPosition:DistToSqr(position) <= 4194304) then
+				cam.Start3D2D(position, panels[i][2], panels[i][5] or 0.1)
 					render.PushFilterMin(TEXFILTER.ANISOTROPIC)
 					render.PushFilterMag(TEXFILTER.ANISOTROPIC)
-						surface.SetDrawColor(panel[i][8], panel[i][8], panel[i][8])
-						surface.SetMaterial(panel[i][7])
-						surface.DrawTexturedRect(0, 0, panel[i][3], panel[i][4])
+						surface.SetDrawColor(panels[i][8], panels[i][8], panels[i][8])
+						surface.SetMaterial(panels[i][7])
+						surface.DrawTexturedRect(0, 0, panels[i][3], panels[i][4])
 					render.PopFilterMag()
 					render.PopFilterMin()
 				cam.End3D2D()
