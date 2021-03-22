@@ -100,6 +100,11 @@ if (SERVER) then
 	-- Called after entities have been loaded on the map.
 	function PLUGIN:LoadData()
 		self.list = self:GetData() or {}
+		
+		-- Make sure older panels created before update have a brightness property
+		for _,v in ipairs(self.list) do
+			v[8] = v[8] or 255
+		end
 	end
 
 	-- Called when the plugin needs to save information.
