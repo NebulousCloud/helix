@@ -73,14 +73,11 @@ if (SERVER) then
 			-- Check if the distance from our specified position to the panel is less than the radius.
 			if (v[1]:Distance(position) <= radius) then
 				panelsDeleted[#panelsDeleted + 1] = k
-
-				-- Increase the number of deleted panels by one.
-				i = i + 1
 			end
 		end
 
 		-- Save the plugin data if we actually changed anything.
-		if (i > 0) then
+		if (#panelsDeleted > 0) then
 			-- Invert index table to delete from highest -> lowest
 			panelsDeleted = table.Reverse(panelsDeleted)
 
@@ -98,7 +95,7 @@ if (SERVER) then
 		end
 
 		-- Return the number of deleted panels.
-		return i
+		return #panelsDeleted
 	end
 
 	-- Called after entities have been loaded on the map.
@@ -198,16 +195,16 @@ else
 	end)
 
 	-- Called after all translucent objects are drawn.
-	function PLUGIN:PostDrawTranslucentRenderables(bDrawingDepth, bDrawingSkyBox)
+	function PLUGIN:PostDrawTranslucentRenderables(bDrawingDepth, bDrawingSkybox)
 		if (bDrawingDepth or bDrawingSkybox) then
 			return
 		end
 
-		-- panel preview
+		-- Preview the panel
 		if (ix.chat.currentCommand == "paneladd") then
 			self:PreviewPanel()
 		end
-		
+
 		-- Store the position of the player to be more optimized.
 		local ourPosition = LocalPlayer():GetPos()
 
@@ -235,6 +232,11 @@ else
 
 		local path = "helix/"..Schema.folder.."/"..PLUGIN.uniqueID.."/"
 		local panelURL = tostring(arguments[1] or "")
+
+		if (panelURL == "") then
+			return
+		end
+
 		local shouldPreview = false
 		local preview
 

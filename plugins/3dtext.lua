@@ -56,23 +56,30 @@ if (SERVER) then
 		local i = 0
 		radius = radius or 100
 
+		local textDeleted = {}
+
 		for k, v in pairs(self.list) do
 			if (v[1]:Distance(position) <= radius) then
-				self.list[k] = nil
-
-				net.Start("ixTextRemove")
-					net.WriteUInt(k, 32)
-				net.Broadcast()
-
-				i = i + 1
+				textDeleted[#textDeleted] = k
 			end
 		end
 
-		if (i > 0) then
+		if (#textDeleted > 0) then
+			-- Invert index table to delete from highest -> lowest
+			textDeleted = table.Reverse(textDeleted)
+
+			for _, v in ipairs(textDeleted) do
+				table.remove(self.list, v)
+
+				net.Start("ixTextRemove")
+					net.WriteUInt(v, 32)
+				net.Broadcast()
+			end
+
 			self:SaveText()
 		end
 
-		return i
+		return #textDeleted
 	end
 
 	function PLUGIN:RemoveTextByID(id)
@@ -86,7 +93,7 @@ if (SERVER) then
 			net.WriteUInt(id, 32)
 		net.Broadcast()
 
-		self.list[id] = nil
+		table.remove(self.list, id)
 		return true
 	end
 
@@ -140,7 +147,7 @@ else
 	end)
 
 	net.Receive("ixTextRemove", function()
-		PLUGIN.list[net.ReadUInt(32)] = nil
+		table.remove(PLUGIN.list, net.ReadUInt(32))
 	end)
 
 	-- Receives a full update on ALL texts.
@@ -247,17 +254,18 @@ else
 		end
 
 		local position = LocalPlayer():GetPos()
+		local texts = self.list
 
-		for _, v in pairs(self.list) do
-			local distance = v[1]:DistToSqr(position)
+		for i = 1, #texts do
+			local distance = texts[i][1]:DistToSqr(position)
 
 			if (distance > 1048576) then
 				continue
 			end
 
-			cam.Start3D2D(v[1], v[2], v[4] or 0.1)
+			cam.Start3D2D(texts[i][1], texts[i][2], texts[i][4] or 0.1)
 				local alpha = (1 - ((distance - 65536) / 768432)) * 255
-				v[3]:draw(0, 0, 1, 1, alpha)
+				texts[i][3]:draw(0, 0, 1, 1, alpha)
 			cam.End3D2D()
 		end
 	end
