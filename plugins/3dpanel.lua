@@ -112,6 +112,9 @@ else
 	-- Pre-define the zero index in client before the net receives
 	PLUGIN.list[0] = PLUGIN.list[0] or 0
 
+	-- Holds the current cached material and filename.
+	local cachedPreview = {}
+
 	local function CacheMaterial(index)
 		if (index < 1) then
 			return
@@ -254,35 +257,36 @@ else
 
 		local path = "helix/"..Schema.folder.."/"..PLUGIN.uniqueID.."/"
 		local panelURL = tostring(arguments[1] or "")
-		local shouldPreview = false
-		local preview
 
-		-- Gets the file name
-		local exploded = string.Explode("/", panelURL)
-		local filename = exploded[#exploded]
+		-- if there's no URL, then no preview.
+		if (!arguments[1]) then
+			return
+		end
 
-		if (file.Exists(path..filename, "DATA")) then
-			preview = Material("../data/"..path..filename, "noclamp smooth")
+		-- Text has been updated since the last frame, re-cache material
+		if (arguments[1] != cachedPreview[1]) then
+			-- Gets the file name
+			local exploded = string.Explode("/", panelURL)
+			local filename = exploded[#exploded]
 
-			if (!preview:IsError()) then
-				shouldPreview = true
+			if (file.Exists(path..filename, "DATA")) then
+				cachedPreview[2] = Material("../data/"..path..filename, "noclamp smooth")
+			else
+				file.CreateDir(path)
+
+				http.Fetch(panelURL, function(body)
+					file.Write(path..filename, body)
+
+					cachedPreview[2] = Material("../data/"..path..filename, "noclamp smooth")
+				end)
 			end
-		else
-			file.CreateDir(path)
 
-			http.Fetch(panelURL, function(body)
-				file.Write(path..filename, body)
-
-				preview = Material("../data/"..path..filename, "noclamp smooth")
-
-				if (!preview:IsError()) then
-					shouldPreview = true
-				end
-			end)
+			-- After caching material, update the current text.
+			cachedPreview[1] = arguments[1]
 		end
 
 		-- If the material is valid, preview the panel
-		if (shouldPreview) then
+		if (cachedPreview[2] and !cachedPreview[2]:IsError()) then
 			local trace = LocalPlayer():GetEyeTrace()
 			local angles = trace.HitNormal:Angle()
 			angles:RotateAroundAxis(angles:Up(), 90)
@@ -299,8 +303,8 @@ else
 					render.PushFilterMin(TEXFILTER.ANISOTROPIC)
 					render.PushFilterMag(TEXFILTER.ANISOTROPIC)
 						surface.SetDrawColor(brightness, brightness, brightness)
-						surface.SetMaterial(preview)
-						surface.DrawTexturedRect(0, 0, preview:Width(), preview:Height())
+						surface.SetMaterial(cachedPreview[2])
+						surface.DrawTexturedRect(0, 0, cachedPreview[2]:Width(), cachedPreview[2]:Height())
 					render.PopFilterMag()
 					render.PopFilterMin()
 				cam.End3D2D()
