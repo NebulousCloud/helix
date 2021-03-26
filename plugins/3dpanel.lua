@@ -161,24 +161,30 @@ else
 		local exploded = string.Explode("/", url)
 		local filename = exploded[#exploded]
 
-		local preview
-
 		if (file.Exists(path..filename, "DATA")) then
-			preview = Material("../data/"..path..filename, "noclamp smooth")
+			local preview = Material("../data/"..path..filename, "noclamp smooth")
+
+			-- Update the cached preview if success
+			if (!preview:IsError()) then
+				cachedPreview = {url, preview}
+			else
+				cachedPreview = {}
+			end
 		else
 			file.CreateDir(path)
 
 			http.Fetch(url, function(body)
 				file.Write(path..filename, body)
 
-				preview = Material("../data/"..path..filename, "noclamp smooth")
-			end)
-		end
+				local preview = Material("../data/"..path..filename, "noclamp smooth")
 
-		-- Update the cached preview if success
-		if (!preview:IsError()) then
-			cachedPreview[1] = url
-			cachedPreview[2] = preview
+				-- Update the cached preview if success
+				if (!preview:IsError()) then
+					cachedPreview = {url, preview}
+				else
+					cachedPreview = {}
+				end
+			end)
 		end
 	end
 
@@ -288,20 +294,27 @@ else
 		end
 	end
 
+	function PLUGIN:ChatTextChanged(text)
+		if (ix.chat.currentCommand == "paneladd") then
+			-- Allow time for ix.chat.currentArguments to update
+			timer.Simple(0, function()
+				local arguments = ix.chat.currentArguments
+
+				if (!arguments[1]) then
+					return
+				end
+
+				UpdateCachedPreview(arguments[1])
+			end)
+		end
+	end
+
 	function PLUGIN:PreviewPanel()
 		local arguments = ix.chat.currentArguments
 
 		-- if there's no URL, then no preview.
 		if (!arguments[1]) then
 			return
-		end
-
-		local path = "helix/"..Schema.folder.."/"..PLUGIN.uniqueID.."/"
-		local panelURL = tostring(arguments[1] or "")
-
-		-- Text has been updated since the last frame, re-cache material
-		if (panelURL != cachedPreview[1]) then
-			UpdateCachedPreview(panelURL)
 		end
 
 		-- If the material is valid, preview the panel
