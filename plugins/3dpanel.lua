@@ -154,6 +154,34 @@ else
 		end
 	end
 
+	local function UpdateCachedPreview(url)
+		local path = "helix/"..Schema.folder.."/"..PLUGIN.uniqueID.."/"
+
+		-- Gets the file name
+		local exploded = string.Explode("/", url)
+		local filename = exploded[#exploded]
+
+		local preview
+
+		if (file.Exists(path..filename, "DATA")) then
+			preview = Material("../data/"..path..filename, "noclamp smooth")
+		else
+			file.CreateDir(path)
+
+			http.Fetch(url, function(body)
+				file.Write(path..filename, body)
+
+				preview = Material("../data/"..path..filename, "noclamp smooth")
+			end)
+		end
+
+		-- Update the cached preview if success
+		if (!preview:IsError()) then
+			cachedPreview[1] = url
+			cachedPreview[2] = preview
+		end
+	end
+
 	-- Receives new panel objects that need to be drawn.
 	net.Receive("ixPanelAdd", function()
 		local index = net.ReadUInt(32)
@@ -263,34 +291,17 @@ else
 	function PLUGIN:PreviewPanel()
 		local arguments = ix.chat.currentArguments
 
-		local path = "helix/"..Schema.folder.."/"..PLUGIN.uniqueID.."/"
-		local panelURL = tostring(arguments[1] or "")
-
 		-- if there's no URL, then no preview.
 		if (!arguments[1]) then
 			return
 		end
 
+		local path = "helix/"..Schema.folder.."/"..PLUGIN.uniqueID.."/"
+		local panelURL = tostring(arguments[1] or "")
+
 		-- Text has been updated since the last frame, re-cache material
-		if (arguments[1] != cachedPreview[1]) then
-			-- Gets the file name
-			local exploded = string.Explode("/", panelURL)
-			local filename = exploded[#exploded]
-
-			if (file.Exists(path..filename, "DATA")) then
-				cachedPreview[2] = Material("../data/"..path..filename, "noclamp smooth")
-			else
-				file.CreateDir(path)
-
-				http.Fetch(panelURL, function(body)
-					file.Write(path..filename, body)
-
-					cachedPreview[2] = Material("../data/"..path..filename, "noclamp smooth")
-				end)
-			end
-
-			-- After caching material, update the current text.
-			cachedPreview[1] = arguments[1]
+		if (panelURL != cachedPreview[1]) then
+			UpdateCachedPreview(panelURL)
 		end
 
 		-- If the material is valid, preview the panel
