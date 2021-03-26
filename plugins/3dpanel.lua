@@ -130,6 +130,10 @@ else
 
 			if (!material:IsError()) then
 				info[7] = material
+
+				-- Set width and height
+				info[3] = material:GetInt("$realwidth")
+				info[4] = material:GetInt("$realheight")
 			end
 		else
 			file.CreateDir(path)
@@ -141,6 +145,10 @@ else
 
 				if (!material:IsError()) then
 					info[7] = material
+
+					-- Set width and height
+					info[3] = material:GetInt("$realwidth")
+					info[4] = material:GetInt("$realheight")
 				end
 			end)
 		end
@@ -244,7 +252,7 @@ else
 					render.PushFilterMag(TEXFILTER.ANISOTROPIC)
 						surface.SetDrawColor(brightness, brightness, brightness)
 						surface.SetMaterial(image)
-						surface.DrawTexturedRect(0, 0, image:Width(), image:Height())
+						surface.DrawTexturedRect(0, 0, panel[i][3] or image:Width(), panel[i][4] or image:Height())
 					render.PopFilterMag()
 					render.PopFilterMin()
 				cam.End3D2D()
@@ -298,13 +306,16 @@ else
 			local scale = math.Clamp((tonumber(arguments[2]) or 1) * 0.1, 0.001, 5)
 			local brightness = math.Clamp(math.Round((tonumber(arguments[3]) or 100) * 2.55), 1, 255)
 
+			-- Attempt to collect the dimensions from the Material
+			local width, height = cachedPreview[2]:GetInt("$realwidth"), cachedPreview[2]:GetInt("$realheight")
+
 			if (ourPosition:DistToSqr(position) <= 4194304) then
 				cam.Start3D2D(position, angles, scale or 0.1)
 					render.PushFilterMin(TEXFILTER.ANISOTROPIC)
 					render.PushFilterMag(TEXFILTER.ANISOTROPIC)
 						surface.SetDrawColor(brightness, brightness, brightness)
 						surface.SetMaterial(cachedPreview[2])
-						surface.DrawTexturedRect(0, 0, cachedPreview[2]:Width(), cachedPreview[2]:Height())
+						surface.DrawTexturedRect(0, 0, width or cachedPreview[2]:Width(), height or cachedPreview[2]:Height())
 					render.PopFilterMag()
 					render.PopFilterMin()
 				cam.End3D2D()
