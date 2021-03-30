@@ -155,7 +155,7 @@ if (SERVER) then
 			local character = client:GetCharacter()
 			local inventory = character:GetInventory()
 
-			for _, v in pairs(inv:GetItems()) do
+			for _, v in pairs(inventory:GetItems()) do
 				if (v:GetData("equip") == true and v.pacData) then
 					client:AddPart(v.uniqueID, v)
 				end
