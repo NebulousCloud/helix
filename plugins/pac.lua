@@ -141,6 +141,27 @@ if (SERVER) then
 			newItem:RemovePAC(client)
 		end
 	end
+
+	function PLUGIN:OnPlayerObserve(client, state)
+		local curParts = client:GetParts()
+
+		-- Remove all the parts
+		if (curParts) then
+			client:ResetParts()
+		end
+
+		-- If coming out of observer, re-add all parts.
+		if (!state) then
+			local character = client:GetCharacter()
+			local inventory = character:GetInventory()
+
+			for _, v in pairs(inv:GetItems()) do
+				if (v:GetData("equip") == true and v.pacData) then
+					client:AddPart(v.uniqueID, v)
+				end
+			end
+		end
+	end
 else
 	local function AttachPart(client, uniqueID)
 		local itemTable = ix.item.list[uniqueID]
