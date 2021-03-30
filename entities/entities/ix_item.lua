@@ -46,6 +46,8 @@ if (SERVER) then
 				caller:PerformInteraction(ix.config.Get("itemPickupTime", 0.5), self, function(client)
 					if (!ix.item.PerformInventoryAction(client, "take", self)) then
 						return false -- do not mark dirty if interaction fails
+					else
+						caller:ForceSequence("pickup", nil, 1)
 					end
 				end)
 			end

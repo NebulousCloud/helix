@@ -44,6 +44,8 @@ if (SERVER) then
 
 		activator:PerformInteraction(ix.config.Get("itemPickupTime", 0.5), self, function(client)
 			if (hook.Run("OnPickupMoney", client, self) != false) then
+				activator:ForceSequence("pickup", nil, 1)
+
 				self:Remove()
 			end
 		end)
