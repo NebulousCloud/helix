@@ -142,6 +142,7 @@ if (SERVER) then
 		end
 	end
 
+	-- Hides PAC parts when a player enters observer.
 	function PLUGIN:OnPlayerObserve(client, state)
 		local curParts = client:GetParts()
 
@@ -150,7 +151,7 @@ if (SERVER) then
 			client:ResetParts()
 		end
 
-		-- If coming out of observer, re-add all parts.
+		-- If exiting of observer, re-add all parts.
 		if (!state) then
 			local character = client:GetCharacter()
 			local inventory = character:GetInventory()
