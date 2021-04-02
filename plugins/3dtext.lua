@@ -5,6 +5,7 @@ PLUGIN.name = "3D Text"
 PLUGIN.author = "Chessnut"
 PLUGIN.description = "Adds text that can be placed on the map."
 
+-- List of available text panels
 PLUGIN.list = PLUGIN.list or {}
 
 if (SERVER) then
@@ -53,26 +54,36 @@ if (SERVER) then
 
 	-- Removes a text that are within the radius of a position.
 	function PLUGIN:RemoveText(position, radius)
-		local i = 0
 		radius = radius or 100
 
+		local textDeleted = {}
+
 		for k, v in pairs(self.list) do
+			if (k == 0) then
+				continue
+			end
+
 			if (v[1]:Distance(position) <= radius) then
-				self.list[k] = nil
-
-				net.Start("ixTextRemove")
-					net.WriteUInt(k, 32)
-				net.Broadcast()
-
-				i = i + 1
+				textDeleted[#textDeleted + 1] = k
 			end
 		end
 
-		if (i > 0) then
+		if (#textDeleted > 0) then
+			-- Invert index table to delete from highest -> lowest
+			textDeleted = table.Reverse(textDeleted)
+
+			for _, v in ipairs(textDeleted) do
+				table.remove(self.list, v)
+
+				net.Start("ixTextRemove")
+					net.WriteUInt(v, 32)
+				net.Broadcast()
+			end
+
 			self:SaveText()
 		end
 
-		return i
+		return #textDeleted
 	end
 
 	function PLUGIN:RemoveTextByID(id)
@@ -86,13 +97,16 @@ if (SERVER) then
 			net.WriteUInt(id, 32)
 		net.Broadcast()
 
-		self.list[id] = nil
+		table.remove(self.list, id)
 		return true
 	end
 
 	-- Called after entities have been loaded on the map.
 	function PLUGIN:LoadData()
 		self.list = self:GetData() or {}
+
+		-- Formats table to sequential to support legacy panels.
+		self.list = table.ClearKeys(self.list)
 	end
 
 	-- Called when the plugin needs to save information.
@@ -100,6 +114,9 @@ if (SERVER) then
 		self:SetData(self.list)
 	end
 else
+	-- Pre-define the zero index in client before the net receives
+	PLUGIN.list[0] = PLUGIN.list[0] or 0
+
 	language.Add("Undone_ix3dText", "Removed 3D Text")
 
 	function PLUGIN:GenerateMarkup(text)
@@ -136,11 +153,17 @@ else
 				PLUGIN:GenerateMarkup(text),
 				scale
 			}
+
+			PLUGIN.list[0] = #PLUGIN.list
 		end
 	end)
 
 	net.Receive("ixTextRemove", function()
-		PLUGIN.list[net.ReadUInt(32)] = nil
+		local index = net.ReadUInt(32)
+
+		table.remove(PLUGIN.list, index)
+
+		PLUGIN.list[0] = #PLUGIN.list
 	end)
 
 	-- Receives a full update on ALL texts.
@@ -156,7 +179,14 @@ else
 
 		PLUGIN.list = util.JSONToTable(uncompressed)
 
-		for _, v in pairs(PLUGIN.list) do
+		-- Will be saved, but refresh just to make sure.
+		PLUGIN.list[0] = #PLUGIN.list
+
+		for k, v in pairs(PLUGIN.list) do
+			if (k == 0) then
+				continue
+			end
+
 			local object = ix.markup.Parse("<font=ix3D2DFont>"..v[3]:gsub("\\n", "\n"))
 
 			object.onDrawText = function(text, font, x, y, color, alignX, alignY, alpha)
@@ -195,7 +225,11 @@ else
 
 		local i = 0
 
-		for _, v in pairs(self.list) do
+		for k, v in pairs(self.list) do
+			if (k == 0) then
+				continue
+			end
+
 			if (v[1]:Distance(LocalPlayer():GetEyeTraceNoCursor().HitPos) <= radius) then
 				local screen = v[1]:ToScreen()
 				surface.DrawLine(
@@ -247,17 +281,18 @@ else
 		end
 
 		local position = LocalPlayer():GetPos()
+		local texts = self.list
 
-		for _, v in pairs(self.list) do
-			local distance = v[1]:DistToSqr(position)
+		for i = 1, texts[0] do
+			local distance = texts[i][1]:DistToSqr(position)
 
 			if (distance > 1048576) then
 				continue
 			end
 
-			cam.Start3D2D(v[1], v[2], v[4] or 0.1)
+			cam.Start3D2D(texts[i][1], texts[i][2], texts[i][4] or 0.1)
 				local alpha = (1 - ((distance - 65536) / 768432)) * 255
-				v[3]:draw(0, 0, 1, 1, alpha)
+				texts[i][3]:draw(0, 0, 1, 1, alpha)
 			cam.End3D2D()
 		end
 	end
