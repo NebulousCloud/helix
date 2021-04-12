@@ -108,7 +108,7 @@ function PANEL:DrawModel()
 	end
 
 	self.Entity:DrawModel()
-	
+
 	if self.PostDrawModel then
 		self:PostDrawModel(self.Entity)
 	end
