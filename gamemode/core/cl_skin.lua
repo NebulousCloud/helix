@@ -511,6 +511,14 @@ function SKIN:PaintInfoBar(panel, width, height, color)
 	surface.DrawTexturedRect(0, 0, width, height)
 end
 
+function SKIN:PaintInventorySlot(panel, width, height)
+	surface.SetDrawColor(35, 35, 35, 85)
+	surface.DrawRect(1, 1, width - 2, height - 2)
+
+	surface.SetDrawColor(0, 0, 0, 250)
+	surface.DrawOutlinedRect(1, 1, width - 2, height - 2)
+end
+
 do
 	-- check if sounds exist, otherwise fall back to default UI sounds
 	local bWhoosh = file.Exists("sound/helix/ui/whoosh1.wav", "GAME")
