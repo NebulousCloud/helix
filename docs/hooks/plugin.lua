@@ -772,6 +772,10 @@ function PostChatboxDraw(width, height, alpha)
 end
 
 --- @realm client
+function PostDrawHelixModelView(panel, entity)
+end
+
+--- @realm client
 function PostDrawInventory(panel)
 end
 
