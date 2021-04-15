@@ -109,11 +109,8 @@ function PANEL:DrawModel()
 
 	self.Entity:DrawModel()
 
-	if self.PostDrawModel then
-		self:PostDrawModel(self.Entity)
-	end
 	if (self.enableHook) then
-		hook.Run("PostHelixModelView", self, self.Entity)
+		hook.Run("PostDrawHelixModelView", self, self.Entity)
 	end
 end
 
