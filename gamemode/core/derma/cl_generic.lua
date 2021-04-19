@@ -760,8 +760,8 @@ function PANEL:DrawKernedText(width, height)
 	local contentWidth, contentHeight = self:GetContentSize()
 	local x, y = self:CalculateAlignment(width, height, contentWidth, contentHeight)
 
-	for i = 1, #self.text do
-		local character = self.text[i]
+	for i = 1, self.text:utf8len() do
+		local character = self.text:utf8sub(i, i)
 		local textWidth, _ = surface.GetTextSize(character)
 		local kerning = i == 1 and 0 or self.kerning
 		local shadowDistance = self.shadowDistance
@@ -857,8 +857,8 @@ function PANEL:GetContentSize(bCalculate)
 		if (self.kerning > 0) then
 			local width = 0
 
-			for i = 1, #self.text do
-				local textWidth, _ = surface.GetTextSize(self.text[i])
+			for i = 1, self.text:utf8len() do
+				local textWidth, _ = surface.GetTextSize(self.text:utf8sub(i, i))
 				width = width + textWidth + self.kerning
 			end
 
