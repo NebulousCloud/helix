@@ -295,24 +295,32 @@ if (SERVER) then
 		end
 
 		local entity = inventory.storageInfo.entity
+		local total
+		if (inventory.storageInfo.OnMoneyTake) then
+			amount, total = inventory.storageInfo.OnMoneyTake(client, inventory, amount)
 
-		if (!IsValid(entity) or
-			(!entity:IsPlayer() and (!isfunction(entity.GetMoney) or !isfunction(entity.SetMoney))) or
-			(entity:IsPlayer() and !entity:GetCharacter())) then
-			return
+			if (!amount) then
+				return
+			end
+		else
+			if (!IsValid(entity) or
+				(!entity:IsPlayer() and (!isfunction(entity.GetMoney) or !isfunction(entity.SetMoney))) or
+				(entity:IsPlayer() and !entity:GetCharacter())) then
+				return
+			end
+
+			entity = entity:IsPlayer() and entity:GetCharacter() or entity
+			amount = math.Clamp(math.Round(tonumber(amount) or 0), 0, entity:GetMoney())
+
+			if (amount == 0) then
+				return
+			end
+
+			character:SetMoney(character:GetMoney() + amount)
+
+			total = entity:GetMoney() - amount
+			entity:SetMoney(total)
 		end
-
-		entity = entity:IsPlayer() and entity:GetCharacter() or entity
-		amount = math.Clamp(math.Round(tonumber(amount) or 0), 0, entity:GetMoney())
-
-		if (amount == 0) then
-			return
-		end
-
-		character:SetMoney(character:GetMoney() + amount)
-
-		local total = entity:GetMoney() - amount
-		entity:SetMoney(total)
 
 		net.Start("ixStorageMoneyUpdate")
 			net.WriteUInt(storageID, 32)
@@ -345,24 +353,32 @@ if (SERVER) then
 		end
 
 		local entity = inventory.storageInfo.entity
+		local total
+		if (inventory.storageInfo.OnMoneyGive) then
+			amount, total = inventory.storageInfo.OnMoneyGive(client, inventory, amount)
 
-		if (!IsValid(entity) or
-			(!entity:IsPlayer() and (!isfunction(entity.GetMoney) or !isfunction(entity.SetMoney))) or
-			(entity:IsPlayer() and !entity:GetCharacter())) then
-			return
+			if (!amount) then
+				return
+			end
+		else
+			if (!IsValid(entity) or
+				(!entity:IsPlayer() and (!isfunction(entity.GetMoney) or !isfunction(entity.SetMoney))) or
+				(entity:IsPlayer() and !entity:GetCharacter())) then
+				return
+			end
+
+			entity = entity:IsPlayer() and entity:GetCharacter() or entity
+			amount = math.Clamp(math.Round(tonumber(amount) or 0), 0, character:GetMoney())
+
+			if (amount == 0) then
+				return
+			end
+
+			character:SetMoney(character:GetMoney() - amount)
+
+			total = entity:GetMoney() + amount
+			entity:SetMoney(total)
 		end
-
-		entity = entity:IsPlayer() and entity:GetCharacter() or entity
-		amount = math.Clamp(math.Round(tonumber(amount) or 0), 0, character:GetMoney())
-
-		if (amount == 0) then
-			return
-		end
-
-		character:SetMoney(character:GetMoney() - amount)
-
-		local total = entity:GetMoney() + amount
-		entity:SetMoney(total)
 
 		net.Start("ixStorageMoneyUpdate")
 			net.WriteUInt(storageID, 32)
