@@ -157,7 +157,7 @@ if (SERVER) then
 					data.SubMaterial = {}
 
 					for k2, _ in pairs(materials) do
-						if (v:GetSubMaterial(k2)) then
+						if (v:GetSubMaterial(k2 - 1) != "") then
 							data.SubMaterial[k2] = v:GetSubMaterial(k2 - 1)
 						end
 					end
