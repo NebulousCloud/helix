@@ -320,14 +320,14 @@ if (SERVER) then
 
 			total = entity:GetMoney() - amount
 			entity:SetMoney(total)
+				
+			ix.log.Add(client, "storageMoneyTake", entity, amount, total)
 		end
 
 		net.Start("ixStorageMoneyUpdate")
 			net.WriteUInt(storageID, 32)
 			net.WriteUInt(total, 32)
 		net.Send(inventory:GetReceivers())
-
-		ix.log.Add(client, "storageMoneyTake", entity, amount, total)
 
 		client.ixStorageMoneyTimer = CurTime() + 0.5
 	end)
@@ -378,14 +378,14 @@ if (SERVER) then
 
 			total = entity:GetMoney() + amount
 			entity:SetMoney(total)
+				
+			ix.log.Add(client, "storageMoneyGive", entity, amount, total)
 		end
 
 		net.Start("ixStorageMoneyUpdate")
 			net.WriteUInt(storageID, 32)
 			net.WriteUInt(total, 32)
 		net.Send(inventory:GetReceivers())
-
-		ix.log.Add(client, "storageMoneyGive", entity, amount, total)
 
 		client.ixStorageMoneyTimer = CurTime() + 0.5
 	end)
