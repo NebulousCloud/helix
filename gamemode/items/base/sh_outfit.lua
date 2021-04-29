@@ -54,10 +54,12 @@ function ITEM:AddOutfit(client)
 	end
 
 	if (isfunction(self.OnGetReplacement)) then
-		character:SetData("oldModel" .. self.outfitCategory, character:GetData("oldModel" .. self.outfitCategory, self.player:GetModel()))
+		character:SetData("oldModel" .. self.outfitCategory,
+			character:GetData("oldModel" .. self.outfitCategory, self.player:GetModel()))
 		character:SetModel(self:OnGetReplacement())
 	elseif (self.replacement or self.replacements) then
-		character:SetData("oldModel" .. self.outfitCategory, character:GetData("oldModel" .. self.outfitCategory, self.player:GetModel()))
+		character:SetData("oldModel" .. self.outfitCategory,
+			character:GetData("oldModel" .. self.outfitCategory, self.player:GetModel()))
 
 		if (istable(self.replacements)) then
 			if (#self.replacements == 2 and isstring(self.replacements[1])) then
