@@ -42,17 +42,7 @@ GM.Author = "nebulous.cloud"
 GM.Website = "https://nebulous.cloud"
 GM.Version = "β"
 
--- Fix for client:SteamID64() returning nil when in single-player.
 do
-	local playerMeta = FindMetaTable("Player")
-	playerMeta.ixSteamID64 = playerMeta.ixSteamID64 or playerMeta.SteamID64
-
-	-- Overwrite the normal SteamID64 method.
-	function playerMeta:SteamID64()
-		-- Return 0 if the SteamID64 could not be found.
-		return self:ixSteamID64() or 0
-	end
-
 	-- luacheck: globals player_manager
 	player_manager.ixTranslateModel = player_manager.ixTranslateModel or player_manager.TranslateToPlayerModelName
 
