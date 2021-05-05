@@ -414,52 +414,31 @@ end
 -- @realm shared
 -- @bool bNoReplication Whether or not the item's removal should not be replicated.
 -- @bool bNoDelete Whether or not the item should not be fully deleted
--- @treturn bool Whether the item was successfully deleted or not
+-- @treturn number The X position that the item was removed from
+-- @treturn number The Y position that the item was removed from
 function ITEM:Remove(bNoReplication, bNoDelete)
-	local inv = ix.item.inventories[self.invID]
+	local inv = ix.inventory.Get(self.invID)
+	local x2, y2
 
-	if (self.invID > 0 and inv) then
-		local failed = false
+	if (inv) then
+		if (self.invID != 0) then
+			local invW, invH = inv:GetSize()
 
-		for x = self.gridX, self.gridX + (self.width - 1) do
-			if (inv.slots[x]) then
-				for y = self.gridY, self.gridY + (self.height - 1) do
-					local item = inv.slots[x][y]
+			for x = 1, invW do
+				if (inv.slots[x]) then
+					for y = 1, invH do
+						local item = inv.slots[x][y]
 
-					if (item and item.id == self.id) then
-						inv.slots[x][y] = nil
-					else
-						failed = true
-					end
-				end
-			end
-		end
+						if (item and item.id == self.id) then
+							inv.slots[x][y] = nil
 
-		if (failed) then
-			local items = inv:GetItems()
-
-			inv.slots = {}
-			for _, v in pairs(items) do
-				if (v.invID == inv:GetID()) then
-					for x = self.gridX, self.gridX + (self.width - 1) do
-						for y = self.gridY, self.gridY + (self.height - 1) do
-							inv.slots[x][y] = v.id
+							x2 = x2 or x
+							y2 = y2 or y
 						end
 					end
 				end
-			end
-
-			if (IsValid(inv.owner) and inv.owner:IsPlayer()) then
-				inv:Sync(inv.owner, true)
-			end
-
-			return false
-		end
-	else
-		-- @todo definition probably isn't needed
-		inv = ix.item.inventories[self.invID]
-
-		if (inv) then
+			end 
+		else
 			ix.item.inventories[self.invID][self.id] = nil
 		end
 	end
@@ -471,13 +450,15 @@ function ITEM:Remove(bNoReplication, bNoDelete)
 			entity:Remove()
 		end
 
-		local receivers = inv.GetReceivers and inv:GetReceivers()
+		if (inv and inv.GetReceivers) then
+			local receivers = inv:GetReceivers()
 
-		if (self.invID != 0 and istable(receivers)) then
-			net.Start("ixInventoryRemove")
-				net.WriteUInt(self.id, 32)
-				net.WriteUInt(self.invID, 32)
-			net.Send(receivers)
+			if (self.invID != 0 and istable(receivers) and #receivers > 0) then
+				net.Start("ixInventoryRemove")
+					net.WriteUInt(self.id, 32)
+					net.WriteUInt(self.invID, 32)
+				net.Send(receivers)
+			end
 		end
 
 		if (!bNoDelete) then
@@ -495,7 +476,7 @@ function ITEM:Remove(bNoReplication, bNoDelete)
 		end
 	end
 
-	return true
+	return x2, y2
 end
 
 if (SERVER) then
