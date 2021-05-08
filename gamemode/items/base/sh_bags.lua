@@ -54,6 +54,25 @@ ITEM.functions.View = {
 		return !IsValid(item.entity) and item:GetData("id") and !IsValid(ix.gui["inv" .. item:GetData("id", "")])
 	end
 }
+ITEM.functions.ViewWorld = {
+    name = "View",
+    OnRun = function(item)
+        local inventory = item:GetInventory()
+
+        if (inventory) then
+            ix.storage.Open(item.player, inventory, {
+                name = item.name,
+                entity = item.entity,
+                searchTime = 0
+            })
+        end
+
+        return false
+    end,
+    OnCanRun = function(item)
+        return IsValid(item.entity)
+    end
+}
 ITEM.functions.combine = {
 	OnRun = function(item, data)
 		ix.item.instances[data[1]]:Transfer(item:GetData("id"))
