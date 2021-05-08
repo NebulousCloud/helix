@@ -23,7 +23,6 @@ if (CLIENT) then
 	end
 end
 
--- On player uneqipped the item, Removes a weapon from the player and keep the ammo in the item.
 ITEM.functions.use = {
 	name = "Load",
 	tip = "useTip",
@@ -36,6 +35,33 @@ ITEM.functions.use = {
 
 		return true
 	end,
+}
+
+ITEM.functions.Split = {
+	name = "Split",
+	tip = "Splits the ammo in half.",
+	icon = "icon16/arrow_divide.png",
+	OnRun = function(item)
+		local client = item.player
+		local rounds = item:GetData("rounds", item.ammoAmount)
+
+		local status, _ = client:GetCharacter():GetInventory():Add(item.uniqueID, 1, {rounds = math.ceil(rounds / 2)})
+
+		-- Bail out if the item does not fit
+		if (!status) then
+			client:NotifyLocalized("noFit")
+			return false
+		end
+
+		item:SetData("rounds", math.floor(rounds / 2))
+
+		client:EmitSound(item.useSound, 110)
+
+		return false
+	end,
+	OnCanRun = function(item)
+		return item:GetData("rounds", item.ammoAmount) > 1
+	end
 }
 
 -- Called after the item is registered into the item tables.
