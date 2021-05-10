@@ -49,19 +49,20 @@ function PANEL:RemoveBar(panel)
 	local toRemove
 
 	for k, v in ipairs(self.bars) do
-		if (toRemove) then
-			-- Decrease index value for the next bars
-			ix.bar.list[k].index = k - 1
-			self.bars[k]:SetID(k - 1)
-		end
-
 		if (v == panel) then
 			toRemove = k
+			break
 		end
 	end
 
 	if (toRemove) then
 		table.remove(self.bars, toRemove)
+
+		-- Decrease index value for the next bars
+		for i = toRemove, #self.bars do
+			ix.bar.list[i].index = i
+			self.bars[i]:SetID(i)
+		end
 	end
 
 	panel:Remove()

@@ -22,11 +22,11 @@ function ix.bar.Remove(identifier)
 	local bar = ix.bar.Get(identifier)
 
 	if (bar) then
+		table.remove(ix.bar.list, bar.index)
+
 		if (IsValid(ix.gui.bars)) then
 			ix.gui.bars:RemoveBar(bar.panel)
 		end
-
-		table.remove(ix.bar.list, bar.index)
 	end
 end
 
