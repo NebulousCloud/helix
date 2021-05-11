@@ -57,6 +57,12 @@ function PANEL:RemoveBar(panel)
 
 	if (toRemove) then
 		table.remove(self.bars, toRemove)
+
+		-- Decrease index value for the next bars
+		for i = toRemove, #self.bars do
+			ix.bar.list[i].index = i
+			self.bars[i]:SetID(i)
+		end
 	end
 
 	panel:Remove()
