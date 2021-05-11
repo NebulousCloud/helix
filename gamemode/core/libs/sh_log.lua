@@ -107,7 +107,7 @@ if (SERVER) then
 
 		Msg("[LOG] ", logString .. "\n")
 
-		ix.log.CallHandler("Write", client, logString, logFlag)
+		ix.log.CallHandler("Write", client, logString, logFlag, logType, {...})
 	end
 
 	function ix.log.Send(client, logString, flag)
