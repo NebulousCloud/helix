@@ -96,7 +96,13 @@ if (CLIENT) then
 
 					return "["..description.."]"
 				elseif (!chatType) then
-					return L"unknown"
+					local unknownName = client:IsFemale() and L2("unknownFemale") or L2("unknownMale")
+
+					if (!unknownName) then
+						unknownName = L("unknown")
+					end
+
+					return unknownName
 				end
 			end
 		end
