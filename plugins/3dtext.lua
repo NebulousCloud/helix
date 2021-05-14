@@ -34,11 +34,12 @@ if (SERVER) then
 	end
 
 	-- Adds a text to the list, sends it to the players, and saves data.
-	function PLUGIN:AddText(position, angles, text, scale)
+	function PLUGIN:AddText(position, angles, text, scale, color)
 		local index = #self.list + 1
 		scale = math.Clamp((scale or 1) * 0.1, 0.001, 5)
+		color = color or "FFFFFF"
 
-		self.list[index] = {position, angles, text, scale}
+		self.list[index] = {position, angles, text, scale, color}
 
 		net.Start("ixTextAdd")
 			net.WriteUInt(index, 32)
@@ -46,6 +47,7 @@ if (SERVER) then
 			net.WriteAngle(angles)
 			net.WriteString(text)
 			net.WriteFloat(scale)
+			net.WriteString(color)
 		net.Broadcast()
 
 		self:SaveText()
@@ -119,8 +121,27 @@ else
 
 	language.Add("Undone_ix3dText", "Removed 3D Text")
 
-	function PLUGIN:GenerateMarkup(text)
-		local object = ix.markup.Parse("<font=ix3D2DFont>"..text:gsub("\\n", "\n"))
+	local function HexColor(str)
+		local color
+
+		if (str:sub(1, 1) == "#") then
+			if (#str == 4) then
+				color = tonumber(str[2] .. str[2] .. str[3] .. str[3] .. str[4] .. str[4], 16)
+			else
+				color = tonumber(str:sub(2), 16)
+			end
+		else
+			color = tonumber(str, 16)
+		end
+
+		local alpha = bit.band(bit.rshift(color, 24), 0xFF)
+		if (alpha == 0) then alpha = 255 end
+
+		return Color(bit.band(bit.rshift(color, 16), 0xFF), bit.band(bit.rshift(color, 8), 0xFF), bit.band(color, 0xFF), alpha)
+	end
+
+	function PLUGIN:GenerateMarkup(text, rgbaColor)
+		local object = ix.markup.Parse("<font=ix3D2DFont><colour=" .. rgbaColor.r .. "," .. rgbaColor.g .. "," .. rgbaColor.b .. "," .. rgbaColor.a .. ">" .. text:gsub("\\n", "\n"))
 
 		object.onDrawText = function(surfaceText, font, x, y, color, alignX, alignY, alpha)
 			-- shadow
@@ -145,13 +166,17 @@ else
 		local angles = net.ReadAngle()
 		local text = net.ReadString()
 		local scale = net.ReadFloat()
+		local color = net.ReadString()
+
+		color = HexColor(color or "FFFFFF")
 
 		if (text != "") then
 			PLUGIN.list[index] = {
 				position,
 				angles,
-				PLUGIN:GenerateMarkup(text),
-				scale
+				PLUGIN:GenerateMarkup(text, color),
+				scale,
+				color
 			}
 
 			PLUGIN.list[0] = #PLUGIN.list
@@ -187,7 +212,8 @@ else
 				continue
 			end
 
-			local object = ix.markup.Parse("<font=ix3D2DFont>"..v[3]:gsub("\\n", "\n"))
+			local rgbaColor = HexColor(v[5] or "FFFFFF")
+			local object = ix.markup.Parse("<font=ix3D2DFont><colour=" .. rgbaColor.r .. "," .. rgbaColor.g .. "," .. rgbaColor.b .. "," .. rgbaColor.a .. ">" .. v[3]:gsub("\\n", "\n"))
 
 			object.onDrawText = function(text, font, x, y, color, alignX, alignY, alpha)
 				draw.TextShadow({
@@ -260,6 +286,7 @@ else
 			local arguments = ix.chat.currentArguments
 			local text = tostring(arguments[1] or "")
 			local scale = math.Clamp((tonumber(arguments[2]) or 1) * 0.1, 0.001, 5)
+			local color = HexColor(arguments[3] or "FFFFFF")
 			local trace = LocalPlayer():GetEyeTraceNoCursor()
 			local position = trace.HitPos
 			local angles = trace.HitNormal:Angle()
@@ -270,7 +297,7 @@ else
 
 			-- markup will error with invalid fonts
 			pcall(function()
-				markup = PLUGIN:GenerateMarkup(text)
+				markup = PLUGIN:GenerateMarkup(text, color)
 			end)
 
 			if (markup) then
@@ -303,16 +330,17 @@ ix.command.Add("TextAdd", {
 	adminOnly = true,
 	arguments = {
 		ix.type.string,
-		bit.bor(ix.type.number, ix.type.optional)
+		bit.bor(ix.type.number, ix.type.optional),
+		bit.bor(ix.type.string, ix.type.optional)
 	},
-	OnRun = function(self, client, text, scale)
+	OnRun = function(self, client, text, scale, color)
 		local trace = client:GetEyeTrace()
 		local position = trace.HitPos
 		local angles = trace.HitNormal:Angle()
 		angles:RotateAroundAxis(angles:Up(), 90)
 		angles:RotateAroundAxis(angles:Forward(), 90)
 
-		local index = PLUGIN:AddText(position + angles:Up() * 0.1, angles, text, scale)
+		local index = PLUGIN:AddText(position + angles:Up() * 0.1, angles, text, scale, color)
 
 		undo.Create("ix3dText")
 			undo.SetPlayer(client)
