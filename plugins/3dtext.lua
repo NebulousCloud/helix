@@ -121,7 +121,7 @@ else
 
 	language.Add("Undone_ix3dText", "Removed 3D Text")
 
-	local function HexColor(str)
+	local function HexToRGB(str)
 		local color
 
 		if (str:sub(1, 1) == "#") then
@@ -168,7 +168,7 @@ else
 		local scale = net.ReadFloat()
 		local color = net.ReadString()
 
-		color = HexColor(color or "FFFFFF")
+		color = HexToRGB(color or "FFFFFF")
 
 		if (text != "") then
 			PLUGIN.list[index] = {
@@ -212,7 +212,7 @@ else
 				continue
 			end
 
-			local rgbaColor = HexColor(v[5] or "FFFFFF")
+			local rgbaColor = HexToRGB(v[5] or "FFFFFF")
 			local object = ix.markup.Parse("<font=ix3D2DFont><colour=" .. rgbaColor.r .. "," .. rgbaColor.g .. "," .. rgbaColor.b .. "," .. rgbaColor.a .. ">" .. v[3]:gsub("\\n", "\n"))
 
 			object.onDrawText = function(text, font, x, y, color, alignX, alignY, alpha)
@@ -286,7 +286,7 @@ else
 			local arguments = ix.chat.currentArguments
 			local text = tostring(arguments[1] or "")
 			local scale = math.Clamp((tonumber(arguments[2]) or 1) * 0.1, 0.001, 5)
-			local color = HexColor(arguments[3] or "FFFFFF")
+			local color = HexToRGB(arguments[3] or "FFFFFF")
 			local trace = LocalPlayer():GetEyeTraceNoCursor()
 			local position = trace.HitPos
 			local angles = trace.HitNormal:Angle()
