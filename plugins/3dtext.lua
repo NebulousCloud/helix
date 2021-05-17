@@ -126,7 +126,7 @@ else
 
 		if (str:sub(1, 1) == "#") then
 			if (#str == 4) then
-				color = tonumber(str[2] .. str[2] .. str[3] .. str[3] .. str[4] .. str[4], 16)
+				color = tonumber(str:sub(2, 2) .. str:sub(2, 2) .. str:sub(3, 3) .. str:sub(3, 3) .. str:sub(4, 4) .. str:sub(4, 4), 16)
 			else
 				color = tonumber(str:sub(2), 16)
 			end
@@ -136,7 +136,9 @@ else
 
 		if color then
 			local alpha = bit.band(bit.rshift(color, 24), 0xFF)
-			if (alpha == 0) then alpha = 255 end
+			if (alpha == 0) then
+				alpha = 255
+			end
 
 			return Color(bit.band(bit.rshift(color, 16), 0xFF), bit.band(bit.rshift(color, 8), 0xFF), bit.band(color, 0xFF), alpha)
 		end
