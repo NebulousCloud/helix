@@ -121,17 +121,15 @@ else
 
 	language.Add("Undone_ix3dText", "Removed 3D Text")
 
-	local function HexToRGB(str)
+	local function HexToRGB(value)
 		local color
 
-		if (str:sub(1, 1) == "#") then
-			if (#str == 4) then
-				color = tonumber(str:sub(2, 2) .. str:sub(2, 2) .. str:sub(3, 3) .. str:sub(3, 3) .. str:sub(4, 4) .. str:sub(4, 4), 16)
-			else
-				color = tonumber(str:sub(2), 16)
-			end
+		value = string.Replace(value, "#", "")
+
+		if (#value == 3) then
+			color = tonumber(value:sub(1, 1) .. value:sub(1, 1) .. value:sub(2, 2) .. value:sub(2, 2) .. value:sub(3, 3) .. value:sub(3, 3), 16)
 		else
-			color = tonumber(str, 16)
+			color = tonumber(value, 16)
 		end
 
 		if color then
