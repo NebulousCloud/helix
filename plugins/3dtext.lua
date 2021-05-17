@@ -134,10 +134,14 @@ else
 			color = tonumber(str, 16)
 		end
 
-		local alpha = bit.band(bit.rshift(color, 24), 0xFF)
-		if (alpha == 0) then alpha = 255 end
+		if color then
+			local alpha = bit.band(bit.rshift(color, 24), 0xFF)
+			if (alpha == 0) then alpha = 255 end
 
-		return Color(bit.band(bit.rshift(color, 16), 0xFF), bit.band(bit.rshift(color, 8), 0xFF), bit.band(color, 0xFF), alpha)
+			return Color(bit.band(bit.rshift(color, 16), 0xFF), bit.band(bit.rshift(color, 8), 0xFF), bit.band(color, 0xFF), alpha)
+		end
+
+		return color_white
 	end
 
 	function PLUGIN:GenerateMarkup(text, rgbaColor)
