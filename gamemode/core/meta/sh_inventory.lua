@@ -428,6 +428,7 @@ function META:GetBags()
 		for _, v2 in pairs(v) do
 			if (istable(v2) and v2.data) then
 				local isBag = v2.data.id
+				local isBag = (((v2.base == "base_bags") or v2.isBag) and v2.data.id)
 
 				if (!table.HasValue(invs, isBag)) then
 					if (isBag and isBag != self:GetID()) then
