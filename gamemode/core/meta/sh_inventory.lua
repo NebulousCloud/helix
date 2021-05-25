@@ -551,9 +551,10 @@ if (SERVER) then
 	end
 
 	--- Sets whether  or not an `Inventory` should save.
-	-- This will prevent an `Inventory` from updating in the Database, if the inventory is already saved, it will not be deleted when unloaded.
+	-- This will prevent an `Inventory` from updating in the Database,
+	-- if the inventory is already saved, it will not be deleted when unloaded.
 	-- @realm server
-	-- @bool bNoSave Whether or not the Inventory should save. 
+	-- @bool bNoSave Whether or not the Inventory should save.
 	function META:SetShouldSave(bNoSave)
 		self.noSave = bNoSave
 	end
@@ -566,7 +567,7 @@ if (SERVER) then
 	function META:GetShouldSave()
 		return self.noSave or true
 	end
-	
+
 	--- Add an item to the inventory.
 	-- @realm server
 	-- @param uniqueID The item unique ID (e.g `"handheld_radio"`) or instance ID (e.g `1024`) to add to the inventory
