@@ -560,7 +560,8 @@ if (SERVER) then
 	end
 
 	--- Gets whether or not an `Inventory` should save.
-	-- Inventories that are marked to not save will not update in the Database, if they inventory is already saved, it will not be deleted when unloaded.
+	-- Inventories that are marked to not save will not update in the Database,
+	-- if the inventory is already saved, it will not be deleted when unloaded.
 	-- @realm server
 	-- @treturn[1] bool Returns the field `noSave`.
 	-- @treturn[2] bool Returns true if the field `noSave` is not registered to this inventory.
