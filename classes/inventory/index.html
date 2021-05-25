@@ -2219,6 +2219,11 @@ GetID											</a>
 GetOwner											</a>
 										</li>
 										<li>
+											<span class="realm server"></span>
+											<a href="../../classes/inventory/#GetShouldSave">
+GetShouldSave											</a>
+										</li>
+										<li>
 											<span class="realm shared"></span>
 											<a href="../../classes/inventory/#GetSize">
 GetSize											</a>
@@ -2237,6 +2242,11 @@ OnCheckAccess											</a>
 											<span class="realm shared"></span>
 											<a href="../../classes/inventory/#Remove">
 Remove											</a>
+										</li>
+										<li>
+											<span class="realm server"></span>
+											<a href="../../classes/inventory/#SetShouldSave">
+SetShouldSave											</a>
 										</li>
 										<li>
 											<span class="realm shared"></span>
@@ -2572,7 +2582,7 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L566">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L585">View source &raquo;</a>
 
 					<p>Add an item to the inventory.</p>
 			</header>
@@ -2752,6 +2762,43 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 									<span class="type">nil</span>
 
 								<p>If no connected player owns this inventory</p>
+							</li>
+
+				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="GetShouldSave">
+					<h1><span class="realm server"></span></span>Inventory:GetShouldSave()</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L568">View source &raquo;</a>
+
+					<p>Gets whether or not an <a href="../../classes/inventory/#">Inventory</a> should save.
+ Inventories that are marked to not save will not update in the Database,
+ if the inventory is already saved, it will not be deleted when unloaded.</p>
+			</header>
+
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Returns the field <code>noSave</code>.</p>
+							</li>
+
+							<div class="or"><span>OR</span></div>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Returns true if the field <code>noSave</code> is not registered to this inventory.</p>
 							</li>
 
 				</ul>
@@ -2992,6 +3039,39 @@ end
 							</li>
 
 				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="SetShouldSave">
+					<h1><span class="realm server"></span></span>Inventory:SetShouldSave(bNoSave)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L558">View source &raquo;</a>
+
+					<p>Sets whether  or not an <a href="../../classes/inventory/#">Inventory</a> should save.
+ This will prevent an <a href="../../classes/inventory/#">Inventory</a> from updating in the Database,
+ if the inventory is already saved, it will not be deleted when unloaded.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">bNoSave</span>
+
+									<span class="tag"><span class="type">boolean</span></span>
+
+
+								<p> Whether or not the Inventory should save.</p>
+							</li>
+					</ul>
+
 
 
 		</section>
