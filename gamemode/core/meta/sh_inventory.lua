@@ -6,6 +6,7 @@ Inventories are an object that contains `Item`s in a grid layout. Every `Charact
 it, which is the only inventory that is allowed to hold bags - any item that has its own inventory (i.e a suitcase). Inventories
 can be owned by a character, or it can be individually interacted with as a standalone object. For example, the container plugin
 attaches inventories to props, allowing for items to be stored outside of any character inventories and remain "in the world".
+ 
 
 You may be looking for the following common functions:
 
@@ -207,7 +208,8 @@ end
 
 --- Checks whether or not an `Item` can fit into the `Inventory` starting from `x` and `y`.
 -- Internally used by FindEmptySlot, in most cases you are better off using that.
--- This function will search if all of the slots within `x + width` and `y + width` are empty, ignoring any space the `Item` itself already occupies.
+-- This function will search if all of the slots within `x + width` and `y + width` are empty, 
+-- ignoring any space the `Item` itself already occupies.
 -- @realm shared
 -- @internal
 -- @number x The beginning x coordinate to search for.
@@ -261,7 +263,12 @@ function META:GetFilledSlotCount()
 end
 
 --- Finds an empty slot of a specified width and height.
--- In most cases, to check if an `Item` can actually fit in the `Inventory`, as if it can't, it will just return `nil`. FindEmptySlot will loop through all the slots for you, as opposed to CanItemFit which you specify an `x` and `y` for, this will call CanItemFit anyway.
+-- In most cases, to check if an `Item` can actually fit in the `Inventory`, 
+-- as if it can't, it will just return `nil`. 
+--
+-- FindEmptySlot will loop through all the slots for you, as opposed to `CanItemFit` 
+-- which you specify an `x` and `y` for. 
+-- this will call CanItemFit anyway.
 -- If you need to check if an item will fit *exactly* at a position, you want CanItemFit instead.
 -- @realm shared
 -- @number w The width of the `Item` you are trying to fit.
@@ -269,6 +276,7 @@ end
 -- @bool onlyMain Whether or not to search any bags connected to this `Inventory`
 -- @treturn number x The `x` coordinate that the `Item` can fit into.
 -- @treturn number y The `y` coordinate that the `Item` can fit into.
+-- @see CanItemFit
 function META:FindEmptySlot(w, h, onlyMain)
 	w = w or 1
 	h = h or 1
@@ -402,7 +410,7 @@ end
 --
 -- This function will automatically sort out invalid players for you.
 -- @realm shared
--- @treturn table result The players who are valid and allowed to see this table.
+-- @treturn table result The players who are on the server and allowed to see this table.
 function META:GetReceivers()
 	local result = {}
 
@@ -491,7 +499,8 @@ function META:GetItemByID(id, onlyMain)
 end
 
 --- Get a table of `Item`s by their specific Database ID.
--- It's important to note that while in 99% of cases, items will have a unique Database ID, developers or random GMod weirdness could
+-- It's important to note that while in 99% of cases, 
+-- items will have a unique Database ID, developers or random GMod weirdness could
 -- cause a second item with the same ID to appear, even though, `ix.item.instances` will only store one of those.
 -- The inventory only stores a reference to the `ix.item.instance` ID, not the memory reference itself.
 -- @realm shared
@@ -549,10 +558,10 @@ end
 -- @treturn table The items this `Inventory` has.
 function META:GetBags()
 	local invs = {}
-
 	for _, v in pairs(self.slots) do
 		for _, v2 in pairs(v) do
 			if (istable(v2) and v2.data) then
+				local isBag = v2.data.id
 				local isBag = (((v2.base == "base_bags") or v2.isBag) and v2.data.id)
 
 				if (!table.HasValue(invs, isBag)) then
@@ -567,7 +576,8 @@ function META:GetBags()
 	return invs
 end
 
---- Returns the item with the given unique ID (e.g `"handheld_radio"`) if it exists in this inventory. This method checks both
+--- Returns the item with the given unique ID (e.g `"handheld_radio"`) if it exists in this inventory. 
+-- This method checks both
 -- this inventory, and any bags that this inventory has inside of it.
 -- @realm shared
 -- @string targetID Unique ID of the item to look for
@@ -614,7 +624,7 @@ end
 --this is due to the usage of the `#` operator in the function.
 --
 -- @realm shared
--- @tab targetIDs, A table of `Item` Unique ID's.
+-- @tab targetIDs A table of `Item` Unique ID's.
 -- @treturn[1] bool true Whether or not the `Inventory` has all of the items.
 -- @treturn[1] table targetIDs Your provided targetIDs table, but it will be empty.
 -- @treturn[2] bool false
@@ -689,12 +699,16 @@ if (SERVER) then
 	--- Sends a specific slot to a character.
 	-- This will *not* send all of the slots of the `Item` to the character, items can occupy multiple slots.
 	--
-	-- This will call `OnSendData` on the Item using all of the `Inventory`'s receivers.'.
+	-- This will call `OnSendData` on the Item using all of the `Inventory`'s receivers.
+	--
+	-- This function should *not* be used to sync an entire inventory, if you need to do that, use `AddReceiver` and `Sync`.
 	-- @realm server
 	-- @internal
 	-- @number x The Inventory x position to send.
 	-- @number y The Inventory y position to send.
 	-- @item[opt] item The item to send, if any.
+	-- @see AddReceiver
+	-- @see Sync
 	function META:SendSlot(x, y, item)
 		local receivers = self:GetReceivers()
 		local sendData = item and item.data and !table.IsEmpty(item.data) and item.data or {}
@@ -717,24 +731,24 @@ if (SERVER) then
 	end
 
 	--- Sets whether  or not an `Inventory` should save.
-	-- This will prevent an `Inventory` from updating in the Database,
-	-- if the inventory is already saved, it will not be deleted when unloaded.
+	-- This will prevent an `Inventory` from updating in the Database, if the inventory is already saved, 
+	-- it will not be deleted when unloaded.
 	-- @realm server
-	-- @bool bNoSave Whether or not the Inventory should save.
+	-- @bool bNoSave Whether or not the Inventory should save. 
 	function META:SetShouldSave(bNoSave)
 		self.noSave = bNoSave
 	end
 
 	--- Gets whether or not an `Inventory` should save.
-	-- Inventories that are marked to not save will not update in the Database,
-	-- if the inventory is already saved, it will not be deleted when unloaded.
+	-- Inventories that are marked to not save will not update in the Database, if they inventory is already saved, 
+	-- it will not be deleted when unloaded.
 	-- @realm server
 	-- @treturn[1] bool Returns the field `noSave`.
 	-- @treturn[2] bool Returns true if the field `noSave` is not registered to this inventory.
 	function META:GetShouldSave()
 		return self.noSave or true
 	end
-
+	
 	--- Add an item to the inventory.
 	-- @realm server
 	-- @param uniqueID The item unique ID (e.g `"handheld_radio"`) or instance ID (e.g `1024`) to add to the inventory
