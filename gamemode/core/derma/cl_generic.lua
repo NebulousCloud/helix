@@ -901,7 +901,6 @@ function PANEL:SetIcon(newIcon)
     self.iconWidth, self.iconHeight = surface.GetTextSize(newIcon)
     self.icon = newIcon
     self:DockMargin(self.iconWidth + 4, 0, 0, 8)
-    self:SizeToContents()
 end
 
 function PANEL:Paint(width, height)
