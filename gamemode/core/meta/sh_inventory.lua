@@ -274,8 +274,11 @@ end
 -- @number w The width of the `Item` you are trying to fit.
 -- @number h The height of the `Item` you are trying to fit.
 -- @bool onlyMain Whether or not to search any bags connected to this `Inventory`
--- @treturn number x The `x` coordinate that the `Item` can fit into.
--- @treturn number y The `y` coordinate that the `Item` can fit into.
+-- @treturn[1] number x The `x` coordinate that the `Item` can fit into.
+-- @treturn[1] number y The `y` coordinate that the `Item` can fit into.
+-- @treturn[2] number x The `x` coordinate that the `Item` can fit into.
+-- @treturn[2] number y The `y` coordinate that the `Item` can fit into.
+-- @treturn[2] Inventory bagInv If the item was in a bag, it will return the inventory it was in.
 -- @see CanItemFit
 function META:FindEmptySlot(w, h, onlyMain)
 	w = w or 1
