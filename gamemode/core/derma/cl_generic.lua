@@ -897,27 +897,24 @@ function PANEL:Init()
 end
 
 function PANEL:SetIcon(newIcon)
-	surface.SetFont("ixSmallTitleIcons")
-
-	self.iconWidth, self.iconHeight = surface.GetTextSize(newIcon)
-	self.icon = newIcon
-
-	self:DockMargin(self.iconWidth + 2, 0, 0, 8)
+    surface.SetFont("ixSmallTitleIcons")
+    self.iconWidth, self.iconHeight = surface.GetTextSize(newIcon)
+    self.icon = newIcon
+    self:DockMargin(self.iconWidth + 4, 0, 0, 8)
+    self:SizeToContents()
 end
 
 function PANEL:Paint(width, height)
-	BaseClass.Paint(self, width, height)
-
-	-- there's no inset for text entries so we'll have to get creative
-	DisableClipping(true)
-		surface.SetDrawColor(self:GetBackgroundColor())
-		surface.DrawRect(-self.iconWidth - 2, 0, self.iconWidth + 2, height)
-
-		surface.SetFont("ixSmallTitleIcons")
-		surface.SetTextColor(self.iconColor)
-		surface.SetTextPos(-self.iconWidth, 0)
-		surface.DrawText("V")
-	DisableClipping(false)
+    BaseClass.Paint(self, width, height)
+    -- there's no inset for text entries so we'll have to get creative
+    DisableClipping(true)
+    surface.SetDrawColor(self:GetBackgroundColor())
+    surface.DrawRect(-self.iconWidth - 4, 0, self.iconWidth + 4, height)
+    surface.SetFont("ixSmallTitleIcons")
+    surface.SetTextColor(self.iconColor)
+    surface.SetTextPos(-self.iconWidth - 2, 0)
+    surface.DrawText(self:GetIcon())
+    DisableClipping(false)
 end
 
 vgui.Register("ixIconTextEntry", PANEL, "ixTextEntry")
