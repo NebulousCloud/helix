@@ -1,5 +1,5 @@
 
-NAME = "Lietuvių" -- todo: add samogitian dialect
+NAME = "Lietuvių" -- changing the font to one that supports lithuanian is recommended
 
 LANGUAGE = {
     helix = "Helix",
