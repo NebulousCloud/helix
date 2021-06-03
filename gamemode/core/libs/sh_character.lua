@@ -330,6 +330,7 @@ do
 			if (!value) then
 				return false, "invalid", "name"
 			end
+
 			value = tostring(value):gsub("\r\n", ""):gsub("\n", "")
 			value = string.Trim(value)
 
