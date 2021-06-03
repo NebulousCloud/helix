@@ -2210,13 +2210,78 @@ Add											</a>
 										</li>
 										<li>
 											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#AddReceiver">
+AddReceiver											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#CanItemFit">
+CanItemFit											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#FindEmptySlot">
+FindEmptySlot											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#FindError">
+FindError											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#GetFilledSlotCount">
+GetFilledSlotCount											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
 											<a href="../../classes/inventory/#GetID">
 GetID											</a>
 										</li>
 										<li>
 											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#GetItemAt">
+GetItemAt											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#GetItemByID">
+GetItemByID											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#GetItemCount">
+GetItemCount											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#GetItems">
+GetItems											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#GetItemsByBase">
+GetItemsByBase											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#GetItemsByID">
+GetItemsByID											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#GetItemsByUniqueID">
+GetItemsByUniqueID											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
 											<a href="../../classes/inventory/#GetOwner">
 GetOwner											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#GetReceivers">
+GetReceivers											</a>
 										</li>
 										<li>
 											<span class="realm server"></span>
@@ -2229,9 +2294,24 @@ GetShouldSave											</a>
 GetSize											</a>
 										</li>
 										<li>
-											<span class="realm server"></span>
+											<span class="realm shared"></span>
 											<a href="../../classes/inventory/#HasItem">
 HasItem											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#HasItemOfBase">
+HasItemOfBase											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#HasItems">
+HasItems											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#Initialize">
+Initialize											</a>
 										</li>
 										<li>
 											<span class="realm shared"></span>
@@ -2240,8 +2320,28 @@ OnCheckAccess											</a>
 										</li>
 										<li>
 											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#PrintAll">
+PrintAll											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
 											<a href="../../classes/inventory/#Remove">
 Remove											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#RemoveReceiver">
+RemoveReceiver											</a>
+										</li>
+										<li>
+											<span class="realm server"></span>
+											<a href="../../classes/inventory/#SendSlot">
+SendSlot											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#SetOwner">
+SetOwner											</a>
 										</li>
 										<li>
 											<span class="realm server"></span>
@@ -2252,6 +2352,11 @@ SetShouldSave											</a>
 											<span class="realm shared"></span>
 											<a href="../../classes/inventory/#SetSize">
 SetSize											</a>
+										</li>
+										<li>
+											<span class="realm server"></span>
+											<a href="../../classes/inventory/#Sync">
+Sync											</a>
 										</li>
 										<li>
 											<span class="realm shared"></span>
@@ -2573,6 +2678,21 @@ it, which is the only inventory that is allowed to hold bags - any item that has
 can be owned by a character, or it can be individually interacted with as a standalone object. For example, the container plugin
 attaches inventories to props, allowing for items to be stored outside of any character inventories and remain "in the world".</p>
 
+
+<p>You may be looking for the following common functions:</p>
+
+<p><a href="../../classes/inventory/#Add">Add</a> Which adds an item to the inventory.</p>
+
+<p><a href="../../classes/inventory/#GetItems">GetItems</a> Which gets all of the items inside the inventory.</p>
+
+<p><a href="../../classes/inventory/#GetItemByID">GetItemByID</a> Which gets an item in the inventory by it's item ID.</p>
+
+<p><a href="../../classes/inventory/#GetItemAt">GetItemAt</a> Which gets an item in the inventory by it's x and y</p>
+
+<p><a href="../../classes/inventory/#GetID">GetID</a> Which gets the inventory's ID.</p>
+
+<p><a href="../../classes/inventory/#HasItem">HasItem</a> Which checks if the inventory has an item.</p>
+
 	<h1 class="title">Functions</h1>
 
 		<section class="method">
@@ -2582,7 +2702,7 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L585">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L766">View source &raquo;</a>
 
 					<p>Add an item to the inventory.</p>
 			</header>
@@ -2708,12 +2828,285 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 		</section>
 		<section class="method">
 			<header>
+				<a class="anchor" id="AddReceiver">
+					<h1><span class="realm shared"></span></span>Inventory:AddReceiver(client)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L399">View source &raquo;</a>
+
+					<p>Adds a player as a receiver on this <a href="../../classes/inventory/#">Inventory</a>
+ Receivers are players who will be networked the items inside the inventory. </p>
+
+<p> Calling this will <em>not</em> automatically sync it's current contents to the client.
+ All future contents will be synced, but not anything that was not synced before this is called.</p>
+
+<p> This function does not check the validity of <code>client</code>, therefore if <code>client</code> doesn't exist, it will error.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">client</span>
+
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
+
+
+								<p> The player to add as a receiver.</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="CanItemFit">
+					<h1><span class="realm shared"></span></span>Inventory:CanItemFit(x, y, w, h, item2)</h1>
+				</a>
+
+					<div class="notice error">
+						<div class="title">Internal</div>
+						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
+					</div>
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L220">View source &raquo;</a>
+
+					<p>Checks whether or not an <a href="../../classes/item/#">Item</a> can fit into the <a href="../../classes/inventory/#">Inventory</a> starting from <code>x</code> and <code>y</code>.
+ Internally used by FindEmptySlot, in most cases you are better off using that.
+ This function will search if all of the slots within <code>x + width</code> and <code>y + width</code> are empty,
+ ignoring any space the <a href="../../classes/item/#">Item</a> itself already occupies.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">x</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> The beginning x coordinate to search for.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">y</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> The beginning y coordiate to search for.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">w</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> The <a href="../../classes/item/#">Item</a>'s width.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">h</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> The <a href="../../classes/item/#">Item</a>'s height.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">item2</span>
+
+									<span class="tag"><a class="type" href="../../classes/item/#">Item</a></span>
+
+									<span class="tag default">default: nil</span>
+
+								<p> An <a href="../../classes/item/#">Item</a>, if any, to ignore when searching.</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="FindEmptySlot">
+					<h1><span class="realm shared"></span></span>Inventory:FindEmptySlot(w, h, onlyMain)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L283">View source &raquo;</a>
+
+					<p>Finds an empty slot of a specified width and height.
+ In most cases, to check if an <a href="../../classes/item/#">Item</a> can actually fit in the <a href="../../classes/inventory/#">Inventory</a>,
+ as if it can't, it will just return <code>nil</code>.</p>
+
+<p> FindEmptySlot will loop through all the slots for you, as opposed to <a href="../../classes/inventory/#CanItemFit">CanItemFit</a>
+ which you specify an <code>x</code> and <code>y</code> for.
+ this will call CanItemFit anyway.
+ If you need to check if an item will fit <em>exactly</em> at a position, you want CanItemFit instead.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">w</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> The width of the <a href="../../classes/item/#">Item</a> you are trying to fit.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">h</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> The height of the <a href="../../classes/item/#">Item</a> you are trying to fit.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">onlyMain</span>
+
+									<span class="tag"><span class="type">boolean</span></span>
+
+
+								<p> Whether or not to search any bags connected to this <a href="../../classes/inventory/#">Inventory</a></p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">number</span>
+
+								<p>x The <code>x</code> coordinate that the <a href="../../classes/item/#">Item</a> can fit into.</p>
+							</li>
+
+							<li>
+									<span class="type">number</span>
+
+								<p>y The <code>y</code> coordinate that the <a href="../../classes/item/#">Item</a> can fit into.</p>
+							</li>
+
+							<div class="or"><span>OR</span></div>
+
+							<li>
+									<span class="type">number</span>
+
+								<p>x The <code>x</code> coordinate that the <a href="../../classes/item/#">Item</a> can fit into.</p>
+							</li>
+
+							<li>
+									<span class="type">number</span>
+
+								<p>y The <code>y</code> coordinate that the <a href="../../classes/item/#">Item</a> can fit into.</p>
+							</li>
+
+							<li>
+									<a class="type" href="../../classes/inventory/#">Inventory</a>
+
+								<p>bagInv If the item was in a bag, it will return the inventory it was in.</p>
+							</li>
+
+				</ul>
+
+
+				<h3>See Also</h3>
+				<ul>
+						<li><a href="../../classes/inventory/#CanItemFit">CanItemFit</a></li>
+				</ul>
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="FindError">
+					<h1><span class="realm shared"></span></span>Inventory:FindError()</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L104">View source &raquo;</a>
+
+					<p>Searches the inventory to find any stacked items.
+ A common problem with developing, is that items will sometimes error out, or get corrupt.
+ Sometimes, the server knows things you don't while developing live
+ This function can be helpful for getting rid of those pesky errors.</p>
+			</header>
+
+
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="GetFilledSlotCount">
+					<h1><span class="realm shared"></span></span>Inventory:GetFilledSlotCount()</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L251">View source &raquo;</a>
+
+					<p>Returns the amount of slots currently filled in the Inventory.</p>
+			</header>
+
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">number</span>
+
+								<p>The amount of slots currently filled.</p>
+							</li>
+
+				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
 				<a class="anchor" id="GetID">
 					<h1><span class="realm shared"></span></span>Inventory:GetID()</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L42">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L63">View source &raquo;</a>
 
 					<p>Returns this inventory's database ID.  This is guaranteed to be unique.</p>
 			</header>
@@ -2735,12 +3128,390 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 		</section>
 		<section class="method">
 			<header>
+				<a class="anchor" id="GetItemAt">
+					<h1><span class="realm shared"></span></span>Inventory:GetItemAt(x, y)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L325">View source &raquo;</a>
+
+					<p>Returns the item that currently exists within <code>x</code> and <code>y</code> in the <a href="../../classes/inventory/#">Inventory</a>.
+ Items that have a width or height greater than 0 occupy more than 1 x and y.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">x</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> The <code>x</code> coordindate to search in.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">y</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> The <code>y</code> coordinate to search in.</p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">number</span>
+
+								<p>x The <code>x</code> coordinate that the <a href="../../classes/item/#">Item</a> is located at.</p>
+							</li>
+
+							<li>
+									<span class="type">number</span>
+
+								<p>y The <code>y</code> coordinate that the <a href="../../classes/item/#">Item</a> is located at.</p>
+							</li>
+
+				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="GetItemByID">
+					<h1><span class="realm shared"></span></span>Inventory:GetItemByID(id, onlyMain)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L496">View source &raquo;</a>
+
+					<p>Get an item by it's specific Database ID.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">id</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> The ID to search for.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">onlyMain</span>
+
+									<span class="tag"><span class="type">boolean</span></span>
+
+
+								<p> Whether or not to exclude bags that are present from the search.</p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">item</span>
+
+								<p>The item if it exists.</p>
+							</li>
+
+				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="GetItemCount">
+					<h1><span class="realm shared"></span></span>Inventory:GetItemCount(uniqueID, onlyMain)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L445">View source &raquo;</a>
+
+					<p>Returns a count of a <em>specific</em> <a href="../../classes/item/#">Item</a>s in the <a href="../../classes/inventory/#">Inventory</a></p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">uniqueID</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+
+								<p> The Unique ID of the item.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">onlyMain</span>
+
+									<span class="tag"><span class="type">boolean</span></span>
+
+
+								<p> Whether or not to exclude bags that are present from the search.</p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">number</span>
+
+								<p>The amount of <a href="../../classes/item/#">Item</a>s this inventory has.</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>local curHighest, winner = 0, false
+for client, character in ix.util.GetCharacters() do
+ local itemCount = character:GetInventory():GetItemCount('water', false)
+ if itemCount > curHighest then
+  curHighest = itemCount
+  winner = character
+ end
+end
+-- Finds the thirstiest character on the server and returns their Character ID or false if no character has water.
+</code></pre>
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="GetItems">
+					<h1><span class="realm shared"></span></span>Inventory:GetItems(onlyMain)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L531">View source &raquo;</a>
+
+					<p>Returns a table of all the items that an <a href="../../classes/inventory/#">Inventory</a> has.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">onlyMain</span>
+
+									<span class="tag"><span class="type">boolean</span></span>
+
+
+								<p> Whether or not to exclude bags from this search.</p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a>
+
+								<p>The items this <a href="../../classes/inventory/#">Inventory</a> has.</p>
+							</li>
+
+				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="GetItemsByBase">
+					<h1><span class="realm shared"></span></span>Inventory:GetItemsByBase(baseID, bOnlyMain)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L479">View source &raquo;</a>
+
+					<p>Returns a table of <a href="../../classes/item/#">Item</a>s by their base.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">baseID</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+
+								<p> The base to search for.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">bOnlyMain</span>
+
+									<span class="tag"><span class="type">boolean</span></span>
+
+
+								<p> Whether or not to exclude bags that are present from the search.</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="GetItemsByID">
+					<h1><span class="realm shared"></span></span>Inventory:GetItemsByID(id, onlyMain)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L513">View source &raquo;</a>
+
+					<p>Get a table of <a href="../../classes/item/#">Item</a>s by their specific Database ID.
+ It's important to note that while in 99% of cases,
+ items will have a unique Database ID, developers or random GMod weirdness could
+ cause a second item with the same ID to appear, even though, <code>ix.item.instances</code> will only store one of those.
+ The inventory only stores a reference to the <code>ix.item.instance</code> ID, not the memory reference itself.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">id</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> The ID to search for.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">onlyMain</span>
+
+									<span class="tag"><span class="type">boolean</span></span>
+
+
+								<p> Whether or not to exclude bags that are present from the search.</p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">item</span>
+
+								<p>The item if it exists.</p>
+							</li>
+
+				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="GetItemsByUniqueID">
+					<h1><span class="realm shared"></span></span>Inventory:GetItemsByUniqueID(uniqueID, onlyMain)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L463">View source &raquo;</a>
+
+					<p>Returns a table of all <a href="../../classes/item/#">Item</a>s in the <a href="../../classes/inventory/#">Inventory</a> by their Unique ID.
+ Not to be confused with <a href="../../classes/inventory/#GetItemsByID">GetItemsByID</a> or <a href="../../classes/inventory/#GetItemByID">GetItemByID</a> which take in an Item Instance's ID instead.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">uniqueID</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+
+								<p> The Unique ID of the item.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">onlyMain</span>
+
+									<span class="tag"><span class="type">boolean</span></span>
+
+
+								<p> Whether or not to exclude bags that are present from the search.</p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">number</span>
+
+								<p>The table of specified <a href="../../classes/item/#">Item</a>s this inventory has.</p>
+							</li>
+
+				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
 				<a class="anchor" id="GetOwner">
 					<h1><span class="realm shared"></span></span>Inventory:GetOwner()</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L125">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L152">View source &raquo;</a>
 
 					<p>Returns the player that owns this inventory.</p>
 			</header>
@@ -2770,16 +3541,46 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 		</section>
 		<section class="method">
 			<header>
+				<a class="anchor" id="GetReceivers">
+					<h1><span class="realm shared"></span></span>Inventory:GetReceivers()</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L417">View source &raquo;</a>
+
+					<p>Get all of the receivers this <a href="../../classes/inventory/#">Inventory</a> has.
+ Receivers are players who will be networked the items inside the inventory.</p>
+
+<p> This function will automatically sort out invalid players for you.</p>
+			</header>
+
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a>
+
+								<p>result The players who are on the server and allowed to see this table.</p>
+							</li>
+
+				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
 				<a class="anchor" id="GetShouldSave">
 					<h1><span class="realm server"></span></span>Inventory:GetShouldSave()</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L568">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L749">View source &raquo;</a>
 
 					<p>Gets whether or not an <a href="../../classes/inventory/#">Inventory</a> should save.
- Inventories that are marked to not save will not update in the Database,
- if the inventory is already saved, it will not be deleted when unloaded.</p>
+ Inventories that are marked to not save will not update in the Database, if they inventory is already saved,
+ it will not be deleted when unloaded.</p>
 			</header>
 
 
@@ -2812,7 +3613,7 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L60">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L81">View source &raquo;</a>
 
 					<p>Returns the grid size of this inventory.</p>
 			</header>
@@ -2841,13 +3642,14 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 		<section class="method">
 			<header>
 				<a class="anchor" id="HasItem">
-					<h1><span class="realm server"></span></span>Inventory:HasItem(targetID, data)</h1>
+					<h1><span class="realm shared"></span></span>Inventory:HasItem(targetID, data)</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L456">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L595">View source &raquo;</a>
 
-					<p>Returns the item with the given unique ID (e.g <code>&quot;handheld_radio&quot;</code>) if it exists in this inventory.  This method checks both
+					<p>Returns the item with the given unique ID (e.g <code>&quot;handheld_radio&quot;</code>) if it exists in this inventory.
+ This method checks both
  this inventory, and any bags that this inventory has inside of it.</p>
 			</header>
 
@@ -2908,6 +3710,214 @@ if (item) then
 end
 </code></pre>
 
+				<h3>See Also</h3>
+				<ul>
+						<li><a href="../../classes/inventory/#HasItems">HasItems</a></li>
+						<li><a href="../../classes/inventory/#HasItemOfBase">HasItemOfBase</a></li>
+				</ul>
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="HasItemOfBase">
+					<h1><span class="realm shared"></span></span>Inventory:HasItemOfBase(baseID, data)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L671">View source &raquo;</a>
+
+					<p>Whether or not an <a href="../../classes/inventory/#">Inventory</a> has an item of a base, optionally with specified data.
+ This function has an optional <code>data</code> argument, which will take a <a href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a>.
+ it will match if the data of the item is correct or not.</p>
+
+<p> Items which are a base will automatically have base_ prefixed to their Unique ID, if you are having
+ trouble finding your base, that is probably why.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">baseID</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+
+								<p> The Item Base's Unique ID.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">data</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+
+									<span class="tag default">optional</span>
+
+								<p> The Item's data to compare against.</p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">item</span>
+
+								<p>The first <a href="../../classes/item/#">Item</a> of <code>baseID</code> that is found and there is no <code>data</code> argument or <code>data</code> was matched.</p>
+							</li>
+
+							<div class="or"><span>OR</span></div>
+
+							<li>
+									<span class="type">false</span>
+
+								<p>If no <a href="../../classes/item/#">Item</a>s of <code>baseID</code> is found or the <code>data</code> argument, if specified didn't match.</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>local bHasWeaponEquipped = Entity(1):GetCharacter():GetInventory():HasItemOfBase('base_weapons', {['equip'] = true})
+if bHasWeaponEquipped then
+ Entity(1):Notify('One gun is fun, two guns is Woo-tastic.')
+end
+-- Notifies the player that they should get some more guns.
+</code></pre>
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="HasItems">
+					<h1><span class="realm shared"></span></span>Inventory:HasItems(targetIDs)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L636">View source &raquo;</a>
+
+					<p>Checks whether or not the <a href="../../classes/inventory/#">Inventory</a> has a table of items.
+ This function takes a table with <strong>no</strong> keys and runs in order of first item > last item,
+this is due to the usage of the <code>#</code> operator in the function.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">targetIDs</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+
+
+								<p> A table of <a href="../../classes/item/#">Item</a> Unique ID's.</p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>true Whether or not the <a href="../../classes/inventory/#">Inventory</a> has all of the items.</p>
+							</li>
+
+							<li>
+									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a>
+
+								<p>targetIDs Your provided targetIDs table, but it will be empty.</p>
+							</li>
+
+							<div class="or"><span>OR</span></div>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>false</p>
+							</li>
+
+							<li>
+									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a>
+
+								<p>targetIDs Table consisting of the items the <a href="../../classes/inventory/#">Inventory</a> did <strong>not</strong> have.</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>local itemFilter = {'water', 'water_sparkling'}
+if not Entity(1):GetCharacter():GetInventory():HasItems(itemFilter) then return end
+-- Filters out if this player has both a water, and a sparkling water.
+</code></pre>
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="Initialize">
+					<h1><span class="realm shared"></span></span>Inventory:Initialize(id, width, height)</h1>
+				</a>
+
+					<div class="notice error">
+						<div class="title">Internal</div>
+						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
+					</div>
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L50">View source &raquo;</a>
+
+					<p>Initializes the inventory with the provided arguments.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">id</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> The <a href="../../classes/inventory/#">Inventory</a>'s database ID.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">width</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> The inventory's width.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">height</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> The inventory's height.</p>
+							</li>
+					</ul>
+
+
+
 		</section>
 		<section class="method">
 			<header>
@@ -2920,7 +3930,7 @@ end
 						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
 					</div>
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L165">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L196">View source &raquo;</a>
 
 					<p>Checks whether a player has access to an inventory</p>
 			</header>
@@ -2957,12 +3967,28 @@ end
 		</section>
 		<section class="method">
 			<header>
+				<a class="anchor" id="PrintAll">
+					<h1><span class="realm shared"></span></span>Inventory:PrintAll()</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L127">View source &raquo;</a>
+
+					<p>Prints out the id, width, height, slots and each item in each slot of an <a href="../../classes/inventory/#">Inventory</a>, used for debugging.</p>
+			</header>
+
+
+
+
+		</section>
+		<section class="method">
+			<header>
 				<a class="anchor" id="Remove">
 					<h1><span class="realm shared"></span></span>Inventory:Remove(id, bNoReplication, bNoDelete, bTransferring)</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L268">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L339">View source &raquo;</a>
 
 					<p>Removes an item from the inventory.</p>
 			</header>
@@ -3044,16 +4070,161 @@ end
 		</section>
 		<section class="method">
 			<header>
+				<a class="anchor" id="RemoveReceiver">
+					<h1><span class="realm shared"></span></span>Inventory:RemoveReceiver(client)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L407">View source &raquo;</a>
+
+					<p>The opposite of <a href="../../classes/inventory/#AddReceiver">AddReceiver</a>.
+ This function does not check the validity of <code>client</code>, therefore if <code>client</code> doesn't exist, it will error.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">client</span>
+
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
+
+
+								<p> The player to remove from the receiver list.</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="SendSlot">
+					<h1><span class="realm server"></span></span>Inventory:SendSlot(x, y, item)</h1>
+				</a>
+
+					<div class="notice error">
+						<div class="title">Internal</div>
+						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
+					</div>
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L713">View source &raquo;</a>
+
+					<p>Sends a specific slot to a character.
+ This will <em>not</em> send all of the slots of the <a href="../../classes/item/#">Item</a> to the character, items can occupy multiple slots.</p>
+
+<p> This will call <code>OnSendData</code> on the Item using all of the <a href="../../classes/inventory/#">Inventory</a>'s receivers.</p>
+
+<p> This function should <em>not</em> be used to sync an entire inventory, if you need to do that, use <a href="../../classes/inventory/#AddReceiver">AddReceiver</a> and <a href="../../classes/inventory/#Sync">Sync</a>.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">x</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> The Inventory x position to send.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">y</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> The Inventory y position to send.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">item</span>
+
+									<span class="tag"><a class="type" href="../../classes/item/#">Item</a></span>
+
+									<span class="tag default">optional</span>
+
+								<p> The item to send, if any.</p>
+							</li>
+					</ul>
+
+
+
+				<h3>See Also</h3>
+				<ul>
+						<li><a href="../../classes/inventory/#AddReceiver">AddReceiver</a></li>
+						<li><a href="../../classes/inventory/#Sync">Sync</a></li>
+				</ul>
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="SetOwner">
+					<h1><span class="realm shared"></span></span>Inventory:SetOwner(owner, fullUpdate)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L164">View source &raquo;</a>
+
+					<p>Sets the player that owns this inventory.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">owner</span>
+
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
+
+
+								<p> The player to take control over the inventory.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">fullUpdate</span>
+
+									<span class="tag"><span class="type">boolean</span></span>
+
+
+								<p> Whether or not to update the inventory immediately to the new owner.</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
 				<a class="anchor" id="SetShouldSave">
 					<h1><span class="realm server"></span></span>Inventory:SetShouldSave(bNoSave)</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L558">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L739">View source &raquo;</a>
 
 					<p>Sets whether  or not an <a href="../../classes/inventory/#">Inventory</a> should save.
- This will prevent an <a href="../../classes/inventory/#">Inventory</a> from updating in the Database,
- if the inventory is already saved, it will not be deleted when unloaded.</p>
+ This will prevent an <a href="../../classes/inventory/#">Inventory</a> from updating in the Database, if the inventory is already saved,
+ it will not be deleted when unloaded.</p>
 			</header>
 
 
@@ -3086,7 +4257,7 @@ end
 						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
 					</div>
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L51">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L72">View source &raquo;</a>
 
 					<p>Sets the grid size of this inventory.</p>
 			</header>
@@ -3124,12 +4295,44 @@ end
 		</section>
 		<section class="method">
 			<header>
+				<a class="anchor" id="Sync">
+					<h1><span class="realm server"></span></span>Inventory:Sync(receiver)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L917">View source &raquo;</a>
+
+					<p>Syncs the <a href="../../classes/inventory/#">Inventory</a> to the receiver.
+ This will call Item.OnSendData on every item in the <a href="../../classes/inventory/#">Inventory</a>.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">receiver</span>
+
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
+
+
+								<p> The player to</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
 				<a class="anchor" id="__tostring">
 					<h1><span class="realm shared"></span></span>Inventory:__tostring()</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L25">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L40">View source &raquo;</a>
 
 					<p>Returns a string representation of this inventory</p>
 			</header>
