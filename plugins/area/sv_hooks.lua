@@ -4,7 +4,7 @@ function PLUGIN:LoadData()
 	ix.area.stored = self:GetData() or {}
 
 	timer.Create("ixAreaThink", ix.config.Get("areaTickTime"), 0, function()
-		self:AreaThink()
+		hook.Run("OnAreaThink")
 	end)
 end
 
@@ -70,6 +70,10 @@ function PLUGIN:AreaThink()
 	end
 end
 
+function PLUGIN:OnAreaThink()
+	self:AreaThink()
+end
+
 function PLUGIN:OnPlayerAreaChanged(client, oldID, newID)
 	net.Start("ixAreaChanged")
 		net.WriteString(oldID)
@@ -106,6 +110,7 @@ net.Receive("ixAreaAdd", function(length, client)
 	end
 
 	ix.area.Create(id, type, startPosition, endPosition, nil, properties)
+	hook.Run("OnAreaAdded", client, id, type, startPosition, endPosition, properties)
 	ix.log.Add(client, "areaAdd", id)
 end)
 
@@ -122,5 +127,6 @@ net.Receive("ixAreaRemove", function(length, client)
 	end
 
 	ix.area.Remove(id)
+	hook.Run("OnAreaRemoved", client, id)
 	ix.log.Add(client, "areaRemove", id)
 end)
