@@ -573,6 +573,10 @@ end
 function OnAreaChanged(oldID, newID)
 end
 
+--- @realm client
+function OnAreaLeft(id)
+end
+
 --- @realm shared
 function OnCharacterCreated(client, character)
 end
@@ -623,8 +627,20 @@ end
 function OnPickupMoney(client, self)
 end
 
---- @realm shared
+--- @realm server
 function OnPlayerAreaChanged(client, oldID, newID)
+end
+
+--- @realm server
+function OnPlayerAreaLeft(client, id)
+end
+
+--- @realm server
+function OnAreaAdded(client, id, type, startPosition, endPosition, properties)
+end
+
+--- @realm server
+function OnAreaRemoved(client, id)
 end
 
 --- @realm server
