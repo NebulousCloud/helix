@@ -4,7 +4,7 @@ function PLUGIN:LoadData()
 	ix.area.stored = self:GetData() or {}
 
 	timer.Create("ixAreaThink", ix.config.Get("areaTickTime"), 0, function()
-		hook.Run("OnAreaThink")
+		self:AreaThink()
 	end)
 end
 
@@ -65,19 +65,26 @@ function PLUGIN:AreaThink()
 
 			client.ixInArea = true
 		else
+			if (client.ixInArea) then
+				hook.Run("OnPlayerAreaLeft", client, client.ixArea)
+			end
+
+			client.ixArea = ""
 			client.ixInArea = false
 		end
 	end
-end
-
-function PLUGIN:OnAreaThink()
-	self:AreaThink()
 end
 
 function PLUGIN:OnPlayerAreaChanged(client, oldID, newID)
 	net.Start("ixAreaChanged")
 		net.WriteString(oldID)
 		net.WriteString(newID)
+	net.Send(client)
+end
+
+function PLUGIN:OnPlayerAreaLeft(client, id)
+	net.Start("ixAreaLeft")
+		net.WriteString(id)
 	net.Send(client)
 end
 
