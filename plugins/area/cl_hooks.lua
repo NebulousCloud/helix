@@ -207,7 +207,6 @@ end
 
 function PLUGIN:OnAreaLeft(id)
 	local client = LocalPlayer()
-
 	client.ixArea = ""
 	client.ixInArea = false
 end
