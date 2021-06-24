@@ -211,6 +211,16 @@ function PLUGIN:OnAreaLeft(id)
 	client.ixInArea = false
 end
 
+function PLUGIN:ShouldDisplayArea(newID)
+	local client = LocalPlayer()
+
+	if (client.ixOldArea == newID) then
+		return false
+	end
+
+	client.ixOldArea = newID
+end
+
 net.Receive("ixAreaEditStart", function()
 	PLUGIN:StartEditing()
 end)
