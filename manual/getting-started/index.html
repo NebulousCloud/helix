@@ -2682,7 +2682,9 @@ ToggleWepRaised											</a>
 
 <p><a name="Installing"></a></p>
 <h2>Installing</h2>
-<p>Helix uses the <a href="https://github.com/FredyH/MySQLOO">MySQLOO</a> library to connect to MySQL databases. You'll need to follow the instructions for installing that library onto your server before continuing. In a nutshell, you need to make sure <code>gmsv_mysqloo_win32.dll</code> or <code>gmsv_mysqloo_linux.dll</code> (depending on your server's operating system) is in the <code>garrysmod/lua/bin</code> folder. Additionally, you need <code>libmysql.dll</code> placed in the root <code>garrysmod</code> folder so it sits next to <code>srcds.exe</code> or <code>srcds_run</code> depending on your OS.</p>
+<p>Helix uses the <a href="https://github.com/FredyH/MySQLOO">MySQLOO</a> library to connect to MySQL databases. You'll need to follow the instructions for installing that library onto your server before continuing. In a nutshell, you need to make sure <code>gmsv_mysqloo_win32.dll</code> or <code>gmsv_mysqloo_linux.dll</code> (depending on your server's operating system) is in the <code>garrysmod/lua/bin</code> folder. </p>
+
+<p>In older versions of MySQLOO, you previously required a .dll called <code>libmysql.dll</code> to place in your <code>root</code> server folder, where <code>srcds</code>/<code>srcds_linux</code> was stored. Newer versions of MySQLOO no longer require this.</p>
 
 <p><a name="Configuring"></a></p>
 <h2>Configuring</h2>
