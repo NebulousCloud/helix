@@ -10,7 +10,9 @@ You'll need to download the framework from [GitHub](https://github.com/NebulousC
 By default, Helix will use SQLite (which is built into Garry's Mod) to store player/character data. This requires no configuration and will work "out of the box" after installing and will be fine for most server owners. However, you might want to connect your database to your website or use multiple servers with one database - this will require the usage of an external database accessible elsewhere. This will require the use of a MySQL server. Some server providers will provide you with a MySQL database for free to use with your server.
 
 ## Installing
-Helix uses the [MySQLOO](https://github.com/FredyH/MySQLOO) library to connect to MySQL databases. You'll need to follow the instructions for installing that library onto your server before continuing. In a nutshell, you need to make sure `gmsv_mysqloo_win32.dll` or `gmsv_mysqloo_linux.dll` (depending on your server's operating system) is in the `garrysmod/lua/bin` folder. Additionally, you need `libmysql.dll` placed in the root `garrysmod` folder so it sits next to `srcds.exe` or `srcds_run` depending on your OS.
+Helix uses the [MySQLOO](https://github.com/FredyH/MySQLOO) library to connect to MySQL databases. You'll need to follow the instructions for installing that library onto your server before continuing. In a nutshell, you need to make sure `gmsv_mysqloo_win32.dll` or `gmsv_mysqloo_linux.dll` (depending on your server's operating system) is in the `garrysmod/lua/bin` folder. 
+
+In older versions of MySQLOO, you previously required a .dll called `libmysql.dll` to place in your `root` server folder, where `srcds`/`srcds_linux` was stored. Newer versions of MySQLOO no longer require this.
 
 ## Configuring
 Now that you've installed MySQLOO, you need to tell Helix that you want to connect to an external MySQL database instead of using SQLite. This requires creating a `helix.yml` configuration file in the `garrysmod/gamemodes/helix` folder. There is an example one already made for you called `helix.example.yml` that you can copy and rename to `helix.yml`.
