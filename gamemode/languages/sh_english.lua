@@ -445,5 +445,15 @@ LANGUAGE = {
 	cmdY = "Yell something to the people around you.",
 	cmdEvent = "Make something perform an action that everyone can see.",
 	cmdOOC = "Sends a message in global out-of-character chat.",
-	cmdLOOC = "Sends a message in local out-of-character chat."
+	cmdLOOC = "Sends a message in local out-of-character chat.",
+
+	iconEditorAlignBest = "Best Guess",
+	iconEditorWidth = "Width",
+	iconEditorHeight = "Height",
+	iconEditorCopy = "Copy to Clipboard",
+	iconEditorCopied = "Copied Item Model Data to Clipboard.",
+	iconEditorAlignFront = "Align from Front",
+	iconEditorAlignAbove = "Align from Above",
+	iconEditorAlignCenter = "Align from Center",
+
 }
