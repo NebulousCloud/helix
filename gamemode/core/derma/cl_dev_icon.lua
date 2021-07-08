@@ -231,7 +231,7 @@ function PANEL:Init()
 
     self.copy = vgui.Create("DButton", self)
     self.copy:SetSize(buttonSize, buttonSize)
-    self.copy:SetPos(w - buttonSize - scale_x(12), h - buttonSize - scale(12))
+    self.copy:SetPos(pW - buttonSize - scale_x(12), pH - buttonSize - scale(12))
     self.copy:SetFont("ixIconsMenuButton")
     self.copy:SetText("}")
     self.copy:SetTooltip(L("iconEditorCopy"))
