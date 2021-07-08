@@ -511,7 +511,7 @@ function SKIN:PaintInfoBar(panel, width, height, color)
 	surface.DrawTexturedRect(0, 0, width, height)
 end
 
-function SKIN:PaintInfoBarBackground(panel, width, height, color)
+function SKIN:PaintInfoBarBackground(panel, width, height)
 	surface.SetDrawColor(230, 230, 230, 15)
 	surface.DrawRect(0, 0, width, height)
 	surface.DrawOutlinedRect(0, 0, width, height)

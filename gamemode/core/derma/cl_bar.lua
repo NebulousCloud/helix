@@ -186,7 +186,7 @@ function PANEL:Think()
 end
 
 function PANEL:Paint(width, height)
-	derma.SkinFunc("PaintInfoBarBackground", self, width, height, self.color)
+	derma.SkinFunc("PaintInfoBarBackground", self, width, height)
 end
 
 vgui.Register("ixInfoBar", PANEL, "Panel")
