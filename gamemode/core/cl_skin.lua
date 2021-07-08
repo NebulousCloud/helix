@@ -511,6 +511,18 @@ function SKIN:PaintInfoBar(panel, width, height, color)
 	surface.DrawTexturedRect(0, 0, width, height)
 end
 
+function SKIN:PaintInfoBarBackground(panel, width, height)
+	surface.SetDrawColor(230, 230, 230, 15)
+	surface.DrawRect(0, 0, width, height)
+	surface.DrawOutlinedRect(0, 0, width, height)
+
+	panel.bar:PaintManual()
+
+	DisableClipping(true)
+		panel.label:PaintManual()
+	DisableClipping(false)
+end
+
 function SKIN:PaintInventorySlot(panel, width, height)
 	surface.SetDrawColor(35, 35, 35, 85)
 	surface.DrawRect(1, 1, width - 2, height - 2)
