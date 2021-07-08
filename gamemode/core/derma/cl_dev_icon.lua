@@ -151,7 +151,7 @@ function PANEL:Init()
     self.modelPath.OnEnter = function(pnl)
         local model = pnl:GetValue()
 
-        if (model && model != '') then
+        if (model and model != '') then
             self.model:SetModel(model)
             self.item:Rebuild()
         end
@@ -160,7 +160,7 @@ function PANEL:Init()
     self.modelPath.OnLoseFocus = function(pnl)
         local model = pnl:GetValue()
 
-        if (model && model != '') then
+        if (model and model != '') then
             self.model:SetModel(model)
             self.item:Rebuild()
         end
@@ -222,7 +222,7 @@ function PANEL:Init()
     self.item:Rebuild()
 
     timer.Create('ix_icon_editor_update', 0.5, 0, function()
-        if IsValid(self) && IsValid(self.model) then
+        if IsValid(self) and IsValid(self.model) then
             self.item:Rebuild()
         else
             timer.Remove('ix_icon_editor_update')
