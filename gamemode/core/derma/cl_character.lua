@@ -295,11 +295,11 @@ function PANEL:Init()
 end
 
 function PANEL:UpdateReturnButton(bValue)
-	if (bValue == nil) then
-		bValue = self.bUsingCharacter
+	if (bValue != nil) then
+		self.bUsingCharacter = bValue
 	end
 
-	self.returnButton:SetText(bValue and "return" or "leave")
+	self.returnButton:SetText(self.bUsingCharacter and "return" or "leave")
 	self.returnButton:SizeToContents()
 end
 
