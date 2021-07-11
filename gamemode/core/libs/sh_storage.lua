@@ -164,7 +164,7 @@ if (SERVER) then
 					v:GetInventory():AddReceiver(client)
 				end
 			end
-			
+
 			if (isfunction(info.OnPlayerOpen)) then
 				info.OnPlayerOpen(client)
 			end
@@ -187,7 +187,7 @@ if (SERVER) then
 	-- @bool bDontRemove Whether or not to skip removing the storage context if there are no more receivers
 	function ix.storage.RemoveReceiver(client, inventory, bDontRemove)
 		local info = inventory.storageInfo
-		
+
 		if (info) then
 			inventory:RemoveReceiver(client)
 
