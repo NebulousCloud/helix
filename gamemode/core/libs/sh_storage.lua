@@ -165,6 +165,10 @@ if (SERVER) then
 				end
 			end
 
+			if (isfunction(info.OnPlayerOpen)) then
+				info.OnPlayerOpen(client)
+			end
+
 			if (!bDontSync) then
 				ix.storage.Sync(client, inventory)
 			end
@@ -182,7 +186,9 @@ if (SERVER) then
 	-- @inventory inventory Inventory with storage context to remove receiver from
 	-- @bool bDontRemove Whether or not to skip removing the storage context if there are no more receivers
 	function ix.storage.RemoveReceiver(client, inventory, bDontRemove)
-		if (inventory.storageInfo) then
+		local info = inventory.storageInfo
+
+		if (info) then
 			inventory:RemoveReceiver(client)
 
 			-- update receivers for any bags this inventory might have
@@ -192,8 +198,8 @@ if (SERVER) then
 				end
 			end
 
-			if (isfunction(inventory.storageInfo.OnPlayerClose)) then
-				inventory.storageInfo.OnPlayerClose(client)
+			if (isfunction(info.OnPlayerClose)) then
+				info.OnPlayerClose(client)
 			end
 
 			if (!bDontRemove and !ix.storage.InUse(inventory)) then
