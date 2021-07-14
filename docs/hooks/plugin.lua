@@ -690,7 +690,8 @@ end
 --- @realm server
 -- @player speaker The player sending the message.
 -- @string chatType The chat type being sent.
--- @string text The text, this text has already been parsed, and will contain all text formatting not performed by other `PlayerMessageSend` hooks.
+-- @string text The text, this text has already been parsed
+-- and will contain all text formatting not performed by other `PlayerMessageSend` hooks.
 -- @bool anonymous Whether or not this message is anonymously sent.
 -- @tab receivers A table of players who received the message.
 -- @string rawText The pre-formatted text, before it was parsed by non-hook sources.
