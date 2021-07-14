@@ -341,7 +341,7 @@ if (SERVER) then
 				text = ix.chat.Format(text)
 			end
 
-			text = hook.Run("PlayerMessageSend", speaker, chatType, text, bAnonymous, receivers, rawText) or text
+			text = hook.Run("PlayerMessageSend", speaker, chatType, text, bAnonymous, receivers, rawText, data) or text
 
 			net.Start("ixChatMessage")
 				net.WriteEntity(speaker)
