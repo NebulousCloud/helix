@@ -302,6 +302,12 @@ function ITEM:OnRemoved()
 	end
 end
 
+function ITEM:OnLoadout()
+	if (self:GetData("equip")) then
+		self:AddOutfit(self.player)
+	end
+end
+
 function ITEM:OnEquipped()
 end
 
