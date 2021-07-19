@@ -225,10 +225,6 @@ else
 	end
 
 	net.Receive("ixTypeClass", function(length, client)
-		if ((client.ixNextTypeClass or 0) > RealTime()) then
-			return
-		end
-
 		local newClass = net.ReadString()
 
 		-- send message to players in pvs only since they're the only ones who can see the indicator
@@ -242,7 +238,5 @@ else
 		else
 			net.SendPVS(client:GetPos())
 		end
-
-		client.ixNextTypeClass = RealTime() + 0.2
 	end)
 end
