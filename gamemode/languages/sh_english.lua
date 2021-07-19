@@ -454,6 +454,6 @@ LANGUAGE = {
 	iconEditorCopied = "Copied Item Model Data to Clipboard.",
 	iconEditorAlignFront = "Align from Front",
 	iconEditorAlignAbove = "Align from Above",
-	iconEditorAlignCenter = "Align from Center",
-
+	iconEditorAlignRight = "Align from Right",
+	iconEditorAlignCenter = "Align from Center"
 }
