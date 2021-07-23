@@ -83,10 +83,6 @@ function ix.hud.PopulatePlayerTooltip(tooltip, client)
 	hook.Run("PopulatePlayerTooltip", client, tooltip)
 end
 
-hook.Add("GetCrosshairAlpha", "ixCrosshair", function(alpha)
-	return alpha * (1 - aprg)
-end)
-
 function ix.hud.DrawAll()
 	ix.hud.DrawItemPickup()
 end
