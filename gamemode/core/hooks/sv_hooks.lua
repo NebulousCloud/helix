@@ -1,4 +1,6 @@
 
+util.AddNetworkString("ixPlayerDeath")
+
 function GM:PlayerInitialSpawn(client)
 	client.ixJoinTime = RealTime()
 
@@ -576,6 +578,9 @@ function GM:DoPlayerDeath(client, attacker, damageinfo)
 			attacker:AddFrags(1)
 		end
 	end
+
+	net.Start("ixPlayerDeath")
+	net.Send(client)
 
 	client:SetAction("@respawning", ix.config.Get("spawnTime", 5))
 	client:SetDSP(31)
