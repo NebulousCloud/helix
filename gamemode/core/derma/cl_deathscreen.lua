@@ -10,11 +10,11 @@ function PANEL:Init()
 	local text = string.utf8upper(L("youreDead"))
 
 	surface.SetFont("ixMenuButtonHugeFont")
-	local textW, _ = surface.GetTextSize(text)
+	local textW, textH = surface.GetTextSize(text)
 
 	self.label = self:Add("DLabel")
 	self.label:SetPaintedManually(true)
-	self.label:SetPos(scrW * 0.5 - textW * 0.5, scrH * 0.5)
+	self.label:SetPos(scrW * 0.5 - textW * 0.5, scrH * 0.5 - textH * 0.5)
 	self.label:SetFont("ixMenuButtonHugeFont")
 	self.label:SetText(text)
 	self.label:SizeToContents()
