@@ -31,7 +31,7 @@ function PANEL:Init()
 				bIgnoreConfig = true,
 				target = {progress = 0},
 
-				OnComplete = function(animation, panel)
+				OnComplete = function()
 					panel:Remove()
 				end
 			})
