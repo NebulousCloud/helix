@@ -623,7 +623,7 @@ function GM:HUDPaintBackground()
 		ix.util.DrawText(L"restricted", scrW * 0.5, scrH * 0.33, nil, 1, 1, "ixBigFont")
 	end
 
-	ix.hud.DrawAll(false)
+	ix.hud.DrawAll()
 end
 
 function GM:PostDrawOpaqueRenderables(bDepth, bSkybox)
@@ -660,9 +660,7 @@ end
 
 function GM:PostDrawHUD()
 	cam.Start2D()
-		ix.hud.DrawAll(true)
-
-		if (!IsValid(ix.gui.characterMenu) or ix.gui.characterMenu:IsClosing()) then
+		if (!IsValid(ix.gui.deathScreen) and (!IsValid(ix.gui.characterMenu) or ix.gui.characterMenu:IsClosing())) then
 			ix.bar.DrawAction()
 		end
 	cam.End2D()
@@ -926,6 +924,14 @@ net.Receive("ixStringRequest", function()
 			net.WriteString(text)
 		net.SendToServer()
 	end)
+end)
+
+net.Receive("ixPlayerDeath", function()
+	if (IsValid(ix.gui.deathScreen)) then
+		ix.gui.deathScreen:Remove()
+	end
+
+	ix.gui.deathScreen = vgui.Create("ixDeathScreen")
 end)
 
 function GM:Think()
