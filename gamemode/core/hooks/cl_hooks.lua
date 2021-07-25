@@ -622,8 +622,6 @@ function GM:HUDPaintBackground()
 	if (client:GetLocalVar("restricted") and !client:GetLocalVar("restrictNoMsg")) then
 		ix.util.DrawText(L"restricted", scrW * 0.5, scrH * 0.33, nil, 1, 1, "ixBigFont")
 	end
-
-	ix.hud.DrawAll()
 end
 
 function GM:PostDrawOpaqueRenderables(bDepth, bSkybox)
@@ -660,6 +658,8 @@ end
 
 function GM:PostDrawHUD()
 	cam.Start2D()
+		ix.hud.DrawAll()
+
 		if (!IsValid(ix.gui.deathScreen) and (!IsValid(ix.gui.characterMenu) or ix.gui.characterMenu:IsClosing())) then
 			ix.bar.DrawAction()
 		end
@@ -980,5 +980,9 @@ hook.Add("player_spawn", "ixPlayerSpawn", function(data)
 		-- GetBoneName returns __INVALIDBONE__ for everything the first time you use it, so we'll force an update to make them valid
 		client:SetupBones()
 		client:SetIK(false)
+
+		if (client == LocalPlayer() and (IsValid(ix.gui.deathScreen) and !ix.gui.deathScreen:IsClosing())) then
+			ix.gui.deathScreen:Close()
+		end
 	end
 end)
