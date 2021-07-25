@@ -21,26 +21,38 @@ function PANEL:Init()
 
 	self.progress = 0
 
-	self:CreateAnimation(ix.config.Get("spawnTime", 5) + 0.1, {
+	self:CreateAnimation(ix.config.Get("spawnTime", 5), {
 		bIgnoreConfig = true,
 		target = {progress = 1},
 
 		OnComplete = function(animation, panel)
-			panel:CreateAnimation(2, {
-				index = 2,
-				bIgnoreConfig = true,
-				target = {progress = 0},
-
-				OnComplete = function()
-					panel:Remove()
-				end
-			})
+			if (!panel:IsClosing()) then
+				panel:Close()
+			end
 		end
 	})
 end
 
 function PANEL:Think()
 	self.label:SetAlpha(((self.progress - 0.3) / 0.3) * 255)
+end
+
+function PANEL:IsClosing()
+	return self.bIsClosing
+end
+
+function PANEL:Close()
+	self.bIsClosing = true
+
+	self:CreateAnimation(2, {
+		index = 2,
+		bIgnoreConfig = true,
+		target = {progress = 0},
+
+		OnComplete = function(animation, panel)
+			panel:Remove()
+		end
+	})
 end
 
 function PANEL:Paint(width, height)
