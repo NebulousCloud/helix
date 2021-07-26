@@ -133,10 +133,6 @@ if (CLIENT) then
 			local text = v.ixChatClassText
 			local range = v.ixChatClassRange
 
-			if (!text) then
-				continue
-			end
-
 			local bAnimation = !ix.option.Get("disableAnimations", false)
 			local fraction
 
