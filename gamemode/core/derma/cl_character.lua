@@ -389,7 +389,7 @@ function PANEL:PlayMusic()
 	path = url and url or path
 
 	play(path, "noplay", function(channel, error, message)
-		if (!IsValid(channel)) then
+		if (!IsValid(self) or !IsValid(channel)) then
 			return
 		end
 
