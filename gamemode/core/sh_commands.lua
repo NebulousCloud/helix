@@ -416,6 +416,7 @@ do
 
 		ix.command.Add("Give" .. MONEY_NAME, {
 			alias = {"GiveMoney"},
+			privilege = "GiveMoney",
 			description = "@cmdGiveMoney",
 			arguments = ix.type.number,
 			OnRun = function(self, client, amount)
@@ -447,6 +448,7 @@ do
 
 		ix.command.Add("CharSet" .. MONEY_NAME, {
 			alias = {"CharSetMoney"},
+			privilege = "CharSetMoney",
 			description = "@cmdCharSetMoney",
 			superAdminOnly = true,
 			arguments = {
@@ -467,6 +469,7 @@ do
 
 		ix.command.Add("Drop" .. MONEY_NAME, {
 			alias = {"DropMoney"},
+			privilege = "DropMoney",
 			description = "@cmdDropMoney",
 			arguments = ix.type.number,
 			OnRun = function(self, client, amount)
