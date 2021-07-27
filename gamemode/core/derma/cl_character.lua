@@ -531,14 +531,16 @@ function PANEL:PaintOver(width, height)
 	end
 end
 
+function PANEL:OnRemove()
+	if (self.channel) then
+		self.channel:Stop()
+		self.channel = nil
+	end
+end
+
 vgui.Register("ixCharMenu", PANEL, "EditablePanel")
 
 if (IsValid(ix.gui.characterMenu)) then
-	if (IsValid(ix.gui.characterMenu.channel)) then
-		ix.gui.characterMenu.channel:Stop()
-		ix.gui.characterMenu.channel = nil
-	end
-
 	ix.gui.characterMenu:Remove()
 
 	--TODO: REMOVE ME
