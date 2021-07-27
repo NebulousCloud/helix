@@ -854,7 +854,7 @@ function GM:RenderScreenspaceEffects()
 				render.SetColorModulation(1, 1, 1)
 				render.SetStencilWriteMask(28)
 				render.SetStencilTestMask(28)
-				render.SetStencilReferenceValue(35)
+				render.SetStencilReferenceValue(28)
 
 				render.SetStencilCompareFunction(STENCIL_ALWAYS)
 				render.SetStencilPassOperation(STENCIL_REPLACE)
