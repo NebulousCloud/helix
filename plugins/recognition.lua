@@ -83,7 +83,7 @@ if (CLIENT) then
 
 	function PLUGIN:GetCharacterName(client, chatType)
 		if (client != LocalPlayer()) then
-			local character = client:GetCharacter()
+			local character = client.GetCharacter and client:GetCharacter() or client
 			local ourCharacter = LocalPlayer():GetCharacter()
 
 			if (ourCharacter and character and !ourCharacter:DoesRecognize(character) and !hook.Run("IsPlayerRecognized", client)) then

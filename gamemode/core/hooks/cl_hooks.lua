@@ -692,13 +692,13 @@ function GM:GetInjuredText(client)
 end
 
 function GM:PopulateImportantCharacterInfo(client, character, container)
-	local color = team.GetColor(client:Team())
+	local color = team.GetColor(character:GetFaction())
 	container:SetArrowColor(color)
 
 	-- name
 	local name = container:AddRow("name")
 	name:SetImportant()
-	name:SetText(hookRun("GetCharacterName", client) or character:GetName())
+	name:SetText(hookRun("GetCharacterName", character) or character:GetName())
 	name:SetBackgroundColor(color)
 	name:SizeToContents()
 
