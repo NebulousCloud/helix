@@ -389,7 +389,7 @@ function PANEL:PlayMusic()
 	path = url and url or path
 
 	play(path, "noplay", function(channel, error, message)
-		if (!IsValid(channel)) then
+		if (!IsValid(self) or !IsValid(channel)) then
 			return
 		end
 
@@ -528,6 +528,13 @@ function PANEL:PaintOver(width, height)
 	if (self.bClosing and self.bFromMenu) then
 		surface.SetDrawColor(color_black)
 		surface.DrawRect(0, 0, width, height)
+	end
+end
+
+function PANEL:OnRemove()
+	if (self.channel) then
+		self.channel:Stop()
+		self.channel = nil
 	end
 end
 
