@@ -121,13 +121,23 @@ else
 
 		function playerMeta:ChatNotify(message)
 			if (self == LocalPlayer()) then
-				ix.chat.Send(LocalPlayer(), "notice", message)
+				local messageLength = message:utf8len()
+
+				ix.chat.Send(LocalPlayer(), "notice", message, false, {
+					bError = message:utf8sub(messageLength, messageLength) == "!"
+				})
 			end
 		end
 
 		function playerMeta:ChatNotifyLocalized(message, ...)
 			if (self == LocalPlayer()) then
-				ix.chat.Send(LocalPlayer(), "notice", L(message, ...))
+				message = L(message, ...)
+
+				local messageLength = message:utf8len()
+
+				ix.chat.Send(LocalPlayer(), "notice", message, false, {
+					bError = message:utf8sub(messageLength, messageLength) == "!"
+				})
 			end
 		end
 	end
