@@ -214,11 +214,11 @@ end
 function PLUGIN:ShouldDisplayArea(newID)
 	local client = LocalPlayer()
 
-	if (client.ixOldArea == newID) then
+	if (client.ixLastArea == newID) then
 		return false
 	end
 
-	client.ixOldArea = newID
+	client.ixLastArea = newID
 end
 
 net.Receive("ixAreaEditStart", function()
