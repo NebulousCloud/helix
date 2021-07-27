@@ -66,7 +66,11 @@ if (SERVER) then
 		-- @realm shared
 		-- @string message Text to display in the notification
 		function playerMeta:ChatNotify(message)
-			ix.chat.Send(nil, "notice", message, false, {self})
+			local messageLength = message:utf8len()
+
+			ix.chat.Send(nil, "notice", message, false, {self}, {
+				bError = message:utf8sub(messageLength, messageLength) == "!"
+			})
 		end
 
 		--- Displays a notification for this player in the chatbox with the given language phrase.
@@ -75,7 +79,13 @@ if (SERVER) then
 		-- @param ... Arguments to pass to the phrase
 		-- @see NotifyLocalized
 		function playerMeta:ChatNotifyLocalized(message, ...)
-			ix.chat.Send(nil, "notice", L(message, self, ...), false, {self})
+			message = L(message, self, ...)
+
+			local messageLength = message:utf8len()
+
+			ix.chat.Send(nil, "notice", message, false, {self}, {
+				bError = message:utf8sub(messageLength, messageLength) == "!"
+			})
 		end
 	end
 else
