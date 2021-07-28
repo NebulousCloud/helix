@@ -702,15 +702,17 @@ function GM:PopulateImportantCharacterInfo(client, character, container)
 	name:SetBackgroundColor(color)
 	name:SizeToContents()
 
-	-- injured text
-	local injureText, injureTextColor = hookRun("GetInjuredText", client)
+	if (IsValid(client)) then
+		-- injured text
+		local injureText, injureTextColor = hookRun("GetInjuredText", client)
 
-	if (injureText) then
-		local injure = container:AddRow("injureText")
+		if (injureText) then
+			local injure = container:AddRow("injureText")
 
-		injure:SetText(L(injureText))
-		injure:SetBackgroundColor(injureTextColor)
-		injure:SizeToContents()
+			injure:SetText(L(injureText))
+			injure:SetBackgroundColor(injureTextColor)
+			injure:SizeToContents()
+		end
 	end
 end
 
