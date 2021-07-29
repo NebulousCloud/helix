@@ -83,7 +83,15 @@ if (CLIENT) then
 
 	function PLUGIN:GetCharacterName(client, chatType)
 		if (client != LocalPlayer()) then
-			local character = client:GetCharacter()
+			local character
+
+			if (client.GetCharacter) then
+				character = client:GetCharacter()
+			elseif (client.GetPlayer) then
+				character = client
+				client = character:GetPlayer()
+			end
+
 			local ourCharacter = LocalPlayer():GetCharacter()
 
 			if (ourCharacter and character and !ourCharacter:DoesRecognize(character) and !hook.Run("IsPlayerRecognized", client)) then
@@ -91,10 +99,10 @@ if (CLIENT) then
 					local description = character:GetDescription()
 
 					if (#description > 40) then
-						description = description:utf8sub(1, 37).."..."
+						description = description:utf8sub(1, 37) .. "..."
 					end
 
-					return "["..description.."]"
+					return "[" .. description .. "]"
 				elseif (!chatType) then
 					return L"unknown"
 				end
