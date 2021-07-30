@@ -15,7 +15,7 @@ function PANEL:Init()
 	hook.Run("CanCreateCharacterInfo", suppress)
 
 	if (!suppress.time) then
-		local format = "%A, %B %d, %Y. %H:%M"
+		local format = ix.option.Get("24hourTime", false) and "%A, %B %d, %Y. %H:%M" or "%A, %B %d, %Y. %I:%M %p"
 
 		self.time = self:Add("DLabel")
 		self.time:SetFont("ixMediumFont")
