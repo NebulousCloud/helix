@@ -71,25 +71,48 @@ function PLUGIN:CalcView(client, origin)
 	local forward = enterAngle:Forward()
 	local head = GetHeadBone(client)
 
-	if (head) then
-		local position = client:GetBonePosition(head) + forward * offset + height
-		local data = {
-			start = (client:GetBonePosition(head) or Vector(0, 0, 64)) + forward * 8,
-			endpos = position + forward * offset,
-			mins = traceMin,
-			maxs = traceMax,
+	local bFirstPerson = true
+
+	if (ix.option.Get("thirdpersonEnabled", false)) then
+		local originPosition = head and client:GetBonePosition(head) or client:GetPos()
+
+		-- check if the camera will hit something
+		local data = util.TraceHull({
+			start = originPosition,
+			endpos = originPosition - client:EyeAngles():Forward() * 48,
+			mins = traceMin * 0.75,
+			maxs = traceMax * 0.75,
 			filter = client
-		}
+		})
 
-		data = util.TraceHull(data)
+		bFirstPerson = data.Hit
 
-		if (data.Hit) then
+		if (!bFirstPerson) then
 			view.origin = data.HitPos
-		else
-			view.origin = position
 		end
-	else
-		view.origin = origin + forward * forwardOffset + height
+	end
+
+	if (bFirstPerson) then
+		if (head) then
+			local position = client:GetBonePosition(head) + forward * offset + height
+			local data = {
+				start = (client:GetBonePosition(head) or Vector(0, 0, 64)) + forward * 8,
+				endpos = position + forward * offset,
+				mins = traceMin,
+				maxs = traceMax,
+				filter = client
+			}
+
+			data = util.TraceHull(data)
+
+			if (data.Hit) then
+				view.origin = data.HitPos
+			else
+				view.origin = position
+			end
+		else
+			view.origin = origin + forward * forwardOffset + height
+		end
 	end
 
 	view.origin = LerpVector(fraction, origin, view.origin)
