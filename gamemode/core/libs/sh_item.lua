@@ -328,6 +328,15 @@ do
 	end
 
 	if (CLIENT) then
+		function ix.item.PerformInventoryAction(action, itemID, invID, data)
+			net.Start("ixInventoryAction")
+				net.WriteString(action)
+				net.WriteUInt(itemID, 32)
+				net.WriteUInt(invID, 32)
+				net.WriteTable(data or {})
+			net.SendToServer()
+		end
+
 		net.Receive("ixInventorySync", function()
 			local slots = net.ReadTable()
 			local id = net.ReadUInt(32)

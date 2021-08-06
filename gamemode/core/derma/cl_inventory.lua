@@ -25,12 +25,7 @@ local function RenderNewIcon(panel, itemTable)
 end
 
 local function InventoryAction(action, itemID, invID, data)
-	net.Start("ixInventoryAction")
-		net.WriteString(action)
-		net.WriteUInt(itemID, 32)
-		net.WriteUInt(invID, 32)
-		net.WriteTable(data or {})
-	net.SendToServer()
+	ix.item.PerformInventoryAction(action, itemID, invID, data)
 end
 
 local PANEL = {}
