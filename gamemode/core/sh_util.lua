@@ -98,14 +98,14 @@ function ix.util.StripRealmPrefix(name)
 	return (prefix == "sh_" or prefix == "sv_" or prefix == "cl_") and name:sub(4) or name
 end
 
+local META_COLOR = FindMetaTable("Color")
 --- Returns `true` if the given input is a color table. This is necessary since the engine `IsColor` function only checks for
 -- color metatables - which are not used for regular Lua color types.
 -- @realm shared
 -- @param input Input to check
 -- @treturn bool Whether or not the input is a color
 function ix.util.IsColor(input)
-	return istable(input) and
-		isnumber(input.a) and isnumber(input.g) and isnumber(input.b) and (input.a and isnumber(input.a) or input.a == nil)
+	return istable(input) and getmetatable(input) == META_COLOR
 end
 
 --- Returns a dimmed version of the given color by the given scale.
