@@ -19,7 +19,7 @@ function PLUGIN:PlayerDeath(client, inflictor, attacker)
 			return
 		end
 
-		if (ix.config.Get("permakillWorld") and !(client == attacker or inflictor:IsWorld())) then
+		if (ix.config.Get("permakillWorld") and (client == attacker or inflictor:IsWorld())) then
 			return
 		end
 
