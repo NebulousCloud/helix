@@ -58,6 +58,10 @@ if (CLIENT) then
 	local traceMax = Vector(10, 10, 10)
 
 	function playerMeta:CanOverrideView()
+		if (hook.Run("ShouldDisableThirdperson", self) == true) then
+			return false
+		end
+		
 		local entity = Entity(self:GetLocalVar("ragdoll", 0))
 
 		if (IsValid(ix.gui.characterMenu) and !ix.gui.characterMenu:IsClosing() and ix.gui.characterMenu:IsVisible()) then
