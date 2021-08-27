@@ -848,6 +848,10 @@ function ShouldDeleteSavedItems()
 end
 
 --- @realm client
+function ShouldDisableThirdperson(client)
+end
+
+--- @realm client
 function ShouldDisplayArea(newID)
 end
 
@@ -897,10 +901,6 @@ end
 
 --- @realm server
 function ShouldSpawnClientRagdoll(client)
-end
-
---- @realm client
-function ShouldDisableThirdperson(client)
 end
 
 --- @realm client
