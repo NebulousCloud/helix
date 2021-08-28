@@ -538,7 +538,8 @@ if (CLIENT) then
 				continue
 			end
 
-			local newLine = line .. " " .. word
+			local space = (i == 1) and "" or " "
+			local newLine = line .. space .. word
 			local newWidth = surface.GetTextSize(newLine)
 
 			if (newWidth > maxWidth) then
