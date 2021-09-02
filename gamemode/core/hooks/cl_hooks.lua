@@ -316,6 +316,7 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 	end
 
 	local fraction = client.ixRaisedFraction
+	local rotation
 
 	if (ix.option.Get("altLower", true)) then
 		rotation = weapon.LowerAngles2 or LOWERED_ANGLES2
