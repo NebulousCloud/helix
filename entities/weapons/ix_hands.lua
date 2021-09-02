@@ -43,7 +43,7 @@ SWEP.ViewModel = Model("models/weapons/c_arms.mdl")
 SWEP.WorldModel = ""
 
 SWEP.UseHands = true
-SWEP.LowerAngles = Angle(0, 5, -14)
+SWEP.LowerAngles = Angle(0, 3, -6)
 SWEP.LowerAngles2 = Angle(0, 5, -19)
 SWEP.KnockViewPunchAngle = Angle(-1.3, 1.8, 0)
 
