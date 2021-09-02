@@ -292,7 +292,8 @@ function GM:OnCharacterMenuCreated(panel)
 	end
 end
 
-local LOWERED_ANGLES = Angle(30, 0, -25)
+local LOWERED_ANGLES = Angle(5, 0, -4)
+local LOWERED_ANGLES2 = Angle(30, 0, -25)
 
 function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos, eyeAngles)
 	if (!IsValid(weapon)) then
@@ -315,10 +316,11 @@ function GM:CalcViewModelView(weapon, viewModel, oldEyePos, oldEyeAngles, eyePos
 	end
 
 	local fraction = client.ixRaisedFraction
-	local rotation = weapon.LowerAngles or LOWERED_ANGLES
 
-	if (ix.option.Get("altLower", true) and weapon.LowerAngles2) then
-		rotation = weapon.LowerAngles2
+	if (ix.option.Get("altLower", true)) then
+		rotation = weapon.LowerAngles2 or LOWERED_ANGLES2
+	else
+		rotation = weapon.LowerAngles or LOWERED_ANGLES
 	end
 
 	eyeAngles:RotateAroundAxis(eyeAngles:Up(), rotation.p * fraction)
