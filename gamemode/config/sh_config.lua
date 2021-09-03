@@ -108,7 +108,7 @@ ix.config.Add("runSpeed", 235, "How fast a player normally runs.", function(oldV
 		local character = v:GetCharacter()
 
 		if (character) then
-			ix.attributes.list["stm"]:OnSetup(v, character:GetAttribute("stm", 0))		
+			ix.attributes.list["stm"]:OnSetup(v, character:GetAttribute("stm", 0))
 		end
 	end
 end, {
