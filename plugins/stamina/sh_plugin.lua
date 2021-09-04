@@ -70,6 +70,8 @@ end
 function PLUGIN:SetupMove(client, cMoveData)
 	if (client:GetNetVar("brth", false)) then
 		cMoveData:SetMaxClientSpeed(client:GetWalkSpeed())
+	elseif (client:WaterLevel() > 1) then
+		cMoveData:SetMaxClientSpeed(client:GetRunSpeed() * 0.775)
 	end
 end
 
