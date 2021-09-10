@@ -537,7 +537,8 @@ function META:GetItems(onlyMain)
 				items[v2.id] = v2
 
 				v2.data = v2.data or {}
-				local isBag = v2.data.id
+				local isBag = (((v2.base == "base_bags") or v2.isBag) and v2.data.id)
+
 				if (isBag and isBag != self:GetID() and onlyMain != true) then
 					local bagInv = ix.item.inventories[isBag]
 
