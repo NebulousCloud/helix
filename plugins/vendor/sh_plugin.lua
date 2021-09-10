@@ -86,15 +86,7 @@ if (SERVER) then
 
 			entity:SetModel(v.model)
 			entity:SetSkin(v.skin or 0)
-			entity:SetSolid(SOLID_BBOX)
-			entity:PhysicsInit(SOLID_BBOX)
-
-			local physObj = entity:GetPhysicsObject()
-
-			if (IsValid(physObj)) then
-				physObj:EnableMotion(false)
-				physObj:Sleep()
-			end
+			entity:InitPhysObj()
 
 			entity:SetNoBubble(v.bubble)
 			entity:SetDisplayName(v.name)
@@ -275,8 +267,7 @@ if (SERVER) then
 			data = {uniqueID, entity.classes[uniqueID]}
 		elseif (key == "model") then
 			entity:SetModel(data)
-			entity:SetSolid(SOLID_BBOX)
-			entity:PhysicsInit(SOLID_BBOX)
+			entity:InitPhysObj()
 			entity:SetAnim()
 		elseif (key == "useMoney") then
 			if (entity.money) then
