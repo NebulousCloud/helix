@@ -21,7 +21,7 @@ function ENT:Initialize()
 		self:DrawShadow(true)
 		self:InitPhysObj()
 
-		self:AddCallback("OnAngleChange", function(entity, newAngles)
+		self:AddCallback("OnAngleChange", function(entity)
 			local mins, maxs = entity:GetAxisAlignedBoundingBox()
 
 			entity:SetCollisionBounds(mins, maxs)
