@@ -228,8 +228,11 @@ function ITEM:GetSkin()
 	return self.skin or 0
 end
 
+--- Returns the material of the item.
+-- @realm shared
+-- @treturn string The material of the item
 function ITEM:GetMaterial()
-	return nil
+	return self.material or ""
 end
 
 --- Returns the ID of the owning character, if one exists.

@@ -247,7 +247,7 @@ end
 	Renders the Icon with given arguments.
 	returns nothing
 ]]--
-function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
+function ikon:renderIcon(name, w, h, mdl, material, camInfo, updateCache)
 	if (#ikon.requestList > 0) then return IKON_BUSY end
 	if (ikon.requestList[name]) then return IKON_PROCESSING end
 	if (!w or !h or !mdl) then return IKON_SOMETHINGWRONG end
@@ -256,6 +256,7 @@ function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
 	ikon.curWidth = w or 1
 	ikon.curHeight = h or 1
 	ikon.renderModel = mdl
+	ikon.renderMaterial = material or ""
 
 	if (camInfo) then
 		ikon.info = camInfo
@@ -272,6 +273,7 @@ function ikon:renderIcon(name, w, h, mdl, camInfo, updateCache)
 	end
 
 	ikon.renderEntity:SetModel(ikon.renderModel)
+	ikon.renderEntity:SetMaterial(ikon.renderMaterial)
 
 	local bone = ikon.renderEntity:LookupBone("ValveBiped.Bip01_Head1")
 
