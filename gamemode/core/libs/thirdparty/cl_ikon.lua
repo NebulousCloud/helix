@@ -146,7 +146,7 @@ function ikon:renderHook()
 	xpcall(function()
 			render.OverrideAlphaWriteEnable(true, true) -- some playermodel eyeballs will not render without this
 			render.SetWriteDepthToDestAlpha(false)
-			render.OverrideBlend(true, BLEND_ONE, BLEND_ONE, BLENDFUNC_ADD, BLEND_ONE, BLEND_ONE, BLENDFUNC_ADD)
+			//render.OverrideBlend(true, BLEND_ONE, BLEND_ONE, BLENDFUNC_ADD, BLEND_ONE, BLEND_ONE, BLENDFUNC_ADD) -- causes all fonts to flicker for 1 tick upon call
 			render.SuppressEngineLighting(true)
 			render.Clear(0, 0, 0, 0, true, true)
 
@@ -342,6 +342,11 @@ concommand.Add("ix_flushicon", function()
 	end
 
 	ikon.cache = {}
+
+	-- Opening and instantly closing ixMenu with inventory tab allows us to get rid of this rendering bug
+	ix.gui.lastMenuTab = nil;
+	local menu = vgui.Create("ixMenu");
+	menu:Remove();
 end)
 
 hook.Add("InitializedSchema", "updatePath", function()
