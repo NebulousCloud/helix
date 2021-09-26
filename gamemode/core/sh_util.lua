@@ -1143,8 +1143,8 @@ end
 --- Merges the contents of the second table with the content in the first one. The destination table will be modified.
 --- If element is table but not metatable object, value's elements will be changed only.
 -- @realm shared
--- @table destination The table you want the source table to merge with
--- @table source The table you want to merge with the destination table
+-- @tab destination The table you want the source table to merge with
+-- @tab source The table you want to merge with the destination table
 -- @return table
 function ix.util.MetatableSafeTableMerge(destination, source)
 	for k, v in pairs(source) do
@@ -1156,7 +1156,6 @@ function ix.util.MetatableSafeTableMerge(destination, source)
 			destination[ k ] = v;
 		end
 	end
-	
 	return destination;
 end
 
