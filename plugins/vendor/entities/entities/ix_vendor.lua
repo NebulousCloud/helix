@@ -50,8 +50,6 @@ function ENT:InitPhysObj()
 	local bPhysObjCreated = self:PhysicsInitBox(mins, maxs)
 
 	if (bPhysObjCreated) then
-		self:SetMoveType(MOVETYPE_NONE)
-
 		local physObj = self:GetPhysicsObject()
 		physObj:EnableMotion(false)
 		physObj:Sleep()
@@ -61,6 +59,7 @@ end
 function ENT:GetAxisAlignedBoundingBox()
 	local mins, maxs = self:GetModelBounds()
 	mins, maxs = self:GetRotatedAABB(mins, maxs)
+	mins = Vector(mins.x, mins.y, 0)
 
 	return mins, maxs
 end
