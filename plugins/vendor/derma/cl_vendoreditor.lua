@@ -130,7 +130,7 @@ function PANEL:Init()
 	self.searchBar:Dock(TOP)
 	self.searchBar:DockMargin(0, 4, 0, 0)
 	self.searchBar:SetUpdateOnType(true)
-	self.searchBar:SetPlaceholderText("Search...")
+	self.searchBar:SetPlaceholderText(L"vendorSearch")
 	self.searchBar.OnValueChange = function(this, value)
 		self:ReloadItemList(value)
 	end
