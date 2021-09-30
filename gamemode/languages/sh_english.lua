@@ -248,6 +248,7 @@ LANGUAGE = {
 	vendorSell = "Sell Only",
 	maxStock = "Max Stock",
 	vendorFaction = "Faction Editor",
+	vendorSearch = "Search...",
 	buy = "Purchase",
 	vendorWelcome = "Welcome to my store, what can I get you today?",
 	vendorBye = "Come again soon!",
