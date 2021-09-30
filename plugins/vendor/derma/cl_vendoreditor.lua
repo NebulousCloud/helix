@@ -247,7 +247,7 @@ function PANEL:ReloadItemList(filter)
 	for k, v in SortedPairs(ix.item.list) do
 		local itemName = v.GetName and v:GetName() or L(v.name)
 
-		if (filter and !itemName:utf8lower():find(filter:utf8lower(), 1, false)) then
+		if (filter and !itemName:utf8lower():find(filter:utf8lower(), 1, true)) then
 			continue
 		end
 
