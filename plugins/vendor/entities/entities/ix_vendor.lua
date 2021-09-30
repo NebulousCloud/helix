@@ -58,8 +58,8 @@ end
 
 function ENT:GetAxisAlignedBoundingBox()
 	local mins, maxs = self:GetModelBounds()
-	mins, maxs = self:GetRotatedAABB(mins, maxs)
 	mins = Vector(mins.x, mins.y, 0)
+	mins, maxs = self:GetRotatedAABB(mins, maxs)
 
 	return mins, maxs
 end
