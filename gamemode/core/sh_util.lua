@@ -1151,7 +1151,7 @@ function ix.util.MetatableSafeTableMerge(destination, source)
 		if (istable(v) and istable(destination[k]) and getmetatable(v) == nil) then
 			-- don't overwrite one table with another
 			-- instead merge them recurisvely
-			ix.util.MetatableSafetyMerge(destination[k], v);
+			ix.util.MetatableSafeTableMerge(destination[k], v);
 		else
 			destination[ k ] = v;
 		end
