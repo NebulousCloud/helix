@@ -359,7 +359,7 @@ if (SERVER) then
 				self.ixRestrictWeps[#self.ixRestrictWeps + 1] = {
 					class = v:GetClass(),
 					item = v.ixItem,
-					clip = v:Clip1(),
+					clip = v:Clip1()
 				}
 
 				v:Remove()
