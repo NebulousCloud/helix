@@ -339,7 +339,7 @@ end
 function CharacterHasFlags(self, flags)
 end
 
---- @realm server
+--- @realm shared
 function CharacterLoaded(character)
 end
 
