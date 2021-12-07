@@ -138,6 +138,10 @@ ix.config.Add("defaultMoney", 0, "The amount of money that players start with.",
 	category = "characters",
 	data = {min = 0, max = 1000}
 })
+ix.config.Add("minMoneyDropAmount", 1, "The minimum amount of money that can be dropped.", nil, {
+	category = "characters",
+	data = {min = 1, max = 1000}
+})
 ix.config.Add("allowVoice", false, "Whether or not voice chat is allowed.", function(oldValue, newValue)
 	if (SERVER) then
 		hook.Run("VoiceToggled", newValue)

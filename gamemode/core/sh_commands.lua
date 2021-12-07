@@ -472,8 +472,10 @@ do
 			OnRun = function(self, client, amount)
 				amount = math.Round(amount)
 
-				if (amount <= 0) then
-					return "@invalidArg", 1
+				local minDropAmount = ix.config.Get("minMoneyDropAmount", 1)
+
+				if (amount < minDropAmount) then
+					return "@belowMinMoneyDrop", minDropAmount
 				end
 
 				if (!client:GetCharacter():HasMoney(amount)) then
