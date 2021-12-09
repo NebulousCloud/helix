@@ -53,6 +53,7 @@ function PANEL:OpenPicker()
 
 	self.picker.OnValueChanged = function(panel)
 		local newColor = panel:GetValue()
+		newColor = Color(newColor.r, newColor.g, newColor.b, newColor.a)
 
 		if (newColor != self.color) then
 			self.color = newColor
