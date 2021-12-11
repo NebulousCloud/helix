@@ -964,8 +964,9 @@ do
 				if (var.OnValidate) then
 					local value = payload[v]
 
-					local result = {var:OnValidate(value, payload, client)} -- we've already made sure the payload is valid so there is no need to check validity here
+					local result = {var:OnValidate(value, payload, client)}
 
+					-- we've already made sure the payload is valid so there is no need to check validity here
 					if (result[1] != nil) then
 						payload[v] = result[1]
 					end

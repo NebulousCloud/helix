@@ -25,7 +25,7 @@ ix.charmenu = ix.charmenu or {}
 
 ix.util.Include("helix/gamemode/core/meta/sh_payload.lua")
 
-if (CLIENT) then	
+if (CLIENT) then
 	--- Creates a character menu and sets it as active.
 	-- @realm client
 	-- @internal

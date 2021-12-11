@@ -78,7 +78,8 @@ function PAYLOAD:IsValid()
 end
 
 if (CLIENT) then
-	-- existing schemas/plugins might expect these methods to exist clientside due to ixCharacterMenuCreate setting them for hooks on that panel
+	-- existing schemas/plugins might expect these methods to exist clientside
+	-- due to ixCharacterMenuCreate setting them for hooks on that panel
 	function PAYLOAD:Set(k, v) self[k] = v end
 	function PAYLOAD:AddHook() end
 	function PAYLOAD:Prepare() end
