@@ -545,7 +545,7 @@ do
 		field = "faction",
 		fieldType = ix.type.string,
 		default = "Citizen",
-		bNoDisplay = true,
+		index = 0,
 		FilterValues = function(self)
 			-- make sequential table of faction unique IDs
 			local values = {}
@@ -579,7 +579,7 @@ do
 		end,
 		OnValidate = function(self, index, data, client)
 			if (index and client:HasWhitelist(index)) then
-				return true
+				return index
 			end
 
 			return false
@@ -933,12 +933,7 @@ do
 
 			client.ixNextCharacterCreate = RealTime() + 1
 
-			local indicies = net.ReadUInt(8)
-			local payload = {}
-
-			for _ = 1, indicies do
-				payload[net.ReadString()] = net.ReadType()
-			end
+			local payload = ix.charmenu.DeserializePayload(client)
 
 			local newPayload = {}
 			local results = {hook.Run("CanPlayerCreateCharacter", client, payload)}
@@ -952,41 +947,40 @@ do
 				return
 			end
 
+			results = {payload:IsValid()}
+
+			if (table.remove(results, 1) == false) then
+				net.Start("ixCharacterAuthFailed")
+					net.WriteString(table.remove(results, 1) or "unknownError")
+					net.WriteTable(results)
+				net.Send(client)
+
+				return
+			end
+
+			for _, v in ipairs(payload.vars) do
+				local var = ix.char.vars[v]
+
+				if (var.OnValidate) then
+					local value = payload[v]
+
+					local result = {var:OnValidate(value, payload, client)} -- we've already made sure the payload is valid so there is no need to check validity here
+
+					if (result[1] != nil) then
+						payload[v] = result[1]
+					end
+
+					if (var.OnAdjust) then
+						var:OnAdjust(client, payload, value, newPayload)
+					end
+				end
+			end
+
 			for k, _ in pairs(payload) do
 				local info = ix.char.vars[k]
 
 				if (!info or (!info.OnValidate and info.bNoDisplay)) then
 					payload[k] = nil
-				end
-			end
-
-			for k, v in SortedPairsByMemberValue(ix.char.vars, "index") do
-				local value = payload[k]
-
-				if (v.OnValidate) then
-					local result = {v:OnValidate(value, payload, client)}
-
-					if (result[1] == false) then
-						local fault = result[2]
-
-						table.remove(result, 2)
-						table.remove(result, 1)
-
-						net.Start("ixCharacterAuthFailed")
-							net.WriteString(fault)
-							net.WriteTable(result)
-						net.Send(client)
-
-						return
-					else
-						if (result[1] != nil) then
-							payload[k] = result[1]
-						end
-
-						if (v.OnAdjust) then
-							v:OnAdjust(client, payload, value, newPayload)
-						end
-					end
 				end
 			end
 
@@ -1122,7 +1116,7 @@ do
 				ix.characters = charList
 			end
 
-			vgui.Create("ixCharMenu")
+			ix.charmenu.Create()
 		end)
 
 		net.Receive("ixCharacterLoadFailure", function()
@@ -1170,8 +1164,8 @@ do
 				end
 			end
 
-			if (isCurrentChar and !IsValid(ix.gui.characterMenu)) then
-				vgui.Create("ixCharMenu")
+			if (isCurrentChar and !ix.charmenu.IsOpen()) then
+				ix.charmenu.Create()
 			end
 		end)
 
@@ -1182,11 +1176,8 @@ do
 				ix.gui.menu:Remove()
 			end
 
-			if (!IsValid(ix.gui.characterMenu)) then
-				vgui.Create("ixCharMenu")
-			elseif (ix.gui.characterMenu:IsClosing()) then
-				ix.gui.characterMenu:Remove()
-				vgui.Create("ixCharMenu")
+			if (!ix.charmenu.IsOpen()) then
+				ix.charmenu.Create()
 			end
 
 			if (isCurrentChar) then

@@ -12,7 +12,7 @@ Plugin hooks are regular hooks that can be used in your schema with `Schema:Hook
 --- Adjusts the data used just before creating a new character.
 -- @realm server
 -- @player client Player that is creating the character
--- @tab payload Table of data to be used for character creation
+-- @payload payload Payload being used for character creation
 -- @tab newPayload Table of data be merged with the current payload
 -- @usage function PLUGIN:AdjustCreationPayload(client, payload, newPayload)
 -- 	newPayload.money = payload.attributes["stm"] -- Sets the characters initial money to the stamina attribute value.
@@ -102,7 +102,7 @@ end
 --- Whether or not a player is allowed to create a new character with the given payload.
 -- @realm server
 -- @player client Player attempting to create a new character
--- @tab payload Data that is going to be used for creating the character
+-- @payload payload Payload that is going to be used for creating the character
 -- @treturn bool Whether or not the player is allowed to create the character. This function defaults to `true`, so you
 -- should only ever return `false` if you're disallowing creation. Otherwise, don't return anything as you'll prevent any other
 -- calls to this hook from running.
