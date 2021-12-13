@@ -57,6 +57,7 @@ function ix.db.InsertSchema(schemaType, field, fieldType)
 
 		local query = mysql:Update("ix_schema")
 			query:Update("columns", util.TableToJSON(schema))
+			query:Where("table", schemaType)
 		query:Execute()
 
 		query = mysql:Alter(schemaType)
