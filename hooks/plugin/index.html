@@ -138,6 +138,11 @@ CanPlayerAccessDoor											</a>
 										</li>
 										<li>
 											<span class="realm server"></span>
+											<a href="../../hooks/plugin/#CanPlayerCombineItem">
+CanPlayerCombineItem											</a>
+										</li>
+										<li>
+											<span class="realm server"></span>
 											<a href="../../hooks/plugin/#CanPlayerCreateCharacter">
 CanPlayerCreateCharacter											</a>
 										</li>
@@ -3061,6 +3066,80 @@ end
 				<h3>Example Usage</h3>
 					<pre><code>function PLUGIN:CanPlayerAccessDoor(client, door, access)
 	return true -- Always allow access.
+end
+</code></pre>
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="CanPlayerCombineItem">
+					<h1><span class="realm server"></span></span>PLUGIN:CanPlayerCombineItem(client, item, other)</h1>
+				</a>
+
+
+
+					<p>Whether or not a player is allowed to combine an item <code>other</code> into the given <code>item</code>.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">client</span>
+
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
+
+
+								<p> Player attempting to combine an item into another</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">item</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> instance ID of the item being dropped onto</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">other</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+
+								<p> instance ID of the item being combined into the first item, this can be invalid due to it being from clientside</p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Whether or not to allow the player to combine the items</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:CanPlayerCombineItem(client, item, other)
+	local otherItem = ix.item.instances[other]
+
+	if (otherItem and otherItem.uniqueID == "soda") then
+		return false -- disallow combining any item that has a uniqueID equal to `soda`
+	end
 end
 </code></pre>
 
