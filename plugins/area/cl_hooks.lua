@@ -265,7 +265,7 @@ net.Receive("ixAreaSync", function()
 
 	-- Set the list of texts to the ones provided by the server.
 	ix.area.stored = util.JSONToTable(uncompressed)
-		
+
 	for k, v in pairs(ix.area.stored) do
 		if (isnumber(k)) then
 			ix.area.stored[tostring(k)] = v
