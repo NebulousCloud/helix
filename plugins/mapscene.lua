@@ -184,7 +184,7 @@ else
 
 		if (position2) then
 			data = {position2, angles, angles2}
-			self.scenes[position] = data
+			self.scenes[#self.scenes + 1] = data
 
 			net.Start("ixMapSceneAddPair")
 				net.WriteTable(data)
