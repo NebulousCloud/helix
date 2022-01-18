@@ -27,7 +27,7 @@ if (CLIENT) then
 				self.index = key
 			end
 
-			if (self.orderedIndex or value.origin) then
+			if (self.orderedIndex or value.origin or isvector(key)) then
 				local curTime = CurTime()
 
 				self.orderedIndex = self.orderedIndex or 1
@@ -146,9 +146,9 @@ if (CLIENT) then
 		-- Set the list of texts to the ones provided by the server.
 		PLUGIN.scenes = util.JSONToTable(uncompressed)
 
-		for _, v in pairs(PLUGIN.scenes) do
-			if (v.origin) then
-				table.insert(PLUGIN.ordered, {v.origin, v})
+		for k, v in pairs(PLUGIN.scenes) do
+			if (v.origin or isvector(k)) then
+				table.insert(PLUGIN.ordered, {v.origin and v.origin or k, v})
 			end
 		end
 	end)
