@@ -279,13 +279,14 @@ if (SERVER) then
 			return
 		end
 
+		local uniqueID = "ixAct" .. self:SteamID()
 		-- Default the time to five seconds.
 		time = time or 5
 		startTime = startTime or CurTime()
 		finishTime = finishTime or (startTime + time)
 
 		if (text == false) then
-			timer.Remove("ixAct" .. self:SteamID())
+			timer.Remove(uniqueID)
 
 			net.Start("ixActionBarReset")
 			net.Send(self)
@@ -307,7 +308,7 @@ if (SERVER) then
 		-- If we have provided a callback, run it delayed.
 		if (callback) then
 			-- Create a timer that runs once with a delay.
-			timer.Create("ixAct" .. self:SteamID(), time, 1, function()
+			timer.Create(uniqueID, time, 1, function()
 				-- Call the callback if the player is still valid.
 				if (IsValid(self)) then
 					callback(self)
