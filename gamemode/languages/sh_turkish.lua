@@ -1,6 +1,6 @@
 /*
 
-Bu dil dosyası "ilusion" tarafından hazırlanmıştır.
+Bu dil dosyası "illusion" tarafından hazırlanmıştır.
 # discord # illusion#6666
 # steam	  # https://steamcommunity.com/id/illusionvisible/
 
