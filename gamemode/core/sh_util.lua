@@ -935,7 +935,7 @@ function ix.util.FindEmptySpace(entity, filter, spacing, size, height, tolerance
 	end
 
 	table.sort(output, function(a, b)
-		return a:Distance(position) < b:Distance(position)
+		return a:DistToSqr(position) < b:DistToSqr(position)
 	end)
 
 	return output
