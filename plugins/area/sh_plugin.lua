@@ -29,7 +29,7 @@ if (CLIENT) then
 	ix.option.Add("areaSounds", ix.type.bool, true, {
 		category = "areas"
 	})
-end 
+end
 
 function ix.area.AddProperty(name, type, default, data)
 	ix.area.properties[name] = {
