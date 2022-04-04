@@ -203,7 +203,7 @@ function PLUGIN:OnAreaChanged(oldID, newID)
 	local format = newID .. (ix.option.Get("24hourTime", false) and ", %H:%M." or ", %I:%M %p.")
 	format = ix.date.GetFormatted(format)
 
-	if (entrySound) then
+	if (entrySound and ix.option.Get("areaSounds", true)) then
 		client:EmitSound(entrySound)
 	end
 

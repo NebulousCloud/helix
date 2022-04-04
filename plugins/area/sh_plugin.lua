@@ -25,6 +25,12 @@ ix.config.Add("areaTickTime", 1, "How many seconds between each time a character
 	}
 )
 
+if (CLIENT) then
+	ix.option.Add("areaSounds", ix.type.bool, true, {
+		category = "areas"
+	})
+end 
+
 function ix.area.AddProperty(name, type, default, data)
 	ix.area.properties[name] = {
 		type = type,
