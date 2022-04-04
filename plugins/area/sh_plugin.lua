@@ -44,6 +44,7 @@ function PLUGIN:SetupAreaProperties()
 
 	ix.area.AddProperty("color", ix.type.color, ix.config.Get("color"))
 	ix.area.AddProperty("display", ix.type.bool, true)
+	ix.area.AddProperty("sound", ix.type.string, "")
 end
 
 ix.util.Include("sv_plugin.lua")

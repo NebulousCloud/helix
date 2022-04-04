@@ -187,6 +187,7 @@ function PLUGIN:OnAreaChanged(oldID, newID)
 	client.ixArea = newID
 
 	local area = ix.area.stored[newID]
+	local entrySound = area.properties["sound"]
 
 	if (!area) then
 		client.ixInArea = false
@@ -201,6 +202,10 @@ function PLUGIN:OnAreaChanged(oldID, newID)
 
 	local format = newID .. (ix.option.Get("24hourTime", false) and ", %H:%M." or ", %I:%M %p.")
 	format = ix.date.GetFormatted(format)
+
+	if (entrySound) then
+		client:EmitSound(entrySound)
+	end
 
 	self.panel:AddEntry(format, area.properties.color)
 end
