@@ -333,7 +333,13 @@ else
 			return
 		end
 
-		if (LocalPlayer():GetCharacter()) then
+		local ply = LocalPlayer()
+
+		if (ent != ply) then
+			return
+		end
+
+		if (ply:GetCharacter()) then
 			pac.RenderOverride(ent, "opaque")
 			pac.RenderOverride(ent, "translucent", true)
 		end
