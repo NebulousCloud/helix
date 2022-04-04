@@ -118,13 +118,13 @@ if (SERVER) then
 		end
 
 		-- After resetting all PAC3 outfits, wear all equipped PAC3 outfits.
-		if (curChar) then
-			local inv = curChar:GetInventory()
+		if (!curChar) then return end
 
-			for _, v in pairs(inv:GetItems()) do
-				if (v:GetData("equip") == true and v.pacData) then
-					client:AddPart(v.uniqueID, v)
-				end
+		local inv = curChar:GetInventory()
+
+		for _, v in pairs(inv:GetItems()) do
+			if (v:GetData("equip") == true and v.pacData) then
+				client:AddPart(v.uniqueID, v)
 			end
 		end
 	end
@@ -152,14 +152,14 @@ if (SERVER) then
 		end
 
 		-- If exiting of observer, re-add all parts.
-		if (!state) then
-			local character = client:GetCharacter()
-			local inventory = character:GetInventory()
+		if (state) then return end
 
-			for _, v in pairs(inventory:GetItems()) do
-				if (v:GetData("equip") == true and v.pacData) then
-					client:AddPart(v.uniqueID, v)
-				end
+		local character = client:GetCharacter()
+		local inventory = character:GetInventory()
+
+		for _, v in pairs(inventory:GetItems()) do
+			if (v:GetData("equip") == true and v.pacData) then
+				client:AddPart(v.uniqueID, v)
 			end
 		end
 	end
@@ -168,35 +168,35 @@ else
 		local itemTable = ix.item.list[uniqueID]
 		local pacData = ix.pac.list[uniqueID]
 
-		if (pacData) then
-			if (itemTable and itemTable.pacAdjust) then
-				pacData = table.Copy(pacData)
-				pacData = itemTable:pacAdjust(pacData, client)
-			end
+		if (!pacData) then return end
 
-			if (isfunction(client.AttachPACPart)) then
-				client:AttachPACPart(pacData)
-			else
-				pac.SetupENT(client)
+		if (itemTable and itemTable.pacAdjust) then
+			pacData = table.Copy(pacData)
+			pacData = itemTable:pacAdjust(pacData, client)
+		end
 
-				timer.Simple(0.1, function()
-					if (IsValid(client) and isfunction(client.AttachPACPart)) then
-						client:AttachPACPart(pacData)
-					end
-				end)
-			end
+		if (isfunction(client.AttachPACPart)) then
+			client:AttachPACPart(pacData)
+		else
+			pac.SetupENT(client)
+
+			timer.Simple(0.1, function()
+				if (IsValid(client) and isfunction(client.AttachPACPart)) then
+					client:AttachPACPart(pacData)
+				end
+			end)
 		end
 	end
 
 	local function RemovePart(client, uniqueID)
 		local pacData = ix.pac.list[uniqueID]
 
-		if (pacData) then
-			if (isfunction(client.RemovePACPart)) then
-				client:RemovePACPart(pacData)
-			else
-				pac.SetupENT(client)
-			end
+		if (!pacData) then return end
+
+		if (isfunction(client.RemovePACPart)) then
+			client:RemovePACPart(pacData)
+		else
+			pac.SetupENT(client)
 		end
 	end
 
@@ -206,16 +206,15 @@ else
 			return
 		end
 
-		if (IsValid(pac.LocalPlayer)) then
-			for _, v in ipairs(player.GetAll()) do
-				local character = v:GetCharacter()
+		if (!IsValid(pac.LocalPlayer)) then return end
+	
+		for _, v in ipairs(player.GetAll()) do
+			local character = v:GetCharacter()
 
-				if (character) then
-					local parts = v:GetParts()
-
-					for k2, _ in pairs(parts) do
-						AttachPart(v, k2)
-					end
+			if (character) then
+				local parts = v:GetParts()
+				for k2, _ in pairs(parts) do
+					AttachPart(v, k2)
 				end
 			end
 
@@ -267,22 +266,20 @@ else
 	function PLUGIN:DrawPlayerRagdoll(entity)
 		local ply = entity.objCache
 
-		if (IsValid(ply)) then
-			if (!entity.overridePAC3) then
-				if ply.pac_parts then
-					for _, part in pairs(ply.pac_parts) do
-						if part.last_owner and part.last_owner:IsValid() then
-							hook.Run("OnPAC3PartTransferred", part)
-							part:SetOwner(entity)
-							part.last_owner = entity
-						end
-					end
+		if (!IsValid(ply)) then return end
+		if (entity.overridePAC3) then return end
+		if ply.pac_parts then
+			for _, part in pairs(ply.pac_parts) do
+				if part.last_owner and part.last_owner:IsValid() then
+					hook.Run("OnPAC3PartTransferred", part)
+					part:SetOwner(entity)
+					part.last_owner = entity
 				end
-				ply.pac_playerspawn = pac.RealTime -- used for events
-
-				entity.overridePAC3 = true
 			end
 		end
+		ply.pac_playerspawn = pac.RealTime -- used for events
+
+		entity.overridePAC3 = true
 	end
 
 	function PLUGIN:OnEntityCreated(entity)
@@ -290,14 +287,12 @@ else
 
 		-- For safe progress, I skip one frame.
 		timer.Simple(0.01, function()
-			if (class == "prop_ragdoll") then
-				if (entity:GetNetVar("player")) then
-					entity.RenderOverride = function()
-						entity.objCache = entity:GetNetVar("player")
-						entity:DrawModel()
+			if (class == "prop_ragdoll" and entity:GetNetVar("player")) then
+				entity.RenderOverride = function()
+					entity.objCache = entity:GetNetVar("player")
+					entity:DrawModel()
 
-						hook.Run("DrawPlayerRagdoll", entity)
-					end
+					hook.Run("DrawPlayerRagdoll", entity)
 				end
 			end
 
