@@ -207,7 +207,7 @@ else
 		end
 
 		if (!IsValid(pac.LocalPlayer)) then return end
-	
+
 		for _, v in ipairs(player.GetAll()) do
 			local character = v:GetCharacter()
 
