@@ -478,7 +478,12 @@ if (SERVER) then
 
 		self:SetNetVar("canShoot", self.ixCouldShoot)
 		self:SetNetVar("forcedSequence", nil)
-		self:SetMoveType(MOVETYPE_WALK)
+		
+		if (self:GetMoveType() != MOVETYPE_NOCLIP) then
+			self:SetMoveType(MOVETYPE_WALK)
+			
+		end
+		
 		self.ixCouldShoot = nil
 
 		if (self.ixSeqCallback) then
