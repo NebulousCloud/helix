@@ -27,7 +27,7 @@ if (CLIENT) then
 				self.index = key
 			end
 
-			if (self.orderedIndex or isvector(key)) then
+			if (self.orderedIndex or value.origin or isvector(key)) then
 				local curTime = CurTime()
 
 				self.orderedIndex = self.orderedIndex or 1
@@ -147,8 +147,8 @@ if (CLIENT) then
 		PLUGIN.scenes = util.JSONToTable(uncompressed)
 
 		for k, v in pairs(PLUGIN.scenes) do
-			if (isvector(k)) then
-				table.insert(PLUGIN.ordered, {k, v})
+			if (v.origin or isvector(k)) then
+				table.insert(PLUGIN.ordered, {v.origin and v.origin or k, v})
 			end
 		end
 	end)
@@ -183,8 +183,8 @@ else
 		local data
 
 		if (position2) then
-			data = {position2, angles, angles2}
-			self.scenes[position] = data
+			data = {origin=position, position2, angles, angles2}
+			self.scenes[#self.scenes + 1] = data
 
 			net.Start("ixMapSceneAddPair")
 				net.WriteTable(data)

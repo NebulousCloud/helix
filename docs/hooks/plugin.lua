@@ -99,6 +99,22 @@ end
 function CanPlayerAccessDoor(client, door, access)
 end
 
+--- Whether or not a player is allowed to combine an item `other` into the given `item`.
+-- @realm server
+-- @player client Player attempting to combine an item into another
+-- @number item instance ID of the item being dropped onto
+-- @number other instance ID of the item being combined into the first item, this can be invalid due to it being from clientside
+-- @treturn bool Whether or not to allow the player to combine the items
+-- @usage function PLUGIN:CanPlayerCombineItem(client, item, other)
+--		local otherItem = ix.item.instances[other]
+--
+--		if (otherItem and otherItem.uniqueID == "soda") then
+--			return false -- disallow combining any item that has a uniqueID equal to `soda`
+--		end
+--	end
+function CanPlayerCombineItem(client, item, other)
+end
+
 --- Whether or not a player is allowed to create a new character with the given payload.
 -- @realm server
 -- @player client Player attempting to create a new character

@@ -28,7 +28,7 @@ if (SERVER) then
 
 	function PLUGIN:PlayerSpawnedProp(client, model, entity)
 		model = tostring(model):lower()
-		local data = ix.container.stored[model:lower()]
+		local data = ix.container.stored[model]
 
 		if (data) then
 			if (hook.Run("CanPlayerSpawnContainer", client, model, entity) == false) then return end
