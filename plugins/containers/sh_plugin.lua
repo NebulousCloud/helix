@@ -190,7 +190,7 @@ if (SERVER) then
 			end
 		end
 
-		client.ixNextContainerPassword = RealTime() + 5
+		client.ixNextContainerPassword = RealTime() + 1
 	end)
 
 	ix.log.AddType("containerPassword", function(client, ...)
