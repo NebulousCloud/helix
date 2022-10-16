@@ -132,6 +132,7 @@ if (SERVER) then
 						entity.password = v[5]
 						entity:SetLocked(true)
 						entity.Sessions = {}
+						entity.PasswordAttempts = {}
 					end
 
 					if (v[6]) then
@@ -167,6 +168,15 @@ if (SERVER) then
 		end
 
 		local entity = net.ReadEntity()
+		local steamID = client:SteamID()
+		local attempts = entity.PasswordAttempts[steamID]
+
+		if (attempts and attempts >= 10) then
+			client:NotifyLocalized("passwordAttemptLimit")
+
+			return
+		end
+
 		local password = net.ReadString()
 		local dist = entity:GetPos():DistToSqr(client:GetPos())
 
@@ -174,11 +184,13 @@ if (SERVER) then
 			if (entity.password and entity.password == password) then
 				entity:OpenInventory(client)
 			else
+				entity.PasswordAttempts[steamID] = attempts and attempts + 1 or 1
+
 				client:NotifyLocalized("wrongPassword")
 			end
 		end
 
-		client.ixNextContainerPassword = RealTime() + 0.5
+		client.ixNextContainerPassword = RealTime() + 1
 	end)
 
 	ix.log.AddType("containerPassword", function(client, ...)
@@ -265,6 +277,7 @@ properties.Add("container_setpassword", {
 		local password = net.ReadString()
 
 		entity.Sessions = {}
+		entity.PasswordAttempts = {}
 
 		if (password:len() != 0) then
 			entity:SetLocked(true)
