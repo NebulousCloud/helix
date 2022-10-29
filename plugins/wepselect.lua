@@ -112,7 +112,7 @@ if (CLIENT) then
 			end
 
 			if (text != "") then
-				self.markup = markup.Parse("<font=ixItemDescFont>"..text, ScrW() * 0.3)
+				self.markup = markup.Parse("<font=ixItemDescFont>" .. text, ScrW() * 0.3)
 				self.infoAlpha = 0
 			end
 
@@ -124,27 +124,37 @@ if (CLIENT) then
 	function PLUGIN:PlayerBindPress(client, bind, pressed)
 		bind = bind:lower()
 
-		if (!pressed or !bind:find("invprev") and !bind:find("invnext")
+		local bScrollUp = bind:find("invprev")
+		local bScrollDown = bind:find("invnext")
+
+		if (!pressed or !bScrollUp and !bScrollDown
 		and !bind:find("slot") and !bind:find("attack")) then
 			return
 		end
 
-		local currentWeapon = client:GetActiveWeapon()
-		local bValid = IsValid(currentWeapon)
-		local bTool
-
-		if (client:InVehicle() or (bValid and currentWeapon:GetClass() == "weapon_physgun" and client:KeyDown(IN_ATTACK))) then
+		if (client:InVehicle()) then
 			return
 		end
 
-		if (bValid and currentWeapon:GetClass() == "gmod_tool") then
-			local tool = client:GetTool()
-			bTool = tool and (tool.Scroll != nil)
+		local currentWeapon = client:GetActiveWeapon()
+		local bValid = currentWeapon:IsValid()
+
+		if (bValid and currentWeapon:GetClass() == "weapon_physgun" and client:KeyDown(IN_ATTACK)) then
+			return
 		end
 
 		local weapons = client:GetWeapons()
+		if #weapons == 0 then return end
 
-		if (bind:find("invprev") and !bTool) then
+		local bHoldingToolgun = bValid and currentWeapon:GetClass() == "gmod_tool"
+		local tool = client:GetTool()
+		local tr = client:GetEyeTraceNoCursor()
+
+		if (bScrollUp) then
+			if (bHoldingToolgun and tool and tool.Scroll and tool:Scroll(tr, 0)) then
+				return
+			end
+
 			local oldIndex = self.index
 			self.index = math.min(self.index + 1, #weapons)
 
@@ -153,7 +163,11 @@ if (CLIENT) then
 			end
 
 			return true
-		elseif (bind:find("invnext") and !bTool) then
+		elseif (bScrollDown) then
+			if (bHoldingToolgun and tool and tool.Scroll and tool:Scroll(tr, 0)) then
+				return
+			end
+
 			local oldIndex = self.index
 			self.index = math.max(self.index - 1, 1)
 
