@@ -144,7 +144,9 @@ if (CLIENT) then
 		end
 
 		local weapons = client:GetWeapons()
-		if #weapons == 0 then return end
+		if (#weapons == 0) then
+	 		return
+		end
 
 		local bHoldingToolgun = bValid and currentWeapon:GetClass() == "gmod_tool"
 		local tool = client:GetTool()
