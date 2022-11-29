@@ -296,7 +296,7 @@ function PANEL:PaintUnder(width, height)
 end
 
 function PANEL:Paint(width, height)
-	self:PaintUnder()
+	self:PaintUnder(width, height)
 
 	-- directional arrow
 	self.bRaised = LocalPlayer():IsWepRaised()
