@@ -227,12 +227,13 @@ end
 -- if you aren't locally storing a `Material()` call.
 -- @realm shared
 -- @string materialPath Path to the material
+-- @string[opt] materialParameters 
 -- @treturn[1] material The cached material
 -- @treturn[2] nil If the material doesn't exist in the filesystem
-function ix.util.GetMaterial(materialPath)
+function ix.util.GetMaterial(materialPath, materialParameters)
 	-- Cache the material.
 	ix.util.cachedMaterials = ix.util.cachedMaterials or {}
-	ix.util.cachedMaterials[materialPath] = ix.util.cachedMaterials[materialPath] or Material(materialPath)
+	ix.util.cachedMaterials[materialPath] = ix.util.cachedMaterials[materialPath] or Material(materialPath, materialParameters)
 
 	return ix.util.cachedMaterials[materialPath]
 end
