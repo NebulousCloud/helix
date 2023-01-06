@@ -709,7 +709,7 @@ do
 					inventory:Sync(client)
 				end
 
-				if ((!inventory.owner or (inventory.owner and inventory.owner == character:GetID())) and
+				if ((!inventory.owner or (inventory.owner and inventory.owner == character:GetID())) or
 					inventory:OnCheckAccess(client)) then
 					local item = inventory:GetItemAt(oldX, oldY)
 
