@@ -73,14 +73,23 @@ if (SERVER) then
 
 		if (inventory) then
 			local name = self:GetDisplayName()
-
+			local def = ix.container.stored[self:GetModel():lower()]
 			ix.storage.Open(activator, inventory, {
 				name = name,
 				entity = self,
+				bMultipleUsers = true,
 				searchTime = ix.config.Get("containerOpenTime", 0.7),
 				data = {money = self:GetMoney()},
+				OnPlayerOpen = function()
+					if def.OnOpen then 
+						def.OnOpen(self, activator)
+					end
+				end,
 				OnPlayerClose = function()
 					ix.log.Add(activator, "closeContainer", name, inventory:GetID())
+                    if def.OnClose then
+                        def.OnClose(self, activator)
+                    end
 				end
 			})
 
