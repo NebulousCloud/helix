@@ -81,7 +81,7 @@ if (SERVER) then
 				searchTime = ix.config.Get("containerOpenTime", 0.7),
 				data = {money = self:GetMoney()},
 				OnPlayerOpen = function()
-					if def.OnOpen then 
+					if def.OnOpen then
 						def.OnOpen(self, activator)
 					end
 				end,
