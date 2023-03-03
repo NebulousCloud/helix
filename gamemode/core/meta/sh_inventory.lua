@@ -558,7 +558,7 @@ end
 --- Returns an iterator that returns all contained items, a better way to iterate items than `pairs(inventory:GetItems())`
 -- @realm shared
 -- @treturn function iterator
-function META:iter()
+function META:Iter()
 	local x, y, item = 1, 1
 
 	return function()
