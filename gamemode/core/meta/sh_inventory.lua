@@ -555,6 +555,31 @@ function META:GetItems(onlyMain)
 	return items
 end
 
+--- Returns an iterator that returns all contained items, a better way to iterate items than `pairs(inventory:GetItems())`
+-- @realm shared
+-- @treturn function iterator
+function META:Iter()
+	local x, y, item = 1, 1
+
+	return function()
+		item = nil
+
+		repeat
+			if (x > self.w) then
+				x, y = 1, y + 1
+				if (y > self.h) then return nil end
+			end
+
+			item = self.slots[x] and self.slots[x][y]
+			x = x + 1
+		until item
+
+		if (item) then
+			return item, x, y
+		end
+	end
+end
+
 -- This function may pretty heavy.
 --- Returns a table of all the items that an `Inventory` has.
 -- @realm shared
