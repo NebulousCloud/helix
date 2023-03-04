@@ -2320,6 +2320,11 @@ Initialize											</a>
 										</li>
 										<li>
 											<span class="realm shared"></span>
+											<a href="../../classes/inventory/#Iter">
+Iter											</a>
+										</li>
+										<li>
+											<span class="realm shared"></span>
 											<a href="../../classes/inventory/#OnCheckAccess">
 OnCheckAccess											</a>
 										</li>
@@ -2707,7 +2712,7 @@ attaches inventories to props, allowing for items to be stored outside of any ch
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L767">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L792">View source &raquo;</a>
 
 					<p>Add an item to the inventory.</p>
 			</header>
@@ -3581,7 +3586,7 @@ end
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L750">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L775">View source &raquo;</a>
 
 					<p>Gets whether or not an <a href="../../classes/inventory/#">Inventory</a> should save.
  Inventories that are marked to not save will not update in the Database, if they inventory is already saved,
@@ -3651,7 +3656,7 @@ end
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L596">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L621">View source &raquo;</a>
 
 					<p>Returns the item with the given unique ID (e.g <code>&quot;handheld_radio&quot;</code>) if it exists in this inventory.
  This method checks both
@@ -3728,7 +3733,7 @@ end
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L672">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L697">View source &raquo;</a>
 
 					<p>Whether or not an <a href="../../classes/inventory/#">Inventory</a> has an item of a base, optionally with specified data.
  This function has an optional <code>data</code> argument, which will take a <a href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a>.
@@ -3803,7 +3808,7 @@ end
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L637">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L662">View source &raquo;</a>
 
 					<p>Checks whether or not the <a href="../../classes/inventory/#">Inventory</a> has a table of items.
  This function takes a table with <strong>no</strong> keys and runs in order of first item > last item,
@@ -3921,6 +3926,33 @@ if not Entity(1):GetCharacter():GetInventory():HasItems(itemFilter) then return 
 							</li>
 					</ul>
 
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="Iter">
+					<h1><span class="realm shared"></span></span>Inventory:Iter()</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L561">View source &raquo;</a>
+
+					<p>Returns an iterator that returns all contained items, a better way to iterate items than <code>pairs(inventory:GetItems())</code></p>
+			</header>
+
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">function</span>
+
+								<p>iterator</p>
+							</li>
+
+				</ul>
 
 
 		</section>
@@ -4116,7 +4148,7 @@ if not Entity(1):GetCharacter():GetInventory():HasItems(itemFilter) then return 
 						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
 					</div>
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L714">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L739">View source &raquo;</a>
 
 					<p>Sends a specific slot to a character.
  This will <em>not</em> send all of the slots of the <a href="../../classes/item/#">Item</a> to the character, items can occupy multiple slots.</p>
@@ -4225,7 +4257,7 @@ if not Entity(1):GetCharacter():GetInventory():HasItems(itemFilter) then return 
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L740">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L765">View source &raquo;</a>
 
 					<p>Sets whether  or not an <a href="../../classes/inventory/#">Inventory</a> should save.
  This will prevent an <a href="../../classes/inventory/#">Inventory</a> from updating in the Database, if the inventory is already saved,
@@ -4305,7 +4337,7 @@ if not Entity(1):GetCharacter():GetInventory():HasItems(itemFilter) then return 
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L918">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_inventory.lua#L943">View source &raquo;</a>
 
 					<p>Syncs the <a href="../../classes/inventory/#">Inventory</a> to the receiver.
  This will call Item.OnSendData on every item in the <a href="../../classes/inventory/#">Inventory</a>.</p>
