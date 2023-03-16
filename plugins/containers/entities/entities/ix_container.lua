@@ -88,6 +88,10 @@ if (SERVER) then
 					end
 				end,
 				OnPlayerClose = function()
+					if (definition.OnClose) then
+                       	                    definition.OnClose(self, activator)
+                                        end
+                    
 					ix.log.Add(activator, "closeContainer", name, inventory:GetID())
                     if def.OnClose then
                         def.OnClose(self, activator)
