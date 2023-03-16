@@ -377,6 +377,8 @@ ix.command.Add("CharUnban", {
 						v2:NotifyLocalized("charUnBan", client:GetName(), v:GetName())
 					end
 				end
+
+				return
 			end
 		end
 
@@ -407,7 +409,11 @@ ix.command.Add("CharUnban", {
 						updateQuery:Where("id", characterID)
 					updateQuery:Execute()
 
-					ix.util.NotifyLocalized("charUnBan", nil, client:GetName(), name)
+					for _, v in ipairs(player.GetAll()) do
+						if (self:OnCheckAccess(v)) then
+							v:NotifyLocalized("charUnBan", client:GetName(), name)
+						end
+					end
 				end
 			end)
 		query:Execute()
