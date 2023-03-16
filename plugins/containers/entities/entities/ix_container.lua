@@ -78,25 +78,19 @@ if (SERVER) then
 			ix.storage.Open(activator, inventory, {
 				name = name,
 				entity = self,
-				bMultipleUsers = true,
 				searchTime = ix.config.Get("containerOpenTime", 0.7),
 				data = {money = self:GetMoney()},
 				OnPlayerOpen = function()
 					if (definition.OnOpen) then
 					    definition.OnOpen(self, activator)
 					end
-						def.OnOpen(self, activator)
-					end
 				end,
 				OnPlayerClose = function()
 					if (definition.OnClose) then
-                       	                    definition.OnClose(self, activator)
-                                        end
+						definition.OnClose(self, activator)
+					end
                     
 					ix.log.Add(activator, "closeContainer", name, inventory:GetID())
-                    if def.OnClose then
-                        def.OnClose(self, activator)
-                    end
 				end
 			})
 
@@ -115,10 +109,10 @@ if (SERVER) then
 			local character = activator:GetCharacter()
 
 			if (character) then
-				local def = ix.container.stored[self:GetModel():lower()]
+				local definition = ix.container.stored[self:GetModel():lower()]
 
 				if (self:GetLocked() and !self.Sessions[character:GetID()]) then
-					self:EmitSound(def.locksound or "doors/default_locked.wav")
+					self:EmitSound(definition.locksound or "doors/default_locked.wav")
 
 					if (!self.keypad) then
 						net.Start("ixContainerPassword")
