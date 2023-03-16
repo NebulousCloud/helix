@@ -374,7 +374,7 @@ ix.command.Add("CharUnban", {
 
 				for _, v2 in ipairs(player.GetAll()) do
 					if (self:OnCheckAccess(v2) or v2 == v:GetPlayer()) then
-						v:NotifyLocalized("charUnban", client:GetName(), v:GetName())
+						v:NotifyLocalized("charUnBan", client:GetName(), v:GetName())
 					end
 				end
 			end
