@@ -73,7 +73,8 @@ if (SERVER) then
 
 		if (inventory) then
 			local name = self:GetDisplayName()
-			local def = ix.container.stored[self:GetModel():lower()]
+			local definition = ix.container.stored[self:GetModel():lower()]
+			
 			ix.storage.Open(activator, inventory, {
 				name = name,
 				entity = self,
