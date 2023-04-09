@@ -46,12 +46,18 @@ function ix.option.Add(key, optionType, default, data)
 
 	data = data or {}
 
+	local oldOption = ix.option.stored[key]
 	local categories = ix.option.categories
 	local category = data.category or "misc"
 	local upperName = key:sub(1, 1):upper() .. key:sub(2)
 
 	categories[category] = categories[category] or {}
 	categories[category][key] = true
+
+	-- using explicit nil comparisons so we don't get caught by a config's value being `false`
+	if (oldOption != nil and oldOption.default != nil) then
+		default = oldOption.default
+	end
 
 	--- You can specify additional optional arguments for `ix.option.Add` by passing in a table of specific fields as the fourth
 	-- argument.
@@ -120,7 +126,6 @@ function ix.option.SetDefault(key, value)
 	else
 		-- set up dummy option if we're setting default of option that doesn't exist yet (i.e schema setting framework default)
 		ix.option.stored[key] = {
-			value = value,
 			default = value
 		}
 	end
