@@ -53,16 +53,15 @@ function PANEL:OpenPicker()
 
 	self.picker.OnValueChanged = function(panel)
 		local newColor = panel:GetValue()
-		newColor = Color(newColor.r, newColor.g, newColor.b, newColor.a)
 
 		if (newColor != self.color) then
-			self.color = newColor
-			self:OnValueChanged(newColor)
+			self:SetValue(newColor)
+			self:OnValueChanged(self.color)
 		end
 	end
 
 	self.picker.OnValueUpdated = function(panel)
-		self.color = panel:GetValue()
+		self:SetValue(panel:GetValue())
 	end
 end
 
