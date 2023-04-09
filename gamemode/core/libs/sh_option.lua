@@ -108,6 +108,24 @@ function ix.option.Add(key, optionType, default, data)
 	}
 end
 
+--- Sets the default value for a user option.
+-- @realm shared
+-- @string key Unique ID of the option
+-- @param value Default value for the user option
+function ix.option.SetDefault(key, value)
+	local option = ix.option.stored[key]
+
+	if (option) then
+		option.default = value
+	else
+		-- set up dummy option if we're setting default of option that doesn't exist yet (i.e schema setting framework default)
+		ix.option.stored[key] = {
+			value = value,
+			default = value
+		}
+	end
+end
+
 --- Loads all saved options from disk.
 -- @realm shared
 -- @internal
