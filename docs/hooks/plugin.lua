@@ -593,7 +593,7 @@ end
 function OnCharacterCreated(client, character)
 end
 
---- @realm shared
+--- @realm server
 function OnCharacterDisconnect(client, character)
 end
 
