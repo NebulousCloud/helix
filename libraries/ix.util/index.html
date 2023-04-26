@@ -1888,6 +1888,11 @@ IncludeDir											</a>
 IsColor											</a>
 										</li>
 										<li>
+											<span class="realm shared"></span>
+											<a href="../../libraries/ix.util/#ix.util.MetatableSafeTableMerge">
+MetatableSafeTableMerge											</a>
+										</li>
+										<li>
 											<span class="realm client"></span>
 											<a href="../../libraries/ix.util/#ix.util.PushBlur">
 PushBlur											</a>
@@ -3700,6 +3705,61 @@ end
 									<span class="type">bool</span>
 
 								<p>Whether or not the input is a color</p>
+							</li>
+
+				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="ix.util.MetatableSafeTableMerge">
+					<h1><span class="realm shared"></span></span>ix.util.MetatableSafeTableMerge(destination, source)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/sh_util.lua#L1150">View source &raquo;</a>
+
+					<p>Merges the contents of the second table with the content in the first one.  The destination table will be modified.
+ If element is table but not metatable object, value's elements will be changed only.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">destination</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+
+
+								<p> The table you want the source table to merge with</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">source</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+
+
+								<p> The table you want to merge with the destination table</p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="tag type">any</span>
+
+								<p>table</p>
 							</li>
 
 				</ul>
