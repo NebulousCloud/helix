@@ -42,7 +42,7 @@ if (SERVER) then
 			ix.inventory.New(0, "container:" .. model:lower(), function(inventory)
 				-- we'll technically call this a bag since we don't want other bags to go inside
 				inventory.vars.isBag = true
-				inventory.vars.isContainer = true
+				inventory.vars.isContainer = "container:" .. model:lower()
 
 				if (IsValid(container)) then
 					container:SetInventory(inventory)
@@ -145,7 +145,7 @@ if (SERVER) then
 
 					ix.inventory.Restore(inventoryID, data2.width, data2.height, function(inventory)
 						inventory.vars.isBag = true
-						inventory.vars.isContainer = true
+						inventory.vars.isContainer = "container:" .. v[4]:lower()
 
 						if (IsValid(entity)) then
 							entity:SetInventory(inventory)
