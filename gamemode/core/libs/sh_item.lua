@@ -239,7 +239,7 @@ function ix.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 				-- we don't know which item was actually edited, so we'll refresh all of them
 				for _, v in pairs(ix.item.instances) do
 					if (v.uniqueID == uniqueID) then
-						table.Merge(v, ITEM)
+						ix.util.MetatableSafeTableMerge(v, ITEM)
 					end
 				end
 			end

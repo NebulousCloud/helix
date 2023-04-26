@@ -1141,5 +1141,24 @@ function ix.util.EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
 	return delay
 end
 
+--- Merges the contents of the second table with the content in the first one. The destination table will be modified.
+--- If element is table but not metatable object, value's elements will be changed only.
+-- @realm shared
+-- @tab destination The table you want the source table to merge with
+-- @tab source The table you want to merge with the destination table
+-- @return table
+function ix.util.MetatableSafeTableMerge(destination, source)
+	for k, v in pairs(source) do
+		if (istable(v) and istable(destination[k]) and getmetatable(v) == nil) then
+			-- don't overwrite one table with another
+			-- instead merge them recurisvely
+			ix.util.MetatableSafeTableMerge(destination[k], v);
+		else
+			destination[ k ] = v;
+		end
+	end
+	return destination;
+end
+
 ix.util.Include("helix/gamemode/core/meta/sh_entity.lua")
 ix.util.Include("helix/gamemode/core/meta/sh_player.lua")
