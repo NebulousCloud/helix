@@ -61,7 +61,7 @@ function ix.item.Instance(index, uniqueID, itemData, x, y, callback, characterID
 		local query = mysql:Insert("ix_items")
 			query:Insert("inventory_id", index)
 			query:Insert("unique_id", uniqueID)
-			query:Insert("data", util.TableToJSON(itemData))
+			query:Insert("data", util.TableToJSON(itemData or {}))
 			query:Insert("x", x)
 			query:Insert("y", y)
 
