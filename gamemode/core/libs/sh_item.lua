@@ -79,7 +79,7 @@ function ix.item.Instance(index, uniqueID, itemData, x, y, callback, characterID
 				local item = ix.item.New(uniqueID, lastID)
 
 				if (item) then
-					item.data = itemData
+					item.data = table.Copy(itemData)
 					item.invID = index
 					item.characterID = characterID
 					item.playerID = playerID
