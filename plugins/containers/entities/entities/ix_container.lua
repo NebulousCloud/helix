@@ -74,7 +74,7 @@ if (SERVER) then
 		if (inventory) then
 			local name = self:GetDisplayName()
 			local definition = ix.container.stored[self:GetModel():lower()]
-			
+
 			ix.storage.Open(activator, inventory, {
 				name = name,
 				entity = self,
@@ -89,7 +89,7 @@ if (SERVER) then
 					if (definition.OnClose) then
 						definition.OnClose(self, activator)
 					end
-                    
+
 					ix.log.Add(activator, "closeContainer", name, inventory:GetID())
 				end
 			})
