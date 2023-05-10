@@ -425,7 +425,7 @@ local vignetteAlphaDelta = 0
 local vignetteTraceHeight = Vector(0, 0, 768)
 local blurGoal = 0
 local blurDelta = 0
-local hasVignetteMaterial = vignette != "___error"
+local hasVignetteMaterial = !vignette:IsError()
 
 timer.Create("ixVignetteChecker", 1, 0, function()
 	local client = LocalPlayer()

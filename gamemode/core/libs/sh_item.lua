@@ -58,6 +58,8 @@ end
 
 function ix.item.Instance(index, uniqueID, itemData, x, y, callback, characterID, playerID)
 	if (!uniqueID or ix.item.list[uniqueID]) then
+		itemData = istable(itemData) and itemData or {}
+
 		local query = mysql:Insert("ix_items")
 			query:Insert("inventory_id", index)
 			query:Insert("unique_id", uniqueID)
@@ -77,7 +79,7 @@ function ix.item.Instance(index, uniqueID, itemData, x, y, callback, characterID
 				local item = ix.item.New(uniqueID, lastID)
 
 				if (item) then
-					item.data = istable(itemData) and table.Copy(itemData) or {}
+					item.data = table.Copy(itemData)
 					item.invID = index
 					item.characterID = characterID
 					item.playerID = playerID
@@ -239,7 +241,7 @@ function ix.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 				-- we don't know which item was actually edited, so we'll refresh all of them
 				for _, v in pairs(ix.item.instances) do
 					if (v.uniqueID == uniqueID) then
-						table.Merge(v, ITEM)
+						ix.util.MetatableSafeTableMerge(v, ITEM)
 					end
 				end
 			end
