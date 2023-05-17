@@ -1100,16 +1100,14 @@ do
 		-- Used for setting random access vars on the "var" character var (really stupid).
 		-- Clean this up someday.
 		net.Receive("ixCharacterVar", function()
-			local id = net.ReadUInt(32)
+			local id = net.ReadUInt(14)
 			local character = ix.char.loaded[id]
 
 			if (character) then
 				local key = net.ReadString()
 				local value = net.ReadType()
-				local oldVar = character:GetVar()[key]
-				character:GetVar()[key] = value
 
-				hook.Run("CharacterVarChanged", character, key, oldVar, value)
+				character.vars.vars[key] = value
 			end
 		end)
 
