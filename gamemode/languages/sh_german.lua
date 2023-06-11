@@ -1,3 +1,8 @@
+
+-- GERMAN TRANSLATION
+-- Fixed from: https://steamcommunity.com/id/feeeedox/
+
+
 NAME = "Deutsch"
 
 LANGUAGE = {
