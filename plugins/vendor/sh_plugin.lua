@@ -386,7 +386,7 @@ if (SERVER) then
 				client:NotifyLocalized("businessSell", name, ix.currency.Get(price))
 				entity:TakeMoney(price)
 				entity:AddStock(uniqueID)
-				
+
 				ix.log.Add(client, "vendorSell", name, entity:GetDisplayName(), ix.currency.Get(price))
 			else
 				local stock = entity:GetStock(uniqueID)
