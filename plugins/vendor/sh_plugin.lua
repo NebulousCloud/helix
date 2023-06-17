@@ -138,6 +138,18 @@ if (SERVER) then
 		return string.format("%s used the '%s' vendor.", client:Name(), arg[1])
 	end)
 
+	ix.log.AddType("vendorBuy", function(client, ...)
+		local arg = {...}
+
+		return string.format("%s purchased a '%s' from the '%s' vendor for %s.", client:Name(), arg[1], arg[2], arg[3])
+	end)
+
+	ix.log.AddType("vendorSell", function(client, ...)
+		local arg = {...}
+
+		return string.format("%s sold a '%s' to the '%s' vendor for %s.", client:Name(), arg[1], arg[2], arg[3])
+	end)
+
 	net.Receive("ixVendorClose", function(length, client)
 		local entity = client.ixVendor
 
@@ -370,13 +382,12 @@ if (SERVER) then
 					return client:NotifyLocalized("tellAdmin", "trd!iid")
 				end
 
-				client:GetCharacter():GiveMoney(price)
+				client:GetCharacter():GiveMoney(price, price == 0)
 				client:NotifyLocalized("businessSell", name, ix.currency.Get(price))
 				entity:TakeMoney(price)
 				entity:AddStock(uniqueID)
 
-				PLUGIN:SaveData()
-				hook.Run("CharacterVendorTraded", client, entity, uniqueID, isSellingToVendor)
+				ix.log.Add(client, "vendorSell", name, entity:GetDisplayName(), ix.currency.Get(price))
 			else
 				local stock = entity:GetStock(uniqueID)
 
@@ -390,7 +401,7 @@ if (SERVER) then
 
 				local name = L(ix.item.list[uniqueID].name, client)
 
-				client:GetCharacter():TakeMoney(price)
+				client:GetCharacter():TakeMoney(price, price == 0)
 				client:NotifyLocalized("businessPurchase", name, ix.currency.Get(price))
 
 				entity:GiveMoney(price)
@@ -405,9 +416,11 @@ if (SERVER) then
 
 				entity:TakeStock(uniqueID)
 
-				PLUGIN:SaveData()
-				hook.Run("CharacterVendorTraded", client, entity, uniqueID, isSellingToVendor)
+				ix.log.Add(client, "vendorBuy", name, entity:GetDisplayName(), ix.currency.Get(price))
 			end
+
+			PLUGIN:SaveData()
+			hook.Run("CharacterVendorTraded", client, entity, uniqueID, isSellingToVendor)
 		else
 			client:NotifyLocalized("vendorNoTrade")
 		end
