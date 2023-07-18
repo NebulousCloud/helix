@@ -139,7 +139,7 @@ if (CLIENT) then
 		local bTool
 		prevent_overflow = false
 
-		if (prevent or 
+		if (prevent or
 		client:InVehicle() or (bValid and currentWeapon:GetClass() == "weapon_physgun" and client:KeyDown(IN_ATTACK))) then
 			return
 		end
