@@ -64,7 +64,9 @@ function PLUGIN:AreaThink()
 			end
 
 			client.ixInArea = true
-		else
+		elseif (client.ixArea != "") then
+			hook.Run("OnPlayerAreaChanged", client, client.ixArea, "")
+			client.ixArea = ""
 			client.ixInArea = false
 		end
 	end
