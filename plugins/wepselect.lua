@@ -126,8 +126,8 @@ if (CLIENT) then
 	function PLUGIN:PlayerBindPress(client, bind, pressed)
 		bind = bind:lower()
 
-		if (!pressed or prevent_overflow or 
-		!bind:find("invprev") and !bind:find("invnext") and 
+		if (!pressed or prevent_overflow or
+		!bind:find("invprev") and !bind:find("invnext") and
 		!bind:find("slot") and !bind:find("attack")) then
 			return
 		end
@@ -139,7 +139,8 @@ if (CLIENT) then
 		local bTool
 		prevent_overflow = false
 
-		if (prevent or client:InVehicle() or (bValid and currentWeapon:GetClass() == "weapon_physgun" and client:KeyDown(IN_ATTACK))) then
+		if (prevent or 
+		client:InVehicle() or (bValid and currentWeapon:GetClass() == "weapon_physgun" and client:KeyDown(IN_ATTACK))) then
 			return
 		end
 
