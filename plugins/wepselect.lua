@@ -126,8 +126,8 @@ if (CLIENT) then
 	function PLUGIN:PlayerBindPress(client, bind, pressed)
 		bind = bind:lower()
 
-		if (!pressed or prevent_overflow or !bind:find("invprev") and !bind:find("invnext")
-		and !bind:find("slot") and !bind:find("attack")) then
+		if (!pressed or prevent_overflow or !bind:find("invprev") and 
+		!bind:find("invnext") and !bind:find("slot") and !bind:find("attack")) then
 			return
 		end
 
