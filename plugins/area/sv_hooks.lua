@@ -28,13 +28,13 @@ function PLUGIN:PlayerInitialSpawn(client)
 end
 
 function PLUGIN:PlayerLoadedCharacter(client)
-	hook.Run("OnPlayerAreaChanged", client, client.ixArea, "")
+	hook.Run("OnPlayerAreaChanged", client, client.ixArea or "", "")
 	client.ixArea = ""
 	client.ixInArea = nil
 end
 
 function PLUGIN:PlayerSpawn(client)
-	hook.Run("OnPlayerAreaChanged", client, client.ixArea, "")
+	hook.Run("OnPlayerAreaChanged", client, client.ixArea or "", "")
 	client.ixArea = ""
 	client.ixInArea = nil
 end
