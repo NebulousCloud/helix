@@ -422,7 +422,7 @@ if (SERVER) then
 	-- @see LeaveSequence
 	function playerMeta:ForceSequence(sequence, callback, time, bNoFreeze)
 		hook.Run("PlayerEnterSequence", self, sequence, callback, time, bNoFreeze)
-		self:SetLocalVelocity(Vector(0,0,0))
+		self:SetLocalVelocity(Vector(0, 0, 0))
 		
 		if (!sequence) then
 			net.Start("ixSequenceReset")
