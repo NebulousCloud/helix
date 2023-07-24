@@ -184,6 +184,7 @@ function PANEL:UpdateUnloaded(bNoSizeToContents)
 		end
 
 		local row = self:AddRow(ix.type.bool, self.unloadedCategory)
+		row.id = k
 
 		row.setting:SetEnabledText(L("on"):utf8upper())
 		row.setting:SetDisabledText(L("off"):utf8upper())
