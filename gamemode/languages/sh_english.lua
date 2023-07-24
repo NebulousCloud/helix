@@ -387,6 +387,8 @@ LANGUAGE = {
 	optdChatFontScale = "How much bigger or smaller the chat font should be.",
 	optChatOutline = "Outline chat text",
 	optdChatOutline = "Draws an outline around the chat text, rather than a drop shadow. Enable this if you are having trouble reading text.",
+	optEscCloseMenu = "Escape returns to game",
+	optdEscCloseMenu = "Whether the escape menu should close itself when you're using it to close the in-game menu.",
 
 	cmdRoll = "Rolls a number between 0 and the specified number.",
 	cmdPM = "Sends a private message to someone.",
