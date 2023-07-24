@@ -281,7 +281,7 @@ function ix.plugin.SetUnloaded(uniqueID, state, bNoSave)
 
 		ix.plugin.unloaded[uniqueID] = true
 	elseif (ix.plugin.unloaded[uniqueID]) then
-		ix.plugin.unloaded[uniqueID] = nil
+		ix.plugin.unloaded[uniqueID] = false
 	else
 		return false
 	end
