@@ -244,7 +244,9 @@ function ix.plugin.LoadEntities(path)
 end
 
 function ix.plugin.Initialize()
-	ix.plugin.unloaded = ix.data.Get("unloaded", {}, true, true)
+	if SERVER then
+		ix.plugin.unloaded = ix.data.Get("unloaded", {}, true, true)
+	end
 
 	ix.plugin.LoadFromDir("helix/plugins")
 
