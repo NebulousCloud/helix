@@ -332,7 +332,7 @@ else
 		local bEnabled = net.ReadBool()
 
 		if (bEnabled) then
-			ix.plugin.unloaded[uniqueID] = nil
+			ix.plugin.unloaded[uniqueID] = false
 		else
 			ix.plugin.unloaded[uniqueID] = true
 		end
