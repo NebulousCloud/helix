@@ -240,7 +240,7 @@ function PANEL:OnRemove()
 	self.activeCharacter:Remove()
 end
 
-vgui.Register("ixCharMenuCarousel", PANEL, "Panel")
+vgui.Register("ixCharacterMenuCarousel", PANEL, "Panel")
 
 -- character load panel
 PANEL = {}
@@ -283,7 +283,7 @@ function PANEL:Init()
 		parent.mainPanel:Undim()
 	end
 
-	self.characterList = controlList:Add("ixCharMenuButtonList")
+	self.characterList = controlList:Add("ixCharacterMenuButtonList")
 	self.characterList.buttons = {}
 	self.characterList:Dock(FILL)
 
@@ -319,7 +319,7 @@ function PANEL:Init()
 		self:SetActiveSubpanel("delete")
 	end
 
-	self.carousel = infoPanel:Add("ixCharMenuCarousel")
+	self.carousel = infoPanel:Add("ixCharacterMenuCarousel")
 	self.carousel:Dock(FILL)
 
 	-- character deletion panel
@@ -472,4 +472,4 @@ function PANEL:Paint(width, height)
 	derma.SkinFunc("PaintCharacterLoadBackground", self, width, height)
 end
 
-vgui.Register("ixCharMenuLoad", PANEL, "ixCharMenuPanel")
+vgui.Register("ixCharacterMenuLoad", PANEL, "ixCharacterMenuPanel")

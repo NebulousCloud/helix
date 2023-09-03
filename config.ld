@@ -11,6 +11,7 @@ module_file = {
 	Entity = "gamemode/core/meta/sh_entity.lua",
 	Inventory = "gamemode/core/meta/sh_inventory.lua",
 	Item = "gamemode/core/meta/sh_item.lua",
+	Payload = "gamemode/core/meta/sh_payload.lua",
 	Player = "gamemode/core/meta/sh_player.lua"
 }
 
@@ -68,6 +69,7 @@ tparam_alias("date", "date")
 tparam_alias("string", "string")
 tparam_alias("bool", "boolean")
 tparam_alias("func", "function")
+tparam_alias("payload", "Payload")
 tparam_alias("player", "Player")
 tparam_alias("entity", "Entity")
 tparam_alias("color", "color")

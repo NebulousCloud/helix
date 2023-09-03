@@ -522,7 +522,7 @@ do
 
 		local panel = ix.gui.entityInfo
 		local bShouldShow = time >= aimTime and (!IsValid(ix.gui.menu) or ix.gui.menu.bClosing) and
-			(!IsValid(ix.gui.characterMenu) or ix.gui.characterMenu.bClosing)
+			(!IsValid(ix.gui.characterMenu) or ix.charmenu.IsClosing())
 		local bShouldPopulate = lastEntity.OnShouldPopulateEntityInfo and lastEntity:OnShouldPopulateEntityInfo() or true
 
 		if (bShouldShow and IsValid(lastEntity) and hookRun("ShouldPopulateEntityInfo", lastEntity) != false and
@@ -793,7 +793,7 @@ function GM:PlayerBindPress(client, bind, pressed)
 end
 
 function GM:CreateMove(command)
-	if ((IsValid(ix.gui.characterMenu) and !ix.gui.characterMenu.bClosing) or
+	if (ix.charmenu.IsOpen() or
 		(IsValid(ix.gui.menu) and !ix.gui.menu.bClosing and ix.gui.menu:GetActiveTab() == "you")) then
 		command:ClearButtons()
 		command:ClearMovement()

@@ -55,7 +55,7 @@ function PANEL:Init()
 	characters:Dock(BOTTOM)
 	characters.DoClick = function()
 		self:Remove()
-		vgui.Create("ixCharMenu")
+		ix.charmenu.Create()
 	end
 
 	-- @todo make a better way to avoid clicks in the padding PLEASE
