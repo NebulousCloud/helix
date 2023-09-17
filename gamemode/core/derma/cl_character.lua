@@ -532,7 +532,7 @@ function PANEL:PaintOver(width, height)
 end
 
 function PANEL:OnRemove()
-	if (self.channel) then
+	if (IsValid(self.channel)) then
 		self.channel:Stop()
 		self.channel = nil
 	end
