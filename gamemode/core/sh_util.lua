@@ -692,8 +692,7 @@ end
 
 -- Vector extension, courtesy of code_gs
 do
-	local R = debug.getregistry()
-	local VECTOR = R.Vector
+	local VECTOR = FindMetaTable("Vector")
 	local CrossProduct = VECTOR.Cross
 	local right = Vector(0, -1, 0)
 
