@@ -690,6 +690,33 @@ if (CLIENT) then
 	end)
 end
 
+do
+    local registry do
+        local oldFindMetaTable = OldFindMetaTable or FindMetaTable
+
+        registry = setmetatable({}, {
+            __index = function(obj, key)
+                local tab = oldFindMetaTable(key)
+
+                if tab then
+                    obj[key] = tab
+                    return tab
+                end
+            end
+        })
+    end
+
+    function debug.getregistry()
+        return registry
+    end
+
+    OldFindMetaTable = OldFindMetaTable or FindMetaTable
+
+    function FindMetaTable(name)
+        return registry[name]
+    end
+end
+
 -- Vector extension, courtesy of code_gs
 do
 	local R = debug.getregistry()
