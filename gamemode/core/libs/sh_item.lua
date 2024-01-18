@@ -129,7 +129,7 @@ function ix.item.Register(uniqueID, baseID, isBaseItem, path, luaGenerated)
 		ITEM = (isBaseItem and ix.item.base or ix.item.list)[uniqueID] or setmetatable({}, meta)
 			ITEM.uniqueID = uniqueID
 			ITEM.base = baseID or ITEM.base
-			ITEM.isBase = isBaseItem
+			ITEM.isBase = isBaseItem or false
 			ITEM.hooks = ITEM.hooks or {}
 			ITEM.postHooks = ITEM.postHooks or {}
 			ITEM.functions = ITEM.functions or {}
