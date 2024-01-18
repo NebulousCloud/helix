@@ -60,7 +60,7 @@ function PANEL:OnMouseReleased(code)
 	end
 
 	self:DragMouseRelease(code)
-	self:SetZPos(99)
+	self:SetZPos(9999)
 	self:MouseCapture(false)
 end
 
