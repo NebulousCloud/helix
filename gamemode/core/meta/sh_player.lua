@@ -316,6 +316,13 @@ if (SERVER) then
 		end
 	end
 
+	-- Stops the player's current progress bar
+	-- @realm server
+	function meta:StopAction()
+		net.Start("ixActionBarReset")
+        net.Send(self)
+	end
+
 	--- Opens up a text box on this player's screen for input and returns the result. Remember to sanitize the user's input if
 	-- it's needed!
 	-- @realm server
