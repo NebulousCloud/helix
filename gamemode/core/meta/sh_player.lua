@@ -319,6 +319,7 @@ if (SERVER) then
 	-- Stops the player's current progress bar
 	-- @realm server
 	function meta:StopAction()
+		timer.Remove("ixAct"..self:UniqueID())
 		net.Start("ixActionBarReset")
         net.Send(self)
 	end
