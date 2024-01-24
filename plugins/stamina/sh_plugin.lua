@@ -30,21 +30,12 @@ local function CalcStaminaChange(client)
 		return 0
 	end
 
-	local runSpeed
-
-	if (SERVER) then
-		runSpeed = ix.config.Get("runSpeed") + character:GetAttribute("stm", 0)
-
-		if (client:WaterLevel() > 1) then
-			runSpeed = runSpeed * 0.775
-		end
-	end
-
 	local walkSpeed = ix.config.Get("walkSpeed")
 	local maxAttributes = ix.config.Get("maxAttributes", 100)
 	local offset
 
-	if (client:KeyDown(IN_SPEED) and client:GetVelocity():LengthSqr() >= (walkSpeed * walkSpeed)) then
+	if (!client:GetNetVar("brth", false) and client:KeyDown(IN_SPEED) and
+		client:GetVelocity():LengthSqr() >= walkSpeed * walkSpeed) then
 		-- characters could have attribute values greater than max if the config was changed
 		offset = -ix.config.Get("staminaDrain", 1) + math.min(character:GetAttribute("end", 0), maxAttributes) / 100
 	else
@@ -63,7 +54,6 @@ local function CalcStaminaChange(client)
 			client:SetLocalVar("stm", value)
 
 			if (value == 0 and !client:GetNetVar("brth", false)) then
-				client:SetRunSpeed(walkSpeed)
 				client:SetNetVar("brth", true)
 
 				character:UpdateAttrib("end", 0.1)
@@ -71,7 +61,6 @@ local function CalcStaminaChange(client)
 
 				hook.Run("PlayerStaminaLost", client)
 			elseif (value >= 50 and client:GetNetVar("brth", false)) then
-				client:SetRunSpeed(runSpeed)
 				client:SetNetVar("brth", nil)
 
 				hook.Run("PlayerStaminaGained", client)
@@ -80,6 +69,13 @@ local function CalcStaminaChange(client)
 	end
 end
 
+function PLUGIN:SetupMove(client, cMoveData)
+	if (client:GetNetVar("brth", false)) then
+		cMoveData:SetMaxClientSpeed(client:GetWalkSpeed())
+	elseif (client:WaterLevel() > 1) then
+		cMoveData:SetMaxClientSpeed(client:GetRunSpeed() * 0.775)
+	end
+end
 
 if (SERVER) then
 	function PLUGIN:PostPlayerLoadout(client)
