@@ -241,3 +241,82 @@ OverridePanel("DScrollPanel", function()
 		self.VBar:SetScroll(y)
 	end
 end)
+
+OverridePanel("DTextEntry", function()
+	Override("UpdateFromHistory")
+	function PANEL:UpdateFromHistory()
+
+		if ( IsValid( self.Menu ) ) then
+			return self:UpdateFromMenu()
+		end
+
+		local pos = self.HistoryPos
+		-- Is the Pos within bounds?
+		if ( pos < 0 ) then pos = #self.History end
+		if ( pos > #self.History ) then pos = 0 end
+
+		local text = self.History[ pos ]
+		if ( !text ) then text = "" end
+
+		self:SetText( text )
+		self:SetCaretPos( text:utf8len() )
+
+		self:OnTextChanged()
+
+		self.HistoryPos = pos
+
+	end
+
+	Override("UpdateFromMenu")
+	function PANEL:UpdateFromMenu()
+
+		local pos = self.HistoryPos
+		local num = self.Menu:ChildCount()
+
+		self.Menu:ClearHighlights()
+
+		if ( pos < 0 ) then pos = num end
+		if ( pos > num ) then pos = 0 end
+
+		local item = self.Menu:GetChild( pos )
+		if ( !item ) then
+			self:SetText( "" )
+			self.HistoryPos = pos
+			return
+		end
+
+		self.Menu:HighlightItem( item )
+
+		local txt = item:GetText()
+
+		self:SetText( txt )
+		self:SetCaretPos( txt:utf8len() )
+
+		self:OnTextChanged( true )
+
+		self.HistoryPos = pos
+
+	end
+
+	Override("OpenAutoComplete")
+	function PANEL:OpenAutoComplete( tab )
+
+		if ( !tab ) then return end
+		if ( #tab == 0 ) then return end
+
+		self.Menu = DermaMenu()
+
+		for _, v in pairs( tab ) do
+
+			self.Menu:AddOption( v, function() self:SetText( v ) self:SetCaretPos( v:utf8len() ) self:RequestFocus() end )
+
+		end
+
+		local x, y = self:LocalToScreen( 0, self:GetTall() )
+		self.Menu:SetMinimumWidth( self:GetWide() )
+		self.Menu:Open( x, y, true, self )
+		self.Menu:SetPos( x, y )
+		self.Menu:SetMaxHeight( ( ScrH() - y ) - 10 )
+
+	end
+end)
