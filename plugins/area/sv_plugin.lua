@@ -3,6 +3,7 @@ util.AddNetworkString("ixAreaSync")
 util.AddNetworkString("ixAreaAdd")
 util.AddNetworkString("ixAreaRemove")
 util.AddNetworkString("ixAreaChanged")
+util.AddNetworkString("ixAreaLeft")
 
 util.AddNetworkString("ixAreaEditStart")
 util.AddNetworkString("ixAreaEditEnd")
