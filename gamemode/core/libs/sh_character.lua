@@ -379,7 +379,7 @@ do
 		fieldType = ix.type.text,
 		default = "",
 		index = 2,
-		OnValidate = function(self, value, payload)
+		OnValidate = function(self, value, payload, client)
 			value = string.Trim((tostring(value):gsub("\r\n", ""):gsub("\n", "")))
 			local minLength = ix.config.Get("minDescriptionLength", 16)
 
@@ -389,9 +389,11 @@ do
 				return false, "invalid", "description"
 			end
 
-			return value
+			return hook.Run("GetDefaultCharacterDescription", client, payload.faction) or value
 		end,
 		OnPostSetup = function(self, panel, payload)
+			local description, disabled = hook.Run("GetDefaultCharacterDescription", LocalPlayer(), payload.faction)
+
 			panel:SetMultiline(true)
 			panel:SetFont("ixMenuButtonFont")
 			panel:SetTall(panel:GetTall() * 2 + 6) -- add another line
@@ -399,6 +401,16 @@ do
 				if (character == "\n" or character == "\r") then
 					return true
 				end
+			end
+
+			if (description) then
+				panel:SetText(description)
+				payload:Set("description", description)
+			end
+
+			if (disabled) then
+				panel:SetDisabled(true)
+				panel:SetEditable(false)
 			end
 		end,
 		alias = "Desc"
