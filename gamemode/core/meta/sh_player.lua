@@ -582,6 +582,7 @@ if (SERVER) then
 						time = time - 0.33
 
 						if (time <= 0) then
+							hook.Run("OnCharacterGetup", self, entity)
 							entity:Remove()
 						end
 					else
