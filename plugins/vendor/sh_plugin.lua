@@ -339,8 +339,10 @@ if (SERVER) then
 		if (!IsValid(entity) or client:GetPos():Distance(entity:GetPos()) > 192) then
 			return
 		end
-
-		local uniqueID = net.ReadString()
+		-- stopping exploiters
+		if not entity:CanAccess(client) then return false end;
+			
+ 		local uniqueID = net.ReadString()
 		local isSellingToVendor = net.ReadBool()
 
 		if (entity.items[uniqueID] and
