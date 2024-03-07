@@ -343,7 +343,7 @@ if (SERVER) then
 		if (!entity:CanAccess(client)) then
 			return
 		end
-			
+
  		local uniqueID = net.ReadString()
 		local isSellingToVendor = net.ReadBool()
 
