@@ -344,7 +344,7 @@ if (SERVER) then
 			return
 		end
 
- 		local uniqueID = net.ReadString()
+		local uniqueID = net.ReadString()
 		local isSellingToVendor = net.ReadBool()
 
 		if (entity.items[uniqueID] and
