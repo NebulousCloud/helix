@@ -442,6 +442,7 @@ function ITEM:Remove(bNoReplication, bNoDelete)
 			for _, v in pairs(items) do
 				if (v.invID == inv:GetID()) then
 					for x = self.gridX, self.gridX + (self.width - 1) do
+						inv.slots[x]={}
 						for y = self.gridY, self.gridY + (self.height - 1) do
 							inv.slots[x][y] = v.id
 						end
