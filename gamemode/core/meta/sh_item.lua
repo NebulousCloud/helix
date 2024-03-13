@@ -308,7 +308,7 @@ function ITEM:GetOwner()
 	for _, v in ipairs(player.GetAll()) do
 		local character = v:GetCharacter()
 
-		if (character and character:GetInventory():GetItemByID(id)) then
+		if (character and character:GetInventory() and character:GetInventory():GetItemByID(id)) then
 			return v
 		end
 	end
