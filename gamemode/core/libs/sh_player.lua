@@ -138,6 +138,8 @@ do
 					break
 				end
 			end
+
+			hook.Run("PlayerWeaponChanged", client, v)
 		end)
 	end
 end
