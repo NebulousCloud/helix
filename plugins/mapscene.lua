@@ -102,12 +102,16 @@ if (CLIENT) then
 		local data = net.ReadTable()
 
 		PLUGIN.scenes[#PLUGIN.scenes + 1] = data
+
+		hook.Run("MapSceneAdded", data)
 	end)
 
 	net.Receive("ixMapSceneRemove", function()
 		local index = net.ReadUInt(16)
 
 		PLUGIN.scenes[index] = nil
+
+		hook.Run("MapSceneRemoved", index)
 	end)
 
 	net.Receive("ixMapSceneAddPair", function()
