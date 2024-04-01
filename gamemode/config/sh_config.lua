@@ -105,7 +105,11 @@ end, {
 })
 ix.config.Add("runSpeed", 235, "How fast a player normally runs.", function(oldValue, newValue)
 	for _, v in ipairs(player.GetAll())	do
-		v:SetRunSpeed(newValue)
+		local character = v:GetCharacter()
+
+		if (character) then
+			ix.attributes.list["stm"]:OnSetup(v, character:GetAttribute("stm", 0))
+		end
 	end
 end, {
 	data = {min = 75, max = 500},
