@@ -617,4 +617,31 @@ else
 
 		net.SendToServer()
 	end
+
+	concommand.Add("ix", function(client, _, arguments)
+		ix.command.Send(table.remove(arguments, 1), unpack(arguments))
+	end, function(_, arguments)
+		arguments = arguments:TrimLeft()
+
+		local autocomplete = {}
+		local command = string.Explode(" ", arguments)[1]
+
+		for _, v in pairs(ix.command.FindAll(command, true, true)) do
+			if (v.OnCheckAccess and !v:OnCheckAccess(LocalPlayer())) then
+				continue
+			end
+
+			if (arguments:find(v.uniqueID, 1, true) == 1) then
+				return {
+					"ix " .. arguments,
+					v:GetDescription(),
+					L("syntax", v.syntax)
+				}
+			end
+
+			table.insert(autocomplete, "ix " .. v.uniqueID)
+		end
+
+		return autocomplete
+	end)
 end

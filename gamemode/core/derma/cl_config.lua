@@ -177,15 +177,21 @@ function PANEL:UpdateUnloaded(bNoSizeToContents)
 		end
 	end
 
-	for k, _ in SortedPairs(ix.plugin.unloaded) do
+	for k, v in SortedPairs(ix.plugin.unloaded) do
 		if (ix.plugin.list[k]) then
 			-- if this plugin is in the loaded plugins list then it's queued for an unload - don't display it in this category
 			continue
 		end
 
 		local row = self:AddRow(ix.type.bool, self.unloadedCategory)
+		row.id = k
+
+		row.setting:SetEnabledText(L("on"):utf8upper())
+		row.setting:SetDisabledText(L("off"):utf8upper())
+		row.setting:SizeToContents()
+
 		row:SetText(k)
-		row:SetValue(false, true)
+		row:SetValue(!v, true)
 
 		row.OnValueChanged = function(panel, bEnabled)
 			self:OnPluginToggled(k, bEnabled)

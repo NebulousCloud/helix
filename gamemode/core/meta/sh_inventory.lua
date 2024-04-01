@@ -537,7 +537,8 @@ function META:GetItems(onlyMain)
 				items[v2.id] = v2
 
 				v2.data = v2.data or {}
-				local isBag = v2.data.id
+				local isBag = (((v2.base == "base_bags") or v2.isBag) and v2.data.id)
+
 				if (isBag and isBag != self:GetID() and onlyMain != true) then
 					local bagInv = ix.item.inventories[isBag]
 
@@ -552,6 +553,31 @@ function META:GetItems(onlyMain)
 	end
 
 	return items
+end
+
+--- Returns an iterator that returns all contained items, a better way to iterate items than `pairs(inventory:GetItems())`
+-- @realm shared
+-- @treturn function iterator
+function META:Iter()
+	local x, y, item = 1, 1
+
+	return function()
+		item = nil
+
+		repeat
+			if (x > self.w) then
+				x, y = 1, y + 1
+				if (y > self.h) then return nil end
+			end
+
+			item = self.slots[x] and self.slots[x][y]
+			x = x + 1
+		until item
+
+		if (item) then
+			return item, x, y
+		end
+	end
 end
 
 -- This function may pretty heavy.

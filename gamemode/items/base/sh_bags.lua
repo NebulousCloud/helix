@@ -56,7 +56,7 @@ ITEM.functions.View = {
 }
 ITEM.functions.combine = {
 	OnRun = function(item, data)
-		ix.item.instances[data[1]]:Transfer(item:GetData("id"))
+		ix.item.instances[data[1]]:Transfer(item:GetData("id"), nil, nil, item.player)
 
 		return false
 	end,

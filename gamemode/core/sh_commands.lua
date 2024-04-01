@@ -372,7 +372,13 @@ ix.command.Add("CharUnban", {
 					return "@charNotBanned"
 				end
 
-				return ix.util.NotifyLocalized("charUnBan", nil, client:GetName(), v:GetName())
+				for _, v2 in ipairs(player.GetAll()) do
+					if (self:OnCheckAccess(v2) or v2 == v:GetPlayer()) then
+						v2:NotifyLocalized("charUnBan", client:GetName(), v:GetName())
+					end
+				end
+
+				return
 			end
 		end
 
@@ -403,7 +409,11 @@ ix.command.Add("CharUnban", {
 						updateQuery:Where("id", characterID)
 					updateQuery:Execute()
 
-					ix.util.NotifyLocalized("charUnBan", nil, client:GetName(), name)
+					for _, v in ipairs(player.GetAll()) do
+						if (self:OnCheckAccess(v)) then
+							v:NotifyLocalized("charUnBan", client:GetName(), name)
+						end
+					end
 				end
 			end)
 		query:Execute()
@@ -472,8 +482,10 @@ do
 			OnRun = function(self, client, amount)
 				amount = math.Round(amount)
 
-				if (amount <= 0) then
-					return "@invalidArg", 1
+				local minDropAmount = ix.config.Get("minMoneyDropAmount", 1)
+
+				if (amount < minDropAmount) then
+					return "@belowMinMoneyDrop", minDropAmount
 				end
 
 				if (!client:GetCharacter():HasMoney(amount)) then
@@ -728,7 +740,9 @@ ix.command.Add("PlyTransfer", {
 				end
 
 				for _, v in ipairs(player.GetAll()) do
-					v:NotifyLocalized("cChangeFaction", client:GetName(), target:GetName(), L(faction.name, v))
+					if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
+						v:NotifyLocalized("cChangeFaction", client:GetName(), target:GetName(), L(faction.name, v))
+					end
 				end
 			else
 				return "@charNotWhitelisted", target:GetName(), L(faction.name, client)
