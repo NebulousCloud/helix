@@ -106,7 +106,7 @@ if (CLIENT) then
 	--- Returns true if a faction can be joinned.
 	-- @realm client
 	-- @number faction Index of the faction
-	-- @treturn bool Whether or not the faction the player is whitelisted.
+	-- @treturn bool Whether or not the player is whitelisted for this faction.
 	function ix.faction.HasWhitelist(faction)
 		local data = ix.faction.indices[faction]
 
