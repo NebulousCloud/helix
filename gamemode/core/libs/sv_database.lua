@@ -159,8 +159,23 @@ end
 
 hook.Add("InitPostEntity", "ixDatabaseConnect", function()
 	-- Connect to the database using SQLite, mysqoo, or tmysql4.
+	ix.database_start_connected = false
 	ix.db.Connect()
+	timer.Create("START_FIX_DB_CONNECTED", 10, 0, function()
+		if ix.database_start_connected == false then
+			ix.db.Connect()
+		else
+			timer.Remove("START_FIX_DB_CONNECTED")
+		end
+	end)
 end)
+
+hook.Add("CheckPassword", "NoDatabaseConnectedStartServer", function()
+	if !ix.database_start_connected then
+		return false, "Database not connected"
+	end
+end)
+
 
 local resetCalled = 0
 
