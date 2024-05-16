@@ -768,14 +768,15 @@ end
 function GM:ShutDown()
 	ix.shuttingDown = true
 	ix.config.Save()
+	if ix.database_connected then
+		hook.Run("SaveData")
 
-	hook.Run("SaveData")
+		for _, v in ipairs(player.GetAll()) do
+			v:SaveData()
 
-	for _, v in ipairs(player.GetAll()) do
-		v:SaveData()
-
-		if (v:GetCharacter()) then
-			v:GetCharacter():Save()
+			if (v:GetCharacter()) then
+				v:GetCharacter():Save()
+			end
 		end
 	end
 end
@@ -945,7 +946,8 @@ function GM:DatabaseConnected()
 	ix.log.LoadTables()
 
 	MsgC(Color(0, 255, 0), "Database Type: " .. ix.db.config.adapter .. ".\n")
-
+	ix.database_connected = true
+	ix.database_start_connected = true
 	timer.Create("ixDatabaseThink", 0.5, 0, function()
 		mysql:Think()
 	end)
