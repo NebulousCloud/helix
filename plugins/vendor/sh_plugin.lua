@@ -403,6 +403,10 @@ if (SERVER) then
 					return client:NotifyLocalized("canNotAfford")
 				end
 
+				if !entity:CanSellToPlayer(client, uniqueID) then
+					return false
+				end
+
 				local name = L(ix.item.list[uniqueID].name, client)
 
 				client:GetCharacter():TakeMoney(price, price == 0)
