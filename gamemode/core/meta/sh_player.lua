@@ -356,7 +356,12 @@ if (SERVER) then
 			self.ixRestrictWeps = self.ixRestrictWeps or {}
 
 			for _, v in ipairs(self:GetWeapons()) do
-				self.ixRestrictWeps[#self.ixRestrictWeps + 1] = v:GetClass()
+				self.ixRestrictWeps[#self.ixRestrictWeps + 1] = {
+					class = v:GetClass(),
+					item = v.ixItem,
+					clip = v:Clip1()
+				}
+
 				v:Remove()
 			end
 
@@ -370,7 +375,13 @@ if (SERVER) then
 
 			if (self.ixRestrictWeps) then
 				for _, v in ipairs(self.ixRestrictWeps) do
-					self:Give(v)
+					local weapon = self:Give(v.class, true)
+
+					if (v.item) then
+						weapon.ixItem = v.item
+					end
+
+					weapon:SetClip1(v.clip)
 				end
 
 				self.ixRestrictWeps = nil
