@@ -318,7 +318,7 @@ if (SERVER) then
 			if (class.CanHear and !receivers) then
 				receivers = {}
 
-				for _, v in ipairs(player.GetAll()) do
+				for _, v in player.Iterator() do
 					if (v:GetCharacter() and class:CanHear(speaker, v, data) != false) then
 						receivers[#receivers + 1] = v
 					end

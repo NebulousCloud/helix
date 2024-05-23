@@ -100,7 +100,7 @@ ix.command.Add("CharGiveFlag", {
 
 		target:GiveFlags(flags)
 
-		for _, v in ipairs(player.GetAll()) do
+		for _, v in player.Iterator() do
 			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
 				v:NotifyLocalized("flagGive", client:GetName(), target:GetName(), flags)
 			end
@@ -125,7 +125,7 @@ ix.command.Add("CharTakeFlag", {
 
 		target:TakeFlags(flags)
 
-		for _, v in ipairs(player.GetAll()) do
+		for _, v in player.Iterator() do
 			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
 				v:NotifyLocalized("flagTake", client:GetName(), flags, target:GetName())
 			end
@@ -155,7 +155,7 @@ ix.command.Add("CharSetModel", {
 		target:SetModel(model)
 		target:GetPlayer():SetupHands()
 
-		for _, v in ipairs(player.GetAll()) do
+		for _, v in player.Iterator() do
 			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
 				v:NotifyLocalized("cChangeModel", client:GetName(), target:GetName(), model)
 			end
@@ -174,7 +174,7 @@ ix.command.Add("CharSetSkin", {
 		target:SetData("skin", skin)
 		target:GetPlayer():SetSkin(skin or 0)
 
-		for _, v in ipairs(player.GetAll()) do
+		for _, v in player.Iterator() do
 			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
 				v:NotifyLocalized("cChangeSkin", client:GetName(), target:GetName(), skin or 0)
 			end
@@ -267,7 +267,7 @@ ix.command.Add("CharSetName", {
 			end, target:GetName())
 		end
 
-		for _, v in ipairs(player.GetAll()) do
+		for _, v in player.Iterator() do
 			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
 				v:NotifyLocalized("cChangeName", client:GetName(), target:GetName(), newName)
 			end
@@ -322,7 +322,7 @@ ix.command.Add("CharKick", {
 			target:Kick()
 		end)
 
-		for _, v in ipairs(player.GetAll()) do
+		for _, v in player.Iterator() do
 			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
 				v:NotifyLocalized("charKick", client:GetName(), target:GetName())
 			end
@@ -346,7 +346,7 @@ ix.command.Add("CharBan", {
 		target:Ban(minutes)
 		target:Save()
 
-		for _, v in ipairs(player.GetAll()) do
+		for _, v in player.Iterator() do
 			if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
 				v:NotifyLocalized("charBan", client:GetName(), target:GetName())
 			end
@@ -372,7 +372,7 @@ ix.command.Add("CharUnban", {
 					return "@charNotBanned"
 				end
 
-				for _, v2 in ipairs(player.GetAll()) do
+				for _, v2 in player.Iterator() do
 					if (self:OnCheckAccess(v2) or v2 == v:GetPlayer()) then
 						v2:NotifyLocalized("charUnBan", client:GetName(), v:GetName())
 					end
@@ -409,7 +409,7 @@ ix.command.Add("CharUnban", {
 						updateQuery:Where("id", characterID)
 					updateQuery:Execute()
 
-					for _, v in ipairs(player.GetAll()) do
+					for _, v in player.Iterator() do
 						if (self:OnCheckAccess(v)) then
 							v:NotifyLocalized("charUnBan", client:GetName(), name)
 						end
@@ -529,7 +529,7 @@ ix.command.Add("PlyWhitelist", {
 
 		if (faction) then
 			if (target:SetWhitelisted(faction.index, true)) then
-				for _, v in ipairs(player.GetAll()) do
+				for _, v in player.Iterator() do
 					if (self:OnCheckAccess(v) or v == target) then
 						v:NotifyLocalized("whitelist", client:GetName(), target:GetName(), L(faction.name, v))
 					end
@@ -590,7 +590,7 @@ ix.command.Add("PlyUnwhitelist", {
 			local targetPlayer = ix.util.FindPlayer(target)
 
 			if (IsValid(targetPlayer) and targetPlayer:SetWhitelisted(faction.index, false)) then
-				for _, v in ipairs(player.GetAll()) do
+				for _, v in player.Iterator() do
 					if (self:OnCheckAccess(v) or v == targetPlayer) then
 						v:NotifyLocalized("unwhitelist", client:GetName(), targetPlayer:GetName(), L(faction.name, v))
 					end
@@ -617,7 +617,7 @@ ix.command.Add("PlyUnwhitelist", {
 								updateQuery:Where("steamid", steamID64)
 							updateQuery:Execute()
 
-							for _, v in ipairs(player.GetAll()) do
+							for _, v in player.Iterator() do
 								if (self:OnCheckAccess(v)) then
 									v:NotifyLocalized("unwhitelist", client:GetName(), target, L(faction.name, v))
 								end
@@ -739,7 +739,7 @@ ix.command.Add("PlyTransfer", {
 					faction:OnTransferred(target)
 				end
 
-				for _, v in ipairs(player.GetAll()) do
+				for _, v in player.Iterator() do
 					if (self:OnCheckAccess(v) or v == target:GetPlayer()) then
 						v:NotifyLocalized("cChangeFaction", client:GetName(), target:GetName(), L(faction.name, v))
 					end

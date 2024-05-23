@@ -96,7 +96,7 @@ ix.config.Add("saveInterval", 300, "How often characters save in seconds.", nil,
 	category = "characters"
 })
 ix.config.Add("walkSpeed", 130, "How fast a player normally walks.", function(oldValue, newValue)
-	for _, v in ipairs(player.GetAll())	do
+	for _, v in player.Iterator()	do
 		v:SetWalkSpeed(newValue)
 	end
 end, {
@@ -104,7 +104,7 @@ end, {
 	category = "characters"
 })
 ix.config.Add("runSpeed", 235, "How fast a player normally runs.", function(oldValue, newValue)
-	for _, v in ipairs(player.GetAll())	do
+	for _, v in player.Iterator()	do
 		v:SetRunSpeed(newValue)
 	end
 end, {

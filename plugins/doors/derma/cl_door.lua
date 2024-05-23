@@ -48,7 +48,7 @@ function PANEL:SetDoor(door, access, door2)
 	self.accessData = access
 	self.door = door
 
-	for _, v in ipairs(player.GetAll()) do
+	for _, v in player.Iterator() do
 		if (v != LocalPlayer() and v:GetCharacter()) then
 			self.access:AddLine(v:Name(), L(ACCESS_LABELS[access[v] or 0])).player = v
 		end

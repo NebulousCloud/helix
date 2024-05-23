@@ -71,7 +71,7 @@ function GM:PlayerInitialSpawn(client)
 			client.ixLoaded = true
 			client:SetData("intro", true)
 
-			for _, v in ipairs(player.GetAll()) do
+			for _, v in player.Iterator() do
 				if (v:GetCharacter()) then
 					v:GetCharacter():Sync(client)
 				end
@@ -451,7 +451,7 @@ local function CalcPlayerCanHearPlayersVoice(listener)
 	listener.ixVoiceHear = listener.ixVoiceHear or {}
 
 	local eyePos = listener:EyePos()
-	for _, speaker in ipairs(player.GetAll()) do
+	for _, speaker in player.Iterator() do
 		local speakerEyePos = speaker:EyePos()
 		listener.ixVoiceHear[speaker] = eyePos:DistToSqr(speakerEyePos) < voiceDistance
 	end
@@ -465,7 +465,7 @@ function GM:InitializedConfig()
 end
 
 function GM:VoiceToggled(bAllowVoice)
-	for _, v in ipairs(player.GetAll()) do
+	for _, v in player.Iterator() do
 		local uniqueID = v:SteamID64() .. "ixCanHearPlayersVoice"
 
 		if (bAllowVoice) then
@@ -724,7 +724,7 @@ function GM:PlayerDisconnected(client)
 		return
 	end
 
-	for _, v in ipairs(player.GetAll()) do
+	for _, v in player.Iterator() do
 		if (!v.ixVoiceHear) then
 			continue
 		end
@@ -771,7 +771,7 @@ function GM:ShutDown()
 
 	hook.Run("SaveData")
 
-	for _, v in ipairs(player.GetAll()) do
+	for _, v in player.Iterator() do
 		v:SaveData()
 
 		if (v:GetCharacter()) then
@@ -877,7 +877,7 @@ function GM:CharacterPreSave(character)
 end
 
 timer.Create("ixLifeGuard", 1, 0, function()
-	for _, v in ipairs(player.GetAll()) do
+	for _, v in player.Iterator() do
 		if (v:GetCharacter() and v:Alive() and hook.Run("ShouldPlayerDrowned", v) != false) then
 			if (v:WaterLevel() >= 3) then
 				if (!v.drowningTime) then
