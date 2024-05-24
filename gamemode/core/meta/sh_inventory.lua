@@ -150,7 +150,7 @@ end
 -- @treturn[1] Player Owning player
 -- @treturn[2] nil If no connected player owns this inventory
 function META:GetOwner()
-	for _, v in ipairs(player.GetAll()) do
+	for _, v in player.Iterator() do
 		if (v:GetCharacter() and v:GetCharacter().id == self.owner) then
 			return v
 		end
@@ -170,7 +170,7 @@ function META:SetOwner(owner, fullUpdate)
 
 	if (SERVER) then
 		if (fullUpdate) then
-			for _, v in ipairs(player.GetAll()) do
+			for _, v in player.Iterator() do
 				if (v:GetNetVar("char") == owner) then
 					self:Sync(v, true)
 

@@ -100,7 +100,7 @@ if (SERVER) then
 	function CHAR:Sync(receiver)
 		-- Broadcast the character information if receiver is not set.
 		if (receiver == nil) then
-			for _, v in ipairs(player.GetAll()) do
+			for _, v in player.Iterator() do
 				self:Sync(v)
 			end
 		-- Send all character information if the receiver is the character's owner.
@@ -250,7 +250,7 @@ function CHAR:GetPlayer()
 	elseif (self.steamID) then
 		local steamID = self.steamID
 
-		for _, v in ipairs(player.GetAll()) do
+		for _, v in player.Iterator() do
 			if (v:SteamID64() == steamID) then
 				self.player = v
 

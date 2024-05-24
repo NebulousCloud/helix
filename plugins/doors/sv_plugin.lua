@@ -107,7 +107,7 @@ function PLUGIN:SaveDoorData()
 	local data = {}
 		local doors = {}
 
-		for _, v in ipairs(ents.GetAll()) do
+		for _, v in ents.Iterator() do
 			if (v:IsDoor()) then
 				doors[v:MapCreationID()] = v
 			end

@@ -115,7 +115,7 @@ if (CLIENT) then
 		local client = LocalPlayer()
 		local position = client:GetPos()
 
-		for _, v in ipairs(player.GetAll()) do
+		for _, v in player.Iterator() do
 			if (v == client) then
 				continue
 			end
