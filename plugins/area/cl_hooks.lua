@@ -205,6 +205,22 @@ function PLUGIN:OnAreaChanged(oldID, newID)
 	self.panel:AddEntry(format, area.properties.color)
 end
 
+function PLUGIN:OnAreaLeft(id)
+	local client = LocalPlayer()
+	client.ixArea = ""
+	client.ixInArea = false
+end
+
+function PLUGIN:ShouldDisplayArea(newID)
+	local client = LocalPlayer()
+
+	if (client.ixLastArea == newID) then
+		return false
+	end
+
+	client.ixLastArea = newID
+end
+
 net.Receive("ixAreaEditStart", function()
 	PLUGIN:StartEditing()
 end)
@@ -249,10 +265,23 @@ net.Receive("ixAreaSync", function()
 
 	-- Set the list of texts to the ones provided by the server.
 	ix.area.stored = util.JSONToTable(uncompressed)
+
+	for k, v in pairs(ix.area.stored) do
+		if (isnumber(k)) then
+			ix.area.stored[tostring(k)] = v
+			ix.area.stored[k] = nil
+		end
+	end
 end)
 
 net.Receive("ixAreaChanged", function()
 	local oldID, newID = net.ReadString(), net.ReadString()
 
 	hook.Run("OnAreaChanged", oldID, newID)
+end)
+
+net.Receive("ixAreaLeft", function()
+	local id = net.ReadString()
+
+	hook.Run("OnAreaLeft", id)
 end)

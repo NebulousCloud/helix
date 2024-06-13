@@ -28,11 +28,19 @@ function PLUGIN:PlayerInitialSpawn(client)
 end
 
 function PLUGIN:PlayerLoadedCharacter(client)
+	if (client.ixInArea) then
+		hook.Run("OnPlayerAreaLeft", client, client.ixArea)
+	end
+
 	client.ixArea = ""
 	client.ixInArea = nil
 end
 
 function PLUGIN:PlayerSpawn(client)
+	if (client.ixInArea) then
+		hook.Run("OnPlayerAreaLeft", client, client.ixArea)
+	end
+
 	client.ixArea = ""
 	client.ixInArea = nil
 end
@@ -65,6 +73,11 @@ function PLUGIN:AreaThink()
 
 			client.ixInArea = true
 		else
+			if (client.ixInArea) then
+				hook.Run("OnPlayerAreaLeft", client, client.ixArea)
+			end
+
+			client.ixArea = ""
 			client.ixInArea = false
 		end
 	end
@@ -74,6 +87,12 @@ function PLUGIN:OnPlayerAreaChanged(client, oldID, newID)
 	net.Start("ixAreaChanged")
 		net.WriteString(oldID)
 		net.WriteString(newID)
+	net.Send(client)
+end
+
+function PLUGIN:OnPlayerAreaLeft(client, id)
+	net.Start("ixAreaLeft")
+		net.WriteString(id)
 	net.Send(client)
 end
 
@@ -106,6 +125,7 @@ net.Receive("ixAreaAdd", function(length, client)
 	end
 
 	ix.area.Create(id, type, startPosition, endPosition, nil, properties)
+	hook.Run("OnAreaAdded", client, id, type, startPosition, endPosition, properties)
 	ix.log.Add(client, "areaAdd", id)
 end)
 
@@ -122,5 +142,6 @@ net.Receive("ixAreaRemove", function(length, client)
 	end
 
 	ix.area.Remove(id)
+	hook.Run("OnAreaRemoved", client, id)
 	ix.log.Add(client, "areaRemove", id)
 end)
