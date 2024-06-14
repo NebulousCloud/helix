@@ -170,7 +170,7 @@ else
 
 				class = ix.chat.classes[class]
 
-				for _, v in ipairs(player.GetAll()) do
+				for _, v in player.Iterator() do
 					if (client != v and v:GetCharacter() and class:CanHear(client, v)) then
 						targets[#targets + 1] = v
 					end

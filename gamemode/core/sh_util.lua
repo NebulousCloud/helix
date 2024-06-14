@@ -251,7 +251,7 @@ function ix.util.FindPlayer(identifier, bAllowPatterns)
 		identifier = string.PatternSafe(identifier)
 	end
 
-	for _, v in ipairs(player.GetAll()) do
+	for _, v in player.Iterator() do
 		if (ix.util.StringMatches(v:Name(), identifier)) then
 			return v
 		end
