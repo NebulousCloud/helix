@@ -243,6 +243,8 @@ end
 -- @bool[opt=false] bAllowPatterns Whether or not to accept Lua patterns in `identifier`
 -- @treturn player Player that matches the given search query - this will be `nil` if a player could not be found
 function ix.util.FindPlayer(identifier, bAllowPatterns)
+	if (#identifier == 0) then return end
+
 	if (string.find(identifier, "STEAM_(%d+):(%d+):(%d+)")) then
 		return player.GetBySteamID(identifier)
 	end
