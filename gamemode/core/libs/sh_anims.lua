@@ -419,9 +419,13 @@ if (SERVER) then
 	-- fails to play
 	-- @number[opt=nil] time How long to play the animation for. This defaults to the duration of the animation
 	-- @bool[opt=false] bNoFreeze Whether or not to avoid freezing this player in place while the animation is playing
+	-- @bool[opt=false] loop Whether or not to have the animation loop. This does nothing if time is not set to greater than the duration of the animation
+	-- @number[opt=1] speed The speed at which the animation should play
 	-- @see LeaveSequence
-	function playerMeta:ForceSequence(sequence, callback, time, bNoFreeze)
-		hook.Run("PlayerEnterSequence", self, sequence, callback, time, bNoFreeze)
+	function playerMeta:ForceSequence(sequence, callback, time, bNoFreeze, loop, speed)
+		speed = speed or 1
+
+		hook.Run("PlayerEnterSequence", self, sequence, callback, time, bNoFreeze, loop, speed)
 
 		if (!sequence) then
 			net.Start("ixSequenceReset")
@@ -434,13 +438,15 @@ if (SERVER) then
 		sequence = self:LookupSequence(tostring(sequence))
 
 		if (sequence and sequence > 0) then
-			time = time or self:SequenceDuration(sequence)
+			time = time or (self:SequenceDuration(sequence) * (1/speed))
 
 			self.ixCouldShoot = self:GetNetVar("canShoot", false)
 			self.ixSeqCallback = callback
 			self:SetCycle(0)
 			self:SetPlaybackRate(1)
 			self:SetNetVar("forcedSequence", sequence)
+			self:SetNetVar("sequenceLoop", loop)
+			self:SetNetVar("sequenceSpeed", speed)
 			self:SetNetVar("canShoot", false)
 
 			if (!bNoFreeze) then
@@ -478,6 +484,8 @@ if (SERVER) then
 
 		self:SetNetVar("canShoot", self.ixCouldShoot)
 		self:SetNetVar("forcedSequence", nil)
+		self:SetNetVar("sequenceLoop", nil)
+		self:SetNetVar("sequenceSpeed", nil)
 		self:SetMoveType(MOVETYPE_WALK)
 		self.ixCouldShoot = nil
 
