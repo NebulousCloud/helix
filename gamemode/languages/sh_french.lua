@@ -16,6 +16,7 @@ LANGUAGE = {
 	helpCommands = "Les paramètres de commande avec les <flèches> sont obligatoires, tandis que les [crochets] sont facultatifs.",
 	helpFlags = "Les drapeaux sur fond vert sont accessibles à ce personnage.",
 
+	credits = "Crédits",
 	creditSpecial = "Remerciement spécial",
 	creditLeadDeveloper = "Développeur principal",
 	creditUIDesigner = "Concepteur d'interface utilisateur",
