@@ -124,7 +124,7 @@ end
 function ix.class.GetPlayers(class)
 	local players = {}
 
-	for _, v in ipairs(player.GetAll()) do
+	for _, v in player.Iterator() do
 		local char = v:GetCharacter()
 
 		if (char and char:GetClass() == class) then

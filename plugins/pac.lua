@@ -207,7 +207,7 @@ else
 		end
 
 		if (IsValid(pac.LocalPlayer)) then
-			for _, v in ipairs(player.GetAll()) do
+			for _, v in player.Iterator() do
 				local character = v:GetCharacter()
 
 				if (character) then
@@ -302,7 +302,7 @@ else
 			end
 
 			if (class:find("HL2MPRagdoll")) then
-				for _, v in ipairs(player.GetAll()) do
+				for _, v in player.Iterator() do
 					if (v:GetRagdollEntity() == entity) then
 						entity.objCache = v
 					end

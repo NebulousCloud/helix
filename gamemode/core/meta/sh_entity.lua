@@ -121,7 +121,7 @@ if (SERVER) then
 				self.ignoreUse = false
 				self.ixIsMuted = false
 
-				for _, v in ipairs(ents.GetAll()) do
+				for _, v in ents.Iterator() do
 					if (v:GetParent() == self) then
 						v:SetNotSolid(false)
 						v:SetNoDraw(false)
@@ -150,7 +150,7 @@ if (SERVER) then
 			dummy:SetBodygroup(v.id, self:GetBodygroup(v.id))
 		end
 
-		for _, v in ipairs(ents.GetAll()) do
+		for _, v in ents.Iterator() do
 			if (v:GetParent() == self) then
 				v:SetNotSolid(true)
 				v:SetNoDraw(true)
