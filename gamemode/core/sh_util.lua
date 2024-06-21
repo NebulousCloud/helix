@@ -911,7 +911,6 @@ function ix.util.FindEmptySpace(variable, filter, spacing, size, height, toleran
 	tolerance = tolerance or 5
 
 	local position = isvector(variable) and variable or isentity(variable) and variable:GetPos()
-	print(position)
 	if (!position) then
 		return
 	end
