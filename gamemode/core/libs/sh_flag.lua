@@ -150,7 +150,7 @@ do
 	-- @treturn string Flags this character has represented as one string. You can access individual flags by iterating through
 	-- the string letter by letter
 	function character:GetFlags()
-		return self:GetData("f", "")
+		return self:GetData("f", ix.config.Get("defaultFlags"))
 	end
 
 	--- Returns `true` if the character has the given flag(s).
