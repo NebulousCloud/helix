@@ -21,6 +21,16 @@ regular gamemode hooks.
 function GetDefaultName(client)
 end
 
+--- Called when the default description for a character needs to be retrieved (i.e upon initial creation).
+-- @realm shared
+-- @player client Client to get the default description for
+-- @treturn string Default description for the newly created character
+-- @usage function FACTION:GetDefaultDescription(client)
+-- 	return "Wearing a metrocop jacket with a radio"
+-- end
+function GetDefaultDescription(client)
+end
+
 --- Called when a character has been initally created and assigned to this faction.
 -- @realm server
 -- @player client Client that owns the character
