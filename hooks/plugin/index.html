@@ -4325,15 +4325,12 @@ end
 		<section class="method">
 			<header>
 				<a class="anchor" id="CanPlayerUseVendor">
-					<h1><span class="realm server"></span></span>PLUGIN:CanPlayerUseVendor(activator)</h1>
+					<h1><span class="realm server"></span></span>PLUGIN:CanPlayerUseVendor(activator, vendor)</h1>
 				</a>
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Determines whether a player can use a vendor.</p>
 			</header>
 
 
@@ -4345,14 +4342,36 @@ end
 							<li>
 								<span class="tag parameter">activator</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> The player attempting to use the vendor</p>
 							</li>
 					</ul>
 
+					<ul>
+
+							<li>
+								<span class="tag parameter">vendor</span>
+
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
+
+
+								<p> The vendor entity being used</p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Returns false if the player can't use the vendor</p>
+							</li>
+
+				</ul>
 
 
 		</section>
