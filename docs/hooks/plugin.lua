@@ -323,8 +323,12 @@ end
 function CanPlayerUseDoor(client, entity)
 end
 
---- @realm server
-function CanPlayerUseVendor(activator)
+--- Determines whether a player can use a vendor.
+-- @realm server
+-- @player activator The player attempting to use the vendor
+-- @entity vendor The vendor entity being used
+-- @treturn bool Returns false if the player can't use the vendor
+function CanPlayerUseVendor(activator, vendor)
 end
 
 --- @realm client

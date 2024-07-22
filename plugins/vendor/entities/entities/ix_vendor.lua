@@ -171,7 +171,7 @@ if (SERVER) then
 	function ENT:Use(activator)
 		local character = activator:GetCharacter()
 
-		if (!self:CanAccess(activator) or hook.Run("CanPlayerUseVendor", activator) == false) then
+		if (!self:CanAccess(activator) or hook.Run("CanPlayerUseVendor", activator, self) == false) then
 			if (self.messages[VENDOR_NOTRADE]) then
 				activator:ChatPrint(self:GetDisplayName()..": "..self.messages[VENDOR_NOTRADE])
 			else
