@@ -279,10 +279,13 @@ function PANEL:SetEntity(entity)
 			hook.Run("PopulateCharacterInfo", entity, character, self)
 		end
 	else
-		if (entity.OnPopulateEntityInfo) then
-			entity:OnPopulateEntityInfo(self)
-		else
-			hook.Run("PopulateEntityInfo", entity, self)
+		local shouldPopulate = hook.Run("ShouldPopulateEntityInfo", entity)
+		if shouldPopulate != false then
+			if (entity.OnPopulateEntityInfo) then
+				entity:OnPopulateEntityInfo(self)
+			else
+				hook.Run("PopulateEntityInfo", entity, self)
+			end
 		end
 	end
 
