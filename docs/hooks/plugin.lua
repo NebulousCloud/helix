@@ -659,11 +659,24 @@ end
 function OnPlayerPurchaseDoor(client, entity, bBuying, bCallOnDoorChild)
 end
 
---- @realm server
+--- Called once, when a player is restricted. its being called from
+-- `meta:SetRestricted(bState, bNoMessage)`.
+-- @realm server
+-- @client client Player that is getting restricted
+-- @usage function PLUGIN:OnPlayerRestricted(client)
+--   -- client:SetWalkSpeed( number walkSpeed )
+--  end
+
 function OnPlayerRestricted(client)
 end
 
---- @realm server
+--- Called once, when a player is unrestricted. its being called from
+-- `meta:SetRestricted(bState, bNoMessage)`.
+-- @realm server
+-- @client client Player that is getting restricted
+-- @usage function PLUGIN:OnPlayerUnRestricted(client)
+--   -- client:SetWalkSpeed( number walkSpeed )
+--  end
 function OnPlayerUnRestricted(client)
 end
 
