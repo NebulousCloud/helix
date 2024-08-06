@@ -421,7 +421,7 @@ function GM:CanPlayerUseCharacter(client, character)
 	if (banned) then
 		if (isnumber(banned)) then
 			if (banned < os.time()) then
-				return
+				goto charBanBypass
 			end
 
 			return false, "@charBannedTemp"
@@ -429,6 +429,8 @@ function GM:CanPlayerUseCharacter(client, character)
 
 		return false, "@charBanned"
 	end
+
+	::charBanBypass::
 
 	local bHasWhitelist = client:HasWhitelist(character:GetFaction())
 
