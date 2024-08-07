@@ -1,5 +1,5 @@
 
-The MIT License (MIT)
+The MIT License (MIT) aspect
 
 Copyright (c) 2015 Brian Hang, Kyu Yeon Lee
 Copyright (c) 2018-2021 Alexander Grist-Hucker, Igor Radovanovic
