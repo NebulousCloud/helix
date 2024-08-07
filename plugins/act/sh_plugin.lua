@@ -5,19 +5,19 @@ Provides players the ability to perform animations.
 ]]
 -- @module ix.act
 
-local PLUGIN = PLUGIN
+local PLUGIN = PLUGIN;
 
-PLUGIN.name = "Player Acts"
-PLUGIN.description = "Adds animations that can be performed by certain models."
-PLUGIN.author = "`impulse"
+PLUGIN.name = "Player Acts";
+PLUGIN.description = "Adds animations that can be performed by certain models.";
+PLUGIN.author = "`impulse";
 
-ix.act = ix.act or {}
-ix.act.stored = ix.act.stored or {}
+ix.act = ix.act or {};
+ix.act.stored = ix.act.stored or {};
 
-CAMI.RegisterPrivilege({
-	Name = "Helix - Player Acts",
-	MinAccess = "user"
-})
+CAMI.RegisterPrivilege({;
+	Name = "Helix - Player Acts",;
+	MinAccess = "user";
+});
 
 --- Registers a sequence as a performable animation.
 -- @realm shared
