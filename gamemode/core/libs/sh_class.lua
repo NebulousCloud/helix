@@ -178,6 +178,8 @@ if (SERVER) then
 			end
 		end
 
+		if (!goClass) then return end
+
 		self:JoinClass(goClass)
 
 		hook.Run("PlayerJoinedClass", client, goClass)
