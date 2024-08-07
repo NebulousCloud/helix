@@ -14,6 +14,7 @@ LANGUAGE = {
     helpCommands = "Kommandoparameter mit <Pfeilen> sind Voraussetung, während [Klammern] optional sind.",
     helpFlags = "Dieser Charakter kann auf Flags mit einem grünen Hintergrund zugreifen.",
 
+    credits = "Credits",
     creditSpecial = "Vielen Dank",
     creditLeadDeveloper = "Lead Developer",
     creditUIDesigner = "UI Designer",
