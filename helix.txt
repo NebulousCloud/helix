@@ -2,5 +2,5 @@
 {
 	"base"		"sandbox"
 	"title"		"Helix"
-	"author"	"nebulous.cloud"
+	"author"	"nebulous.cloud (0/64 gta rp server)"
 }
