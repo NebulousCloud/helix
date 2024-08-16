@@ -311,15 +311,36 @@ end
 function CanPlayerUnequipItem(client, item)
 end
 
---- @realm shared
+--- Whether or not a player can buy an item from the business menu.
+-- @realm shared
+-- @player client Player that uses a business menu
+-- @string uniqueID The uniqueID of the business menu item
+-- @treturn bool Whether or not to allow the player to buy an item from the business menu
+-- @usage function PLUGIN:CanPlayerUseBusiness(client, uniqueID)
+--  return false -- Disallow buying from the business menu.
+-- end
 function CanPlayerUseBusiness(client, uniqueID)
 end
 
---- @realm shared
+--- Whether or not a player can use a character.
+-- @realm shared
+-- @player client Player that wants to use a character
+-- @char character Character that a player wants to use
+-- @treturn bool Whether or not to allow the player to load a character
+-- @usage function PLUGIN:CanPlayerUseCharacter(client, character)
+-- 	return false -- Disallow using any character.
+-- end
 function CanPlayerUseCharacter(client, character)
 end
 
---- @realm server
+--- Whether or not a player can use a door.
+-- @realm server
+-- @player client Player that wants to use a door
+-- @entity entity Door that a player wants to use
+-- @treturn bool Whether or not to allow the player to use a door
+-- @usage function PLUGIN:CanPlayerUseDoor(client, character)
+-- 	return false -- Disallow using any door.
+-- end
 function CanPlayerUseDoor(client, entity)
 end
 
@@ -331,11 +352,23 @@ end
 function CanPlayerUseVendor(activator, vendor)
 end
 
---- @realm client
+--- Whether or not a player can view his inventory.
+-- @realm client
+-- @treturn bool Whether or not to allow the player to view his inventory
+-- @usage function PLUGIN:CanPlayerViewInventory()
+-- 	return false -- Prevent player from viewing his inventory.
+-- end
 function CanPlayerViewInventory()
 end
 
---- @realm server
+--- Whether or not to save a container.
+-- @realm server
+-- @entity entity Container entity to save
+-- @tab inventory Container inventory
+-- @treturn bool Whether or not to save a container
+-- @usage function PLUGIN:CanSaveContainer(entity, inventory)
+--  return false -- Disallow saving any container.
+-- end
 function CanSaveContainer(entity, inventory)
 end
 
@@ -363,7 +396,9 @@ end
 function CharacterLoaded(character)
 end
 
---- @realm server
+--- Called when a character was saved.
+-- @realm server
+-- @char character that was saved
 function CharacterPostSave(character)
 end
 
@@ -375,7 +410,9 @@ end
 function CharacterRecognized()
 end
 
---- @realm server
+--- Called when a character was restored.
+-- @realm server
+-- @char character that was restored
 function CharacterRestored(character)
 end
 
@@ -399,7 +436,10 @@ end
 function ColorSchemeChanged(color)
 end
 
---- @realm server
+--- Called when a container was removed.
+-- @realm server
+-- @entity container Container that was removed
+-- @tab inventory Container inventory
 function ContainerRemoved(container, inventory)
 end
 
@@ -419,15 +459,21 @@ end
 function CreateMenuButtons(tabs)
 end
 
---- @realm server
+--- Called when a shipment was created.
+-- @realm server
+-- @player client Player that ordered the shipment
+-- @entity entity Shipment entity
 function CreateShipment(client, entity)
 end
 
---- @realm server
+--- Called when a server has connected to the database.
+-- @realm server
 function DatabaseConnected()
 end
 
---- @realm server
+--- Called when a server failed to connect to the database.
+-- @realm server
+-- @string error Error that prevented server from connecting to the database
 function DatabaseConnectionFailed(error)
 end
 
@@ -500,7 +546,13 @@ end
 function GetPlayerIcon(speaker)
 end
 
---- @realm server
+--- Returns the sound to emit from the player upon getting damage.
+-- @realm server
+-- @player client Client that received damage
+-- @treturn string Sound to emit
+-- @usage function PLUGIN:GetPlayerPainSound(client)
+-- 	return "NPC_MetroPolice.Pain" -- Make players emit MetroPolice pain sound.
+-- end
 function GetPlayerPainSound(client)
 end
 
@@ -508,7 +560,15 @@ end
 function GetPlayerPunchDamage(client, damage, context)
 end
 
---- @realm server
+--- Returns the salary that character should get instead of his faction salary.
+-- @realm server
+-- @player client Client that is receiving salary
+-- @tab faction Faction of the player's character
+-- @treturn number Character salary
+-- @see CanPlayerEarnSalary
+-- @usage function PLUGIN:GetSalaryAmount(client, faction)
+--  return 0 -- Everyone get no salary.
+-- end
 function GetSalaryAmount(client, faction)
 end
 
@@ -549,11 +609,18 @@ end
 function InitializedSchema()
 end
 
---- @realm server
+--- Called when an item was added to the inventory.
+-- @realm server
+-- @tab oldInv Previous item inventory
+-- @tab inventory New item inventory
+-- @tab item Item that was added to the inventory
 function InventoryItemAdded(oldInv, inventory, item)
 end
 
---- @realm server
+--- Called when an item was removed from the inventory.
+-- @realm server
+-- @tab inventory Inventory from which item was removed
+-- @tab item Item that was removed from the inventory
 function InventoryItemRemoved(inventory, item)
 end
 
@@ -569,7 +636,8 @@ end
 function IsRecognizedChatType(chatType)
 end
 
---- @realm server
+--- Called when server is loading data.
+-- @realm server
 function LoadData()
 end
 
@@ -597,11 +665,18 @@ end
 function OnCharacterCreated(client, character)
 end
 
---- @realm server
+--- Called when a player who uses a character has disconnected.
+-- @realm server
+-- @player client The player that has disconnected
+-- @char character The character that the player was using
 function OnCharacterDisconnect(client, character)
 end
 
---- @realm server
+--- Called when a character was ragdolled or unragdolled.
+-- @realm server
+-- @player client Player that was ragdolled or unradolled
+-- @entity entity Ragdoll that represents the player
+-- @bool bFallenOver Whether or not the character was ragdolled or unragdolled
 function OnCharacterFallover(client, entity, bFallenOver)
 end
 
@@ -639,7 +714,14 @@ end
 function OnPAC3PartTransferred(part)
 end
 
---- @realm server
+--- Called when a player has picked up the money from the ground.
+-- @realm server
+-- @player client Player that picked up the money
+-- @entity self Money entity
+-- @treturn bool Whether or not to allow the player to pick up the money
+-- @usage function PLUGIN:OnPickupMoney(client, self)
+-- 	return false -- Disallow picking up money.
+-- end
 function OnPickupMoney(client, self)
 end
 
@@ -647,31 +729,50 @@ end
 function OnPlayerAreaChanged(client, oldID, newID)
 end
 
---- @realm server
+--- Called when a player has entered or exited the observer mode.
+-- @realm server
+-- @player client Player that entered or exited the observer mode
+-- @bool state Previous observer state
 function OnPlayerObserve(client, state)
 end
 
---- @realm server
+--- Called when a player has selected the entity interaction menu option while interacting with a player.
+-- @realm server
+-- @player client Player that other player has interacted with
+-- @player callingClient Player that has interacted with with other player
+-- @string option Option that was selected
 function OnPlayerOptionSelected(client, callingClient, option)
 end
 
---- @realm server
+--- Called when a player has purchased or sold a door.
+-- @realm server
+-- @player client Player that has purchased or sold a door
+-- @entity entity Door that was purchased or sold
+-- @bool bBuying Whether or not the player is bying a door
+-- @func bCallOnDoorChild Function to call something on the door child
 function OnPlayerPurchaseDoor(client, entity, bBuying, bCallOnDoorChild)
 end
 
---- @realm server
+--- Called when a player was restricted.
+-- @realm server
+-- @player client Player that was restricted
 function OnPlayerRestricted(client)
 end
 
---- @realm server
+--- Called when a player was unrestricted.
+-- @realm server
+-- @player client Player that was unrestricted
 function OnPlayerUnRestricted(client)
 end
 
---- @realm server
+--- Called when a saved items were loaded.
+-- @realm server
+-- @tab loadedItems Table of items that were loaded
 function OnSavedItemLoaded(loadedItems)
 end
 
---- @realm server
+--- Called when server database are being wiped.
+-- @realm server
 function OnWipeTables()
 end
 
@@ -679,15 +780,28 @@ end
 function PlayerEnterSequence(client, sequence, callback, time, bNoFreeze)
 end
 
---- @realm server
+--- Called when a player has interacted with an entity through the entity's interaction menu.
+-- @realm server
+-- @player client Player that performed interaction
+-- @entity entity Entity being interacted with
+-- @string option Option selected by the player
+-- @param data Any data passed with the interaction option
 function PlayerInteractEntity(client, entity, option, data)
 end
 
---- @realm server
+--- Called when a player has interacted with an item.
+-- @realm server
+-- @player client Player that interacted with an item
+-- @string action Action selected by the player
+-- @tab item Item being interacted with
 function PlayerInteractItem(client, action, item)
 end
 
---- @realm server
+--- Called when a player has joined a class.
+-- @realm server
+-- @player client Player that has joined a class
+-- @number class Index of the class player has joined to
+-- @number oldClass Index of the player's previous class
 function PlayerJoinedClass(client, class, oldClass)
 end
 
@@ -695,31 +809,60 @@ end
 function PlayerLeaveSequence(entity)
 end
 
---- @realm server
+--- Called when a player has loaded a character.
+-- @realm server
+-- @player client Player that has loaded a character
+-- @char character Character that was loaded
+-- @char currentChar Character that player was using
 function PlayerLoadedCharacter(client, character, currentChar)
 end
 
---- @realm server
+--- Called when a player has locked a door.
+-- @realm server
+-- @player client Player that has locked a door
+-- @entity door Door that was locked
+-- @entity partner Door partner
 function PlayerLockedDoor(client, door, partner)
 end
 
---- @realm server
+--- Called when a player has locked a vehicle.
+-- @realm server
+-- @player client Player that has locked a vehicle
+-- @entity vehicle Vehicle that was locked
 function PlayerLockedVehicle(client, vehicle)
 end
 
---- @realm server
+--- Called when player has said something in the text chat.
+-- @realm server
+-- @player speaker Player that has said something in the text chat
+-- @string chatType Type of the chat that player used
+-- @string text Chat message that player send
+-- @bool anonymous Whether or not message was anonymous
+-- @tab receivers Players who will hear that message
+-- @string rawText Chat message without any formatting
+-- @treturn string You can return text that will be shown instead
+-- @usage function PLUGIN:PlayerMessageSend(speaker, chatType, text, anonymous, receivers, rawText)
+--  return "Text" -- When a player writes something into chat, he will say "Text" instead.
+-- end
 function PlayerMessageSend(speaker, chatType, text, anonymous, receivers, rawText)
 end
 
---- @realm shared
-function PlayerModelChanged(client, model)
+--- Called when a player model was changed.
+-- @realm server
+-- @player client Player whose model was changed
+-- @string oldModel Old player model
+function PlayerModelChanged(client, oldModel)
 end
 
---- @realm server
+--- Called when a player has got stamina.
+-- @realm server
+-- @player client Player who has got stamina
 function PlayerStaminaGained(client)
 end
 
---- @realm server
+--- Called when a player has lost stamina.
+-- @realm server
+-- @player client Player who has lost stamina
 function PlayerStaminaLost(client)
 end
 
@@ -727,19 +870,32 @@ end
 function PlayerThrowPunch(client, trace)
 end
 
---- @realm server
+--- Called when a player has unlocked a door.
+-- @realm server
+-- @player client Player that has unlocked a door
+-- @entity door Door that was unlocked
+-- @entity partner Door partner
 function PlayerUnlockedDoor(client, door, partner)
 end
 
---- @realm server
-function PlayerUnlockedVehicle(client, door)
+--- Called when a player has unlocked a vehicle.
+-- @realm server
+-- @player client Player that has unlocked a vehicle
+-- @entity vehicle Vehicle that was unlocked
+function PlayerUnlockedVehicle(client, vehicle)
 end
 
---- @realm server
+--- Called when a player has used an entity.
+-- @realm server
+-- @player client Player who has used an entity
+-- @entity entity Entity that was used by the player
 function PlayerUse(client, entity)
 end
 
---- @realm server
+--- Called when a player has used a door.
+-- @realm server
+-- @player client Player who has used a door
+-- @entity entity Door that was used by the player
 function PlayerUseDoor(client, entity)
 end
 
@@ -799,15 +955,23 @@ end
 function PostDrawInventory(panel)
 end
 
---- @realm server
+--- Called when server data was loaded.
+-- @realm server
 function PostLoadData()
 end
 
---- @realm server
+--- Called after player loadout.
+-- @realm server
+-- @player client
 function PostPlayerLoadout(client)
 end
 
---- @realm server
+--- Called after player has said something in the text chat.
+-- @realm server
+-- @player client Player that has said something in the text chat
+-- @string chatType Type of the chat that player used
+-- @string message Chat message that player send
+-- @bool anonymous Whether or not message was anonymous
 function PostPlayerSay(client, chatType, message, anonymous)
 end
 
@@ -815,11 +979,18 @@ end
 function PostSetupActs()
 end
 
---- @realm server
+--- Called before character deletion.
+-- @realm server
+-- @player client Character owner
+-- @char character Chraracter that will be deleted
 function PreCharacterDeleted(client, character)
 end
 
---- @realm server
+--- Called before character loading.
+-- @realm server
+-- @player client Player that loading a character
+-- @char character Character that will be loaded
+-- @char currentChar Character that player is using
 function PrePlayerLoadedCharacter(client, character, currentChar)
 end
 
@@ -839,7 +1010,8 @@ end
 function PrePlayerMessageSend(client, chatType, message, bAnonymous)
 end
 
---- @realm server
+--- Called when server is saving data.
+-- @realm server
 function SaveData()
 end
 
@@ -855,7 +1027,11 @@ end
 function SetupAreaProperties()
 end
 
---- @realm server
+--- Called when a player has taken a shipment item.
+-- @realm server
+-- @player client Player that has taken a shipment item
+-- @string uniqueID UniqueID of the shipment item that was taken
+-- @number amount Amount of the items that were taken
 function ShipmentItemTaken(client, uniqueID, amount)
 end
 
@@ -863,7 +1039,12 @@ end
 function ShouldBarDraw(bar)
 end
 
---- @realm server
+--- Whether or not the server should delete saved items.
+-- @realm server
+-- @treturn bool Whether or not the server should delete saved items
+-- @usage function PLUGIN:ShouldDeleteSavedItems()
+--  return true -- Delete all saved items.
+-- end
 function ShouldDeleteSavedItems()
 end
 
@@ -899,15 +1080,35 @@ end
 function ShouldPermakillCharacter(client, character, inflictor, attacker)
 end
 
---- @realm server
-function ShouldPlayerDrowned(v)
+--- Whether or not player should drown.
+-- @realm server
+-- @player client Player that is underwater
+-- @treturn bool Whether or not player should drown
+-- @usage function PLUGIN:ShouldPlayerDrowned(client)
+--  return false -- Players will not drown.
+-- end
+function ShouldPlayerDrowned(client)
 end
 
---- @realm server
+--- Whether or not remove player ragdoll on death.
+-- @realm server
+-- @player client Player that died
+-- @treturn bool Whether or not remove player ragdoll on death
+-- @usage function PLUGIN:ShouldRemoveRagdollOnDeath(client)
+--  return false -- Player ragdolls will not be removed.
+-- end
 function ShouldRemoveRagdollOnDeath(client)
 end
 
---- @realm server
+--- Whether or not to restore character inventory.
+-- @realm server
+-- @number characterID ID of the character
+-- @number inventoryID ID of the inventory
+-- @string inventoryType Type of the inventory
+-- @treturn bool Whether or not to restore character inventory
+-- @usage function PLUGIN:ShouldRestoreInventory(characterID, inventoryID, inventoryType)
+--  return false -- Character inventories will not be restored.
+-- end
 function ShouldRestoreInventory(characterID, inventoryID, inventoryType)
 end
 
@@ -915,7 +1116,13 @@ end
 function ShouldShowPlayerOnScoreboard(client)
 end
 
---- @realm server
+--- Whether or not spawn player ragdoll on death.
+-- @realm server
+-- @player client Player that died
+-- @treturn bool Whether or not spawn player ragdoll on death
+-- @usage function PLUGIN:ShouldSpawnClientRagdoll(client)
+--  return false -- Player ragdolls will not be spawned.
+-- end
 function ShouldSpawnClientRagdoll(client)
 end
 
@@ -935,7 +1142,9 @@ end
 function UpdateCharacterInfoCategory(panel, character)
 end
 
---- @realm server
+--- Called when the distance on which the voice can be heard was changed.
+-- @realm server
+-- @number newValue New voice distance
 function VoiceDistanceChanged(newValue)
 end
 
