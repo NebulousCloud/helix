@@ -667,7 +667,7 @@ PlayerLockedVehicle											</a>
 PlayerMessageSend											</a>
 										</li>
 										<li>
-											<span class="realm shared"></span>
+											<span class="realm server"></span>
 											<a href="../../hooks/plugin/#PlayerModelChanged">
 PlayerModelChanged											</a>
 										</li>
@@ -4189,10 +4189,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Whether or not a player can buy an item from the business menu.</p>
 			</header>
 
 
@@ -4204,11 +4201,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that uses a business menu</p>
 							</li>
 					</ul>
 
@@ -4217,15 +4213,30 @@ end
 							<li>
 								<span class="tag parameter">uniqueID</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p>
-
-</p>
+								<p> The uniqueID of the business menu item</p>
 							</li>
 					</ul>
 
 
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Whether or not to allow the player to buy an item from the business menu</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:CanPlayerUseBusiness(client, uniqueID)
+ return false -- Disallow buying from the business menu.
+end
+</code></pre>
 
 		</section>
 		<section class="method">
@@ -4236,10 +4247,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Whether or not a player can use a character.</p>
 			</header>
 
 
@@ -4251,11 +4259,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that wants to use a character</p>
 							</li>
 					</ul>
 
@@ -4264,15 +4271,30 @@ end
 							<li>
 								<span class="tag parameter">character</span>
 
+									<span class="tag"><a class="type" href="../../classes/character/#">Character</a></span>
 
 
-								<p>
-
-</p>
+								<p> Character that a player wants to use</p>
 							</li>
 					</ul>
 
 
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Whether or not to allow the player to load a character</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:CanPlayerUseCharacter(client, character)
+	return false -- Disallow using any character.
+end
+</code></pre>
 
 		</section>
 		<section class="method">
@@ -4283,10 +4305,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Whether or not a player can use a door.</p>
 			</header>
 
 
@@ -4298,11 +4317,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that wants to use a door</p>
 							</li>
 					</ul>
 
@@ -4311,15 +4329,30 @@ end
 							<li>
 								<span class="tag parameter">entity</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Door that a player wants to use</p>
 							</li>
 					</ul>
 
 
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Whether or not to allow the player to use a door</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:CanPlayerUseDoor(client, character)
+	return false -- Disallow using any door.
+end
+</code></pre>
 
 		</section>
 		<section class="method">
@@ -4383,14 +4416,27 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Whether or not a player can view his inventory.</p>
 			</header>
 
 
 
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Whether or not to allow the player to view his inventory</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:CanPlayerViewInventory()
+	return false -- Prevent player from viewing his inventory.
+end
+</code></pre>
 
 		</section>
 		<section class="method">
@@ -4401,10 +4447,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Whether or not to save a container.</p>
 			</header>
 
 
@@ -4416,11 +4459,10 @@ end
 							<li>
 								<span class="tag parameter">entity</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Container entity to save</p>
 							</li>
 					</ul>
 
@@ -4429,15 +4471,30 @@ end
 							<li>
 								<span class="tag parameter">inventory</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
 
 
-								<p>
-
-</p>
+								<p> Container inventory</p>
 							</li>
 					</ul>
 
 
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Whether or not to save a container</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:CanSaveContainer(entity, inventory)
+ return false -- Disallow saving any container.
+end
+</code></pre>
 
 		</section>
 		<section class="method">
@@ -4808,10 +4865,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a character was saved.</p>
 			</header>
 
 
@@ -4823,11 +4877,10 @@ end
 							<li>
 								<span class="tag parameter">character</span>
 
+									<span class="tag"><a class="type" href="../../classes/character/#">Character</a></span>
 
 
-								<p>
-
-</p>
+								<p> that was saved</p>
 							</li>
 					</ul>
 
@@ -4894,10 +4947,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a character was restored.</p>
 			</header>
 
 
@@ -4909,11 +4959,10 @@ end
 							<li>
 								<span class="tag parameter">character</span>
 
+									<span class="tag"><a class="type" href="../../classes/character/#">Character</a></span>
 
 
-								<p>
-
-</p>
+								<p> that was restored</p>
 							</li>
 					</ul>
 
@@ -5199,10 +5248,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a container was removed.</p>
 			</header>
 
 
@@ -5214,11 +5260,10 @@ end
 							<li>
 								<span class="tag parameter">container</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Container that was removed</p>
 							</li>
 					</ul>
 
@@ -5227,11 +5272,10 @@ end
 							<li>
 								<span class="tag parameter">inventory</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
 
 
-								<p>
-
-</p>
+								<p> Container inventory</p>
 							</li>
 					</ul>
 
@@ -5408,10 +5452,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a shipment was created.</p>
 			</header>
 
 
@@ -5423,11 +5464,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that ordered the shipment</p>
 							</li>
 					</ul>
 
@@ -5436,11 +5476,10 @@ end
 							<li>
 								<span class="tag parameter">entity</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Shipment entity</p>
 							</li>
 					</ul>
 
@@ -5455,10 +5494,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a server has connected to the database.</p>
 			</header>
 
 
@@ -5473,10 +5509,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a server failed to connect to the database.</p>
 			</header>
 
 
@@ -5488,11 +5521,10 @@ end
 							<li>
 								<span class="tag parameter">error</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p>
-
-</p>
+								<p> Error that prevented server from connecting to the database</p>
 							</li>
 					</ul>
 
@@ -6072,10 +6104,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Returns the sound to emit from the player upon getting damage.</p>
 			</header>
 
 
@@ -6087,15 +6116,30 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Client that received damage</p>
 							</li>
 					</ul>
 
 
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a>
+
+								<p>Sound to emit</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:GetPlayerPainSound(client)
+	return "NPC_MetroPolice.Pain" -- Make players emit MetroPolice pain sound.
+end
+</code></pre>
 
 		</section>
 		<section class="method">
@@ -6166,10 +6210,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Returns the salary that character should get instead of his faction salary.</p>
 			</header>
 
 
@@ -6181,11 +6222,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Client that is receiving salary</p>
 							</li>
 					</ul>
 
@@ -6194,16 +6234,35 @@ end
 							<li>
 								<span class="tag parameter">faction</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
 
 
-								<p>
-
-</p>
+								<p> Faction of the player's character</p>
 							</li>
 					</ul>
 
 
+				<h3>Returns</h3>
+				<ul>
 
+							<li>
+									<span class="type">number</span>
+
+								<p>Character salary</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:GetSalaryAmount(client, faction)
+ return 0 -- Everyone get no salary.
+end
+</code></pre>
+
+				<h3>See Also</h3>
+				<ul>
+						<li><a href="../../hooks/plugin/#CanPlayerEarnSalary">CanPlayerEarnSalary</a></li>
+				</ul>
 		</section>
 		<section class="method">
 			<header>
@@ -6350,10 +6409,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when an item was added to the inventory.</p>
 			</header>
 
 
@@ -6365,11 +6421,10 @@ end
 							<li>
 								<span class="tag parameter">oldInv</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
 
 
-								<p>
-
-</p>
+								<p> Previous item inventory</p>
 							</li>
 					</ul>
 
@@ -6378,11 +6433,10 @@ end
 							<li>
 								<span class="tag parameter">inventory</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
 
 
-								<p>
-
-</p>
+								<p> New item inventory</p>
 							</li>
 					</ul>
 
@@ -6391,11 +6445,10 @@ end
 							<li>
 								<span class="tag parameter">item</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
 
 
-								<p>
-
-</p>
+								<p> Item that was added to the inventory</p>
 							</li>
 					</ul>
 
@@ -6410,10 +6463,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when an item was removed from the inventory.</p>
 			</header>
 
 
@@ -6425,11 +6475,10 @@ end
 							<li>
 								<span class="tag parameter">inventory</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
 
 
-								<p>
-
-</p>
+								<p> Inventory from which item was removed</p>
 							</li>
 					</ul>
 
@@ -6438,11 +6487,10 @@ end
 							<li>
 								<span class="tag parameter">item</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
 
 
-								<p>
-
-</p>
+								<p> Item that was removed from the inventory</p>
 							</li>
 					</ul>
 
@@ -6572,10 +6620,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when server is loading data.</p>
 			</header>
 
 
@@ -6843,10 +6888,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player who uses a character has disconnected.</p>
 			</header>
 
 
@@ -6858,11 +6900,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> The player that has disconnected</p>
 							</li>
 					</ul>
 
@@ -6871,11 +6912,10 @@ end
 							<li>
 								<span class="tag parameter">character</span>
 
+									<span class="tag"><a class="type" href="../../classes/character/#">Character</a></span>
 
 
-								<p>
-
-</p>
+								<p> The character that the player was using</p>
 							</li>
 					</ul>
 
@@ -6890,10 +6930,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a character was ragdolled or unragdolled.</p>
 			</header>
 
 
@@ -6905,11 +6942,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that was ragdolled or unradolled</p>
 							</li>
 					</ul>
 
@@ -6918,11 +6954,10 @@ end
 							<li>
 								<span class="tag parameter">entity</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Ragdoll that represents the player</p>
 							</li>
 					</ul>
 
@@ -6931,11 +6966,10 @@ end
 							<li>
 								<span class="tag parameter">bFallenOver</span>
 
+									<span class="tag"><span class="type">boolean</span></span>
 
 
-								<p>
-
-</p>
+								<p> Whether or not the character was ragdolled or unragdolled</p>
 							</li>
 					</ul>
 
@@ -7204,10 +7238,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has picked up the money from the ground.</p>
 			</header>
 
 
@@ -7219,11 +7250,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that picked up the money</p>
 							</li>
 					</ul>
 
@@ -7232,15 +7262,30 @@ end
 							<li>
 								<span class="tag parameter">self</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Money entity</p>
 							</li>
 					</ul>
 
 
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Whether or not to allow the player to pick up the money</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:OnPickupMoney(client, self)
+	return false -- Disallow picking up money.
+end
+</code></pre>
 
 		</section>
 		<section class="method">
@@ -7311,10 +7356,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has entered or exited the observer mode.</p>
 			</header>
 
 
@@ -7326,11 +7368,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that entered or exited the observer mode</p>
 							</li>
 					</ul>
 
@@ -7339,11 +7380,10 @@ end
 							<li>
 								<span class="tag parameter">state</span>
 
+									<span class="tag"><span class="type">boolean</span></span>
 
 
-								<p>
-
-</p>
+								<p> Previous observer state</p>
 							</li>
 					</ul>
 
@@ -7358,10 +7398,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has selected the entity interaction menu option while interacting with a player.</p>
 			</header>
 
 
@@ -7373,11 +7410,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that other player has interacted with</p>
 							</li>
 					</ul>
 
@@ -7386,11 +7422,10 @@ end
 							<li>
 								<span class="tag parameter">callingClient</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that has interacted with with other player</p>
 							</li>
 					</ul>
 
@@ -7399,11 +7434,10 @@ end
 							<li>
 								<span class="tag parameter">option</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p>
-
-</p>
+								<p> Option that was selected</p>
 							</li>
 					</ul>
 
@@ -7418,10 +7452,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has purchased or sold a door.</p>
 			</header>
 
 
@@ -7433,11 +7464,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that has purchased or sold a door</p>
 							</li>
 					</ul>
 
@@ -7446,11 +7476,10 @@ end
 							<li>
 								<span class="tag parameter">entity</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Door that was purchased or sold</p>
 							</li>
 					</ul>
 
@@ -7459,11 +7488,10 @@ end
 							<li>
 								<span class="tag parameter">bBuying</span>
 
+									<span class="tag"><span class="type">boolean</span></span>
 
 
-								<p>
-
-</p>
+								<p> Whether or not the player is bying a door</p>
 							</li>
 					</ul>
 
@@ -7472,11 +7500,10 @@ end
 							<li>
 								<span class="tag parameter">bCallOnDoorChild</span>
 
+									<span class="tag"><span class="type">function</span></span>
 
 
-								<p>
-
-</p>
+								<p> Function to call something on the door child</p>
 							</li>
 					</ul>
 
@@ -7491,10 +7518,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player was restricted.</p>
 			</header>
 
 
@@ -7506,11 +7530,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that was restricted</p>
 							</li>
 					</ul>
 
@@ -7525,10 +7548,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player was unrestricted.</p>
 			</header>
 
 
@@ -7540,11 +7560,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that was unrestricted</p>
 							</li>
 					</ul>
 
@@ -7559,10 +7578,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a saved items were loaded.</p>
 			</header>
 
 
@@ -7574,11 +7590,10 @@ end
 							<li>
 								<span class="tag parameter">loadedItems</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
 
 
-								<p>
-
-</p>
+								<p> Table of items that were loaded</p>
 							</li>
 					</ul>
 
@@ -7593,10 +7608,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when server database are being wiped.</p>
 			</header>
 
 
@@ -7697,10 +7709,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has interacted with an entity through the entity's interaction menu.</p>
 			</header>
 
 
@@ -7712,11 +7721,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that performed interaction</p>
 							</li>
 					</ul>
 
@@ -7725,11 +7733,10 @@ end
 							<li>
 								<span class="tag parameter">entity</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Entity being interacted with</p>
 							</li>
 					</ul>
 
@@ -7738,11 +7745,10 @@ end
 							<li>
 								<span class="tag parameter">option</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p>
-
-</p>
+								<p> Option selected by the player</p>
 							</li>
 					</ul>
 
@@ -7753,9 +7759,7 @@ end
 
 
 
-								<p>
-
-</p>
+								<p> Any data passed with the interaction option</p>
 							</li>
 					</ul>
 
@@ -7770,10 +7774,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has interacted with an item.</p>
 			</header>
 
 
@@ -7785,11 +7786,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that interacted with an item</p>
 							</li>
 					</ul>
 
@@ -7798,11 +7798,10 @@ end
 							<li>
 								<span class="tag parameter">action</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p>
-
-</p>
+								<p> Action selected by the player</p>
 							</li>
 					</ul>
 
@@ -7811,11 +7810,10 @@ end
 							<li>
 								<span class="tag parameter">item</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
 
 
-								<p>
-
-</p>
+								<p> Item being interacted with</p>
 							</li>
 					</ul>
 
@@ -7830,10 +7828,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has joined a class.</p>
 			</header>
 
 
@@ -7845,11 +7840,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that has joined a class</p>
 							</li>
 					</ul>
 
@@ -7858,11 +7852,10 @@ end
 							<li>
 								<span class="tag parameter">class</span>
 
+									<span class="tag"><span class="type">number</span></span>
 
 
-								<p>
-
-</p>
+								<p> Index of the class player has joined to</p>
 							</li>
 					</ul>
 
@@ -7871,11 +7864,10 @@ end
 							<li>
 								<span class="tag parameter">oldClass</span>
 
+									<span class="tag"><span class="type">number</span></span>
 
 
-								<p>
-
-</p>
+								<p> Index of the player's previous class</p>
 							</li>
 					</ul>
 
@@ -7924,10 +7916,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has loaded a character.</p>
 			</header>
 
 
@@ -7939,11 +7928,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that has loaded a character</p>
 							</li>
 					</ul>
 
@@ -7952,11 +7940,10 @@ end
 							<li>
 								<span class="tag parameter">character</span>
 
+									<span class="tag"><a class="type" href="../../classes/character/#">Character</a></span>
 
 
-								<p>
-
-</p>
+								<p> Character that was loaded</p>
 							</li>
 					</ul>
 
@@ -7965,11 +7952,10 @@ end
 							<li>
 								<span class="tag parameter">currentChar</span>
 
+									<span class="tag"><a class="type" href="../../classes/character/#">Character</a></span>
 
 
-								<p>
-
-</p>
+								<p> Character that player was using</p>
 							</li>
 					</ul>
 
@@ -7984,10 +7970,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has locked a door.</p>
 			</header>
 
 
@@ -7999,11 +7982,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that has locked a door</p>
 							</li>
 					</ul>
 
@@ -8012,11 +7994,10 @@ end
 							<li>
 								<span class="tag parameter">door</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Door that was locked</p>
 							</li>
 					</ul>
 
@@ -8025,11 +8006,10 @@ end
 							<li>
 								<span class="tag parameter">partner</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Door partner</p>
 							</li>
 					</ul>
 
@@ -8044,10 +8024,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has locked a vehicle.</p>
 			</header>
 
 
@@ -8059,11 +8036,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that has locked a vehicle</p>
 							</li>
 					</ul>
 
@@ -8072,11 +8048,10 @@ end
 							<li>
 								<span class="tag parameter">vehicle</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Vehicle that was locked</p>
 							</li>
 					</ul>
 
@@ -8091,10 +8066,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when player has said something in the text chat.</p>
 			</header>
 
 
@@ -8106,11 +8078,10 @@ end
 							<li>
 								<span class="tag parameter">speaker</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that has said something in the text chat</p>
 							</li>
 					</ul>
 
@@ -8119,11 +8090,10 @@ end
 							<li>
 								<span class="tag parameter">chatType</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p>
-
-</p>
+								<p> Type of the chat that player used</p>
 							</li>
 					</ul>
 
@@ -8132,11 +8102,10 @@ end
 							<li>
 								<span class="tag parameter">text</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p>
-
-</p>
+								<p> Chat message that player send</p>
 							</li>
 					</ul>
 
@@ -8145,11 +8114,10 @@ end
 							<li>
 								<span class="tag parameter">anonymous</span>
 
+									<span class="tag"><span class="type">boolean</span></span>
 
 
-								<p>
-
-</p>
+								<p> Whether or not message was anonymous</p>
 							</li>
 					</ul>
 
@@ -8158,11 +8126,10 @@ end
 							<li>
 								<span class="tag parameter">receivers</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
 
 
-								<p>
-
-</p>
+								<p> Players who will hear that message</p>
 							</li>
 					</ul>
 
@@ -8171,29 +8138,41 @@ end
 							<li>
 								<span class="tag parameter">rawText</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p>
-
-</p>
+								<p> Chat message without any formatting</p>
 							</li>
 					</ul>
 
 
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a>
+
+								<p>You can return text that will be shown instead</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:PlayerMessageSend(speaker, chatType, text, anonymous, receivers, rawText)
+ return "Text" -- When a player writes something into chat, he will say "Text" instead.
+end
+</code></pre>
 
 		</section>
 		<section class="method">
 			<header>
 				<a class="anchor" id="PlayerModelChanged">
-					<h1><span class="realm shared"></span></span>PLUGIN:PlayerModelChanged(client, model)</h1>
+					<h1><span class="realm server"></span></span>PLUGIN:PlayerModelChanged(client, oldModel)</h1>
 				</a>
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player model was changed.</p>
 			</header>
 
 
@@ -8205,24 +8184,22 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player whose model was changed</p>
 							</li>
 					</ul>
 
 					<ul>
 
 							<li>
-								<span class="tag parameter">model</span>
+								<span class="tag parameter">oldModel</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-
-								<p>
-
-</p>
+								<p> Old player model</p>
 							</li>
 					</ul>
 
@@ -8237,10 +8214,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has got stamina.</p>
 			</header>
 
 
@@ -8252,11 +8226,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player who has got stamina</p>
 							</li>
 					</ul>
 
@@ -8271,10 +8244,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has lost stamina.</p>
 			</header>
 
 
@@ -8286,11 +8256,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player who has lost stamina</p>
 							</li>
 					</ul>
 
@@ -8352,10 +8321,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has unlocked a door.</p>
 			</header>
 
 
@@ -8367,11 +8333,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that has unlocked a door</p>
 							</li>
 					</ul>
 
@@ -8380,11 +8345,10 @@ end
 							<li>
 								<span class="tag parameter">door</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Door that was unlocked</p>
 							</li>
 					</ul>
 
@@ -8393,11 +8357,10 @@ end
 							<li>
 								<span class="tag parameter">partner</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Door partner</p>
 							</li>
 					</ul>
 
@@ -8407,15 +8370,12 @@ end
 		<section class="method">
 			<header>
 				<a class="anchor" id="PlayerUnlockedVehicle">
-					<h1><span class="realm server"></span></span>PLUGIN:PlayerUnlockedVehicle(client, door)</h1>
+					<h1><span class="realm server"></span></span>PLUGIN:PlayerUnlockedVehicle(client, vehicle)</h1>
 				</a>
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has unlocked a vehicle.</p>
 			</header>
 
 
@@ -8427,24 +8387,22 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that has unlocked a vehicle</p>
 							</li>
 					</ul>
 
 					<ul>
 
 							<li>
-								<span class="tag parameter">door</span>
+								<span class="tag parameter">vehicle</span>
+
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-
-								<p>
-
-</p>
+								<p> Vehicle that was unlocked</p>
 							</li>
 					</ul>
 
@@ -8459,10 +8417,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has used an entity.</p>
 			</header>
 
 
@@ -8474,11 +8429,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player who has used an entity</p>
 							</li>
 					</ul>
 
@@ -8487,11 +8441,10 @@ end
 							<li>
 								<span class="tag parameter">entity</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Entity that was used by the player</p>
 							</li>
 					</ul>
 
@@ -8506,10 +8459,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has used a door.</p>
 			</header>
 
 
@@ -8521,11 +8471,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player who has used a door</p>
 							</li>
 					</ul>
 
@@ -8534,11 +8483,10 @@ end
 							<li>
 								<span class="tag parameter">entity</span>
 
+									<span class="tag"><a class="type" href="../../classes/entity/#">Entity</a></span>
 
 
-								<p>
-
-</p>
+								<p> Door that was used by the player</p>
 							</li>
 					</ul>
 
@@ -9198,10 +9146,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when server data was loaded.</p>
 			</header>
 
 
@@ -9216,10 +9161,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called after player loadout.</p>
 			</header>
 
 
@@ -9231,6 +9173,7 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
 								<p>
@@ -9250,10 +9193,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called after player has said something in the text chat.</p>
 			</header>
 
 
@@ -9265,11 +9205,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that has said something in the text chat</p>
 							</li>
 					</ul>
 
@@ -9278,11 +9217,10 @@ end
 							<li>
 								<span class="tag parameter">chatType</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p>
-
-</p>
+								<p> Type of the chat that player used</p>
 							</li>
 					</ul>
 
@@ -9291,11 +9229,10 @@ end
 							<li>
 								<span class="tag parameter">message</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p>
-
-</p>
+								<p> Chat message that player send</p>
 							</li>
 					</ul>
 
@@ -9304,11 +9241,10 @@ end
 							<li>
 								<span class="tag parameter">anonymous</span>
 
+									<span class="tag"><span class="type">boolean</span></span>
 
 
-								<p>
-
-</p>
+								<p> Whether or not message was anonymous</p>
 							</li>
 					</ul>
 
@@ -9341,10 +9277,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called before character deletion.</p>
 			</header>
 
 
@@ -9356,11 +9289,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Character owner</p>
 							</li>
 					</ul>
 
@@ -9369,11 +9301,10 @@ end
 							<li>
 								<span class="tag parameter">character</span>
 
+									<span class="tag"><a class="type" href="../../classes/character/#">Character</a></span>
 
 
-								<p>
-
-</p>
+								<p> Chraracter that will be deleted</p>
 							</li>
 					</ul>
 
@@ -9388,10 +9319,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called before character loading.</p>
 			</header>
 
 
@@ -9403,11 +9331,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that loading a character</p>
 							</li>
 					</ul>
 
@@ -9416,11 +9343,10 @@ end
 							<li>
 								<span class="tag parameter">character</span>
 
+									<span class="tag"><a class="type" href="../../classes/character/#">Character</a></span>
 
 
-								<p>
-
-</p>
+								<p> Character that will be loaded</p>
 							</li>
 					</ul>
 
@@ -9429,11 +9355,10 @@ end
 							<li>
 								<span class="tag parameter">currentChar</span>
 
+									<span class="tag"><a class="type" href="../../classes/character/#">Character</a></span>
 
 
-								<p>
-
-</p>
+								<p> Character that player is using</p>
 							</li>
 					</ul>
 
@@ -9533,10 +9458,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when server is saving data.</p>
 			</header>
 
 
@@ -9634,10 +9556,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when a player has taken a shipment item.</p>
 			</header>
 
 
@@ -9649,11 +9568,10 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that has taken a shipment item</p>
 							</li>
 					</ul>
 
@@ -9662,11 +9580,10 @@ end
 							<li>
 								<span class="tag parameter">uniqueID</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p>
-
-</p>
+								<p> UniqueID of the shipment item that was taken</p>
 							</li>
 					</ul>
 
@@ -9675,11 +9592,10 @@ end
 							<li>
 								<span class="tag parameter">amount</span>
 
+									<span class="tag"><span class="type">number</span></span>
 
 
-								<p>
-
-</p>
+								<p> Amount of the items that were taken</p>
 							</li>
 					</ul>
 
@@ -9728,14 +9644,27 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Whether or not the server should delete saved items.</p>
 			</header>
 
 
 
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Whether or not the server should delete saved items</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:ShouldDeleteSavedItems()
+ return true -- Delete all saved items.
+end
+</code></pre>
 
 		</section>
 		<section class="method">
@@ -9959,49 +9888,12 @@ end
 		<section class="method">
 			<header>
 				<a class="anchor" id="ShouldPlayerDrowned">
-					<h1><span class="realm server"></span></span>PLUGIN:ShouldPlayerDrowned(v)</h1>
+					<h1><span class="realm server"></span></span>PLUGIN:ShouldPlayerDrowned(client)</h1>
 				</a>
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
-			</header>
-
-
-					<h3>Parameters</h3>
-
-
-					<ul>
-
-							<li>
-								<span class="tag parameter">v</span>
-
-
-
-								<p>
-
-</p>
-							</li>
-					</ul>
-
-
-
-		</section>
-		<section class="method">
-			<header>
-				<a class="anchor" id="ShouldRemoveRagdollOnDeath">
-					<h1><span class="realm server"></span></span>PLUGIN:ShouldRemoveRagdollOnDeath(client)</h1>
-				</a>
-
-
-
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Whether or not player should drown.</p>
 			</header>
 
 
@@ -10013,15 +9905,76 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that is underwater</p>
 							</li>
 					</ul>
 
 
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Whether or not player should drown</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:ShouldPlayerDrowned(client)
+ return false -- Players will not drown.
+end
+</code></pre>
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="ShouldRemoveRagdollOnDeath">
+					<h1><span class="realm server"></span></span>PLUGIN:ShouldRemoveRagdollOnDeath(client)</h1>
+				</a>
+
+
+
+					<p>Whether or not remove player ragdoll on death.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">client</span>
+
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
+
+
+								<p> Player that died</p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Whether or not remove player ragdoll on death</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:ShouldRemoveRagdollOnDeath(client)
+ return false -- Player ragdolls will not be removed.
+end
+</code></pre>
 
 		</section>
 		<section class="method">
@@ -10032,10 +9985,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Whether or not to restore character inventory.</p>
 			</header>
 
 
@@ -10047,11 +9997,10 @@ end
 							<li>
 								<span class="tag parameter">characterID</span>
 
+									<span class="tag"><span class="type">number</span></span>
 
 
-								<p>
-
-</p>
+								<p> ID of the character</p>
 							</li>
 					</ul>
 
@@ -10060,11 +10009,10 @@ end
 							<li>
 								<span class="tag parameter">inventoryID</span>
 
+									<span class="tag"><span class="type">number</span></span>
 
 
-								<p>
-
-</p>
+								<p> ID of the inventory</p>
 							</li>
 					</ul>
 
@@ -10073,15 +10021,30 @@ end
 							<li>
 								<span class="tag parameter">inventoryType</span>
 
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p>
-
-</p>
+								<p> Type of the inventory</p>
 							</li>
 					</ul>
 
 
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Whether or not to restore character inventory</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:ShouldRestoreInventory(characterID, inventoryID, inventoryType)
+ return false -- Character inventories will not be restored.
+end
+</code></pre>
 
 		</section>
 		<section class="method">
@@ -10126,10 +10089,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Whether or not spawn player ragdoll on death.</p>
 			</header>
 
 
@@ -10141,15 +10101,30 @@ end
 							<li>
 								<span class="tag parameter">client</span>
 
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
 
 
-								<p>
-
-</p>
+								<p> Player that died</p>
 							</li>
 					</ul>
 
 
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<span class="type">bool</span>
+
+								<p>Whether or not spawn player ragdoll on death</p>
+							</li>
+
+				</ul>
+
+				<h3>Example Usage</h3>
+					<pre><code>function PLUGIN:ShouldSpawnClientRagdoll(client)
+ return false -- Player ragdolls will not be spawned.
+end
+</code></pre>
 
 		</section>
 		<section class="method">
@@ -10335,10 +10310,7 @@ end
 
 
 
-					<div class="notice warning">
-						<div class="title">Incomplete</div>
-						<p>Documentation for this section is incomplete and needs expanding.</p>
-					</div>
+					<p>Called when the distance on which the voice can be heard was changed.</p>
 			</header>
 
 
@@ -10350,11 +10322,10 @@ end
 							<li>
 								<span class="tag parameter">newValue</span>
 
+									<span class="tag"><span class="type">number</span></span>
 
 
-								<p>
-
-</p>
+								<p> New voice distance</p>
 							</li>
 					</ul>
 
