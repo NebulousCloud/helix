@@ -344,14 +344,12 @@ end
 function CanPlayerUseDoor(client, entity)
 end
 
---- Whether or not a player can use a vendor.
+--- Determines whether a player can use a vendor.
 -- @realm server
--- @player activator Player that wants to use a vendor
--- @treturn bool Whether or not to allow the player to use a vendor
--- @usage function PLUGIN:CanPlayerUseVendor(activator)
--- 	return false -- Disallow using any vendor.
--- end
-function CanPlayerUseVendor(activator)
+-- @player activator The player attempting to use the vendor
+-- @entity vendor The vendor entity being used
+-- @treturn bool Returns false if the player can't use the vendor
+function CanPlayerUseVendor(activator, vendor)
 end
 
 --- Whether or not a player can view his inventory.
