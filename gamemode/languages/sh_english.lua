@@ -12,6 +12,7 @@ LANGUAGE = {
 	helpCommands = "Command parameters with <arrows> are required, while [brackets] are optional.",
 	helpFlags = "Flags with a green background are accessible by this character.",
 
+	credits = "Credits",
 	creditSpecial = "Special Thanks",
 	creditLeadDeveloper = "Lead Developer",
 	creditUIDesigner = "UI Designer",
