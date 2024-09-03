@@ -824,6 +824,7 @@ end
 
 function GM:OnPhysgunFreeze(weapon, physObj, entity, client)
 	-- Object is already frozen (!?)
+	if (IsValid(physObj) then return false end
 	if (!physObj:IsMoveable()) then return false end
 	if (entity:GetUnFreezable()) then return false end
 
