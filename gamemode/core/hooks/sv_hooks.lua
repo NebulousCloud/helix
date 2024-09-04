@@ -823,6 +823,9 @@ function GM:PlayerCanPickupWeapon(client, weapon)
 end
 
 function GM:OnPhysgunFreeze(weapon, physObj, entity, client)
+    -- Validate the physObj, to prevent errors on entities who have no physics object
+    if (!IsValid(physObj)) then return false end
+
 	-- Object is already frozen (!?)
 	if (!physObj:IsMoveable()) then return false end
 	if (entity:GetUnFreezable()) then return false end
