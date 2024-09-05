@@ -279,7 +279,7 @@ function GM:PlayerLoadedCharacter(client, character, lastChar)
 	end
 
 	local faction = ix.faction.indices[character:GetFaction()]
-	local uniqueID = "ixSalary" .. client:UniqueID()
+	local uniqueID = "ixSalary" .. client:SteamID64()
 
 	if (faction and faction.pay and faction.pay > 0) then
 		timer.Create(uniqueID, faction.payTime or 300, 0, function()
