@@ -3313,6 +3313,7 @@ stds.gmod.read_globals = {
 	"SOLID_BBOX",
 	"CHAN_WEAPON",
 	"ErrorNoHalt",
+	"ErrorNoHaltWithStack",
 	"ACT_HL2MP_RUN_DUEL",
 	"ACT_DOD_WALK_ZOOM_BAZOOKA",
 	"type",
