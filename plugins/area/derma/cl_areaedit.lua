@@ -21,7 +21,7 @@ function PANEL:Init()
 
 	-- name entry
 	self.nameEntry = vgui.Create("ixTextEntry")
-	self.nameEntry:SetFont("ixMenuButtonFont")
+	self.nameEntry:SetFont("ixMediumLightFont")
 	self.nameEntry:SetText(L("areaNew"))
 
 	local listRow = self.canvas:Add("ixListRow")
@@ -34,8 +34,8 @@ function PANEL:Init()
 	-- type entry
 	self.typeEntry = self.canvas:Add("DComboBox")
 	self.typeEntry:Dock(RIGHT)
-	self.typeEntry:SetFont("ixMenuButtonFont")
-	self.typeEntry:SetTextColor(color_white)
+	self.typeEntry:SetFont("ixMediumLightFont")
+	self.typeEntry:SetTextColor(color_black)
 	self.typeEntry.OnSelect = function(panel)
 		panel:SizeToContents()
 		panel:SetWide(panel:GetWide() + 12) -- padding for arrow (nice)
@@ -70,6 +70,7 @@ function PANEL:Init()
 		elseif (v.type == ix.type.bool) then
 			panel = vgui.Create("ixCheckBox")
 			panel:SetChecked(v.default, true)
+			panel:SetFont("ixMediumLightFont")
 		elseif (v.type == ix.type.color) then
 			panel = vgui.Create("DButton")
 			panel.value = v.default
@@ -142,7 +143,7 @@ function PANEL:Init()
 end
 
 function PANEL:SizeToContents()
-	local width = 64
+	local width = 600
 	local height = 37
 
 	for _, v in ipairs(self.canvas:GetCanvas():GetChildren()) do
@@ -151,7 +152,7 @@ function PANEL:SizeToContents()
 	end
 
 	self:SetWide(width + 200)
-	self:SetTall(height + self.saveButton:GetTall())
+	self:SetTall(height + self.saveButton:GetTall() + 50)
 end
 
 function PANEL:Submit()
