@@ -45,25 +45,30 @@ if (CLIENT) then
 	})
 end
 
-ix.option.Add("language", ix.type.array, ix.config.language or "english", {
-	category = "general",
-	bNetworked = true,
-	populate = function()
-		local entries = {}
+do
+	local gmodLanguage = GetConVar("gmod_language"):GetString()
+	local defaultLanguage = ix.config.language or ix.lang.codes[gmodLanguage] or "english"
 
-		for k, _ in SortedPairs(ix.lang.stored) do
-			local name = ix.lang.names[k]
-			local name2 = k:utf8sub(1, 1):utf8upper() .. k:utf8sub(2)
+	ix.option.Add("language", ix.type.array, defaultLanguage, {
+		category = "general",
+		bNetworked = true,
+		populate = function()
+			local entries = {}
 
-			if (name) then
-				name = name .. " (" .. name2 .. ")"
-			else
-				name = name2
+			for k, _ in SortedPairs(ix.lang.stored) do
+				local name = ix.lang.names[k]
+				local name2 = k:utf8sub(1, 1):utf8upper() .. k:utf8sub(2)
+
+				if (name) then
+					name = name .. " (" .. name2 .. ")"
+				else
+					name = name2
+				end
+
+				entries[k] = name
 			end
 
-			entries[k] = name
+			return entries
 		end
-
-		return entries
-	end
-})
+	})
+end
