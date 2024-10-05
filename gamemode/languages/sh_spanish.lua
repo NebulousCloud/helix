@@ -1,3 +1,8 @@
+-- SPANISH TRANSLATION
+-- Cuboxis (http://steamcommunity.com/id/Cuboxis)
+-- Geferon (https://steamcommunity.com/id/GEFERON)
+-- Whitehole (https://steamcommunity.com/id/whitehole)
+-- Carlos Bes
 
 NAME = "Español"
 
@@ -160,6 +165,7 @@ LANGUAGE = {
 	moneyTaken = "Has encontrado %s.",
 	moneyGiven = "Te han dado %s.",
 	insufficientMoney = "No puedes permitirte esto con tu dinero.",
+	belowMinMoneyDrop = "No puedes soltar menos de %s.",
 	businessPurchase = "Has comprado %s por %s.",
 	businessSell = "Has vendido %s por %s.",
 	businessTooFast = "Por favor, espera antes de comprar otro objeto.",
@@ -308,8 +314,10 @@ LANGUAGE = {
 	containerNameWrite = "Introduce el nombre.",
 	containerNameRemove = "Has borrado el nombre de este contenedor.",
 	containerInvalid = "¡Necesitas estar mirando a un contenedor para hacer esto!",
+	passwordAttemptLimit = "¡Demasiados intentos fallidos de contraseña!",
 	wrongPassword = "Has introducido una contraseña errónea.",
 	respawning = "Reapareciendo...",
+	syntax = "Formato: %s",
 	tellAdmin = "Informa a un miembro del staff de este error: %s",
 
 	mapAdd = "Has añadido una escena de mapa.",
@@ -447,5 +455,15 @@ LANGUAGE = {
 	cmdY = "Grita algo a las personas a tu alrededor.",
 	cmdEvent = "Describe un evento que todos pueden ver en el servidor.",
 	cmdOOC = "Envía un mensaje en el chat (global) fuera de personaje.",
-	cmdLOOC = "Envía un mensaje en el chat (local) fuera de personaje."
+	cmdLOOC = "Envía un mensaje en el chat (local) fuera de personaje.",
+
+	iconEditorAlignBest = "Alineación óptima",
+	iconEditorWidth = "Ancho",
+	iconEditorHeight = "Altura",
+	iconEditorCopy = "Copiar al portapapeles",
+	iconEditorCopied = "Datos del modelo del objeto copiados al portapapeles.",
+	iconEditorAlignFront = "Alinear desde el frente",
+	iconEditorAlignAbove = "Alinear desde arriba",
+	iconEditorAlignRight = "Alinear desde la derecha",
+	iconEditorAlignCenter = "Alinear desde el centro"
 }
