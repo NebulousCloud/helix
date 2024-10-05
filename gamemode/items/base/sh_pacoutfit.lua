@@ -90,7 +90,7 @@ end)
 -- On player uneqipped the item, Removes a weapon from the player and keep the ammo in the item.
 ITEM.functions.EquipUn = { -- sorry, for name order.
 	name = "unequip",
-	tip = "equipTip",
+	tip = "unequipTip",
 	icon = "icon16/cross.png",
 	OnRun = function(item)
 		item:RemovePart(item.player)
