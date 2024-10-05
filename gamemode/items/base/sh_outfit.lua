@@ -241,7 +241,7 @@ end)
 
 ITEM.functions.EquipUn = { -- sorry, for name order.
 	name = "unequip",
-	tip = "equipTip",
+	tip = "unequipTip",
 	icon = "icon16/cross.png",
 	OnRun = function(item)
 		item:RemoveOutfit(item.player)
