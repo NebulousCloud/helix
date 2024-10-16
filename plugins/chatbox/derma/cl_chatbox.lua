@@ -914,6 +914,8 @@ function PANEL:DraggingInBounds()
 	return mouseY > screenY and mouseY < screenY + self.tabs.buttons:GetTall()
 end
 
+local ixChatboxActive = false
+
 function PANEL:SetActive(bActive)
 	if (bActive) then
 		self:SetAlpha(255)
@@ -954,6 +956,7 @@ function PANEL:SetActive(bActive)
 	end
 
 	self.bActive = tobool(bActive)
+	ixChatboxActive = tobool(bActive)
 end
 
 function PANEL:SetupTabs(tabs)
@@ -1073,15 +1076,23 @@ function PANEL:OnMouseReleased()
 	end
 end
 
+local ixDisableChatbox = false
+
+hook.Add("OnPauseMenuShow", "ixCloseChatboxOnPause", function()
+    if ixChatboxActive then
+		ixDisableChatbox = true
+		timer.Simple(0.1, function() ixDisableChatbox = false end)
+		return false
+	end
+end)
+
 function PANEL:Think()
 	if (!self.bActive) then
 		return
 	end
 
-	if (gui.IsGameUIVisible()) then
+	if gui.IsGameUIVisible() or ixDisableChatbox then
 		self:SetActive(false)
-		gui.HideGameUI()
-
 		return
 	end
 
