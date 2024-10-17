@@ -1078,13 +1078,6 @@ function PANEL:Think()
 		return
 	end
 
-	if (gui.IsGameUIVisible()) then
-		self:SetActive(false)
-		gui.HideGameUI()
-
-		return
-	end
-
 	local mouseX = math.Clamp(gui.MouseX(), 0, ScrW())
 	local mouseY = math.Clamp(gui.MouseY(), 0, ScrH())
 
