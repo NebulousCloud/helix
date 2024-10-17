@@ -97,6 +97,16 @@ if (CLIENT) then
 		end
 	end
 
+	function PLUGIN:OnPauseMenuShow()
+		if (!IsValid(ix.gui.chat) or !ix.gui.chat:GetActive()) then
+			return
+		end
+
+		ix.gui.chat:SetActive(false)
+
+		return false
+	end
+
 	function PLUGIN:HUDShouldDraw(element)
 		if (element == "CHudChat") then
 			return false
