@@ -79,7 +79,7 @@ local function CalcStaminaChange(client)
 end
 
 function PLUGIN:SetupMove(client, mv, cmd)
-	if client:GetNetVar("brth", false) then
+	if (client:GetNetVar("brth", false)) then
 		mv:SetMaxClientSpeed(client:GetWalkSpeed())
 	end
 end
