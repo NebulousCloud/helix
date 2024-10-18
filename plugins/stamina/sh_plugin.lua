@@ -78,11 +78,11 @@ local function CalcStaminaChange(client)
 	end
 end
 
-hook.Add("SetupMove", "StaminaSpeedReduction", function(client, mv, cmd)
+function PLUGIN:SetupMove(client, mv, cmd)
 	if client:GetNetVar("brth", false) then
 		mv:SetMaxClientSpeed(client:GetWalkSpeed())
 	end
-end)
+end
 
 if (SERVER) then
 	function PLUGIN:PostPlayerLoadout(client)
