@@ -1260,8 +1260,8 @@ function PANEL:OnTabUpdated(id, filter, newID)
 		return
 	end
 
-	tab:SetFilter(filter)
-	self.tabs:RenameTab(id, newID)
+	self.tabs:AddTab(newID, filter)
+	self.tabs:RemoveTab(id)
 
 	PLUGIN:SaveTabs()
 end
