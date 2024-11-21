@@ -38,7 +38,7 @@ end
 
 function SetNetVar(key, value, receiver) -- luacheck: globals SetNetVar
 	if (CheckBadType(key, value)) then return end
-	if (GetNetVar(key) == value) then return end
+	if (GetNetVar(key) == value and !istable(value)) then return end
 
 	ix.net.globals[key] = value
 
