@@ -5,7 +5,7 @@ Multi-language phrase support.
 Helix has support for multiple languages, and you can easily leverage this system for use in your own schema, plugins, etc.
 Languages will be loaded from the schema and any plugins in `languages/sh_languagename.lua`, where `languagename` is the id of a
 language (`english` for English, `french` for French, etc). The structure of a language file is a table of phrases with the key
-as its phrase ID and the value as its translation for that language. For example, in `plugins/area/sh_english.lua`:
+as its phrase ID and the value as its translation for that language. For example, in `plugins/area/languages/sh_english.lua`:
 	LANGUAGE = {
 		area = "Area",
 		areas = "Areas",
