@@ -15,6 +15,7 @@ stds.helix.globals = {
 	"PLUGIN",
 	"ATTRIBUTE",
 	"NAME",
+	"CODE",
 	"LANGUAGE",
 	"FACTION",
 	"CLASS",

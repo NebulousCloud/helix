@@ -32,6 +32,7 @@ does not have a set language. An example:
 ix.lang = ix.lang or {}
 ix.lang.stored = ix.lang.stored or {}
 ix.lang.names = ix.lang.names or {}
+ix.lang.codes = ix.lang.codes or {}
 
 --- Loads language files from a directory.
 -- @realm shared
@@ -47,6 +48,11 @@ function ix.lang.LoadFromDir(directory)
 			if (NAME) then
 				ix.lang.names[niceName] = NAME
 				NAME = nil
+			end
+
+			if (CODE) then
+				ix.lang.codes[CODE] = niceName
+				CODE = nil
 			end
 
 			ix.lang.AddTable(niceName, LANGUAGE)
