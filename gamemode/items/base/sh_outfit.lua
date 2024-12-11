@@ -116,6 +116,7 @@ function ITEM:AddOutfit(client)
 		end
 	end
 
+	self:GetOwner():SetupHands()
 	self:OnEquipped()
 end
 
@@ -205,6 +206,7 @@ function ITEM:RemoveOutfit(client)
 		self:RemoveAttachment(k, client)
 	end
 
+	self:GetOwner():SetupHands()
 	self:OnUnequipped()
 end
 
