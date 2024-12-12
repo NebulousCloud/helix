@@ -383,7 +383,6 @@ end
 --   return false
 --  end
 -- end
- 
 function CanTransferItem(item, currentInv, oldInv)
 end
 
