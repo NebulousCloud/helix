@@ -372,7 +372,18 @@ end
 function CanSaveContainer(entity, inventory)
 end
 
---- @realm shared
+--- Whether or not to transer item. When you drop item currentInv == nil 
+-- @realm shared
+-- @tab item Item that we try to transfer
+-- @tab currentInv inventory Inventory from what we try to transfer item
+-- @tab oldInv inventory Inventory to what we try to transfer item
+-- @treturn bool Whenever or not to transfer item
+-- @usage function CanTransferItem(item, currentInv, oldInv)
+--  if (item.noTranserable) then
+--   return false
+--  end
+-- end
+ 
 function CanTransferItem(item, currentInv, oldInv)
 end
 
