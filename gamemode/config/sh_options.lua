@@ -43,6 +43,10 @@ if (CLIENT) then
 	ix.option.Add("showIntro", ix.type.bool, true, {
 		category = "general"
 	})
+
+	ix.option.Add("escCloseMenu", ix.type.bool, false, {
+		category = "general"
+	})
 end
 
 ix.option.Add("language", ix.type.array, ix.config.language or "english", {
