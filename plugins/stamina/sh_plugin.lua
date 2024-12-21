@@ -30,16 +30,6 @@ local function CalcStaminaChange(client)
 		return 0
 	end
 
-	local runSpeed
-
-	if (SERVER) then
-		runSpeed = ix.config.Get("runSpeed") + character:GetAttribute("stm", 0)
-
-		if (client:WaterLevel() > 1) then
-			runSpeed = runSpeed * 0.775
-		end
-	end
-
 	local walkSpeed = ix.config.Get("walkSpeed")
 	local maxAttributes = ix.config.Get("maxAttributes", 100)
 	local offset
