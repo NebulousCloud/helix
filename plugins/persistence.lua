@@ -150,6 +150,10 @@ if (SERVER) then
 					entity:RestoreNetworkVars(v.DT)
 				end
 
+				if (entity.OnHelixPersistLoad) then
+					entity:OnHelixPersistLoad()
+				end
+
 				self.stored[#self.stored + 1] = entity
 
 				entity:SetNetVar("Persistent", true)
@@ -210,6 +214,10 @@ if (SERVER) then
 
 				if (v.GetNetworkVars) then
 					data.DT = v:GetNetworkVars()
+				end
+
+				if (v.OnHelixPersistSave) then
+					v:OnHelixPersistSave(data)
 				end
 
 				entities[#entities + 1] = data
