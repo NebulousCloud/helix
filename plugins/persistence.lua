@@ -1,10 +1,27 @@
-
 local PLUGIN = PLUGIN
 
 PLUGIN.name = "Persistence"
 PLUGIN.description = "Define entities to persist through restarts."
-PLUGIN.author = "alexgrist"
-PLUGIN.stored = PLUGIN.stored or {}
+PLUGIN.author = "alexgrist & Beelzebub"
+
+-- disable default sbox persistence (because we override Get/SetPersistent behaivor)
+function PLUGIN:OnLoaded()
+	self._PersistenceSave = self._PersistenceSave or (hook.GetTable().PersistenceSave or {}).PersistenceSave
+	self._PersistenceLoad = self._PersistenceLoad or (hook.GetTable().PersistenceLoad or {}).PersistenceLoad
+
+	hook.Remove("PersistenceSave", "PersistenceSave")
+	hook.Remove("PersistenceLoad", "PersistenceLoad")
+end
+
+-- restore it
+function PLUGIN:OnUnload()
+	if self._PersistenceSave then
+		hook.Add("PersistenceSave", "PersistenceSave", self._PersistenceSave)
+	end
+	if self._PersistenceLoad then
+		hook.Add("PersistenceLoad", "PersistenceLoad", self._PersistenceLoad)
+	end
+end
 
 local function GetRealModel(entity)
 	return entity:GetClass() == "prop_effect" and entity.AttachedEntity:GetModel() or entity:GetModel()
@@ -19,7 +36,7 @@ properties.Add("persist", {
 		if (entity:IsPlayer() or entity:IsVehicle() or entity.bNoPersist) then return false end
 		if (!gamemode.Call("CanProperty", client, "persist", entity)) then return false end
 
-		return !entity:GetNetVar("Persistent", false)
+		return !entity:GetPersistent()
 	end,
 
 	Action = function(self, entity)
@@ -34,10 +51,7 @@ properties.Add("persist", {
 		if (!IsValid(entity)) then return end
 		if (!self:Filter(entity, client)) then return end
 
-		PLUGIN.stored[#PLUGIN.stored + 1] = entity
-
-		entity:SetNetVar("Persistent", true)
-
+		entity:SetPersistent(true)
 		ix.log.Add(client, "persist", GetRealModel(entity), true)
 	end
 })
@@ -51,7 +65,7 @@ properties.Add("persist_end", {
 		if (entity:IsPlayer()) then return false end
 		if (!gamemode.Call("CanProperty", client, "persist", entity)) then return false end
 
-		return entity:GetNetVar("Persistent", false)
+		return entity:GetPersistent()
 	end,
 
 	Action = function(self, entity)
@@ -66,126 +80,39 @@ properties.Add("persist_end", {
 		if (!IsValid(entity)) then return end
 		if (!self:Filter(entity, client)) then return end
 
-		for k, v in ipairs(PLUGIN.stored) do
-			if (v == entity) then
-				table.remove(PLUGIN.stored, k)
-
-				break
-			end
-		end
-
-		entity:SetNetVar("Persistent", false)
+		entity:SetPersistent(false)
 
 		ix.log.Add(client, "persist", GetRealModel(entity), false)
 	end
 })
 
-function PLUGIN:PhysgunPickup(client, entity)
-	if (entity:GetNetVar("Persistent", false)) then
-		return false
-	end
-end
-
 if (SERVER) then
 	function PLUGIN:LoadData()
-		local entities = self:GetData() or {}
+		local data = self:GetData()
+		if !(data and data.Entities) then return end
 
-		for _, v in ipairs(entities) do
-			local entity = ents.Create(v.Class)
+		local entities = duplicator.Paste(nil, data.Entities, data.Constraints)
 
-			if (IsValid(entity)) then
-				entity:SetPos(v.Pos)
-				entity:SetAngles(v.Angle)
-				entity:SetModel(v.Model)
-				entity:SetSkin(v.Skin)
-				entity:SetColor(v.Color)
-				entity:SetMaterial(v.Material)
-				entity:Spawn()
-				entity:Activate()
-
-				if (v.bNoCollision) then
-					entity:SetCollisionGroup(COLLISION_GROUP_WORLD)
-				end
-
-				if (istable(v.BodyGroups)) then
-					for k2, v2 in pairs(v.BodyGroups) do
-						entity:SetBodygroup(k2, v2)
-					end
-				end
-
-				if (istable(v.SubMaterial)) then
-					for k2, v2 in pairs(v.SubMaterial) do
-						if (!isnumber(k2) or !isstring(v2)) then
-							continue
-						end
-
-						entity:SetSubMaterial(k2 - 1, v2)
-					end
-				end
-
-				local physicsObject = entity:GetPhysicsObject()
-
-				if (IsValid(physicsObject)) then
-					physicsObject:EnableMotion(v.Movable)
-				end
-
-				self.stored[#self.stored + 1] = entity
-
-				entity:SetNetVar("Persistent", true)
-			end
+		for _, ent in pairs(entities) do
+			ent:SetPersistent(true)
 		end
 	end
 
 	function PLUGIN:SaveData()
-		local entities = {}
+		local data = {Entities = {}, Constraints = {}}
 
-		for _, v in ipairs(self.stored) do
-			if (IsValid(v)) then
-				local data = {}
-				data.Class = v.ClassOverride or v:GetClass()
-				data.Pos = v:GetPos()
-				data.Angle = v:GetAngles()
-				data.Model = GetRealModel(v)
-				data.Skin = v:GetSkin()
-				data.Color = v:GetColor()
-				data.Material = v:GetMaterial()
-				data.bNoCollision = v:GetCollisionGroup() == COLLISION_GROUP_WORLD
+		for _, ent in ipairs(ents.GetAll()) do
+			if (!ent:GetPersistent()) then continue end
 
-				local materials = v:GetMaterials()
+			local tmpEntities = {}
+			duplicator.GetAllConstrainedEntitiesAndConstraints(ent, tmpEntities, data.Constraints)
 
-				if (istable(materials)) then
-					data.SubMaterial = {}
-
-					for k2, _ in pairs(materials) do
-						if (v:GetSubMaterial(k2 - 1) != "") then
-							data.SubMaterial[k2] = v:GetSubMaterial(k2 - 1)
-						end
-					end
-				end
-
-				local bodyGroups = v:GetBodyGroups()
-
-				if (istable(bodyGroups)) then
-					data.BodyGroups = {}
-
-					for _, v2 in pairs(bodyGroups) do
-						if (v:GetBodygroup(v2.id) > 0) then
-							data.BodyGroups[v2.id] = v:GetBodygroup(v2.id)
-						end
-					end
-				end
-
-				local physicsObject = v:GetPhysicsObject()
-
-				if (IsValid(physicsObject)) then
-					data.Movable = physicsObject:IsMoveable()
-				end
-
-				entities[#entities + 1] = data
+			for k, v in pairs(tmpEntities) do
+				data.Entities[k] = duplicator.CopyEntTable(v)
 			end
 		end
 
-		self:SetData(entities)
+		self:SetData(data)
 	end
 
 	ix.log.AddType("persist", function(client, ...)
