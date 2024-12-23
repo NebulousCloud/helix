@@ -151,7 +151,7 @@ if (SERVER) then
 				end
 
 				if (entity.OnHelixPersistLoad) then
-					entity:OnHelixPersistLoad()
+					entity:OnHelixPersistLoad(v)
 				end
 
 				self.stored[#self.stored + 1] = entity
