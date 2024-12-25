@@ -161,7 +161,7 @@ function PANEL:Init()
 	self.progress:SetPos(0, parent:GetTall() - self.progress:GetTall())
 
 	-- setup payload hooks
-	self:AddPayloadHook("model", function(value)
+	self.payload:AddHook("model", function(value)
 		local faction = ix.faction.indices[self.payload.faction]
 
 		if (faction) then
@@ -281,40 +281,23 @@ function PANEL:ResetPayload(bWithHooks)
 
 	self.payload = {}
 
-	-- TODO: eh..
 	function self.payload.Set(payload, key, value)
-		self:SetPayload(key, value)
+		self.payload[key] = value
+
+		for _, v in ipairs(self.hooks[key] or {}) do
+			v(value)
+		end
 	end
 
 	function self.payload.AddHook(payload, key, callback)
-		self:AddPayloadHook(key, callback)
+		self.hooks[key] = self.hooks[key] or {}
+		self.hooks[key][#self.hooks[key] + 1] = callback
 	end
 
 	function self.payload.Prepare(payload)
 		self.payload.Set = nil
 		self.payload.AddHook = nil
 		self.payload.Prepare = nil
-	end
-end
-
-function PANEL:SetPayload(key, value)
-	self.payload[key] = value
-	self:RunPayloadHook(key, value)
-end
-
-function PANEL:AddPayloadHook(key, callback)
-	if (!self.hooks[key]) then
-		self.hooks[key] = {}
-	end
-
-	self.hooks[key][#self.hooks[key] + 1] = callback
-end
-
-function PANEL:RunPayloadHook(key, value)
-	local hooks = self.hooks[key] or {}
-
-	for _, v in ipairs(hooks) do
-		v(value)
 	end
 end
 
