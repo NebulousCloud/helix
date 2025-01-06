@@ -358,7 +358,7 @@ if (SERVER) then
 
 				local invOkay = true
 
-				for _, v in pairs(client:GetCharacter():GetInventory():GetItems()) do
+				for _, v in client:GetCharacter():GetInventory():Iter() do
 					if (v.uniqueID == uniqueID and v:GetID() != 0 and ix.item.instances[v:GetID()] and v:GetData("equip", false) == false) then
 						invOkay = v:Remove()
 						found = true

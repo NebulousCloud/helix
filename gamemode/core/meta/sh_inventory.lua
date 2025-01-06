@@ -84,7 +84,7 @@ end
 
 -- this is pretty good to debug/develop function to use.
 function META:Print(printPos)
-	for k, v in pairs(self:GetItems()) do
+	for k, v in self:Iter() do
 		local str = k .. ": " .. v.name
 
 		if (printPos) then
@@ -102,7 +102,7 @@ end
 -- This function can be helpful for getting rid of those pesky errors.
 -- @realm shared
 function META:FindError()
-	for _, v in pairs(self:GetItems()) do
+	for _, v in self:Iter() do
 		if (v.width == 1 and v.height == 1) then
 			continue
 		end
@@ -619,9 +619,7 @@ end
 -- 	-- do something with the item table
 -- end
 function META:HasItem(targetID, data)
-	local items = self:GetItems()
-
-	for _, v in pairs(items) do
+	for _, v in self:Iter() do
 		if (v.uniqueID == targetID) then
 			if (data) then
 				local itemData = v.data
@@ -660,11 +658,10 @@ end
 -- if not Entity(1):GetCharacter():GetInventory():HasItems(itemFilter) then return end
 -- -- Filters out if this player has both a water, and a sparkling water.
 function META:HasItems(targetIDs)
-	local items = self:GetItems()
 	local count = #targetIDs -- assuming array
 	targetIDs = table.Copy(targetIDs)
 
-	for _, v in pairs(items) do
+	for _, v in self:Iter() do
 		for k, targetID in ipairs(targetIDs) do
 			if (v.uniqueID == targetID) then
 				table.remove(targetIDs, k)
@@ -695,9 +692,7 @@ end
 -- end
 -- -- Notifies the player that they should get some more guns.
 function META:HasItemOfBase(baseID, data)
-	local items = self:GetItems()
-
-	for _, v in pairs(items) do
+	for _, v in self:Iter() do
 		if (v.base == baseID) then
 			if (data) then
 				local itemData = v.data
@@ -960,7 +955,7 @@ if (SERVER) then
 			net.WriteTable(self.vars or {})
 		net.Send(receiver)
 
-		for _, v in pairs(self:GetItems()) do
+		for _, v in self:Iter() do
 			v:Call("OnSendData", receiver)
 		end
 	end
