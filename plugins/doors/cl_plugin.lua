@@ -169,9 +169,10 @@ net.Receive("ixDoorMenu", function()
 
 	local door = net.ReadEntity()
 	local access = net.ReadTable()
-	local entity = net.ReadEntity()
 
-	if (IsValid(door)) then
+	if (IsValid(door) and !table.IsEmpty(access)) then
+		local entity = net.ReadEntity()
+
 		ix.gui.door = vgui.Create("ixDoorMenu")
 		ix.gui.door:SetDoor(door, access, entity)
 	end
