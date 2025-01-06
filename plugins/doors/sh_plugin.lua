@@ -44,6 +44,19 @@ do
 
 	if (SERVER) then
 		function entityMeta:RemoveDoorAccessData()
+			local receivers = {}
+
+			for k, _ in pairs(self.ixAccess or {}) do
+				receivers[#receivers + 1] = k
+			end
+
+			if (#receivers > 0) then
+				net.Start("ixDoorMenu")
+					net.WriteEntity(self)
+					net.WriteTable({})
+				net.Send(receivers)
+			end
+
 			self.ixAccess = {}
 			self:SetDTEntity(0, nil)
 
