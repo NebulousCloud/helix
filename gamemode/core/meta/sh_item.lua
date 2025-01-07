@@ -437,11 +437,11 @@ function ITEM:Remove(bNoReplication, bNoDelete)
 
 		if (failed) then
 			inv.slots = {}
-			for _, v in inv:Iter() do
-				if (v.invID == inv:GetID()) then
+			for k, _ in inv:Iter() do
+				if (k.invID == inv:GetID()) then
 					for x = self.gridX, self.gridX + (self.width - 1) do
 						for y = self.gridY, self.gridY + (self.height - 1) do
-							inv.slots[x][y] = v.id
+							inv.slots[x][y] = k.id
 						end
 					end
 				end

@@ -204,8 +204,8 @@ if (SERVER) then
 				return
 			end
 
-			for _, v in bagInventory:Iter() do
-				ix.log.Add(character:GetPlayer(), "inventoryAdd", character:GetName(), v:GetName(), v:GetID())
+			for k, _ in bagInventory:Iter() do
+				ix.log.Add(character:GetPlayer(), "inventoryAdd", character:GetName(), k:GetName(), k:GetID())
 			end
 		end
 	end
