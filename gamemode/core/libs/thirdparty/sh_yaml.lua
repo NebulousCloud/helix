@@ -345,7 +345,7 @@ Parser.parse = function (self)
     result = tonumber(self:advanceValue())
   elseif c.token[1] == "pipe" then
     result = self:parsePipe()
-  elseif c.token.const == true then
+  elseif c.token.const then
     self:advanceValue();
     result = c.token.value
   else

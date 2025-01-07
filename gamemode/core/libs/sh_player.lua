@@ -4,7 +4,7 @@ local playerMeta = FindMetaTable("Player")
 do
 	if (SERVER) then
 		function playerMeta:GetData(key, default)
-			if (key == true) then
+			if (key) then
 				return self.ixData
 			end
 
@@ -51,7 +51,7 @@ do
 
 			local ixData = self:GetData("whitelists", {})
 
-			return ixData[Schema.folder] and ixData[Schema.folder][data.uniqueID] == true or false
+			return ixData[Schema.folder] and ixData[Schema.folder][data.uniqueID] == true
 		end
 
 		return false

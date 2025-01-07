@@ -573,7 +573,7 @@ else
 			entity.factions[uniqueID] = state
 
 			if (IsValid(editPanel) and IsValid(editPanel.factions[uniqueID])) then
-				editPanel.factions[uniqueID]:SetChecked(state == true)
+				editPanel.factions[uniqueID]:SetChecked(state)
 			end
 		elseif (key == "class") then
 			local uniqueID = data[1]
@@ -583,7 +583,7 @@ else
 			entity.classes[uniqueID] = state
 
 			if (IsValid(editPanel) and IsValid(editPanel.classes[uniqueID])) then
-				editPanel.classes[uniqueID]:SetChecked(state == true)
+				editPanel.classes[uniqueID]:SetChecked(state)
 			end
 		elseif (key == "model") then
 			editor.model:SetText(entity:GetModel())

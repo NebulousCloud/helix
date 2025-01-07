@@ -160,7 +160,7 @@ do
 	function character:HasFlags(flags)
 		local bHasFlag = hook.Run("CharacterHasFlags", self, flags)
 
-		if (bHasFlag == true) then
+		if (bHasFlag) then
 			return true
 		end
 
