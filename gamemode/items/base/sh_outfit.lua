@@ -264,9 +264,8 @@ ITEM.functions.Equip = {
 	OnRun = function(item)
 		local client = item.player
 		local char = client:GetCharacter()
-		local items = char:GetInventory():GetItems()
 
-		for _, v in pairs(items) do
+		for _, v in char:GetInventory():Iter() do
 			if (v.id != item.id) then
 				local itemTable = ix.item.instances[v.id]
 

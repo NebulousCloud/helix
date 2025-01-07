@@ -120,11 +120,9 @@ function ITEM:RemovePAC(client)
 end
 
 function ITEM:Equip(client, bNoSelect, bNoSound)
-	local items = client:GetCharacter():GetInventory():GetItems()
-
 	client.carryWeapons = client.carryWeapons or {}
 
-	for _, v in pairs(items) do
+	for _, v in client:GetCharacter():GetInventory():Iter() do
 		if (v.id != self.id) then
 			local itemTable = ix.item.instances[v.id]
 
@@ -289,7 +287,7 @@ end
 hook.Add("PlayerDeath", "ixStripClip", function(client)
 	client.carryWeapons = {}
 
-	for _, v in pairs(client:GetCharacter():GetInventory():GetItems()) do
+	for _, v in client:GetCharacter():GetInventory():Iter() do
 		if (v.isWeapon and v:GetData("equip")) then
 			v:SetData("ammo", nil)
 			v:SetData("equip", nil)

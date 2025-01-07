@@ -124,6 +124,10 @@ function GM:TranslateActivity(client, act)
 end
 
 function GM:CanPlayerUseBusiness(client, uniqueID)
+	if (!ix.config.Get("allowBusiness", true)) then
+		return false
+	end
+
 	local itemTable = ix.item.list[uniqueID]
 
 	if (!client:GetCharacter()) then
@@ -571,7 +575,7 @@ function GM:CanTransferItem(itemObject, curInv, inventory)
 
 	-- don't allow transferring items that are in use
 	if (inventory) then
-		for _, v in pairs(inventory:GetItems()) do
+		for _, v in inventory:Iter() do
 			if (v:GetData("equip")) then
 				local owner = itemObject:GetOwner()
 
