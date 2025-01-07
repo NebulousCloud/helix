@@ -124,6 +124,10 @@ function GM:TranslateActivity(client, act)
 end
 
 function GM:CanPlayerUseBusiness(client, uniqueID)
+	if (!ix.config.Get("allowBusiness", true)) then
+		return false
+	end
+
 	local itemTable = ix.item.list[uniqueID]
 
 	if (!client:GetCharacter()) then
