@@ -30,7 +30,7 @@ function PLUGIN:LoadData()
 		end
 
 		if (#idRange > 0) then
-			if (hook.Run("ShouldDeleteSavedItems") == true) then
+			if (hook.Run("ShouldDeleteSavedItems")) then
 				-- don't spawn saved item and just delete them.
 				local query = mysql:Delete("ix_items")
 					query:WhereIn("item_id", idRange)

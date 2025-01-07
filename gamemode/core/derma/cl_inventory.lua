@@ -74,7 +74,7 @@ function PANEL:DoRightClick()
 		local menu = DermaMenu()
 		local override = hook.Run("CreateItemInteractionMenu", self, menu, itemTable)
 
-		if (override == true) then
+		if (override) then
 			if (menu.Remove) then
 				menu:Remove()
 			end

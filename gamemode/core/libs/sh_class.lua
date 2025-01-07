@@ -35,7 +35,7 @@ function ix.class.LoadFromDir(directory)
 			end
 		end
 
-		if (halt == true) then
+		if (halt) then
 			continue
 		end
 

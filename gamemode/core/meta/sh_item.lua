@@ -250,7 +250,7 @@ end
 -- @realm shared
 -- @bool[opt=false] detail Whether additional detail should be printed or not(Owner, X position, Y position)
 function ITEM:Print(detail)
-	if (detail == true) then
+	if (detail) then
 		print(Format("%s[%s]: >> [%s](%s,%s)", self.uniqueID, self.id, self.owner, self.gridX, self.gridY))
 	else
 		print(Format("%s[%s]", self.uniqueID, self.id))
@@ -363,7 +363,7 @@ function ITEM:GetData(key, default)
 	self.data = self.data or {}
 
 	if (self.data) then
-		if (key == true) then
+		if (key) then
 			return self.data
 		end
 

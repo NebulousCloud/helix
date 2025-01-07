@@ -85,7 +85,7 @@ ITEM.functions.EquipUn = { -- sorry, for name order.
 	OnCanRun = function(item)
 		local client = item.player
 
-		return !IsValid(item.entity) and IsValid(client) and item:GetData("equip") == true and
+		return !IsValid(item.entity) and IsValid(client) and item:GetData("equip") and
 			hook.Run("CanPlayerUnequipItem", client, item) != false
 	end
 }

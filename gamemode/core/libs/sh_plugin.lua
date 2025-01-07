@@ -212,7 +212,7 @@ function ix.plugin.LoadEntities(path)
 		Base = "base_gmodentity",
 		Spawnable = true
 	}, false, nil, function(ent)
-		if (SERVER and ent.Holdable == true) then
+		if (SERVER and ent.Holdable) then
 			ix.allowedHoldableClasses[ent.ClassName] = true
 		end
 	end)
