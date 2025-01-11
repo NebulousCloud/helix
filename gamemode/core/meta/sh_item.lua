@@ -308,7 +308,7 @@ function ITEM:GetOwner()
 	for _, v in player.Iterator() do
 		local character = v:GetCharacter()
 
-		if (character and character:GetInventory():GetItemByID(id)) then
+		if (character and character:GetInventory() and character:GetInventory():GetItemByID(id)) then
 			return v
 		end
 	end
@@ -436,14 +436,12 @@ function ITEM:Remove(bNoReplication, bNoDelete)
 		end
 
 		if (failed) then
-			local items = inv:GetItems()
-
 			inv.slots = {}
-			for _, v in pairs(items) do
-				if (v.invID == inv:GetID()) then
+			for k, _ in inv:Iter() do
+				if (k.invID == inv:GetID()) then
 					for x = self.gridX, self.gridX + (self.width - 1) do
 						for y = self.gridY, self.gridY + (self.height - 1) do
-							inv.slots[x][y] = v.id
+							inv.slots[x][y] = k.id
 						end
 					end
 				end

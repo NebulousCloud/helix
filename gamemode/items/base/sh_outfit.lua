@@ -264,13 +264,12 @@ ITEM.functions.Equip = {
 	OnRun = function(item)
 		local client = item.player
 		local char = client:GetCharacter()
-		local items = char:GetInventory():GetItems()
 
-		for _, v in pairs(items) do
-			if (v.id != item.id) then
-				local itemTable = ix.item.instances[v.id]
+		for k, _ in char:GetInventory():Iter() do
+			if (k.id != item.id) then
+				local itemTable = ix.item.instances[k.id]
 
-				if (itemTable.pacData and v.outfitCategory == item.outfitCategory and itemTable:GetData("equip")) then
+				if (itemTable.pacData and k.outfitCategory == item.outfitCategory and itemTable:GetData("equip")) then
 					client:NotifyLocalized(item.equippedNotify or "outfitAlreadyEquipped")
 					return false
 				end

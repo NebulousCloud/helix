@@ -102,19 +102,19 @@ end
 -- This function can be helpful for getting rid of those pesky errors.
 -- @realm shared
 function META:FindError()
-	for _, v in pairs(self:GetItems()) do
-		if (v.width == 1 and v.height == 1) then
+	for k, _ in self:Iter() do
+		if (k.width == 1 and k.height == 1) then
 			continue
 		end
 
-		print("Finding error: " .. v.name)
-		print("Item Position: " .. v.gridX, v.gridY)
+		print("Finding error: " .. k.name)
+		print("Item Position: " .. k.gridX, k.gridY)
 
-		for x = v.gridX, v.gridX + v.width - 1 do
-			for y = v.gridY, v.gridY + v.height - 1 do
+		for x = k.gridX, k.gridX + k.width - 1 do
+			for y = k.gridY, k.gridY + k.height - 1 do
 				local item = self.slots[x][y]
 
-				if (item and item.id != v.id) then
+				if (item and item.id != k.id) then
 					print("Error Found: ".. item.name)
 				end
 			end
@@ -619,12 +619,10 @@ end
 -- 	-- do something with the item table
 -- end
 function META:HasItem(targetID, data)
-	local items = self:GetItems()
-
-	for _, v in pairs(items) do
-		if (v.uniqueID == targetID) then
+	for k, _ in self:Iter() do
+		if (k.uniqueID == targetID) then
 			if (data) then
-				local itemData = v.data
+				local itemData = k.data
 				local bFound = true
 
 				for dataKey, dataVal in pairs(data) do
@@ -639,7 +637,7 @@ function META:HasItem(targetID, data)
 				end
 			end
 
-			return v
+			return k
 		end
 	end
 
@@ -660,13 +658,12 @@ end
 -- if not Entity(1):GetCharacter():GetInventory():HasItems(itemFilter) then return end
 -- -- Filters out if this player has both a water, and a sparkling water.
 function META:HasItems(targetIDs)
-	local items = self:GetItems()
 	local count = #targetIDs -- assuming array
 	targetIDs = table.Copy(targetIDs)
 
-	for _, v in pairs(items) do
+	for item, _ in self:Iter() do
 		for k, targetID in ipairs(targetIDs) do
-			if (v.uniqueID == targetID) then
+			if (item.uniqueID == targetID) then
 				table.remove(targetIDs, k)
 				count = count - 1
 
@@ -695,12 +692,10 @@ end
 -- end
 -- -- Notifies the player that they should get some more guns.
 function META:HasItemOfBase(baseID, data)
-	local items = self:GetItems()
-
-	for _, v in pairs(items) do
-		if (v.base == baseID) then
+	for k, _ in self:Iter() do
+		if (k.base == baseID) then
 			if (data) then
-				local itemData = v.data
+				local itemData = k.data
 				local bFound = true
 
 				for dataKey, dataVal in pairs(data) do
@@ -715,7 +710,7 @@ function META:HasItemOfBase(baseID, data)
 				end
 			end
 
-			return v
+			return k
 		end
 	end
 
@@ -960,8 +955,8 @@ if (SERVER) then
 			net.WriteTable(self.vars or {})
 		net.Send(receiver)
 
-		for _, v in pairs(self:GetItems()) do
-			v:Call("OnSendData", receiver)
+		for k, _ in self:Iter() do
+			k:Call("OnSendData", receiver)
 		end
 	end
 end

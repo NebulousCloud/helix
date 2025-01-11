@@ -204,8 +204,8 @@ if (SERVER) then
 				return
 			end
 
-			for _, v in pairs(bagInventory:GetItems()) do
-				ix.log.Add(character:GetPlayer(), "inventoryAdd", character:GetName(), v:GetName(), v:GetID())
+			for k, _ in bagInventory:Iter() do
+				ix.log.Add(character:GetPlayer(), "inventoryAdd", character:GetName(), k:GetName(), k:GetID())
 			end
 		end
 	end
@@ -220,7 +220,7 @@ if (SERVER) then
 		ix.log.Add(character:GetPlayer(), "inventoryRemove", character:GetName(), item:GetName(), item:GetID())
 
 		if (item.isBag) then
-			for _, v in pairs(item:GetInventory():GetItems()) do
+			for _, v in item:GetInventory():Iter() do
 				ix.log.Add(character:GetPlayer(), "inventoryRemove", character:GetName(), v:GetName(), v:GetID())
 			end
 		end
