@@ -372,7 +372,7 @@ end
 function CanSaveContainer(entity, inventory)
 end
 
---- Whether or not to transer item from one inventory to another. When you drop item currentInv == nil 
+--- Whether or not to transer item from one inventory to another. When you drop item currentInv == nil
 -- @realm shared
 -- @tab item Item that we try to transfer
 -- @tab currentInv inventory Inventory from what we try to transfer item
