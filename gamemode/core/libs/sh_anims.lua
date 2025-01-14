@@ -377,7 +377,7 @@ function ix.anim.GetModelClass(model)
 	model = string.lower(model)
 	local class = translations[model]
 
-	if (!class and string.find(model, "/player")) then
+	if (!class) then
 		return "player"
 	end
 
