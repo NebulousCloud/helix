@@ -707,8 +707,8 @@ do
 			if (character) then
 				local inventory = ix.item.inventories[invID]
 
-				if (!inventory or inventory == nil) then
-					inventory:Sync(client)
+				if (!inventory) then
+					return
 				end
 
 				if ((inventory.owner and inventory.owner == character:GetID()) or inventory:OnCheckAccess(client)) then
