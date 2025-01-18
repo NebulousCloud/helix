@@ -338,19 +338,15 @@ end
 -- @treturn number The Y position that the item was removed from
 function META:Remove(id, bNoReplication, bNoDelete, bTransferring)
 	local x2, y2
+	local item = ix.item.instances[id]
 
-	for x = 1, self.w do
-		if (self.slots[x]) then
-			for y = 1, self.h do
-				local item = self.slots[x][y]
+	if (item and item.invID == self.id) then
+		local x, y = item.gridX, item.gridY
+		if (self.slots[x] and self.slots[x][y] and self.slots[x][y].id == id) then
+			self.slots[x][y] = nil
 
-				if (item and item.id == id) then
-					self.slots[x][y] = nil
-
-					x2 = x2 or x
-					y2 = y2 or y
-				end
-			end
+			x2 = x
+			y2 = y
 		end
 	end
 
