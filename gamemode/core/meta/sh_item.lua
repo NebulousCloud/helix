@@ -419,38 +419,10 @@ function ITEM:Remove(bNoReplication, bNoDelete)
 	local inv = ix.item.inventories[self.invID]
 
 	if (self.invID > 0 and inv) then
-		local failed = false
-
-		for x = self.gridX, self.gridX + (self.width - 1) do
-			if (inv.slots[x]) then
-				for y = self.gridY, self.gridY + (self.height - 1) do
-					local item = inv.slots[x][y]
-
-					if (item and item.id == self.id) then
-						inv.slots[x][y] = nil
-					else
-						failed = true
-					end
-				end
-			end
-		end
-
-		if (failed) then
-			inv.slots = {}
-			for k, _ in inv:Iter() do
-				if (k.invID == inv:GetID()) then
-					for x = self.gridX, self.gridX + (self.width - 1) do
-						for y = self.gridY, self.gridY + (self.height - 1) do
-							inv.slots[x][y] = k.id
-						end
-					end
-				end
-			end
-
-			if (IsValid(inv.owner) and inv.owner:IsPlayer()) then
-				inv:Sync(inv.owner, true)
-			end
-
+		local x, y = self.gridX, self.gridY
+		if (inv.slots[x] and inv.slots[x][y] and inv.slots[x][y].id == self.id) then
+			inv.slots[x][y] = nil
+		else
 			return false
 		end
 	else
