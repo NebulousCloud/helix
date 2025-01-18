@@ -366,8 +366,6 @@ function META:Remove(id, bNoReplication, bNoDelete, bTransferring)
 		end
 
 		if (!bNoDelete) then
-			local item = ix.item.instances[id]
-
 			if (item and item.OnRemoved) then
 				item:OnRemoved()
 			end
