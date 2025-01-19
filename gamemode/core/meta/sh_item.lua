@@ -438,7 +438,7 @@ function ITEM:Remove(bNoReplication, bNoDelete)
 
 		if (bFailed) then
 			local items = {}
-			for k, v in pairs(ix.item.instances) do
+			for _, v in pairs(ix.item.instances) do
 				if (v.invID == self.invID and v.id != self.id) then
 					items[#items + 1] = v
 				end
