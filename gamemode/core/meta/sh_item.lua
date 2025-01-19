@@ -440,7 +440,7 @@ function ITEM:Remove(bNoReplication, bNoDelete)
 			local items = {}
 			for k, v in pairs(ix.item.instances) do
 				if (v.invID == self.invID and v.id != self.id) then
-					table.insert(items, v)
+					items[#items + 1] = v
 				end
 			end
 
