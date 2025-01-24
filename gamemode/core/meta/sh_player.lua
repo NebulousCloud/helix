@@ -337,7 +337,7 @@ if (SERVER) then
 			net.WriteUInt(time, 32)
 			net.WriteString(title)
 			net.WriteString(subTitle)
-			net.WriteString(default)
+			net.WriteString(default or "")
 		net.Send(self)
 	end
 
