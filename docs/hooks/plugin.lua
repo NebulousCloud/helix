@@ -657,7 +657,16 @@ end
 function MessageReceived(client, info)
 end
 
---- @realm client
+--- Called when a player leaves an area.
+-- @number oldID The ID of the area the player is leaving.
+-- @realm client
+function OnLeaveArea(oldID)
+end
+
+--- Called when a player enters a new area.
+-- @number oldID The ID of the area the player is leaving.
+-- @number newID The ID of the area the player is entering.
+-- @realm client
 function OnAreaChanged(oldID, newID)
 end
 
