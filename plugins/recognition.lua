@@ -128,7 +128,7 @@ if (CLIENT) then
 	end)
 
 	net.Receive("ixRecognizeDone", function(length)
-		hook.Run("CharacterRecognized")
+		hook.Run("CharacterRecognized", LocalPlayer(), net.ReadUInt(32))
 	end)
 
 	function PLUGIN:CharacterRecognized(client, recogCharID)
@@ -189,6 +189,7 @@ else
 
 				if (i > 0) then
 					net.Start("ixRecognizeDone")
+						net.WriteUInt(id, 32)
 					net.Send(client)
 
 					hook.Run("CharacterRecognized", client, id)

@@ -372,42 +372,83 @@ end
 function CanSaveContainer(entity, inventory)
 end
 
---- @realm shared
-function CanTransferItem(item, currentInv, oldInv)
+--- Whether or not an item can be transferred.
+-- @realm shared
+-- @tab item Item that is being transferred
+-- @tab oldInv Inventory from which item is being transferred
+-- @tab newInv Inventory to which item is being transferred
+-- @treturn bool Whether or not an item can be transferred
+-- @usage function PLUGIN:CanTransferItem(item, oldInv, newInv)
+-- 	return false -- Disallow transferring of all items.
+-- end
+function CanTransferItem(item, oldInv, newInv)
 end
 
---- @realm shared
+--- Called after character's attribute was boosted.
+-- @realm shared
+-- @player client Owner of the character
+-- @char character Character whose attribute was boosted
+-- @string attribID Name of the attribute that was boosted
+-- @string boostID Unique ID of the boost
+-- @number boostAmount Amount that was added to the attribute
 function CharacterAttributeBoosted(client, character, attribID, boostID, boostAmount)
 end
 
---- @realm shared
-function CharacterAttributeUpdated(client, self, key, value)
+--- Called after character's attribute was updates.
+-- @realm shared
+-- @player client Owner of the character
+-- @char character Character whose attribute was updated
+-- @string attribID Name of the attribute that was updated
+-- @number value Amount that was added to the attribute
+function CharacterAttributeUpdated(client, character, attribID, value)
 end
 
---- @realm shared
+--- Called after character was deleted.
+-- @realm shared
+-- @player client Owner of the character
+-- @number id ID of the character that was deleted
+-- @bool isCurrentChar If the character was currently loaded by its owner
 function CharacterDeleted(client, id, isCurrentChar)
 end
 
---- @realm shared
-function CharacterHasFlags(self, flags)
+--- Whether or not character has access to the given flag(s).
+-- @realm shared
+-- @char character Character to check flags for
+-- @string flags Flag(s) to check access for
+-- @treturn bool Whether or not character has access to the given flag(s)
+-- @usage function PLUGIN:CharacterHasFlags(character, flags)
+-- 	return false -- Disallow using any flags.
+-- end
+function CharacterHasFlags(character, flags)
 end
 
---- @realm shared
+--- Called after character was loaded.
+-- @realm shared
+-- @char character Character that was loaded
 function CharacterLoaded(character)
 end
 
---- Called when a character was saved.
+--- Called after character was saved.
 -- @realm server
--- @char character that was saved
+-- @char character Character that was saved
 function CharacterPostSave(character)
 end
 
---- @realm shared
+--- Called when character is about to be saved.
+-- @realm server
+-- @char character that is about to be saved
+-- @treturn bool Whether or not to save this character
+-- @usage function PLUGIN:CharacterPreSave(character)
+-- 	return false -- Disallow saving of any character.
+-- end
 function CharacterPreSave(character)
 end
 
---- @realm shared
-function CharacterRecognized()
+--- Called after character was recognized.
+-- @realm shared
+-- @player client Client who recognized other character
+-- @number id ID of the character that was recognized
+function CharacterRecognized(client, id)
 end
 
 --- Called when a character was restored.
@@ -416,23 +457,41 @@ end
 function CharacterRestored(character)
 end
 
---- @realm shared
-function CharacterVarChanged(character, key, oldVar, value)
+--- Called after character's variable was changed.
+-- @realm shared
+-- @char character Character whose variable was changed
+-- @string key Key of the changed variable
+-- @param oldValue Old value of the changed variable
+-- @param newValue New value of the changed variable
+function CharacterVarChanged(character, key, oldValue, newValue)
 end
 
---- @realm shared
+--- Called after client traded with vendor.
+-- @realm server
+-- @player client Client that traded with vendor
+-- @entity entity Vendor entity
+-- @string uniqueID The uniqueID of the item that was traded.
+-- @bool isSellingToVendor If the client is selling to the vendor
 function CharacterVendorTraded(client, entity, uniqueID, isSellingToVendor)
 end
 
---- @realm client
+--- Called after chatbox was created.
+-- @realm client
 function ChatboxCreated()
 end
 
---- @realm client
+--- Called after chatbox's position was changed.
+-- @realm client
+-- @number x New chatbox's x positon
+-- @number y New chatbox's y positon
+-- @number width New chatbox's width
+-- @number height New chatbox's height
 function ChatboxPositionChanged(x, y, width, height)
 end
 
---- @realm client
+--- Called after color scheme (color config) was changed.
+-- @realm client
+-- @color color New color scheme
 function ColorSchemeChanged(color)
 end
 
@@ -443,19 +502,34 @@ end
 function ContainerRemoved(container, inventory)
 end
 
---- @realm client
+--- Called when character info panel in `ixCharacterInfo` menu tab was created.
+-- @realm client
+-- @tab panel Character info panel
 function CreateCharacterInfo(panel)
 end
 
---- @realm client
+--- Called when `ixCharacterInfo` menu tab was fully loaded.
+-- @realm client
+-- @tab panel Character info tab
 function CreateCharacterInfoCategory(panel)
 end
 
---- @realm client
-function CreateItemInteractionMenu(icon, menu, itemTable)
+--- Called before creation of the item interaction menu.
+-- @realm client
+-- @tab icon Item icon which was pressed
+-- @tab menu Derma menu
+-- @tab item Item for which interaction menu is being created for
+function CreateItemInteractionMenu(icon, menu, item)
 end
 
---- @realm client
+--- Called when populating tabs for TAB menu.
+-- @realm client
+-- @tab tabs Table containg menu tabs
+-- @usage hook.Add("CreateMenuButtons", "ixHelpMenu", function(tabs) -- Adds help tab to the TAB menu
+--  tabs["help"] = function(container)
+--      container:Add("ixHelpMenu")
+--  end
+-- end)
 function CreateMenuButtons(tabs)
 end
 
@@ -477,31 +551,49 @@ end
 function DatabaseConnectionFailed(error)
 end
 
---- @realm shared
+--- Called when a plugin being loaded.
+-- @realm shared
+-- @string path Path to the plugin's folder
+-- @tab pluginTable Table of the plugin's
+-- @usage function PLUGIN:DoPluginIncludes(path, pluginTable)
+-- 	ix.item.LoadFromDir(path .. "/bombs") -- Includes all Lua files from the folder bombs that is located inside the plugin's folder
+-- end
 function DoPluginIncludes(path, pluginTable)
 end
 
---- @realm client
+--- Called when character overview is being drawn.
+-- @realm client
 function DrawCharacterOverview()
 end
 
---- @realm client
+--- Called before entity of the ``ixModelPanel`` is drawn.
+-- @realm client
+-- @tab panel Model panel
+-- @entity entity Entity that is about to be drawn
 function DrawHelixModelView(panel, entity)
 end
 
---- @realm client
-function DrawPlayerRagdoll(entity)
+--- Called after player's ragdoll was drawn.
+-- @realm client
+-- @entity ragdoll Player's ragdoll that was drawn
+function DrawPlayerRagdoll(ragdoll)
 end
 
 --- @realm client
 function GetCharacterDescription(client)
 end
 
---- @realm shared
-function GetCharacterName(speaker, chatType)
+--- Returns name of the character.
+-- @realm shared
+-- @client Owner of the character.
+-- @string chatType Type of the chat in which character said something.
+-- @usage function PLUGIN:GetCharacterName(client, chatType)
+-- 	return "John Doe" -- Makes everyone to be recognized as John Doe.
+-- end
+function GetCharacterName(client, chatType)
 end
 
---- @realm shared
+--- @realm client
 function GetChatPrefixInfo(text)
 end
 
@@ -509,15 +601,29 @@ end
 function GetCrosshairAlpha(curAlpha)
 end
 
---- @realm shared
-function GetDefaultAttributePoints(client, count)
+--- Returns the default amount of attribute points when character is being created.
+-- @realm shared
+-- @client client Player that is creating the character
+-- @tab payload Character creation payload
+function GetDefaultAttributePoints(client, payload)
 end
 
---- @realm shared
+--- Returns the default character name.
+-- @realm shared
+-- @client client Player who is creating the character
+-- @string faction Faction of the character
+-- @usage function PLUGIN:GetDefaultCharacterName(client, faction)
+-- 	return "Garry Newman" -- Disallows using any name, but Garry Newman.
+-- end
 function GetDefaultCharacterName(client, faction)
 end
 
---- @realm shared
+--- Returns the maximum number of characters a player can have.
+-- @realm shared
+-- @client client Player to get character limit for
+-- @usage function PLUGIN:GetMaxPlayerCharacter(client)
+-- 	return 1 -- Disallow having more than one character.
+-- end
 function GetMaxPlayerCharacter(client)
 end
 
@@ -556,7 +662,18 @@ end
 function GetPlayerPainSound(client)
 end
 
---- @realm shared
+--- Returns the amount of the damage player deals with his punches.
+-- @realm shared
+-- @client client Player that in punching
+-- @number Default punch damage
+-- @tab context Used to change damage amount
+-- @usage function PLUGIN:GetPlayerPunchDamage(client, damage, context)
+-- 	if (client:Health() == client:GetMaxHealth()) then
+--      context.damage = context.damage * 2 -- Increase damage from punches if player is fully healed.
+--  else
+--      retutn 0 -- Disable damage from punches if player is not fully healed.
+--  end
+-- end
 function GetPlayerPunchDamage(client, damage, context)
 end
 
@@ -597,15 +714,18 @@ end
 function InitializedChatClasses()
 end
 
---- @realm shared
+--- Called after config was initialized.
+-- @realm shared
 function InitializedConfig()
 end
 
---- @realm shared
+--- Called after plugins were initialized.
+-- @realm shared
 function InitializedPlugins()
 end
 
---- @realm shared
+--- Called after schema was initialized.
+-- @realm shared
 function InitializedSchema()
 end
 
@@ -624,7 +744,13 @@ end
 function InventoryItemRemoved(inventory, item)
 end
 
---- @realm shared
+--- Whether or not character recognizes other character.
+-- @realm shared
+-- @char character Character that is trying to recognize other
+-- @number id ID of the other character
+-- @usage function PLUGIN:IsCharacterRecognized(character, id)
+--  return false -- Nobody recognizes each other.
+-- end
 function IsCharacterRecognized(character, id)
 end
 
@@ -657,11 +783,7 @@ end
 function MessageReceived(client, info)
 end
 
---- @realm client
-function OnAreaChanged(oldID, newID)
-end
-
---- @realm shared
+--- @realm server
 function OnCharacterCreated(client, character)
 end
 
@@ -702,7 +824,7 @@ end
 function OnItemSpawned(entity)
 end
 
---- @realm shared
+--- @realm server
 function OnItemTransferred(item, curInv, inventory)
 end
 
@@ -725,7 +847,11 @@ end
 function OnPickupMoney(client, self)
 end
 
---- @realm shared
+--- Called when player's area was changed.
+-- @realm shared
+-- @client client Player whose area was changed
+-- @string oldID Previous area of the player
+-- @string newID New area of the player
 function OnPlayerAreaChanged(client, oldID, newID)
 end
 
@@ -776,7 +902,13 @@ end
 function OnWipeTables()
 end
 
---- @realm shared
+--- Called when player entered animation that was started by `ForceSequence`.
+-- @realm shared
+-- @player client Player on who animation is being played
+-- @string sequence Name of the animation sequence to play
+-- @func callback Function to call when the animation finishes.
+-- @number time How long to play the animation for.
+-- @bool bNoFreeze Whether or not to avoid freezing this player in place while the animation is playing
 function PlayerEnterSequence(client, sequence, callback, time, bNoFreeze)
 end
 
@@ -805,8 +937,10 @@ end
 function PlayerJoinedClass(client, class, oldClass)
 end
 
---- @realm shared
-function PlayerLeaveSequence(entity)
+--- Called when player left animation that was started by `ForceSequence`.
+-- @realm shared
+-- @client client Player that left animation
+function PlayerLeaveSequence(client)
 end
 
 --- Called when a player has loaded a character.
@@ -866,7 +1000,10 @@ end
 function PlayerStaminaLost(client)
 end
 
---- @realm shared
+--- Called when player is punching with his hands.
+-- @realm shared
+-- @client client Player that is punching with his hands
+-- @tab Trace line of the punch
 function PlayerThrowPunch(client, trace)
 end
 
@@ -899,19 +1036,28 @@ end
 function PlayerUseDoor(client, entity)
 end
 
---- @realm shared
+--- Called when player's active weapon was changed.
+-- @realm shared
 function PlayerWeaponChanged(client, weapon)
 end
 
---- @realm shared
+--- Called when plugin was loaded.
+-- @realm shared
 function PluginLoaded(uniqueID, pluginTable)
 end
 
---- @realm shared
+--- Whether or not plugin should be loaded.
+-- @realm shared
+-- @string uniqueID UniqueID of the plugin
+-- @treturn bool Whether or not plugin should be loaded.
+-- @usage function PLUGIN:PluginShouldLoad(uniqueID)
+--  return false -- Prevents plugins from being loaded.
+-- end
 function PluginShouldLoad(uniqueID)
 end
 
---- @realm shared
+--- Called when plugin was unloaded.
+-- @realm shared
 function PluginUnloaded(uniqueID)
 end
 
@@ -975,7 +1121,8 @@ end
 function PostPlayerSay(client, chatType, message, anonymous)
 end
 
---- @realm shared
+--- Called after acts setup.
+-- @realm shared
 function PostSetupActs()
 end
 
@@ -1015,15 +1162,21 @@ end
 function SaveData()
 end
 
---- @realm client
-function ScreenResolutionChanged(width, height)
-end
-
---- @realm shared
+--- Called after ``act`` plugin was initialized.
+-- @realm shared
+-- @usage function PLUGIN:SetupActs()
+-- 	ix.act.Register("Cheer", "citizen_male", { -- Adds cheer act to models that use citizen_male animation class.
+--		sequence = {{"cheer1", duration = 1.6}, "cheer2", "wave_smg1"}
+--	})
+-- end
 function SetupActs()
 end
 
---- @realm shared
+--- Called to setup area properties.
+-- @realm shared
+-- @usage function PLUGIN:SetupAreaProperties()
+-- 	ix.area.AddProperty("color", ix.type.color, ix.config.Get("color")) -- Adds color property to the area.
+-- end
 function SetupAreaProperties()
 end
 
