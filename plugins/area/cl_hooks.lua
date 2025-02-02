@@ -182,8 +182,7 @@ function PLUGIN:ShouldDisplayArea(id)
 	end
 end
 
-function PLUGIN:OnPlayerAreaChanged(oldID, newID)
-	local client = LocalPlayer()
+function PLUGIN:OnPlayerAreaChanged(client, oldID, newID)
 	client.ixArea = newID
 
 	local area = ix.area.stored[newID]
