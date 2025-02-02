@@ -665,7 +665,7 @@ end
 --- Returns the amount of the damage player deals with his punches.
 -- @realm shared
 -- @player client Player that in punching
--- @number Default punch damage
+-- @number damage Default punch damage
 -- @tab context Used to change damage amount
 -- @usage function PLUGIN:GetPlayerPunchDamage(client, damage, context)
 -- 	if (client:Health() == client:GetMaxHealth()) then
@@ -1003,7 +1003,7 @@ end
 --- Called when player is punching with his hands.
 -- @realm shared
 -- @player client Player that is punching with his hands
--- @tab Trace line of the punch
+-- @tab trace Trace line of the punch
 function PlayerThrowPunch(client, trace)
 end
 
