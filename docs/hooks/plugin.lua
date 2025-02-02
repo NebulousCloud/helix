@@ -585,7 +585,7 @@ end
 
 --- Returns name of the character.
 -- @realm shared
--- @client Owner of the character.
+-- @player client Owner of the character.
 -- @string chatType Type of the chat in which character said something.
 -- @usage function PLUGIN:GetCharacterName(client, chatType)
 -- 	return "John Doe" -- Makes everyone to be recognized as John Doe.
@@ -603,14 +603,14 @@ end
 
 --- Returns the default amount of attribute points when character is being created.
 -- @realm shared
--- @client client Player that is creating the character
+-- @player client Player that is creating the character
 -- @tab payload Character creation payload
 function GetDefaultAttributePoints(client, payload)
 end
 
 --- Returns the default character name.
 -- @realm shared
--- @client client Player who is creating the character
+-- @player client Player who is creating the character
 -- @string faction Faction of the character
 -- @usage function PLUGIN:GetDefaultCharacterName(client, faction)
 -- 	return "Garry Newman" -- Disallows using any name, but Garry Newman.
@@ -620,7 +620,7 @@ end
 
 --- Returns the maximum number of characters a player can have.
 -- @realm shared
--- @client client Player to get character limit for
+-- @player client Player to get character limit for
 -- @usage function PLUGIN:GetMaxPlayerCharacter(client)
 -- 	return 1 -- Disallow having more than one character.
 -- end
@@ -664,7 +664,7 @@ end
 
 --- Returns the amount of the damage player deals with his punches.
 -- @realm shared
--- @client client Player that in punching
+-- @player client Player that in punching
 -- @number Default punch damage
 -- @tab context Used to change damage amount
 -- @usage function PLUGIN:GetPlayerPunchDamage(client, damage, context)
@@ -849,7 +849,7 @@ end
 
 --- Called when player's area was changed.
 -- @realm shared
--- @client client Player whose area was changed
+-- @player client Player whose area was changed
 -- @string oldID Previous area of the player
 -- @string newID New area of the player
 function OnPlayerAreaChanged(client, oldID, newID)
@@ -939,7 +939,7 @@ end
 
 --- Called when player left animation that was started by `ForceSequence`.
 -- @realm shared
--- @client client Player that left animation
+-- @player client Player that left animation
 function PlayerLeaveSequence(client)
 end
 
@@ -1002,7 +1002,7 @@ end
 
 --- Called when player is punching with his hands.
 -- @realm shared
--- @client client Player that is punching with his hands
+-- @player client Player that is punching with his hands
 -- @tab Trace line of the punch
 function PlayerThrowPunch(client, trace)
 end
