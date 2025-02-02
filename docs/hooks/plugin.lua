@@ -556,7 +556,7 @@ end
 -- @string path Path to the plugin's folder
 -- @tab pluginTable Table of the plugin's
 -- @usage function PLUGIN:DoPluginIncludes(path, pluginTable)
--- 	ix.item.LoadFromDir(path .. "/bombs") -- Includes all Lua files from the folder bombs that is located inside the plugin's folder
+-- 	ix.item.LoadFromDir(path .. "/bombs") -- Includes folder bombs that is located inside the plugin's folder.
 -- end
 function DoPluginIncludes(path, pluginTable)
 end
