@@ -1,5 +1,6 @@
 --Maybe this thing have some trouble with translate
 NAME = "Русский"
+CODE = "ru"
 
 LANGUAGE = {
 	helix = "Helix",
