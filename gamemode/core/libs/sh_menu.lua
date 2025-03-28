@@ -74,7 +74,7 @@ else
 
 		if (!IsValid(entity) or !isstring(option) or
 			hook.Run("CanPlayerInteractEntity", client, entity, option, data) == false or
-			entity:GetPos():Distance(client:GetPos()) > 96) then
+			entity:GetPos():Distance(client:GetPos()) > ix.config.Get("interactionRange", 96) then
 			return
 		end
 
