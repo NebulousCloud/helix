@@ -614,7 +614,7 @@ do
 
 			-- total spendable attribute points
 			local totalBar = attributes:Add("ixAttributeBar")
-			totalBar:SetMax(maximum)
+			totalBar:SetMax(v.maxValue or maximum)
 			totalBar:SetValue(maximum)
 			totalBar:Dock(TOP)
 			totalBar:DockMargin(2, 2, 2, 2)
