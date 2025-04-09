@@ -662,7 +662,7 @@ do
 						count = count + v
 					end
 
-					if (count > (hook.Run("GetDefaultAttributePoints", client, count) or 10)) then
+					if (count > (hook.Run("GetDefaultAttributePoints", client, data) or 10)) then
 						return false, "unknownError"
 					end
 				else
@@ -1155,7 +1155,8 @@ do
 
 		net.Receive("ixCharacterDelete", function()
 			local id = net.ReadUInt(32)
-			local isCurrentChar = LocalPlayer():GetCharacter() and LocalPlayer():GetCharacter():GetID() == id
+			local client = LocalPlayer()
+			local isCurrentChar = client:GetCharacter() and client:GetCharacter():GetID() == id
 			local character = ix.char.loaded[id]
 
 			ix.char.loaded[id] = nil
@@ -1173,6 +1174,8 @@ do
 			if (isCurrentChar and !IsValid(ix.gui.characterMenu)) then
 				vgui.Create("ixCharMenu")
 			end
+
+			hook.Run("CharacterDeleted", client, id, isCurrentChar)
 		end)
 
 		net.Receive("ixCharacterKick", function()

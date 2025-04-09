@@ -182,8 +182,7 @@ function PLUGIN:ShouldDisplayArea(id)
 	end
 end
 
-function PLUGIN:OnAreaChanged(oldID, newID)
-	local client = LocalPlayer()
+function PLUGIN:OnPlayerAreaChanged(client, oldID, newID)
 	client.ixArea = newID
 
 	local area = ix.area.stored[newID]
@@ -254,5 +253,5 @@ end)
 net.Receive("ixAreaChanged", function()
 	local oldID, newID = net.ReadString(), net.ReadString()
 
-	hook.Run("OnAreaChanged", oldID, newID)
+	hook.Run("OnPlayerAreaChanged", LocalPlayer(), oldID, newID)
 end)
