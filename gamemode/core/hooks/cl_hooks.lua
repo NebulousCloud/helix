@@ -942,7 +942,7 @@ function GM:Think()
 	end
 end
 
-function GM:ScreenResolutionChanged(oldW, oldH)
+function GM:OnScreenSizeChanged(oldWidth, oldHeight, newWidth, newHeight)
 	hook.Run("LoadFonts", ix.config.Get("font"), ix.config.Get("genericFont"))
 
 	if (IsValid(ix.gui.notices)) then

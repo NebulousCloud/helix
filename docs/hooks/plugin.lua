@@ -1015,10 +1015,6 @@ end
 function SaveData()
 end
 
---- @realm client
-function ScreenResolutionChanged(width, height)
-end
-
 --- @realm shared
 function SetupActs()
 end
