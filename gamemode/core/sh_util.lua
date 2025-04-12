@@ -685,11 +685,6 @@ if (CLIENT) then
 
 		return skin.Colours[name] or default
 	end
-
-
-	hook.Add("OnScreenSizeChanged", "ix.OnScreenSizeChanged", function(oldWidth, oldHeight)
-		hook.Run("ScreenResolutionChanged", oldWidth, oldHeight)
-	end)
 end
 
 -- Vector extension, courtesy of code_gs

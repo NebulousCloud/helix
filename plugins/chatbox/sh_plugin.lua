@@ -113,7 +113,7 @@ if (CLIENT) then
 		end
 	end
 
-	function PLUGIN:ScreenResolutionChanged(oldWidth, oldHeight)
+	function PLUGIN:OnScreenSizeChanged(oldWidth, oldHeight, newWidth, newHeight)
 		self:CreateChat()
 	end
 
