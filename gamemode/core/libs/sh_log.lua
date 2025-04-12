@@ -68,7 +68,7 @@ if (SERVER) then
 			if (client) then
 				fallback = fallback..client:Name().." - "
 			end
-			for k, v in ipairs({...}) do
+			for _, v in ipairs({...}) do
 				fallback = fallback..tostring(v).." "
 			end
 			return fallback, FLAG_WARNING
