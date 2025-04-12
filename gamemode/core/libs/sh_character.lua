@@ -628,7 +628,7 @@ do
 				payload.attributes[k] = 0
 
 				local bar = attributes:Add("ixAttributeBar")
-				bar:SetMax(maximum)
+				bar:SetMax(v.maxValue or maximum)
 				bar:Dock(TOP)
 				bar:DockMargin(2, 2, 2, 2)
 				bar:SetText(L(v.name))
