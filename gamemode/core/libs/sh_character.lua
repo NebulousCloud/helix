@@ -614,7 +614,7 @@ do
 
 			-- total spendable attribute points
 			local totalBar = attributes:Add("ixAttributeBar")
-			totalBar:SetMax(v.maxValue or maximum)
+			totalBar:SetMax(maximum)
 			totalBar:SetValue(maximum)
 			totalBar:Dock(TOP)
 			totalBar:DockMargin(2, 2, 2, 2)
@@ -628,7 +628,7 @@ do
 				payload.attributes[k] = 0
 
 				local bar = attributes:Add("ixAttributeBar")
-				bar:SetMax(maximum)
+				bar:SetMax(v.maxValue or maximum)
 				bar:Dock(TOP)
 				bar:DockMargin(2, 2, 2, 2)
 				bar:SetText(L(v.name))
