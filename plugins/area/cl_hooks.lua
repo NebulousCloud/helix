@@ -185,23 +185,17 @@ end
 function PLUGIN:OnAreaChanged(oldID, newID)
 	local client = LocalPlayer()
 	client.ixArea = newID
-
 	local area = ix.area.stored[newID]
-
-	if (!area) then
+	if not area then
 		client.ixInArea = false
+		hook.Run("OnLeaveArea", oldID)
 		return
 	end
 
 	client.ixInArea = true
-
-	if (hook.Run("ShouldDisplayArea", newID) == false or !area.properties.display) then
-		return
-	end
-
+	if hook.Run("ShouldDisplayArea", newID) == false or not area.properties.display then return end
 	local format = newID .. (ix.option.Get("24hourTime", false) and ", %H:%M." or ", %I:%M %p.")
 	format = ix.date.GetFormatted(format)
-
 	self.panel:AddEntry(format, area.properties.color)
 end
 
