@@ -182,6 +182,11 @@ ix.config.Add("itemPickupTime", 0.5, "How long it takes to pick up and put an it
 	data = {min = 0, max = 5, decimals = 1},
 	category = "interaction"
 })
+ix.config.Add("interactionRange", 96, "Maximum range to interact with an entity.", nil, {
+	data = {min = 50, max = 250, decimals = 0},
+	category = "interaction"
+})
+
 ix.config.Add("year", 2015, "The current in-game year.", function(oldValue, newValue)
 	if (SERVER and !ix.date.bSaving) then
 		ix.date.ResolveOffset()
