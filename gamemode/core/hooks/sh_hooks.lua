@@ -123,6 +123,55 @@ function GM:TranslateActivity(client, act)
 	end
 end
 
+function GM:UpdateAnimation(client, velocity, maxSeqGroundSpeed)
+	if (client:GetNetVar("forcedSequence")) then
+		client:SetPlaybackRate(client:GetNetVar("sequenceSpeed", 1))
+	else
+		local len = velocity:Length()
+		local movement = 1.0
+
+		if (len > 0.2) then
+			movement = (len / maxSeqGroundSpeed)
+		end
+
+		local rate = math.min(movement, 2)
+
+		-- if we're under water we want to constantly be swimming..
+		if (client:WaterLevel() >= 2) then
+			rate = math.max(rate, 0.5)
+		elseif (!client:IsOnGround() && len >= 1000) then
+			rate = 0.1
+		end
+
+		client:SetPlaybackRate(rate)
+	end
+
+	-- We only need to do this clientside..
+	if (CLIENT) then
+		if (client:InVehicle()) then
+			--
+			-- This is used for the 'rollercoaster' arms
+			--
+			local Vehicle = client:GetVehicle()
+			local Velocity = Vehicle:GetVelocity()
+			local fwd = Vehicle:GetUp()
+			local dp = fwd:Dot(Vector(0, 0, 1))
+
+			client:SetPoseParameter("vertical_velocity", (dp < 0 && dp || 0) + fwd:Dot(Velocity) * 0.005)
+
+			-- Pass the vehicles steer param down to the player
+			local steer = Vehicle:GetPoseParameter("vehicle_steer")
+			steer = steer * 2 - 1 -- convert from 0..1 to -1..1
+			if (Vehicle:GetClass() == "prop_vehicle_prisoner_pod") then steer = 0 client:SetPoseParameter("aim_yaw", math.NormalizeAngle(client:GetAimVector():Angle().y - Vehicle:GetAngles().y - 90)) end
+			client:SetPoseParameter("vehicle_steer", steer)
+
+		end
+
+		GAMEMODE:GrabEarAnimation(client)
+		GAMEMODE:MouthMoveAnimation(client)
+	end
+end
+
 function GM:CanPlayerUseBusiness(client, uniqueID)
 	if (!ix.config.Get("allowBusiness", true)) then
 		return false
@@ -338,7 +387,7 @@ do
 		local forcedSequence = client:GetNetVar("forcedSequence")
 
 		if (forcedSequence) then
-			if (client:GetSequence() != forcedSequence) then
+			if (client:GetSequence() != forcedSequence or (client:GetCycle() == 1 and client:GetNetVar("sequenceLoop"))) then
 				client:SetCycle(0)
 			end
 
