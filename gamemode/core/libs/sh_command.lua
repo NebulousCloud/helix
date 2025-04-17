@@ -112,7 +112,10 @@ local function ArgumentCheckStub(command, client, given)
 			local value = ix.command.FindPlayer(client, argument or "") -- argument could be nil due to optional type
 
 			-- FindPlayer emits feedback for us
-			if (!value and !bOptional) then
+			if (!IsValid(value) and !bOptional) then
+				if isstring(value) then
+					return L(value, client)
+				end
 				return L(bPlayer and "plyNoExist" or "charNoExist", client)
 			end
 
@@ -451,11 +454,11 @@ if (SERVER) then
 				if (IsValid(entity)) then
 					if (entity:IsPlayer()) then
 						return entity
-					elseif (IsValid(entity.ixPlayer) and entity.ixPlayer:IsPlayer()) then
+					elseif (IsValid(entity.ixPlayer)) then
 						return entity.ixPlayer
 					end
 				end
-				return
+				return "plyNotValid"
 			end
 
 			local target = ix.util.FindPlayer(name)
