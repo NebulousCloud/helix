@@ -109,7 +109,7 @@ local function ArgumentCheckStub(command, client, given)
 			result[#result + 1] = value
 		elseif (argType == ix.type.player or argType == ix.type.character) then
 			local bPlayer = argType == ix.type.player
-			local value = ix.util.FindPlayer(argument or "") -- argument could be nil due to optional type
+			local value = ix.command.FindPlayer(client, argument or "") -- argument could be nil due to optional type
 
 			-- FindPlayer emits feedback for us
 			if (!value and !bOptional) then
@@ -443,12 +443,25 @@ if (SERVER) then
 	-- @treturn[2] nil If a player could not be found
 	-- @see ix.util.FindPlayer
 	function ix.command.FindPlayer(client, name)
-		local target = isstring(name) and ix.util.FindPlayer(name) or NULL
+		if (isstring(name)) then
+			if (name == "^") then
+				return client
+			elseif (name == "@") then
+				local entity = client:GetEyeTrace().Entity
+				if (IsValid(entity)) then
+					if (entity:IsPlayer()) then
+						return entity
+					elseif (IsValid(entity.ixPlayer) and entity.ixPlayer:IsPlayer()) then
+						return entity.ixPlayer
+					end
+				end
+				return
+			end
 
-		if (IsValid(target)) then
-			return target
-		else
-			client:NotifyLocalized("plyNoExist")
+			local target = ix.util.FindPlayer(name)
+			if (IsValid(target)) then
+				return target
+			end
 		end
 	end
 
