@@ -104,13 +104,6 @@ ix.container.Register("models/items/ammocrate_smg1.mdl", {
 	end
 })
 
-ix.container.Register("models/props_forest/footlocker01_closed.mdl", {
-	name = "Footlocker",
-	description = "A small chest to store belongings in.",
-	width = 5,
-	height = 3
-})
-
 ix.container.Register("models/Items/item_item_crate.mdl", {
 	name = "Item Crate",
 	description = "A crate to store some belongings in.",
