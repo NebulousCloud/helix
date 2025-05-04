@@ -1,6 +1,7 @@
 
 -- DUTCH TRANSLATION - http://steamcommunity.com/profiles/76561198084653538/
 NAME = "Nederlands"
+CODE = "nl"
 
 LANGUAGE = {
 	loading = "Laden",
