@@ -438,12 +438,15 @@ if (SERVER) then
 	util.AddNetworkString("ixCommand")
 
 	--- Attempts to find a player by an identifier. If unsuccessful, a notice will be displayed to the specified player. The
-	-- search criteria is derived from `ix.util.FindPlayer`.
+	-- search criteria is derived from `ix.util.FindPlayer`. This command also allows for the usage of two target selectors in place of a character name.
+	-- `^` will target the command caller, in this case `client`. Using `@` will instead target the player, that the command
+	-- caller is looking at. This also works for looking at ragdolled players.
 	-- @realm server
 	-- @player client Player to give a notification to if the player could not be found
 	-- @string name Search query
 	-- @treturn[1] player Player that matches the given search query
-	-- @treturn[2] nil If a player could not be found
+	-- @treturn[2] string Error message if `client` looks at an invalid player and attempts to use the `@` target selector
+	-- @treturn[3] nil If a player could not be found
 	-- @see ix.util.FindPlayer
 	function ix.command.FindPlayer(client, name)
 		if (isstring(name)) then
