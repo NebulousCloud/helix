@@ -564,12 +564,12 @@ function GM:PostPlayerLoadout(client)
 	local character = client:GetCharacter()
 
 	if (character:GetInventory()) then
-		for _, v in pairs(character:GetInventory():GetItems()) do
-			v:Call("OnLoadout", client)
+		for k, _ in character:GetInventory():Iter() do
+			k:Call("OnLoadout", client)
 
-			if (v:GetData("equip") and v.attribBoosts) then
-				for attribKey, attribValue in pairs(v.attribBoosts) do
-					character:AddBoost(v.uniqueID, attribKey, attribValue)
+			if (k:GetData("equip") and k.attribBoosts) then
+				for attribKey, attribValue in pairs(k.attribBoosts) do
+					character:AddBoost(k.uniqueID, attribKey, attribValue)
 				end
 			end
 		end
@@ -870,9 +870,9 @@ end
 function GM:CharacterPreSave(character)
 	local client = character:GetPlayer()
 
-	for _, v in pairs(character:GetInventory():GetItems()) do
-		if (v.OnSave) then
-			v:Call("OnSave", client)
+	for k, _ in character:GetInventory():Iter() do
+		if (k.OnSave) then
+			k:Call("OnSave", client)
 		end
 	end
 

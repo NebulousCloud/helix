@@ -89,7 +89,7 @@ end
 function PANEL:CreateClicked()
 	local name = self.tab and self.tab or self.name:GetValue()
 
-	if (self.tab != self.name:GetValue() and PLUGIN:TabExists(name)) then
+	if (self.tab != self.name:GetValue() and PLUGIN:TabExists(self.name:GetValue())) then
 		ix.util.Notify(L("chatTabExists"))
 		return
 	end

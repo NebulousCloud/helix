@@ -63,8 +63,15 @@ if (SERVER) then
 		local info = ix.log.types[logType]
 
 		if (!info) then
-			ErrorNoHalt("attempted to add entry to non-existent log type \"" .. tostring(logType) .. "\"")
-			return
+			ErrorNoHalt("attempted to add entry to non-existent log type \"" .. tostring(logType) .. "\"\n")
+			local fallback = logType.." : "
+			if (client) then
+				fallback = fallback..client:Name().." - "
+			end
+			for _, v in ipairs({...}) do
+				fallback = fallback..tostring(v).." "
+			end
+			return fallback, FLAG_WARNING
 		end
 
 		local text = info and info.format

@@ -972,6 +972,12 @@ function GM:HUDDrawTargetID()
 	return false
 end
 
+function GM:BuildBusinessMenu()
+	if (!ix.config.Get("allowBusiness", true)) then
+		return false
+	end
+end
+
 gameevent.Listen("player_spawn")
 hook.Add("player_spawn", "ixPlayerSpawn", function(data)
 	local client = Player(data.userid)

@@ -86,15 +86,7 @@ if (SERVER) then
 
 			entity:SetModel(v.model)
 			entity:SetSkin(v.skin or 0)
-			entity:SetSolid(SOLID_BBOX)
-			entity:PhysicsInit(SOLID_BBOX)
-
-			local physObj = entity:GetPhysicsObject()
-
-			if (IsValid(physObj)) then
-				physObj:EnableMotion(false)
-				physObj:Sleep()
-			end
+			entity:InitPhysObj()
 
 			entity:SetNoBubble(v.bubble)
 			entity:SetDisplayName(v.name)
@@ -287,8 +279,7 @@ if (SERVER) then
 			data = {uniqueID, entity.classes[uniqueID]}
 		elseif (key == "model") then
 			entity:SetModel(data)
-			entity:SetSolid(SOLID_BBOX)
-			entity:PhysicsInit(SOLID_BBOX)
+			entity:InitPhysObj()
 			entity:SetAnim()
 		elseif (key == "useMoney") then
 			if (entity.money) then
@@ -367,11 +358,11 @@ if (SERVER) then
 
 				local invOkay = true
 
-				for _, v in pairs(client:GetCharacter():GetInventory():GetItems()) do
-					if (v.uniqueID == uniqueID and v:GetID() != 0 and ix.item.instances[v:GetID()] and v:GetData("equip", false) == false) then
-						invOkay = v:Remove()
+				for k, _ in client:GetCharacter():GetInventory():Iter() do
+					if (k.uniqueID == uniqueID and k:GetID() != 0 and ix.item.instances[k:GetID()] and k:GetData("equip", false) == false) then
+						invOkay = k:Remove()
 						found = true
-						name = L(v.name, client)
+						name = L(k.name, client)
 
 						break
 					end
