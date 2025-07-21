@@ -1,41 +1,162 @@
-﻿PLUGIN.name = "Cameras"
+PLUGIN.name = "Codex"
 PLUGIN.author = "@liliaplayer"
-PLUGIN.desc = "Adds Map Cameras"
-if not CLIENT then return end
-if not Codex then Codex = {} end
-local dataFile = "codex_data.txt"
-function Codex.Load()
-    if not file.Exists(dataFile, "DATA") then return end
-    local t = util.JSONToTable(file.Read(dataFile, "DATA") or "")
-    if t then Codex.Categories = t end
-end
+PLUGIN.desc = "Adds an in-game codex"
 
+Codex = Codex or {}
 Codex.Categories = Codex.Categories or {}
-Codex.Load()
-local function save()
-    file.Write(dataFile, util.TableToJSON(Codex.Categories, true))
-end
 
-function Codex.RegisterCategory(id, title)
-    if Codex.Categories[id] then return end
-    Codex.Categories[id] = {
-        title = title,
-        entries = {}
-    }
+if SERVER then
+    util.AddNetworkString("ixCodexData")
+    util.AddNetworkString("ixCodexAddCategory")
+    util.AddNetworkString("ixCodexAddEntry")
 
-    save()
-end
+    local function Sync(client)
+        local json = util.TableToJSON(Codex.Categories)
+        local compressed = util.Compress(json)
+        local length = compressed:len()
 
-function Codex.RegisterEntry(catId, name, kind, content)
-    local cat = Codex.Categories[catId]
-    if not cat then return end
-    table.insert(cat.entries, {
-        name = name,
-        type = string.lower(kind or "text"),
-        content = content
-    })
+        net.Start("ixCodexData")
+            net.WriteUInt(length, 32)
+            net.WriteData(compressed, length)
+        if client then
+            net.Send(client)
+        else
+            net.Broadcast()
+        end
+    end
 
-    save()
+    function Codex.SetupTables()
+        local query = mysql:Create("ix_codex_categories")
+            query:Create("id", "VARCHAR(64) NOT NULL")
+            query:Create("title", "VARCHAR(255) NOT NULL")
+            query:PrimaryKey("id")
+        query:Execute()
+
+        query = mysql:Create("ix_codex_entries")
+            query:Create("entry_id", "INT(11) UNSIGNED NOT NULL AUTO_INCREMENT")
+            query:Create("category_id", "VARCHAR(64) NOT NULL")
+            query:Create("name", "VARCHAR(255) NOT NULL")
+            query:Create("type", "VARCHAR(32) NOT NULL")
+            query:Create("content", "TEXT")
+            query:PrimaryKey("entry_id")
+        query:Execute()
+    end
+
+    function Codex.Load()
+        Codex.Categories = {}
+
+        local query = mysql:Select("ix_codex_categories")
+            query:Callback(function(result)
+                if istable(result) then
+                    for _, v in ipairs(result) do
+                        Codex.Categories[v.id] = {title = v.title, entries = {}}
+                    end
+                end
+
+                local q = mysql:Select("ix_codex_entries")
+                    q:Callback(function(res)
+                        if istable(res) then
+                            for _, e in ipairs(res) do
+                                local cat = Codex.Categories[e.category_id]
+                                if cat then
+                                    cat.entries[#cat.entries + 1] = {
+                                        name = e.name,
+                                        type = e.type,
+                                        content = e.content
+                                    }
+                                end
+                            end
+                        end
+
+                        Sync()
+                    end)
+                q:Execute()
+            end)
+        query:Execute()
+    end
+
+    function Codex.RegisterCategory(id, title)
+        if Codex.Categories[id] then return end
+
+        Codex.Categories[id] = {title = title, entries = {}}
+
+        local query = mysql:Insert("ix_codex_categories")
+            query:Insert("id", id)
+            query:Insert("title", title)
+        query:Execute()
+
+        Sync()
+    end
+
+    function Codex.RegisterEntry(catId, name, kind, content)
+        local cat = Codex.Categories[catId]
+        if not cat then return end
+
+        table.insert(cat.entries, {
+            name = name,
+            type = string.lower(kind or "text"),
+            content = content
+        })
+
+        local query = mysql:Insert("ix_codex_entries")
+            query:Insert("category_id", catId)
+            query:Insert("name", name)
+            query:Insert("type", string.lower(kind or "text"))
+            query:Insert("content", content)
+        query:Execute()
+
+        Sync()
+    end
+
+    net.Receive("ixCodexAddCategory", function(len, client)
+        local id = net.ReadString()
+        local title = net.ReadString()
+        Codex.RegisterCategory(id, title)
+    end)
+
+    net.Receive("ixCodexAddEntry", function(len, client)
+        local catId = net.ReadString()
+        local name = net.ReadString()
+        local kind = net.ReadString()
+        local content = net.ReadString()
+        Codex.RegisterEntry(catId, name, kind, content)
+    end)
+
+    function PLUGIN:PlayerInitialSpawn(client)
+        timer.Simple(1, function()
+            if IsValid(client) then
+                Sync(client)
+            end
+        end)
+    end
+
+    function PLUGIN:OnLoaded()
+        Codex.SetupTables()
+        Codex.Load()
+    end
+else
+    net.Receive("ixCodexData", function()
+        local length = net.ReadUInt(32)
+        local data = net.ReadData(length)
+        local uncompressed = util.Decompress(data)
+        Codex.Categories = util.JSONToTable(uncompressed) or {}
+    end)
+
+    function Codex.RegisterCategory(id, title)
+        net.Start("ixCodexAddCategory")
+            net.WriteString(id)
+            net.WriteString(title)
+        net.SendToServer()
+    end
+
+    function Codex.RegisterEntry(catId, name, kind, content)
+        net.Start("ixCodexAddEntry")
+            net.WriteString(catId)
+            net.WriteString(name)
+            net.WriteString(kind)
+            net.WriteString(content)
+        net.SendToServer()
+    end
 end
 
 function Codex.Open()
