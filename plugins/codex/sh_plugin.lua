@@ -159,17 +159,30 @@ else
     end
 end
 
-function Codex.Open()
+function Codex.Open(parent)
     if IsValid(Codex.Frame) then Codex.Frame:Remove() end
     local sw, sh = ScrW(), ScrH()
-    local fw, fh = sw * 0.85, sh * 0.85
+    local fw, fh
+
+    if IsValid(parent) then
+        fw, fh = parent:GetSize()
+    else
+        fw, fh = sw * 0.85, sh * 0.85
+    end
+
     local skin = derma.GetDefaultSkin()
-    local frame = vgui.Create("DFrame")
-    frame:SetSize(fw, fh)
-    frame:Center()
-    frame:SetDraggable(false)
-    frame:ShowCloseButton(false)
-    frame:SetTitle("")
+    local frame = vgui.Create(IsValid(parent) and "DPanel" or "DFrame", parent)
+
+    if IsValid(parent) then
+        frame:Dock(FILL)
+    else
+        frame:SetSize(fw, fh)
+        frame:Center()
+        frame:SetDraggable(false)
+        frame:ShowCloseButton(false)
+        frame:SetTitle("")
+    end
+
     Codex.Frame = frame
     local title = vgui.Create("DLabel", frame)
     title:SetFont("DermaLarge")
@@ -312,7 +325,31 @@ function Codex.Open()
         end
     end
 
-    frame:MakePopup()
+    if not IsValid(parent) then
+        frame:MakePopup()
+    end
 end
 
 concommand.Add("codex", Codex.Open)
+
+if CLIENT then
+    hook.Add("CreateMenuButtons", "ixCodex", function(tabs)
+        tabs["codex"] = {
+            Create = function(info, container)
+                Codex.Open(container)
+            end,
+
+            OnSelected = function(info, container)
+                if not IsValid(Codex.Frame) then
+                    Codex.Open(container)
+                end
+            end,
+
+            OnDeselected = function(info, container)
+                if IsValid(Codex.Frame) and Codex.Frame:GetParent() == container then
+                    Codex.Frame:Remove()
+                end
+            end
+        }
+    end)
+end
