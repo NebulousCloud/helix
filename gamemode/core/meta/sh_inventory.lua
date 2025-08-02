@@ -572,7 +572,7 @@ function META:Iter()
 
 			item = self.slots[x] and self.slots[x][y]
 			x = x + 1
-		until item
+		until item and not isbool(item) -- skip reserved slots in which items have yet to be fully instantiated
 
 		if (item) then
 			return item, x, y
