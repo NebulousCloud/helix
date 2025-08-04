@@ -189,9 +189,15 @@ else
 	end
 
 	local function RemovePart(client, uniqueID)
+		local itemTable = ix.item.list[uniqueID]
 		local pacData = ix.pac.list[uniqueID]
 
 		if (pacData) then
+			if (itemTable and itemTable.pacAdjust) then
+				pacData = table.Copy(pacData)
+				pacData = itemTable:pacAdjust(pacData, client)
+			end
+
 			if (isfunction(client.RemovePACPart)) then
 				client:RemovePACPart(pacData)
 			else
