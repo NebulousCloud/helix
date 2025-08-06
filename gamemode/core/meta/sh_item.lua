@@ -486,6 +486,8 @@ function ITEM:Remove(bNoReplication, bNoDelete)
 		if (!bNoDelete) then
 			local item = ix.item.instances[self.id]
 
+			hook.Run("InventoryItemRemoved", inv, item)
+
 			if (item and item.OnRemoved) then
 				item:OnRemoved()
 			end
