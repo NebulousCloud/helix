@@ -332,21 +332,43 @@ end
 function SKIN:PaintVScrollBar(panel, width, height)
 end
 
+function SKIN:PaintHScrollBar(panel, width, height)
+end
+
 function SKIN:PaintScrollBarGrip(panel, width, height)
 	local parent = panel:GetParent()
-	local upButtonHeight = parent.btnUp:GetTall()
-	local downButtonHeight = parent.btnDown:GetTall()
 
-	DisableClipping(true)
-		surface.SetDrawColor(30, 30, 30, 200)
-		surface.DrawRect(4, -upButtonHeight, width - 8, height + upButtonHeight + downButtonHeight)
-	DisableClipping(false)
+	if (IsValid(parent.btnUp)) then
+		-- Vertical scrollbar
+		local upButtonHeight = parent.btnUp:GetTall()
+		local downButtonHeight = parent.btnDown:GetTall()
+
+		DisableClipping(true)
+			surface.SetDrawColor(30, 30, 30, 200)
+			surface.DrawRect(4, -upButtonHeight, width - 8, height + upButtonHeight + downButtonHeight)
+		DisableClipping(false)
+	else
+		-- Horizontal scrollbar
+		local leftButtonWidth = parent.btnLeft:GetWide()
+		local rightButtonWidth = parent.btnRight:GetWide()
+
+		DisableClipping(true)
+			surface.SetDrawColor(30, 30, 30, 200)
+			surface.DrawRect(-leftButtonWidth, 4, width + leftButtonWidth + rightButtonWidth, height - 8)
+		DisableClipping(false)
+	end
 end
 
 function SKIN:PaintButtonUp(panel, width, height)
 end
 
 function SKIN:PaintButtonDown(panel, width, height)
+end
+
+function SKIN:PaintButtonLeft(panel, width, height)
+end
+
+function SKIN:PaintButtonRight(panel, width, height)
 end
 
 function SKIN:PaintComboBox(panel, width, height)
