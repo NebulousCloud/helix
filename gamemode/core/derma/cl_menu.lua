@@ -64,7 +64,7 @@ function PANEL:Init()
 	self.guard:SetSize(self:GetPadding(), self:GetTall())
 
 	-- tabs
-	self.tabs = self.buttons:Add("Panel")
+	self.tabs = self.buttons:Add("DScrollPanel")
 	self.tabs.buttons = {}
 	self.tabs:Dock(FILL)
 	self:PopulateTabs()
