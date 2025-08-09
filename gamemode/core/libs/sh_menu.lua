@@ -72,7 +72,7 @@ else
 		local option = net.ReadString()
 		local data = net.ReadType()
 
-		local cfgDistSqr = ix.config.Get("interactionRange", 96)) * ix.config.Get("interactionRange", 96))
+		local cfgDistSqr = ix.config.Get("interactionRange", 96) * ix.config.Get("interactionRange", 96)
 		if (!IsValid(entity) or !isstring(option) or
 			hook.Run("CanPlayerInteractEntity", client, entity, option, data) == false or
 			entity:GetPos():DistToSqr(client:GetPos()) > cfgDistSqr then
