@@ -241,15 +241,11 @@ if (SERVER) then
 			timer.Create("ixCharacterInteraction" .. self:SteamID(), time, 1, function()
 				if (IsValid(self) and IsValid(entity) and IsValid(self.ixInteractionTarget) and
 					self.ixInteractionCharacter == self:GetCharacter():GetID()) then
-					local data = {}
-						data.start = self:GetShootPos()
-						data.endpos = data.start + self:GetAimVector() * 96
-						data.filter = self
-					local traceEntity = util.TraceLine(data).Entity
+					local useEntity = self:GetUseEntity()
 
-					if (IsValid(traceEntity) and traceEntity == self.ixInteractionTarget and !traceEntity.ixInteractionDirty) then
+					if (IsValid(useEntity) and useEntity == self.ixInteractionTarget and !useEntity.ixInteractionDirty) then
 						if (callback(self) != false) then
-							traceEntity.ixInteractionDirty = true
+							useEntity.ixInteractionDirty = true
 						end
 					end
 				end
