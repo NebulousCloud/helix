@@ -32,6 +32,8 @@ function ix.class.LoadFromDir(directory)
 		for _, v2 in ipairs(ix.class.list) do
 			if (v2.uniqueID == niceName) then
 				halt = true
+
+                break
 			end
 		end
 
