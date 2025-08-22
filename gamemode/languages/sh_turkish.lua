@@ -1,5 +1,7 @@
 
--- TURKISH TRANSLATION - MADE BY @WILDERWESTEN
+-- TURKISH TRANSLATION 
+-- MADE BY @WILDERWESTEN
+-- https://steamcommunity.com/id/wilderwesten/
 
 NAME = "Turkish"
 
