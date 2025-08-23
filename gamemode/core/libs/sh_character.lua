@@ -268,7 +268,7 @@ if (SERVER) then
 								ErrorNoHalt(
 									"[Helix] Loaded character "
 									.. tostring(characterInfo.id)
-									.. " with invalid 'data' JSON ("
+									.. " with invalid '" .. v.field .. "' JSON ("
 									.. json
 									.. ")\n"
 								)
