@@ -24,10 +24,10 @@ do
 					updateQuery:Execute()
 
 					self.ixPlayTime = tonumber(result[1].play_time) or 0
-					
+
 					local json = result[1].data
 					self.ixData = util.JSONToTable(json)
-					
+
 					if (not self.ixData) then
 						ErrorNoHalt(
 							"[Helix] Loaded player "
