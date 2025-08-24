@@ -266,11 +266,12 @@ if (SERVER) then
 
 							if (not value) then
 								ErrorNoHalt(
-									"[Helix] Loaded character "
-									.. tostring(characterInfo.id)
-									.. " with invalid '" .. v.field .. "' JSON ("
-									.. json
-									.. ")\n"
+									string.format(
+										"[Helix] Loaded character %s with invalid '%s' JSON (%s)\n",
+										tostring(characterInfo.id),
+										v.field,
+										json
+									)
 								)
 							end
 						end
