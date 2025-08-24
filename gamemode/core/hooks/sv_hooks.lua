@@ -437,7 +437,7 @@ ix.allowedHoldableClasses = {
 }
 
 function GM:CanPlayerHoldObject(client, entity)
-	if (entity and entity.GetClass and ix.allowedHoldableClasses[entity:GetClass()]) then
+	if (ix.allowedHoldableClasses[entity:GetClass()]) then
 		return true
 	end
 end
