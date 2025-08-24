@@ -31,8 +31,8 @@ do
 					if (not self.ixData) then
 						ErrorNoHalt(
 							string.format(
-								"[Helix] Loaded player %s with invalid 'data' JSON (%s)\n", 
-								steamID64, 
+								"[Helix] Loaded player %s with invalid 'data' JSON (%s)\n",
+								steamID64,
 								tostring(json)
 							)
 						)
