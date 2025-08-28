@@ -3590,7 +3590,13 @@ end
 
 				<h3>Example Usage</h3>
 					<pre><code>function PLUGIN:CanPlayerInteractEntity(client, entity, option, data)
-	return false -- Disallow interacting with any entity.
+ if (entity:GetClass() == "my_big_entity" and entity:GetPos():Distance(client:GetPos()) < 192) then
+   return true -- Force allow interacting if within larger than default interact range of large entity
+ end
+
+	if (client:GetNetVar("drunk")) then
+   return false -- Disallow interacting with an entity while drunk
+	end
 end
 </code></pre>
 
