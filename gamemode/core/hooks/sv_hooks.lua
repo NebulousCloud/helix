@@ -138,6 +138,10 @@ function GM:KeyRelease(client, key)
 	end
 end
 
+function GM:CanPlayerInteractEntity(client, entity, option, data)
+	return entity:GetPos():DistToSqr(client:GetPos()) <= 96 ^ 2
+end
+
 function GM:CanPlayerInteractItem(client, action, item, data)
 	if (client:IsRestricted()) then
 		return false
