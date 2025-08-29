@@ -1736,6 +1736,11 @@ Save											</a>
 Set											</a>
 										</li>
 										<li>
+											<span class="realm shared"></span>
+											<a href="../../libraries/ix.option/#ix.option.SetDefault">
+SetDefault											</a>
+										</li>
+										<li>
 											<span class="realm client"></span>
 											<a href="../../libraries/ix.option/#ix.option.Sync">
 Sync											</a>
@@ -2794,7 +2799,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L278">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L301">View source &raquo;</a>
 
 					<p>Retrieves an option value from the specified player.  If it is not set, it'll return the default that you've specified.
  This function will error when an invalid player is passed.</p>
@@ -2868,7 +2873,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L218">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L241">View source &raquo;</a>
 
 					<p>Retrieves an option value for the local player.  If it is not set, it'll return the default that you've specified.</p>
 			</header>
@@ -2929,7 +2934,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L139">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L162">View source &raquo;</a>
 
 					<p>Returns all of the available options.  Note that this does contain the actual values of the options, just their properties.</p>
 			</header>
@@ -2964,7 +2969,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L157">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L180">View source &raquo;</a>
 
 					<p>Returns all of the available options grouped by their categories.  The returned table contains category tables, that contain
  all the options in that category as an array (this is so you can sort them if you'd like).</p>
@@ -3022,7 +3027,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
 					</div>
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L114">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L137">View source &raquo;</a>
 
 					<p>Loads all saved options from disk.</p>
 			</header>
@@ -3042,7 +3047,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
 					</div>
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L237">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L260">View source &raquo;</a>
 
 					<p>Saves all options to disk.</p>
 			</header>
@@ -3058,7 +3063,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L186">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L209">View source &raquo;</a>
 
 					<p>Sets an option value for the local player.
  This function will error when an invalid key is passed.</p>
@@ -3109,12 +3114,54 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 		</section>
 		<section class="method">
 			<header>
+				<a class="anchor" id="ix.option.SetDefault">
+					<h1><span class="realm shared"></span></span>ix.option.SetDefault(key, value)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L121">View source &raquo;</a>
+
+					<p>Sets the default value for a user option.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">key</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+
+								<p> Unique ID of the option</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">value</span>
+
+
+
+								<p> Default value for the user option</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
 				<a class="anchor" id="ix.option.Sync">
 					<h1><span class="realm client"></span></span>ix.option.Sync()</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L243">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L266">View source &raquo;</a>
 
 					<p>Syncs all networked options to the server.</p>
 			</header>
@@ -3132,7 +3179,7 @@ named <code>headbob</code>, then you'll need to define a language phrase called 
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L94">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_option.lua#L100">View source &raquo;</a>
 
 					<p>You can specify additional optional arguments for <a href="../../libraries/ix.option/#ix.option.Add">ix.option.Add</a> by passing in a table of specific fields as the fourth
  argument.</p>
