@@ -39,6 +39,11 @@ if (SERVER) then
 			container:SetModel(model)
 			container:Spawn()
 
+			undo.Create(data.name)
+				undo.AddEntity(container)
+				undo.SetPlayer(client)
+			undo.Finish()
+
 			ix.inventory.New(0, "container:" .. model:lower(), function(inventory)
 				-- we'll technically call this a bag since we don't want other bags to go inside
 				inventory.vars.isBag = true
