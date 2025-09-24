@@ -9,10 +9,17 @@ function GM:PlayerInitialSpawn(client)
 		local index = math.random(1, table.Count(ix.faction.indices))
 		local faction = ix.faction.indices[index]
 
+        local models = faction:GetModels( client )
+
+        local model = models[ math.random( #models ) ]
+        if ( istable( model ) ) then model = model[ 1 ] end
+
+        if ( !isstring( model ) ) then model = "models/gman.mdl" end
+
 		local character = ix.char.New({
 			name = client:Name(),
 			faction = faction and faction.uniqueID or "unknown",
-			model = faction and table.Random(faction:GetModels(client)) or "models/gman.mdl"
+			model = model,
 		}, botID, client, client:SteamID64())
 		character.isBot = true
 
