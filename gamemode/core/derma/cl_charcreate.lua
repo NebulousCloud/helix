@@ -94,7 +94,7 @@ function PANEL:Init()
 	self.descriptionModel:SetFOV(modelFOV - 13)
 	self.descriptionModel.PaintModel = self.descriptionModel.Paint
 
-	self.descriptionPanel = self.description:Add("Panel")
+	self.descriptionPanel = self.description:Add("DScrollPanel")
 	self.descriptionPanel:SetWide(halfWidth + padding * 2)
 	self.descriptionPanel:Dock(RIGHT)
 
