@@ -700,6 +700,11 @@ function GM:PlayerDeathThink(client)
 
 		if (deathTime and deathTime <= CurTime()) then
 			client:Spawn()
+
+			local character = client:GetCharacter()
+			if character then
+				hook.Run("OnCharacterRespawn", client, character)
+			end
 		end
 	end
 
