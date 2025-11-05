@@ -28,7 +28,8 @@ ix.config.Add("areaTickTime", 1, "How many seconds between each time a character
 function ix.area.AddProperty(name, type, default, data)
 	ix.area.properties[name] = {
 		type = type,
-		default = default
+		default = default,
+		data = data or {}
 	}
 end
 
