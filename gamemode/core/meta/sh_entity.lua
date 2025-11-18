@@ -43,11 +43,9 @@ if (SERVER) then
 	function meta:IsLocked()
 		if (self:IsVehicle()) then
 			return self:GetInternalVariable( "VehicleLocked" )
-		else
-			return self:GetInternalVariable( "m_bLocked" )
 		end
 
-		return false
+		return self:GetInternalVariable( "m_bLocked" )
 	end
 
 	--- Returns the neighbouring door entity for double doors.
