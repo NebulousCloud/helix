@@ -63,9 +63,7 @@ if (SERVER) then
 	-- @treturn[1] Entity Entity that is blocking this door
 	-- @treturn[2] nil If this entity is not a door, or there is no blocking entity
 	function meta:GetBlocker()
-		local datatable = self:GetSaveTable()
-
-		return datatable.pBlocker
+		return self:GetInternalVariable( "pBlocker" )
 	end
 
 	--- Blasts a door off its hinges. Internally, this hides the door entity, spawns a physics prop with the same model, and
