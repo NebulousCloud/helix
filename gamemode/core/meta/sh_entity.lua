@@ -42,17 +42,9 @@ if (SERVER) then
 	-- (e.g not a button or door)
 	function meta:IsLocked()
 		if (self:IsVehicle()) then
-			local datatable = self:GetSaveTable()
-
-			if (datatable) then
-				return datatable.VehicleLocked
-			end
+			return self:GetInternalVariable( "VehicleLocked" )
 		else
-			local datatable = self:GetSaveTable()
-
-			if (datatable) then
-				return datatable.m_bLocked
-			end
+			return self:GetInternalVariable( "m_bLocked" )
 		end
 
 		return false
