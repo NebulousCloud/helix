@@ -70,7 +70,7 @@ if (CLIENT) then
 							end
 						end
 
-						self.index = table.Random(keys)
+						self.index = keys[ math.random( #keys ) ]
 					end
 				end
 			elseif (value) then
