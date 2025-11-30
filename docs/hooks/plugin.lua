@@ -671,6 +671,13 @@ end
 function OnCharacterCreated(client, character)
 end
 
+--- Called when a player dies and respawns
+-- @realm server
+-- @player client The player that has respawned
+-- @char character The character that the player was using
+function OnCharacterRespawn(client, character)
+end
+
 --- Called when a player who uses a character has disconnected.
 -- @realm server
 -- @player client The player that has disconnected
