@@ -335,7 +335,7 @@ end
 concommand.Add("ix_flushicon", function()
 	local root = "helix/icons/" .. schemaName
 
-	for _, v in pairs(file.Find(root .. "/*.png", "DATA")) do
+	for _, v in ipairs(file.Find(root .. "/*.png", "DATA")) do
 		file.Delete(root .. "/" .. v)
 	end
 

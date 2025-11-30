@@ -844,7 +844,7 @@ do
 			nearestDist = util.DistanceToLine(searchCenter, forward, point)
 		end
 
-		for _, v in pairs(ents.FindInSphere(searchCenter, 80)) do
+		for _, v in ipairs(ents.FindInSphere(searchCenter, 80)) do
 			if (!ix.util.IsUseableEntity(v, FCAP_USE_IN_RADIUS)) then
 				continue
 			end
