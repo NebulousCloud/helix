@@ -415,29 +415,25 @@ local submodelClasses = {
 
 hook.Add("PlayerModelChanged", "ixCheckAnimFixes", function(ply, model)
 	timer.Simple(0.1, function()
-		print("playermodelchanged", ply, model)
 		if !IsValid(ply) then return end
 		model = model:lower()
 
 		if translations[model] then return end
-		print("no translations")
 
 		local foundClass
 		local submodels = ply:GetSubModels()
 		for i, submodel in ipairs(submodels) do
 			local class = submodel["name"]:gsub(".*/([^/]+)%.%w+$", "%1"):lower()
 			foundClass = submodelClasses[class]
-			print( class, foundClass )
 			if foundClass then
 				ix.anim.SetModelClass(model, foundClass)
 				fixedAnims[foundClass] = model
-				print(model, "ok")
 				break
 			end
 		end
 
-		if not foundClass then print("didnt find class") return end -- ;-;
-
+		if not foundClass then return end
+				
 		ply.ixAnimModelClass = foundClass
 		local base = ix.anim[foundClass]
 		ply.ixAnimTable = base[ply.ixAnimHoldType]
