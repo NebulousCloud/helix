@@ -241,4 +241,3 @@ if (SERVER) then
 		net.Broadcast()
 	end
 end
-
