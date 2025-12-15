@@ -71,8 +71,8 @@ if (SERVER) then
 	-- @tparam Player|nil client Player tied to the log.
 	-- @tparam string logType Log type name.
 	-- @param ... Arguments for the formatter.
-	-- @treturn string|number text Message string, or -1 to skip logging.
-	-- @treturn number flag Flag from the registered type.
+	-- @treturn string|number Message string, or -1 to skip logging.
+	-- @treturn number Flag from the registered type.
 	function ix.log.Parse(client, logType, ...)
 		local info = ix.log.types[logType]
 
