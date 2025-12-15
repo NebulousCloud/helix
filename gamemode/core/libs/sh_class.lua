@@ -93,8 +93,8 @@ end
 -- @realm shared
 -- @player client Player to check
 -- @number class Index of the class
--- @treturn[1] bool Whether or not the player can switch to the class.
--- @treturn[2] string The reason why the player cannot switch (if applicable).
+-- @treturn bool Whether or not the player can switch to the class.
+-- @treturn string The reason why the player cannot switch (if applicable).
 -- @usage -- Check if a player can join class ID 2.
 -- -- For our example, they can't- because they are in the wrong faction.
 -- local canJoin, reason = ix.class.CanSwitchTo(player, 2)
