@@ -128,8 +128,7 @@ if (SERVER) then
 	-- @tparam Player|nil client Player tied to the log (can be nil).
 	-- @tparam string logType Type registered with `ix.log.AddType`.
 	-- @param ... Arguments for the formatter.
-	-- @usage ix.log.AddType("charMoneyGive", "%s gave %s %d tokens.", FLAG_SUCCESS)
-	-- ix.log.Add(client, "charMoneyGive", giverName, receiverName, amount)
+	-- @usage ix.log.Add(client, "charMoneyGive", giverName, receiverName, amount)
 	-- @see ix.log.AddType
 	-- @see ix.log.AddRaw
 	function ix.log.Add(client, logType, ...)
