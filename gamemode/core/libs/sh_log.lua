@@ -108,7 +108,7 @@ if (SERVER) then
 	-- @tparam string logString Pre-formatted log message.
 	-- @tparam[opt] boolean bNoSave If true, skips handler output (e.g. file logging).
 	-- @usage ix.log.AddRaw("Server is restarting in 5 minutes.")
-	-- @see ix.log.Add 
+	-- @see ix.log.Add
 	function ix.log.AddRaw(logString, bNoSave)
 		CAMI.GetPlayersWithAccess("Helix - Logs", function(receivers)
 			ix.log.Send(receivers, logString)
