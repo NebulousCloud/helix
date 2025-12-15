@@ -50,15 +50,29 @@ if (SERVER) then
 
 	ix.log.types = ix.log.types or {}
 
-	--- Adds a log type
+	--- Registers a log type for `ix.log.Add`.
+	-- `format` is either a format string or a function `(client, ...) -> string`.
+	--
+	-- `flag` is a display/severity tag (see `FLAG_*`). If omitted, it behaves like a normal log.
 	-- @realm server
-	-- @string logType Log category
-	-- @string format The string format that log messages should use
-	-- @number flag Log level
+	-- @tparam string logType Type name used when calling `ix.log.Add`.
+	-- @tparam string|function format Format string or formatter function.
+	-- @tparam[opt] number flag One of the `FLAG_*` constants.
+	-- @usage
+	-- ix.log.AddType("charMoneyGive", "%s gave %s %d tokens.", FLAG_SUCCESS)
 	function ix.log.AddType(logType, format, flag)
 		ix.log.types[logType] = {format = format, flag = flag}
 	end
 
+	--- Turns a log type + args into `(message, flag)`.
+	-- Missing type falls back to a warning string. No formatter returns `-1` (caller bails).
+	-- @internal
+	-- @realm server
+	-- @tparam Player|nil client Player tied to the log.
+	-- @tparam string logType Log type name.
+	-- @param ... Arguments for the formatter.
+	-- @treturn string|number Message string, or -1 to skip logging.
+	-- @treturn number Flag from the registered type.
 	function ix.log.Parse(client, logType, ...)
 		local info = ix.log.types[logType]
 
@@ -87,6 +101,14 @@ if (SERVER) then
 		return text, info.flag
 	end
 
+	--- Adds a log entry without using a log type.
+	-- Sends the message to admins with log access, prints it to the server console,
+	-- and writes it through log handlers unless `bNoSave` is true.
+	-- @realm server
+	-- @tparam string logString Pre-formatted log message.
+	-- @tparam[opt] boolean bNoSave If true, skips handler output (e.g. file logging).
+	-- @usage ix.log.AddRaw("Server is restarting in 5 minutes.")
+	-- @see ix.log.Add
 	function ix.log.AddRaw(logString, bNoSave)
 		CAMI.GetPlayersWithAccess("Helix - Logs", function(receivers)
 			ix.log.Send(receivers, logString)
@@ -99,11 +121,16 @@ if (SERVER) then
 		end
 	end
 
-	--- Add a log message
+	--- Adds a typed log entry.
+	-- The entry is visible to admins with log access, printed to the server console,
+	-- and written through the logging system.
 	-- @realm server
-	-- @player client Player who instigated the log
-	-- @string logType Log category
-	-- @param ... Arguments to pass to the log
+	-- @tparam Player|nil client Player tied to the log (can be nil).
+	-- @tparam string logType Type registered with `ix.log.AddType`.
+	-- @param ... Arguments for the formatter.
+	-- @usage ix.log.Add(client, "charMoneyGive", giverName, receiverName, amount)
+	-- @see ix.log.AddType
+	-- @see ix.log.AddRaw
 	function ix.log.Add(client, logType, ...)
 		local logString, logFlag = ix.log.Parse(client, logType, ...)
 		if (logString == -1) then return end
@@ -117,14 +144,24 @@ if (SERVER) then
 		ix.log.CallHandler("Write", client, logString, logFlag, logType, {...})
 	end
 
-	function ix.log.Send(client, logString, flag)
+	--- Sends a log entry to clients.
+	-- @internal
+	-- @realm server
+	-- @tparam Player|table receivers Target player(s).
+	-- @tparam string logString Log message.
+	-- @tparam[opt] number flag `FLAG_*` value (defaults to normal).
+	function ix.log.Send(receivers, logString, flag)
 		net.Start("ixLogStream")
 			net.WriteString(logString)
 			net.WriteUInt(flag or 0, 4)
-		net.Send(client)
+		net.Send(receivers)
 	end
 
 	ix.log.handlers = ix.log.handlers or {}
+
+	--- Calls a specific event on all registered log handlers.
+	-- @realm server
+	-- @internal
 	function ix.log.CallHandler(event, ...)
 		for _, v in pairs(ix.log.handlers) do
 			if (isfunction(v[event])) then
@@ -133,6 +170,9 @@ if (SERVER) then
 		end
 	end
 
+	-- Register a log handler
+	-- @realm server
+	-- @internal
 	function ix.log.RegisterHandler(name, data)
 		data.name = string.gsub(name, "%s", "")
 			name = name:lower()
@@ -164,3 +204,4 @@ else
 		end
 	end)
 end
+
