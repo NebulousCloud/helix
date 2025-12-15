@@ -1634,8 +1634,28 @@ Add											</a>
 										</li>
 										<li>
 											<span class="realm server"></span>
+											<a href="../../libraries/ix.log/#ix.log.AddRaw">
+AddRaw											</a>
+										</li>
+										<li>
+											<span class="realm server"></span>
 											<a href="../../libraries/ix.log/#ix.log.AddType">
 AddType											</a>
+										</li>
+										<li>
+											<span class="realm server"></span>
+											<a href="../../libraries/ix.log/#ix.log.CallHandler">
+CallHandler											</a>
+										</li>
+										<li>
+											<span class="realm server"></span>
+											<a href="../../libraries/ix.log/#ix.log.Parse">
+Parse											</a>
+										</li>
+										<li>
+											<span class="realm server"></span>
+											<a href="../../libraries/ix.log/#ix.log.Send">
+Send											</a>
 										</li>
 
 									</ul>
@@ -2715,9 +2735,11 @@ FLAG_DEV
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_log.lua#L107">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_log.lua#L134">View source &raquo;</a>
 
-					<p>Add a log message</p>
+					<p>Adds a typed log entry.
+ The entry is visible to admins with log access, printed to the server console,
+ and written through the logging system.</p>
 			</header>
 
 
@@ -2729,10 +2751,10 @@ FLAG_DEV
 							<li>
 								<span class="tag parameter">client</span>
 
-									<span class="tag"><a class="type" href="../../classes/player/#">Player</a></span>
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a> or <span class="type">nil</span></span>
 
 
-								<p> Player who instigated the log</p>
+								<p> Player tied to the log (can be nil).</p>
 							</li>
 					</ul>
 
@@ -2744,7 +2766,7 @@ FLAG_DEV
 									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p> Log category</p>
+								<p> Type registered with <a href="../../libraries/ix.log/#ix.log.AddType">ix.log.AddType</a>.</p>
 							</li>
 					</ul>
 
@@ -2755,12 +2777,73 @@ FLAG_DEV
 
 
 
-								<p> Arguments to pass to the log</p>
+								<p> Arguments for the formatter.</p>
 							</li>
 					</ul>
 
 
+				<h3>Example Usage</h3>
+					<pre><code>ix.log.Add(client, "charMoneyGive", giverName, receiverName, amount)
+</code></pre>
 
+				<h3>See Also</h3>
+				<ul>
+						<li><a href="../../libraries/ix.log/#ix.log.AddType">ix.log.AddType</a></li>
+						<li><a href="../../libraries/ix.log/#ix.log.AddRaw">ix.log.AddRaw</a></li>
+				</ul>
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="ix.log.AddRaw">
+					<h1><span class="realm server"></span></span>ix.log.AddRaw(logString, bNoSave)</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_log.lua#L112">View source &raquo;</a>
+
+					<p>Adds a log entry without using a log type.
+ Sends the message to admins with log access, prints it to the server console,
+ and writes it through log handlers unless <code>bNoSave</code> is true.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">logString</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+
+								<p> Pre-formatted log message.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">bNoSave</span>
+
+									<span class="tag"><span class="type">boolean</span></span>
+
+									<span class="tag default">optional</span>
+
+								<p> If true, skips handler output (e.g. file logging).</p>
+							</li>
+					</ul>
+
+
+				<h3>Example Usage</h3>
+					<pre><code>ix.log.AddRaw("Server is restarting in 5 minutes.")
+</code></pre>
+
+				<h3>See Also</h3>
+				<ul>
+						<li><a href="../../libraries/ix.log/#ix.log.Add">ix.log.Add</a></li>
+				</ul>
 		</section>
 		<section class="method">
 			<header>
@@ -2769,9 +2852,12 @@ FLAG_DEV
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_log.lua#L58">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_log.lua#L63">View source &raquo;</a>
 
-					<p>Adds a log type</p>
+					<p>Registers a log type for <a href="../../libraries/ix.log/#ix.log.Add">ix.log.Add</a>.
+ <code>format</code> is either a format string or a function <code>(client, ...) -&gt; string</code>.</p>
+
+<p> <a href="../../libraries/ix.flag/">flag</a> is a display/severity tag (see <code>FLAG_*</code>). If omitted, it behaves like a normal log.</p>
 			</header>
 
 
@@ -2786,7 +2872,7 @@ FLAG_DEV
 									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
 
 
-								<p> Log category</p>
+								<p> Type name used when calling <a href="../../libraries/ix.log/#ix.log.Add">ix.log.Add</a>.</p>
 							</li>
 					</ul>
 
@@ -2795,10 +2881,10 @@ FLAG_DEV
 							<li>
 								<span class="tag parameter">format</span>
 
-									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a> or <span class="type">function</span></span>
 
 
-								<p> The string format that log messages should use</p>
+								<p> Format string or formatter function.</p>
 							</li>
 					</ul>
 
@@ -2809,8 +2895,197 @@ FLAG_DEV
 
 									<span class="tag"><span class="type">number</span></span>
 
+									<span class="tag default">optional</span>
 
-								<p> Log level</p>
+								<p> One of the <code>FLAG_*</code> constants.</p>
+							</li>
+					</ul>
+
+
+				<h3>Example Usage</h3>
+					<pre><code>ix.log.AddType("charMoneyGive", "%s gave %s %d tokens.", FLAG_SUCCESS)
+</code></pre>
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="ix.log.CallHandler">
+					<h1><span class="realm server"></span></span>ix.log.CallHandler(event, ...)</h1>
+				</a>
+
+					<div class="notice error">
+						<div class="title">Internal</div>
+						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
+					</div>
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_log.lua#L165">View source &raquo;</a>
+
+					<p>Calls a specific event on all registered log handlers.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">event</span>
+
+
+
+								<p>
+
+</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">...</span>
+
+
+
+								<p>
+
+</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="ix.log.Parse">
+					<h1><span class="realm server"></span></span>ix.log.Parse(client, logType, ...)</h1>
+				</a>
+
+					<div class="notice error">
+						<div class="title">Internal</div>
+						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
+					</div>
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_log.lua#L76">View source &raquo;</a>
+
+					<p>Turns a log type + args into <code>(message, flag)</code>.
+ Missing type falls back to a warning string. No formatter returns <code>-1</code> (caller bails).</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">client</span>
+
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a> or <span class="type">nil</span></span>
+
+
+								<p> Player tied to the log.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">logType</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+
+								<p> Log type name.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">...</span>
+
+
+
+								<p> Arguments for the formatter.</p>
+							</li>
+					</ul>
+
+
+				<h3>Returns</h3>
+				<ul>
+
+							<li>
+									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a> or <span class="type">number</span>
+
+								<p>Message string, or -1 to skip logging.</p>
+							</li>
+
+							<li>
+									<span class="type">number</span>
+
+								<p>Flag from the registered type.</p>
+							</li>
+
+				</ul>
+
+
+		</section>
+		<section class="method">
+			<header>
+				<a class="anchor" id="ix.log.Send">
+					<h1><span class="realm server"></span></span>ix.log.Send(receivers, logString, flag)</h1>
+				</a>
+
+					<div class="notice error">
+						<div class="title">Internal</div>
+						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
+					</div>
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_log.lua#L153">View source &raquo;</a>
+
+					<p>Sends a log entry to clients.</p>
+			</header>
+
+
+					<h3>Parameters</h3>
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">receivers</span>
+
+									<span class="tag"><a class="type" href="../../classes/player/#">Player</a> or <a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+
+
+								<p> Target player(s).</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">logString</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+
+
+								<p> Log message.</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">flag</span>
+
+									<span class="tag"><span class="type">number</span></span>
+
+									<span class="tag default">optional</span>
+
+								<p> <code>FLAG_*</code> value (defaults to normal).</p>
 							</li>
 					</ul>
 

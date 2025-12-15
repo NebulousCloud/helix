@@ -1634,8 +1634,28 @@ Add											</a>
 										</li>
 										<li>
 											<span class="realm server"></span>
+											<a href="../../libraries/ix.log/#ix.log.AddRaw">
+AddRaw											</a>
+										</li>
+										<li>
+											<span class="realm server"></span>
 											<a href="../../libraries/ix.log/#ix.log.AddType">
 AddType											</a>
+										</li>
+										<li>
+											<span class="realm server"></span>
+											<a href="../../libraries/ix.log/#ix.log.CallHandler">
+CallHandler											</a>
+										</li>
+										<li>
+											<span class="realm server"></span>
+											<a href="../../libraries/ix.log/#ix.log.Parse">
+Parse											</a>
+										</li>
+										<li>
+											<span class="realm server"></span>
+											<a href="../../libraries/ix.log/#ix.log.Send">
+Send											</a>
 										</li>
 
 									</ul>
@@ -2706,7 +2726,7 @@ their faction by default, but you can restrict this as you need with <code>CLASS
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L82">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L105">View source &raquo;</a>
 
 					<p>Determines if a player is allowed to join a specific class.</p>
 			</header>
@@ -2746,11 +2766,26 @@ their faction by default, but you can restrict this as you need with <code>CLASS
 							<li>
 									<span class="type">bool</span>
 
-								<p>Whether or not the player can switch to the class</p>
+								<p>Whether or not the player can switch to the class.</p>
+							</li>
+
+							<li>
+									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a>
+
+								<p>The reason why the player cannot switch (if applicable).</p>
 							</li>
 
 				</ul>
 
+				<h3>Example Usage</h3>
+					<pre><code>-- Check if a player can join class ID 2.
+-- For our example, they can't- because they are in the wrong faction.
+local canJoin, reason = ix.class.CanSwitchTo(player, 2)
+if (!canJoin) then
+    print("Player cannot join class: "..reason)
+end
+> Player cannot join class: not correct team
+</code></pre>
 
 		</section>
 		<section class="method">
@@ -2760,9 +2795,9 @@ their faction by default, but you can restrict this as you need with <code>CLASS
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L118">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L144">View source &raquo;</a>
 
-					<p>Retrieves a class table.</p>
+					<p>Gets a class definition table by numeric identifier.</p>
 			</header>
 
 
@@ -2777,7 +2812,7 @@ their faction by default, but you can restrict this as you need with <code>CLASS
 									<span class="tag"><span class="type">number</span></span>
 
 
-								<p> Index of the class</p>
+								<p> Numeric class identifier.</p>
 							</li>
 					</ul>
 
@@ -2786,13 +2821,18 @@ their faction by default, but you can restrict this as you need with <code>CLASS
 				<ul>
 
 							<li>
-									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a>
+									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a> or <span class="type">nil</span>
 
-								<p>Class table</p>
+								<p>Class definition table (see <a href="../../libraries/ix.class/">class</a> table docs).</p>
 							</li>
 
 				</ul>
 
+				<h3>Example Usage</h3>
+					<pre><code>-- Print the name of class ID 1
+print(ix.class.Get(1).name)
+> Citizen
+</code></pre>
 
 		</section>
 		<section class="method">
@@ -2802,9 +2842,9 @@ their faction by default, but you can restrict this as you need with <code>CLASS
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L126">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L159">View source &raquo;</a>
 
-					<p>Retrieves the players in a class</p>
+					<p>Retrieves all players currently assigned to a specific class.</p>
 			</header>
 
 
@@ -2830,11 +2870,20 @@ their faction by default, but you can restrict this as you need with <code>CLASS
 							<li>
 									<a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a>
 
-								<p>Table of players in the class</p>
+								<p>Numerically indexed table of players in the class, or an empty table if none are found.</p>
 							</li>
 
 				</ul>
 
+				<h3>Example Usage</h3>
+					<pre><code>-- Print all players in class ID 1
+for _, ply in ipairs(ix.class.GetPlayers(1)) do
+    print(ply:GetName())
+end
+> Player1
+> Player2
+> etc
+</code></pre>
 
 		</section>
 		<section class="method">
@@ -2848,7 +2897,7 @@ their faction by default, but you can restrict this as you need with <code>CLASS
 						<p>This is an internal function! You are able to use it, but you risk unintended side effects if used incorrectly.</p>
 					</div>
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L24">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L39">View source &raquo;</a>
 
 					<p>Loads classes from a directory.</p>
 			</header>
@@ -2866,6 +2915,52 @@ their faction by default, but you can restrict this as you need with <code>CLASS
 
 
 								<p> The path to the class files.</p>
+							</li>
+					</ul>
+
+
+
+		</section>
+	<h1 class="title">Fields</h1>
+
+		<section class="method">
+			<header>
+				<a class="anchor" id="class">
+					<h1><span class="realm shared"></span></span>class</h1>
+				</a>
+
+
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_class.lua#L26">View source &raquo;</a>
+
+					<p>Class definition table returned by <a href="../../libraries/ix.class/#ix.class.Get">ix.class.Get</a>.</p>
+			</header>
+
+
+
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">class</span>
+
+									<span class="tag"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+
+
+								<p>
+<p> Class definition table.
+ Default keys:</p>
+
+<ul>
+    <li><code>index</code> (number) - numeric class ID</li>
+    <li><code>uniqueID</code> (string) - stable identifier (e.g. <code>citizen</code>)</li>
+    <li><code>name</code> (string)</li>
+    <li><code>description</code> (string)</li>
+    <li><a href="../../libraries/ix.faction/">faction</a> (number) - Faction ID this class belongs to</li>
+    <li><code>isDefault</code> (boolean) - whether it is the default class for the faction</li>
+    <li><code>limit</code> (number) - maximum number of players allowed in this class (0 for unlimited)</li>
+    <li><a href="../../libraries/ix.class/#ix.class.CanSwitchTo">CanSwitchTo</a> (function|nil) - optional callback to check if a player may switch</li>
+</ul>
+</p>
 							</li>
 					</ul>
 
