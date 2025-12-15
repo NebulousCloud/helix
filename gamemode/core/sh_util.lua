@@ -67,32 +67,36 @@ end
 -- @string directory Directory to include files from
 -- @bool[opt] bFromLua Whether or not to search from the base `lua/` folder, instead of contextually basing from `schema/`
 -- or `gamemode/`
+-- @bool[opt] bRecursive Whether or not to recursively include files from subdirectories
 -- @see ix.util.Include
-function ix.util.IncludeDir(directory, bFromLua)
+function ix.util.IncludeDir(directory, bFromLua, bRecursive)
     -- Determine the base directory for file inclusion
     -- Default is "helix" for the main gamemode
     local baseDir = "helix"
-
+    
     -- If we're loading a schema, use the schema's directory instead
     if (Schema and Schema.folder and Schema.loading) then
         baseDir = Schema.folder.."/schema/"
     else
         baseDir = baseDir.."/gamemode/"
     end
-
+    
     -- Find all files and subdirectories within the specified directory
     -- Returns two tables: files and directories
     local files, dirs = file.Find((bFromLua and "" or baseDir)..directory.."/*", "LUA")
-
+    
     -- Include all Lua files found in the current directory
     for _, v in ipairs(files) do
-        ix.util.Include(directory.."/"..v)
+        if (string.EndsWith(v, ".lua")) then
+            ix.util.Include(directory.."/"..v)
+        end
     end
-
-    -- Recursively include all subdirectories
-    -- This allows for nested folder structures to be fully processed
-    for _, d in ipairs(dirs) do
-        ix.util.IncludeDir(directory.."/"..d, bFromLua)
+    
+    -- Recursively include all subdirectories (only if bRecursive is true)
+    if (bRecursive) then
+        for _, d in ipairs(dirs) do
+            ix.util.IncludeDir(directory.."/"..d, bFromLua, bRecursive)
+        end
     end
 end
 
