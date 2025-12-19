@@ -20,7 +20,7 @@ If you know what you're doing, a quick start for bootstrapping your own schema i
 
 You can also use our HL2 RP schema at https://github.com/nebulouscloud/helix-hl2rp as a base to work off of if you need something more fleshed out.
 
-Additionally, make sure to subscribe to the [Helix Content](https://steamcommunity.com/sharedfiles/filedetails/?id=1267236756&searchtext=helix+content) and add it to your server’s collection.
+Additionally, make sure to subscribe to the [Helix Content](https://steamcommunity.com/sharedfiles/filedetails/?id=1267236756) and add it to your server’s collection.
 
 ## Plugins
 If you'd like to enhance your gamemode, you can use any of the freely provided plugins available at the [Helix Plugin Center](https://plugins.gethelix.co). It is also encouraged to submit your own plugins for others to find and use at https://github.com/nebulouscloud/helix-plugins
