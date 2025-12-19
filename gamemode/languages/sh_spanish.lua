@@ -395,6 +395,8 @@ LANGUAGE = {
 	optdChatFontScale = "Modifica el tamaño de la fuente del chat.",
 	optChatOutline = "Contorno en el texto de chat",
 	optdChatOutline = "Dibuja un contorno alrededor del texto del chat, en vez de una sombra paralela. Activa esto si tienes problemas leyendo el texto.",
+	optEscCloseMenu = "Tecla ESC vuelve al juego",
+	optdEscCloseMenu = "Al pulsar la tecla ESC, se cierra el menú de Helix y también se oculta automáticamente el menú de pausa de Garry's Mod. Es decir, vuelves directamente a controlar tu personaje.",
 
 	cmdRoll = "Tira un numero entre 0 y el número especificado.",
 	cmdPM = "Envía un mensaje privado a alguien.",
