@@ -620,9 +620,14 @@ do
 				item.player = client
 			end
 
-			if (item.entity) then
+			local entity = item.entity
+			if ( IsValid(entity) ) then
+				if ( client:GetShootPos():DistToSqr( entity:GetPos() ) > 96 * 96 ) then
+					return
+				end
+
 				local useEntity = client:GetUseEntity()
-				if ( IsValid(useEntity) and item.entity != useEntity) then
+				if ( IsValid(useEntity) and entity != useEntity ) then
 					return
 				end
 			elseif (!inventory:GetItemByID(item.id)) then
