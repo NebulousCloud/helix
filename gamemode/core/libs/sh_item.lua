@@ -621,7 +621,8 @@ do
 			end
 
 			if (item.entity) then
-				if (item.entity != client:GetUseEntity()) then
+				local useEntity = client:GetUseEntity()
+				if ( IsValid(useEntity) and item.entity != useEntity) then
 					return
 				end
 			elseif (!inventory:GetItemByID(item.id)) then
