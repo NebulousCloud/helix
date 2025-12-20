@@ -621,7 +621,7 @@ do
 			end
 
 			if (item.entity) then
-				if (item.entity:GetPos():Distance(client:GetPos()) > 96) then
+				if (item.entity != client:GetUseEntity()) then
 					return
 				end
 			elseif (!inventory:GetItemByID(item.id)) then
