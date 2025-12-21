@@ -1089,8 +1089,11 @@ do
 			if (character) then
 				local key = net.ReadString()
 				local value = net.ReadType()
+				local oldVar = character.vars[key]
 
 				character.vars[key] = value
+
+				hook.Run("CharacterVarChanged", character, key, oldVar, value)
 			end
 		end)
 
@@ -1103,10 +1106,8 @@ do
 			if (character) then
 				local key = net.ReadString()
 				local value = net.ReadType()
-				local oldVar = character:GetVar()[key]
-				character:GetVar()[key] = value
 
-				hook.Run("CharacterVarChanged", character, key, oldVar, value)
+				character.vars.vars[key] = value
 			end
 		end)
 
