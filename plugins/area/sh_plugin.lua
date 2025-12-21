@@ -13,10 +13,7 @@ ix.area.stored = ix.area.stored or {}
 ix.config.Add("areaTickTime", 1, "How many seconds between each time a character's current area is calculated.",
 	function(oldValue, newValue)
 		if (SERVER) then
-			timer.Remove("ixAreaThink")
-			timer.Create("ixAreaThink", newValue, 0, function()
-				PLUGIN:AreaThink()
-			end)
+			timer.Adjust("ixAreaThink", newValue)
 		end
 	end,
 	{
@@ -28,7 +25,8 @@ ix.config.Add("areaTickTime", 1, "How many seconds between each time a character
 function ix.area.AddProperty(name, type, default, data)
 	ix.area.properties[name] = {
 		type = type,
-		default = default
+		default = default,
+		data = data or {}
 	}
 end
 

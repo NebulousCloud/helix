@@ -42,20 +42,10 @@ if (SERVER) then
 	-- (e.g not a button or door)
 	function meta:IsLocked()
 		if (self:IsVehicle()) then
-			local datatable = self:GetSaveTable()
-
-			if (datatable) then
-				return datatable.VehicleLocked
-			end
-		else
-			local datatable = self:GetSaveTable()
-
-			if (datatable) then
-				return datatable.m_bLocked
-			end
+			return self:GetInternalVariable( "VehicleLocked" )
 		end
 
-		return false
+		return self:GetInternalVariable( "m_bLocked" )
 	end
 
 	--- Returns the neighbouring door entity for double doors.
@@ -71,9 +61,7 @@ if (SERVER) then
 	-- @treturn[1] Entity Entity that is blocking this door
 	-- @treturn[2] nil If this entity is not a door, or there is no blocking entity
 	function meta:GetBlocker()
-		local datatable = self:GetSaveTable()
-
-		return datatable.pBlocker
+		return self:GetInternalVariable( "pBlocker" )
 	end
 
 	--- Blasts a door off its hinges. Internally, this hides the door entity, spawns a physics prop with the same model, and

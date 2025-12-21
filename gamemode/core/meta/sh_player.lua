@@ -130,7 +130,7 @@ end
 -- end)
 -- -- prints "hello!" after looking at the entity for 4 seconds
 function meta:DoStaredAction(entity, callback, time, onCancel, distance)
-	local uniqueID = "ixStare"..self:UniqueID()
+	local uniqueID = "ixStare"..self:SteamID64()
 	local data = {}
 	data.filter = self
 
@@ -281,7 +281,7 @@ if (SERVER) then
 		finishTime = finishTime or (startTime + time)
 
 		if (text == false) then
-			timer.Remove("ixAct"..self:UniqueID())
+			timer.Remove("ixAct"..self:SteamID64())
 
 			net.Start("ixActionBarReset")
 			net.Send(self)
@@ -303,7 +303,7 @@ if (SERVER) then
 		-- If we have provided a callback, run it delayed.
 		if (callback) then
 			-- Create a timer that runs once with a delay.
-			timer.Create("ixAct"..self:UniqueID(), time, 1, function()
+			timer.Create("ixAct"..self:SteamID64(), time, 1, function()
 				-- Call the callback if the player is still valid.
 				if (IsValid(self)) then
 					callback(self)

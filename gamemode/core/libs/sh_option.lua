@@ -46,12 +46,18 @@ function ix.option.Add(key, optionType, default, data)
 
 	data = data or {}
 
+	local oldOption = ix.option.stored[key]
 	local categories = ix.option.categories
 	local category = data.category or "misc"
 	local upperName = key:sub(1, 1):upper() .. key:sub(2)
 
 	categories[category] = categories[category] or {}
 	categories[category][key] = true
+
+	-- using explicit nil comparisons so we don't get caught by a config's value being `false`
+	if (oldOption != nil and oldOption.default != nil) then
+		default = oldOption.default
+	end
 
 	--- You can specify additional optional arguments for `ix.option.Add` by passing in a table of specific fields as the fourth
 	-- argument.
@@ -106,6 +112,23 @@ function ix.option.Add(key, optionType, default, data)
 		populate = data.populate or nil,
 		OnChanged = data.OnChanged or nil
 	}
+end
+
+--- Sets the default value for a user option.
+-- @realm shared
+-- @string key Unique ID of the option
+-- @param value Default value for the user option
+function ix.option.SetDefault(key, value)
+	local option = ix.option.stored[key]
+
+	if (option) then
+		option.default = value
+	else
+		-- set up dummy option if we're setting default of option that doesn't exist yet (i.e schema setting framework default)
+		ix.option.stored[key] = {
+			default = value
+		}
+	end
 end
 
 --- Loads all saved options from disk.

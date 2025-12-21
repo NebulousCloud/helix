@@ -209,18 +209,7 @@ end
 
 -- Returns the address:port of the server.
 function ix.util.GetAddress()
-	local address = tonumber(GetConVarString("hostip"))
-
-	if (!address) then
-		return "127.0.0.1"..":"..GetConVarString("hostport")
-	end
-
-	local ip = {}
-		ip[1] = bit.rshift(bit.band(address, 0xFF000000), 24)
-		ip[2] = bit.rshift(bit.band(address, 0x00FF0000), 16)
-		ip[3] = bit.rshift(bit.band(address, 0x0000FF00), 8)
-		ip[4] = bit.band(address, 0x000000FF)
-	return table.concat(ip, ".")..":"..GetConVarString("hostport")
+	return game.GetIPAddress()
 end
 
 --- Returns a cached copy of the given material, or creates and caches one if it doesn't exist. This is a quick helper function
@@ -855,7 +844,7 @@ do
 			nearestDist = util.DistanceToLine(searchCenter, forward, point)
 		end
 
-		for _, v in pairs(ents.FindInSphere(searchCenter, 80)) do
+		for _, v in ipairs(ents.FindInSphere(searchCenter, 80)) do
 			if (!ix.util.IsUseableEntity(v, FCAP_USE_IN_RADIUS)) then
 				continue
 			end

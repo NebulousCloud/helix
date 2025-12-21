@@ -8,6 +8,21 @@ their faction by default, but you can restrict this as you need with `CLASS.CanS
 ]]
 -- @module ix.class
 
+--- Class definition table returned by `ix.class.Get`.
+-- @realm shared
+-- @tab class Class definition table.
+-- Default keys:
+--
+-- - `index` (number) - numeric class ID
+-- - `uniqueID` (string) - stable identifier (e.g. `citizen`)
+-- - `name` (string)
+-- - `description` (string)
+-- - `faction` (number) - Faction ID this class belongs to
+-- - `isDefault` (boolean) - whether it is the default class for the faction
+-- - `limit` (number) - maximum number of players allowed in this class (0 for unlimited)
+-- - `CanSwitchTo` (function|nil) - optional callback to check if a player may switch
+
+
 if (SERVER) then
 	util.AddNetworkString("ixClassUpdate")
 end
@@ -78,7 +93,15 @@ end
 -- @realm shared
 -- @player client Player to check
 -- @number class Index of the class
--- @treturn bool Whether or not the player can switch to the class
+-- @treturn bool Whether or not the player can switch to the class.
+-- @treturn string The reason why the player cannot switch (if applicable).
+-- @usage -- Check if a player can join class ID 2.
+-- -- For our example, they can't- because they are in the wrong faction.
+-- local canJoin, reason = ix.class.CanSwitchTo(player, 2)
+-- if (!canJoin) then
+--     print("Player cannot join class: "..reason)
+-- end
+-- > Player cannot join class: not correct team
 function ix.class.CanSwitchTo(client, class)
 	-- Get the class table by its numeric identifier.
 	local info = ix.class.list[class]
@@ -111,18 +134,28 @@ function ix.class.CanSwitchTo(client, class)
 	return info:CanSwitchTo(client)
 end
 
---- Retrieves a class table.
+--- Gets a class definition table by numeric identifier.
 -- @realm shared
--- @number identifier Index of the class
--- @treturn table Class table
+-- @tparam number identifier Numeric class identifier.
+-- @treturn table|nil Class definition table (see `class` table docs).
+-- @usage -- Print the name of class ID 1
+-- print(ix.class.Get(1).name)
+-- > Citizen
 function ix.class.Get(identifier)
 	return ix.class.list[identifier]
 end
 
---- Retrieves the players in a class
+--- Retrieves all players currently assigned to a specific class.
 -- @realm shared
 -- @number class Index of the class
--- @treturn table Table of players in the class
+-- @treturn table Numerically indexed table of players in the class, or an empty table if none are found.
+-- @usage -- Print all players in class ID 1
+-- for _, ply in ipairs(ix.class.GetPlayers(1)) do
+--     print(ply:GetName())
+-- end
+-- > Player1
+-- > Player2
+-- > etc
 function ix.class.GetPlayers(class)
 	local players = {}
 

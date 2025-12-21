@@ -199,7 +199,13 @@ end
 -- @param data Any data passed with the interaction option
 -- @treturn bool Whether or not to allow the player to interact with the entity
 -- @usage function PLUGIN:CanPlayerInteractEntity(client, entity, option, data)
--- 	return false -- Disallow interacting with any entity.
+--  if (entity:GetClass() == "my_big_entity" and entity:GetPos():Distance(client:GetPos()) < 192) then
+--    return true -- Force allow interacting if within larger than default interact range of large entity
+--  end
+--
+-- 	if (client:GetNetVar("drunk")) then
+--    return false -- Disallow interacting with an entity while drunk
+-- 	end
 -- end
 function CanPlayerInteractEntity(client, entity, option, data)
 end
