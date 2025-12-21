@@ -1,15 +1,16 @@
+--[[
+TURKISH TRANSLATION
+Made by @wilderwesten
+https://steamcommunity.com/id/wilderwesten/
+]]
 
--- TURKISH TRANSLATION 
--- MADE BY @WILDERWESTEN
--- https://steamcommunity.com/id/wilderwesten/
-
-NAME = "Turkish"
+NAME = "Türkçe"
 
 LANGUAGE = {
 	helix = "Helix",
 
 	introTextOne = "fist industries sunar",
-	introTextTwo = "%s ile iş birliği içinde",
+	introTextTwo = "%s ile iş fraksiyonu içinde",
 	introContinue = "devam etmek için boşluk tuşuna bas",
 
 	helpIdle = "Bir kategori seçin",
@@ -57,10 +58,10 @@ LANGUAGE = {
 	["return"] = "Geri dön",
 	returnTip = "Önceki menüye dön.",
 	proceed = "Devam et",
-	faction = "Birlik",
+	faction = "Fraksiyon",
 	skills = "Yetenekler",
 	choose = "Seç",
-	chooseFaction = "Bir Birlik Seç",
+	chooseFaction = "Bir fraksiyon Seç",
 	chooseDescription = "Anlatımını Belirle",
 	chooseSkills = "Yeteneklerini Geliştir",
 	name = "İsim",
@@ -143,15 +144,15 @@ LANGUAGE = {
 	dNoParentDoor = "Ayarlanmış bir ana kapınız yok.",
 	dOwnedBy = "Bu kapı %s tarafından sahiplenilmiş.",
 	dConfigName = "Kapılar",
-	dSetFaction = "Bu kapı artık %s birliğine ait.",
-	dRemoveFaction = "Bu kapı artık hiçbir birliğe ait değil.",
+	dSetFaction = "Bu kapı artık %s fraksiyonuna ait.",
+	dRemoveFaction = "Bu kapı artık hiçbir fraksiyona ait değil.",
 	dNotValid = "Geçerli bir kapıya bakmıyorsunuz!",
 	canNotAfford = "Bunu satın alacak paranız yok!",
 	dPurchased = "Bu kapıyı %s karşılığında satın aldınız.",
 	dSold = "Bu kapıyı %s karşılığında sattınız.",
 	notOwner = "Bunun sahibi siz değilsiniz!",
 	invalidArg = "Argüman #%s için geçersiz bir değer verdiniz!",
-	invalidFaction = "Belirttiğiniz birlik bulunamadı!",
+	invalidFaction = "Belirttiğiniz fraksiyon bulunamadı!",
 	flagGive = "%s, %s adlı kişiye '%s' bayrak(lar)ını verdi.",
 	flagGiveTitle = "Bayrak Ver",
 	flagTake = "%s, %s adlı kişiden '%s' bayrak(lar)ını aldı.",
@@ -190,7 +191,7 @@ LANGUAGE = {
 	whitelist = "%s, %s adlı kişiyi %s fraksiyonu için beyaz listeye ekledi.",
 	unwhitelist = "%s, %s adlı kişiyi %s fraksiyonundan beyaz listeden çıkardı.",
 	noWhitelist = "Bu karakter için beyaz listedesiniz!",
-	charNotWhitelisted = "%s, %s birliği için beyaz listede değil.",
+	charNotWhitelisted = "%s, %s fraksiyonu için beyaz listede değil.",
 	gettingUp = "Şu anda ayağa kalkıyorsunuz...",
 	wakingUp = "Bilinç kazanıyorsunuz...",
 	Weapons = "Silahlar",
@@ -253,7 +254,7 @@ LANGUAGE = {
 	vendorBuy = "Sadece Satın Al",
 	vendorSell = "Sadece Sat",
 	maxStock = "Maksimum Stok",
-	vendorFaction = "Birlik Düzenleyici",
+	vendorFaction = "Fraksiyon Düzenleyici",
 	buy = "Satın Al",
 	vendorWelcome = "Mağazama hoş geldin, size ne verebilirim?",
 	vendorBye = "Yine bekleriz!",
@@ -334,7 +335,7 @@ LANGUAGE = {
 	currentMoney = "Kalan Para: ",
 
 	invalidClass = "Bu geçerli bir sınıf değil!",
-	invalidClassFaction = "Bu, o birlik için geçerli bir sınıf değil!",
+	invalidClassFaction = "Bu, o fraksiyon için geçerli bir sınıf değil!",
 
 	miscellaneous = "Çeşitli",
 	general = "Genel",
@@ -345,10 +346,9 @@ LANGUAGE = {
 	interaction = "Etkileşim",
 	server = "Sunucu",
 
-
 	resetDefault = "Varsayılanlara sıfırla",
 	resetDefaultDescription = "\"%s\" ayarı, varsayılan değeri \"%s\" olarak sıfırlanacaktır.",
-	optOpenBags = "Envanterle birlikte çantaları aç",
+	optOpenBags = "Envanterle fraksiyonte çantaları aç",
 	optdOpenBags = "Menü açıldığında envanterinizdeki tüm çantaları otomatik olarak görüntüler.",
 	optShowIntro = "Katılınca giriş videosunu göster",
 	optdShowIntro = "Bir sonraki katılışınızda Helix tanıtımını gösterir. İzledikten sonra bu ayar devre dışı kalır.",
@@ -399,7 +399,6 @@ LANGUAGE = {
 	optEscCloseMenu = "ESC ile oyuna dön",
 	optdEscCloseMenu = "ESC tuşunun oyun içi menüyü kapatıp kapatmayacağını belirler.",
 
-	
 	cmdRoll = "0 ile belirtilen sayı arasında zar atar.",
 	cmdPM = "Birine özel mesaj gönderir.",
 	cmdReply = "Son gelen mesaja cevap verir.",
