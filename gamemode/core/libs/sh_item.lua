@@ -621,7 +621,12 @@ do
 			end
 
 			if (item.entity) then
-				if (item.entity:GetPos():Distance(client:GetPos()) > 96) then
+				if (client:GetShootPos():DistToSqr(item.entity:GetPos()) > 96 * 96) then
+					return
+				end
+
+				local useEntity = client:GetUseEntity()
+				if (IsValid(useEntity) and item.entity != useEntity) then
 					return
 				end
 			elseif (!inventory:GetItemByID(item.id)) then
