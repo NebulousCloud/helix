@@ -502,16 +502,19 @@ do
 				elseif (istable(model)) then
 					newData.model = model[1]
 
-					-- save skin/bodygroups to character data
-					local bodygroups = {}
-
-					for i = 1, #model[3] do
-						bodygroups[i - 1] = tonumber(model[3][i]) or 0
-					end
-
 					newData.data = newData.data or {}
 					newData.data.skin = model[2] or 0
-					newData.data.groups = bodygroups
+
+					-- save skin/bodygroups to character data
+					if (model[3]) then
+						local bodygroups = {}
+
+						for i = 1, #model[3] do
+							bodygroups[i - 1] = tonumber(model[3][i]) or 0
+						end
+
+						newData.data.groups = bodygroups
+					end
 				end
 			end
 		end,
