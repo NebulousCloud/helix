@@ -1,5 +1,6 @@
 
 NAME = "Norwegian"
+CODE = "no"
 
 LANGUAGE = {
 	loading = "Laster",

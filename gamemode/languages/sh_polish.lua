@@ -1,6 +1,7 @@
 -- Autorzy: zgredinzyyy (Poprawki + Brakujące rzeczy) || Veran120, Michał, Lechu2375 https://github.com/lechu2375/helix-polishlocalization/blob/master/sh_polish.lua
 
 NAME = "Polski"
+CODE = "pl"
 
 LANGUAGE = {
 	helix = "Helix",
