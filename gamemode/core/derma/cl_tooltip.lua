@@ -296,7 +296,7 @@ function PANEL:PaintUnder(width, height)
 end
 
 function PANEL:Paint(width, height)
-	self:PaintUnder()
+	self:PaintUnder(width, height)
 
 	-- directional arrow
 	self.bRaised = LocalPlayer():IsWepRaised()
@@ -505,7 +505,7 @@ function PANEL:AddRow(id)
 end
 
 function PANEL:Paint(width, height)
-	self:PaintUnder()
+	self:PaintUnder(width, height)
 
 	derma.SkinFunc("PaintTooltipMinimalBackground", self, width, height)
 end
