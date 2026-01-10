@@ -197,7 +197,7 @@ end
 -- @player client Player attempting interaction
 -- @entity entity Entity being interacted with
 -- @string option Option selected by the player
--- @param data Any data passed with the interaction option
+-- @param data any Any data passed with the interaction option
 -- @treturn bool Whether or not to allow the player to interact with the entity
 -- @usage function PLUGIN:CanPlayerInteractEntity(client, entity, option, data)
 --  if (entity:GetClass() == "my_big_entity" and entity:GetPos():Distance(client:GetPos()) < 192) then
@@ -217,8 +217,8 @@ end
 -- @realm server
 -- @player client Player attempting interaction
 -- @string action The action being performed
--- @param item Item's instance ID or item table
--- @param data Any data passed with the action
+-- @param item any Item's instance ID or item table
+-- @param data any Any data passed with the action
 -- @treturn bool Whether or not to allow the player to interact with the item
 -- @usage function PLUGIN:CanPlayerInteractItem(client, action, item, data)
 --     return false -- Disallow interacting with any item.
@@ -506,8 +506,8 @@ end
 -- @realm shared
 -- @char character Character whose var changed
 -- @string key Variable key name
--- @param oldVar Previous value
--- @param value New value
+-- @param oldVar any Previous value
+-- @param value any New value
 -- @usage function PLUGIN:CharacterVarChanged(character, key, oldVar, value)
 --     if (key == "name") then
 --         local client = character:GetPlayer()
@@ -554,7 +554,7 @@ end
 
 --- Called when the Helix color scheme changes.
 -- @realm client
--- @param color New base color (Color)
+-- @param color Color New base color
 -- @usage function PLUGIN:ColorSchemeChanged(color)
 --     -- Recompute cached tints
 --     print("New color scheme applied: " .. tostring(color))
@@ -571,7 +571,7 @@ end
 
 --- Build custom character info entries.
 -- @realm client
--- @param panel panel Character info panel to populate
+-- @param panel Panel Character info panel to populate
 -- @usage function PLUGIN:CreateCharacterInfo(panel)
 --     print("Character info panel created: " .. tostring(panel))
 -- end
@@ -580,15 +580,24 @@ end
 
 --- Build character info category sections.
 -- @realm client
--- @param panel panel Category parent panel to populate
+-- @param panel Panel Category parent panel to populate
 -- @usage function PLUGIN:CreateCharacterInfoCategory(panel)
 --     print("Character info category created: " .. tostring(panel))
 -- end
 function CreateCharacterInfoCategory(panel)
 end
 
--- @param icon panel Icon panel for the item
--- @param menu panel Context menu to add options to
+--- Called when creating the right-click interaction menu for an item.
+-- @realm client
+-- @param icon Panel Icon panel for the item
+-- @param menu Panel Context menu to add options to
+-- @tab itemTable Item table being interacted with
+-- @treturn bool Return true to prevent the default menu from being created
+-- @usage function PLUGIN:CreateItemInteractionMenu(icon, menu, itemTable)
+--     menu:AddOption("Custom Action", function()
+--         -- do something with itemTable
+--     end)
+-- end
 function CreateItemInteractionMenu(icon, menu, itemTable)
 end
 
@@ -656,8 +665,8 @@ end
 
 --- Customize the model view rendering in character screens.
 -- @realm client
--- @param panel panel Model view panel
--- @param entity entity Model entity being drawn
+-- @param panel Panel Model view panel
+-- @entity entity Model entity being drawn
 -- @usage function PLUGIN:DrawHelixModelView(panel, entity)
 --     -- Custom drawing code here
 -- end
@@ -964,7 +973,7 @@ end
 --- Called when a tab menu subpanel is created.
 -- @realm client
 -- @string subpanelName Name of the subpanel
--- @param panel panel The created panel instance
+-- @param panel Panel The created panel instance
 -- @usage function PLUGIN:MenuSubpanelCreated(subpanelName, panel)
 --     if (subpanelName == "inventory") then panel:SetBackgroundColor(Color(10,10,10,200)) end
 -- end
@@ -1034,7 +1043,7 @@ end
 
 --- Called when the character selection/menu UI is created.
 -- @realm client
--- @param panel panel Root menu panel
+-- @param panel Panel Root menu panel
 -- @usage function PLUGIN:OnCharacterMenuCreated(panel)
 --     panel:SetTitle("Choose your destiny")
 -- end
@@ -1066,7 +1075,7 @@ end
 --- Called when a local networked variable is set.
 -- @realm client
 -- @string key Variable key
--- @param var New value
+-- @param var any New value
 -- @usage function PLUGIN:OnLocalVarSet(key, var)
 --     if (key == "viewbob" and var == false) then
 --         LocalPlayer():ChatPrint("View bob disabled.")
@@ -1193,7 +1202,7 @@ end
 -- @player client Player that performed interaction
 -- @entity entity Entity being interacted with
 -- @string option Option selected by the player
--- @param data Any data passed with the interaction option
+-- @param data any Any data passed with the interaction option
 function PlayerInteractEntity(client, entity, option, data)
 end
 
@@ -1391,16 +1400,17 @@ end
 -- @realm client
 -- @player client Player whose character tooltip is shown
 -- @char character Character table
--- @param tooltip panel Tooltip panel to populate
+-- @param tooltip Panel Tooltip panel to populate
 -- @usage function PLUGIN:PopulateCharacterInfo(client, character, tooltip)
 --     tooltip:AddRow("ID"):SetText(tostring(character:GetID()))
 -- end
 function PopulateCharacterInfo(client, character, tooltip)
 end
 
+--- Populate the entity tooltip with custom rows.
 -- @realm client
 -- @entity entity Entity being looked at
--- @param tooltip panel Tooltip panel
+-- @param tooltip Panel Tooltip panel
 -- @usage function PLUGIN:PopulateEntityInfo(entity, tooltip)
 --     if (entity:IsDoor()) then tooltip:AddRow("Lock"):SetText(entity:IsLocked() and "Locked" or "Unlocked") end
 -- end
@@ -1417,10 +1427,11 @@ end
 function PopulateHelpMenu(categories)
 end
 
+--- Add high-priority info to the character tooltip.
 -- @realm client
 -- @entity entity Player entity
 -- @char character Character table
--- @param tooltip panel Tooltip panel
+-- @param tooltip Panel Tooltip panel
 -- @usage function PLUGIN:PopulateImportantCharacterInfo(entity, character, tooltip)
 --     tooltip:AddRow("Faction"):SetText(character:GetFaction() and character:GetFaction():GetName() or "Unknown")
 -- end
@@ -1429,7 +1440,7 @@ end
 
 --- Populate the item tooltip with additional info rows.
 -- @realm client
--- @param tooltip panel Tooltip panel
+-- @param tooltip Panel Tooltip panel
 -- @tab item Item table
 -- @usage function PLUGIN:PopulateItemTooltip(tooltip, item)
 --     if (item and item.weight) then tooltip:AddRow("Weight"):SetText(item.weight .. " kg") end
@@ -1440,7 +1451,7 @@ end
 --- Populate the player tooltip with extra information.
 -- @realm client
 -- @player client Player being looked at
--- @param tooltip panel Tooltip panel
+-- @param tooltip Panel Tooltip panel
 -- @usage function PLUGIN:PopulatePlayerTooltip(client, tooltip)
 --     tooltip:AddRow("SteamID"):SetText(client:SteamID())
 -- end
@@ -1450,7 +1461,7 @@ end
 --- Add custom options to the scoreboard player context menu.
 -- @realm client
 -- @player client Player clicked
--- @param menu panel Context menu panel
+-- @param menu Panel Context menu panel
 -- @usage function PLUGIN:PopulateScoreboardPlayerMenu(client, menu)
 --     menu:AddOption("Wave", function() RunConsoleCommand("act", "wave") end)
 -- end
@@ -1470,7 +1481,7 @@ end
 
 --- Called after drawing the model view to add post-processing.
 -- @realm client
--- @param panel panel Model view panel
+-- @param panel Panel Model view panel
 -- @entity entity Model entity
 -- @usage function PLUGIN:PostDrawHelixModelView(panel, entity)
 --     -- Could add halo, overlays, etc.
@@ -1480,7 +1491,7 @@ end
 
 --- Called after the inventory panel is drawn.
 -- @realm client
--- @param panel panel Inventory panel
+-- @param panel Panel Inventory panel
 -- @usage function PLUGIN:PostDrawInventory(panel)
 --     -- Draw slot outlines or helper text
 -- end
@@ -1605,7 +1616,7 @@ end
 
 --- Allows hiding specific HUD bars.
 -- @realm client
--- @param bar panel Bar panel
+-- @param bar Panel Bar panel
 -- @treturn bool Return false to prevent drawing
 -- @usage function PLUGIN:ShouldBarDraw(bar)
 --     return bar.identifier != "stamina"
@@ -1751,7 +1762,7 @@ end
 
 --- Update existing character info UI.
 -- @realm client
--- @param panel panel Character info panel
+-- @param panel Panel Character info panel
 -- @char character Character being displayed
 -- @usage function PLUGIN:UpdateCharacterInfo(panel, character)
 --     panel:InvalidateLayout()
@@ -1761,7 +1772,7 @@ end
 
 --- Update existing character info category UI.
 -- @realm client
--- @param panel panel Category panel
+-- @param panel Panel Category panel
 -- @char character Character being displayed
 -- @usage function PLUGIN:UpdateCharacterInfoCategory(panel, character)
 --     panel:InvalidateLayout()
