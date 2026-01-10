@@ -571,7 +571,7 @@ end
 
 --- Build custom character info entries.
 -- @realm client
--- @panel panel Character info panel to populate
+-- @param panel panel Character info panel to populate
 -- @usage function PLUGIN:CreateCharacterInfo(panel)
 --     print("Character info panel created: " .. tostring(panel))
 -- end
@@ -580,7 +580,7 @@ end
 
 --- Build character info category sections.
 -- @realm client
--- @panel panel Category parent panel to populate
+-- @param panel panel Category parent panel to populate
 -- @usage function PLUGIN:CreateCharacterInfoCategory(panel)
 --     print("Character info category created: " .. tostring(panel))
 -- end
@@ -656,8 +656,8 @@ end
 
 --- Customize the model view rendering in character screens.
 -- @realm client
--- @panel panel Model view panel
--- @entity entity Model entity being drawn
+-- @param panel panel Model view panel
+-- @param entity entity Model entity being drawn
 -- @usage function PLUGIN:DrawHelixModelView(panel, entity)
 --     -- Custom drawing code here
 -- end
@@ -964,7 +964,7 @@ end
 --- Called when a tab menu subpanel is created.
 -- @realm client
 -- @string subpanelName Name of the subpanel
--- @panel panel The created panel instance
+-- @param panel panel The created panel instance
 -- @usage function PLUGIN:MenuSubpanelCreated(subpanelName, panel)
 --     if (subpanelName == "inventory") then panel:SetBackgroundColor(Color(10,10,10,200)) end
 -- end
@@ -991,7 +991,13 @@ end
 function OnAreaChanged(oldID, newID)
 end
 
---- @realm shared
+--- Called when a character has been created and assigned to a player.
+-- @realm shared
+-- @player client Player that owns the newly created character
+-- @char character Character instance that was created
+-- @usage function PLUGIN:OnCharacterCreated(client, character)
+--     print("Created character ID:", character and character:GetID())
+-- end
 function OnCharacterCreated(client, character)
 end
 
@@ -1028,7 +1034,7 @@ end
 
 --- Called when the character selection/menu UI is created.
 -- @realm client
--- @panel panel Root menu panel
+-- @param panel panel Root menu panel
 -- @usage function PLUGIN:OnCharacterMenuCreated(panel)
 --     panel:SetTitle("Choose your destiny")
 -- end
@@ -1207,7 +1213,12 @@ end
 function PlayerJoinedClass(client, class, oldClass)
 end
 
---- @realm shared
+--- Called when a player stops a forced sequence started with `ForceSequence`.
+-- @realm shared
+-- @player entity Player leaving the sequence
+-- @usage function PLUGIN:PlayerLeaveSequence(entity)
+--     print(entity:Name() .. " left a sequence")
+-- end
 function PlayerLeaveSequence(entity)
 end
 
@@ -1286,7 +1297,8 @@ end
 function PlayerStaminaLost(client)
 end
 
---- @realm shared
+--- Called when a player throws a punch (hands SWEP).
+-- @realm shared
 -- @usage function PLUGIN:PlayerThrowPunch(client, trace)
 --     -- Example: feedback
 --     print(client:Name() .. " threw a punch.")
@@ -1335,7 +1347,10 @@ end
 function PlayerUseDoor(client, entity)
 end
 
---- @realm shared
+--- Called when a player's active weapon changes clientside or serverside.
+-- @realm shared
+-- @player client Player whose weapon changed
+-- @entity weapon New active weapon (may be NULL on holster)
 -- @usage function PLUGIN:PlayerWeaponChanged(client, weapon)
 --     -- Log weapon switch
 --     print(client:Name() .. " switched to " .. (IsValid(weapon) and weapon:GetClass() or "none"))
@@ -1504,7 +1519,8 @@ end
 function PostPlayerSay(client, chatType, message, anonymous)
 end
 
---- @realm shared
+--- Called after all act sequences have been set up.
+-- @realm shared
 -- @usage function PLUGIN:PostSetupActs()
 --     print("Acts setup complete.")
 -- end
