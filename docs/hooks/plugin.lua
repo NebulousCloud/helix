@@ -1391,24 +1391,22 @@ end
 -- @realm client
 -- @player client Player whose character tooltip is shown
 -- @char character Character table
--- @panel tooltip Tooltip panel to populate
+-- @param tooltip panel Tooltip panel to populate
 -- @usage function PLUGIN:PopulateCharacterInfo(client, character, tooltip)
 --     tooltip:AddRow("ID"):SetText(tostring(character:GetID()))
 -- end
 function PopulateCharacterInfo(client, character, tooltip)
 end
 
---- Populate the entity tooltip with custom rows.
 -- @realm client
 -- @entity entity Entity being looked at
--- @panel tooltip Tooltip panel
+-- @param tooltip panel Tooltip panel
 -- @usage function PLUGIN:PopulateEntityInfo(entity, tooltip)
 --     if (entity:IsDoor()) then tooltip:AddRow("Lock"):SetText(entity:IsLocked() and "Locked" or "Unlocked") end
 -- end
 function PopulateEntityInfo(entity, tooltip)
 end
 
---- Populate the tab help menu with custom categories.
 -- @realm client
 -- @tab categories Table to add categories into
 -- @usage function PLUGIN:PopulateHelpMenu(categories)
@@ -1419,11 +1417,10 @@ end
 function PopulateHelpMenu(categories)
 end
 
---- Add high-priority info to the character tooltip.
 -- @realm client
 -- @entity entity Player entity
 -- @char character Character table
--- @panel tooltip Tooltip panel
+-- @param tooltip panel Tooltip panel
 -- @usage function PLUGIN:PopulateImportantCharacterInfo(entity, character, tooltip)
 --     tooltip:AddRow("Faction"):SetText(character:GetFaction() and character:GetFaction():GetName() or "Unknown")
 -- end
@@ -1432,7 +1429,7 @@ end
 
 --- Populate the item tooltip with additional info rows.
 -- @realm client
--- @panel tooltip Tooltip panel
+-- @param tooltip panel Tooltip panel
 -- @tab item Item table
 -- @usage function PLUGIN:PopulateItemTooltip(tooltip, item)
 --     if (item and item.weight) then tooltip:AddRow("Weight"):SetText(item.weight .. " kg") end
@@ -1443,7 +1440,7 @@ end
 --- Populate the player tooltip with extra information.
 -- @realm client
 -- @player client Player being looked at
--- @panel tooltip Tooltip panel
+-- @param tooltip panel Tooltip panel
 -- @usage function PLUGIN:PopulatePlayerTooltip(client, tooltip)
 --     tooltip:AddRow("SteamID"):SetText(client:SteamID())
 -- end
@@ -1453,7 +1450,7 @@ end
 --- Add custom options to the scoreboard player context menu.
 -- @realm client
 -- @player client Player clicked
--- @panel menu Context menu panel
+-- @param menu panel Context menu panel
 -- @usage function PLUGIN:PopulateScoreboardPlayerMenu(client, menu)
 --     menu:AddOption("Wave", function() RunConsoleCommand("act", "wave") end)
 -- end
@@ -1473,7 +1470,7 @@ end
 
 --- Called after drawing the model view to add post-processing.
 -- @realm client
--- @panel panel Model view panel
+-- @param panel panel Model view panel
 -- @entity entity Model entity
 -- @usage function PLUGIN:PostDrawHelixModelView(panel, entity)
 --     -- Could add halo, overlays, etc.
@@ -1483,7 +1480,7 @@ end
 
 --- Called after the inventory panel is drawn.
 -- @realm client
--- @panel panel Inventory panel
+-- @param panel panel Inventory panel
 -- @usage function PLUGIN:PostDrawInventory(panel)
 --     -- Draw slot outlines or helper text
 -- end
@@ -1608,7 +1605,7 @@ end
 
 --- Allows hiding specific HUD bars.
 -- @realm client
--- @panel bar Bar panel
+-- @param bar panel Bar panel
 -- @treturn bool Return false to prevent drawing
 -- @usage function PLUGIN:ShouldBarDraw(bar)
 --     return bar.identifier != "stamina"
@@ -1754,7 +1751,7 @@ end
 
 --- Update existing character info UI.
 -- @realm client
--- @panel panel Character info panel
+-- @param panel panel Character info panel
 -- @char character Character being displayed
 -- @usage function PLUGIN:UpdateCharacterInfo(panel, character)
 --     panel:InvalidateLayout()
@@ -1764,7 +1761,7 @@ end
 
 --- Update existing character info category UI.
 -- @realm client
--- @panel panel Category panel
+-- @param panel panel Category panel
 -- @char character Character being displayed
 -- @usage function PLUGIN:UpdateCharacterInfoCategory(panel, character)
 --     panel:InvalidateLayout()
