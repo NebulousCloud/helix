@@ -186,7 +186,8 @@ end
 -- @entity entity Entity being held
 -- @treturn bool Whether or not to allow the player to hold the entity
 -- @usage function PLUGIN:CanPlayerHoldObject(client, entity)
---     return !(client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle()) -- Disallow players in observer holding objects.
+--     -- Disallow players in observer from holding objects.
+--     return client:GetMoveType() != MOVETYPE_NOCLIP
 -- end
 function CanPlayerHoldObject(client, entity)
 end
@@ -586,16 +587,8 @@ end
 function CreateCharacterInfoCategory(panel)
 end
 
---- Populate the item interaction menu.
--- @realm client
--- @panel icon Icon panel for the item
--- @panel menu Context menu to add options to
--- @tab itemTable Item table for the selected item
--- @usage function PLUGIN:CreateItemInteractionMenu(icon, menu, itemTable)
---     if (itemTable and itemTable.canInspect) then
---         menu:AddOption("Inspect", function() ix.item.OpenInspection(itemTable) end)
---     end
--- end
+-- @param icon panel Icon panel for the item
+-- @param menu panel Context menu to add options to
 function CreateItemInteractionMenu(icon, menu, itemTable)
 end
 
