@@ -340,6 +340,7 @@ do
 		if (forcedSequence) then
 			if (client:GetSequence() != forcedSequence) then
 				client:SetCycle(0)
+				client:SetPlaybackRate(1)
 			end
 
 			return -1, forcedSequence
@@ -374,6 +375,15 @@ do
 		clientInfo.m_bWasNoclipping = (client:GetMoveType() == MOVETYPE_NOCLIP and !client:InVehicle())
 
 		return clientInfo.CalcIdeal, sequenceOverride or clientInfo.CalcSeqOverride or -1
+	end
+
+	function GM:UpdateAnimation(client, velocity, maxseqgroundspeed)
+		local forcedSequence = client:GetNetVar("forcedSequence")
+
+		if (forcedSequence) then
+			client:SetPlaybackRate(1)
+			return true
+		end
 	end
 end
 
