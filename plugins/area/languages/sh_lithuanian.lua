@@ -1,0 +1,6 @@
+
+LANGUAGE = {
+    paper = "Popierius"
+}
+
+
