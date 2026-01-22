@@ -233,6 +233,11 @@ local function BuildSelectQuery(queryObj)
 		queryString[#queryString + 1] = queryObj.limit
 	end
 
+	if (isnumber(queryObj.offset)) then
+		queryString[#queryString + 1] = " OFFSET "
+		queryString[#queryString + 1] = queryObj.offset
+	end
+
 	return table.concat(queryString)
 end
 
