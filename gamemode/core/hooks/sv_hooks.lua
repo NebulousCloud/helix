@@ -147,13 +147,13 @@ end
 
 function GM:CanPlayerInteractEntity(client, entity, option, data)
 	local start = client:GetShootPos()
-	local lookedEntity = util.TraceLine({
-		start = start,
-		endpos = start + client:GetAimVector() * 96,
+	local traceResult = util.TraceLine({
+		start = client:GetShootPos(),
+		endpos = client:GetShootPos() + client:GetAimVector() * 96,
 		filter = client
 	})
-	if (!IsValid(lookedEntity.Entity)) then return false end
-	return (entity == lookedEntity.Entity)
+	if (!IsValid(traceResult.Entity)) then return false end
+	return (entity == traceResult.Entity)
 end
 
 function GM:CanPlayerInteractItem(client, action, item, data)
