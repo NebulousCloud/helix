@@ -146,9 +146,10 @@ function GM:KeyRelease(client, key)
 end
 
 function GM:CanPlayerInteractEntity(client, entity, option, data)
+	local start = client:GetShootPos()
 	local lookedEntity = util.TraceLine({
-		start = client:GetShootPos(),
-		endpos = client:GetShootPos() + client:GetAimVector() * 96,
+		start = start,
+		endpos = start + client:GetAimVector() * 96,
 		filter = client
 	})
 	if (!IsValid(lookedEntity.Entity)) then return false end
