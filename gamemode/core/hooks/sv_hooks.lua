@@ -146,8 +146,7 @@ function GM:KeyRelease(client, key)
 end
 
 function GM:CanPlayerInteractEntity(client, entity, option, data)
-	local intDist = ix.config.Get("interactionDistance", 96)
-	return entity:GetPos():DistToSqr(client:GetPos()) <= intDist ^ 2
+	return entity:GetPos():DistToSqr(client:GetPos()) <= (ix.config.Get("interactionDistance", 96) ^ 2)
 end
 
 function GM:CanPlayerInteractItem(client, action, item, data)

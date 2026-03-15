@@ -621,8 +621,7 @@ do
 			end
 
 			if (item.entity) then
-				local intDist = ix.config.Get("interactionDistance", 96)
-				if (client:GetShootPos():DistToSqr(item.entity:GetPos()) > intDist * intDist) then
+				if (client:GetShootPos():DistToSqr(item.entity:GetPos()) > (ix.config.Get("interactionDistance", 96) ^ 2)) then
 					return
 				end
 
