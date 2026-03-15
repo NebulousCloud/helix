@@ -340,12 +340,15 @@ function ITEM:SetData(key, value, receivers, noSave, noCheckEntity)
 
 	local inventory = ix.item.inventories[self.invID]
 
-	if (receivers != false and (receivers or inventory and inventory.GetReceivers and inventory:GetReceivers() or self:GetOwner())) then
-		net.Start("ixInventoryData")
-			net.WriteUInt(self:GetID(), 32)
-			net.WriteString(key)
-			net.WriteType(value)
-		net.Send(receivers or inventory and inventory.GetReceivers and inventory:GetReceivers() or self:GetOwner())
+	if (receivers != false) then
+		local targets = receivers or (inventory and inventory.GetReceivers and inventory:GetReceivers()) or self:GetOwner()
+		if (targets) then
+			net.Start("ixInventoryData")
+				net.WriteUInt(self:GetID(), 32)
+				net.WriteString(key)
+				net.WriteType(value)
+			net.Send(targets)
+		end
 	end
 
 	if (!noSave and ix.db) then
