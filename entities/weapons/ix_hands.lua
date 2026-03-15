@@ -63,7 +63,7 @@ function SWEP:Initialize()
 	self.lastHand = 0
 
 	-- how far away the held object is allowed to travel before forcefully dropping
-	self.maxHoldDistance = ix.config.Get("interactionDistance", 96)
+	self.maxHoldDistance = ix.config.Get("interactRange", 96)
 	self.maxHoldDistanceSquared = self.maxHoldDistance ^ 2
 	self.heldObjectAngle = Angle(angle_zero)
 end
@@ -417,7 +417,7 @@ function SWEP:PrimaryAttack()
 			self:GetOwner():LagCompensation(true)
 				local data = {}
 					data.start = self:GetOwner():GetShootPos()
-					data.endpos = data.start + self:GetOwner():GetAimVector() * ix.config.Get("interactionDistance", 96)
+					data.endpos = data.start + self:GetOwner():GetAimVector() * ix.config.Get("interactRange", 96)
 					data.filter = self:GetOwner()
 				local trace = util.TraceLine(data)
 

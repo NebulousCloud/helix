@@ -7,7 +7,7 @@ ix.command.Add("DoorSell", {
 		-- Get the entity intDist units infront of the player.
 		local data = {}
 			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector() * ix.config.Get("interactionDistance", 96)
+			data.endpos = data.start + client:GetAimVector() * ix.config.Get("interactRange", 96)
 			data.filter = client
 		local trace = util.TraceLine(data)
 		local entity = trace.Entity
@@ -58,7 +58,7 @@ ix.command.Add("DoorBuy", {
 		-- Get the entity intDist units infront of the player.
 		local data = {}
 			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector() * ix.config.Get("interactionDistance", 96)
+			data.endpos = data.start + client:GetAimVector() * ix.config.Get("interactRange", 96)
 			data.filter = client
 		local trace = util.TraceLine(data)
 		local entity = trace.Entity
@@ -281,7 +281,7 @@ ix.command.Add("DoorSetTitle", {
 		-- Get the door infront of the player.
 		local data = {}
 			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector() * ix.config.Get("interactionDistance", 96)
+			data.endpos = data.start + client:GetAimVector() * ix.config.Get("interactRange", 96)
 			data.filter = client
 		local trace = util.TraceLine(data)
 		local entity = trace.Entity
