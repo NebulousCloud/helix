@@ -6,7 +6,7 @@ function PLUGIN:GetPlayerAreaTrace()
 
 	return util.TraceLine({
 		start = client:GetShootPos(),
-		endpos = client:GetShootPos() + client:GetForward() * 96,
+		endpos = client:GetShootPos() + client:GetForward() * ix.config.Get("interactionDistance", 96),
 		filter = client
 	})
 end

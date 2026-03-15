@@ -737,7 +737,7 @@ function GM:KeyRelease(client, key)
 		if (!ix.menu.IsOpen()) then
 			local data = {}
 			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector() * 96
+			data.endpos = data.start + client:GetAimVector() * ix.config.Get("interactionDistance", 96)
 			data.filter = client
 
 			local entity = util.TraceLine(data).Entity
@@ -763,7 +763,7 @@ function GM:PlayerBindPress(client, bind, pressed)
 		if (pickupTime > 0) then
 			local data = {}
 				data.start = client:GetShootPos()
-				data.endpos = data.start + client:GetAimVector() * 96
+				data.endpos = data.start + client:GetAimVector() * ix.config.Get("interactionDistance", 96)
 				data.filter = client
 			local entity = util.TraceLine(data).Entity
 

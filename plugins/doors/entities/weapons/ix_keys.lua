@@ -86,7 +86,7 @@ function SWEP:PrimaryAttack()
 
 	local data = {}
 		data.start = self.Owner:GetShootPos()
-		data.endpos = data.start + self.Owner:GetAimVector()*96
+		data.endpos = data.start + self.Owner:GetAimVector() * ix.config.Get("interactionDistance", 96)
 		data.filter = self.Owner
 	local entity = util.TraceLine(data).Entity
 
@@ -110,7 +110,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:ToggleLock(door, state)
-	if (IsValid(self.Owner) and self.Owner:GetPos():Distance(door:GetPos()) > 96) then
+	if (IsValid(self.Owner) and self.Owner:GetPos():Distance(door:GetPos()) > ix.config.Get("interactionDistance", 96)) then
 		return
 	end
 
@@ -176,7 +176,7 @@ function SWEP:SecondaryAttack()
 
 	local data = {}
 		data.start = self.Owner:GetShootPos()
-		data.endpos = data.start + self.Owner:GetAimVector()*96
+		data.endpos = data.start + self.Owner:GetAimVector() * ix.config.Get("interactionDistance", 96)
 		data.filter = self.Owner
 	local entity = util.TraceLine(data).Entity
 

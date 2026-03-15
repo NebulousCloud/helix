@@ -121,7 +121,7 @@ function GM:KeyPress(client, key)
 	elseif (key == IN_USE) then
 		local data = {}
 			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector() * 96
+			data.endpos = data.start + client:GetAimVector() * ix.config.Get("interactionDistance", 96)
 			data.filter = client
 		local entity = util.TraceLine(data).Entity
 
@@ -146,7 +146,8 @@ function GM:KeyRelease(client, key)
 end
 
 function GM:CanPlayerInteractEntity(client, entity, option, data)
-	return entity:GetPos():DistToSqr(client:GetPos()) <= 96 ^ 2
+	local intDist = ix.config.Get("interactionDistance", 96)
+	return entity:GetPos():DistToSqr(client:GetPos()) <= intDist ^ 2
 end
 
 function GM:CanPlayerInteractItem(client, action, item, data)
@@ -822,7 +823,7 @@ end
 function GM:PlayerCanPickupWeapon(client, weapon)
 	local data = {}
 		data.start = client:GetShootPos()
-		data.endpos = data.start + client:GetAimVector() * 96
+		data.endpos = data.start + client:GetAimVector() * ix.config.Get("interactionDistance", 96)
 		data.filter = client
 	local trace = util.TraceLine(data)
 
