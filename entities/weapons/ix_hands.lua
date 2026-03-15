@@ -449,7 +449,7 @@ function SWEP:SecondaryAttack()
 
 	local data = {}
 		data.start = self:GetOwner():GetShootPos()
-		data.endpos = data.start + self:GetOwner():GetAimVector() * 84
+		data.endpos = data.start + self:GetOwner():GetAimVector() * (self.maxHoldDistance * 0.875)
 		data.filter = {self, self:GetOwner()}
 	local trace = util.TraceLine(data)
 	local entity = trace.Entity
