@@ -182,12 +182,12 @@ ix.config.Add("itemPickupTime", 0.5, "How long it takes to pick up and put an it
 	data = {min = 0, max = 5, decimals = 1},
 	category = "interaction"
 })
-ix.config.Add("interactionDistance", 96, "The maximum distance a player can be in order to interact with an item or entity.", function(oldValue, newValue)
+ix.config.Add("interactionDistance", 96, "The maximum distance that entities can be interacted with.", function(old, new)
 	for _, v in player.Iterator() do
 		local wep = v:GetWeapon("ix_hands")
 		if IsValid(wep) then
-			wep.maxHoldDistance = newValue
-			wep.maxHoldDistanceSquared = newValue ^ 2
+			wep.maxHoldDistance = new
+			wep.maxHoldDistanceSquared = new ^ 2
 		end
 	end
 end, {

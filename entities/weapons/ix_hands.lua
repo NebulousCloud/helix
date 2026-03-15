@@ -61,7 +61,9 @@ function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
 
 	self.lastHand = 0
-	self.maxHoldDistance = ix.config.Get("interactionDistance", 96) -- how far away the held object is allowed to travel before forcefully dropping
+
+	-- how far away the held object is allowed to travel before forcefully dropping
+	self.maxHoldDistance = ix.config.Get("interactionDistance", 96)
 	self.maxHoldDistanceSquared = self.maxHoldDistance ^ 2
 	self.heldObjectAngle = Angle(angle_zero)
 end
