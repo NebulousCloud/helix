@@ -182,6 +182,18 @@ ix.config.Add("itemPickupTime", 0.5, "How long it takes to pick up and put an it
 	data = {min = 0, max = 5, decimals = 1},
 	category = "interaction"
 })
+ix.config.Add("interactRange", 96, "The maximum distance that entities can be interacted with.", function(old, new)
+	for _, v in player.Iterator() do
+		local wep = v:GetWeapon("ix_hands")
+		if IsValid(wep) then
+			wep.maxHoldDistance = new
+			wep.maxHoldDistanceSquared = new ^ 2
+		end
+	end
+end, {
+	data = {min = 48, max = 96},
+	category = "interaction"
+})
 ix.config.Add("year", 2015, "The current in-game year.", function(oldValue, newValue)
 	if (SERVER and !ix.date.bSaving) then
 		ix.date.ResolveOffset()

@@ -194,7 +194,7 @@ end
 function PLUGIN:ShowTeam(client)
 	local data = {}
 		data.start = client:GetShootPos()
-		data.endpos = data.start + client:GetAimVector() * 96
+		data.endpos = data.start + client:GetAimVector() * ix.config.Get("interactRange", 96)
 		data.filter = client
 	local trace = util.TraceLine(data)
 	local entity = trace.Entity

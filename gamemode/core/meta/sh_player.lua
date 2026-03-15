@@ -137,7 +137,7 @@ function meta:DoStaredAction(entity, callback, time, onCancel, distance)
 	timer.Create(uniqueID, 0.1, time / 0.1, function()
 		if (IsValid(self) and IsValid(entity)) then
 			data.start = self:GetShootPos()
-			data.endpos = data.start + self:GetAimVector()*(distance or 96)
+			data.endpos = data.start + self:GetAimVector() * (distance or ix.config.Get("interactRange", 96))
 
 			if (util.TraceLine(data).Entity != entity) then
 				timer.Remove(uniqueID)
