@@ -146,7 +146,14 @@ function GM:KeyRelease(client, key)
 end
 
 function GM:CanPlayerInteractEntity(client, entity, option, data)
-	return entity:GetPos():DistToSqr(client:GetPos()) <= 96 ^ 2
+	local start = client:GetShootPos()
+	local traceResult = util.TraceLine({
+		start = client:GetShootPos(),
+		endpos = client:GetShootPos() + client:GetAimVector() * 96,
+		filter = client
+	})
+	if (!IsValid(traceResult.Entity)) then return false end
+	return (entity == traceResult.Entity)
 end
 
 function GM:CanPlayerInteractItem(client, action, item, data)
