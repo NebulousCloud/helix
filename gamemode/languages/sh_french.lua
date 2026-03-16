@@ -4,6 +4,7 @@
 -- https://steamcommunity.com/id/Azphal
 
 NAME = "Français"
+CODE = "fr"
 
 LANGUAGE = {
 	helix = "Helix",
