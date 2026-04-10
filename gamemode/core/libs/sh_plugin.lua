@@ -83,7 +83,7 @@ function ix.plugin.Load(uniqueID, path, isSingleFile, variable)
 		end
 
 		ix.plugin.list[uniqueID] = PLUGIN
-		_G[variable] = nil
+		_G[variable] = oldPlugin
 	end
 
 	if (PLUGIN.OnLoaded) then

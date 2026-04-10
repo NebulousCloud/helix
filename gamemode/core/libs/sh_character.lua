@@ -560,6 +560,7 @@ do
 			local client = self:GetPlayer()
 
 			if (IsValid(client)) then
+				local oldVar = self:GetFaction()
 				self.vars.faction = ix.faction.indices[value] and ix.faction.indices[value].uniqueID
 
 				client:SetTeam(value)
@@ -570,6 +571,8 @@ do
 					net.WriteString("faction")
 					net.WriteType(self.vars.faction)
 				net.Broadcast()
+
+				hook.Run("CharacterVarChanged", self, "faction", oldVar, value)
 			end
 		end,
 		OnGet = function(self, default)
@@ -628,7 +631,7 @@ do
 				payload.attributes[k] = 0
 
 				local bar = attributes:Add("ixAttributeBar")
-				bar:SetMax(maximum)
+				bar:SetMax(v.maxValue or maximum)
 				bar:Dock(TOP)
 				bar:DockMargin(2, 2, 2, 2)
 				bar:SetText(L(v.name))

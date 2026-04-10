@@ -378,7 +378,7 @@ do
 end
 
 do
-	local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2
+	local KEY_BLACKLIST = bit.bor( IN_ATTACK, IN_ATTACK2 )
 
 	function GM:StartCommand(client, command)
 		if (!client:CanShootWeapon()) then

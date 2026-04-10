@@ -338,12 +338,17 @@ function ITEM:SetData(key, value, receivers, noSave, noCheckEntity)
 		end
 	end
 
-	if (receivers != false and (receivers or self:GetOwner())) then
-		net.Start("ixInventoryData")
-			net.WriteUInt(self:GetID(), 32)
-			net.WriteString(key)
-			net.WriteType(value)
-		net.Send(receivers or self:GetOwner())
+	local inventory = ix.item.inventories[self.invID]
+
+	if (receivers != false) then
+		local targets = receivers or (inventory and inventory.GetReceivers and inventory:GetReceivers()) or self:GetOwner()
+		if (targets) then
+			net.Start("ixInventoryData")
+				net.WriteUInt(self:GetID(), 32)
+				net.WriteString(key)
+				net.WriteType(value)
+			net.Send(targets)
+		end
 	end
 
 	if (!noSave and ix.db) then
@@ -417,10 +422,9 @@ end
 -- @treturn bool Whether the item was successfully deleted or not
 function ITEM:Remove(bNoReplication, bNoDelete)
 	local inv = ix.item.inventories[self.invID]
+	local bFailed = false
 
 	if (self.invID > 0 and inv) then
-		local failed = false
-
 		for x = self.gridX, self.gridX + (self.width - 1) do
 			if (inv.slots[x]) then
 				for y = self.gridY, self.gridY + (self.height - 1) do
@@ -429,29 +433,31 @@ function ITEM:Remove(bNoReplication, bNoDelete)
 					if (item and item.id == self.id) then
 						inv.slots[x][y] = nil
 					else
-						failed = true
+						bFailed = true
 					end
 				end
+			else
+				bFailed = true
 			end
 		end
 
-		if (failed) then
-			inv.slots = {}
-			for k, _ in inv:Iter() do
-				if (k.invID == inv:GetID()) then
-					for x = self.gridX, self.gridX + (self.width - 1) do
-						for y = self.gridY, self.gridY + (self.height - 1) do
-							inv.slots[x][y] = k.id
-						end
-					end
+		if (bFailed) then
+			local items = {}
+			for _, v in pairs(ix.item.instances) do
+				if (v.invID == self.invID and v.id != self.id) then
+					items[#items + 1] = v
 				end
 			end
 
-			if (IsValid(inv.owner) and inv.owner:IsPlayer()) then
-				inv:Sync(inv.owner, true)
+			inv.slots = {}
+			for _, v in ipairs(items) do
+				for x = v.gridX, v.gridX + (v.width - 1) do
+					for y = v.gridY, v.gridY + (v.height - 1) do
+						inv.slots[x] = inv.slots[x] or {}
+						inv.slots[x][y] = v
+					end
+				end
 			end
-
-			return false
 		end
 	else
 		-- @todo definition probably isn't needed
@@ -472,14 +478,22 @@ function ITEM:Remove(bNoReplication, bNoDelete)
 		local receivers = inv.GetReceivers and inv:GetReceivers()
 
 		if (self.invID != 0 and istable(receivers)) then
-			net.Start("ixInventoryRemove")
-				net.WriteUInt(self.id, 32)
-				net.WriteUInt(self.invID, 32)
-			net.Send(receivers)
+			if (bFailed) then
+				inv:Sync(receivers)
+			else
+				net.Start("ixInventoryRemove")
+					net.WriteUInt(self.id, 32)
+					net.WriteUInt(self.invID, 32)
+				net.Send(receivers)
+			end
 		end
 
 		if (!bNoDelete) then
 			local item = ix.item.instances[self.id]
+
+			if (inv and inv.owner) then
+				hook.Run("InventoryItemRemoved", inv, item)
+			end
 
 			if (item and item.OnRemoved) then
 				item:OnRemoved()

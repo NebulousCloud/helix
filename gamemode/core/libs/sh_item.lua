@@ -621,7 +621,12 @@ do
 			end
 
 			if (item.entity) then
-				if (item.entity:GetPos():Distance(client:GetPos()) > 96) then
+				if (client:GetShootPos():DistToSqr(item.entity:GetPos()) > 96 * 96) then
+					return
+				end
+
+				local useEntity = client:GetUseEntity()
+				if (IsValid(useEntity) and item.entity != useEntity) then
 					return
 				end
 			elseif (!inventory:GetItemByID(item.id)) then
@@ -707,8 +712,8 @@ do
 			if (character) then
 				local inventory = ix.item.inventories[invID]
 
-				if (!inventory or inventory == nil) then
-					inventory:Sync(client)
+				if (!inventory) then
+					return
 				end
 
 				if ((inventory.owner and inventory.owner == character:GetID()) or inventory:OnCheckAccess(client)) then

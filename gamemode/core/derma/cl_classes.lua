@@ -64,7 +64,7 @@ function PANEL:SetClass(data)
 	if (data.model) then
 		local model = data.model
 		if (istable(model)) then
-			model = table.Random(model)
+			model = model[ math.random(#model) ]
 		end
 
 		self.icon:SetModel(model)

@@ -34,7 +34,7 @@ function PLUGIN:PlayerLoadout(client)
 			points = points[className] or points["default"]
 
 			if (points and !table.IsEmpty(points)) then
-				local position = table.Random(points)
+				local position = points[ math.random( #points ) ]
 
 				client:SetPos(position)
 			end
