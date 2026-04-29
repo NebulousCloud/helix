@@ -35,10 +35,10 @@ function meta:IsDoor()
 	return (class and class:find("door") != nil)
 end
 
---- Returns `true` if the given entity is a button or door and is locked.
+--- Returns `true` if the given entity is lockable (for example, a button, door, or vehicle) and is locked.
 -- @realm shared
 -- @treturn bool Whether or not this entity is locked; `false` if this entity cannot be locked at all
--- (e.g not a button or door)
+-- (e.g not a button, door, or vehicle)
 function meta:IsLocked()
 	if (self:IsVehicle()) then
 		return self:GetInternalVariable( "VehicleLocked" )
