@@ -41,10 +41,10 @@ end
 -- (e.g not a button, door, or vehicle)
 function meta:IsLocked()
 	if (self:IsVehicle()) then
-		return self:GetInternalVariable( "VehicleLocked" )
+		return self:GetInternalVariable("VehicleLocked") == true
 	end
 
-	return self:GetInternalVariable( "m_bLocked" )
+	return self:GetInternalVariable("m_bLocked") == true
 end
 
 if (SERVER) then
