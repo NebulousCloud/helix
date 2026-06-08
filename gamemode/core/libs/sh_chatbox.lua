@@ -281,12 +281,22 @@ end
 function ix.chat.Format(text)
 	text = string.Trim(text)
 	local last = text:utf8sub(-1)
+	local check = (last == "*" and text:utf8sub(-2, -2)) or last
 
-	if (last != "." and last != "?" and last != "!" and last != "-" and last != "\"") then
-		text = text .. "."
+	if (check != "." and check != "?" and check != "!" and check != "-" and check != "\"") then
+		if (last == "*") then
+			text = text:utf8sub(1, -2) .. ".*"
+		else
+			text = text .. "."
+		end
 	end
 
-	return text:utf8sub(1, 1):utf8upper() .. text:utf8sub(2)
+	local first = text:utf8sub(1, 1)
+	if (first == "*") then
+		return first .. text:utf8sub(2, 2):utf8upper() .. text:utf8sub(3)
+	else
+		return text:utf8sub(1, 1):utf8upper() .. text:utf8sub(2)
+	end
 end
 
 if (SERVER) then
