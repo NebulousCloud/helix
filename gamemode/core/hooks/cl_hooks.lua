@@ -523,7 +523,11 @@ do
 		local panel = ix.gui.entityInfo
 		local bShouldShow = time >= aimTime and (!IsValid(ix.gui.menu) or ix.gui.menu.bClosing) and
 			(!IsValid(ix.gui.characterMenu) or ix.gui.characterMenu.bClosing)
-		local bShouldPopulate = lastEntity.OnShouldPopulateEntityInfo and lastEntity:OnShouldPopulateEntityInfo() or true
+		local bShouldPopulate = true
+
+		if (lastEntity.OnShouldPopulateEntityInfo) then
+			bShouldPopulate = lastEntity:OnShouldPopulateEntityInfo()
+		end
 
 		if (bShouldShow and IsValid(lastEntity) and hookRun("ShouldPopulateEntityInfo", lastEntity) != false and
 			(lastEntity.PopulateEntityInfo or bShouldPopulate)) then
