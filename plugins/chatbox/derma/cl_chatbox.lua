@@ -341,13 +341,7 @@ function PANEL:AddLine(elements, bShouldScroll)
 				local inner = value:utf8sub(2, -2)
 
 				if (inner:find("%S")) then
-					local baseFont = (CHAT_CLASS and CHAT_CLASS.font) or "ixChatFont"
-					local italicsFont = baseFont .. "Italics"
-					if !pcall(surface.SetFont, italicsFont) then
-						italicsFont = "ixChatFontItalics"
-					end
-
-					return "<font=" .. italicsFont .. ">" .. inner .. "</font>"
+					return "<font=ixChatFontItalics>" .. value:utf8sub(2, -2) .. "</font>"
 				end
 			end)
 		end
