@@ -621,7 +621,7 @@ do
 			end
 
 			if (item.entity) then
-				if (client:GetShootPos():DistToSqr(item.entity:GetPos()) > 96 * 96) then
+				if (client:GetShootPos():DistToSqr(item.entity:GetPos()) > (ix.config.Get("interactRange", 96) ^ 2)) then
 					return
 				end
 
