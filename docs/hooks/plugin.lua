@@ -846,11 +846,12 @@ end
 -- @bool anonymous Whether or not message was anonymous
 -- @tab receivers Players who will hear that message
 -- @string rawText Chat message without any formatting
+-- @tab data The data table sent with the chat message
 -- @treturn string You can return text that will be shown instead
 -- @usage function PLUGIN:PlayerMessageSend(speaker, chatType, text, anonymous, receivers, rawText)
 --  return "Text" -- When a player writes something into chat, he will say "Text" instead.
 -- end
-function PlayerMessageSend(speaker, chatType, text, anonymous, receivers, rawText)
+function PlayerMessageSend(speaker, chatType, text, anonymous, receivers, rawText, data)
 end
 
 --- Called when a player model was changed.
