@@ -95,8 +95,13 @@ function ENT:GetStock(uniqueID)
 end
 
 function ENT:GetPrice(uniqueID, selling)
-	local price = ix.item.list[uniqueID] and self.items[uniqueID] and
-		self.items[uniqueID][VENDOR_PRICE] or ix.item.list[uniqueID].price or 0
+	local itemTable = ix.item.list[uniqueID]
+
+	if (!itemTable) then
+		return 0
+	end
+
+	local price = self.items[uniqueID] and self.items[uniqueID][VENDOR_PRICE] or itemTable.price or 0
 
 	if (selling) then
 		price = math.floor(price * (self.scale or 0.5))

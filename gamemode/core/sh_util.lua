@@ -105,7 +105,7 @@ end
 -- @treturn bool Whether or not the input is a color
 function ix.util.IsColor(input)
 	return istable(input) and
-		isnumber(input.a) and isnumber(input.g) and isnumber(input.b) and (input.a and isnumber(input.a) or input.a == nil)
+		isnumber(input.r) and isnumber(input.g) and isnumber(input.b) and (input.a == nil or isnumber(input.a))
 end
 
 --- Returns a dimmed version of the given color by the given scale.

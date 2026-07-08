@@ -765,10 +765,9 @@ if (SERVER) then
 	-- Inventories that are marked to not save will not update in the Database, if they inventory is already saved,
 	-- it will not be deleted when unloaded.
 	-- @realm server
-	-- @treturn[1] bool Returns the field `noSave`.
-	-- @treturn[2] bool Returns true if the field `noSave` is not registered to this inventory.
+	-- @treturn bool Whether or not this inventory should save.
 	function META:GetShouldSave()
-		return self.noSave or true
+		return self.noSave != true
 	end
 
 	--- Add an item to the inventory.

@@ -587,6 +587,10 @@ do
 
 			local inventory = ix.item.inventories[invID or 0]
 
+			if (!inventory) then
+				return
+			end
+
 			if (hook.Run("CanPlayerInteractItem", client, action, item, data) == false) then
 				return
 			end
@@ -795,7 +799,7 @@ do
 
 					if (item) then
 						NetworkInventoryMove(
-							client, item.invID, item.invID, item:GetID(), item.gridX, item.gridY, item.gridX, item.gridY
+							client, item.invID, item:GetID(), item.gridX, item.gridY, item.gridX, item.gridY
 						)
 					end
 				end

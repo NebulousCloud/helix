@@ -121,6 +121,11 @@ else
 		end
 
 		local info = PLUGIN.list[index]
+
+		if (!info or !info[6]) then
+			return
+		end
+
 		local exploded = string.Explode("/", info[6])
 		local filename = exploded[#exploded]
 		local path = "helix/"..Schema.folder.."/"..PLUGIN.uniqueID.."/"

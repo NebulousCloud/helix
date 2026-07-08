@@ -208,12 +208,14 @@ if (SERVER) then
 
 			data = uniqueID
 		elseif (key == "stockDisable") then
-			local uniqueID = data[1]
+			local uniqueID = data
 
-			entity.items[data] = entity.items[uniqueID] or {}
-			entity.items[data][VENDOR_MAXSTOCK] = nil
+			entity.items[uniqueID] = entity.items[uniqueID] or {}
+			entity.items[uniqueID][VENDOR_MAXSTOCK] = nil
 
-			UpdateEditReceivers(entity.receivers, key, data)
+			UpdateEditReceivers(entity.receivers, key, uniqueID)
+
+			data = uniqueID
 		elseif (key == "stockMax") then
 			local uniqueID = data[1]
 			data[2] = math.max(math.Round(tonumber(data[2]) or 1), 1)
@@ -648,7 +650,7 @@ else
 		if (IsValid(editor)) then
 			local _, max = entity:GetStock(uniqueID)
 
-			editor.lines[uniqueID]:SetValue(4, amount .. "/" .. max)
+			editor.lines[uniqueID]:SetValue(5, amount .. "/" .. max)
 		end
 	end)
 

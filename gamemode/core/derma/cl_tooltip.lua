@@ -99,7 +99,7 @@ end
 -- @color color New color of the background. The alpha is clamped to 100-255 to ensure visibility
 function PANEL:SetBackgroundColor(color)
 	color = table.Copy(color)
-	color.a = math.min(color.a or 255, 100)
+	color.a = math.Clamp(color.a or 255, 100, 255)
 
 	self.backgroundColor = color
 end
@@ -459,7 +459,7 @@ end
 -- background color will affect text instead in minimal tooltips
 function PANEL:SetBackgroundColor(color)
 	color = table.Copy(color)
-	color.a = math.min(color.a or 255, 100)
+	color.a = math.Clamp(color.a or 255, 100, 255)
 
 	self:SetTextColor(color)
 	self.backgroundColor = color

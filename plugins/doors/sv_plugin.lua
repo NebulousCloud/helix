@@ -257,7 +257,8 @@ net.Receive("ixDoorPermission", function(length, client)
 	local target = net.ReadEntity()
 	local access = net.ReadUInt(4)
 
-	if (IsValid(target) and target:GetCharacter() and door.ixAccess and door:GetDTEntity(0) == client and target != client) then
+	if (IsValid(door) and door:IsDoor() and IsValid(target) and target:IsPlayer() and target:GetCharacter()
+		and door.ixAccess and door:GetDTEntity(0) == client and target != client) then
 		access = math.Clamp(access or 0, DOOR_NONE, DOOR_TENANT)
 
 		if (access == door.ixAccess[target]) then
