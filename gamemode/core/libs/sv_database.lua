@@ -162,6 +162,60 @@ hook.Add("InitPostEntity", "ixDatabaseConnect", function()
 	ix.db.Connect()
 end)
 
+-- Garbage collection for bot inventories to prevent database bloat
+hook.Add("PostLoadData", "ixBotCleanup", function()
+	if (!mysql or !mysql.IsConnected or !mysql:IsConnected()) then return end
+
+	local query = mysql:Select("ix_items")
+	query:Select("item_id")
+	query:Select("unique_id")
+	query:Select("data")
+	query:Where("player_id", "BOT_ITEM")
+
+	query:Callback(function(result)
+		if (!istable(result) or #result == 0) then return end
+
+		local invsToDelete = {}
+		local itemsToDelete = {}
+		local jsonDecode = util.JSONToTable
+
+		for _, row in ipairs(result) do
+			table.insert(itemsToDelete, row.item_id)
+
+			local itemTable = ix.item.list[row.unique_id]
+			if (itemTable and itemTable.isBag) then
+				if (row.data and row.data != "" and row.data != "[]") then
+					local data = jsonDecode(row.data)
+
+					if (data and data.id) then
+						table.insert(invsToDelete, data.id)
+					end
+				end
+			end
+		end
+
+		if (#invsToDelete > 0) then
+			local delInvs = mysql:Delete("ix_inventories")
+			delInvs:WhereIn("inventory_id", invsToDelete)
+			delInvs:Execute()
+		end
+
+		if (#itemsToDelete > 0) then
+			local delItems = mysql:Delete("ix_items")
+			delItems:WhereIn("item_id", itemsToDelete)
+			delItems:Execute()
+		end
+
+		MsgC(Color(0, 255, 0),
+			string.format(
+				"[Helix] Wiped %d orphaned bot items and %d ghost bags from the database.\n",
+				#itemsToDelete, #invsToDelete
+			)
+		)
+	end)
+	query:Execute()
+end)
+
 local resetCalled = 0
 
 concommand.Add("ix_wipedb", function(client, cmd, arguments)

@@ -643,6 +643,37 @@ if (SERVER) then
 				local status, result = targetInv:Add(self.id, nil, nil, x, y, noReplication)
 
 				if (status) then
+					-- Check if the destination inventory is owned by a bot
+					local isBot = false
+					if (targetInv.owner) then
+						local character = ix.char.loaded[targetInv.owner]
+						if (character and character.isBot) then
+							isBot = true
+						end
+					end
+
+					-- Force database update for transient (noSave) inventories to prevent duplication
+					if (targetInv.noSave) then
+						local query = mysql:Update("ix_items")
+							query:Update("inventory_id", 0)
+							-- Only tag for deletion if it is specifically a bot, protecting real players
+							if (isBot) then
+								query:Update("player_id", "BOT_ITEM")
+							end
+							query:Where("item_id", self.id)
+						query:Execute()
+					elseif (curInv and curInv.noSave and IsValid(client) and client:GetCharacter()) then
+						-- Restore proper ownership when taking an item FROM a noSave inv TO a real player
+						self.playerID = client:SteamID64()
+						self.characterID = client:GetCharacter():GetID()
+
+						local query = mysql:Update("ix_items")
+							query:Update("player_id", self.playerID)
+							query:Update("character_id", self.characterID)
+							query:Where("item_id", self.id)
+						query:Execute()
+					end
+
 					if (self.invID > 0 and prevID != 0) then
 						-- we are transferring this item from one inventory to another
 						curInv:Remove(self.id, false, true, true)
