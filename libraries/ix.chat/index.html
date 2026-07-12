@@ -2728,7 +2728,7 @@ to create your own chat classes.</p>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L281">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L287">View source &raquo;</a>
 
 					<p>Formats a string to fix basic grammar - removing extra spacing at the beginning and end, capitalizing the first character,
  and making sure it ends in punctuation.</p>
@@ -2778,7 +2778,7 @@ to create your own chat classes.</p>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L207">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L213">View source &raquo;</a>
 
 					<p>Identifies which chat mode should be used.</p>
 			</header>
@@ -2857,7 +2857,7 @@ to create your own chat classes.</p>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L112">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L118">View source &raquo;</a>
 
 					<p>Registers a new chat type with the information provided.  Chat classes should usually be created inside of the
  <code>InitializedChatClasses</code> hook.</p>
@@ -2917,7 +2917,7 @@ ix.chat.Register("me", {
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L313">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L319">View source &raquo;</a>
 
 					<p>Send a chat message using the specified chat type.</p>
 			</header>
@@ -3013,7 +3013,7 @@ ix.chat.Register("me", {
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L96">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/libs/sh_chatbox.lua#L102">View source &raquo;</a>
 
 					<p>Chat messages can have different classes or "types" of messages that have different properties.  This can include how the
  text is formatted, color, hearing distance, etc.</p>
@@ -3213,6 +3213,28 @@ end
 <pre><code>GetColor = function(self, speaker, text)
     -- each message with this chat class will be colored a random shade of red
     return Color(math.random(120, 200), 0, 0)
+end
+</code></pre>
+
+</p>
+							</li>
+					</ul>
+
+					<ul>
+
+							<li>
+								<span class="tag parameter">GetFont</span>
+
+									<span class="tag"><span class="type">function</span></span>
+
+									<span class="tag default">optional</span>
+
+								<p>
+<p> Function to run to set the font of a message with this chat class. You should generally
+ stick to using <code>font</code>, but this is useful for when you want the font of the message to change with some criteria.</p>
+<pre><code>GetFont = function(self, speaker, text, data)
+    -- each message with this chat class will use whatever the &lt;code&gt;w&lt;/code&gt; class uses, or the standard fallback &lt;code&gt;ixChatFont&lt;/code&gt;.
+    return ix.chat.classes.w.font or "ixChatFont"
 end
 </code></pre>
 
