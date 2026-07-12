@@ -18,7 +18,8 @@ if (SERVER) then
 		self:SetUseType(SIMPLE_USE)
 		self.receivers = {}
 
-		local definition = ix.container.stored[self:GetModel():lower()]
+		local model = self:GetModel()
+		local definition = model and ix.container.stored[model:lower()]
 
 		if (definition) then
 			self:SetDisplayName(definition.name)

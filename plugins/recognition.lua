@@ -147,6 +147,12 @@ else
 	end
 
 	net.Receive("ixRecognize", function(length, client)
+		local character = client:GetCharacter()
+
+		if (!character) then
+			return
+		end
+
 		local level = net.ReadUInt(2)
 
 		if (isnumber(level)) then
@@ -178,7 +184,7 @@ else
 			end
 
 			if (#targets > 0) then
-				local id = client:GetCharacter():GetID()
+				local id = character:GetID()
 				local i = 0
 
 				for _, v in ipairs(targets) do

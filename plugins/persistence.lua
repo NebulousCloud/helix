@@ -7,7 +7,8 @@ PLUGIN.author = "alexgrist"
 PLUGIN.stored = PLUGIN.stored or {}
 
 local function GetRealModel(entity)
-	return entity:GetClass() == "prop_effect" and entity.AttachedEntity:GetModel() or entity:GetModel()
+	return entity:GetClass() == "prop_effect" and IsValid(entity.AttachedEntity) and entity.AttachedEntity:GetModel()
+		or entity:GetModel()
 end
 
 properties.Add("persist", {

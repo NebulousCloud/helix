@@ -99,6 +99,12 @@ if (SERVER) then
 		local itemID = entTable.ixItemID
 		local itemTable = ix.item.instances[itemID]
 
+		if (!itemTable) then
+			self:Remove()
+
+			return
+		end
+
 		ix.item.Instance(0, itemTable.uniqueID, itemTable.data, 1, 1, function(item)
 			self:SetItem(item:GetID())
 		end)
@@ -106,6 +112,12 @@ if (SERVER) then
 
 	function ENT:OnTakeDamage(damageInfo)
 		local itemTable = ix.item.instances[self.ixItemID]
+
+		if (!itemTable) then
+			self:Remove()
+
+			return
+		end
 
 		if (itemTable.OnEntityTakeDamage
 		and itemTable:OnEntityTakeDamage(self, damageInfo) == false) then
@@ -158,8 +170,10 @@ if (SERVER) then
 	function ENT:Think()
 		local itemTable = self:GetItemTable()
 
-		if (!itemTable) then
+		if (!itemTable or !ix.item.instances[self.ixItemID]) then
 			self:Remove()
+
+			return true
 		end
 
 		if (itemTable.Think) then

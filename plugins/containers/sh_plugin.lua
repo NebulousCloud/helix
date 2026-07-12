@@ -107,7 +107,12 @@ if (SERVER) then
 
 		if (data) then
 			for _, v in ipairs(data) do
-				local data2 = ix.container.stored[v[4]:lower()]
+				if (!istable(v)) then
+					continue
+				end
+
+				local model = isstring(v[4]) and v[4]:lower()
+				local data2 = model and ix.container.stored[model]
 
 				if (data2) then
 					local inventoryID = tonumber(v[3])
@@ -123,8 +128,8 @@ if (SERVER) then
 					local entity = ents.Create("ix_container")
 					entity:SetPos(v[1])
 					entity:SetAngles(v[2])
-					entity:Spawn()
 					entity:SetModel(v[4])
+					entity:Spawn()
 					entity:SetSolid(SOLID_VPHYSICS)
 					entity:PhysicsInit(SOLID_VPHYSICS)
 
@@ -168,7 +173,18 @@ if (SERVER) then
 		end
 
 		local entity = net.ReadEntity()
+
+		if (!IsValid(entity) or entity:GetClass() != "ix_container" or !entity:GetLocked()) then
+			return
+		end
+
+		if (!client:GetCharacter()) then
+			return
+		end
+
 		local steamID = client:SteamID()
+		entity.PasswordAttempts = entity.PasswordAttempts or {}
+
 		local attempts = entity.PasswordAttempts[steamID]
 
 		if (attempts and attempts >= 10) then

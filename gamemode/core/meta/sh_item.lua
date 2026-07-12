@@ -475,7 +475,7 @@ function ITEM:Remove(bNoReplication, bNoDelete)
 			entity:Remove()
 		end
 
-		local receivers = inv.GetReceivers and inv:GetReceivers()
+		local receivers = inv and inv.GetReceivers and inv:GetReceivers()
 
 		if (self.invID != 0 and istable(receivers)) then
 			if (bFailed) then

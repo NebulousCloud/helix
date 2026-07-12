@@ -923,6 +923,11 @@ do
 
 			local maxChars = hook.Run("GetMaxPlayerCharacter", client) or ix.config.Get("maxCharacters", 5)
 			local charList = client.ixCharList
+
+			if (!istable(charList)) then
+				return
+			end
+
 			local charCount = table.Count(charList)
 
 			if (charCount >= maxChars) then

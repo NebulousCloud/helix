@@ -191,7 +191,7 @@ net.Receive("ixDoorPermission", function()
 	local panel = door.ixPanel
 
 	if (IsValid(panel) and IsValid(target)) then
-		panel.access[target] = access
+		panel.accessData[target] = access
 
 		for _, v in ipairs(panel.access:GetLines()) do
 			if (v.player == target) then
