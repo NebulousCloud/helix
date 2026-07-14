@@ -40,10 +40,6 @@ end
 -- @treturn bool Whether or not this entity is locked; `false` if this entity cannot be locked at all
 -- (e.g not a button, door, or vehicle)
 function meta:IsLocked()
-	if (self:IsVehicle()) then
-		return self:GetInternalVariable("VehicleLocked") == true
-	end
-
 	return self:GetInternalVariable("m_bLocked") == true
 end
 
