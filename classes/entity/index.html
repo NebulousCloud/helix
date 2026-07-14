@@ -2213,7 +2213,7 @@ IsChair											</a>
 IsDoor											</a>
 										</li>
 										<li>
-											<span class="realm server"></span>
+											<span class="realm shared"></span>
 											<a href="../../classes/entity/#IsLocked">
 IsLocked											</a>
 										</li>
@@ -2727,7 +2727,7 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_entity.lua#L75">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_entity.lua#L71">View source &raquo;</a>
 
 					<p>Blasts a door off its hinges.  Internally, this hides the door entity, spawns a physics prop with the same model, and
  applies force to the prop.</p>
@@ -2838,7 +2838,7 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_entity.lua#L63">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_entity.lua#L59">View source &raquo;</a>
 
 					<p>Returns the entity that is blocking this door from opening.</p>
 			</header>
@@ -2873,7 +2873,7 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_entity.lua#L55">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_entity.lua#L51">View source &raquo;</a>
 
 					<p>Returns the neighbouring door entity for double doors.</p>
 			</header>
@@ -3019,13 +3019,13 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 		<section class="method">
 			<header>
 				<a class="anchor" id="IsLocked">
-					<h1><span class="realm server"></span></span>Entity:IsLocked()</h1>
+					<h1><span class="realm shared"></span></span>Entity:IsLocked()</h1>
 				</a>
 
 
-					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_entity.lua#L43">View source &raquo;</a>
+					<a class="reference" href="https://github.com/nebulouscloud/helix/tree/master/gamemode/core/meta/sh_entity.lua#L42">View source &raquo;</a>
 
-					<p>Returns <code>true</code> if the given entity is a button or door and is locked.</p>
+					<p>Returns <code>true</code> if the given entity is lockable (for example, a button, door, or vehicle) and is locked.</p>
 			</header>
 
 
@@ -3037,7 +3037,7 @@ between Helix's own classes, and to reduce boilerplate code.</p>
 									<span class="type">bool</span>
 
 								<p>Whether or not this entity is locked; <code>false</code> if this entity cannot be locked at all
- (e.g not a button or door)</p>
+ (e.g not a button, door, or vehicle)</p>
 							</li>
 
 				</ul>
