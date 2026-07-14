@@ -35,19 +35,15 @@ function meta:IsDoor()
 	return (class and class:find("door") != nil)
 end
 
+--- Returns `true` if the given entity is lockable (for example, a button, door, or vehicle) and is locked.
+-- @realm shared
+-- @treturn bool Whether or not this entity is locked; `false` if this entity cannot be locked at all
+-- (e.g not a button, door, or vehicle)
+function meta:IsLocked()
+	return self:GetInternalVariable("m_bLocked") == true
+end
+
 if (SERVER) then
-	--- Returns `true` if the given entity is a button or door and is locked.
-	-- @realm server
-	-- @treturn bool Whether or not this entity is locked; `false` if this entity cannot be locked at all
-	-- (e.g not a button or door)
-	function meta:IsLocked()
-		if (self:IsVehicle()) then
-			return self:GetInternalVariable( "VehicleLocked" )
-		end
-
-		return self:GetInternalVariable( "m_bLocked" )
-	end
-
 	--- Returns the neighbouring door entity for double doors.
 	-- @realm shared
 	-- @treturn[1] Entity This door's partner
