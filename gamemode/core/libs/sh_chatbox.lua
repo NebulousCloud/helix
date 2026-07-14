@@ -63,27 +63,27 @@ Name = "Helix - Bypass OOC Timer",
 -- 	-- message can be heard by any player 1000 units away from the speaking player
 -- 	CanHear = 1000
 -- OR
--- 	CanHear = function(self, speaker, listener)
+-- 	CanHear = function(self, speaker, listener, data)
 -- 		-- the speaking player will be heard by everyone
 -- 		return true
 -- 	end
 -- @field[type=function,opt] CanSay Function to run to check whether or not a player can send a message with this chat class.
 -- By default, it will return `false` if the player is dead and `deadCanChat` is `false`. Overriding this function will prevent
 -- `deadCanChat` from working, and you must implement this functionality manually.
--- 	CanSay = function(self, speaker, text)
+-- 	CanSay = function(self, speaker, text, data)
 -- 		-- the speaker will never be able to send a message with this chat class
 -- 		return false
 -- 	end
 -- @field[type=function,opt] GetColor Function to run to set the color of a message with this chat class. You should generally
 -- stick to using `color`, but this is useful for when you want the color of the message to change with some criteria.
--- 	GetColor = function(self, speaker, text)
+-- 	GetColor = function(self, speaker, text, data)
 -- 		-- each message with this chat class will be colored a random shade of red
 -- 		return Color(math.random(120, 200), 0, 0)
 -- 	end
 -- @field[type=function,opt] GetFont Function to run to set the font of a message with this chat class. You should generally
 -- stick to using `font`, but this is useful for when you want the font of the message to change with some criteria.
 -- 	GetFont = function(self, speaker, text, data)
--- 		-- each message with this chat class will use whatever the `w` class uses, or the standard fallback `ixChatFont`.
+-- 		-- each message with this chat class will use whatever the "w" class uses, or the standard fallback "ixChatFont".
 -- 		return ix.chat.classes.w.font or "ixChatFont"
 -- 	end
 -- @field[type=function,opt] OnChatAdd Function to run when a message with this chat class should be added to the chatbox. If
