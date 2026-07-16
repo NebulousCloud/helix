@@ -3165,7 +3165,7 @@ ix.chat.Register("me", {
 CanHear = 1000
 </code></pre>
 <p> OR</p>
-<pre><code>CanHear = function(self, speaker, listener)
+<pre><code>CanHear = function(self, speaker, listener, data)
     -- the speaking player will be heard by everyone
     return true
 end
@@ -3188,7 +3188,7 @@ end
 <p> Function to run to check whether or not a player can send a message with this chat class.
  By default, it will return <code>false</code> if the player is dead and <code>deadCanChat</code> is <code>false</code>. Overriding this function will prevent
  <code>deadCanChat</code> from working, and you must implement this functionality manually.</p>
-<pre><code>CanSay = function(self, speaker, text)
+<pre><code>CanSay = function(self, speaker, text, data)
     -- the speaker will never be able to send a message with this chat class
     return false
 end
@@ -3210,7 +3210,7 @@ end
 								<p>
 <p> Function to run to set the color of a message with this chat class. You should generally
  stick to using <code>color</code>, but this is useful for when you want the color of the message to change with some criteria.</p>
-<pre><code>GetColor = function(self, speaker, text)
+<pre><code>GetColor = function(self, speaker, text, data)
     -- each message with this chat class will be colored a random shade of red
     return Color(math.random(120, 200), 0, 0)
 end
@@ -3233,7 +3233,7 @@ end
 <p> Function to run to set the font of a message with this chat class. You should generally
  stick to using <code>font</code>, but this is useful for when you want the font of the message to change with some criteria.</p>
 <pre><code>GetFont = function(self, speaker, text, data)
-    -- each message with this chat class will use whatever the &lt;code&gt;w&lt;/code&gt; class uses, or the standard fallback &lt;code&gt;ixChatFont&lt;/code&gt;.
+    -- each message with this chat class will use whatever the "w" class uses, or the standard fallback "ixChatFont".
     return ix.chat.classes.w.font or "ixChatFont"
 end
 </code></pre>
