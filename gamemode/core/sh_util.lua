@@ -892,13 +892,18 @@ ALWAYS_RAISED["weapon_physgun"] = true
 ALWAYS_RAISED["gmod_tool"] = true
 ALWAYS_RAISED["ix_poshelper"] = true
 
-function ix.util.FindEmptySpace(entity, filter, spacing, size, height, tolerance)
+function ix.util.FindEmptySpace(variable, filter, spacing, size, height, tolerance)
+	filter = filter or {}
 	spacing = spacing or 32
 	size = size or 3
 	height = height or 36
 	tolerance = tolerance or 5
 
-	local position = entity:GetPos()
+	local position = isvector(variable) and variable or isentity(variable) and variable:GetPos()
+	if (!position) then
+		return
+	end
+
 	local mins, maxs = Vector(-spacing * 0.5, -spacing * 0.5, 0), Vector(spacing * 0.5, spacing * 0.5, height)
 	local output = {}
 
@@ -909,7 +914,7 @@ function ix.util.FindEmptySpace(entity, filter, spacing, size, height, tolerance
 			local data = {}
 				data.start = origin + mins + Vector(0, 0, tolerance)
 				data.endpos = origin + maxs
-				data.filter = filter or entity
+				data.filter = filter or isentity(variable) and variable or {}
 			local trace = util.TraceLine(data)
 
 			data.start = origin + Vector(-maxs.x, -maxs.y, tolerance)
