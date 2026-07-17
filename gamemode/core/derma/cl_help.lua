@@ -191,7 +191,7 @@ hook.Add("PopulateHelpMenu", "ixHelpMenu", function(tabs)
 		info:SetTall(info:GetTall() + 16)
 
 		info.Paint = function(_, width, height)
-			surface.SetDrawColor(ColorAlpha(derma.GetColor("Info", info), 160))
+			surface.SetDrawColor(ix.config.Get("color"))
 			surface.DrawRect(0, 0, width, height)
 		end
 
@@ -283,7 +283,7 @@ hook.Add("PopulateHelpMenu", "ixHelpMenu", function(tabs)
 		info:SetTall(info:GetTall() + 16)
 
 		info.Paint = function(_, width, height)
-			surface.SetDrawColor(ColorAlpha(derma.GetColor("Info", info), 160))
+			surface.SetDrawColor(ix.config.Get("color"))
 			surface.DrawRect(0, 0, width, height)
 		end
 
