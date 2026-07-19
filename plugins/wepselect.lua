@@ -72,7 +72,12 @@ if (CLIENT) then
 				end
 
 				surface.SetFont("ixWeaponSelectFont")
-				local weaponName = language.GetPhrase(weapons[i]:GetPrintName()):utf8upper()
+				local weaponName = weapons[i]:GetPrintName()
+				if weaponName[1] != '#' then
+					weaponName = weaponName:utf8upper()
+				else
+					weaponName = language.GetPhrase( weaponName )
+				end
 				local _, ty = surface.GetTextSize(weaponName)
 				local scale = 1 - math.abs(theta * 2)
 
