@@ -352,6 +352,7 @@ ix.anim.fastZombie = {
 }
 
 local translations = {}
+local fixedAnims = {}
 
 --- Sets a model's animation class.
 -- @realm shared
@@ -402,9 +403,49 @@ ix.anim.SetModelClass("models/vortigaunt_blue.mdl", "vortigaunt")
 ix.anim.SetModelClass("models/vortigaunt_doctor.mdl", "vortigaunt")
 ix.anim.SetModelClass("models/vortigaunt_slave.mdl", "vortigaunt")
 
+local submodelClasses = {
+	male_shared = "citizen_male",
+	female_shared = "citizen_female",
+	police_animations = "metrocop",
+	combine_soldier_anims = "overwatch",
+	vortigaunt_anims = "vortigaunt",
+	m_anm = "player",
+	f_anm = "player",
+}
+
+hook.Add("PlayerModelChanged", "ixCheckAnimFixes", function(ply, model)
+	timer.Simple(0.1, function()
+		if !IsValid(ply) then return end
+		model = model:lower()
+
+		if translations[model] then return end
+
+		local foundClass
+		local submodels = ply:GetSubModels()
+		for i, submodel in ipairs(submodels) do
+			local class = submodel["name"]:gsub(".*/([^/]+)%.%w+$", "%1"):lower()
+			foundClass = submodelClasses[class]
+			if foundClass then
+				ix.anim.SetModelClass(model, foundClass)
+				fixedAnims[foundClass] = model
+				break
+			end
+		end
+
+		if not foundClass then return end
+				
+		ply.ixAnimModelClass = foundClass
+		local base = ix.anim[foundClass]
+		ply.ixAnimTable = base[ply.ixAnimHoldType]
+		ply.ixAnimGlide = base["glide"]
+	end)
+end)
+
+
 if (SERVER) then
 	util.AddNetworkString("ixSequenceSet")
 	util.AddNetworkString("ixSequenceReset")
+	util.AddNetworkString("ixSendAnimFixes")
 
 	local playerMeta = FindMetaTable("Player")
 
@@ -485,6 +526,12 @@ if (SERVER) then
 			self:ixSeqCallback()
 		end
 	end
+
+	hook.Add("PlayerInitialSpawn", "ixSendAnimFixes", function(ply)
+		net.Start("ixSendAnimFixes")
+			net.WriteTable(fixedAnims)
+		net.Send(ply)
+	end)
 else
 	net.Receive("ixSequenceSet", function()
 		local entity = net.ReadEntity()
@@ -499,6 +546,13 @@ else
 
 		if (IsValid(entity)) then
 			hook.Run("PlayerLeaveSequence", entity)
+		end
+	end)
+
+	net.Receive("ixSendAnimFixes", function()
+		local fixes = net.ReadTable()
+		for class, model in pairs(fixes) do
+			ix.util.SetModelClass(class, model)
 		end
 	end)
 end
