@@ -4,10 +4,10 @@ local PLUGIN = PLUGIN
 ix.command.Add("DoorSell", {
 	description = "@cmdDoorSell",
 	OnRun = function(self, client, arguments)
-		-- Get the entity 96 units infront of the player.
+		-- Get the entity intDist units infront of the player.
 		local data = {}
 			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector() * 96
+			data.endpos = data.start + client:GetAimVector() * ix.config.Get("interactRange", 96)
 			data.filter = client
 		local trace = util.TraceLine(data)
 		local entity = trace.Entity
@@ -55,10 +55,10 @@ ix.command.Add("DoorSell", {
 ix.command.Add("DoorBuy", {
 	description = "@cmdDoorBuy",
 	OnRun = function(self, client, arguments)
-		-- Get the entity 96 units infront of the player.
+		-- Get the entity intDist units infront of the player.
 		local data = {}
 			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector() * 96
+			data.endpos = data.start + client:GetAimVector() * ix.config.Get("interactRange", 96)
 			data.filter = client
 		local trace = util.TraceLine(data)
 		local entity = trace.Entity
@@ -281,7 +281,7 @@ ix.command.Add("DoorSetTitle", {
 		-- Get the door infront of the player.
 		local data = {}
 			data.start = client:GetShootPos()
-			data.endpos = data.start + client:GetAimVector() * 96
+			data.endpos = data.start + client:GetAimVector() * ix.config.Get("interactRange", 96)
 			data.filter = client
 		local trace = util.TraceLine(data)
 		local entity = trace.Entity
