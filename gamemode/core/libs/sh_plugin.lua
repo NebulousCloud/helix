@@ -198,6 +198,7 @@ function ix.plugin.LoadEntities(path)
 
 		if (gmodTool) then
 			gmodTool.Tool[className] = tool
+			gmodTool.Tool[className]:CreateConVars()
 		else
 			-- this should never happen
 			ErrorNoHalt(string.format("attempted to register tool '%s' with invalid gmod_tool weapon", className))
@@ -231,7 +232,6 @@ function ix.plugin.LoadEntities(path)
 
 		TOOL = ix.meta.tool:Create()
 		TOOL.Mode = className
-		TOOL:CreateConVars()
 	end)
 
 	-- Include effects.
