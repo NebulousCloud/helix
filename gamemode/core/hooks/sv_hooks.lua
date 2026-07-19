@@ -85,6 +85,7 @@ function GM:PlayerInitialSpawn(client)
 			end
 		end, bNoCache)
 
+		hook.Run("PlayerDataLoaded", client);
 		ix.chat.Send(nil, "connect", client:SteamName())
 	end)
 
