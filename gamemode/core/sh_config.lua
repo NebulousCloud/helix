@@ -262,7 +262,7 @@ if (SERVER) then
 		end
 
 		local uniqueID = net.ReadString()
-		local bUnloaded = !!ix.plugin.unloaded[uniqueID]
+		local bUnloaded = ix.plugin.unloaded[uniqueID]
 		local bShouldEnable = net.ReadBool()
 
 		if ((bShouldEnable and bUnloaded) or (!bShouldEnable and !bUnloaded)) then
