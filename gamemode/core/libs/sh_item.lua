@@ -60,8 +60,23 @@ function ix.item.Instance(index, uniqueID, itemData, x, y, callback, characterID
 	if (!uniqueID or ix.item.list[uniqueID]) then
 		itemData = istable(itemData) and itemData or {}
 
+		local inventory = ix.item.inventories[index]
+		local isTemp = inventory and inventory.noSave
+
+		-- Explicitly verify if the target inventory belongs to a bot character
+		local isBot = false
+		if (inventory and inventory.owner) then
+			local character = ix.char.loaded[inventory.owner]
+			if (character and character.isBot) then
+				isBot = true
+			end
+		end
+
+		local dbIndex = isTemp and 0 or index
+		local dbPlayerID = isBot and "BOT_ITEM" or playerID
+
 		local query = mysql:Insert("ix_items")
-			query:Insert("inventory_id", index)
+			query:Insert("inventory_id", dbIndex)
 			query:Insert("unique_id", uniqueID)
 			query:Insert("data", util.TableToJSON(itemData))
 			query:Insert("x", x)
@@ -71,8 +86,8 @@ function ix.item.Instance(index, uniqueID, itemData, x, y, callback, characterID
 				query:Insert("character_id", characterID)
 			end
 
-			if (playerID) then
-				query:Insert("player_id", playerID)
+			if (dbPlayerID) then
+				query:Insert("player_id", dbPlayerID)
 			end
 
 			query:Callback(function(result, status, lastID)
