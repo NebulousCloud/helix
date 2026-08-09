@@ -69,21 +69,31 @@ end
 -- or `gamemode/`
 -- @see ix.util.Include
 function ix.util.IncludeDir(directory, bFromLua)
-	-- By default, we include relatively to Helix.
-	local baseDir = "helix"
+    -- Determine the base directory for file inclusion
+    -- Default is "helix" for the main gamemode
+    local baseDir = "helix"
 
-	-- If we're in a schema, include relative to the schema.
-	if (Schema and Schema.folder and Schema.loading) then
-		baseDir = Schema.folder.."/schema/"
-	else
-		baseDir = baseDir.."/gamemode/"
-	end
+    -- If we're loading a schema, use the schema's directory instead
+    if (Schema and Schema.folder and Schema.loading) then
+        baseDir = Schema.folder.."/schema/"
+    else
+        baseDir = baseDir.."/gamemode/"
+    end
 
-	-- Find all of the files within the directory.
-	for _, v in ipairs(file.Find((bFromLua and "" or baseDir)..directory.."/*.lua", "LUA")) do
-		-- Include the file from the prefix.
-		ix.util.Include(directory.."/"..v)
-	end
+    -- Find all files and subdirectories within the specified directory
+    -- Returns two tables: files and directories
+    local files, dirs = file.Find((bFromLua and "" or baseDir)..directory.."/*", "LUA")
+
+    -- Include all Lua files found in the current directory
+    for _, v in ipairs(files) do
+        ix.util.Include(directory.."/"..v)
+    end
+
+    -- Recursively include all subdirectories
+    -- This allows for nested folder structures to be fully processed
+    for _, d in ipairs(dirs) do
+        ix.util.IncludeDir(directory.."/"..d, bFromLua)
+    end
 end
 
 --- Removes the realm prefix from a file name. The returned string will be unchanged if there is no prefix found.
