@@ -91,22 +91,6 @@ if (CLIENT) then
 	end
 end
 
--- Called when a new instance of this item has been made.
-function ITEM:OnInstanced(invID, x, y)
-	local inventory = ix.item.inventories[invID]
-
-	ix.inventory.New(inventory and inventory.owner or 0, self.uniqueID, function(inv)
-		local client = inv:GetOwner()
-
-		inv.vars.isBag = self.uniqueID
-		self:SetData("id", inv:GetID())
-
-		if (IsValid(client)) then
-			inv:AddReceiver(client)
-		end
-	end)
-end
-
 function ITEM:GetInventory()
 	local index = self:GetData("id")
 
@@ -150,6 +134,12 @@ function ITEM:OnSendData()
 	else
 		ix.inventory.New(self.player:GetCharacter():GetID(), self.uniqueID, function(inv)
 			self:SetData("id", inv:GetID())
+
+			local client = inv:GetOwner()
+
+			if (IsValid(client)) then
+				inv:AddReceiver(client)
+			end
 		end)
 	end
 end
