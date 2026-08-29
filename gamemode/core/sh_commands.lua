@@ -557,8 +557,6 @@ ix.command.Add("CharGetUp", {
 				if (!IsValid(entity)) then
 					return
 				end
-
-				hook.Run("OnCharacterGetup", client, entity)
 				entity:Remove()
 			end)
 		end
