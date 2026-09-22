@@ -24,7 +24,19 @@ do
 					updateQuery:Execute()
 
 					self.ixPlayTime = tonumber(result[1].play_time) or 0
-					self.ixData = util.JSONToTable(result[1].data)
+
+					local json = result[1].data
+					self.ixData = util.JSONToTable(json)
+
+					if (not self.ixData) then
+						ErrorNoHalt(
+							string.format(
+								"[Helix] Loaded player %s with invalid 'data' JSON (%s)\n",
+								steamID64,
+								tostring(json)
+							)
+						)
+					end
 
 					if (callback) then
 						callback(self.ixData)

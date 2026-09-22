@@ -259,7 +259,22 @@ if (SERVER) then
 							value = v.default
 						end
 					elseif (istable(v.default)) then
-						value = istable(value) and value or util.JSONToTable(value)
+						if (isstring(value)) then
+							local json = value
+
+							value = util.JSONToTable(json)
+
+							if (not value) then
+								ErrorNoHalt(
+									string.format(
+										"[Helix] Loaded character %s with invalid '%s' JSON (%s)\n",
+										tostring(characterInfo.id),
+										v.field,
+										json
+									)
+								)
+							end
+						end
 					end
 
 					data[k] = value
