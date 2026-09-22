@@ -104,6 +104,8 @@ if (SERVER) then
 				entity:Spawn()
 				entity:Activate()
 
+				hook.Run("DoPersistanceLoad", entity, v)
+
 				if (v.bNoCollision) then
 					entity:SetCollisionGroup(COLLISION_GROUP_WORLD)
 				end
@@ -151,6 +153,8 @@ if (SERVER) then
 				data.Color = v:GetColor()
 				data.Material = v:GetMaterial()
 				data.bNoCollision = v:GetCollisionGroup() == COLLISION_GROUP_WORLD
+
+				hook.Run("DoPersistanceSave", v, data)
 
 				local materials = v:GetMaterials()
 
