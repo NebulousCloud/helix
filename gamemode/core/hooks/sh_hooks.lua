@@ -324,6 +324,10 @@ function GM:PlayerSwitchWeapon(client, oldWeapon, weapon)
 end
 
 function GM:PlayerModelChanged(client, model)
+	if (!model) then
+		return
+	end
+	
 	client.ixAnimModelClass = ix.anim.GetModelClass(model)
 
 	UpdateAnimationTable(client)
