@@ -587,7 +587,7 @@ ix.command.Add("PlyUnwhitelist", {
 		end
 
 		if (faction) then
-			local targetPlayer = ix.util.FindPlayer(target)
+			local targetPlayer = ix.command.FindPlayer(client, target)
 
 			if (IsValid(targetPlayer) and targetPlayer:SetWhitelisted(faction.index, false)) then
 				for _, v in player.Iterator() do
