@@ -121,19 +121,26 @@ if (CLIENT) then
 		end
 	end
 
+	local prevent_overflow = false
+
 	function PLUGIN:PlayerBindPress(client, bind, pressed)
 		bind = bind:lower()
 
-		if (!pressed or !bind:find("invprev") and !bind:find("invnext")
-		and !bind:find("slot") and !bind:find("attack")) then
+		if (!pressed or prevent_overflow or
+		!bind:find("invprev") and !bind:find("invnext") and
+		!bind:find("slot") and !bind:find("attack")) then
 			return
 		end
 
+		prevent_overflow = true
+		local prevent = hook.Run("PlayerBindPress", client, bind, pressed)
+		prevent_overflow = false
 		local currentWeapon = client:GetActiveWeapon()
 		local bValid = IsValid(currentWeapon)
 		local bTool
 
-		if (client:InVehicle() or (bValid and currentWeapon:GetClass() == "weapon_physgun" and client:KeyDown(IN_ATTACK))) then
+		if (prevent or
+		client:InVehicle() or (bValid and currentWeapon:GetClass() == "weapon_physgun" and client:KeyDown(IN_ATTACK))) then
 			return
 		end
 
