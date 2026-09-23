@@ -8,6 +8,16 @@ ix.currency.singular = ix.currency.singular or "dollar"
 ix.currency.plural = ix.currency.plural or "dollars"
 ix.currency.model = ix.currency.model or "models/props_lab/box01a.mdl"
 
+local Places = {
+    [1] = "Thousand",
+    [2] = "Million",
+    [3] = "Billion",
+    [4] = "Trillion",
+    [5] = "Quintillion",
+    [6] = "Sextillion",
+    [7] = "Heptillion"
+}
+
 --- Sets the currency type.
 -- @realm shared
 -- @string symbol The symbol of the currency.
@@ -31,6 +41,38 @@ function ix.currency.Get(amount)
 	else
 		return ix.currency.symbol..amount.." "..ix.currency.plural
 	end
+end
+
+function ix.currency.Format(amount,Place)
+    local String = ""
+    local Suffix = ""
+    if Place == nil then
+        Place = 0
+    end
+    if !isnumber(amount) then
+        return "Input must be value"
+    end
+	if (amount == 1 or amount == -1) and Place == 0 then
+		Suffix = " "..ix.currency.singular
+	else
+		Suffix = " "..ix.currency.plural
+	end
+    if amount > 1000 then
+        amount = math.Round(amount/1000, 2)
+        Place = Place + 1
+        if Moni > 1000 and Place < 7 then
+            String = ix.currency:Format(amount,Place)
+        else
+            String = ix.currency.symbol..amount.." "..Places[Place]..Suffix
+        end
+    elseif amount == 0 then
+        String = "Broke"
+    elseif amount < 1 then
+        String = "Debt of "..ix.currency:Format(amount*-1)
+    else
+        String = ix.currency.symbol..amount..Suffix
+    end
+    return String
 end
 
 --- Spawns an amount of cash at a specific location on the map.
