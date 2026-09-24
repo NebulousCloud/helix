@@ -51,7 +51,6 @@ SWEP.FireWhenLowered = true
 SWEP.HoldType = "fist"
 
 SWEP.holdDistance = 64
-SWEP.maxHoldDistance = 96 -- how far away the held object is allowed to travel before forcefully dropping
 SWEP.maxHoldStress = 4000 -- how much stress the held object can undergo before forcefully dropping
 
 -- luacheck: globals ACT_VM_FISTS_DRAW ACT_VM_FISTS_HOLSTER
@@ -62,6 +61,9 @@ function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
 
 	self.lastHand = 0
+
+	-- how far away the held object is allowed to travel before forcefully dropping
+	self.maxHoldDistance = ix.config.Get("interactRange", 96)
 	self.maxHoldDistanceSquared = self.maxHoldDistance ^ 2
 	self.heldObjectAngle = Angle(angle_zero)
 end
@@ -415,7 +417,7 @@ function SWEP:PrimaryAttack()
 			self:GetOwner():LagCompensation(true)
 				local data = {}
 					data.start = self:GetOwner():GetShootPos()
-					data.endpos = data.start + self:GetOwner():GetAimVector() * 96
+					data.endpos = data.start + self:GetOwner():GetAimVector() * ix.config.Get("interactRange", 96)
 					data.filter = self:GetOwner()
 				local trace = util.TraceLine(data)
 
@@ -449,7 +451,7 @@ function SWEP:SecondaryAttack()
 
 	local data = {}
 		data.start = self:GetOwner():GetShootPos()
-		data.endpos = data.start + self:GetOwner():GetAimVector() * 84
+		data.endpos = data.start + self:GetOwner():GetAimVector() * (self.maxHoldDistance * 0.875)
 		data.filter = {self, self:GetOwner()}
 	local trace = util.TraceLine(data)
 	local entity = trace.Entity
