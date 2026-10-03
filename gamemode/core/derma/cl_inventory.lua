@@ -24,15 +24,6 @@ local function RenderNewIcon(panel, itemTable)
 	end
 end
 
-local function InventoryAction(action, itemID, invID, data)
-	net.Start("ixInventoryAction")
-		net.WriteString(action)
-		net.WriteUInt(itemID, 32)
-		net.WriteUInt(invID, 32)
-		net.WriteTable(data or {})
-	net.SendToServer()
-end
-
 local PANEL = {}
 
 AccessorFunc(PANEL, "itemTable", "ItemTable")
@@ -102,7 +93,7 @@ function PANEL:DoRightClick()
 						end
 
 						if (send != false) then
-							InventoryAction(k, itemTable.id, inventory)
+							ix.item.PerformInventoryAction(k, itemTable.id, inventory)
 						end
 					itemTable.player = nil
 				end)
@@ -125,7 +116,7 @@ function PANEL:DoRightClick()
 								end
 
 								if (send != false) then
-									InventoryAction(k, itemTable.id, inventory, sub.data)
+									ix.item.PerformInventoryAction(k, itemTable.id, inventory, sub.data)
 								end
 							itemTable.player = nil
 						end)
@@ -145,7 +136,7 @@ function PANEL:DoRightClick()
 						end
 
 						if (send != false) then
-							InventoryAction(k, itemTable.id, inventory)
+							ix.item.PerformInventoryAction(k, itemTable.id, inventory)
 						end
 					itemTable.player = nil
 				end):SetImage(v.icon or "icon16/brick.png")
@@ -169,7 +160,7 @@ function PANEL:DoRightClick()
 					end
 
 					if (send != false) then
-						InventoryAction("drop", itemTable.id, inventory)
+						ix.item.PerformInventoryAction("drop", itemTable.id, inventory)
 					end
 				itemTable.player = nil
 			end):SetImage(info.icon or "icon16/brick.png")
@@ -191,7 +182,7 @@ function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY)
 		local inventoryID = self.inventoryID
 
 		if (inventoryID) then
-			InventoryAction("drop", item.id, inventoryID, {})
+			ix.item.PerformInventoryAction("drop", item.id, inventoryID, {})
 		end
 	elseif (inventoryPanel:IsAllEmpty(gridX, gridY, item.width, item.height, self)) then
 		local oldX, oldY = self.gridX, self.gridY
@@ -209,7 +200,7 @@ function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY)
 					surface.PlaySound(combineItem.functions.combine.sound)
 				end
 
-				InventoryAction("combine", combineItem.id, inventoryID, {item.id})
+				ix.item.PerformInventoryAction("combine", combineItem.id, inventoryID, {item.id})
 			combineItem.player = nil
 		end
 	end
