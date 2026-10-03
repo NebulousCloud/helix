@@ -130,7 +130,7 @@ function PANEL:Init()
 	self.searchBar:Dock(TOP)
 	self.searchBar:DockMargin(0, 4, 0, 0)
 	self.searchBar:SetUpdateOnType(true)
-	self.searchBar:SetPlaceholderText("Search...")
+	self.searchBar:SetPlaceholderText(L"vendorSearch")
 	self.searchBar.OnValueChange = function(this, value)
 		self:ReloadItemList(value)
 	end
@@ -247,7 +247,7 @@ function PANEL:ReloadItemList(filter)
 	for k, v in SortedPairs(ix.item.list) do
 		local itemName = v.GetName and v:GetName() or L(v.name)
 
-		if (filter and !itemName:lower():find(filter:lower(), 1, false)) then
+		if (filter and !itemName:utf8lower():find(filter:utf8lower(), 1, true)) then
 			continue
 		end
 
