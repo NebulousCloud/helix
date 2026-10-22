@@ -588,8 +588,8 @@ end
 -- @entity entity Entity that was loaded
 -- @tab data Table of the saved data for this entity
 -- @usage function PLUGIN:HelixPersistLoad(entity, data)
--- 	if (entity:GetClass() == "ix_item") then
--- 		entity:SetItem(data.ItemID)
+-- 	if (entity:GetClass() == "my_ent") then
+-- 		entity:SetOwnerID(data.OwnerID)
 -- 	end
 -- end
 function HelixPersistLoad(entity, data)
@@ -601,8 +601,8 @@ end
 -- @entity entity Entity that is being saved
 -- @tab data Table of the saved data for this entity
 -- @usage function PLUGIN:HelixPersistSave(entity, data)
--- 	if (entity:GetClass() == "ix_item") then
--- 		data.ItemID = entity:GetItemID()
+-- 	if (entity:GetClass() == "my_ent") then
+-- 		data.OwnerID = entity:GetOwnerID()
 -- 	end
 -- end
 function HelixPersistSave(entity, data)
