@@ -104,8 +104,26 @@ if (SERVER) then
 				entity:Spawn()
 				entity:Activate()
 
-				if (v.bNoCollision) then
+				if (v.Mins and v.Maxs) then
+					entity:SetCollisionBounds(v.Mins, v.Maxs)
+				end
+
+				if (v.ColGroup) then
+					entity:SetCollisionGroup(v.ColGroup)
+				elseif (v.bNoCollision) then
 					entity:SetCollisionGroup(COLLISION_GROUP_WORLD)
+				end
+
+				if (v.Name and v.Name != "") then
+					entity:SetName(v.Name)
+				end
+
+				if (v.CurHealth) then
+					entity:SetHealth(v.CurHealth)
+				end
+
+				if (v.MaxHealth) then
+					entity:SetMaxHealth(v.MaxHealth)
 				end
 
 				if (istable(v.BodyGroups)) then
@@ -130,6 +148,12 @@ if (SERVER) then
 					physicsObject:EnableMotion(v.Movable)
 				end
 
+				if (entity.RestoreNetworkVars and v.DT) then
+					entity:RestoreNetworkVars(v.DT)
+				end
+
+				hook.Run("HelixPersistLoad", entity, v)
+
 				self.stored[#self.stored + 1] = entity
 
 				entity:SetNetVar("Persistent", true)
@@ -151,6 +175,16 @@ if (SERVER) then
 				data.Color = v:GetColor()
 				data.Material = v:GetMaterial()
 				data.bNoCollision = v:GetCollisionGroup() == COLLISION_GROUP_WORLD
+				data.Mins, data.Maxs = v:GetCollisionBounds()
+				data.ColGroup = v:GetCollisionGroup()
+				data.CurHealth = v:Health()
+				data.MaxHealth = v:GetMaxHealth()
+
+				local name = v:GetName()
+
+				if (name and name != "") then
+					data.Name = name
+				end
 
 				local materials = v:GetMaterials()
 
@@ -181,6 +215,12 @@ if (SERVER) then
 				if (IsValid(physicsObject)) then
 					data.Movable = physicsObject:IsMoveable()
 				end
+
+				if (v.GetNetworkVars) then
+					data.DT = v:GetNetworkVars()
+				end
+
+				hook.Run("HelixPersistSave", v, data)
 
 				entities[#entities + 1] = data
 			end
