@@ -582,6 +582,32 @@ end
 function GetTypingIndicator(character, text)
 end
 
+--- Called when a persistent entity is loaded from disk. This is called after the entity has been spawned and its core
+-- state (position, model, health, collision, etc.) has been restored, but before it is marked as persistent.
+-- @realm server
+-- @entity entity Entity that was loaded
+-- @tab data Table of the saved data for this entity
+-- @usage function PLUGIN:HelixPersistLoad(entity, data)
+-- 	if (entity:GetClass() == "my_ent") then
+-- 		entity:SetOwnerID(data.OwnerID)
+-- 	end
+-- end
+function HelixPersistLoad(entity, data)
+end
+
+--- Called when a persistent entity is saved. Any values added to the data table will be stored and passed back to the
+-- "HelixPersistLoad" hook when the entity is loaded again.
+-- @realm server
+-- @entity entity Entity that is being saved
+-- @tab data Table of the saved data for this entity
+-- @usage function PLUGIN:HelixPersistSave(entity, data)
+-- 	if (entity:GetClass() == "my_ent") then
+-- 		data.OwnerID = entity:GetOwnerID()
+-- 	end
+-- end
+function HelixPersistSave(entity, data)
+end
+
 --- Registers chat classes after the core framework chat classes have been registered. You should usually create your chat
 -- classes in this hook - especially if you want to reference the properties of a framework chat class.
 -- @realm shared
