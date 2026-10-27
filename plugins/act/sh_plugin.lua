@@ -81,6 +81,11 @@ function PLUGIN:ExitAct(client)
 
 	net.Start("ixActLeave")
 	net.Send(client)
+
+	if (client.ixOldPosition) then
+		client:SetPos(client.ixOldPosition)
+		client.ixOldPosition = nil
+	end
 end
 
 function PLUGIN:PostSetupActs()
